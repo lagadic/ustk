@@ -1,0 +1,33 @@
+# - Config file for the UsTk package
+# It defines the following variables
+#  UsTk_INCLUDE_DIRS - include directories for UsTk
+#  UsTk_LIBRARIES    - libraries to link against
+ 
+# Compute paths
+get_filename_component(UsTk_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+set(UsTk_INCLUDE_DIRS "@CONF_INCLUDE_DIRS@")
+
+# Our library dependencies (contains definitions for IMPORTED targets)
+MESSAGE(STATUS "Here")
+if(NOT TARGET @UsTk_INTERN_LIBRARY@ AND NOT UsTk_BINARY_DIR)
+	MESSAGE(STATUS "There")
+  include("${CMAKE_CURRENT_LIST_DIR}/UsTkTargets.cmake")
+endif()
+ 
+# These are IMPORTED targets created by UsTkTargets.cmake
+set(USTK_LIBRARIES "@UsTk_INTERN_LIBRARY@")
+
+#----------------------------------------------------------------------
+# Remember UsTk's third party libs configuration:
+#----------------------------------------------------------------------
+
+SET(USTK_HAVE_CUDA "@USTK_HAVE_CUDA@")
+SET(USTK_HAVE_CULA "@USTK_HAVE_CULA@")
+SET(USTK_HAVE_LEVMAR "@USTK_HAVE_LEVMAR@")
+SET(USTK_HAVE_VISP "@USTK_HAVE_VISP@")
+SET(USTK_HAVE_VTK "@USTK_HAVE_VTK@")
+SET(USTK_HAVE_FFTW "@USTK_HAVE_FFTW@")
+SET(USTK_HAVE_Ultrasonix "@USTK_HAVE_ULTRASONIX@")
+SET(USTK_HAVE_V4L2 "@USTK_HAVE_V4L2@")
+SET(USTK_HAVE_IIWA "@USTK_HAVE_IIWA@")
+SET(USTK_HAVE_ROBOTS "@USTK_HAVE_ROBOTS@")
