@@ -62,7 +62,7 @@ PROJECT_NUMBER         = @UsTk_VERSION_FULL@
 # If a relative path is entered, it will be relative to the location 
 # where doxygen was started. If left blank the current directory will be used.
 
-OUTPUT_DIRECTORY       = doc
+OUTPUT_DIRECTORY       = "@UsTk_BINARY_DIR@/doc"
 
 # If the CREATE_SUBDIRS tag is set to YES, then doxygen will create 
 # 4096 sub-directories (in 2 levels) under the output directory of each output 
@@ -477,11 +477,11 @@ WARN_LOGFILE           =  warning.log
 # directories like "/usr/src/myproject". Separate the files or directories 
 # with spaces.
 
-INPUT                  = @UsTk_SOURCE_DIR@/src \
-                         @UsTk_SOURCE_DIR@/tools \
-                         @UsTk_SOURCE_DIR@/doc \
-                         @UsTk_SOURCE_DIR@/examples \
-                         @UsTk_SOURCE_DIR@/tests
+INPUT                  = "@UsTk_SOURCE_DIR@/src" \
+                         "@UsTk_SOURCE_DIR@/doc" \
+                         "@UsTk_SOURCE_DIR@/examples" \
+                         "@UsTk_SOURCE_DIR@/tests" \
+                         "@UsTk_SOURCE_DIR@/tools" 
 
 # If the value of the INPUT tag contains directories, you can use the 
 # FILE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp 

@@ -1,0 +1,5 @@
+*
+#keep only those 2 files plus .gitignore
+!.gitignore
+!config-doxygen.cmake
+!mainpage.dox
