@@ -38,7 +38,7 @@
 #include <visp/vpImageIo.h>
 #include <visp/vpIoTools.h>
 
-#include <UsTk/usVolumeIo.h>
+#include <visp3/ustk_io/usVolumeIo.h>
 
 void usDataIo::read(usData &data, const char *filename) {
   if (data.getMode() == PRESCAN_2D)

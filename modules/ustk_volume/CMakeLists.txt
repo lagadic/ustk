@@ -1,4 +1,4 @@
-vp_add_module(ustk_volume visp_core)
+vp_add_module(ustk_volume INTERNAL visp_core visp_io)
 
 vp_glob_module_sources()
 vp_module_include_directories()
