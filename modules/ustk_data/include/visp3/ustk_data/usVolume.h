@@ -59,7 +59,7 @@ enum ElementType
  * This class is used to represent 3D data with physical information such as element spacing.
  */
 template <class DataType>
-class usVolume
+class VISP_EXPORT usVolume
 {
  public:
   /**

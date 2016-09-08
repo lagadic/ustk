@@ -42,9 +42,9 @@
 #include <fstream>
 #include <string>
 
-#include <visp/vpColVector.h>
-#include <visp/vpMatrix.h>
-#include <visp/vpRotationMatrix.h>
+#include <visp3/core/vpColVector.h>
+#include <visp3/core/vpMatrix.h>
+#include <visp3/core/vpRotationMatrix.h>
 
 
 class File_tools{

@@ -38,9 +38,9 @@
 #ifndef US_DATA_POSTSCAN_2D_H
 #define US_DATA_POSTSCAN_2D_H
 
-#include <visp/vpImage.h>
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpImage.h>
 
-//#include <UsTk/usTkConfig.h>
 #include <visp3/ustk_data/usData.h>
 
 /**
@@ -50,7 +50,7 @@
  *
  * This class represents a 2D ultrasound prescan frame.
  */
-class /*USTK_EXPORT*/ usDataPostscan2D : public usData, public vpImage<unsigned char> {
+class VISP_EXPORT usDataPostscan2D : public usData, public vpImage<unsigned char> {
  public:
   /**
    * Constructor.

@@ -48,7 +48,7 @@
  *
  * This class is used to represent 3D data with physical information such as element spacing.
  */
-class /*USTK_EXPORT*/ usDataPostscan3D : public usData, public usVolume<unsigned char>
+class VISP_EXPORT usDataPostscan3D : public usData, public usVolume<unsigned char>
 {
 public:
   /** Constructor  */

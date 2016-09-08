@@ -35,7 +35,7 @@
 #include <fstream>
 #include <visp3/ustk_io/usDataIo.h>
 #include <visp3/ustk_grabber/usGrabberException.h>
-#include <visp/vpIoTools.h>
+#include <visp3/core/vpIoTools.h>
 
 usGrabberFile::usGrabberFile() {
   m_data = NULL;

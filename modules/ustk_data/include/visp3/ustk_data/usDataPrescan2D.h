@@ -40,7 +40,6 @@
 
 #include <visp/vpImage.h>
 
-//#include <UsTk/usTkConfig.h>
 #include <visp3/ustk_data/usData.h>
 
 /**
@@ -50,7 +49,7 @@
  *
  * This class represents a 2D ultrasound prescan frame.
  */
-class /*USTK_EXPORT*/ usDataPrescan2D : public usData, public vpImage<unsigned char> {
+class VISP_EXPORT usDataPrescan2D : public usData, public vpImage<unsigned char> {
  public:
   /**
    * Constructor.

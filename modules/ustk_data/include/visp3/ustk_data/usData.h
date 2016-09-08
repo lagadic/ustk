@@ -38,7 +38,7 @@
 #ifndef US_DATA_H
 #define US_DATA_H
 
-//#include <UsTk/usTkConfig.h>
+#include <visp3/core/vpConfig.h>
 
 /**
  * Storage element type.
@@ -84,7 +84,7 @@ enum usDataMode {
  *
  * This class represents a generic ultrasound image.
  */
-class /*USTK_EXPORT*/ usData {
+class VISP_EXPORT usData {
  public:
   /**
    * Constructor.

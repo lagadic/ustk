@@ -42,7 +42,6 @@
 #include <vector>
 #include <algorithm>
 
-//#include <UsTk/usTkConfig.h>
 #include <visp3/ustk_data/usData.h>
 #include <visp3/ustk_data/usVolume.h>
 
@@ -52,7 +51,7 @@
  *
  * This class represents a 3D prescan ultrasound volume.
  */
-class /*USTK_EXPORT*/ usDataPrescan3D : public usData, public usVolume<unsigned char>
+class VISP_EXPORT usDataPrescan3D : public usData, public usVolume<unsigned char>
 {
 public:
   /**

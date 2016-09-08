@@ -47,7 +47,7 @@
  * @brief Error that can be emited by the vpRobot class and its derivates.
  * @author Pierre Chatelain
  */
-class usGrabberException : public vpException
+class VISP_EXPORT usGrabberException : public vpException
 {
   public:
   /**

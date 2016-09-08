@@ -35,8 +35,8 @@
 #include <set>
 #include <sstream>
 
-#include <visp/vpImageIo.h>
-#include <visp/vpIoTools.h>
+#include <visp3/io/vpImageIo.h>
+#include <visp3/core/vpIoTools.h>
 
 #include <visp3/ustk_io/usVolumeIo.h>
 

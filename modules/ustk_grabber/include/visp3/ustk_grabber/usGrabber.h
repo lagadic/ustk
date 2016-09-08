@@ -56,7 +56,7 @@ enum usGrabberType {
  *
  * Generic class for ultrasound data grabber.
  */
-class usGrabber {
+class VISP_EXPORT usGrabber {
  public:
   /**
    * Constructor.

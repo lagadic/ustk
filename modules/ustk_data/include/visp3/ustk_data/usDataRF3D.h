@@ -21,7 +21,7 @@
  *
  * This class represents a 3D RF ultrasound volume.
  */
-class /*USTK_EXPORT*/ usDataRF3D : public usData, public usVolume<short>
+class VISP_EXPORT usDataRF3D : public usData, public usVolume<short>
 {
 public:
   /**
