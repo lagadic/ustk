@@ -45,8 +45,8 @@
 #include <fstream>
 #include <sstream>
 
-#include <visp3/ustk_volume/usVolume.h>
-#include <visp3/ustk_volume/usVolumeTools.h>
+#include <visp3/ustk_data/usVolume.h>
+#include <visp3/ustk_data/usVolumeTools.h>
 
 /**
  * @namespace usVolumeIo

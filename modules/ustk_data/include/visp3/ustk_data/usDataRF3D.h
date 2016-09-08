@@ -13,7 +13,7 @@
 
 //#include <UsTk/usTkConfig.h>
 #include <visp3/ustk_data/usData.h>
-#include <visp3/ustk_volume/usVolume.h>
+#include <visp3/ustk_data/usVolume.h>
 
 /**
  * @class usDataRF3D

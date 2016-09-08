@@ -44,7 +44,7 @@
 
 #include <visp/vpImage.h>
 
-#include <visp3/ustk_volume/usVolume.h>
+#include <visp3/ustk_data/usVolume.h>
 
 /**
  * @namespace usVolumeTools
