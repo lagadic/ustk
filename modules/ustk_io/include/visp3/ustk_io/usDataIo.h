@@ -117,7 +117,7 @@ namespace usDataIo
    *
    * The type of data to read is deduced from the class of data.
    */
-  /*USTK_EXPORT*/ void read(usData &data, const char *filename);
+	VISP_EXPORT void read(usData &data, const char *filename);
 
   /**
    * Read 2D postscan ultrasound data.
@@ -126,7 +126,7 @@ namespace usDataIo
    *
    * The file should be in an image format readable by ViSP.
    */
-  /*USTK_EXPORT*/ void read(usDataPostscan2D &data, const char *filename);
+	VISP_EXPORT void read(usDataPostscan2D &data, const char *filename);
 
   /**
    * Read 3D postscan ultrasound data.
@@ -135,7 +135,7 @@ namespace usDataIo
    *
    * The file should be in MetaImage format (.mhd).
    */
-  /*USTK_EXPORT*/ void read(usDataPostscan3D &data, const char *filename);
+	VISP_EXPORT void read(usDataPostscan3D &data, const char *filename);
 
   /**
    * Read 2D prescan ultrasound data.
@@ -144,7 +144,7 @@ namespace usDataIo
    *
    * The file should be in an image format reabable by ViSP.
    */
-  /*USTK_EXPORT*/ void read(usDataPrescan2D &data, const char *filename);
+	VISP_EXPORT void read(usDataPrescan2D &data, const char *filename);
 
   /**
    * Read 2D postscan ultrasound data.
@@ -153,7 +153,7 @@ namespace usDataIo
    *
    * The file should be in MetaImage format (.mhd).
    */
-  /*USTK_EXPORT*/ void read(usDataPrescan3D &data, const char *filename);
+	VISP_EXPORT void read(usDataPrescan3D &data, const char *filename);
 
   /**
    * Read 3D RF ultrasound data.
@@ -162,7 +162,7 @@ namespace usDataIo
    *
    * The file should be in MetaImage format (.mhd).
    */
-  /*USTK_EXPORT*/ void read(usDataRF3D &data, const char *filename);
+	VISP_EXPORT void read(usDataRF3D &data, const char *filename);
 
   /**
    * Open a Propello file and read the header.
@@ -173,7 +173,7 @@ namespace usDataIo
    * If the header parsing is successful, then the position indicator of the stream points to the
    * first data element.
    */
-  /*USTK_EXPORT*/ FILE* readPropelloHeader(propelloHeader& header, const char *filename);
+	VISP_EXPORT FILE* readPropelloHeader(propelloHeader& header, const char *filename);
 
   /**
    * Open an Ulterius file and read the header.
@@ -184,56 +184,56 @@ namespace usDataIo
    * If the header parsing is successful, then the position indicator of the stream points to the
    * first data element.
    */
-  /*USTK_EXPORT*/ FILE* readUlteriusHeader(uFileHeader &header, const char *filename);
+	VISP_EXPORT FILE* readUlteriusHeader(uFileHeader &header, const char *filename);
 
   /**
    * Write ultrasound data.
    * @param[in] data The ultrasound data.
    * @param[in] filename Path to the file to write.
    */
-  /*USTK_EXPORT*/ void write(const usData &data, const char *filename);
+	VISP_EXPORT void write(const usData &data, const char *filename);
 
   /**
    * Write 2D postscan ultrasound data.
    * @param[in] data The ultrasound data.
    * @param[in] filename Path to the data file.
    */
-  /*USTK_EXPORT*/ void write(const usDataPostscan2D &data, const char *filename);
+	VISP_EXPORT void write(const usDataPostscan2D &data, const char *filename);
 
   /**
    * Write 3D postscan ultrasound data.
    * @param[in] data The ultrasound data.
    * @param[in] filename Path to the data file.
    */
-  /*USTK_EXPORT*/ void write(const usDataPostscan3D &data, const char *filename);
+	VISP_EXPORT  void write(const usDataPostscan3D &data, const char *filename);
 
   /**
    * Write 2D prescan ultrasound data.
    * @param[in] data The ultrasound data.
    * @param[in] filename Path to the data file.
    */
-  /*USTK_EXPORT*/ void write(const usDataPrescan2D &data, const char *filename);
+	VISP_EXPORT void write(const usDataPrescan2D &data, const char *filename);
 
   /**
    * Write 3D precan ultrasound data.
    * @param[in] data The ultrasound data.
    * @param[in] filename Path to the data file.
    */
-  /*USTK_EXPORT*/ void write(const usDataPrescan3D &data, const char *filename);
+   VISP_EXPORT void write(const usDataPrescan3D &data, const char *filename);
 
   /**
    * Write 3D RF ultrasound data.
    * @param[in] data The ultrasound data.
    * @param[in] filename Path to the data file.
    */
-  /*USTK_EXPORT*/ void write(const usDataRF3D &data, const char *filename);
+   VISP_EXPORT void write(const usDataRF3D &data, const char *filename);
 
   /**
    * Write 2D prescan ultrasound data as MHD.
    * @param[in] data The ultrasound data.
    * @param[in] filename File name.
    */
-  /*USTK_EXPORT*/ void writeMHD(const usDataPrescan2D &data, const char *filename);
+   VISP_EXPORT void writeMHD(const usDataPrescan2D &data, const char *filename);
 
 }
 

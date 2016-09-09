@@ -38,7 +38,7 @@
 #ifndef US_DATA_PRESCAN_2D_H
 #define US_DATA_PRESCAN_2D_H
 
-#include <visp/vpImage.h>
+#include <visp3/core/vpImage.h>
 
 #include <visp3/ustk_data/usData.h>
 

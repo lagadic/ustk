@@ -47,7 +47,7 @@
 #include <visp3/core/vpRotationMatrix.h>
 
 
-class File_tools{
+class VISP_EXPORT File_tools{
 public:
     //FILE_Tools();
 	//! return the number of lines of a text file
