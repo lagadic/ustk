@@ -29,7 +29,7 @@
  *
  *****************************************************************************/
 
-#include <visp3/ustk_io/usGrabberFile.h>
+#include <visp3/ustk_grabber/usGrabberFile.h>
 #include <cstdio>
 #include <cstdlib>
 #include <fstream>
