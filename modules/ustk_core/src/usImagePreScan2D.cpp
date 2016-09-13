@@ -123,10 +123,10 @@ void usImagePreScan2D::copyFrom(const vpImage<unsigned char> &I)
 * Get the number of A-samples in a line.
 * @param[out] AN number of A-samples in a line.
 */
-unsigned int usImagePreScan2D::getAN() const { return getHeight(); }
+unsigned int usImagePreScan2D::getAN() const { return vpImage<unsigned char>::getHeight(); }
 
 /**
 * Get the number of lines.
 * @param[out] LN number of lines.
 */
-unsigned int usImagePreScan2D::getLN() const { return getWidth(); }
+unsigned int usImagePreScan2D::getLN() const { return vpImage<unsigned char>::getWidth(); }
