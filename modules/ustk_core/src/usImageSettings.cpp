@@ -32,8 +32,7 @@
 
  /**
  * @file usImageSettings.cpp
- * @brief Generic ultrasound data.
- * @author Pierre Chatelain
+ * @brief Generic ultrasound image.
  */
 
 //std includes
@@ -47,8 +46,9 @@
 /**
 * Basic Constructor, all settings set to default.
 */
-usImageSettings::usImageSettings() : m_scannerType(UNKNOWN_SCANNER), m_probeType(UNKNOWN_PROBE),
-		   m_dataIdx(0), m_timestamp(0.0), m_originX(0), m_originY(0) {}
+usImageSettings::usImageSettings() : m_probeRadius(0.0f), m_lineAngle(0.0f),
+                                        m_resolution(0.0f), m_BSampleFreq(0.0f),
+                                        m_probeElementPitch(0.0f) {}
 		   
 /**
 * Full Constructor, all settings availables
@@ -58,13 +58,11 @@ usImageSettings::usImageSettings() : m_scannerType(UNKNOWN_SCANNER), m_probeType
 * @param[in] BSampleFreq Sampling frequency used for B-Mode.
 * @param[in] probeElementPitch Physic parameter of the probe : distance between 2 sucessive piezoelectric elements of the ultrasound probe.
 */
-usImageSettings::usImageSettings(float probeRadius, float lineAngle, float resolution, float BSampleFreq, float probeElementPitch) {
-	m_probeRadius = probeRadius;
-	m_lineAngle = lineAngle;
-	m_resolution = resolution;
-	m_BSampleFreq = BSampleFreq;
-	m_probeElementPitch = probeElementPitch;
-}
+usImageSettings::usImageSettings(float probeRadius, float lineAngle,
+                                 float resolution, float BSampleFreq, 
+                                 float probeElementPitch) :     m_probeRadius(probeRadius), m_lineAngle(lineAngle),
+                                                                m_resolution(resolution), m_BSampleFreq(BSampleFreq),
+                                                                m_probeElementPitch(probeElementPitch) {}
 
 /**
 * Copy Constructor, all settings availables
@@ -80,12 +78,6 @@ usImageSettings::usImageSettings(const usImageSettings &other) {
 	m_resolution = other.getResolution();
 	m_BSampleFreq = other.getBSampleFreq();
 	m_probeElementPitch = other.getProbeElementPitch(); 
-	m_scannerType = other.getScannerType();
-	m_probeType = other.getProbeType();
-	m_dataIdx = other.getDataIdx();
-	m_timestamp = other.getTimestamp();
-	m_originX = other.getOriginX();
-	m_originY = other.getOriginY();
 }
 /**
 * Destructor.
@@ -98,12 +90,6 @@ usImageSettings::~usImageSettings() {}
 */
 usImageSettings& usImageSettings::operator=(const usImageSettings& other)
 {
-  m_scannerType = other.getScannerType();
-  m_probeType = other.getProbeType();
-  m_dataIdx = other.getDataIdx();
-  m_timestamp = other.getTimestamp();
-  m_originX = other.getOriginX();
-  m_originY = other.getOriginY();
   m_probeRadius = other.getProbeRadius();
   m_lineAngle = other.getLineAngle();
   m_resolution = other.getResolution();
@@ -111,100 +97,6 @@ usImageSettings& usImageSettings::operator=(const usImageSettings& other)
   m_probeElementPitch = other.getProbeElementPitch();
 
   return *this;
-}
-
-/**
-* Set the scanner type (SONIX_RP, SONIX_TOUCH, SONOSITE).
-* @param[in] scannerType Scanner used to acquire the image.
-*/
-void usImageSettings::setScannerType(usScannerType scannerType) { m_scannerType = scannerType; }
-
-/**
-* Get the scanner type (SONIX_RP, SONIX_TOUCH, SONOSITE).
-* @param[out] scannerType Scanner used to acquire the image.
-*/
-usScannerType usImageSettings::getScannerType() const { return m_scannerType; }
-
-/**
-* Set the probe type (US_4DC7, SS_C60).
-* @param[in] probeType Scanner used to acquire the image.
-*/
-void usImageSettings::setProbeType(usProbeType probeType) { m_probeType = probeType; }
-
-/**
-* Get the probe type (US_4DC7, SS_C60).
-* @param[out] m_probeType Scanner used to acquire the image.
-*/
-usProbeType usImageSettings::getProbeType() const { return m_probeType; }
-
-/**
-* Set the data index.
-* @param[in] idx index of the image.
-*/
-void usImageSettings::setDataIdx(unsigned int idx) { m_dataIdx = idx; }
-
-/**
-* Get the data index.
-* @param[out] m_dataIdx index of the image.
-*/
-unsigned int usImageSettings::getDataIdx() const { return m_dataIdx; }
-
-/**
-* Set the data timestamp.
-* @param[in] timestamp Timestamp of the image.
-*/
-void usImageSettings::setTimestamp(double timestamp) { m_timestamp = timestamp; }
-
-/**
-* Set the data timestamp.
-* @param[out] m_timestamp Timestamp of the image.
-*/
-double usImageSettings::getTimestamp() const { return m_timestamp; }
-
-/**
-* Set the x-coordinate of the volume origin.
-* @param[in] originX x-coordinate of the image origin.
-*/
-void usImageSettings::setOriginX(double originX) { m_originX = originX; }
-
-/**
-* Get the x-coordinate of the volume origin.
-* @param[out] m_originX x-coordinate of the image origin.
-*/
-double usImageSettings::getOriginX() const { return m_originX; }
-
-/**
-* Set the y-coordinate of the volume origin.
-* @param[in] originY y-coordinate of the image origin.
-*/
-void usImageSettings::setOriginY(double originY) { m_originY = originY; }
-
-/**
-* Get the y-coordinate of the volume origin.
-* @param[out] m_originY y-coordinate of the image origin.
-*/
-double usImageSettings::getOriginY() const { return m_originY; }
-
-/**
-* Set the coordinates of the image origin.
-* @param[in] originX x-coordinate of the image origin.
-* @param[in] originY y-coordinate of the image origin.
-*/
-void usImageSettings::setOrigin(double originX, double originY) {
-  m_originX = originX;
-  m_originY = originY;
-}
-
-/**
-* Print data information.
-*/
-void usImageSettings::printInfo()
-{
-  std::cout << "scanner: " << m_scannerType << std::endl
-	    << "probe: " << m_probeType << std::endl
-	    << "data index: " << m_dataIdx << std::endl
-	    << "timestamp: " << m_timestamp << std::endl
-	    << "origin: (" << m_originX << ", " << m_originY << ")" << std::endl;
 }
 
 //probe settings getters/setters
@@ -217,7 +109,7 @@ void usImageSettings::setProbeRadius(float probeRadius) { m_probeRadius = probeR
 
 /**
 * Get the probe radius (m).
-* @param[out] m_probeRadius Probe radius in meters.
+* @return m_probeRadius Probe radius in meters.
 */
 float usImageSettings::getProbeRadius() const { return m_probeRadius; }
 
@@ -229,7 +121,7 @@ void usImageSettings::setLineAngle(float angle) { m_lineAngle = angle; }
 
 /**
 * Get the line angle (rad).
-* @param[out] m_lineAngle Line angle of the probe in radians.
+* @return m_lineAngle Line angle of the probe in radians.
 */
 float usImageSettings::getLineAngle() const { return m_lineAngle; }
 
@@ -241,7 +133,7 @@ void usImageSettings::setResolution(float resolution) { m_resolution = resolutio
 
 /**
 * Get the linear resolution = pixel size (m).
-* @param[out] m_resolution Image resolution in meters.
+* @return m_resolution Image resolution in meters.
 */
 float usImageSettings::getResolution() const { return m_resolution; }
 
@@ -253,7 +145,7 @@ void usImageSettings::setBSampleFreq(float freq) { m_BSampleFreq = freq; }
 
 /**
 * Get the B-sample frequence (Hz).
-* @param[out] m_BSampleFreq B-mode sampling frequency in Hertz.
+* @return m_BSampleFreq B-mode sampling frequency in Hertz.
 */
 float usImageSettings::getBSampleFreq() const { return m_BSampleFreq; }
 
@@ -265,7 +157,7 @@ void usImageSettings::setProbeElementPitch(float probeElementPitch) { m_probeEle
 
 /**
 * Get the probe element pitch.
-* @param[out] m_probeElementPitch Probe element pitch in meters.
+* @return m_probeElementPitch Probe element pitch in meters.
 */
 float usImageSettings::getProbeElementPitch() const { return m_probeElementPitch; }
 

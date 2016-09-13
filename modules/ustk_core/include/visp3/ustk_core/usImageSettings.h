@@ -31,8 +31,7 @@
 
 /**
  * @file usImageSettings.h
- * @brief Generic ultrasound data.
- * @author Pierre Chatelain
+ * @brief Generic ultrasound image settings.
  */
 
 #ifndef US_IMAGE_SETTINGS_H
@@ -46,34 +45,11 @@
 
  //ustk includes
 
-
-/**
- * Ultasound scanner type.
- *
- * Defines the ultrasound scanner used for acquisition.
- */
-enum usScannerType {
-  UNKNOWN_SCANNER, SONIX_RP, SONIX_TOUCH, SONOSITE
-};
-
-/**
- * Ultasound probe type.
- *
- * Defines the ultrasound probe used for acquisition.
- *
- * @todo Add more probe types.
- */
-enum usProbeType {
-  UNKNOWN_PROBE, US_4DC7, SS_C60
-};
-
-
 /**
  * @class usImageSettings
  * @brief Generic class for ultrasound data : storage of probe and scanner settings.
- * @author Pierre Chatelain
  *
- * This class represents a generic ultrasound image.
+ * This class represents a ultrasound image settings.
  */
 class VISP_EXPORT usImageSettings {
  public:
@@ -90,34 +66,6 @@ class VISP_EXPORT usImageSettings {
   virtual ~usImageSettings();
 
   usImageSettings& operator=(const usImageSettings& other);
-
-  // Getters/Setters for general image informations
-
-  void setScannerType(usScannerType scannerType);
-  
-  usScannerType getScannerType() const;
-  
-  void setProbeType(usProbeType probeType);
-
-  usProbeType getProbeType() const;
-
-  void setDataIdx(unsigned int idx);
-
-  unsigned int getDataIdx() const;
-
-  void setTimestamp(double timestamp);
-
-  double getTimestamp() const;
-
-  void setOriginX(double originX);
-
-  double getOriginX() const;
-
-  void setOriginY(double originY);
-
-  double getOriginY() const;
-
-  void setOrigin(double originX, double originY);
   
   //Settings form the probe
 
@@ -140,21 +88,10 @@ class VISP_EXPORT usImageSettings {
   float getProbeElementPitch() const;
 
   void setProbeElementPitch(float probeElementPitch);
-
-  virtual void printInfo();
   
   virtual void printProbeSettings();
 
- private:
-  //general settings
-  usScannerType m_scannerType;
-  usProbeType m_probeType;
-  unsigned int m_dataIdx;
-  double m_timestamp;
-  double m_originX;
-  double m_originY;
-  //double m_originZ; not in 2D
-  
+ private:  
   //Settings from the probe
   float m_probeRadius;
   float m_lineAngle;
