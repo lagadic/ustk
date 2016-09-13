@@ -49,7 +49,8 @@
  *
  * This class represents a 2D ultrasound RF frame.
  */
-class VISP_EXPORT usImageRF2D : public usImageSettings, public vpImage<unsigned char> {
+template<class T>
+class VISP_EXPORT usImageRF2D : public vpImage<T>, public usImageSettings {
  public:
   /**unsigned char
    * Constructor.
@@ -77,27 +78,27 @@ class VISP_EXPORT usImageRF2D : public usImageSettings, public vpImage<unsigned 
    */
   ~usImageRF2D();
 
-  void copyFrom(const vpImage<unsigned char> &I);
+  //void copyFrom(const vpImage<T> &I);
 
   /**
    * Set the number of A-samples in a line.
    */
-  void setAN();
+  //void setAN();
   
   /**
    * Get the number of A-samples in a line.
    */
-  unsigned int getAN() const;
+  //unsigned int getAN() const;
 
   /**
    * Set the number of lines.
    */
-  void setLN();
+  //void setLN();
 
   /**
    * Get the number of lines.
    */
-  unsigned int getLN() const;
+  //unsigned int getLN() const;
 
 
 

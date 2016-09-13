@@ -1,32 +1,37 @@
 #include <visp3/ustk_core/usImageRF2D.h>
 #include <cstring>
 
-usImageRF2D::usImageRF2D() : vpImage<unsigned char>(), usImageSettings()
+template<class T>
+usImageRF2D<T>::usImageRF2D() : vpImage<T>(), usImageSettings()
 {
 	
 }
 
-usImageRF2D::usImageRF2D(unsigned int AN, unsigned int LN)
-  : vpImage<unsigned char>(AN, LN), usImageSettings()
+template<class T>
+usImageRF2D<T>::usImageRF2D(unsigned int AN, unsigned int LN)
+  : vpImage<T>(AN, LN), usImageSettings()
 {
 	
 }
 
-usImageRF2D::usImageRF2D(unsigned int AN, unsigned int LN,
+template<class T>
+usImageRF2D<T>::usImageRF2D(unsigned int AN, unsigned int LN,
 		       float probeRadius, float lineAngle, float resolution,
 		       float BSampleFreq, float probeElementPitch)
-  : vpImage<unsigned char>(AN, LN), usImageSettings(probeRadius, lineAngle, resolution, BSampleFreq, probeElementPitch)
+  : vpImage<T>(AN, LN), usImageSettings(probeRadius, lineAngle, resolution, BSampleFreq, probeElementPitch)
 {
 	
 }
 
-usImageRF2D::usImageRF2D(const usImageRF2D& other)
-  : vpImage<unsigned char>(other), usImageSettings()
+template<class T>
+usImageRF2D<T>::usImageRF2D(const usImageRF2D& other)
+  : vpImage<T>(other), usImageSettings()
 {
 	
 }
 
-usImageRF2D::~usImageRF2D()
+template<class T>
+usImageRF2D<T>::~usImageRF2D()
 {
 
 }
