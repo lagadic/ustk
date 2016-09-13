@@ -30,52 +30,52 @@
  *****************************************************************************/
 
 /**
- * @file usDataPrescan2D.h
- * @brief 2D prescan ultrasound data.
+ * @file usImagePreScan2D.h
+ * @brief 2D prescan ultrasound image.
  * @author Pierre Chatelain
  */
 
-#ifndef US_DATA_PRESCAN_2D_H
-#define US_DATA_PRESCAN_2D_H
+#ifndef US_IMAGE_PRESCAN_2D_H
+#define US_IMAGE_PRESCAN_2D_H
 
 #include <visp3/core/vpImage.h>
 
-#include <visp3/ustk_data/usData.h>
+#include <visp3/ustk_core/usImageSettings.h>
 
 /**
- * @class usDataPrescan2D
- * @brief 2D prescan ultrasound data.
+ * @class usImagePreScan2D
+ * @brief 2D prescan ultrasound image.
  * @author Pierre Chatelain
  *
  * This class represents a 2D ultrasound prescan frame.
  */
-class VISP_EXPORT usDataPrescan2D : public usData, public vpImage<unsigned char> {
+class VISP_EXPORT usImagePreScan2D : public usImageSettings, public vpImage<unsigned char> {
  public:
   /**
    * Constructor.
    */
-  usDataPrescan2D();
+  usImagePreScan2D();
 
   /**
    * Initializing constructor.
    */
-  usDataPrescan2D(unsigned int AN, unsigned int LN);
+  usImagePreScan2D(unsigned int AN, unsigned int LN);
 
   /**
    * Initializing constructor.
    */
-  usDataPrescan2D(unsigned int AN, unsigned int LN, float probeRadius, float lineAngle,
+  usImagePreScan2D(unsigned int AN, unsigned int LN, float probeRadius, float lineAngle,
 		  float resolution, float BSampleFreq, float probeElementPitch);
 
   /**
    * Copy constructor.
    */
-  usDataPrescan2D(const usDataPrescan2D &other, const bool copy=true);
+  usImagePreScan2D(const usImagePreScan2D &other, const bool copy=true);
 
   /**
    * Destructor.
    */
-  ~usDataPrescan2D();
+  ~usImagePreScan2D();
 
   void copyFrom(const vpImage<unsigned char> &I);
 
@@ -89,44 +89,6 @@ class VISP_EXPORT usDataPrescan2D : public usData, public vpImage<unsigned char>
    */
   unsigned int getLN() const;
 
-  /**
-   * Get the probe radius (m).
-   */
-  float getProbeRadius() const;
-
-  /**
-   * Get the line angle (rad).
-   */
-  float getLineAngle() const;
-
-  /**
-   * Get the linear resolution (m).
-   */
-  float getResolution() const;
-
-  /**
-   * Get the B-sample frequence (Hz).
-   */
-  float getBSampleFreq() const;
-
-  /**
-   * Get the probe element pitch.
-   */
-  float getProbeElementPitch() const;
-
-  void setProbeRadius(float probeRadius);
-  void setLineAngle(double angle);
-  void setResolution(float resolution);
-  void setBSampleFreq(double freq);
-  void setProbeElementPitch(float probeElementPitch);
-
- private:
-  float m_probeRadius;
-  float m_lineAngle;
-  float m_resolution;
-  float m_BSampleFreq;
-  float m_probeElementPitch;
-
 };
 
-#endif // US_DATA_PRESCAN_2D_H
+#endif // US_IMAGE_PRESCAN_2D_H

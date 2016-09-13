@@ -29,11 +29,11 @@
  *
  *****************************************************************************/
 
-#include <visp3/ustk_data/usDataPostscan2D.h>
+#include <visp3/ustk_core/usImagePostScan2D.h>
 
-usDataPostscan2D::usDataPostscan2D()
+usImagePostScan2D::usImagePostScan2D()
 {
-  setMode(POSTSCAN_2D);
+	
 }
 
-usDataPostscan2D::~usDataPostscan2D() {}
+usImagePostScan2D::~usImagePostScan2D() {}

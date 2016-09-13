@@ -30,47 +30,38 @@
  *****************************************************************************/
 
 /**
- * @file usDataPostscan3D.h
- * @brief Volume handling.
+ * @file usImagePostScan2D.h
+ * @brief 2D prescan ultrasound image.
  * @author Pierre Chatelain
  */
 
-#ifndef US_DATA_POSTSCAN_3D_H
-#define US_DATA_POSTSCAN_3D_H
+#ifndef US_IMAGE_POSTSCAN_2D_H
+#define US_IMAGE_POSTSCAN_2D_H
 
-//#include <UsTk/usTkConfig.h>
-#include <visp3/ustk_data/usData.h>
-#include <visp3/ustk_data/usVolume.h>
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpImage.h>
+
+#include <visp3/ustk_core/usImageSettings.h>
 
 /**
- * @class usDataPostscan3D
- * @brief Representation of a physical data volume.
+ * @class usImagePostScan2D
+ * @brief 2D prescan ultrasound image.
+ * @author Pierre Chatelain
  *
- * This class is used to represent 3D data with physical information such as element spacing.
+ * This class represents a 2D ultrasound prescan frame.
  */
-class VISP_EXPORT usDataPostscan3D : public usData, public usVolume<unsigned char>
-{
-public:
-  /** Constructor  */
-  usDataPostscan3D();
-
-  /** Constructor.
-   * Set the dimensions and element spacing of the volume.
+class VISP_EXPORT usImagePostScan2D : public usImageSettings, public vpImage<unsigned char> {
+ public:
+  /**
+   * Constructor.
    */
-  usDataPostscan3D(unsigned int dimx, unsigned int dimy, unsigned int dimz, float esx, float esy, float esz);
+  usImagePostScan2D();
 
-  /** Constructor.
-   * Set the dimensions, element spacing, and origin of the volume.
+  /**
+   * Destructor.
    */
-  usDataPostscan3D(unsigned int dimx, unsigned int dimy, unsigned int dimz, float esx, float esy,
-		   float esz, float ox, float oy, float oz);
+  ~usImagePostScan2D();
 
-  /** Copy constructor */
-  usDataPostscan3D(const usDataPostscan3D &volume, const bool copy);
-
-  /** Print information */
-  void printInfo();
-  
 };
 
-#endif // US_DATA_POSTSCAN_3D_H
+#endif // US_IMAGE_POSTSCAN_2D_H

@@ -25,43 +25,82 @@
  *
  *
  * Authors:
- * Pierre Chatelain
+ * Marc Pouliquen
  *
  *****************************************************************************/
 
 /**
- * @file usDataPostscan2D.h
- * @brief 2D prescan ultrasound data.
- * @author Pierre Chatelain
+ * @file usImageRF2D.h
+ * @brief 2D RF ultrasound image.
+ * @author Marc Pouliquen
  */
 
-#ifndef US_DATA_POSTSCAN_2D_H
-#define US_DATA_POSTSCAN_2D_H
+#ifndef US_IMAGE_RF_2D_H
+#define US_IMAGE_RF_2D_H
 
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 
-#include <visp3/ustk_data/usData.h>
+#include <visp3/ustk_core/usImageSettings.h>
 
 /**
- * @class usDataPostscan2D
- * @brief 2D prescan ultrasound data.
- * @author Pierre Chatelain
+ * @class usImageRF2D
+ * @brief 2D Rf ultrasound image.
+ * @author Marc Pouliquen
  *
- * This class represents a 2D ultrasound prescan frame.
+ * This class represents a 2D ultrasound RF frame.
  */
-class VISP_EXPORT usDataPostscan2D : public usData, public vpImage<unsigned char> {
+class VISP_EXPORT usImageRF2D : public usImageSettings, public vpImage<unsigned char> {
  public:
-  /**
+  /**unsigned char
    * Constructor.
    */
-  usDataPostscan2D();
+  usImageRF2D();
+
+  /**
+   * Initializing constructor.
+   */
+  usImageRF2D(unsigned int AN, unsigned int LN);
+
+  /**
+   * Initializing constructor.
+   */
+  usImageRF2D(unsigned int AN, unsigned int LN, float probeRadius, float lineAngle,
+		  float resolution, float BSampleFreq, float probeElementPitch);
+
+  /**
+   * Copy constructor.
+   */
+  usImageRF2D(const usImageRF2D &other);
 
   /**
    * Destructor.
    */
-  ~usDataPostscan2D();
+  ~usImageRF2D();
+
+  void copyFrom(const vpImage<unsigned char> &I);
+
+  /**
+   * Set the number of A-samples in a line.
+   */
+  void setAN();
+  
+  /**
+   * Get the number of A-samples in a line.
+   */
+  unsigned int getAN() const;
+
+  /**
+   * Set the number of lines.
+   */
+  void setLN();
+
+  /**
+   * Get the number of lines.
+   */
+  unsigned int getLN() const;
+
+
 
 };
 
-#endif // US_DATA_POSTSCAN_2D_H
+#endif // US_IMAGE_RF_2D_H
