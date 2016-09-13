@@ -49,8 +49,7 @@
  *
  * This class represents a 2D ultrasound RF frame.
  */
-template<class T>
-class VISP_EXPORT usImageRF2D : public vpImage<T>, public usImageSettings {
+class VISP_EXPORT usImageRF2D : public vpImage<short>, public usImageSettings {
  public:
   /**unsigned char
    * Constructor.

@@ -33,7 +33,6 @@
  /**
  * @file usImagePostScan2D.cpp
  * @brief 2D prescan ultrasound image.
- * @author Pierre Chatelain
  */
 
 //std includes

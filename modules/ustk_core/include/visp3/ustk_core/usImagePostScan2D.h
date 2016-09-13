@@ -26,13 +26,13 @@
  *
  * Authors:
  * Pierre Chatelain
+ * Marc Pouliquen
  *
  *****************************************************************************/
 
 /**
  * @file usImagePostScan2D.h
  * @brief 2D prescan ultrasound image.
- * @author Pierre Chatelain
  */
 
 #ifndef US_IMAGE_POSTSCAN_2D_H
@@ -46,11 +46,10 @@
 /**
  * @class usImagePostScan2D
  * @brief 2D prescan ultrasound image.
- * @author Pierre Chatelain
  *
  * This class represents a 2D ultrasound prescan frame.
  */
-class VISP_EXPORT usImagePostScan2D : public usImageSettings, public vpImage<unsigned char> {
+class VISP_EXPORT usImagePostScan2D : public vpImage<unsigned char>, public usImageSettings {
  public:
   usImagePostScan2D();
 
