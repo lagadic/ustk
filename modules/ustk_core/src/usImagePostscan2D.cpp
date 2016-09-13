@@ -58,6 +58,32 @@ usImagePostScan2D::usImagePostScan2D(const usImagePostScan2D &other) : vpImage<u
 {
 
 }
+
+
+/**
+* Constructor from vpImage.
+*/
+usImagePostScan2D::usImagePostScan2D(const vpImage<unsigned char> &other) : vpImage<unsigned char>(other)
+{
+
+}
+
+/**
+* Constructor from usImageSettings.
+*/
+usImagePostScan2D::usImagePostScan2D(const usImageSettings &other) : usImageSettings(other)
+{
+
+}
+
+/**
+* Constructor from usImageSettings.
+*/
+usImagePostScan2D::usImagePostScan2D(const vpImage<unsigned char> &otherImage, const usImageSettings &otherSettings) : vpImage<unsigned char>(otherImage), usImageSettings(otherSettings)
+{
+
+}
+
 /**
 * Destructor.
 */

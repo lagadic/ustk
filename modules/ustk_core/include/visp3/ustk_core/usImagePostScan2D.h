@@ -54,7 +54,13 @@ class VISP_EXPORT usImagePostScan2D : public usImageSettings, public vpImage<uns
  public:
   usImagePostScan2D();
 
-  usImagePostScan2D(const usImagePostScan2D &oter);
+  usImagePostScan2D(const usImagePostScan2D &other);
+
+  usImagePostScan2D(const vpImage<unsigned char> &other);
+
+  usImagePostScan2D(const usImageSettings &other);
+
+  usImagePostScan2D(const vpImage<unsigned char> &otherImage, const usImageSettings &otherSettings);
 
   ~usImagePostScan2D();
 

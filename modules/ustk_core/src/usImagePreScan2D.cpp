@@ -88,6 +88,22 @@ usImagePreScan2D::usImagePreScan2D(const usImagePreScan2D &other) :
 
 }
 
+usImagePreScan2D::usImagePreScan2D(const vpImage<unsigned char> &other) : vpImage<unsigned char>(other)
+{
+
+}
+
+usImagePreScan2D::usImagePreScan2D(const usImageSettings &other) : usImageSettings(other)
+{
+
+}
+
+usImagePreScan2D::usImagePreScan2D(const vpImage<unsigned char> &other, usImageSettings &otherSettings) :
+	vpImage<unsigned char>(other), usImageSettings(otherSettings)
+{
+
+}
+
 /**
 * Destructor.
 */

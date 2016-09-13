@@ -61,6 +61,12 @@ class VISP_EXPORT usImagePreScan2D : public usImageSettings, public vpImage<unsi
 
   usImagePreScan2D(const usImagePreScan2D &other);
 
+  usImagePreScan2D(const vpImage<unsigned char> &other);
+
+  usImagePreScan2D(const usImageSettings &other);
+
+  usImagePreScan2D(const vpImage<unsigned char> &other, usImageSettings &otherSettings);
+
   ~usImagePreScan2D();
 
   void copyFrom(const vpImage<unsigned char> &I);
