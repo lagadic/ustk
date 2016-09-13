@@ -38,7 +38,14 @@
 #ifndef US_IMAGE_SETTINGS_H
 #define US_IMAGE_SETTINGS_H
 
+ //std includes
+#include <iostream>
+
+ //visp includes
 #include <visp3/core/vpConfig.h>
+
+ //ustk includes
+
 
 /**
  * Ultasound scanner type.
@@ -70,168 +77,75 @@ enum usProbeType {
  */
 class VISP_EXPORT usImageSettings {
  public:
-  /**
-   * Constructor.
-   */
   usImageSettings();
   
-  /**
-   * Constructor.
-   */
   usImageSettings(float probeRadius,
 				  float lineAngle,
 				  float resolution,
 				  float BSampleFreq,
 				  float probeElementPitch);
 
-  /**
-   * Destructor.
-   */
+  usImageSettings(const usImageSettings &other);
+
   virtual ~usImageSettings();
 
-  /**
-   * Assignment operator.
-   */
   usImageSettings& operator=(const usImageSettings& other);
 
-  /**
-   * Set the scanner type (SONIX_RP, SONIX_TOUCH, SONOSITE).
-   */
+  // Getters/Setters for general image informations
+
   void setScannerType(usScannerType scannerType);
   
-  /**
-   * Get the scanner type.
-   */
   usScannerType getScannerType() const;
   
-  /**
-   * Set the probe type (US_4DC7, SS_C60).
-   */
   void setProbeType(usProbeType probeType);
 
-  /**
-   * Get the probe type.
-   */
   usProbeType getProbeType() const;
 
-  /**
-   * Set the data index.
-   */
   void setDataIdx(unsigned int idx);
 
-  /**
-   * Get the data index.
-   */
   unsigned int getDataIdx() const;
 
-  /**
-   * Set the data timestamp.
-   */
   void setTimestamp(double timestamp);
 
-  /**
-   * Set the data timestamp.
-   */
   double getTimestamp() const;
 
-  /**
-   * Set the x-coordinate of the volume origin.
-   */
   void setOriginX(double originX);
 
-  /**
-   * Get the x-coordinate of the volume origin.
-   */
   double getOriginX() const;
 
-  /**
-   * Set the y-coordinate of the volume origin.
-   */
   void setOriginY(double originY);
 
-  /**
-   * Get the y-coordinate of the volume origin.
-   */
   double getOriginY() const;
 
-  /*Not for 2D version
-   * Set the z-coordinate of the volume origin.
-   /
-  void setOriginZ(double originZ);
-
-  /**
-   * Get the z-coordinate of the volume origin.
-   /
-  double getOriginZ() const;*/
-
-  /**
-   * Set the coordinates of the image origin.
-   */
   void setOrigin(double originX, double originY);
   
   //Settings form the probe
 
-  /**
-   * Set the probe  radius (m).
-   */
   void setProbeRadius(float probeRadius);
   
-  /**
-   * Get the probe radius (m).
-   */
   float getProbeRadius() const;
 
-  /**
-   * Get the line angle (rad).
-   */
-  void setLineAngle(double angle);
+  void setLineAngle(float angle);
 
-  /**
-   * Get the line angle (rad).
-   */
   float getLineAngle() const;
 
-  /**
-   * Get the linear resolution (m).
-   */
   void setResolution(float resolution);
 
-  /**
-   * Get the linear resolution (m).
-   */
   float getResolution() const;
 
-  /**
-   * Get the B-sample frequence (Hz).
-   */
-  void setBSampleFreq(double freq);
+  void setBSampleFreq(float freq);
 
-  /**
-   * Get the B-sample frequence (Hz).
-   */
   float getBSampleFreq() const;
 
-  /**
-   * Get the probe element pitch.
-   */
   float getProbeElementPitch() const;
 
-  /**
-   * Set the probe element pitch.
-   */
   void setProbeElementPitch(float probeElementPitch);
 
-  /**
-   * Print data information.
-   */
   virtual void printInfo();
   
-  /**
-   * Print probe settings information.
-   */
   virtual void printProbeSettings();
 
- protected:
+ private:
   //general settings
   usScannerType m_scannerType;
   usProbeType m_probeType;
@@ -241,15 +155,12 @@ class VISP_EXPORT usImageSettings {
   double m_originY;
   //double m_originZ; not in 2D
   
-  //Settings form the probe
+  //Settings from the probe
   float m_probeRadius;
   float m_lineAngle;
   float m_resolution;
   float m_BSampleFreq;
   float m_probeElementPitch;
-
-  //probe settings verification, turn it to true only when you are shure that your instance of usImageXXXXX contains the good probe settings
-  bool probeSettingsAreValid; //true if valid
 };
 
 #endif // US_IMAGE_SETTINGS_H

@@ -26,57 +26,91 @@
  *
  * Authors:
  * Pierre Chatelain
+ * Marc Pouliquen
  *
  *****************************************************************************/
 
+ /**
+ * @file usImagePreScan2D.h
+ * @brief 2D prescan ultrasound image.
+ * @author Pierre Chatelain
+ */
+
+//std include
+
+//ViSP includes
 #include <visp3/ustk_core/usImagePreScan2D.h>
 
-usImagePreScan2D::usImagePreScan2D()
+//usTK includes
+
+/**
+* Basic constructor, all settings set to default.
+*/
+usImagePreScan2D::usImagePreScan2D() : vpImage<unsigned char>(), usImageSettings()
 {
-  setProbeRadius(0.0f);
-  setLineAngle(0.0f);
-  setResolution(0.0f);
-  setBSampleFreq(0.0f);
-  setProbeElementPitch(0.0f);
+
 }
 
-usImagePreScan2D::usImagePreScan2D(unsigned int AN, unsigned int LN) : vpImage<unsigned char>(LN, AN)
+/**
+* Initializing image size constructor.
+* @param[in] AN A-samples in a line (corresponds to image height in px).
+* @param[in] LN Number of lines (corresponds to image width in px).
+*/
+usImagePreScan2D::usImagePreScan2D(unsigned int AN, unsigned int LN) : vpImage<unsigned char>(LN, AN), usImageSettings()
 {
-  setProbeRadius(0.0f);
-  setLineAngle(0.0f);
-  setResolution(0.0f);
-  setBSampleFreq(0.0f);
-  setProbeElementPitch(0.0f);
+
 }
 
+/**
+* Initializing constructor for image size and probe settings.
+* @param[in] AN A-samples in a line (corresponds to image height in px).
+* @param[in] LN Number of lines (corresponds to image width in px).
+* @param[in] probeRadius Distance between the center point of the probe and the first pixel arc acquired, in meters (m).
+* @param[in] lineAngle Radius between 2 successives acquisiton lines in the probe, in radians (rad).
+* @param[in] resolution Size of a pixel (we use square pixels), in meters(m) for postscan. For prescan image (not managed yet) : line angle (in radians) and axial resolution (meters).
+* @param[in] BSampleFreq Sampling frequency used for B-Mode.
+* @param[in] probeElementPitch Physic parameter of the probe : distance between 2 sucessive piezoelectric elements in the ultrasound probe.
+*/
 usImagePreScan2D::usImagePreScan2D(unsigned int AN, unsigned int LN, float probeRadius, float lineAngle,
 				 float resolution, float BSampleFreq, float probeElementPitch) :
-  vpImage<unsigned char>(AN, LN)
+  vpImage<unsigned char>(AN, LN), usImageSettings(probeRadius, lineAngle, resolution, BSampleFreq, probeElementPitch)
 {
-  setProbeRadius(probeRadius);
-  setLineAngle(lineAngle);
-  setResolution(resolution);
-  setBSampleFreq(BSampleFreq);
-  setProbeElementPitch(probeElementPitch);
+
 }
 
-usImagePreScan2D::usImagePreScan2D(const usImagePreScan2D &other, const bool copy) :
+/**
+* Copy constructor.
+* @param[in] other usImagePreScan2D image you want to copy.
+*/
+usImagePreScan2D::usImagePreScan2D(const usImagePreScan2D &other) :
   vpImage<unsigned char>(other), usImageSettings(other)
 {
-  setProbeRadius(other.getProbeRadius());
-  setLineAngle(other.getLineAngle());
-  setResolution(other.getResolution());
-  setBSampleFreq(other.getBSampleFreq());
-  setProbeElementPitch(other.getProbeElementPitch());
+
 }
 
+/**
+* Destructor.
+*/
 usImagePreScan2D::~usImagePreScan2D() {};
 
+/**
+* Copy from vpImage.
+* @param[in] I vpImage<unsigned char> to copy.
+*/
 void usImagePreScan2D::copyFrom(const vpImage<unsigned char> &I)
 {
   resize(I.getHeight(), I.getWidth());
   memcpy(bitmap, I.bitmap, I.getSize()*sizeof(unsigned char));
 }
 
+/**
+* Get the number of A-samples in a line.
+* @param[out] AN number of A-samples in a line.
+*/
 unsigned int usImagePreScan2D::getAN() const { return getHeight(); }
+
+/**
+* Get the number of lines.
+* @param[out] LN number of lines.
+*/
 unsigned int usImagePreScan2D::getLN() const { return getWidth(); }

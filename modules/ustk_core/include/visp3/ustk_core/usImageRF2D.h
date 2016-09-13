@@ -78,29 +78,17 @@ class VISP_EXPORT usImageRF2D : public vpImage<T>, public usImageSettings {
    */
   ~usImageRF2D();
 
-  //void copyFrom(const vpImage<T> &I);
-
-  /**
-   * Set the number of A-samples in a line.
-   */
-  //void setAN();
+  //No setters for AN & LN (not available in vpImage), those parameters have to be passed in the constructor.
   
   /**
    * Get the number of A-samples in a line.
    */
-  //unsigned int getAN() const;
-
-  /**
-   * Set the number of lines.
-   */
-  //void setLN();
+  unsigned int getAN() const;
 
   /**
    * Get the number of lines.
    */
-  //unsigned int getLN() const;
-
-
+  unsigned int getLN() const;
 
 };
 

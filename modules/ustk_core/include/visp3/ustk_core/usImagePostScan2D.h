@@ -52,14 +52,10 @@
  */
 class VISP_EXPORT usImagePostScan2D : public usImageSettings, public vpImage<unsigned char> {
  public:
-  /**
-   * Constructor.
-   */
   usImagePostScan2D();
 
-  /**
-   * Destructor.
-   */
+  usImagePostScan2D(const usImagePostScan2D &oter);
+
   ~usImagePostScan2D();
 
 };

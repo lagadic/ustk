@@ -35,3 +35,18 @@ usImageRF2D<T>::~usImageRF2D()
 {
 
 }
+
+
+/**
+* Get the number of A-samples in a line.
+* @param[out] AN number of A-samples in a line.
+*/
+template<class T>
+unsigned int usImageRF2D<T>::getAN() const { return getHeight(); }
+
+/**
+* Get the number of lines.
+* @param[out] LN number of lines.
+*/
+template<class T>
+unsigned int  usImageRF2D<T>::getLN() const { return getWidth(); }

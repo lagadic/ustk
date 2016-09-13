@@ -51,42 +51,23 @@
  */
 class VISP_EXPORT usImagePreScan2D : public usImageSettings, public vpImage<unsigned char> {
  public:
-  /**
-   * Constructor.
-   */
+
   usImagePreScan2D();
 
-  /**
-   * Initializing constructor.
-   */
   usImagePreScan2D(unsigned int AN, unsigned int LN);
 
-  /**
-   * Initializing constructor.
-   */
   usImagePreScan2D(unsigned int AN, unsigned int LN, float probeRadius, float lineAngle,
 		  float resolution, float BSampleFreq, float probeElementPitch);
 
-  /**
-   * Copy constructor.
-   */
-  usImagePreScan2D(const usImagePreScan2D &other, const bool copy=true);
+  usImagePreScan2D(const usImagePreScan2D &other);
 
-  /**
-   * Destructor.
-   */
   ~usImagePreScan2D();
 
   void copyFrom(const vpImage<unsigned char> &I);
 
-  /**
-   * Get the number of A-samples in a line.
-   */
+  //No setters for AN and LN because vpImage doesn't have setters for height and width. Those parameters have to be passed in the constructor.
   unsigned int getAN() const;
 
-  /**
-   * Get the number of lines.
-   */
   unsigned int getLN() const;
 
 };

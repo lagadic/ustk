@@ -26,14 +26,39 @@
  *
  * Authors:
  * Pierre Chatelain
+ * Marc Pouliquen
  *
  *****************************************************************************/
 
+ /**
+ * @file usImagePostScan2D.cpp
+ * @brief 2D prescan ultrasound image.
+ * @author Pierre Chatelain
+ */
+
+//std includes
+
+//ViSP includes
+
+//ustk includes
 #include <visp3/ustk_core/usImagePostScan2D.h>
 
-usImagePostScan2D::usImagePostScan2D()
+/**
+* Constructor.
+*/
+usImagePostScan2D::usImagePostScan2D() : vpImage<unsigned char>(), usImageSettings()
 {
 	
 }
 
+/**
+* Copy constructor.
+*/
+usImagePostScan2D::usImagePostScan2D(const usImagePostScan2D &other) : vpImage<unsigned char>(other), usImageSettings(other)
+{
+
+}
+/**
+* Destructor.
+*/
 usImagePostScan2D::~usImagePostScan2D() {}
