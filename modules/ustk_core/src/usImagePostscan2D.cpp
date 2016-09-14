@@ -43,7 +43,7 @@
 #include <visp3/ustk_core/usImagePostScan2D.h>
 
 /**
-* Constructor.
+* Basic constructor, all parameters set to default values
 */
 usImagePostScan2D::usImagePostScan2D() : vpImage<unsigned char>(), usImageSettings()
 {
@@ -51,7 +51,8 @@ usImagePostScan2D::usImagePostScan2D() : vpImage<unsigned char>(), usImageSettin
 }
 
 /**
-* Copy constructor.
+* Copy constructor from other usImagePostScan2D
+* @param other usImagePostScan2D to copy
 */
 usImagePostScan2D::usImagePostScan2D(const usImagePostScan2D &other) : vpImage<unsigned char>(other), usImageSettings(other)
 {
@@ -60,7 +61,8 @@ usImagePostScan2D::usImagePostScan2D(const usImagePostScan2D &other) : vpImage<u
 
 
 /**
-* Constructor from vpImage.
+* Constructor from vpImage
+* @param other vpImage<unsigned char> to copy
 */
 usImagePostScan2D::usImagePostScan2D(const vpImage<unsigned char> &other) : vpImage<unsigned char>(other)
 {
@@ -69,6 +71,7 @@ usImagePostScan2D::usImagePostScan2D(const vpImage<unsigned char> &other) : vpIm
 
 /**
 * Constructor from usImageSettings.
+* @param other usImageSettings to copy
 */
 usImagePostScan2D::usImagePostScan2D(const usImageSettings &other) : usImageSettings(other)
 {
@@ -76,7 +79,9 @@ usImagePostScan2D::usImagePostScan2D(const usImageSettings &other) : usImageSett
 }
 
 /**
-* Constructor from usImageSettings.
+* Constructor from vpImage and usImageSettings.
+* @param otherImage vpImage<unsigned char> to copy
+* @param otherSettings usImageSettings to copy
 */
 usImagePostScan2D::usImagePostScan2D(const vpImage<unsigned char> &otherImage, const usImageSettings &otherSettings) : vpImage<unsigned char>(otherImage), usImageSettings(otherSettings)
 {

@@ -1,8 +1,8 @@
 #include <visp3/ustk_core/usImageRF3D.h>
 #include <cstring>
 
-/**unsigned char
-* Constructor.
+/**
+* Basic constructor.
 */
 usImageRF3D::usImageRF3D() : usImage3D<short>(), usImageSettings3D()
 {
@@ -21,7 +21,7 @@ usImageRF3D::usImageRF3D(unsigned int AN, unsigned int LN, unsigned int FN)
 }
 
 /**
-* Initializing constructor.
+* Full initializing constructor.
 * @param[in] AN number of A-samples in a line.
 * @param[in] LN number of lines.
 * @param[in] FN number of frames.

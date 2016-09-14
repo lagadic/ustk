@@ -25,48 +25,44 @@
 *
 *
 * Authors:
+* Pierre Chatelain
 * Marc Pouliquen
 *
 *****************************************************************************/
 
 /**
-* @file usImageRF3D.h
-* @brief 3D RF ultrasound image.
+* @file usImagePostScan3D.h
+* @brief 3D postscan ultrasound image.
 */
 
-#ifndef US_IMAGE_RF_2D_H
-#define US_IMAGE_RF_2D_H
+#ifndef US_IMAGE_POSTSCAN_3D_H
+#define US_IMAGE_POSTSCAN_3D_H
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/ustk_core/usImage3D.h>
 
 #include <visp3/ustk_core/usImageSettings3D.h>
 
 /**
-* @class usImageRF3D
-* @brief 3D RF ultrasound image.
+* @class usImagePostScan3D
+* @brief 3D postscan ultrasound image.
 *
-* This class represents a 3D ultrasound RF frame.
+* This class represents a 3D ultrasound postscan frame.
 */
-class VISP_EXPORT usImageRF3D : public usImage3D<short>, public usImageSettings3D {
+class VISP_EXPORT usImagePostScan3D : public usImage3D<unsigned char>, public usImageSettings3D {
 public:
+  usImagePostScan3D();
 
-  usImageRF3D();
+  usImagePostScan3D(const usImagePostScan3D &other);
 
-  usImageRF3D(unsigned int AN, unsigned int LN, unsigned int FN);
+  usImagePostScan3D(const usImage3D<unsigned char> &other);
 
-  usImageRF3D(unsigned int AN, unsigned int LN, unsigned int FN,
-    float probeRadius, float motorRadius, float lineAngle, float frameAngle,
-    float resolution, float BSampleFreq, float probeElementPitch);
+  usImagePostScan3D(const usImageSettings3D &other);
 
-  usImageRF3D(const usImageRF3D &other);
+  usImagePostScan3D(const usImage3D<unsigned char> &otherImage, const usImageSettings3D &otherSettings);
 
-  ~usImageRF3D();
+  ~usImagePostScan3D();
 
-  unsigned int getAN() const;
-
-  unsigned int getLN() const;
-
-  unsigned int getFN() const;
 };
 
-#endif // US_IMAGE_RF_2D_H
+#endif // US_IMAGE_POSTSCAN_3D_H
