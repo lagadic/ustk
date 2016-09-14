@@ -48,7 +48,7 @@
  * This class represents a 2D ultrasound prescan frame.
  */
 template<class T>
-class VISP_EXPORT usImagePreScan2D : public vpImage<T>, public usImageSettings {
+class usImagePreScan2D : public vpImage<T>, public usImageSettings {
     public:
         //default constructors
         usImagePreScan2D();
@@ -270,11 +270,11 @@ void usImagePreScan2D<unsigned char>::copyFrom(const vpImage<unsigned char> &I)
 * @param[out] AN number of A-samples in a line.
 */
 template<class T>
-unsigned int usImagePreScan2D::getAN() const { return vpImage<T>::getHeight(); }
+unsigned int usImagePreScan2D<T>::getAN() const { return vpImage<T>::getHeight(); }
 
 /**
 * Get the number of lines.
 * @param[out] LN number of lines.
 */
 template<class T>
-unsigned int usImagePreScan2D::getLN() const { return vpImage<T>::getWidth(); }
+unsigned int usImagePreScan2D<T>::getLN() const { return vpImage<T>::getWidth(); }

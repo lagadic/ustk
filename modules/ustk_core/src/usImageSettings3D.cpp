@@ -137,6 +137,6 @@ float usImageSettings3D::getFrameAngle() const { return m_frameAngle; }
 void usImageSettings3D::printProbeSettings() 
 {
   usImageSettings::printProbeSettings();
-  std::cout << "motor radius: " << m_motorRadius << std::endl
-            << "frame angle: " << m_frameAngle << std::endl;
+  std::cout << "motor radius : " << m_motorRadius << std::endl
+            << "frame angle : " << m_frameAngle << std::endl;
 }
