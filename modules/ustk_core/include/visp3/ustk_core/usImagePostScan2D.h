@@ -32,7 +32,7 @@
 
 /**
  * @file usImagePostScan2D.h
- * @brief 2D prescan ultrasound image.
+ * @brief 2D postscan ultrasound image.
  */
 
 #ifndef US_IMAGE_POSTSCAN_2D_H
@@ -45,9 +45,9 @@
 
 /**
  * @class usImagePostScan2D
- * @brief 2D prescan ultrasound image.
+ * @brief 2D postscan ultrasound image.
  *
- * This class represents a 2D ultrasound prescan frame.
+ * This class represents a 2D ultrasound postscan frame.
  */
 class VISP_EXPORT usImagePostScan2D : public vpImage<unsigned char>, public usImageSettings {
  public:

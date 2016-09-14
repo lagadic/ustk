@@ -33,6 +33,8 @@
 /**
 * @file usImage3D.h
 * @brief 3D image handling.
+*
+* This class is used to represent 3D data with physical information such as element spacing.
 */
 
 #ifndef US_IMAGE_3D_H
@@ -43,17 +45,7 @@
 #include <vector>
 #include <algorithm>
 
-/*
-* Storage element type for MetaImage (mhd) format.
-*/
-/*
-enum ElementType
-{
-  MET_UNKNOWN, MET_CHAR, MET_UCHAR, MET_SHORT, MET_USHORT, MET_LONG, MET_ULONG, MET_INT, MET_UINT,
-  MET_FLOAT, MET_DOUBLE, MET_VECTOR
-};*/
-
-/*
+/**
 * @class usImage3D
 * @brief Representation of a physical image volume.
 *
@@ -70,11 +62,19 @@ public:
 
   /**
   * Constructor. Set the dimensions and element spacing of the volume.
+  * @param dimX size (in pixels) on X-axis 
+  * @param dimY size (in pixels) on Y-axis
+  * @param dimZ size (in pixels) on Z-axis
+  * @param spacingX distancee (in meters) between two voxels on X-axis
+  * @param spacingY distancee (in meters) between two voxels on Y-axis
+  * @param spacingZ distancee (in meters) between two voxels on Z-axis
   */
   usImage3D(unsigned int dimX, unsigned int dimY, unsigned int dimZ, float spacingX, float spacingY, float spacingZ);
 
   /**
-  * Copy constructor. By default performs a deep copy.
+  * Copy constructor. By default doesn't perform a deep copy.
+  * @param image other 3D-image to copy
+  * @param copy boolean to select if deep copy is performed or not (not a deep copy by default)
   */
   usImage3D(const usImage3D<Type> &image, const bool copy = false);
 
@@ -85,11 +85,13 @@ public:
 
   /**
   * Assignment operator.
+  * @param other other 3D-image to copy
   */
   usImage3D<Type> &operator=(const usImage3D<Type> &other);
 
   /**
   * Access operator.
+  * @param index Index of the data to acess.
   */
   inline Type operator()(unsigned int index) const
   {
@@ -98,6 +100,8 @@ public:
 
   /**
   * Modification operator.
+  * @param index Index of the data to modify.
+  * @param value New value to set.
   */
   inline void operator()(unsigned int index, Type value)
   {
@@ -106,87 +110,108 @@ public:
 
   /**
   * Access operator.
+  * @param indexX Index on x-axis to acess
+  * @param indexY Index on y-axis to acess
+  * @param indexZ Index on z-axis to acess
   */
-  inline Type operator()(unsigned int x, unsigned int y, unsigned int z) const
+  inline Type operator()(unsigned int indexX, unsigned int indexY, unsigned int indexZ) const
   {
-    return m_data[(m_dimx * m_dimy) * z + m_dimx*y + x];
+    return m_data[(m_dimx * m_dimy) * indexZ + m_dimx*indexY + indexX];
   }
 
   /**
   * Modification operator.
+  * @param indexX Index on x-axis to modify
+  * @param indexY Index on y-axis to modify
+  * @param indexZ Index on z-axis to modify
+  * @param value Value to insert at the desired index
   */
-  inline void operator()(unsigned int x, unsigned int y, unsigned int z, Type value)
+  inline void operator()(unsigned int indexX, unsigned int indexY, unsigned int indexZ, Type value)
   {
-    m_data[(m_dimx * m_dimy)*z + m_dimx*y + x] = value;
+    m_data[(m_dimx * m_dimy)*indexZ + m_dimx*indexY + indexX] = value;
   }
 
   /**
   * Get the volume size.
+  * @return The number of voxels in the volume.
   */
   unsigned int getSize() const { return m_size; }
 
   /**
   * Get the volume height.
+  * @return The number of pixel on the x-axis.
   */
   unsigned int getDimX() const { return m_dimx; }
 
   /**
   * Get the volume width.
+  * @return The number of pixel on the y-axis.
   */
   unsigned int getDimY() const { return m_dimy; }
 
   /**
   * Get the volume depth.
+  * @return The number of pixel on the z-axis.
   */
   unsigned int getDimZ() const { return m_dimz; }
 
   /**
   * Get the element spacing along the x-axis.
+  * @return The element spacing along the x-axis
   */
   float getElementSpacingX() const { return m_elementSpacingX; }
 
   /**
   * Get the element spacing along the y-axis.
+  * @return The element spacing along the y-axis
   */
   float getElementSpacingY() const { return m_elementSpacingY; }
 
   /**
-  * Get the element spacing along the y-axis.
+  * Get the element spacing along the z-axis.
+  * @return The element spacing along the z-axis
   */
   float getElementSpacingZ() const { return m_elementSpacingZ; }
 
   /**
   * Set the element spacing along the x-axis.
+  * @param elementSpacingX The element spacing along the x-axis
   */
   void setElementSpacingX(float elementSpacingX) { m_elementSpacingX = elementSpacingX; }
 
   /**
   * Set the element spacing along the y-axis.
+  * @param elementSpacingY The element spacing along the y-axis
   */
   void setElementSpacingY(float elementSpacingY) { m_elementSpacingY = elementSpacingY; }
 
   /**
-  * Set the element spacing along the y-axis.
+  * Set the element spacing along the z-axis.
+  * @param elementSpacingZ The element spacing along the z-axis
   */
   void setElementSpacingZ(float elementSpacingZ) { m_elementSpacingZ = elementSpacingZ; }
 
   /**
   * Get the pointer to the data container.
+  * @return The pointer to the data container
   */
   Type* getData() { return m_data; }
 
   /**
   * Get the pointer to the const data container.
+  * @return The pointer to the const data container
   */
   const Type* getConstData() const { return m_data; }
 
   /**
   * Set the data container.
+  * @param data The data container
   */
   void setData(Type* data);
 
   /**
   * Initialize the data container with the specified value.
+  * @param value The data 
   */
   void initData(Type value = Type());
 
