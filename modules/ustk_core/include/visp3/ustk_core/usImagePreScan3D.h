@@ -113,7 +113,7 @@ usImagePreScan3D<double>::usImagePreScan3D() : usImage3D<double>(), usImageSetti
 * @param[in] LN Number of lines (corresponds to image width in px).
 */
 template<double>
-usImagePreScan3D<double>::usImagePreScan3D(unsigned int AN, unsigned int LN) : usImage3D<double>(LN, AN), usImageSettings3D()
+usImagePreScan3D<double>::usImagePreScan3D(unsigned int AN, unsigned int LN, unsigned int FN) : usImage3D<double>(LN, AN), usImageSettings3D()
 {
 
 }
@@ -124,7 +124,7 @@ usImagePreScan3D<double>::usImagePreScan3D(unsigned int AN, unsigned int LN) : u
 * @param[in] LN Number of lines (corresponds to image width in px).
 */
 template<unsigned char>
-usImagePreScan3D<unsigned char>::usImagePreScan3D(unsigned int AN, unsigned int LN) : usImage3D<unsigned char>(LN, AN), usImageSettings3D()
+usImagePreScan3D<unsigned char>::usImagePreScan3D(unsigned int AN, unsigned int LN, unsigned int FN) : usImage3D<unsigned char>(LN, AN), usImageSettings3D()
 {
 
 }
@@ -140,7 +140,7 @@ usImagePreScan3D<unsigned char>::usImagePreScan3D(unsigned int AN, unsigned int 
 * @param[in] probeElementPitch Physic parameter of the probe : distance between 2 sucessive piezoelectric elements in the ultrasound probe.
 */
 template<double>
-usImagePreScan3D<double>::usImagePreScan3D(unsigned int AN, unsigned int LN, float probeRadius, float lineAngle,
+usImagePreScan3D<double>::usImagePreScan3D(unsigned int AN, unsigned int LN, unsigned int FN, float probeRadius, float lineAngle,
   float resolution, float BSampleFreq, float probeElementPitch) :
   usImage3D<double>(AN, LN, FN), usImageSettings3D(probeRadius, motorRadius, lineAngle, frameAngle, resolution, BSampleFreq, probeElementPitch)
 {
@@ -158,7 +158,7 @@ usImagePreScan3D<double>::usImagePreScan3D(unsigned int AN, unsigned int LN, flo
 * @param[in] probeElementPitch Physic parameter of the probe : distance between 2 sucessive piezoelectric elements in the ultrasound probe.
 */
 template<unsigned char>
-usImagePreScan3D<unsigned char>::usImagePreScan3D(unsigned int AN, unsigned int LN, unsigned int FN, float probeRadius, float lineAngle,
+usImagePreScan3D<unsigned char>::usImagePreScan3D(unsigned int AN, unsigned int LN, unsigned int FN, float probeRadius, float motorRadius, float lineAngle, float frameAngle,
   float resolution, float BSampleFreq, float probeElementPitch) :
   usImage3D<unsigned char>(AN, LN, FN), usImageSettings3D(probeRadius, motorRadius, lineAngle, frameAngle, resolution, BSampleFreq, probeElementPitch)
 {
