@@ -32,7 +32,6 @@
 /**
  * @file usImageRF2D.h
  * @brief 2D RF ultrasound image.
- * @author Marc Pouliquen
  */
 
 #ifndef US_IMAGE_RF_2D_H
@@ -45,50 +44,29 @@
 /**
  * @class usImageRF2D
  * @brief 2D Rf ultrasound image.
- * @author Marc Pouliquen
  *
  * This class represents a 2D ultrasound RF frame.
  */
-class VISP_EXPORT usImageRF2D : public vpImage<double>, public usImageSettings {
+class VISP_EXPORT usImageRF2D : public vpImage<short>, public usImageSettings {
  public:
-  /**unsigned char
-   * Constructor.
-   */
+  
   usImageRF2D();
 
-  /**
-   * Initializing constructor.
-   */
   usImageRF2D(unsigned int AN, unsigned int LN);
 
-  /**
-   * Initializing constructor.
-   */
-  usImageRF2D(unsigned int AN, unsigned int LN, float probeRadius, float lineAngle,
-		  float resolution, float BSampleFreq, float probeElementPitch);
+  usImageRF2D(unsigned int AN, unsigned int LN,
+    float probeRadius, float lineAngle, float resolution,
+    float BSampleFreq, float probeElementPitch);
 
-  /**
-   * Copy constructor.
-   */
   usImageRF2D(const usImageRF2D &other);
 
-  /**
-   * Destructor.
-   */
   ~usImageRF2D();
 
   //No setters for AN & LN (not available in vpImage), those parameters have to be passed in the constructor.
   
-  /**
-   * Get the number of A-samples in a line.
-   */
   unsigned int getAN() const;
 
-  /**
-   * Get the number of lines.
-   */
   unsigned int getLN() const;
-
 };
 
 #endif // US_IMAGE_RF_2D_H
