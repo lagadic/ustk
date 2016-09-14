@@ -62,6 +62,14 @@ public:
 
   /**
   * Constructor. Set the dimensions and element spacing of the volume.
+  * @param dimX size (in pixels) on X-axis
+  * @param dimY size (in pixels) on Y-axis
+  * @param dimZ size (in pixels) on Z-axis
+  */
+  usImage3D(unsigned int dimX, unsigned int dimY, unsigned int dimZ);
+
+  /**
+  * Constructor. Set the dimensions and element spacing of the volume.
   * @param dimX size (in pixels) on X-axis 
   * @param dimY size (in pixels) on Y-axis
   * @param dimZ size (in pixels) on Z-axis
@@ -234,6 +242,12 @@ template<class Type>
 usImage3D<Type>::usImage3D() : m_dimx(0), m_dimy(0), m_dimz(0), m_size(0),
 m_data(NULL), m_elementSpacingX(1.0f), m_elementSpacingY(1.0f), m_elementSpacingZ(1.0f)
 {
+
+}
+
+template<class Type>
+usImage3D<Type>::usImage3D(unsigned int dimX, unsigned int dimY, unsigned int dimZ) : m_dimx(dimX), m_dimy(dimY), m_dimz(dimZ), m_size(dimX * dimY * dimZ),
+                                                                                      m_data(NULL), m_elementSpacingX(1.0f), m_elementSpacingY(1.0f), m_elementSpacingZ(1.0f) {
 
 }
 
