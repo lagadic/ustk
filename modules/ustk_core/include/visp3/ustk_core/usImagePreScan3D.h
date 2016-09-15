@@ -92,7 +92,7 @@ public:
 /**
 * Basic constructor, all settings set to default. For unsigned char data.
 */
-template<unsigned char>
+template<>
 usImagePreScan3D<unsigned char>::usImagePreScan3D() : usImage3D<unsigned char>(), usImageSettings3D()
 {
 
@@ -101,7 +101,7 @@ usImagePreScan3D<unsigned char>::usImagePreScan3D() : usImage3D<unsigned char>()
 /**
 * Basic constructor, all settings set to default. For double data.
 */
-template<double>
+template<>
 usImagePreScan3D<double>::usImagePreScan3D() : usImage3D<double>(), usImageSettings3D()
 {
 
@@ -112,8 +112,8 @@ usImagePreScan3D<double>::usImagePreScan3D() : usImage3D<double>(), usImageSetti
 * @param[in] AN A-samples in a line (corresponds to image height in px).
 * @param[in] LN Number of lines (corresponds to image width in px).
 */
-template<double>
-usImagePreScan3D<double>::usImagePreScan3D(unsigned int AN, unsigned int LN, unsigned int FN) : usImage3D<double>(LN, AN), usImageSettings3D()
+template<>
+usImagePreScan3D<double>::usImagePreScan3D(unsigned int AN, unsigned int LN, unsigned int FN) : usImage3D<double>(LN, AN, FN), usImageSettings3D()
 {
 
 }
@@ -123,8 +123,8 @@ usImagePreScan3D<double>::usImagePreScan3D(unsigned int AN, unsigned int LN, uns
 * @param[in] AN A-samples in a line (corresponds to image height in px).
 * @param[in] LN Number of lines (corresponds to image width in px).
 */
-template<unsigned char>
-usImagePreScan3D<unsigned char>::usImagePreScan3D(unsigned int AN, unsigned int LN, unsigned int FN) : usImage3D<unsigned char>(LN, AN), usImageSettings3D()
+template<>
+usImagePreScan3D<unsigned char>::usImagePreScan3D(unsigned int AN, unsigned int LN, unsigned int FN) : usImage3D<unsigned char>(LN, AN, FN), usImageSettings3D()
 {
 
 }
@@ -139,8 +139,8 @@ usImagePreScan3D<unsigned char>::usImagePreScan3D(unsigned int AN, unsigned int 
 * @param[in] BSampleFreq Sampling frequency used for B-Mode.
 * @param[in] probeElementPitch Physic parameter of the probe : distance between 2 sucessive piezoelectric elements in the ultrasound probe.
 */
-template<double>
-usImagePreScan3D<double>::usImagePreScan3D(unsigned int AN, unsigned int LN, unsigned int FN, float probeRadius, float lineAngle,
+template<>
+usImagePreScan3D<double>::usImagePreScan3D(unsigned int AN, unsigned int LN, unsigned int FN, float probeRadius, float motorRadius, float lineAngle, float frameAngle,
   float resolution, float BSampleFreq, float probeElementPitch) :
   usImage3D<double>(AN, LN, FN), usImageSettings3D(probeRadius, motorRadius, lineAngle, frameAngle, resolution, BSampleFreq, probeElementPitch)
 {
@@ -157,7 +157,7 @@ usImagePreScan3D<double>::usImagePreScan3D(unsigned int AN, unsigned int LN, uns
 * @param[in] BSampleFreq Sampling frequency used for B-Mode.
 * @param[in] probeElementPitch Physic parameter of the probe : distance between 2 sucessive piezoelectric elements in the ultrasound probe.
 */
-template<unsigned char>
+template< >
 usImagePreScan3D<unsigned char>::usImagePreScan3D(unsigned int AN, unsigned int LN, unsigned int FN, float probeRadius, float motorRadius, float lineAngle, float frameAngle,
   float resolution, float BSampleFreq, float probeElementPitch) :
   usImage3D<unsigned char>(AN, LN, FN), usImageSettings3D(probeRadius, motorRadius, lineAngle, frameAngle, resolution, BSampleFreq, probeElementPitch)
@@ -169,7 +169,7 @@ usImagePreScan3D<unsigned char>::usImagePreScan3D(unsigned int AN, unsigned int 
 * Copy constructor. For double image type.
 * @param[in] other usImagePreScan3D image you want to copy.
 */
-template<double>
+template<>
 usImagePreScan3D<double>::usImagePreScan3D(const usImagePreScan3D &other) :
   usImage3D<double>(other), usImageSettings3D(other)
 {
@@ -180,7 +180,7 @@ usImagePreScan3D<double>::usImagePreScan3D(const usImagePreScan3D &other) :
 * Copy constructor. For unsigned char image type.
 * @param[in] other usImagePreScan3D image you want to copy.
 */
-template<unsigned char>
+template< >
 usImagePreScan3D<unsigned char>::usImagePreScan3D(const usImagePreScan3D &other) :
   usImage3D<unsigned char>(other), usImageSettings3D(other)
 {
@@ -191,7 +191,7 @@ usImagePreScan3D<unsigned char>::usImagePreScan3D(const usImagePreScan3D &other)
 * Copy constructor. For double image type.
 * @param[in] other usImage3D<double> image you want to copy.
 */
-template<double>
+template<>
 usImagePreScan3D<double>::usImagePreScan3D(const usImage3D<double> &other) : usImage3D<double>(other)
 {
 
@@ -201,7 +201,7 @@ usImagePreScan3D<double>::usImagePreScan3D(const usImage3D<double> &other) : usI
 * Copy constructor. For unsigned char image type.
 * @param[in] other usImage3D<double> image you want to copy.
 */
-template<unsigned char>
+template< >
 usImagePreScan3D<unsigned char>::usImagePreScan3D(const usImage3D<unsigned char> &other) : usImage3D<unsigned char>(other)
 {
 
@@ -221,7 +221,7 @@ usImagePreScan3D<T>::usImagePreScan3D(const usImageSettings3D &other) : usImageS
 * Copy constructor. For double image type.
 * @param[in] other usImageSettings3D you want to copy.
 */
-template<double>
+template<>
 usImagePreScan3D<double>::usImagePreScan3D(const usImage3D<double> &other, usImageSettings3D &otherSettings) :
   usImage3D<double>(other), usImageSettings3D(otherSettings)
 {
@@ -232,7 +232,7 @@ usImagePreScan3D<double>::usImagePreScan3D(const usImage3D<double> &other, usIma
 *Copy constructor.For unsigned char image type.
 * @param[in] other usImageSettings3D you want to copy.
 */
-template<unsigned char>
+template< >
 usImagePreScan3D<unsigned char>::usImagePreScan3D(const usImage3D<unsigned char> &other, usImageSettings3D &otherSettings) :
   usImage3D<unsigned char>(other), usImageSettings3D(otherSettings)
 {
@@ -248,7 +248,7 @@ usImagePreScan3D<T>::~usImagePreScan3D() {};
 * Copy from usImage3D. From double image type.
 * @param[in] I usImage3D<double> to copy.
 */
-template<double>
+template<>
 void usImagePreScan3D<double>::copyFrom(const usImage3D<double> &I)
 {
   //resize(I.getHeight(), I.getWidth());
@@ -259,7 +259,7 @@ void usImagePreScan3D<double>::copyFrom(const usImage3D<double> &I)
 * Copy from usImage3D.
 * @param[in] I usImage3D<unsigned char> to copy.
 */
-template<unsigned char>
+template<>
 void usImagePreScan3D<unsigned char>::copyFrom(const usImage3D<unsigned char> &I)
 {
   //resize(I.getHeight(), I.getWidth());
@@ -271,18 +271,18 @@ void usImagePreScan3D<unsigned char>::copyFrom(const usImage3D<unsigned char> &I
 * @return AN number of A-samples in a line.
 */
 template<class T>
-unsigned int usImagePreScan3D::getAN() const { return usImage3D<T>::getHeight(); }
+unsigned int usImagePreScan3D<T>::getAN() const { return usImage3D<T>::getHeight(); }
 
 /**
 * Get the number of lines.
 * @return LN number of lines.
 */
 template<class T>
-unsigned int usImagePreScan3D::getLN() const { return usImage3D<T>::getWidth(); }
+unsigned int usImagePreScan3D<T>::getLN() const { return usImage3D<T>::getWidth(); }
 
 /**
 * Get the number of frames.
 * @return FN number of frames.
 */
 template<class T>
-unsigned int usImagePreScan3D::getFN() const { return usImage3D<T>::getDepth(); }
+unsigned int usImagePreScan3D<T>::getFN() const { return usImage3D<T>::getDepth(); }
