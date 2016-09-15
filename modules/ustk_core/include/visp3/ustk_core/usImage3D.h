@@ -253,15 +253,15 @@ usImage3D<Type>::usImage3D(unsigned int dimX, unsigned int dimY, unsigned int di
 
 template<class Type>
 usImage3D<Type>::usImage3D(unsigned int dimx, unsigned int dimy, unsigned int dimz,
-  float m_elementSpacingX, float m_elementSpacingY, float m_elementSpacingZ)
+  float elementSpacingX, float elementSpacingY, float elementSpacingZ)
 {
   m_dimx = dimx;
   m_dimy = dimy;
   m_dimz = dimz;
   m_size = m_dimx * m_dimy * m_dimz;
-  m_elementSpacingX = m_elementSpacingX;
-  m_elementSpacingY = m_elementSpacingY;
-  m_elementSpacingZ = m_elementSpacingZ;
+  m_elementSpacingX = elementSpacingX;
+  m_elementSpacingY = elementSpacingY;
+  m_elementSpacingZ = elementSpacingZ;
   //try to fill
   try {
     m_data = new Type[m_size];

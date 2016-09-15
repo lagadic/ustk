@@ -41,6 +41,33 @@ usImageRF3D::usImageRF3D(unsigned int AN, unsigned int LN, unsigned int FN, floa
 }
 
 /**
+* Copy constructor from usImage3D and usImageSettings
+* @param image3D usImage3D to copy
+* @param imageSettings usImageSettings3D to copy
+*/
+usImageRF3D::usImageRF3D(usImage3D<short> image3D, usImageSettings3D imageSettings) : usImage3D<short>(image3D), usImageSettings3D(imageSettings) {
+
+}
+
+/**
+* Copy constructor from usImage3D and usImageSettings
+* @param image3D usImage3D to copy
+* @param imageSettings usImageSettings3D to copy
+*/
+usImageRF3D::usImageRF3D(usImage3D<short> image3D) : usImage3D<short>(image3D) {
+
+}
+
+/**
+* Copy constructor from usImage3D and usImageSettings
+* @param image3D usImage3D to copy
+* @param imageSettings usImageSettings3D to copy
+*/
+usImageRF3D::usImageRF3D(usImageSettings3D imageSettings) : usImageSettings3D(imageSettings) {
+
+}
+
+/**
 * Copy constructor.
 * @param other usImageRF3D to copy
 */

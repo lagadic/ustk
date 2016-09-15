@@ -58,6 +58,12 @@ public:
     float probeRadius, float motorRadius, float lineAngle, float frameAngle,
     float resolution, float BSampleFreq, float probeElementPitch);
 
+  usImageRF3D(usImage3D<short> image3D, usImageSettings3D imageSettings);
+
+  usImageRF3D(usImage3D<short> image3D);
+
+  usImageRF3D(usImageSettings3D imageSettings);
+  
   usImageRF3D(const usImageRF3D &other);
 
   ~usImageRF3D();
