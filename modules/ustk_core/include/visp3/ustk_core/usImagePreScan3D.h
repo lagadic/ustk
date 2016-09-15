@@ -71,7 +71,7 @@ public:
   usImagePreScan3D(const usImageSettings3D &other);
 
   //copy constructor from usImage3D and usImageSettings3D
-  usImagePreScan3D(const usImage3D<T> &other, usImageSettings3D &otherSettings);
+  usImagePreScan3D(const usImage3D<T> &other, const usImageSettings3D &otherSettings);
 
   //destructor
   ~usImagePreScan3D();
@@ -222,7 +222,7 @@ usImagePreScan3D<T>::usImagePreScan3D(const usImageSettings3D &other) : usImageS
 * @param[in] other usImageSettings3D you want to copy.
 */
 template<>
-usImagePreScan3D<double>::usImagePreScan3D(const usImage3D<double> &other, usImageSettings3D &otherSettings) :
+usImagePreScan3D<double>::usImagePreScan3D(const usImage3D<double> &other, const usImageSettings3D &otherSettings) :
   usImage3D<double>(other), usImageSettings3D(otherSettings)
 {
 
@@ -233,16 +233,17 @@ usImagePreScan3D<double>::usImagePreScan3D(const usImage3D<double> &other, usIma
 * @param[in] other usImageSettings3D you want to copy.
 */
 template< >
-usImagePreScan3D<unsigned char>::usImagePreScan3D(const usImage3D<unsigned char> &other, usImageSettings3D &otherSettings) :
+usImagePreScan3D<unsigned char>::usImagePreScan3D(const usImage3D<unsigned char> &other, const usImageSettings3D &otherSettings) :
   usImage3D<unsigned char>(other), usImageSettings3D(otherSettings)
 {
 
 }
+
 /**
 * Destructor.
 */
 template<class T>
-usImagePreScan3D<T>::~usImagePreScan3D() {};
+usImagePreScan3D<T>::~usImagePreScan3D() {}
 
 /**
 * Copy from usImage3D. From double image type.

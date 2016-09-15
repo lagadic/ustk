@@ -70,7 +70,7 @@ class usImagePreScan2D : public vpImage<T>, public usImageSettings {
         usImagePreScan2D(const usImageSettings &other);
 
         //copy constructor from vpImage and usImageSettings
-        usImagePreScan2D(const vpImage<T> &other, usImageSettings &otherSettings);
+        usImagePreScan2D(const vpImage<T> &other, const usImageSettings &otherSettings);
 
         //destructor
         ~usImagePreScan2D();
@@ -221,7 +221,7 @@ usImagePreScan2D<T>::usImagePreScan2D(const usImageSettings &other) : usImageSet
 * @param[in] other usImageSettings you want to copy.
 */
 template<>
-usImagePreScan2D<double>::usImagePreScan2D(const vpImage<double> &other, usImageSettings &otherSettings) :
+usImagePreScan2D<double>::usImagePreScan2D(const vpImage<double> &other, const usImageSettings &otherSettings) :
     vpImage<double>(other), usImageSettings(otherSettings)
 {
 
@@ -232,7 +232,7 @@ usImagePreScan2D<double>::usImagePreScan2D(const vpImage<double> &other, usImage
 * @param[in] other usImageSettings you want to copy.
 */
 template<>
-usImagePreScan2D<unsigned char>::usImagePreScan2D(const vpImage<unsigned char> &other, usImageSettings &otherSettings) :
+usImagePreScan2D<unsigned char>::usImagePreScan2D(const vpImage<unsigned char> &other, const usImageSettings &otherSettings) :
     vpImage<unsigned char>(other), usImageSettings(otherSettings)
 {
 
