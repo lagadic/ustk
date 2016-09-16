@@ -267,8 +267,9 @@ usImage3D<Type>::usImage3D(unsigned int dimx, unsigned int dimy, unsigned int di
     m_data = new Type[m_size];
     std::fill_n(m_data, m_size, Type());
   }
-  catch(std::bad_alloc) {
-    std::cout << "Bad allocation for volume data storage." << std::endl;
+  catch(std::exception e) {
+    std::cout << e.what() << std::endl;
+    std::cout << "Error allocating memory for volume data storage." << std::endl;
   }
 }
 
@@ -283,17 +284,20 @@ usImage3D<Type>::usImage3D(const usImage3D<Type> &volume, const bool copy)
   m_elementSpacingY = volume.m_elementSpacingY;
   m_elementSpacingZ = volume.m_elementSpacingZ;
   //try to allocate memory for data
-  try {
-    m_data = new Type[m_size];
-  }
-  catch(std::bad_alloc) {
 
-  }
   if (copy) {
+    try {
+      m_data = new Type[m_size];
+    }
+    catch (std::exception e) {
+      std::cout << e.what() << std::endl;
+      std::cout << "Error allocating memory for volume data" << std::endl;
+    }
     // not using memcpy because it's a C function, so no exeption thrown.
     //memcpy(m_data, volume.m_data, m_size * sizeof(Type));
-
-
+  }
+  else {
+    m_data = volume.getConstData();
   }
 }
 
@@ -341,8 +345,9 @@ void usImage3D<Type>::initData(Type value)
   try {
     std::fill_n(m_data, m_size, value);
   }
-  catch (std::bad_alloc)
+  catch (std::exception e)
   {
+    std::cout << e.what() << std::endl;
     std::cout << "Bad allocation using std::fill_n() method." << std::endl;
   }
 }

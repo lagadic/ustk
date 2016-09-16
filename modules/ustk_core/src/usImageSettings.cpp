@@ -32,7 +32,7 @@
 
  /**
  * @file usImageSettings.cpp
- * @brief Generic ultrasound image.
+ * @brief Generic ultrasound image settings.
  */
 
 //std includes
