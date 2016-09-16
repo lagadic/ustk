@@ -73,15 +73,7 @@ usImageSettings3D::usImageSettings3D(float probeRadius, float motorRadius, float
 * @param[in] BSampleFreq Sampling frequency used for B-Mode.
 * @param[in] probeElementPitch Physic parameter of the probe : distance between 2 sucessive piezoelectric elements of the ultrasound probe.
 */
-usImageSettings3D::usImageSettings3D(const usImageSettings3D &other) {
-	setProbeRadius(other.getProbeRadius());
-  setLineAngle(other.getLineAngle());
-  setResolution(other.getResolution());
-  setBSampleFreq(other.getBSampleFreq());
-  setProbeElementPitch(other.getProbeElementPitch());
-  m_motorRadius = other.getMotorRadius();
-  m_frameAngle = other.getFrameAngle();
-}
+usImageSettings3D::usImageSettings3D(const usImageSettings3D &other) : usImageSettings(other), m_motorRadius(other.getMotorRadius()), m_frameAngle(other.getFrameAngle()) {}
 
 /**
 * Destructor.
