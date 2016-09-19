@@ -42,7 +42,7 @@
 //#include <UsTk/usTkConfig.h>
 #include <visp3/ustk_core/usImagePostScan2D.h>
 #include <visp3/ustk_core/usImagePreScan2D.h>
-#include <visp3/ustk_core/usImageRf2D.h>
+#include <visp3/ustk_core/usImageRF2D.h>
 
 /**
  * @class usIo2DImageFormat

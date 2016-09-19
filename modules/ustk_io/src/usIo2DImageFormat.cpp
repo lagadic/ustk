@@ -35,6 +35,8 @@
  */
 
 #include <visp3/io/vpImageIo.h>
+#include <visp3/core/vpXmlParser.h>
+
 
 #include <visp3/ustk_io/usIo2DImageFormat.h>
 
@@ -91,12 +93,17 @@ usImagePreScan2D<double> usIo2DImageFormat::readPreScanDouble(std::string filena
 bool usIo2DImageFormat::write(usImagePostScan2D &postScanImage, const std::string filename) {
   try {
     vpImageIo::writePNG(postScanImage, filename);
+    vpXmlParser xmlParser();
+    xmlParser.
+
   }
   catch (std::exception e) {
     std::cout << "Error writing postScan image : " << std::endl;
     std::cout << e.what() << std::endl;
     return false;
   }
+
+
   
   return true;
 }
