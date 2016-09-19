@@ -67,7 +67,7 @@ bool usIo2DImageFormat::write(usImagePreScan2D<unsigned char> &preScanImage, con
 /**
 * Read 2D prescan ultrasound image
 */
-usImagePreScan2D<unsigned char> readPreScanUChar(const std::string filename) {
+usImagePreScan2D<unsigned char> usIo2DImageFormat::readPreScanUChar(const std::string filename) {
   return usImagePreScan2D<unsigned char>();
 }
 
@@ -105,5 +105,5 @@ bool usIo2DImageFormat::write(usImagePostScan2D &postScanImage, const std::strin
 * Read 2D postscan ultrasound image
 */
 usImagePostScan2D usIo2DImageFormat::readPostScan(const std::string filename) {
-  return
+  return usImagePostScan2D();
 }
