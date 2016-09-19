@@ -51,6 +51,24 @@ usImagePostScan3D::usImagePostScan3D() : usImage3D<unsigned char>(), usImageSett
 }
 
 /**
+* Complete constructor, all parameters availables.
+* @param AN A-samples in a line (corresponds to image height in px).
+* @param LN Number of lines (corresponds to image width in px).
+* @param FN Number of Frames.
+* @param probeRadius radius of the ultrasound probe used to acquire the RF image.
+* @param motorRadius radius of the ultrasound probe motor used to acquire the RF image.
+* @param scanLinePitch angle(rad) / distance(m) between 2 lines of the ultrasound probe used to acquire the RF image.
+* @param framePitch angle(rad) / distance(m) between 2 lines of the ultrasound probe used to acquire the RF image.
+* @param isImageConvex Boolean to specyfy if the image was acquired by a convex probe(true) or by a linear probe (false).
+* @param isMotorConvex Boolean to specyfy if the image was acquired by a rotating  motor(true) or by a linear motor (false).
+*/
+usImagePostScan3D::usImagePostScan3D(unsigned int AN, unsigned int LN, unsigned int FN, float probeRadius, float motorRadius, float scanLinePitch, float framePitch, bool isImageConvex, bool isMotorConvex)
+  : usImage3D<unsigned char>(), usImageSettings3D(probeRadius, motorRadius, scanLinePitch, framePitch, isImageConvex, isMotorConvex)
+{
+
+}
+
+/**
 * Copy constructor from other usImagePostScan3D
 * @param other usImagePostScan3D to copy
 */
@@ -92,3 +110,27 @@ usImagePostScan3D::usImagePostScan3D(const usImage3D<unsigned char> &otherImage,
 * Destructor.
 */
 usImagePostScan3D::~usImagePostScan3D() {}
+
+/**
+* Setter for width Resolution.
+* @param widthResolution Width resolution (in meters) to set.
+*/
+void usImagePostScan3D::setWidthResolution(float widthResolution) { m_widthResolution = widthResolution; }
+
+/**
+* Getter for width Resolution.
+* @return widthResolution Width resolution (in meters).
+*/
+float usImagePostScan3D::getWidthResolution() { return m_heightResolution; }
+
+/**
+* Setter for width Resolution.
+* @param heightResolution Height resolution (in meters) to set.
+*/
+void usImagePostScan3D::setHeightResolution(float heightResolution) { m_heightResolution = heightResolution; }
+
+/**
+* Setter for width Resolution.
+* @param heightResolution Height resolution (in meters) to set.
+*/
+float usImagePostScan3D::getHeightResolution() { return m_heightResolution; }

@@ -11,8 +11,8 @@ usImageRF2D::usImageRF2D() : vpImage<short>(), usImageSettings()
 
 /**
 * Initializing constructor for image dimentions.
-* @param[in] AN number of A-samples in a line.
-* @param[in] LN number of lines.
+* @param AN number of A-samples in a line.
+* @param LN number of lines.
 */
 usImageRF2D::usImageRF2D(unsigned int AN, unsigned int LN)
   : vpImage<short>(AN, LN), usImageSettings()
@@ -22,17 +22,14 @@ usImageRF2D::usImageRF2D(unsigned int AN, unsigned int LN)
 
 /**
 * Initializing constructor.
-* @param[in] AN number of A-samples in a line.
-* @param[in] LN number of lines.
-* @param[in] probeRadius radius of the ultrasound probe used to acquire the RF image.
-* @param[in] lineAngle angle (in radians) between 2 lines of the ultrasound probe used to acquire the RF image.
-* @param[in] resolution resolution of the image.
-* @param[in] BSampleFreq frequency (Hz) used for B-Mode.
-* @param[in] probeElementPitch physical distance (in meters) between two piezo-electric elements in the ultrasound probe.
+* @param AN number of A-samples in a line.
+* @param LN number of lines.
+* @param probeRadius radius of the ultrasound probe used to acquire the RF image.
+* @param scanLinePitch Angle(rad) / Distance(m) between 2 lines of the ultrasound probe used to acquire the RF image. Angle if isConvex is true, distance if it's false.
+* @param isConvex Boolean to specify if the probe used was convex(true) or linear(false).
 */
-usImageRF2D::usImageRF2D(unsigned int AN, unsigned int LN, float probeRadius, float lineAngle,
-  float resolution, float BSampleFreq, float probeElementPitch)
-  : vpImage<short>(AN, LN), usImageSettings(probeRadius, lineAngle, resolution, BSampleFreq, probeElementPitch)
+usImageRF2D::usImageRF2D(unsigned int AN, unsigned int LN, float probeRadius, float scanLinePitch, bool isConvex)
+  : vpImage<short>(AN, LN), usImageSettings(probeRadius, scanLinePitch, isConvex)
 {
 	
 }
@@ -66,3 +63,15 @@ unsigned int usImageRF2D::getAN() const { return getHeight(); }
 * @return LN number of lines.
 */
 unsigned int  usImageRF2D::getLN() const { return getWidth(); }
+
+/**
+* Setter for axial Resolution.
+* @param Axial resolution (in meters) to set.
+*/
+void usImageRF2D::setAxialResolution(float axialResolution) { m_axialResolution = axialResolution; }
+
+/**
+* Getter for axial Resolution.
+* @return Axial resolution (in meters).
+*/
+float usImageRF2D::getAxialResolution() const { return m_axialResolution; }

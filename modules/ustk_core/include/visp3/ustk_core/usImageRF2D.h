@@ -54,9 +54,7 @@ class VISP_EXPORT usImageRF2D : public vpImage<short>, public usImageSettings {
 
   usImageRF2D(unsigned int AN, unsigned int LN);
 
-  usImageRF2D(unsigned int AN, unsigned int LN,
-    float probeRadius, float lineAngle, float resolution,
-    float BSampleFreq, float probeElementPitch);
+  usImageRF2D(unsigned int AN, unsigned int LN, float probeRadius, float scanLinePitch, bool isConvex);
 
   usImageRF2D(const usImageRF2D &other);
 
@@ -67,6 +65,13 @@ class VISP_EXPORT usImageRF2D : public vpImage<short>, public usImageSettings {
   unsigned int getAN() const;
 
   unsigned int getLN() const;
+
+  float getAxialResolution() const;
+
+  void setAxialResolution(float axialResolution);
+
+private:
+  float m_axialResolution;
 };
 
 #endif // US_IMAGE_RF_2D_H

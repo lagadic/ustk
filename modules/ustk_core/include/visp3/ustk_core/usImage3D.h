@@ -209,7 +209,7 @@ public:
   * Get the pointer to the const data container.
   * @return The pointer to the const data container
   */
-  const Type* getConstData() const { return m_data; }
+  Type* getConstData() const { return m_data; }
 
   /**
   * Set the data container.

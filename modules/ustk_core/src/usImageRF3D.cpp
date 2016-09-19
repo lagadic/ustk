@@ -27,15 +27,14 @@ usImageRF3D::usImageRF3D(unsigned int AN, unsigned int LN, unsigned int FN)
 * @param[in] FN number of frames.
 * @param[in] probeRadius radius of the ultrasound probe used to acquire the RF image.
 * @param[in] motorRadius radius of the ultrasound probe motor used to acquire the RF image.
-* @param[in] lineAngle angle (in radians) between 2 lines of the ultrasound probe used to acquire the RF image.
-* @param[in] frameAngle angle (in radians) between 2 successive ultrasound frames when the RF image was acquired.
-* @param[in] resolution resolution of the image.
-* @param[in] BSampleFreq frequency (Hz) used for B-Mode.
-* @param[in] probeElementPitch physical distance (in meters) between two piezo-electric elements in the ultrasound probe.
+* @param[in] scanLinePitch angle(rad) / distance(m) between 2 lines of the ultrasound probe used to acquire the RF image.
+* @param[in] framePitch angle(rad) / distance(m) between 2 lines of the ultrasound probe used to acquire the RF image.
+* @param[in] isImageConvex Boolean to specyfy if the image was acquired by a convex probe(true) or by a linear probe (false).
+* @param[in] isMotorConvex Boolean to specyfy if the image was acquired by a rotating  motor(true) or by a linear motor (false).
 */
-usImageRF3D::usImageRF3D(unsigned int AN, unsigned int LN, unsigned int FN, float probeRadius, float motorRadius, float lineAngle, float frameAngle,
-  float resolution, float BSampleFreq, float probeElementPitch)
-  : usImage3D<short>(AN, LN, FN), usImageSettings3D(probeRadius, motorRadius, lineAngle, frameAngle, resolution, BSampleFreq, probeElementPitch)
+usImageRF3D::usImageRF3D(unsigned int AN, unsigned int LN, unsigned int FN, float probeRadius, float motorRadius, float scanLinePitch, float framePitch,
+  bool isImageConvex, bool isMotorConvex)
+  : usImage3D<short>(AN, LN, FN), usImageSettings3D(probeRadius, motorRadius, scanLinePitch, framePitch, isImageConvex, isMotorConvex)
 {
 
 }
@@ -102,3 +101,15 @@ unsigned int  usImageRF3D::getLN() const { return getDimY(); }
 * @return FN number of frames.
 */
 unsigned int  usImageRF3D::getFN() const { return getDimZ(); }
+
+/**
+* Setter for axial Resolution.
+* @param Axial resolution (in meters) to set.
+*/
+void usImageRF3D::setAxialResolution(float axialResolution) { m_axialResolution = axialResolution; }
+
+/**
+* Getter for axial Resolution.
+* @return Axial resolution (in meters).
+*/
+float usImageRF3D::getAxialResolution() const { return m_axialResolution; }

@@ -46,34 +46,26 @@
 /**
 * Basic Constructor, all settings set to default.
 */
-usImageSettings3D::usImageSettings3D() : usImageSettings(), m_motorRadius(0.0f), m_frameAngle(0.0f) {}
+usImageSettings3D::usImageSettings3D() : usImageSettings(), m_motorRadius(0.0f), m_framePitch(0.0f) {}
 		   
 /**
 * Full Constructor, all settings availables
-* @param[in] probeRadius Distance between the center point of the probe and the first pixel arc acquired, in meters (m).
-* @param[in] motorRadius Distance between the rotation center of the probe motor and the first pixel arc acquired, in meters (m).
-* @param[in] lineAngle Radius between 2 successives acquisiton lines in the probe, in radians (rad).
-* @param[in] frameAngle Radius between 2 successives acquisiton planes in the probe, in radians (rad).
-* @param[in] resolution Size of a pixel (we use square pixels), in meters(m) for postscan. For prescan image (not managed yet) : line angle (in radians) and axial resolution (meters).
-* @param[in] BSampleFreq Sampling frequency used for B-Mode.
-* @param[in] probeElementPitch Physic parameter of the probe : distance between 2 sucessive piezoelectric elements of the ultrasound probe.
+* @param probeRadius Distance between the center point of the probe and the first pixel arc acquired, in meters (m).
+* @param motorRadius Distance between the rotation center of the probe motor and the first pixel arc acquired, in meters (m).
+* @param lineAngle Radius between 2 successives acquisiton lines in the probe, in radians (rad).
+* @param frameAngle Radius between 2 successives acquisiton planes in the probe, in radians (rad).
+* @param resolution Size of a pixel (we use square pixels), in meters(m) for postscan. For prescan image (not managed yet) : line angle (in radians) and axial resolution (meters).
+* @param BSampleFreq Sampling frequency used for B-Mode.
+* @param probeElementPitch Physic parameter of the probe : distance between 2 sucessive piezoelectric elements of the ultrasound probe.
 */
-usImageSettings3D::usImageSettings3D(float probeRadius, float motorRadius, float lineAngle, float frameAngle,
-                                     float resolution, float BSampleFreq, 
-                                     float probeElementPitch) : usImageSettings(probeRadius, lineAngle,
-                                                                                resolution, BSampleFreq,
-                                                                                probeElementPitch), m_motorRadius(motorRadius), m_frameAngle(frameAngle) {}
+usImageSettings3D::usImageSettings3D(float probeRadius, float motorRadius, float scanLinePitch, float framePitch, bool isImageConvex, bool isMotorConvex)
+                 : usImageSettings(probeRadius, scanLinePitch, isImageConvex), m_motorRadius(motorRadius), m_framePitch(framePitch), m_isMotorConvex(isMotorConvex) {}
 
 /**
 * Copy Constructor, all settings availables
-* @param[in] probeRadius Distance between the center point of the probe and the first pixel arc acquired, in meters (m).
-* @param[in] motorRadius Distance between the rotation center of the probe motor and the first pixel arc acquired, in meters (m).
-* @param[in] lineAngle Radius between 2 successives acquisiton lines in the probe, in radians (rad).
-* @param[in] resolution Size of a pixel (we use square pixels), in meters(m) for postscan. For prescan image (not managed yet) : line angle (in radians) and axial resolution (meters).
-* @param[in] BSampleFreq Sampling frequency used for B-Mode.
-* @param[in] probeElementPitch Physic parameter of the probe : distance between 2 sucessive piezoelectric elements of the ultrasound probe.
+* @param other usImageSettings3D you want to copy.
 */
-usImageSettings3D::usImageSettings3D(const usImageSettings3D &other) : usImageSettings(other), m_motorRadius(other.getMotorRadius()), m_frameAngle(other.getFrameAngle()) {}
+usImageSettings3D::usImageSettings3D(const usImageSettings3D &other) : usImageSettings(other), m_motorRadius(other.getMotorRadius()), m_framePitch(other.getFramePitch()), m_isMotorConvex(other.isMotorConvex()) {}
 
 /**
 * Destructor.
@@ -82,17 +74,16 @@ usImageSettings3D::~usImageSettings3D() {}
 
 /**
 * Assignment operator.
-* @param[in] other usImageSettings3D you want to copy.
+* @param other usImageSettings3D you want to copy.
 */
 usImageSettings3D& usImageSettings3D::operator=(const usImageSettings3D& other)
 {
   setProbeRadius(other.getProbeRadius());
-  setLineAngle(other.getLineAngle());
-  setResolution(other.getResolution());
-  setBSampleFreq(other.getBSampleFreq());
-  setProbeElementPitch(other.getProbeElementPitch());
-  m_motorRadius = other.getMotorRadius();
-  m_frameAngle = other.getFrameAngle();
+  setScanLinePitch(other.getScanLinePitch());
+  setImageConvex(other.isImageConvex());
+  setMotorRadius(other.getMotorRadius());
+  setFramePitch(other.getFramePitch());
+  setMotorConvex(other.isMotorConvex());  
 
   return *this;
 }
@@ -101,7 +92,7 @@ usImageSettings3D& usImageSettings3D::operator=(const usImageSettings3D& other)
 
 /**
 * Set the motor  radius (m).
-* @param[in] motorRadius Motor radius in meters.
+* @param motorRadius Motor radius in meters.
 */
 void usImageSettings3D::setMotorRadius(float motorRadius) { m_motorRadius = motorRadius; }
 
@@ -113,15 +104,32 @@ float usImageSettings3D::getMotorRadius() const { return m_motorRadius; }
 
 /**
 * Set the frame angle (rad).
-* @param[in] angle Frame angle of the probe in radians.
+* @param angle Frame angle of the probe in radians.
 */
-void usImageSettings3D::setFrameAngle(float angle) { m_frameAngle = angle; }
+void usImageSettings3D::setFramePitch(float framePitch) { m_framePitch = framePitch; }
 
 /**
 * Get the frame angle (rad).
 * @return m_lineAngle Frame angle of the probe in radians.
 */
-float usImageSettings3D::getFrameAngle() const { return m_frameAngle; }
+float usImageSettings3D::getFramePitch() const { return m_framePitch; }
+
+/**
+* Set the motor type : convex or linear (from probe type used to acquire the image).
+* @param isMotorConvex Boolean to specify the motor type : true for convex, false for linear.
+*/
+void usImageSettings3D::setMotorConvex(bool isMotorConvex) {
+  m_isMotorConvex = isMotorConvex;
+  if (!isMotorConvex) {
+    setMotorRadius(0.0f);
+  }
+}
+
+/**
+* Get the motor type : convex or linear (from probe type used to acquire the image).
+* @return isMotorConvex Boolean to specify the motor type : true for convex, false for linear.
+*/
+bool usImageSettings3D::isMotorConvex() const { return m_isMotorConvex; }
 
 /**
 * Print probe settings information.
@@ -130,5 +138,5 @@ void usImageSettings3D::printProbeSettings()
 {
   usImageSettings::printProbeSettings();
   std::cout << "motor radius : " << m_motorRadius << std::endl
-            << "frame angle : " << m_frameAngle << std::endl;
+            << "frame angle : " << m_framePitch << std::endl;
 }

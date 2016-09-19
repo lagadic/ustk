@@ -54,9 +54,8 @@ public:
 
   usImageRF3D(unsigned int AN, unsigned int LN, unsigned int FN);
 
-  usImageRF3D(unsigned int AN, unsigned int LN, unsigned int FN,
-    float probeRadius, float motorRadius, float lineAngle, float frameAngle,
-    float resolution, float BSampleFreq, float probeElementPitch);
+  usImageRF3D(unsigned int AN, unsigned int LN, unsigned int FN, float probeRadius, float motorRadius, float scanLinePitch, float framePitch,
+    bool isImageConvex, bool isMotorConvex);
 
   usImageRF3D(usImage3D<short> image3D, usImageSettings3D imageSettings);
 
@@ -73,6 +72,13 @@ public:
   unsigned int getLN() const;
 
   unsigned int getFN() const;
+
+  float getAxialResolution() const;
+
+  void setAxialResolution(float axialResolution);
+
+private:
+  float m_axialResolution;
 };
 
 #endif // US_IMAGE_RF_2D_H

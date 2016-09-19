@@ -57,10 +57,8 @@ class VISP_EXPORT usImageSettings {
   usImageSettings();
   
   usImageSettings(float probeRadius,
-				  float lineAngle,
-				  float resolution,
-				  float BSampleFreq,
-				  float probeElementPitch);
+				  float scanLinePitch,
+				  bool isConvex);
 
   usImageSettings(const usImageSettings &other);
 
@@ -74,31 +72,21 @@ class VISP_EXPORT usImageSettings {
   
   float getProbeRadius() const;
 
-  void setLineAngle(float angle);
+  void setScanLinePitch(float scanLinePitch);
 
-  float getLineAngle() const;
+  float getScanLinePitch() const;
 
-  void setResolution(float resolution);
+  void setImageConvex(bool isConvex);
 
-  float getResolution() const;
-
-  void setBSampleFreq(float freq);
-
-  float getBSampleFreq() const;
-
-  float getProbeElementPitch() const;
-
-  void setProbeElementPitch(float probeElementPitch);
+  bool isImageConvex() const;
   
   virtual void printProbeSettings();
 
  private:  
   //Settings from the probe
   float m_probeRadius;
-  float m_lineAngle;
-  float m_resolution;
-  float m_BSampleFreq;
-  float m_probeElementPitch;
+  float m_scanLinePitch;
+  bool m_isImageConvex;
 };
 
 #endif // US_IMAGE_SETTINGS_H

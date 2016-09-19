@@ -53,6 +53,8 @@ class VISP_EXPORT usImagePostScan2D : public vpImage<unsigned char>, public usIm
  public:
   usImagePostScan2D();
 
+  usImagePostScan2D(unsigned int AN, unsigned int LN, float probeRadius, float scanLinePitch, bool isConvex);
+
   usImagePostScan2D(const usImagePostScan2D &other);
 
   usImagePostScan2D(const vpImage<unsigned char> &other);
@@ -63,6 +65,17 @@ class VISP_EXPORT usImagePostScan2D : public vpImage<unsigned char>, public usIm
 
   ~usImagePostScan2D();
 
+  void setWidthResolution(float widthResolution);
+
+  float getWidthResolution();
+
+  void setHeightResolution(float widthResolution);
+
+  float getHeightResolution();
+
+private:
+  float m_widthResolution;
+  float m_heightResolution;
 };
 
 #endif // US_IMAGE_POSTSCAN_2D_H

@@ -56,7 +56,7 @@ class VISP_EXPORT usImageSettings3D : public usImageSettings {
  public:
    usImageSettings3D();
   
-   usImageSettings3D(float probeRadius, float motorRadius, float lineAngle, float frameAngle, float resolution, float BSampleFreq, float probeElementPitch);
+   usImageSettings3D(float probeRadius, float motorRadius, float scanLinePitch, float framePitch, bool isImageConvex, bool isMotorConvex);
 
    usImageSettings3D(const usImageSettings3D &other);
 
@@ -70,16 +70,21 @@ class VISP_EXPORT usImageSettings3D : public usImageSettings {
   
   float getMotorRadius() const;
 
-  void setFrameAngle(float frameAngle);
+  void setFramePitch(float framePitch);
 
-  float getFrameAngle() const;
+  float getFramePitch() const;
+
+  void setMotorConvex(bool isMotorConvex);
+
+  bool isMotorConvex() const;
 
   virtual void printProbeSettings();
 
   private:  
     //Settings from the 3D probe
     float m_motorRadius;
-    float m_frameAngle;
+    float m_framePitch;
+    bool m_isMotorConvex;
 };
 
 #endif // US_IMAGE_SETTINGS_3D_H
