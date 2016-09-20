@@ -39,6 +39,7 @@
 
 
 #include <visp3/ustk_io/usIo2DImageFormat.h>
+#include <visp3/ustk_io/usSettingsXml.h>
 
  /**
  * Constructor
@@ -88,29 +89,39 @@ usImagePreScan2D<double> usIo2DImageFormat::readPreScanDouble(std::string filena
 }
 
 /**
-* Write 2D postscan ultrasound image
+* Write 2D postscan ultrasound image and settings
+* @param postScanImage Image to write
+* @param filename The file name without extenstion (same name for png and xml);
 */
 bool usIo2DImageFormat::write(usImagePostScan2D &postScanImage, const std::string filename) {
   try {
-    vpImageIo::writePNG(postScanImage, filename);
-    vpXmlParser xmlParser();
-    xmlParser.
-
+    std::string pngFileName = filename + ".png";
+    std::string xmlFileName = filename + ".xml";
+    vpImageIo::writePNG(postScanImage, pngFileName);
+    usSettingsXml xmlSettings;
+    xmlSettings.setImageSettings(&postScanImage);
+    xmlSettings.setImageFileName(pngFileName);
+    xmlSettings.save(xmlFileName);
   }
   catch (std::exception e) {
     std::cout << "Error writing postScan image : " << std::endl;
     std::cout << e.what() << std::endl;
     return false;
   }
-
-
-  
   return true;
 }
 
 /**
 * Read 2D postscan ultrasound image
+* @param xmlFilename The xml file name with .xml extenstion (make sure png file is in the same directory);
 */
-usImagePostScan2D usIo2DImageFormat::readPostScan(const std::string filename) {
-  return usImagePostScan2D();
+usImagePostScan2D usIo2DImageFormat::readPostScan(const std::string xmlFilename) {
+  usSettingsXml xmlSettings;
+  xmlSettings.parse(xmlFilename);
+
+  vpImage<unsigned char> image;
+  vpImageIo::read(image,xmlSettings.getImageFileName());
+
+  usImagePostScan2D postScanImage(image,*xmlSettings.getImageSettings());
+  return postScanImage;
 }
