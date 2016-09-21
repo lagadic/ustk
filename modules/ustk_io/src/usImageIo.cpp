@@ -30,62 +30,103 @@
  *****************************************************************************/
 
 /**
- * @file usIo2DimageFormat.cpp
+ * @file usImageIo.cpp
  * @brief Input/output operations between ultrasound data and classical 2D image files.
  */
 
 #include <visp3/io/vpImageIo.h>
 #include <visp3/core/vpXmlParser.h>
 
-
-#include <visp3/ustk_io/usIo2DImageFormat.h>
-#include <visp3/ustk_io/usSettingsXml.h>
+#include <visp3/ustk_io/usImageIo.h>
+#include <visp3/ustk_io/usImageSettingsXmlParser.h>
 
  /**
  * Constructor
  */
-usIo2DImageFormat::usIo2DImageFormat() {}
+usImageIo::usImageIo() {}
 
 /**
 * Write 2D rf ultrasound image
 */
-bool usIo2DImageFormat::write(usImageRF2D &rfImage, const std::string filename) {
+bool usImageIo::write(usImageRF2D &rfImage, const std::string filename) {
   return false;
 }
   
 /**
 * Read 2D rf ultrasound image
 */
-usImageRF2D usIo2DImageFormat::readRF(const std::string filename) {
+usImageRF2D usImageIo::readRF2D(const std::string filename) {
   return usImageRF2D();
 }
 
 /**
-* Write 2D prescan ultrasound image
+* Write 3D rf ultrasound image
 */
-bool usIo2DImageFormat::write(usImagePreScan2D<unsigned char> &preScanImage, const std::string filename) {
+bool usImageIo::write(usImageRF3D &rfImage3D, const std::string filename) {
   return false;
 }
 
 /**
-* Read 2D prescan ultrasound image
+* Read 3D rf ultrasound image
 */
-usImagePreScan2D<unsigned char> usIo2DImageFormat::readPreScanUChar(const std::string filename) {
+usImageRF3D usImageIo::readRF3D(const std::string filename) {
+  return usImageRF3D();
+}
+
+/**
+* Write 2D unsigned char prescan ultrasound image
+*/
+bool usImageIo::write(usImagePreScan2D<unsigned char> &preScanImage, const std::string filename) {
+  return false;
+}
+
+/**
+* Read 2D unsigned char prescan ultrasound image
+*/
+usImagePreScan2D<unsigned char> usImageIo::readPreScan2DUChar(const std::string filename) {
   return usImagePreScan2D<unsigned char>();
 }
 
 /**
-* Write 2D prescan ultrasound image
+* Write 3D unsigned char prescan ultrasound image
 */
-bool usIo2DImageFormat::write(usImagePreScan2D<double> &preScanImage, const std::string filename) {
+bool usImageIo::write(usImagePreScan3D<unsigned char> &preScanImage, const std::string filename) {
+  return false;
+}
+
+/**
+* Read 3D unsigned char prescan ultrasound image
+*/
+usImagePreScan3D<unsigned char> usImageIo::readPreScan3DUChar(const std::string filename) {
+  return usImagePreScan3D<unsigned char>();
+}
+
+/**
+* Write 2D double prescan ultrasound image
+*/
+bool usImageIo::write(usImagePreScan2D<double> &preScan2DImage, const std::string filename) {
   return  false;
 }
 
 /**
-* Read 2D prescan ultrasound image
+* Read 2D double prescan ultrasound image
 */
-usImagePreScan2D<double> usIo2DImageFormat::readPreScanDouble(std::string filename) {
+usImagePreScan2D<double> usImageIo::readPreScan2DDouble(std::string filename) {
   return  usImagePreScan2D<double>();
+}
+
+/**
+* Write 3D double prescan ultrasound image
+*/
+bool usImageIo::write(usImagePreScan3D<double> &preScan3DImage, const std::string filename) {
+  return  false;
+}
+
+/**
+* Read 3D double prescan ultrasound image
+*/
+usImagePreScan3D<double> usImageIo::readPreScan3DDouble(std::string filename) {
+  return  usImagePreScan3D<double>();
 }
 
 /**
@@ -93,13 +134,13 @@ usImagePreScan2D<double> usIo2DImageFormat::readPreScanDouble(std::string filena
 * @param postScanImage Image to write
 * @param filename The file name without extenstion (same name for png and xml);
 */
-bool usIo2DImageFormat::write(usImagePostScan2D &postScanImage, const std::string filename) {
+bool usImageIo::write(usImagePostScan2D &postScanImage, const std::string filename) {
   try {
     std::string pngFileName = filename + ".png";
     std::string xmlFileName = filename + ".xml";
     vpImageIo::writePNG(postScanImage, pngFileName);
-    usSettingsXml xmlSettings;
-    xmlSettings.setImageSettings(&postScanImage);
+    usImageSettingsXmlParser xmlSettings;
+    xmlSettings.setImageSettings(postScanImage);
     xmlSettings.setImageFileName(pngFileName);
     xmlSettings.save(xmlFileName);
   }
@@ -115,13 +156,27 @@ bool usIo2DImageFormat::write(usImagePostScan2D &postScanImage, const std::strin
 * Read 2D postscan ultrasound image
 * @param xmlFilename The xml file name with .xml extenstion (make sure png file is in the same directory);
 */
-usImagePostScan2D usIo2DImageFormat::readPostScan(const std::string xmlFilename) {
-  usSettingsXml xmlSettings;
+usImagePostScan2D usImageIo::readPostScan2D(const std::string xmlFilename) {
+  usImageSettingsXmlParser xmlSettings;
   xmlSettings.parse(xmlFilename);
 
   vpImage<unsigned char> image;
   vpImageIo::read(image,xmlSettings.getImageFileName());
 
-  usImagePostScan2D postScanImage(image,*xmlSettings.getImageSettings());
+  usImagePostScan2D postScanImage(image,xmlSettings.getImageSettings());
   return postScanImage;
+}
+
+/**
+* Write 3D postscan ultrasound image and settings
+*/
+bool usImageIo::write(usImagePostScan3D &postScanImage, const std::string filename) {
+  return true;
+}
+
+/**
+* Read 3D postscan ultrasound image
+*/
+usImagePostScan3D usImageIo::readPostScan3D() {
+  return usImagePostScan3D();
 }

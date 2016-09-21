@@ -30,7 +30,7 @@
  *****************************************************************************/
 
 /**
- * @file usSettingsXml.h
+ * @file usImageSettingsXmlParser.h
  * @brief Input/output operations between ultrasound image settings and the assiciated xml files.
  */
 
@@ -38,8 +38,8 @@
 
 #ifdef VISP_HAVE_XML2
 
-#ifndef US_SETTINGS_XML_H
-#define US_SETTINGS_XML_H
+#ifndef US_IMAGE_SETTINGS_XML_PARSER_H
+#define US_IMAGE_SETTINGS_XML_PARSER_H
 #include <iostream>
 #include <visp3/ustk_core/usImageSettings.h>
 #include <visp3/core/vpXmlParser.h>
@@ -49,40 +49,50 @@
 #include <string>
 
 /**
- * @class usSettingsXml
+ * @class usImageSettingsXmlParser
  * @brief Input/output operations between ultrasound image settings and the assiciated xml files.
  */
 
 
-class VISP_EXPORT usSettingsXml: public vpXmlParser
+class VISP_EXPORT usImageSettingsXmlParser: public vpXmlParser
 {
-protected:
-  usImageSettings* m_imageSettings;
-  std::string m_imageFileName;
-  
-  typedef enum{
-    settings,
-    scanline_pitch,
-    probe_radius,
-    is_convex,
-    image_file_name
-  }dataToParse;
-  
 public:
-  usSettingsXml();
-  virtual ~usSettingsXml();
+  typedef enum{
+    CODE_XML_BAD = -1,
+    CODE_XML_SETTINGS,
+    CODE_XML_SCANLINE_PITCH,
+    CODE_XML_PROBE_RADIUS,
+    CODE_XML_IS_CONVEX,
+    CODE_XML_ASSOCIATED_IMAGE_FILE_NAME
+  } vpXmlCodeType;
+
+  typedef enum
+  {
+      SEQUENCE_OK,
+      SEQUENCE_ERROR
+  } vpXmlCodeSequenceType;
+
+  usImageSettingsXmlParser();
+  usImageSettingsXmlParser(usImageSettingsXmlParser& twinParser);
+  usImageSettingsXmlParser& operator =(const usImageSettingsXmlParser& twinparser);
+  virtual ~usImageSettingsXmlParser();
   
   // Data accessors.
-  usImageSettings* getImageSettings() const {return m_imageSettings;}
+  usImageSettings getImageSettings() const {return m_imageSettings;}
   std::string getImageFileName() const {return m_imageFileName;}
   
-  void setImageSettings(usImageSettings* imageSettings) { m_imageSettings = imageSettings;}
+  //Data setters
+  void setImageSettings(usImageSettings imageSettings) { m_imageSettings = imageSettings;}
+  void setImageSettings(float probeRadius, float scanLinePitch, bool isImageConvex);
   void setImageFileName(std::string imageFileName) { m_imageFileName = imageFileName;}
-  
-protected:  
+
+private:
+  usImageSettings m_imageSettings;
+  std::string m_imageFileName;
+
   virtual void readMainClass (xmlDocPtr doc, xmlNodePtr node);
   virtual void writeMainClass (xmlNodePtr node);
 };
-#endif //US_SETTINGS_XML_H
+#endif //US_IMAGE_SETTINGS_XML_PARSER_H
 #endif //VISP_HAVE_XML2
 

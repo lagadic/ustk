@@ -30,49 +30,55 @@
  *****************************************************************************/
 
 /**
- * @file usIo2DimageFormat.h
- * @brief Input/output operations between ultrasound data and classical 2D image files.
+ * @file usImageIo.h
+ * @brief Input/output operations between ultrasound data and image files and their associated header (containing usImageSettings info).
  */
 
-#ifndef US_IO_2D_IMAGE_FORMAT_H
-#define US_IO_2D_IMAGE_FORMAT_H
+#ifndef US_IMAGE_IO_H
+#define US_IMAGE_IO_H
 
 #include <string>
 
-//#include <UsTk/usTkConfig.h>
-#include <visp3/ustk_core/usImagePostScan2D.h>
-#include <visp3/ustk_core/usImagePreScan2D.h>
 #include <visp3/ustk_core/usImageRF2D.h>
+#include <visp3/ustk_core/usImageRF3D.h>
+#include <visp3/ustk_core/usImagePreScan2D.h>
+#include <visp3/ustk_core/usImagePreScan3D.h>
+#include <visp3/ustk_core/usImagePostScan2D.h>
+#include <visp3/ustk_core/usImagePostScan3D.h>
 
 /**
- * @class usIo2DImageFormat
- * @brief Input/output operations between ultrasound data and classical 2D image files.
+ * @class usImageIo
+ * @brief Input/output operations between ultrasound data and image files and their associated header (containing usImageSettings info).
  */
-class VISP_EXPORT usIo2DImageFormat
+class VISP_EXPORT usImageIo
 {
-  /**
-   * Write 2D prescan ultrasound data as MHD.
-   * @param[in] data The ultrasound data.
-   * @param[in] filename File name.
-   */
 public:
 
-  usIo2DImageFormat();
+  usImageIo();
 
   //RF
   bool write(usImageRF2D &rfImage, const std::string filename);
-  usImageRF2D readRF(const std::string filename);
+  usImageRF2D readRF2D(const std::string filename);
+  bool write(usImageRF3D &rfImage3D, const std::string filename);
+  usImageRF3D readRF3D(const std::string filename);
 
-  //PreScan
+  //PreScan-unsigned char
   bool write(usImagePreScan2D<unsigned char> &preScanImage, const std::string filename);
-  usImagePreScan2D<unsigned char> readPreScanUChar(const std::string filename);
+  usImagePreScan2D<unsigned char> readPreScan2DUChar(const std::string filename);
+  bool write(usImagePreScan3D<unsigned char> &preScanImage3D, const std::string filename);
+  usImagePreScan3D<unsigned char> readPreScan3DUChar(const std::string filename);
+
+  //PreScan-double
   bool write(usImagePreScan2D<double> &preScanImage, const std::string filename);
-  usImagePreScan2D<double> readPreScanDouble(const std::string filename);
+  usImagePreScan2D<double> readPreScan2DDouble(const std::string filename);
+  bool write(usImagePreScan3D<double> &preScanImage3D, const std::string filename);
+  usImagePreScan3D<double> readPreScan3DDouble(const std::string filename);
 
   //postScan
   bool write(usImagePostScan2D &postScanImage, const std::string filename);
-  usImagePostScan2D readPostScan(const std::string filename);
-
+  usImagePostScan2D readPostScan2D(const std::string filename);
+  bool write(usImagePostScan3D &postScanImage3D, const std::string filename);
+  usImagePostScan3D readPostScan3D();
 };
 
-#endif //US_IO_2D_IMAGE_FORMAT_H
+#endif //US_IMAGE_IO_H

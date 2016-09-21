@@ -34,8 +34,8 @@
 * @brief 3D RF ultrasound image.
 */
 
-#ifndef US_IMAGE_RF_2D_H
-#define US_IMAGE_RF_2D_H
+#ifndef US_IMAGE_RF_3D_H
+#define US_IMAGE_RF_3D_H
 
 #include <cstring>
 
@@ -210,5 +210,4 @@ void usImageRF3D<T>::setAxialResolution(double axialResolution) { m_axialResolut
 template<class T>
 double usImageRF3D<T>::getAxialResolution() const { return m_axialResolution; }
 
-
-#endif // US_IMAGE_RF_2D_H
+#endif // US_IMAGE_RF_3D_H
