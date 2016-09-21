@@ -129,6 +129,7 @@ usImagePreScan3D<double> usImageIo::readPreScan3DDouble(std::string filename) {
   return  usImagePreScan3D<double>();
 }
 
+#ifdef VISP_HAVE_XML2
 /**
 * Write 2D postscan ultrasound image and settings
 * @param postScanImage Image to write
@@ -166,6 +167,7 @@ usImagePostScan2D usImageIo::readPostScan2D(const std::string xmlFilename) {
   usImagePostScan2D postScanImage(image,xmlSettings.getImageSettings());
   return postScanImage;
 }
+#endif //VISP_HAVE_XML2
 
 /**
 * Write 3D postscan ultrasound image and settings

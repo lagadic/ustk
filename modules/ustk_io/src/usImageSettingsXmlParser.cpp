@@ -34,7 +34,7 @@
  * @brief Input/output operations between ultrasound image settings and the assiciated xml files.
  */
 #include<visp3/ustk_io/usImageSettingsXmlParser.h>
-
+#ifdef VISP_HAVE_XML2
 usImageSettingsXmlParser::usImageSettingsXmlParser()
  : m_imageSettings(), m_imageFileName()
 {
@@ -108,3 +108,5 @@ void usImageSettingsXmlParser::setImageSettings(float probeRadius, float scanLin
   m_imageSettings.setScanLinePitch(scanLinePitch);
   m_imageSettings.setImageConvex(isImageConvex);
 }
+#endif //VISP_HAVE_XML2
+

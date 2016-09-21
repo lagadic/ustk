@@ -75,8 +75,10 @@ public:
   usImagePreScan3D<double> readPreScan3DDouble(const std::string filename);
 
   //postScan
+#ifdef VISP_HAVE_XML2
   bool write(usImagePostScan2D &postScanImage, const std::string filename);
   usImagePostScan2D readPostScan2D(const std::string filename);
+#endif //VISP_HAVE_XML2
   bool write(usImagePostScan3D &postScanImage3D, const std::string filename);
   usImagePostScan3D readPostScan3D();
 };
