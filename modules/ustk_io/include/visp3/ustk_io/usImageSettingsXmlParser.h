@@ -42,6 +42,8 @@
 #define US_IMAGE_SETTINGS_XML_PARSER_H
 #include <iostream>
 #include <visp3/ustk_core/usImageSettings.h>
+#include <visp3/ustk_core/usImagePreScan2D.h>
+#include <visp3/ustk_core/usImagePostScan2D.h>
 #include <visp3/core/vpXmlParser.h>
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpIoTools.h>
@@ -59,10 +61,14 @@ class VISP_EXPORT usImageSettingsXmlParser: public vpXmlParser
 public:
   typedef enum{
     CODE_XML_BAD = -1,
-    CODE_XML_SETTINGS,
+    CODE_XML_SETTINGS, 
+    CODE_XML_IMAGE_TYPE,
     CODE_XML_SCANLINE_PITCH,
     CODE_XML_PROBE_RADIUS,
     CODE_XML_IS_CONVEX,
+    CODE_XML_AXIAL_RESOLUTION,
+    CODE_XML_HEIGHT_RESOLUTION,
+    CODE_XML_WIDTH_RESOLUTION,
     CODE_XML_ASSOCIATED_IMAGE_FILE_NAME
   } vpXmlCodeType;
 
@@ -80,15 +86,26 @@ public:
   // Data accessors.
   usImageSettings getImageSettings() const {return m_imageSettings;}
   std::string getImageFileName() const {return m_imageFileName;}
+  float getAxialResolution() const { return m_axialResolution; }
+  float getHeightResolution() const { return m_heightResolution; }
+  float getWidthResolution() const { return m_widthResolution; }
   
   //Data setters
-  void setImageSettings(usImageSettings imageSettings) { m_imageSettings = imageSettings;}
-  void setImageSettings(float probeRadius, float scanLinePitch, bool isImageConvex);
-  void setImageFileName(std::string imageFileName) { m_imageFileName = imageFileName;}
+  void setImagePreScanSettings(usImagePreScan2D<unsigned char> imagePrescan2D);
+  void setImagePostScanSettings(usImagePostScan2D imagePostcan2D);
+  void setImageSettings(float probeRadius, float scanLinePitch, bool isImageConvex, float axialResolution);
+  void setImageSettings(float probeRadius, float scanLinePitch, bool isImageConvex, float widthResolution, float heightResolution);
+  void setImageFileName(std::string imageFileName);
 
 private:
   usImageSettings m_imageSettings;
   std::string m_imageFileName;
+
+  //to manage different resolution types
+  bool m_is_prescan;
+  float m_axialResolution;
+  float m_heightResolution;
+  float m_widthResolution;
 
   virtual void readMainClass (xmlDocPtr doc, xmlNodePtr node);
   virtual void writeMainClass (xmlNodePtr node);

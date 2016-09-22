@@ -73,19 +73,48 @@ usImageRF3D usImageIo::readRF3D(const std::string filename) {
   return usImageRF3D();
 }
 
+#ifdef VISP_HAVE_XML2
 /**
 * Write 2D unsigned char prescan ultrasound image
 */
-bool usImageIo::write(usImagePreScan2D<unsigned char> &preScanImage, const std::string filename) {
-  return false;
+bool usImageIo::writeXmlPng(usImagePreScan2D<unsigned char> &preScanImage, const std::string filename) {
+  try {
+    std::string pngFileName = filename + ".png";
+    std::string xmlFileName = filename + ".xml";
+    vpImageIo::writePNG(preScanImage, pngFileName);
+    usImageSettingsXmlParser xmlSettings;
+    xmlSettings.setImagePreScanSettings(preScanImage);
+    xmlSettings.setImageFileName(pngFileName);
+    xmlSettings.save(xmlFileName);
+  }
+  catch (std::exception e) {
+    std::cout << "Error writing postScan image : " << std::endl;
+    std::cout << e.what() << std::endl;
+    return false;
+  }
+  return true;
 }
 
 /**
 * Read 2D unsigned char prescan ultrasound image
 */
-usImagePreScan2D<unsigned char> usImageIo::readPreScan2DUChar(const std::string filename) {
-  return usImagePreScan2D<unsigned char>();
+usImagePreScan2D<unsigned char> usImageIo::readPreScan2DUCharFromXml(const std::string xmlFilename) {
+  usImageSettingsXmlParser xmlSettings;
+  try {
+    xmlSettings.parse(xmlFilename);
+  }
+  catch (std::exception e) {
+    std::cout << "Error parsing postScan settings file" << std::endl;
+    throw e;
+  }
+
+  vpImage<unsigned char> image;
+  vpImageIo::read(image, xmlSettings.getImageFileName());
+
+  usImagePreScan2D<unsigned char> postScanImage(image, xmlSettings.getImageSettings());
+  return postScanImage;
 }
+#endif //VISP_HAVE_XML2
 
 /**
 * Write 3D unsigned char prescan ultrasound image
@@ -112,7 +141,8 @@ bool usImageIo::write(usImagePreScan2D<double> &preScan2DImage, const std::strin
 * Read 2D double prescan ultrasound image
 */
 usImagePreScan2D<double> usImageIo::readPreScan2DDouble(std::string filename) {
-  return  usImagePreScan2D<double>();
+  usImagePreScan2D<double> img;
+  return img;
 }
 
 /**
@@ -135,13 +165,13 @@ usImagePreScan3D<double> usImageIo::readPreScan3DDouble(std::string filename) {
 * @param postScanImage Image to write
 * @param filename The file name without extenstion (same name for png and xml);
 */
-bool usImageIo::write(usImagePostScan2D &postScanImage, const std::string filename) {
+bool usImageIo::writeXmlPng(usImagePostScan2D &postScanImage, const std::string filename) {
   try {
     std::string pngFileName = filename + ".png";
     std::string xmlFileName = filename + ".xml";
     vpImageIo::writePNG(postScanImage, pngFileName);
     usImageSettingsXmlParser xmlSettings;
-    xmlSettings.setImageSettings(postScanImage);
+    xmlSettings.setImagePostScanSettings(postScanImage);
     xmlSettings.setImageFileName(pngFileName);
     xmlSettings.save(xmlFileName);
   }
@@ -157,9 +187,15 @@ bool usImageIo::write(usImagePostScan2D &postScanImage, const std::string filena
 * Read 2D postscan ultrasound image
 * @param xmlFilename The xml file name with .xml extenstion (make sure png file is in the same directory);
 */
-usImagePostScan2D usImageIo::readPostScan2D(const std::string xmlFilename) {
+usImagePostScan2D usImageIo::readPostScan2DFromXml(const std::string xmlFilename) {
   usImageSettingsXmlParser xmlSettings;
-  xmlSettings.parse(xmlFilename);
+  try {
+    xmlSettings.parse(xmlFilename);
+  }
+  catch(std::exception e) {
+    std::cout << "Error parsing postScan settings file" << std::endl;
+    throw e;
+  }
 
   vpImage<unsigned char> image;
   vpImageIo::read(image,xmlSettings.getImageFileName());
@@ -173,7 +209,7 @@ usImagePostScan2D usImageIo::readPostScan2D(const std::string xmlFilename) {
 * Write 3D postscan ultrasound image and settings
 */
 bool usImageIo::write(usImagePostScan3D &postScanImage, const std::string filename) {
-  return true;
+  return false;
 }
 
 /**

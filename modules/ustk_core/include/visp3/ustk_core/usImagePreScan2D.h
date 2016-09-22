@@ -90,9 +90,6 @@ private:
   double m_axialResolution;
 };
 
-/**
-* Basic constructor, all settings set to default. For double data.
-*/
 template<class T>
 usImagePreScan2D<T>::usImagePreScan2D() : vpImage<T>(), usImageSettings()
 {
@@ -119,7 +116,7 @@ usImagePreScan2D<T>::usImagePreScan2D(unsigned int AN, unsigned int LN) : vpImag
 * @param isConvex Boolean to specify if the probe used was convex(true) or linear(false).
 */
 template<class T>
-usImagePreScan2D<T>::usImagePreScan2D(unsigned int AN, unsigned int LN, double probeRadius, double scanLinePitch, bool isConvex) :
+usImagePreScan2D<T>::usImagePreScan2D(unsigned int AN, unsigned int LN, float probeRadius, float scanLinePitch, bool isConvex) :
     vpImage<T>(AN, LN), usImageSettings(probeRadius, scanLinePitch, isConvex)
 {
 
@@ -181,7 +178,7 @@ template<class T>
 void usImagePreScan2D<T>::copyFrom(const vpImage<T> &I)
 {
     resize(I.getHeight(), I.getWidth());
-    memcpy(this->bitmap, I.bitmap, I.getSize() * sizeof(T));
+    memcpy(bitmap, I.bitmap, I.getSize() * sizeof(T));
 }
 
 /**

@@ -63,8 +63,10 @@ public:
   usImageRF3D readRF3D(const std::string filename);
 
   //PreScan-unsigned char
-  bool write(usImagePreScan2D<unsigned char> &preScanImage, const std::string filename);
-  usImagePreScan2D<unsigned char> readPreScan2DUChar(const std::string filename);
+#ifdef VISP_HAVE_XML2
+  bool writeXmlPng(usImagePreScan2D<unsigned char> &preScanImage, const std::string filename);
+  usImagePreScan2D<unsigned char> readPreScan2DUCharFromXml(const std::string filename);
+#endif //VISP_HAVE_XML2
   bool write(usImagePreScan3D<unsigned char> &preScanImage3D, const std::string filename);
   usImagePreScan3D<unsigned char> readPreScan3DUChar(const std::string filename);
 
@@ -76,8 +78,8 @@ public:
 
   //postScan
 #ifdef VISP_HAVE_XML2
-  bool write(usImagePostScan2D &postScanImage, const std::string filename);
-  usImagePostScan2D readPostScan2D(const std::string filename);
+  bool writeXmlPng(usImagePostScan2D &postScanImage, const std::string filename);
+  usImagePostScan2D readPostScan2DFromXml(const std::string filename);
 #endif //VISP_HAVE_XML2
   bool write(usImagePostScan3D &postScanImage3D, const std::string filename);
   usImagePostScan3D readPostScan3D();
