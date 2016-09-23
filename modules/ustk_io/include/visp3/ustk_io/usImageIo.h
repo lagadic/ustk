@@ -45,6 +45,8 @@
 #include <visp3/ustk_core/usImagePreScan3D.h>
 #include <visp3/ustk_core/usImagePostScan2D.h>
 #include <visp3/ustk_core/usImagePostScan3D.h>
+#include <visp3/ustk_io/usMetaHeaderParser.h>
+
 
 /**
  * @class usImageIo
@@ -82,7 +84,7 @@ public:
   usImagePostScan2D readPostScan2DFromXml(const std::string filename);
 #endif //VISP_HAVE_XML2
   bool write(usImagePostScan3D &postScanImage3D, const std::string filename);
-  usImagePostScan3D readPostScan3D();
+  usImagePostScan3D readPostScan3D(std::string mhdFileName);
 };
 
 #endif //US_IMAGE_IO_H
