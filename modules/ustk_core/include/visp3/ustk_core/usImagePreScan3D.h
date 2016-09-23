@@ -90,15 +90,14 @@ public:
   void setAxialResolution(float axialResolution);
 
 private:
-  float axialResolution;
+  float m_axialResolution;
 };
 
-#endif // US_IMAGE_PRESCAN_3D_H
 
 
 /**
 * Basic constructor, all settings set to default. For unsigned char data.
-*/
+*
 template<>
 usImagePreScan3D<unsigned char>::usImagePreScan3D() : usImage3D<unsigned char>(), usImageSettings3D()
 {
@@ -108,8 +107,8 @@ usImagePreScan3D<unsigned char>::usImagePreScan3D() : usImage3D<unsigned char>()
 /**
 * Basic constructor, all settings set to default. For double data.
 */
-template<>
-usImagePreScan3D<double>::usImagePreScan3D() : usImage3D<double>(), usImageSettings3D()
+template<class T>
+usImagePreScan3D<T>::usImagePreScan3D() : usImage3D<T>(), usImageSettings3D()
 {
 
 }
@@ -119,8 +118,8 @@ usImagePreScan3D<double>::usImagePreScan3D() : usImage3D<double>(), usImageSetti
 * @param AN A-samples in a line (corresponds to image height in px).
 * @param LN Number of lines (corresponds to image width in px).
 */
-template<>
-usImagePreScan3D<double>::usImagePreScan3D(unsigned int AN, unsigned int LN, unsigned int FN) : usImage3D<double>(LN, AN, FN), usImageSettings3D()
+template<class T>
+usImagePreScan3D<T>::usImagePreScan3D(unsigned int AN, unsigned int LN, unsigned int FN) : usImage3D<T>(LN, AN, FN), usImageSettings3D()
 {
 
 }
@@ -129,7 +128,7 @@ usImagePreScan3D<double>::usImagePreScan3D(unsigned int AN, unsigned int LN, uns
 * Initializing image size constructor. For unsigned char image type.
 * @param AN A-samples in a line (corresponds to image height in px).
 * @param LN Number of lines (corresponds to image width in px).
-*/
+*
 template<>
 usImagePreScan3D<unsigned char>::usImagePreScan3D(unsigned int AN, unsigned int LN, unsigned int FN) : usImage3D<unsigned char>(LN, AN, FN), usImageSettings3D()
 {
@@ -148,10 +147,10 @@ usImagePreScan3D<unsigned char>::usImagePreScan3D(unsigned int AN, unsigned int 
 * @param isImageConvex Boolean to specyfy if the image was acquired by a convex probe(true) or by a linear probe (false).
 * @param isMotorConvex Boolean to specyfy if the image was acquired by a rotating  motor(true) or by a linear motor (false).
 */
-template<>
-usImagePreScan3D<double>::usImagePreScan3D(unsigned int AN, unsigned int LN, unsigned int FN, float probeRadius, float motorRadius, float scanLinePitch, float framePitch,
+template<class T>
+usImagePreScan3D<T>::usImagePreScan3D(unsigned int AN, unsigned int LN, unsigned int FN, float probeRadius, float motorRadius, float scanLinePitch, float framePitch,
   bool isImageConvex, bool isMotorConvex) :
-  usImage3D<double>(AN, LN, FN), usImageSettings3D(probeRadius, motorRadius, scanLinePitch, framePitch, isImageConvex, isMotorConvex)
+  usImage3D<T>(AN, LN, FN), usImageSettings3D(probeRadius, motorRadius, scanLinePitch, framePitch, isImageConvex, isMotorConvex)
 {
 
 }
@@ -167,7 +166,7 @@ usImagePreScan3D<double>::usImagePreScan3D(unsigned int AN, unsigned int LN, uns
 * @param framePitch angle(rad) / distance(m) between 2 lines of the ultrasound probe used to acquire the RF image.
 * @param isImageConvex Boolean to specyfy if the image was acquired by a convex probe(true) or by a linear probe (false).
 * @param isMotorConvex Boolean to specyfy if the image was acquired by a rotating  motor(true) or by a linear motor (false).
-*/
+*
 template< >
 usImagePreScan3D<unsigned char>::usImagePreScan3D(unsigned int AN, unsigned int LN, unsigned int FN, float probeRadius, float motorRadius, float scanLinePitch, float framePitch,
   bool isImageConvex, bool isMotorConvex) :
@@ -180,9 +179,9 @@ usImagePreScan3D<unsigned char>::usImagePreScan3D(unsigned int AN, unsigned int 
 * Copy constructor. For double image type.
 * @param other usImagePreScan3D image you want to copy.
 */
-template<>
-usImagePreScan3D<double>::usImagePreScan3D(const usImagePreScan3D &other) :
-  usImage3D<double>(other), usImageSettings3D(other)
+template<class T>
+usImagePreScan3D<T>::usImagePreScan3D(const usImagePreScan3D &other) :
+  usImage3D<T>(other), usImageSettings3D(other)
 {
 
 }
@@ -190,7 +189,7 @@ usImagePreScan3D<double>::usImagePreScan3D(const usImagePreScan3D &other) :
 /**
 * Copy constructor. For unsigned char image type.
 * @param other usImagePreScan3D image you want to copy.
-*/
+*
 template< >
 usImagePreScan3D<unsigned char>::usImagePreScan3D(const usImagePreScan3D &other) :
   usImage3D<unsigned char>(other), usImageSettings3D(other)
@@ -202,8 +201,8 @@ usImagePreScan3D<unsigned char>::usImagePreScan3D(const usImagePreScan3D &other)
 * Copy constructor. For double image type.
 * @param other usImage3D<double> image you want to copy.
 */
-template<>
-usImagePreScan3D<double>::usImagePreScan3D(const usImage3D<double> &other) : usImage3D<double>(other)
+template<class T>
+usImagePreScan3D<T>::usImagePreScan3D(const usImage3D<T> &other) : usImage3D<T>(other)
 {
 
 }
@@ -211,7 +210,7 @@ usImagePreScan3D<double>::usImagePreScan3D(const usImage3D<double> &other) : usI
 /**
 * Copy constructor. For unsigned char image type.
 * @param other usImage3D<double> image you want to copy.
-*/
+*
 template< >
 usImagePreScan3D<unsigned char>::usImagePreScan3D(const usImage3D<unsigned char> &other) : usImage3D<unsigned char>(other)
 {
@@ -232,9 +231,9 @@ usImagePreScan3D<T>::usImagePreScan3D(const usImageSettings3D &other) : usImageS
 * Copy constructor. For double image type.
 * @param other usImageSettings3D you want to copy.
 */
-template<>
-usImagePreScan3D<double>::usImagePreScan3D(const usImage3D<double> &other, const usImageSettings3D &otherSettings) :
-  usImage3D<double>(other), usImageSettings3D(otherSettings)
+template<class T>
+usImagePreScan3D<T>::usImagePreScan3D(const usImage3D<T> &other, const usImageSettings3D &otherSettings) :
+  usImage3D<T>(other), usImageSettings3D(otherSettings)
 {
 
 }
@@ -242,7 +241,7 @@ usImagePreScan3D<double>::usImagePreScan3D(const usImage3D<double> &other, const
 /**
 *Copy constructor.For unsigned char image type.
 * @param other usImageSettings3D you want to copy.
-*/
+*
 template< >
 usImagePreScan3D<unsigned char>::usImagePreScan3D(const usImage3D<unsigned char> &other, const usImageSettings3D &otherSettings) :
   usImage3D<unsigned char>(other), usImageSettings3D(otherSettings)
@@ -260,17 +259,17 @@ usImagePreScan3D<T>::~usImagePreScan3D() {}
 * Copy from usImage3D. From double image type.
 * @param I usImage3D<double> to copy.
 */
-template<>
-void usImagePreScan3D<double>::copyFrom(const usImage3D<double> &I)
+template<class T>
+void usImagePreScan3D<T>::copyFrom(const usImage3D<T> &I)
 {
-  //resize(I.getHeight(), I.getWidth());
+  //resize(I.getHeight(), I.getWidth());B
   //memcpy(bitmap, I.bitmap, I.getSize() * sizeof(double));
 }
 
 /**
 * Copy from usImage3D.
 * @param I usImage3D<unsigned char> to copy.
-*/
+*
 template<>
 void usImagePreScan3D<unsigned char>::copyFrom(const usImage3D<unsigned char> &I)
 {
@@ -315,3 +314,5 @@ void usImagePreScan3D<T>::setAxialResolution(float axialResolution)
 {
   m_axialResolution = axialResolution;
 }
+
+#endif // US_IMAGE_PRESCAN_3D_H
