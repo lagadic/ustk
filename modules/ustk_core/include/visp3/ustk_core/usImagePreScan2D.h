@@ -178,7 +178,7 @@ template<class T>
 void usImagePreScan2D<T>::copyFrom(const vpImage<T> &I)
 {
     resize(I.getHeight(), I.getWidth());
-    memcpy(bitmap, I.bitmap, I.getSize() * sizeof(T));
+    memcpy(this->bitmap, I.bitmap, I.getSize() * sizeof(T));
 }
 
 /**
