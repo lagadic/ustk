@@ -58,7 +58,7 @@ usImageSettings3D::usImageSettings3D() : usImageSettings(), m_motorRadius(0.0f),
 * @param BSampleFreq Sampling frequency used for B-Mode.
 * @param probeElementPitch Physic parameter of the probe : distance between 2 sucessive piezoelectric elements of the ultrasound probe.
 */
-usImageSettings3D::usImageSettings3D(float probeRadius, float motorRadius, float scanLinePitch, float framePitch, bool isImageConvex, bool isMotorConvex)
+usImageSettings3D::usImageSettings3D(double probeRadius, double motorRadius, double scanLinePitch, double framePitch, bool isImageConvex, bool isMotorConvex)
                  : usImageSettings(probeRadius, scanLinePitch, isImageConvex), m_motorRadius(motorRadius), m_framePitch(framePitch), m_isMotorConvex(isMotorConvex) {}
 
 /**
@@ -94,25 +94,25 @@ usImageSettings3D& usImageSettings3D::operator=(const usImageSettings3D& other)
 * Set the motor  radius (m).
 * @param motorRadius Motor radius in meters.
 */
-void usImageSettings3D::setMotorRadius(float motorRadius) { m_motorRadius = motorRadius; }
+void usImageSettings3D::setMotorRadius(double motorRadius) { m_motorRadius = motorRadius; }
 
 /**
 * Get the probe radius (m).
 * @return motorRadius Motor radius in meters.
 */
-float usImageSettings3D::getMotorRadius() const { return m_motorRadius; }
+double usImageSettings3D::getMotorRadius() const { return m_motorRadius; }
 
 /**
 * Set the frame angle (rad).
 * @param angle Frame angle of the probe in radians.
 */
-void usImageSettings3D::setFramePitch(float framePitch) { m_framePitch = framePitch; }
+void usImageSettings3D::setFramePitch(double framePitch) { m_framePitch = framePitch; }
 
 /**
 * Get the frame angle (rad).
 * @return m_lineAngle Frame angle of the probe in radians.
 */
-float usImageSettings3D::getFramePitch() const { return m_framePitch; }
+double usImageSettings3D::getFramePitch() const { return m_framePitch; }
 
 /**
 * Set the motor type : convex or linear (from probe type used to acquire the image).

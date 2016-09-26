@@ -57,7 +57,7 @@ class usImagePreScan2D : public vpImage<T>, public usImageSettings {
         usImagePreScan2D(unsigned int AN, unsigned int LN);
 
         //All parameters initialisation constructors
-        usImagePreScan2D(unsigned int AN, unsigned int LN, float probeRadius, float scanLinePitch, bool isConvex);
+        usImagePreScan2D(unsigned int AN, unsigned int LN, double probeRadius, double scanLinePitch, bool isConvex);
 
         //usImagePreScan2D copy constructor
         usImagePreScan2D(const usImagePreScan2D &other);
@@ -82,12 +82,12 @@ class usImagePreScan2D : public vpImage<T>, public usImageSettings {
 
         unsigned int getLN() const;
 
-        float getAxialResolution() const;
+        double getAxialResolution() const;
 
-        void setAxialResolution(float axialResolution);
+        void setAxialResolution(double axialResolution);
 
 private:
-  float m_axialResolution;
+  double m_axialResolution;
 };
 
 
@@ -141,7 +141,7 @@ usImagePreScan2D<unsigned char>::usImagePreScan2D(unsigned int AN, unsigned int 
 * @param isConvex Boolean to specify if the probe used was convex(true) or linear(false).
 */
 template<class T>
-usImagePreScan2D<T>::usImagePreScan2D(unsigned int AN, unsigned int LN, float probeRadius, float scanLinePitch, bool isConvex) :
+usImagePreScan2D<T>::usImagePreScan2D(unsigned int AN, unsigned int LN, double probeRadius, double scanLinePitch, bool isConvex) :
     vpImage<T>(AN, LN), usImageSettings(probeRadius, scanLinePitch, isConvex)
 {
 
@@ -282,14 +282,14 @@ unsigned int usImagePreScan2D<T>::getLN() const { return vpImage<T>::getWidth();
 * @return The axial resolution : distance(in meters) between 2 successive pixels acquired along a scanLine.
 */
 template<class T>
-float usImagePreScan2D<T>::getAxialResolution() const { return m_axialResolution; }
+double usImagePreScan2D<T>::getAxialResolution() const { return m_axialResolution; }
 
 /**
 * Setter for the axial resolution
 * @param axialResolution The axial resolution : distance(in meters) between 2 successive pixels acquired along a scanLine.
 */
 template<class T>
-void usImagePreScan2D<T>::setAxialResolution(float axialResolution)
+void usImagePreScan2D<T>::setAxialResolution(double axialResolution)
 {
   m_axialResolution = axialResolution;
 }

@@ -28,7 +28,7 @@ usImageRF2D::usImageRF2D(unsigned int AN, unsigned int LN)
 * @param scanLinePitch Angle(rad) / Distance(m) between 2 lines of the ultrasound probe used to acquire the RF image. Angle if isConvex is true, distance if it's false.
 * @param isConvex Boolean to specify if the probe used was convex(true) or linear(false).
 */
-usImageRF2D::usImageRF2D(unsigned int AN, unsigned int LN, float probeRadius, float scanLinePitch, bool isConvex)
+usImageRF2D::usImageRF2D(unsigned int AN, unsigned int LN, double probeRadius, double scanLinePitch, bool isConvex)
   : vpImage<short>(AN, LN), usImageSettings(probeRadius, scanLinePitch, isConvex)
 {
 	
@@ -68,10 +68,10 @@ unsigned int  usImageRF2D::getLN() const { return getWidth(); }
 * Setter for axial Resolution.
 * @param Axial resolution (in meters) to set.
 */
-void usImageRF2D::setAxialResolution(float axialResolution) { m_axialResolution = axialResolution; }
+void usImageRF2D::setAxialResolution(double axialResolution) { m_axialResolution = axialResolution; }
 
 /**
 * Getter for axial Resolution.
 * @return Axial resolution (in meters).
 */
-float usImageRF2D::getAxialResolution() const { return m_axialResolution; }
+double usImageRF2D::getAxialResolution() const { return m_axialResolution; }

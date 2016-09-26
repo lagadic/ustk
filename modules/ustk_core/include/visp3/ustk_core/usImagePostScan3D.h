@@ -53,7 +53,7 @@ class VISP_EXPORT usImagePostScan3D : public usImage3D<unsigned char>, public us
 public:
   usImagePostScan3D();
 
-  usImagePostScan3D(unsigned int AN, unsigned int LN, unsigned int FN, float probeRadius, float motorRadius, float scanLinePitch, float framePitch, bool isImageConvex, bool isMotorConvex);
+  usImagePostScan3D(unsigned int AN, unsigned int LN, unsigned int FN, double probeRadius, double motorRadius, double scanLinePitch, double framePitch, bool isImageConvex, bool isMotorConvex);
 
   usImagePostScan3D(const usImagePostScan3D &other);
 
@@ -65,17 +65,17 @@ public:
 
   ~usImagePostScan3D();
 
-  void setWidthResolution(float widthResolution);
+  void setWidthResolution(double widthResolution);
 
-  float getWidthResolution();
+  double getWidthResolution();
 
-  void setHeightResolution(float widthResolution);
+  void setHeightResolution(double widthResolution);
 
-  float getHeightResolution();
+  double getHeightResolution();
 
 private:
-  float m_widthResolution;
-  float m_heightResolution;
+  double m_widthResolution;
+  double m_heightResolution;
 };
 
 #endif // US_IMAGE_POSTSCAN_3D_H

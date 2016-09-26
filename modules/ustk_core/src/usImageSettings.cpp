@@ -54,7 +54,7 @@ usImageSettings::usImageSettings() : m_probeRadius(0.0f), m_scanLinePitch(0.0f),
 * @param[in] scanLinePitch Distance/Radius between 2 successives acquisiton lines in the probe : in radians (rad) if isConvex is true, in meters (m) if isConvex is false.
 * @param[in] isConvex Boolean to specify if the probe used was convex or linear.
 */
-usImageSettings::usImageSettings(float probeRadius, float scanLinePitch, bool isConvex) : m_probeRadius(probeRadius), m_scanLinePitch(scanLinePitch), m_isImageConvex(isConvex) {}
+usImageSettings::usImageSettings(double probeRadius, double scanLinePitch, bool isConvex) : m_probeRadius(probeRadius), m_scanLinePitch(scanLinePitch), m_isImageConvex(isConvex) {}
 
 /**
 * Copy Constructor, all settings availables
@@ -90,25 +90,25 @@ usImageSettings& usImageSettings::operator=(const usImageSettings& other)
 * Set the probe  radius (m).
 * @param[in] probeRadius Probe radius in meters. The probe radius is set to 0 in case of linear probe type (see isImageConvex() and setImageConvex(bool) for more informations). 
 */
-void usImageSettings::setProbeRadius(float probeRadius) { m_probeRadius = probeRadius; }
+void usImageSettings::setProbeRadius(double probeRadius) { m_probeRadius = probeRadius; }
 
 /**
 * Get the probe radius (m).
 * @return m_probeRadius Probe radius in meters. The probe radius is set to 0 if a linear probe is used.
 */
-float usImageSettings::getProbeRadius() const { return m_probeRadius; }
+double usImageSettings::getProbeRadius() const { return m_probeRadius; }
 
 /**
 * Set the line angle (rad).
 * @param[in] angle Line angle of the probe in radians.
 */
-void usImageSettings::setScanLinePitch(float scanLinePitch) { m_scanLinePitch = scanLinePitch; }
+void usImageSettings::setScanLinePitch(double scanLinePitch) { m_scanLinePitch = scanLinePitch; }
 
 /**
 * Get the scanLine pitch (m).
 * @return m_scanLinePitch Line angle of the probe in radians.
 */
-float usImageSettings::getScanLinePitch() const { return m_scanLinePitch; }
+double usImageSettings::getScanLinePitch() const { return m_scanLinePitch; }
 
 /**
 * Set image probe type to convex/linear (boolean).

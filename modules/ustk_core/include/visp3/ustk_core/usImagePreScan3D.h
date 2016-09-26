@@ -58,7 +58,7 @@ public:
   usImagePreScan3D(unsigned int AN, unsigned int LN, unsigned int FN);
 
   //All parameters initialisation constructors
-  usImagePreScan3D(unsigned int AN, unsigned int LN, unsigned int FN, float probeRadius, float motorRadius, float scanLinePitch, float framePitch,
+  usImagePreScan3D(unsigned int AN, unsigned int LN, unsigned int FN, double probeRadius, double motorRadius, double scanLinePitch, double framePitch,
     bool isImageConvex, bool isMotorConvex);
 
   //usImagePreScan3D copy constructor
@@ -85,12 +85,12 @@ public:
 
   unsigned int getFN() const;
 
-  float getAxialResolution() const;
+  double getAxialResolution() const;
 
-  void setAxialResolution(float axialResolution);
+  void setAxialResolution(double axialResolution);
 
 private:
-  float m_axialResolution;
+  double m_axialResolution;
 };
 
 
@@ -148,7 +148,7 @@ usImagePreScan3D<unsigned char>::usImagePreScan3D(unsigned int AN, unsigned int 
 * @param isMotorConvex Boolean to specyfy if the image was acquired by a rotating  motor(true) or by a linear motor (false).
 */
 template<class T>
-usImagePreScan3D<T>::usImagePreScan3D(unsigned int AN, unsigned int LN, unsigned int FN, float probeRadius, float motorRadius, float scanLinePitch, float framePitch,
+usImagePreScan3D<T>::usImagePreScan3D(unsigned int AN, unsigned int LN, unsigned int FN, double probeRadius, double motorRadius, double scanLinePitch, double framePitch,
   bool isImageConvex, bool isMotorConvex) :
   usImage3D<T>(AN, LN, FN), usImageSettings3D(probeRadius, motorRadius, scanLinePitch, framePitch, isImageConvex, isMotorConvex)
 {
@@ -303,14 +303,14 @@ unsigned int usImagePreScan3D<T>::getFN() const { return usImage3D<T>::getDepth(
 * @return The axial resolution : distance(in meters) between 2 successive pixels acquired along a scanLine.
 */
 template<class T>
-float usImagePreScan3D<T>::getAxialResolution() const { return m_axialResolution; }
+double usImagePreScan3D<T>::getAxialResolution() const { return m_axialResolution; }
 
 /**
 * Setter for the axial resolution
 * @param axialResolution The axial resolution : distance(in meters) between 2 successive pixels acquired along a scanLine.
 */
 template<class T>
-void usImagePreScan3D<T>::setAxialResolution(float axialResolution)
+void usImagePreScan3D<T>::setAxialResolution(double axialResolution)
 {
   m_axialResolution = axialResolution;
 }

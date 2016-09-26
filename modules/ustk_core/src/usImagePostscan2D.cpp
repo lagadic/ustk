@@ -58,7 +58,7 @@ usImagePostScan2D::usImagePostScan2D() : vpImage<unsigned char>(), usImageSettin
 * @param scanLinePitch Angle(rad) / Distance(m) between 2 lines of the ultrasound probe used to acquire the RF image. Angle if isConvex is true, distance if it's false.
 * @param isConvex Boolean to specify if the probe used was convex(true) or linear(false).
 */
-usImagePostScan2D::usImagePostScan2D(unsigned int AN, unsigned int LN, float probeRadius, float scanLinePitch, bool isConvex)
+usImagePostScan2D::usImagePostScan2D(unsigned int AN, unsigned int LN, double probeRadius, double scanLinePitch, bool isConvex)
   : vpImage<unsigned char>(AN,LN), usImageSettings(probeRadius, scanLinePitch, isConvex)
 {
 
@@ -111,22 +111,22 @@ usImagePostScan2D::~usImagePostScan2D() {}
 * Setter for width Resolution.
 * @param widthResolution Width resolution (in meters) to set.
 */
-void usImagePostScan2D::setWidthResolution(float widthResolution) { m_widthResolution = widthResolution; }
+void usImagePostScan2D::setWidthResolution(double widthResolution) { m_widthResolution = widthResolution; }
 
 /**
 * Getter for width Resolution.
 * @return widthResolution Width resolution (in meters).
 */
-float usImagePostScan2D::getWidthResolution() { return m_heightResolution; }
+double usImagePostScan2D::getWidthResolution() { return m_heightResolution; }
 
 /**
 * Setter for width Resolution.
 * @param heightResolution Height resolution (in meters) to set.
 */
-void usImagePostScan2D::setHeightResolution(float heightResolution) { m_heightResolution = heightResolution; }
+void usImagePostScan2D::setHeightResolution(double heightResolution) { m_heightResolution = heightResolution; }
 
 /**
 * Setter for width Resolution.
 * @param heightResolution Height resolution (in meters) to set. 
 */
-float usImagePostScan2D::getHeightResolution() { return m_heightResolution; }
+double usImagePostScan2D::getHeightResolution() { return m_heightResolution; }
