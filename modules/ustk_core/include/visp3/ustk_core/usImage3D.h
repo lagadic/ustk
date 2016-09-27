@@ -45,6 +45,9 @@
 #include <vector>
 #include <algorithm>
 
+#include <visp3/core/vpDebug.h>
+#include <visp3/core/vpException.h>
+
 /**
 * @class usImage3D
 * @brief Representation of a physical image volume.
@@ -103,8 +106,25 @@ public:
   */
   inline Type operator()(unsigned int index) const
   {
-    return m_data[index];
+    return bitmap[index];
   }
+
+  //! operator[] allows operation like I[i] = x.
+  inline Type *operator[]( const unsigned int i)   { if(i<m_size) {return planesIndex[i];} throw(vpException::badValue);}
+  inline Type *operator[]( const int i) { if(i<m_size) {return planesIndex[i];} throw(vpException::badValue);}
+
+  //! operator[] allows operation like x = I[i]
+  inline const  Type *operator[](unsigned int i) const { if(i<m_size) {return planesIndex[i];} throw(vpException::badValue);}
+  inline const  Type *operator[](int i) const { if(i<m_size) {return planesIndex[i];} throw(vpException::badValue);}
+
+
+  /**
+  * initiation of the image.
+  * @param h volume height.
+  * @param w volume width.
+  * @param d volume depth.
+  */
+  void init(unsigned int h, unsigned int w, unsigned int d);
 
   /**
   * Modification operator.
@@ -113,7 +133,7 @@ public:
   */
   inline void operator()(unsigned int index, Type value)
   {
-    m_data[index] = value;
+    bitmap[index] = value;
   }
 
   /**
@@ -124,7 +144,7 @@ public:
   */
   inline Type operator()(unsigned int indexX, unsigned int indexY, unsigned int indexZ) const
   {
-    return m_data[(m_dimx * m_dimy) * indexZ + m_dimx*indexY + indexX];
+    return bitmap[(m_dimx * m_dimy) * indexZ + m_dimx*indexY + indexX];
   }
 
   /**
@@ -136,7 +156,7 @@ public:
   */
   inline void operator()(unsigned int indexX, unsigned int indexY, unsigned int indexZ, Type value)
   {
-    m_data[(m_dimx * m_dimy)*indexZ + m_dimx*indexY + indexX] = value;
+    bitmap[(m_dimx * m_dimy)*indexZ + m_dimx*indexY + indexX] = value;
   }
 
   /**
@@ -203,111 +223,163 @@ public:
   * Get the pointer to the data container.
   * @return The pointer to the data container
   */
-  Type* getData() { return m_data; }
+  Type* getData() { return bitmap; }
 
   /**
   * Get the pointer to the const data container.
   * @return The pointer to the const data container
   */
-  Type* getConstData() const { return m_data; }
+  Type* getConstData() const { return bitmap; }
 
   /**
   * Set the data container.
   * @param data The data container
   */
-  void setData(Type* data);
+  void setData(Type* data, int numberOfVloxels);
 
   /**
   * Initialize the data container with the specified value.
   * @param value The data 
+  * @param numberOfVloxels number of voxels in the volume
   */
-  void initData(Type value = Type());
+  void initData(Type value,int numberOfVloxels);
 
 protected:
+
+private:
   unsigned int m_dimx; /**< Volume height in pixels (number of pixels on the x-axis)*/
   unsigned int m_dimy; /**< Volume width in pixels (number of pixels on the x-axis)*/
   unsigned int m_dimz; /**< Volume depth in pixels (number of pixels on the x-axis)*/
-  unsigned int m_size; /**< Volume size : number of voxels in the whole volume*/
-  Type* m_data; /**< Data container */
   float m_elementSpacingX; /**< Element spacing along the x-axis, in meters */
   float m_elementSpacingY; /**< Element spacing along the y-axis, in meters */
   float m_elementSpacingZ; /**< Element spacing along the z-axis, in meters */
+  unsigned int m_size; /**< Volume size : number of voxels in the whole volume*/
+
+  Type* bitmap; /**< Data container */
+  Type **planesIndex ;
 };
 
 /****************************************************************************
 * Template implementations.
 ****************************************************************************/
+/*!
+  \brief Image initialization
+
+  Allocate memory for an [h x w x d] image.
+
+  \param w : Image width.
+  \param h : Image height.
+  \param d : Image depth.
+
+  Element of the bitmap are not initialized
+
+  If the image has been already initialized, memory allocation is done
+  only if the new image size is different, else we re-use the same
+  memory space.
+
+  \exception vpException::memoryAllocationError
+
+*/
+template<class Type>
+void
+usImage3D<Type>::init(unsigned int h, unsigned int w, unsigned int d)
+{
+  if ((h != this->m_dimx) || (w != this->m_dimy)) {
+    if (planesIndex != NULL)  {
+      vpDEBUG_TRACE(10,"Destruction index[]");
+      delete [] planesIndex;
+      planesIndex = NULL;
+    }
+  }
+
+  if ((h != this->m_dimx) || (w != this->m_dimy) || (d != this->m_dimz))
+  {
+    if (bitmap != NULL) {
+      vpDEBUG_TRACE(10,"Destruction bitmap[]") ;
+      delete [] bitmap;
+      bitmap = NULL;
+    }
+  }
+
+  this->m_dimx = w ;
+  this->m_dimy = h;
+  this->m_dimz = d;
+
+  m_size=m_dimx*m_dimy*m_dimz;
+
+  if (bitmap == NULL)  bitmap = new  Type[m_size] ;
+
+  //  vpERROR_TRACE("Allocate bitmap %p",bitmap) ;
+  if (bitmap == NULL)
+  {
+        vpERROR_TRACE("cannot allocate bitmap ") ;
+    throw(vpException(vpException::memoryAllocationError,
+          "cannot allocate bitmap ")) ;
+  }
+
+  if (planesIndex == NULL)  planesIndex = new  Type*[m_dimx] ;
+//  vpERROR_TRACE("Allocate row %p",row) ;
+  if (planesIndex == NULL)
+  {
+    vpERROR_TRACE("cannot allocate index ") ;
+    throw(vpException(vpException::memoryAllocationError,
+          "cannot allocate index ")) ;
+  }
+
+  //filling planesIndex
+  unsigned int i ;
+  for ( i =0  ; i < m_dimz ; i++)
+    planesIndex[i] = bitmap + i*m_dimx*m_dimy ;
+}
+
 
 template<class Type>
 usImage3D<Type>::usImage3D() : m_dimx(0), m_dimy(0), m_dimz(0), m_size(0),
-m_data(NULL), m_elementSpacingX(1.0f), m_elementSpacingY(1.0f), m_elementSpacingZ(1.0f)
+bitmap(NULL), planesIndex(NULL),m_elementSpacingX(1.0f), m_elementSpacingY(1.0f), m_elementSpacingZ(1.0f)
 {
 
 }
 
 template<class Type>
 usImage3D<Type>::usImage3D(unsigned int dimX, unsigned int dimY, unsigned int dimZ) : m_dimx(dimX), m_dimy(dimY), m_dimz(dimZ), m_size(dimX * dimY * dimZ),
-                                                                                      m_data(NULL), m_elementSpacingX(1.0f), m_elementSpacingY(1.0f), m_elementSpacingZ(1.0f) {
-
+                                                                                      bitmap(NULL), planesIndex(NULL), m_elementSpacingX(1.0f), m_elementSpacingY(1.0f), m_elementSpacingZ(1.0f) {
+    init(dimX,dimY,dimZ);
 }
 
 template<class Type>
 usImage3D<Type>::usImage3D(unsigned int dimx, unsigned int dimy, unsigned int dimz,
-  float elementSpacingX, float elementSpacingY, float elementSpacingZ)
-{
-  m_dimx = dimx;
-  m_dimy = dimy;
-  m_dimz = dimz;
-  m_size = m_dimx * m_dimy * m_dimz;
-  m_elementSpacingX = elementSpacingX;
-  m_elementSpacingY = elementSpacingY;
-  m_elementSpacingZ = elementSpacingZ;
-  //try to fill
-  try {
-    m_data = new Type[m_size];
-    std::fill_n(m_data, m_size, Type());
-  }
-  catch(std::exception e) {
-    std::cout << e.what() << std::endl;
-    std::cout << "Error allocating memory for volume data storage." << std::endl;
-  }
+  float elementSpacingX, float elementSpacingY, float elementSpacingZ)  : m_dimx(dimx), m_dimy(dimy), m_dimz(dimz), m_size(dimx * dimy * dimz),
+                                                                          bitmap(NULL), planesIndex(NULL), m_elementSpacingX(elementSpacingX), m_elementSpacingY(elementSpacingY), m_elementSpacingZ(elementSpacingZ) {
+    init(dimx,dimy,dimz);
 }
 
 template<class Type>
 usImage3D<Type>::usImage3D(const usImage3D<Type> &volume, const bool copy)
 {
-  m_dimx = volume.m_dimx;
-  m_dimy = volume.m_dimy;
-  m_dimz = volume.m_dimz;
-  m_size = m_dimx * m_dimy * m_dimz;
-  m_elementSpacingX = volume.m_elementSpacingX;
-  m_elementSpacingY = volume.m_elementSpacingY;
-  m_elementSpacingZ = volume.m_elementSpacingZ;
-  //try to allocate memory for data
+  init(volume.getDimX(),volume.getDimY(),volume.getDimZ());
 
-  if (copy) {
-    try {
-      m_data = new Type[m_size];
-    }
-    catch (std::exception e) {
-      std::cout << e.what() << std::endl;
-      std::cout << "Error allocating memory for volume data" << std::endl;
-    }
-    // not using memcpy because it's a C function, so no exeption thrown.
-    //memcpy(m_data, volume.m_data, m_size * sizeof(Type));
-  }
-  else {
-    m_data = volume.getConstData();
-  }
+  m_size = m_dimx * m_dimy * m_dimz;
+  m_elementSpacingX = volume.getElementSpacingX();
+  m_elementSpacingY = volume.getElementSpacingY();
+  m_elementSpacingZ = volume.getElementSpacingZ();
+
+  //deep copy
+  if(copy)
+    memcpy(bitmap, volume.bitmap, m_size * sizeof(Type));
 }
 
 template<class Type>
 usImage3D<Type>::~usImage3D()
 {
-  if (m_data)
+  if (planesIndex)
   {
-    delete[] m_data;
-    m_data = NULL;
+    delete[] planesIndex;
+    planesIndex = NULL;
+  }
+  if (bitmap)
+  {
+    delete[] bitmap;
+    bitmap = NULL;
   }
 }
 
@@ -322,28 +394,37 @@ usImage3D<Type> &usImage3D<Type>::operator=(const usImage3D<Type> &other)
     m_dimy = other.m_dimy;
     m_dimz = other.m_dimz;
     m_size = m_dimx * m_dimy * m_dimz;
-    if (m_data) delete[]m_data;
-    m_data = new Type[m_size];
+    if (bitmap) delete[]bitmap;
+    bitmap = new Type[m_size];
   }
 
   m_elementSpacingX = other.m_elementSpacingX;
   m_elementSpacingY = other.m_elementSpacingY;
   m_elementSpacingZ = other.m_elementSpacingZ;
-  memcpy(m_data, other.m_data, m_size * sizeof(Type));
+  memcpy(bitmap, other.bitmap, m_size * sizeof(Type));
   return *this;
 }
 
 template<class Type>
-void usImage3D<Type>::setData(Type* data)
+void usImage3D<Type>::setData(Type* data, int numberOfVloxels)
 {
-  m_data = data;
+  try {
+    m_size =numberOfVloxels;
+    memcpy(bitmap, data, m_size * sizeof(Type));
+  }
+  catch (std::exception e)
+  {
+    std::cout << e.what() << std::endl;
+    std::cout << "Bad allocation using std::fill_n() method." << std::endl;
+  }
 }
 
 template<class Type>
-void usImage3D<Type>::initData(Type value)
+void usImage3D<Type>::initData(Type value,int numberOfVloxels)
 {
   try {
-    std::fill_n(m_data, m_size, value);
+    m_size =numberOfVloxels;
+    std::fill_n(bitmap, m_size, value);
   }
   catch (std::exception e)
   {

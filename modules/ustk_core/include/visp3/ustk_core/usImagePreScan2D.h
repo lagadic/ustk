@@ -90,17 +90,6 @@ private:
   double m_axialResolution;
 };
 
-
-
-/**
-* Basic constructor, all settings set to default. For unsigned char data.
-*
-template<>
-usImagePreScan2D<unsigned char>::usImagePreScan2D() : vpImage<unsigned char>(), usImageSettings()
-{
-
-}
-
 /**
 * Basic constructor, all settings set to default. For double data.
 */
@@ -122,17 +111,6 @@ usImagePreScan2D<T>::usImagePreScan2D(unsigned int AN, unsigned int LN) : vpImag
 }
 
 /**
-* Initializing image size constructor. For unsigned char image type.
-* @param AN A-samples in a line (corresponds to image height in px).
-* @param LN Number of lines (corresponds to image width in px).
-*
-template<>
-usImagePreScan2D<unsigned char>::usImagePreScan2D(unsigned int AN, unsigned int LN) : vpImage<unsigned char>(LN, AN), usImageSettings()
-{
-
-}
-
-/**
 * Initializing constructor for image size and probe settings. For double image type.
 * @param AN number of A-samples in a line.
 * @param LN number of lines.
@@ -143,21 +121,6 @@ usImagePreScan2D<unsigned char>::usImagePreScan2D(unsigned int AN, unsigned int 
 template<class T>
 usImagePreScan2D<T>::usImagePreScan2D(unsigned int AN, unsigned int LN, double probeRadius, double scanLinePitch, bool isConvex) :
     vpImage<T>(AN, LN), usImageSettings(probeRadius, scanLinePitch, isConvex)
-{
-
-}
-
-/**
-* Initializing constructor for image size and probe settings. For unsigned char image type.
-* @param AN number of A-samples in a line.
-* @param LN number of lines.
-* @param probeRadius radius of the ultrasound probe used to acquire the RF image.
-* @param scanLinePitch Angle(rad) / Distance(m) between 2 lines of the ultrasound probe used to acquire the RF image. Angle if isConvex is true, distance if it's false.
-* @param isConvex Boolean to specify if the probe used was convex(true) or linear(false).
-*
-template<>
-usImagePreScan2D<unsigned char>::usImagePreScan2D(unsigned int AN, unsigned int LN, float probeRadius, float scanLinePitch, bool isConvex) :
-    vpImage<unsigned char>(AN, LN), usImageSettings(probeRadius, scanLinePitch, isConvex)
 {
 
 }
@@ -174,32 +137,11 @@ usImagePreScan2D<T>::usImagePreScan2D(const usImagePreScan2D &other) :
 }
 
 /**
-* Copy constructor. For unsigned char image type.
-* @param other usImagePreScan2D image you want to copy.
-*
-template<>
-usImagePreScan2D<unsigned char>::usImagePreScan2D(const usImagePreScan2D &other) :
-    vpImage<unsigned char>(other), usImageSettings(other)
-{
-
-}
-
-/**
 * Copy constructor. For double image type.
 * @param other vpImage<double> image you want to copy.
 */
 template<class T>
 usImagePreScan2D<T>::usImagePreScan2D(const vpImage<T> &other) : vpImage<T>(other)
-{
-
-}
-
-/**
-* Copy constructor. For unsigned char image type.
-* @param other vpImage<double> image you want to copy.
-*
-template<>
-usImagePreScan2D<unsigned char>::usImagePreScan2D(const vpImage<unsigned char> &other) : vpImage<unsigned char>(other)
 {
 
 }
@@ -226,16 +168,6 @@ usImagePreScan2D<T>::usImagePreScan2D(const vpImage<T> &other, const usImageSett
 }
 
 /**
-*Copy constructor.For unsigned char image type.
-* @param other usImageSettings you want to copy.
-*
-template<>
-usImagePreScan2D<unsigned char>::usImagePreScan2D(const vpImage<unsigned char> &other, const usImageSettings &otherSettings) :
-    vpImage<unsigned char>(other), usImageSettings(otherSettings)
-{
-
-}
-/**
 * Destructor.
 */
 template<class T>
@@ -250,17 +182,6 @@ void usImagePreScan2D<T>::copyFrom(const vpImage<T> &I)
 {
     resize(I.getHeight(), I.getWidth());
     memcpy(this->bitmap, I.bitmap, I.getSize() * sizeof(T));
-}
-
-/**
-* Copy from vpImage.
-* @param I vpImage<unsigned char> to copy.
-*
-template<>
-void usImagePreScan2D<unsigned char>::copyFrom(const vpImage<unsigned char> &I)
-{
-    resize(I.getHeight(), I.getWidth());
-    memcpy(bitmap, I.bitmap, I.getSize() * sizeof(unsigned char));
 }
 
 /**

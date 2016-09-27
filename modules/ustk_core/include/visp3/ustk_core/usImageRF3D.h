@@ -37,6 +37,8 @@
 #ifndef US_IMAGE_RF_2D_H
 #define US_IMAGE_RF_2D_H
 
+#include <cstring>
+
 #include <visp3/ustk_core/usImage3D.h>
 
 #include <visp3/ustk_core/usImageSettings3D.h>
@@ -47,7 +49,8 @@
 *
 * This class represents a 3D ultrasound RF frame.
 */
-class VISP_EXPORT usImageRF3D : public usImage3D<short>, public usImageSettings3D {
+template<class T>
+class VISP_EXPORT usImageRF3D : public usImage3D<T>, public usImageSettings3D {
 public:
 
   usImageRF3D();
@@ -57,13 +60,13 @@ public:
   usImageRF3D(unsigned int AN, unsigned int LN, unsigned int FN, double probeRadius, double motorRadius, double scanLinePitch, double framePitch,
     bool isImageConvex, bool isMotorConvex);
 
-  usImageRF3D(usImage3D<short> image3D, usImageSettings3D imageSettings);
+  usImageRF3D(usImage3D<T> image3D, usImageSettings3D imageSettings);
 
-  usImageRF3D(usImage3D<short> image3D);
+  usImageRF3D(usImage3D<T> image3D);
 
   usImageRF3D(usImageSettings3D imageSettings);
   
-  usImageRF3D(const usImageRF3D &other);
+  usImageRF3D(const usImageRF3D<T> &other);
 
   ~usImageRF3D();
 
@@ -80,5 +83,132 @@ public:
 private:
   double m_axialResolution;
 };
+
+/**
+* Basic constructor.
+*/
+template<class T>
+usImageRF3D<T>::usImageRF3D() : usImage3D<T>(), usImageSettings3D()
+{
+
+}
+
+/**
+* Initializing constructor for image dimentions.
+* @param[in] AN number of A-samples in a line.
+* @param[in] LN number of lines.
+*/
+template<class T>
+usImageRF3D<T>::usImageRF3D(unsigned int AN, unsigned int LN, unsigned int FN)
+  : usImage3D<T>(AN, LN, FN), usImageSettings3D()
+{
+
+}
+
+/**
+* Full initializing constructor.
+* @param[in] AN number of A-samples in a line.
+* @param[in] LN number of lines.
+* @param[in] FN number of frames.
+* @param[in] probeRadius radius of the ultrasound probe used to acquire the RF image.
+* @param[in] motorRadius radius of the ultrasound probe motor used to acquire the RF image.
+* @param[in] scanLinePitch angle(rad) / distance(m) between 2 lines of the ultrasound probe used to acquire the RF image.
+* @param[in] framePitch angle(rad) / distance(m) between 2 lines of the ultrasound probe used to acquire the RF image.
+* @param[in] isImageConvex Boolean to specyfy if the image was acquired by a convex probe(true) or by a linear probe (false).
+* @param[in] isMotorConvex Boolean to specyfy if the image was acquired by a rotating  motor(true) or by a linear motor (false).
+*/
+template<class T>
+usImageRF3D<T>::usImageRF3D(unsigned int AN, unsigned int LN, unsigned int FN, double probeRadius, double motorRadius, double scanLinePitch, double framePitch,
+  bool isImageConvex, bool isMotorConvex)
+  : usImage3D<T>(AN, LN, FN), usImageSettings3D(probeRadius, motorRadius, scanLinePitch, framePitch, isImageConvex, isMotorConvex)
+{
+
+}
+
+/**
+* Copy constructor from usImage3D and usImageSettings
+* @param image3D usImage3D to copy
+* @param imageSettings usImageSettings3D to copy
+*/
+template<class T>
+usImageRF3D<T>::usImageRF3D(usImage3D<T> image3D, usImageSettings3D imageSettings) : usImage3D<T>(image3D), usImageSettings3D(imageSettings) {
+
+}
+
+/**
+* Copy constructor from usImage3D and usImageSettings
+* @param image3D usImage3D to copy
+* @param imageSettings usImageSettings3D to copy
+*/
+template<class T>
+usImageRF3D<T>::usImageRF3D(usImage3D<T> image3D) : usImage3D<T>(image3D) {
+
+}
+
+/**
+* Copy constructor from usImage3D and usImageSettings
+* @param image3D usImage3D to copy
+* @param imageSettings usImageSettings3D to copy
+*/
+template<class T>
+usImageRF3D<T>::usImageRF3D(usImageSettings3D imageSettings) : usImageSettings3D(imageSettings) {
+
+}
+
+/**
+* Copy constructor.
+* @param other usImageRF3D to copy
+*/
+template<class T>
+usImageRF3D<T>::usImageRF3D(const usImageRF3D& other)
+  : usImage3D<T>(other), usImageSettings3D(other)
+{
+
+}
+
+/**
+* Destructor.
+*/
+template<class T>
+usImageRF3D<T>::~usImageRF3D()
+{
+
+}
+
+/**
+* Get the number of A-samples in a line.
+* @return AN number of A-samples in a line.
+*/
+template<class T>
+unsigned int usImageRF3D<T>::getAN() const { return usImage3D<T>::getDimX(); }
+
+/**
+* Get the number of lines.
+* @return LN number of lines.
+*/
+template<class T>
+unsigned int  usImageRF3D<T>::getLN() const { return usImage3D<T>::getDimY(); }
+
+/**
+* Get the number of frames.
+* @return FN number of frames.
+*/
+template<class T>
+unsigned int  usImageRF3D<T>::getFN() const { return usImage3D<T>::getDimZ(); }
+
+/**
+* Setter for axial Resolution.
+* @param Axial resolution (in meters) to set.
+*/
+template<class T>
+void usImageRF3D<T>::setAxialResolution(double axialResolution) { m_axialResolution = axialResolution; }
+
+/**
+* Getter for axial Resolution.
+* @return Axial resolution (in meters).
+*/
+template<class T>
+double usImageRF3D<T>::getAxialResolution() const { return m_axialResolution; }
+
 
 #endif // US_IMAGE_RF_2D_H

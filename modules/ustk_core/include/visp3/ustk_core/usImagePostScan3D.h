@@ -49,7 +49,8 @@
 *
 * This class represents a 3D ultrasound postscan frame.
 */
-class VISP_EXPORT usImagePostScan3D : public usImage3D<unsigned char>, public usImageSettings3D {
+template<class T>
+class VISP_EXPORT usImagePostScan3D : public usImage3D<T>, public usImageSettings3D {
 public:
   usImagePostScan3D();
 
@@ -57,11 +58,11 @@ public:
 
   usImagePostScan3D(const usImagePostScan3D &other);
 
-  usImagePostScan3D(const usImage3D<unsigned char> &other);
+  usImagePostScan3D(const usImage3D<T> &other);
 
   usImagePostScan3D(const usImageSettings3D &other);
 
-  usImagePostScan3D(const usImage3D<unsigned char> &otherImage, const usImageSettings3D &otherSettings);
+  usImagePostScan3D(const usImage3D<T> &otherImage, const usImageSettings3D &otherSettings);
 
   ~usImagePostScan3D();
 
@@ -77,5 +78,111 @@ private:
   double m_widthResolution;
   double m_heightResolution;
 };
+
+
+/**
+* Basic constructor, all parameters set to default values
+*/
+template<class T>
+usImagePostScan3D<T>::usImagePostScan3D() : usImage3D<T>(), usImageSettings3D()
+{
+
+}
+
+/**
+* Complete constructor, all parameters availables.
+* @param AN A-samples in a line (corresponds to image height in px).
+* @param LN Number of lines (corresponds to image width in px).
+* @param FN Number of Frames.
+* @param probeRadius radius of the ultrasound probe used to acquire the RF image.
+* @param motorRadius radius of the ultrasound probe motor used to acquire the RF image.
+* @param scanLinePitch angle(rad) / distance(m) between 2 lines of the ultrasound probe used to acquire the RF image.
+* @param framePitch angle(rad) / distance(m) between 2 lines of the ultrasound probe used to acquire the RF image.
+* @param isImageConvex Boolean to specyfy if the image was acquired by a convex probe(true) or by a linear probe (false).
+* @param isMotorConvex Boolean to specyfy if the image was acquired by a rotating  motor(true) or by a linear motor (false).
+*/
+template<class T>
+usImagePostScan3D<T>::usImagePostScan3D(unsigned int AN, unsigned int LN, unsigned int FN, double probeRadius, double motorRadius, double scanLinePitch, double framePitch, bool isImageConvex, bool isMotorConvex)
+  : usImage3D<T>(), usImageSettings3D(probeRadius, motorRadius, scanLinePitch, framePitch, isImageConvex, isMotorConvex)
+{
+
+}
+
+/**
+* Copy constructor from other usImagePostScan3D
+* @param other usImagePostScan3D to copy
+*/
+template<class T>
+usImagePostScan3D<T>::usImagePostScan3D(const usImagePostScan3D &other) : usImage3D<T>(other), usImageSettings3D(other)
+{
+
+}
+
+
+/**
+* Constructor from usImage3D
+* @param other usImage3D<unsigned char> to copy
+*/
+template<class T>
+usImagePostScan3D<T>::usImagePostScan3D(const usImage3D<T> &other) : usImage3D<T>(other)
+{
+
+}
+
+/**
+* Constructor from usImageSettings3D.
+* @param other usImageSettings3D to copy
+*/
+template<class T>
+usImagePostScan3D<T>::usImagePostScan3D(const usImageSettings3D &other) : usImageSettings3D(other)
+{
+
+}
+
+/**
+* Constructor from usImage3D and usImageSettings3D.
+* @param otherImage usImage3D<unsigned char> to copy
+* @param otherSettings usImageSettings3D to copy
+*/
+template<class T>
+usImagePostScan3D<T>::usImagePostScan3D(const usImage3D<T> &otherImage, const usImageSettings3D &otherSettings) : usImage3D<T>(otherImage), usImageSettings3D(otherSettings)
+{
+
+}
+
+/**
+* Destructor.
+*/
+template<class T>
+usImagePostScan3D<T>::~usImagePostScan3D() {}
+
+/**
+* Setter for width Resolution.
+* @param widthResolution Width resolution (in meters) to set.
+*/
+template<class T>
+void usImagePostScan3D<T>::setWidthResolution(double widthResolution) { m_widthResolution = widthResolution; }
+
+/**
+* Getter for width Resolution.
+* @return widthResolution Width resolution (in meters).
+*/
+template<class T>
+double usImagePostScan3D<T>::getWidthResolution() { return m_heightResolution; }
+
+/**
+* Setter for width Resolution.
+* @param heightResolution Height resolution (in meters) to set.
+*/
+template<class T>
+void usImagePostScan3D<T>::setHeightResolution(double heightResolution) { m_heightResolution = heightResolution; }
+
+/**
+* Setter for width Resolution.
+* @param heightResolution Height resolution (in meters) to set.
+*/
+template<class T>
+double usImagePostScan3D<T>::getHeightResolution() { return m_heightResolution; }
+
 
 #endif // US_IMAGE_POSTSCAN_3D_H

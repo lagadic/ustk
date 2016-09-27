@@ -49,19 +49,20 @@
  *
  * This class represents a 2D ultrasound postscan frame.
  */
-class VISP_EXPORT usImagePostScan2D : public vpImage<unsigned char>, public usImageSettings {
+template<class T>
+class VISP_EXPORT usImagePostScan2D : public vpImage<T>, public usImageSettings {
  public:
   usImagePostScan2D();
 
   usImagePostScan2D(unsigned int AN, unsigned int LN, double probeRadius, double scanLinePitch, bool isConvex);
 
-  usImagePostScan2D(const usImagePostScan2D &other);
+  usImagePostScan2D(const usImagePostScan2D<T> &other);
 
-  usImagePostScan2D(const vpImage<unsigned char> &other);
+  usImagePostScan2D(const vpImage<T> &other);
 
   usImagePostScan2D(const usImageSettings &other);
 
-  usImagePostScan2D(const vpImage<unsigned char> &otherImage, const usImageSettings &otherSettings);
+  usImagePostScan2D(const vpImage<T> &otherImage, const usImageSettings &otherSettings);
 
   ~usImagePostScan2D();
 
@@ -77,5 +78,105 @@ private:
   double m_widthResolution;
   double m_heightResolution;
 };
+
+/**
+* Basic constructor, all parameters set to default values
+*/
+template<class T>
+usImagePostScan2D<T>::usImagePostScan2D() : vpImage<T>(), usImageSettings()
+{
+
+}
+
+/**
+* Full constructor, all parameters settables.
+* @param AN number of A-samples in a line.
+* @param LN number of lines.
+* @param probeRadius radius of the ultrasound probe used to acquire the RF image.
+* @param scanLinePitch Angle(rad) / Distance(m) between 2 lines of the ultrasound probe used to acquire the RF image. Angle if isConvex is true, distance if it's false.
+* @param isConvex Boolean to specify if the probe used was convex(true) or linear(false).
+*/
+template<class T>
+usImagePostScan2D<T>::usImagePostScan2D(unsigned int AN, unsigned int LN, double probeRadius, double scanLinePitch, bool isConvex)
+  : vpImage<T>(AN,LN), usImageSettings(probeRadius, scanLinePitch, isConvex)
+{
+
+}
+
+/**
+* Copy constructor from other usImagePostScan2D
+* @param other usImagePostScan2D to copy
+*/
+template<class T>
+usImagePostScan2D<T>::usImagePostScan2D(const usImagePostScan2D<T> &other) : vpImage<T>(other), usImageSettings(other)
+{
+
+}
+
+
+/**
+* Constructor from vpImage
+* @param other vpImage<unsigned char> to copy
+*/
+template<class T>
+usImagePostScan2D<T>::usImagePostScan2D(const vpImage<T> &other) : vpImage<T>(other)
+{
+
+}
+
+/**
+* Constructor from usImageSettings.
+* @param other usImageSettings to copy
+*/
+template<class T>
+usImagePostScan2D<T>::usImagePostScan2D(const usImageSettings &other) : usImageSettings(other)
+{
+
+}
+
+/**
+* Constructor from vpImage and usImageSettings.
+* @param otherImage vpImage<unsigned char> to copy
+* @param otherSettings usImageSettings to copy
+*/
+template<class T>
+usImagePostScan2D<T>::usImagePostScan2D(const vpImage<T> &otherImage, const usImageSettings &otherSettings) : vpImage<T>(otherImage), usImageSettings(otherSettings)
+{
+
+}
+
+/**
+* Destructor.
+*/
+template<class T>
+usImagePostScan2D<T>::~usImagePostScan2D() {}
+
+/**
+* Setter for width Resolution.
+* @param widthResolution Width resolution (in meters) to set.
+*/
+template<class T>
+void usImagePostScan2D<T>::setWidthResolution(double widthResolution) { m_widthResolution = widthResolution; }
+
+/**
+* Getter for width Resolution.
+* @return widthResolution Width resolution (in meters).
+*/
+template<class T>
+double usImagePostScan2D<T>::getWidthResolution() { return m_heightResolution; }
+
+/**
+* Setter for width Resolution.
+* @param heightResolution Height resolution (in meters) to set.
+*/
+template<class T>
+void usImagePostScan2D<T>::setHeightResolution(double heightResolution) { m_heightResolution = heightResolution; }
+
+/**
+* Setter for width Resolution.
+* @param heightResolution Height resolution (in meters) to set.
+*/
+template<class T>
+double usImagePostScan2D<T>::getHeightResolution() { return m_heightResolution; }
 
 #endif // US_IMAGE_POSTSCAN_2D_H
