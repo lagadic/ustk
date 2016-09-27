@@ -93,9 +93,12 @@ private:
   double m_axialResolution;
 };
 
+<<<<<<< 9b681142d7f8fc2d2bcd57be715fc6bb5bc19cb3
 
+=======
+>>>>>>> code polishing to remove warnings at compilation
 /**
-* Basic constructor, all settings set to default. For double data.
+* Basic constructor, all settings set to default.
 */
 template<class T>
 usImagePreScan3D<T>::usImagePreScan3D() : usImage3D<T>(), usImageSettings3D()
