@@ -84,6 +84,12 @@ usImageSettings& usImageSettings::operator=(const usImageSettings& other)
   return *this;
 }
 
+bool usImageSettings::operator ==(usImageSettings const& other)
+{
+  return ( this->getProbeRadius() == other.getProbeRadius() &&
+           this->getScanLinePitch() == other.getScanLinePitch() &&
+           this->isImageConvex() == other.isImageConvex());
+}
 //Image settings getters/setters
 
 /**

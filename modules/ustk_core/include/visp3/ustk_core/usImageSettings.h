@@ -65,7 +65,10 @@ class VISP_EXPORT usImageSettings {
   virtual ~usImageSettings();
 
   usImageSettings& operator=(const usImageSettings& other);
-  
+
+  //comparaison
+  bool operator ==(usImageSettings const& other);
+
   //Settings form the probe
 
   void setProbeRadius(double probeRadius);

@@ -83,12 +83,16 @@ public:
   usImageSettingsXmlParser& operator =(const usImageSettingsXmlParser& twinparser);
   virtual ~usImageSettingsXmlParser();
   
+  //comparaison
+  bool operator ==(usImageSettingsXmlParser const& other);
+
   // Data accessors.
   usImageSettings getImageSettings() const {return m_imageSettings;}
   std::string getImageFileName() const {return m_imageFileName;}
   float getAxialResolution() const { return m_axialResolution; }
   float getHeightResolution() const { return m_heightResolution; }
   float getWidthResolution() const { return m_widthResolution; }
+  bool isImagePreScan() const { return m_is_prescan; }
   
   //Data setters
   void setImagePreScanSettings(usImagePreScan2D<unsigned char> imagePrescan2D);
@@ -96,6 +100,7 @@ public:
   void setImageSettings(float probeRadius, float scanLinePitch, bool isImageConvex, float axialResolution);
   void setImageSettings(float probeRadius, float scanLinePitch, bool isImageConvex, float widthResolution, float heightResolution);
   void setImageFileName(std::string imageFileName);
+  void setImagePreScan(bool is_prescan) { m_is_prescan = is_prescan; }
 
 private:
   usImageSettings m_imageSettings;

@@ -88,6 +88,15 @@ usImageSettings3D& usImageSettings3D::operator=(const usImageSettings3D& other)
   return *this;
 }
 
+inline bool usImageSettings3D::operator==(const usImageSettings3D& other)
+{
+    return ( this->getProbeRadius() == other.getProbeRadius() &&
+             this->getScanLinePitch() == other.getScanLinePitch() &&
+             this->isImageConvex() == other.isImageConvex() &&
+             this->getFramePitch() == other.getFramePitch() &&
+             this->getMotorRadius() == other.getMotorRadius());
+}
+
 //probe settings getters/setters
 
 /**

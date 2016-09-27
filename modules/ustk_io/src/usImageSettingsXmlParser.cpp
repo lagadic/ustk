@@ -69,6 +69,16 @@ usImageSettingsXmlParser::~usImageSettingsXmlParser()
   
 }
 
+bool usImageSettingsXmlParser::operator ==(usImageSettingsXmlParser const& other)
+{
+    return (this->getImageSettings() == other.getImageSettings() &&
+       this->getImageFileName() == other.getImageFileName() &&
+       this->getAxialResolution() == other.getAxialResolution() &&
+       this->getHeightResolution() == other.getHeightResolution() &&
+       this->getWidthResolution() == other.getWidthResolution()
+    );
+}
+
 void
 usImageSettingsXmlParser::readMainClass (xmlDocPtr doc, xmlNodePtr node)
 {

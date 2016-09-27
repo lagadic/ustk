@@ -63,6 +63,8 @@ class VISP_EXPORT usImageSettings3D : public usImageSettings {
   virtual ~usImageSettings3D();
 
   usImageSettings3D& operator=(const usImageSettings3D& other);
+
+  inline bool operator==(const usImageSettings3D& other);
   
   //Settings form the 3D probe
 
