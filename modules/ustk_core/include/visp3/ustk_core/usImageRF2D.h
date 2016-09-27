@@ -50,7 +50,7 @@
  * This class represents a 2D ultrasound RF frame.
  */
 template<class T>
-class VISP_EXPORT usImageRF2D : public vpImage<T>, public usImageSettings {
+class usImageRF2D : public vpImage<T>, public usImageSettings {
  public:
   
   usImageRF2D();

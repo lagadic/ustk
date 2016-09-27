@@ -50,7 +50,7 @@
 * This class represents a 3D ultrasound postscan frame.
 */
 template<class T>
-class VISP_EXPORT usImagePostScan3D : public usImage3D<T>, public usImageSettings3D {
+class usImagePostScan3D : public usImage3D<T>, public usImageSettings3D {
 public:
   usImagePostScan3D();
 

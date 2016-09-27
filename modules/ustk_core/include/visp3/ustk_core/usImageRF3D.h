@@ -50,7 +50,7 @@
 * This class represents a 3D ultrasound RF frame.
 */
 template<class T>
-class VISP_EXPORT usImageRF3D : public usImage3D<T>, public usImageSettings3D {
+class usImageRF3D : public usImage3D<T>, public usImageSettings3D {
 public:
 
   usImageRF3D();
