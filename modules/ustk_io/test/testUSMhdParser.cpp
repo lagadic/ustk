@@ -193,8 +193,8 @@ int main(int argc, const char** argv)
     prescan2DReference.setAxialResolution(0.0005f);
     prescan2DReference.setScanLinePitch(0.0045f);
     prescan2DReference.setProbeRadius(0.0547896);
-
-    testReferenceSettings.setImagePreScanSettings(prescan2DReference);
+/*
+    testReferenceSettings.setImageSettings(prescan2DReference);
     testReferenceSettings.setImageFileName(std::string("prescan2D.png"));
     testReferenceSettings.setImagePreScan(true);
 
@@ -215,7 +215,7 @@ int main(int argc, const char** argv)
         return 0;
       }
     }
-
+*/
     filename = dirname + vpIoTools::path("/") + "dataTestXml.xml";
 
     // Write data using a parser.

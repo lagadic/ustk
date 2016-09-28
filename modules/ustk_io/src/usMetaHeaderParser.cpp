@@ -28,7 +28,7 @@ void usMetaHeaderParser::readMHDHeader(const std::string fileName)
     readMHDHeader(fileName.c_str());
 }
 
-usMetaHeaderParser::MHDHeader  usMetaHeaderParser::readMHDHeader(const char * fileName)
+void  usMetaHeaderParser::readMHDHeader(const char * fileName)
 {
   std::string pathPrefix;
   std::string tmp;
@@ -240,8 +240,6 @@ usMetaHeaderParser::MHDHeader  usMetaHeaderParser::readMHDHeader(const char * fi
   }
 
   file.close();
-
-  return this->mhdHeader;
 }
 
 void usMetaHeaderParser::parse(const std::string& filename)

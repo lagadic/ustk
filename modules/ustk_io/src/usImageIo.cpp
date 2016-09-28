@@ -213,9 +213,16 @@ void usImageIo::write(const usImagePostScan3D<unsigned char> &postScanImage, con
 */
 void usImageIo::read(usImagePostScan3D<unsigned char> &postScanImage,std::string mhdFileName) {
     usMetaHeaderParser mhdParser;
-    usMetaHeaderParser::MHDHeader mhdHeader = mhdParser.readMHDHeader(mhdFileName.c_str());
-
-    std::cout << "mhdFileName: " << mhdHeader.mhdFileName << std::endl;
+    mhdParser.read(mhdFileName);
+    if (mhdParser.getImageType() != usMetaHeaderParser::POSTSCAN_3D) {
+      throw(vpException(vpException::badValue,"Reading a non postscan3d image!"));
+    }
+    postScanImage = mhdParser.getImageSettings3D();
+    postScanImage.setWidthResolution(mhdParser.getWidthResolution());
+    postScanImage.setHeightResolution(mhdParser.getHeightResolution());
+    std::cout << "raw filname: " << mhdParser.getImageFileName() << std::endl;
+/*
+    std::cout << "mhdFileName: " << m_mhdHeader.mhdFileName << std::endl;
     std::cout << "rawFileName: " << mhdHeader.rawFileName << std::endl;
     std::cout << "numberOfDimensions: " << mhdHeader.numberOfDimensions << std::endl;
     std::cout << "numberOfChannels: " << mhdHeader.numberOfChannels << std::endl;
@@ -231,7 +238,7 @@ void usImageIo::read(usImagePostScan3D<unsigned char> &postScanImage,std::string
     std::cout << "probeRadius: " << mhdHeader.probeRadius;
     std::cout << "scanLinePitch: " << mhdHeader.scanLinePitch;
     std::cout << "motorradius: " << mhdHeader.motorRadius;
-    std::cout << "framePitch: " << mhdHeader.framePitch;
+    std::cout << "framePitch: " << mhdHeader.framePitch;*/
 
 
 }

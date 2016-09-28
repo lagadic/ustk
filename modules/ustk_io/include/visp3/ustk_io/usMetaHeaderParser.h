@@ -71,7 +71,7 @@ public:
   bool operator ==(usMetaHeaderParser const& other);
 
   //Read/write operations
-  MHDHeader readMHDHeader(const char * fileName);
+  void readMHDHeader(const char * fileName);
 
   void readMHDHeader(const std::string fileName);
 
@@ -87,6 +87,7 @@ public:
   double getAxialResolution() const { return m_axialResolution; }
   double getHeightResolution() const { return m_heightResolution; }
   double getWidthResolution() const { return m_widthResolution; }
+  ImageType getImageType() const { return mhdHeader.imageType; }
 
   //Data setters
   void setImageSettings(const usImageSettings imageSettings);
