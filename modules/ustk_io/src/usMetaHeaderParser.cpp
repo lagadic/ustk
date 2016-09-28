@@ -32,25 +32,24 @@ usMetaHeaderParser::MHDHeader  usMetaHeaderParser::readMHDHeader(const char * fi
 
   std::string keyword, keyval;
 
-  MHDHeader header;
-  header.numberOfDimensions = 0;
-  header.mhdFileName = fileName;
-  header.rawFileName = "";
-  header.numberOfChannels = 1;
-  header.dim[0] = 1;
-  header.dim[1] = 1;
-  header.dim[2] = 1;
-  header.dim[3] = 1;
-  header.elementSpacing[0] = 1.0f;
-  header.elementSpacing[1] = 1.0f;
-  header.elementSpacing[2] = 1.0f;
-  header.elementSpacing[3] = 1.0f;
-  header.position[0] = 0.0f;
-  header.position[1] = 0.0f;
-  header.position[2] = 0.0f;
-  header.position[3] = 0.0f;
-  header.msb = false;
-  header.headerSize = 0;
+  this->mhdHeader.numberOfDimensions = 0;
+  this->mhdHeader.mhdFileName = fileName;
+  this->mhdHeader.rawFileName = "";
+  this->mhdHeader.numberOfChannels = 1;
+  this->mhdHeader.dim[0] = 1;
+  this->mhdHeader.dim[1] = 1;
+  this->mhdHeader.dim[2] = 1;
+  this->mhdHeader.dim[3] = 1;
+  this->mhdHeader.elementSpacing[0] = 1.0f;
+  this->mhdHeader.elementSpacing[1] = 1.0f;
+  this->mhdHeader.elementSpacing[2] = 1.0f;
+  this->mhdHeader.elementSpacing[3] = 1.0f;
+  this->mhdHeader.position[0] = 0.0f;
+  this->mhdHeader.position[1] = 0.0f;
+  this->mhdHeader.position[2] = 0.0f;
+  this->mhdHeader.position[3] = 0.0f;
+  this->mhdHeader.msb = false;
+  this->mhdHeader.headerSize = 0;
 
   std::ifstream file;
   file.open(fileName, std::ifstream::in);
@@ -66,25 +65,25 @@ usMetaHeaderParser::MHDHeader  usMetaHeaderParser::readMHDHeader(const char * fi
     keyword.erase(std::remove(keyword.begin(),keyword.end(),' '),it);
     if (keyword == "NDims")
     {
-      file >> header.numberOfDimensions;
+      file >> this->mhdHeader.numberOfDimensions;
       std::getline(file, keyval, '\n');
     }
     else if (keyword == "DimSize")
     {
-      for (unsigned int i = 0; i < header.numberOfDimensions; i++)
-        file >> header.dim[i];
+      for (unsigned int i = 0; i < this->mhdHeader.numberOfDimensions; i++)
+        file >> this->mhdHeader.dim[i];
       std::getline(file, keyval, '\n');
     }
     else if (keyword == "ElementSpacing")
     {
-      for (unsigned int i = 0; i < header.numberOfDimensions; i++)
-        file >> header.elementSpacing[i];
+      for (unsigned int i = 0; i < this->mhdHeader.numberOfDimensions; i++)
+        file >> this->mhdHeader.elementSpacing[i];
       std::getline(file, keyval, '\n');
     }
     else if (keyword == "Position")
     {
-      for (unsigned int i = 0; i < header.numberOfDimensions; i++)
-        file >> header.position[i];
+      for (unsigned int i = 0; i < this->mhdHeader.numberOfDimensions; i++)
+        file >> this->mhdHeader.position[i];
       std::getline(file, keyval, '\n');
     }
     else if (keyword == "ImagePositionPatient")
@@ -98,7 +97,7 @@ usMetaHeaderParser::MHDHeader  usMetaHeaderParser::readMHDHeader(const char * fi
       keyval.erase(std::remove(keyval.begin(),keyval.end(),' '),it);
       it=keyval.end();
       keyval.erase(std::remove(keyval.begin(),keyval.end(),'\r'),it);
-      header.msb = ((keyval == "True") || (keyval == "1"));
+      this->mhdHeader.msb = ((keyval == "True") || (keyval == "1"));
     }
     else if (keyword == "BinaryDataByteOrderMSB")
     {
@@ -107,11 +106,11 @@ usMetaHeaderParser::MHDHeader  usMetaHeaderParser::readMHDHeader(const char * fi
       keyval.erase(std::remove(keyval.begin(),keyval.end(),' '),it);
       it=keyval.end();
       keyval.erase(std::remove(keyval.begin(),keyval.end(),'\r'),it);
-      header.msb = ((keyval == "True") || (keyval == "1"));
+      this->mhdHeader.msb = ((keyval == "True") || (keyval == "1"));
     }
     else if (keyword == "ElementNumberOfChannels")
     {
-      file >> header.numberOfChannels;
+      file >> this->mhdHeader.numberOfChannels;
       std::getline(file, keyval, '\n');
     }
     else if (keyword == "ElementType")
@@ -122,14 +121,14 @@ usMetaHeaderParser::MHDHeader  usMetaHeaderParser::readMHDHeader(const char * fi
       it=keyval.end();
       keyval.erase(std::remove(keyval.begin(), keyval.end(), '\r'), it);
       std::map<std::string, int>::iterator mapIt = elementTypeMap.find(keyval);
-      header.elementType = ((mapIt != elementTypeMap.end()) ? (ElementType)mapIt->second : MET_UNKNOWN);
+      this->mhdHeader.elementType = ((mapIt != elementTypeMap.end()) ? (ElementType)mapIt->second : MET_UNKNOWN);
     }
     else if (keyword == "HeaderSize")
     {
-      file >> header.headerSize;
+      file >> this->mhdHeader.headerSize;
       std::getline(file, keyval, '\n');
-      if ((header.headerSize) && (header.headerSize != -1)) {
-        std::cout <<   "Warning: " << header.headerSize << " bytes header" << std::endl;
+      if ((this->mhdHeader.headerSize) && (this->mhdHeader.headerSize != -1)) {
+        std::cout <<   "Warning: " << this->mhdHeader.headerSize << " bytes this->mhdHeader" << std::endl;
       }
     }
     else if (keyword == "ElementDataFile")
@@ -139,7 +138,7 @@ usMetaHeaderParser::MHDHeader  usMetaHeaderParser::readMHDHeader(const char * fi
       keyval.erase(std::remove(keyval.begin(),keyval.end(),' '),it);
       it=keyval.end();
       keyval.erase(std::remove(keyval.begin(),keyval.end(),'\r'),it);
-      header.rawFileName = keyval;
+      this->mhdHeader.rawFileName = keyval;
     }
     else if (keyword == "UltrasoundImageType")
     {
@@ -149,7 +148,7 @@ usMetaHeaderParser::MHDHeader  usMetaHeaderParser::readMHDHeader(const char * fi
       it=keyval.end();
       keyval.erase(std::remove(keyval.begin(),keyval.end(),'\r'),it);
       std::map<std::string, int>::iterator mapIt = imageTypeMap.find(keyval);
-      header.imageType = ((mapIt != imageTypeMap.end()) ? (ImageType)mapIt->second : UNKNOWN );
+      this->mhdHeader.imageType = ((mapIt != imageTypeMap.end()) ? (ImageType)mapIt->second : UNKNOWN );
     }
     else
     {
@@ -162,5 +161,15 @@ usMetaHeaderParser::MHDHeader  usMetaHeaderParser::readMHDHeader(const char * fi
 
   file.close();
 
-  return header;
+  return this->mhdHeader;
+}
+
+void parse(const std::string& filename)
+{
+
+}
+
+void read(const std::string& filename)
+{
+
 }

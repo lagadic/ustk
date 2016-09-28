@@ -50,41 +50,39 @@
 
 /**
  * @class usImageIo
- * @brief Input/output operations between ultrasound data and image files and their associated header (containing usImageSettings info).
+ * @brief Input/output operations between ultrasound data and files (header + image file).
  */
 class VISP_EXPORT usImageIo
 {
 public:
 
-  usImageIo();
-
   //RF
-  bool write(usImageRF2D &rfImage, const std::string filename);
-  usImageRF2D readRF2D(const std::string filename);
-  bool write(usImageRF3D &rfImage3D, const std::string filename);
-  usImageRF3D readRF3D(const std::string filename);
+  static void write(const usImageRF2D &rfImage, const std::string filename);
+  static void read(usImageRF2D &rfImage,const std::string filename);
+  static void write(const usImageRF3D &rfImage3D, const std::string filename);
+  static void read(usImageRF3D &rfImage3D, const std::string filename);
 
   //PreScan-unsigned char
 #ifdef VISP_HAVE_XML2
-  bool writeXmlPng(usImagePreScan2D<unsigned char> &preScanImage, const std::string filename);
-  usImagePreScan2D<unsigned char> readPreScan2DUCharFromXml(const std::string filename);
+  static void writeXml(const usImagePreScan2D<unsigned char> &preScanImage, const std::string xmlFilename);
+  static void readXml(usImagePreScan2D<unsigned char> &preScanImage,const std::string xmlFilename);
 #endif //VISP_HAVE_XML2
-  bool write(usImagePreScan3D<unsigned char> &preScanImage3D, const std::string filename);
-  usImagePreScan3D<unsigned char> readPreScan3DUChar(const std::string filename);
+  static void write(const usImagePreScan3D<unsigned char> &preScanImage3D, const std::string filename);
+  static void read(usImagePreScan3D<unsigned char> &preScanImage3D, const std::string filename);
 
   //PreScan-double
-  bool write(usImagePreScan2D<double> &preScanImage, const std::string filename);
-  usImagePreScan2D<double> readPreScan2DDouble(const std::string filename);
-  bool write(usImagePreScan3D<double> &preScanImage3D, const std::string filename);
-  usImagePreScan3D<double> readPreScan3DDouble(const std::string filename);
+  static void write(const usImagePreScan2D<double> &preScanImage, const std::string filename);
+  static void read(usImagePreScan2D<double> &preScanImage,const std::string filename);
+  static void write(const usImagePreScan3D<double> &preScanImage3D, const std::string filename);
+  static void read(usImagePreScan3D<double> &preScanImage3D,const std::string filename);
 
   //postScan
 #ifdef VISP_HAVE_XML2
-  bool writeXmlPng(usImagePostScan2D &postScanImage, const std::string filename);
-  usImagePostScan2D readPostScan2DFromXml(const std::string filename);
+  static void writeXml(const usImagePostScan2D &postScanImage, const std::string filename);
+  static void readPostScan2DFromXml(usImagePostScan2D &postScanImage, const std::string filename);
 #endif //VISP_HAVE_XML2
-  bool write(usImagePostScan3D &postScanImage3D, const std::string filename);
-  usImagePostScan3D readPostScan3D(std::string mhdFileName);
+  static void write(const usImagePostScan3D &postScanImage3D, const std::string filename);
+  static void read(const usImagePostScan3D &postScanImage3D,std::string mhdFileName);
 };
 
 #endif //US_IMAGE_IO_H

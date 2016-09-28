@@ -41,122 +41,121 @@
 #include <visp3/ustk_io/usImageSettingsXmlParser.h>
 
 /**
- * Constructor
- */
-usImageIo::usImageIo() {}
-
-/**
 * Write 2D rf ultrasound image
 */
-bool usImageIo::write(usImageRF2D &rfImage, const std::string filename) {
-    return false;
+void usImageIo::write(usImageRF2D &imageRf2D, const std::string filename) {
+
 }
 
 /**
 * Read 2D rf ultrasound image
 */
-usImageRF2D usImageIo::readRF2D(const std::string filename) {
-    return usImageRF2D();
+void usImageIo::read(usImageRF2D &imageRf2D, const std::string filename) {
+
 }
 
 /**
 * Write 3D rf ultrasound image
 */
-bool usImageIo::write(usImageRF3D &rfImage3D, const std::string filename) {
-    return false;
+void usImageIo::write(usImageRF3D &imageRf3D, const std::string filename) {
+
 }
 
 /**
 * Read 3D rf ultrasound image
 */
-usImageRF3D usImageIo::readRF3D(const std::string filename) {
-    return usImageRF3D();
+void usImageIo::readRF3D(usImageRF3D &imageRf3,const std::string filename) {
+
 }
 
 #ifdef VISP_HAVE_XML2
 /**
 * Write 2D unsigned char prescan ultrasound image
 */
-bool usImageIo::writeXmlPng(usImagePreScan2D<unsigned char> &preScanImage, const std::string filename) {
+void usImageIo::writeXml(usImagePreScan2D<unsigned char> &preScanImage, const std::string imageFilename) {
     try {
-        std::string pngFileName = filename + ".png";
-        std::string xmlFileName = filename + ".xml";
-        vpImageIo::writePNG(preScanImage, pngFileName);
+        //writing image
+        vpImageIo::write(preScanImage, imageFilename);
+        //writing xml
         usImageSettingsXmlParser xmlSettings;
         xmlSettings.setImagePreScanSettings(preScanImage);
-        xmlSettings.setImageFileName(pngFileName);
+        xmlSettings.setImageFileName(imageFilename);
+        //get xml filename from imageFilename
+        std::vector<std::string> splittedFileName = vpIoTools::splitChain(imageFilename, ".");
+        std::string xmlFileName = splittedFileName[0] + ".xml";
         xmlSettings.save(xmlFileName);
     }
     catch (std::exception e) {
         std::cout << "Error writing postScan image : " << std::endl;
         std::cout << e.what() << std::endl;
-        return false;
     }
-    return true;
 }
 
 /**
 * Read 2D unsigned char prescan ultrasound image
 */
-usImagePreScan2D<unsigned char> usImageIo::readPreScan2DUCharFromXml(const std::string xmlFilename) {
+void usImageIo::readXml(usImagePreScan2D<unsigned char> &preScanImage,const std::string imageFilename)
+{
+    //get xml filename from imageFilename
+    std::vector<std::string> splittedFileName = vpIoTools::splitChain(imageFilename, ".");
+    std::string xmlFileName = splittedFileName[0] + ".xml";
+    //parsing xml file
     usImageSettingsXmlParser xmlSettings;
     try {
-        xmlSettings.parse(xmlFilename);
+        xmlSettings.parse(xmlFileName);
     }
     catch (std::exception e) {
         std::cout << "Error parsing postScan settings file" << std::endl;
         throw e;
     }
 
-    vpImage<unsigned char> image;
-    vpImageIo::read(image, xmlSettings.getImageFileName());
+    vpImageIo::read(preScanImage, xmlSettings.getImageFileName());
 
-    usImagePreScan2D<unsigned char> postScanImage(image, xmlSettings.getImageSettings());
-    return postScanImage;
+    preScanImage.setImageSettings(xmlSettings.getImageSettings());
+    preScanImage.setAxialResolution(xmlSettings.getAxialResolution());
 }
 #endif //VISP_HAVE_XML2
 
 /**
 * Write 3D unsigned char prescan ultrasound image
 */
-bool usImageIo::write(usImagePreScan3D<unsigned char> &preScanImage, const std::string filename) {
-    return false;
+void usImageIo::write(usImagePreScan3D<unsigned char> &preScanImage, const std::string filename) {
+
 }
 
 /**
 * Read 3D unsigned char prescan ultrasound image
 */
-usImagePreScan3D<unsigned char> usImageIo::readPreScan3DUChar(const std::string filename) {
-    return usImagePreScan3D<unsigned char>();
+void usImageIo::read(usImagePreScan3D<unsigned char> &preScanImage,const std::string filename) {
+
 }
 
 /**
 * Write 2D double prescan ultrasound image
 */
-bool usImageIo::write(usImagePreScan2D<double> &preScan2DImage, const std::string filename) {
-    return  false;
+void usImageIo::write(usImagePreScan2D<double> &preScan2DImage, const std::string filename) {
+
 }
 
 /**
 * Read 2D double prescan ultrasound image
 */
-usImagePreScan2D<double> usImageIo::readPreScan2DDouble(std::string filename) {
-    usImagePreScan2D<double> img;
-    return img;
+void usImageIo::read(usImagePreScan2D<double> &preScan2D,std::string filename) {
+
 }
 
 /**
 * Write 3D double prescan ultrasound image
 */
-bool usImageIo::write(usImagePreScan3D<double> &preScan3DImage, const std::string filename) {
-    return  false;
+void usImageIo::write(usImagePreScan3D<double> &preScan3DImage, const std::string filename) {
+
 }
 
 /**
 * Read 3D double prescan ultrasound image
 */
-usImagePreScan3D<double> usImageIo::readPreScan3DDouble(std::string filename) {
-    return  usImagePreScan3D<double>();
+void usImageIo::readPreScan3DDouble(usImagePreScan3D<double> &preScan3DImage,std::string filename) {
+
 }
 
 #ifdef VISP_HAVE_XML2
@@ -165,7 +164,7 @@ usImagePreScan3D<double> usImageIo::readPreScan3DDouble(std::string filename) {
 * @param postScanImage Image to write
 * @param filename The file name without extenstion (same name for png and xml);
 */
-bool usImageIo::writeXmlPng(usImagePostScan2D &postScanImage, const std::string filename) {
+void usImageIo::writeXmlPng(usImagePostScan2D &postScanImage, const std::string filename) {
     try {
         std::string pngFileName = filename + ".png";
         std::string xmlFileName = filename + ".xml";
@@ -187,7 +186,7 @@ bool usImageIo::writeXmlPng(usImagePostScan2D &postScanImage, const std::string 
 * Read 2D postscan ultrasound image
 * @param xmlFilename The xml file name with .xml extenstion (make sure png file is in the same directory);
 */
-usImagePostScan2D usImageIo::readPostScan2DFromXml(const std::string xmlFilename) {
+void usImageIo::readPostScan2DFromXml(usImagePostScan2D &postScanImage,const std::string xmlFilename) {
     usImageSettingsXmlParser xmlSettings;
     try {
         xmlSettings.parse(xmlFilename);
@@ -201,21 +200,20 @@ usImagePostScan2D usImageIo::readPostScan2DFromXml(const std::string xmlFilename
     vpImageIo::read(image,xmlSettings.getImageFileName());
 
     usImagePostScan2D postScanImage(image,xmlSettings.getImageSettings());
-    return postScanImage;
 }
 #endif //VISP_HAVE_XML2
 
 /**
 * Write 3D postscan ultrasound image and settings
 */
-bool usImageIo::write(usImagePostScan3D &postScanImage, const std::string filename) {
-    return false;
+void usImageIo::write(usImagePostScan3D &postScanImage, const std::string filename) {
+
 }
 
 /**
 * Read 3D postscan ultrasound image
 */
-usImagePostScan3D usImageIo::readPostScan3D(std::string mhdFileName) {
+void usImageIo::readPostScan3D(usImagePostScan3D &postScanImage,std::string mhdFileName) {
     usMetaHeaderParser mhdParser;
     usMetaHeaderParser::MHDHeader mhdHeader = mhdParser.readMHDHeader(mhdFileName.c_str());
 

@@ -19,10 +19,8 @@
 #include <visp3/ustk_core/usImageRF3D.h>
 
 class VISP_EXPORT usMetaHeaderParser {
-private:
 
-
-  std::map<std::string, int> elementTypeMap;
+public:
 
   typedef enum {
     MET_UNKNOWN = -1,
@@ -30,8 +28,6 @@ private:
     MET_SHORT,
     MET_DOUBLE,
   }ElementType;
-
-  std::map<std::string, int> imageTypeMap;
 
   typedef enum {
     UNKNOWN = -1,
@@ -42,8 +38,6 @@ private:
     POSTSCAN_2D,
     POSTSCAN_3D,
   }ImageType;
-
-public:
 
   struct MHDHeader
   {
@@ -59,6 +53,7 @@ public:
     bool msb;
     ImageType imageType;
   };
+
   //Constructor
   usMetaHeaderParser();
   usMetaHeaderParser(std::string mhdFilename);
@@ -66,8 +61,35 @@ public:
   //Desctructor
   virtual ~usMetaHeaderParser();
 
+  //comparaison
+  bool operator ==(usImageSettingsXmlParser const& other);
+
+  //Read/write operations
   MHDHeader readMHDHeader(const char * fileName);
 
+  void parse(const std::string& filename);
+
+  void read(const std::string& filename);
+
+
+  // Data accessors.
+  usImageSettings getImageSettings() const {return m_imageSettings;}
+  usImageSettings3D getImageSettings() const {return m_imageSettings3D;}
+  std::string getImageFileName() const {return m_imageFileName;}
+  float getAxialResolution() const { return m_axialResolution; }
+  float getHeightResolution() const { return m_heightResolution; }
+  float getWidthResolution() const { return m_widthResolution; }
+  bool isImagePreScan() const { return m_is_prescan; }
+
+  //Data setters
+  void setImagePreScanSettings(usImagePreScan2D<unsigned char> imagePrescan2D);
+  void setImagePostScanSettings(usImagePostScan2D imagePostcan2D);
+  void setImageSettings(float probeRadius, float scanLinePitch, bool isImageConvex, float axialResolution);
+  void setImageSettings(float probeRadius, float scanLinePitch, bool isImageConvex, float widthResolution, float heightResolution);
+  void setImageSettings3D(float probeRadius, float scanLinePitch, bool isImageConvex, float framePitch, float motorRadiurs, bool isMotorConvex, float axialResolution);
+  void setImageSettings3D(float probeRadius, float scanLinePitch, bool isImageConvex, float framePitch, float motorRadiurs, bool isMotorConvex, float widthResolution, float heightResolution);
+  void setImageFileName(std::string imageFileName);
+  void setImagePreScan(bool is_prescan) { m_is_prescan = is_prescan; }
 /*  usImageSettings getImageSettings(MHDHeader mhdHeader);
   usImageSettings3D getImageSettings3D(MHDHeader mhdHeader);
 
@@ -77,5 +99,16 @@ public:
   usImagePreScan3D getImagePreScan3D();
   usImageRF2D getImageRF2D();
   usImageRF3D getImageRF3D();*/
+
+private :
+  bool m_is_prescan;
+  float m_axialResolution;
+  float m_heightResolution;
+  float m_widthResolution;
+
+
+  MHDHeader mhdHeader;
+  std::map<std::string, int> imageTypeMap;
+  std::map<std::string, int> elementTypeMap;
 };
 #endif //US_META_HEADER_PARSER_H

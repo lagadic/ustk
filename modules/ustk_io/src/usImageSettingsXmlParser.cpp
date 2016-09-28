@@ -136,7 +136,7 @@ void
 usImageSettingsXmlParser::writeMainClass(xmlNodePtr node)
 {
   if (m_is_prescan) {
-    xmlWriteStringChild(node, (const char*)"image_type", std::string("prescan"));
+    xmlWriteStringChild(node, "image_type", std::string("prescan"));
     xmlWriteFloatChild(node, (const char*)"axial_resolution", getAxialResolution());
   }
   else {
@@ -150,7 +150,7 @@ usImageSettingsXmlParser::writeMainClass(xmlNodePtr node)
   xmlWriteCharChild(node, (const char*)"image_file_name", m_imageFileName.c_str());
 }
 
-void usImageSettingsXmlParser::setImagePreScanSettings(usImagePreScan2D<unsigned char> imagePrescan2D)
+void usImageSettingsXmlParser::setImagePreScanSettings(usImagePreScan2D<unsigned char>& imagePrescan2D)
 {
   m_imageSettings.setImageConvex(imagePrescan2D.isImageConvex());
   m_imageSettings.setProbeRadius(imagePrescan2D.getProbeRadius());
@@ -159,7 +159,7 @@ void usImageSettingsXmlParser::setImagePreScanSettings(usImagePreScan2D<unsigned
   m_is_prescan = true;
 }
 
-void usImageSettingsXmlParser::setImagePostScanSettings(usImagePostScan2D imagePostcan2D)
+void usImageSettingsXmlParser::setImagePostScanSettings(usImagePostScan2D<unsigned char>& imagePostcan2D)
 {
   m_imageSettings.setImageConvex(imagePostcan2D.isImageConvex());
   m_imageSettings.setProbeRadius(imagePostcan2D.getProbeRadius());
