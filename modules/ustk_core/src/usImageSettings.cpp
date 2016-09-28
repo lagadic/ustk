@@ -96,7 +96,7 @@ bool usImageSettings::operator ==(usImageSettings const& other)
 * Set the probe  radius (m).
 * @param[in] probeRadius Probe radius in meters. The probe radius is set to 0 in case of linear probe type (see isImageConvex() and setImageConvex(bool) for more informations). 
 */
-void usImageSettings::setProbeRadius(double probeRadius) { m_probeRadius = probeRadius; }
+void usImageSettings::setProbeRadius(const double probeRadius) { m_probeRadius = probeRadius; }
 
 /**
 * Get the probe radius (m).
@@ -108,7 +108,7 @@ double usImageSettings::getProbeRadius() const { return m_probeRadius; }
 * Set the line angle (rad).
 * @param[in] angle Line angle of the probe in radians.
 */
-void usImageSettings::setScanLinePitch(double scanLinePitch) { m_scanLinePitch = scanLinePitch; }
+void usImageSettings::setScanLinePitch(const double scanLinePitch) { m_scanLinePitch = scanLinePitch; }
 
 /**
 * Get the scanLine pitch (m).
@@ -120,7 +120,7 @@ double usImageSettings::getScanLinePitch() const { return m_scanLinePitch; }
 * Set image probe type to convex/linear (boolean).
 * @param isConvex True if the probe used was convex, false if it was linear. Sets the probe radius to 0 in case of linear probe.
 */
-void usImageSettings::setImageConvex(bool isConvex) { 
+void usImageSettings::setImageConvex(const bool isConvex) {
   m_isImageConvex = isConvex; 
   if (!isConvex) {
     m_probeRadius = 0.0f;
@@ -141,4 +141,11 @@ void usImageSettings::printProbeSettings()
   std::cout << "probe radius: " << m_probeRadius << std::endl
     << "line angle: " << m_scanLinePitch << std::endl
     << "convex probe used: " << m_isImageConvex << std::endl;
+}
+
+void usImageSettings::setImageSettings(const usImageSettings& other)
+{
+    m_scanLinePitch = other.getScanLinePitch();
+    m_probeRadius = other.getProbeRadius();
+    m_isImageConvex = other.isImageConvex();
 }

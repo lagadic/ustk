@@ -68,11 +68,13 @@ class usImagePostScan2D : public vpImage<T>, public usImageSettings {
 
   void setWidthResolution(double widthResolution);
 
-  double getWidthResolution();
+  double getWidthResolution() const;
 
   void setHeightResolution(double widthResolution);
 
-  double getHeightResolution();
+  double getHeightResolution() const;
+
+  void setImageSettings(const usImageSettings &settings);
 
 private:
   double m_widthResolution;
@@ -163,7 +165,7 @@ void usImagePostScan2D<T>::setWidthResolution(double widthResolution) { m_widthR
 * @return widthResolution Width resolution (in meters).
 */
 template<class T>
-double usImagePostScan2D<T>::getWidthResolution() { return m_heightResolution; }
+double usImagePostScan2D<T>::getWidthResolution() const { return m_heightResolution; }
 
 /**
 * Setter for width Resolution.
@@ -177,6 +179,18 @@ void usImagePostScan2D<T>::setHeightResolution(double heightResolution) { m_heig
 * @param heightResolution Height resolution (in meters) to set.
 */
 template<class T>
-double usImagePostScan2D<T>::getHeightResolution() { return m_heightResolution; }
+double usImagePostScan2D<T>::getHeightResolution() const { return m_heightResolution; }
+
+/**
+* Setter for all imageSettings.
+* @param settings Settings you want to copy.
+*/
+template<class T>
+void usImagePostScan2D<T>::setImageSettings(const usImageSettings &settings)
+{
+    setProbeRadius(settings.getProbeRadius());
+    setScanLinePitch(settings.getScanLinePitch());
+    setImageConvex(settings.isImageConvex());
+}
 
 #endif // US_IMAGE_POSTSCAN_2D_H

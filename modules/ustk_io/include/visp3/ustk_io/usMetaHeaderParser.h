@@ -47,11 +47,17 @@ public:
     int  numberOfChannels;
     ElementType elementType;
     unsigned int dim[4];
-    float elementSpacing[4];
-    float position[4];
+    double elementSpacing[4];
+    double position[4];
     int headerSize;
     bool msb;
     ImageType imageType;
+    bool isImageConvex;
+    bool isMotorConvex;
+    double probeRadius;
+    double scanLinePitch;
+    double motorRadius;
+    double framePitch;
   };
 
   //Constructor
@@ -62,10 +68,12 @@ public:
   virtual ~usMetaHeaderParser();
 
   //comparaison
-  bool operator ==(usImageSettingsXmlParser const& other);
+  bool operator ==(usMetaHeaderParser const& other);
 
   //Read/write operations
   MHDHeader readMHDHeader(const char * fileName);
+
+  void readMHDHeader(const std::string fileName);
 
   void parse(const std::string& filename);
 
@@ -74,38 +82,28 @@ public:
 
   // Data accessors.
   usImageSettings getImageSettings() const {return m_imageSettings;}
-  usImageSettings3D getImageSettings() const {return m_imageSettings3D;}
+  usImageSettings3D getImageSettings3D() const {return m_imageSettings3D;}
   std::string getImageFileName() const {return m_imageFileName;}
-  float getAxialResolution() const { return m_axialResolution; }
-  float getHeightResolution() const { return m_heightResolution; }
-  float getWidthResolution() const { return m_widthResolution; }
-  bool isImagePreScan() const { return m_is_prescan; }
+  double getAxialResolution() const { return m_axialResolution; }
+  double getHeightResolution() const { return m_heightResolution; }
+  double getWidthResolution() const { return m_widthResolution; }
 
   //Data setters
-  void setImagePreScanSettings(usImagePreScan2D<unsigned char> imagePrescan2D);
-  void setImagePostScanSettings(usImagePostScan2D imagePostcan2D);
-  void setImageSettings(float probeRadius, float scanLinePitch, bool isImageConvex, float axialResolution);
-  void setImageSettings(float probeRadius, float scanLinePitch, bool isImageConvex, float widthResolution, float heightResolution);
-  void setImageSettings3D(float probeRadius, float scanLinePitch, bool isImageConvex, float framePitch, float motorRadiurs, bool isMotorConvex, float axialResolution);
-  void setImageSettings3D(float probeRadius, float scanLinePitch, bool isImageConvex, float framePitch, float motorRadiurs, bool isMotorConvex, float widthResolution, float heightResolution);
-  void setImageFileName(std::string imageFileName);
-  void setImagePreScan(bool is_prescan) { m_is_prescan = is_prescan; }
-/*  usImageSettings getImageSettings(MHDHeader mhdHeader);
-  usImageSettings3D getImageSettings3D(MHDHeader mhdHeader);
-
-  usImagePostScan2D getImagePostScan2D();
-  usImagePostScan3D getImagePostScan3D();
-  usImagePreScan2D getImagePreScan2D();
-  usImagePreScan3D getImagePreScan3D();
-  usImageRF2D getImageRF2D();
-  usImageRF3D getImageRF3D();*/
+  void setImageSettings(const usImageSettings imageSettings);
+  void setImageSettings3D(const usImageSettings3D imageSettings3D);
+  void setImageFileName(const std::string imageFileName);
+  void setAxialResolution(const double axialresolution);
+  void setHeightResolution(const double heightResolution);
+  void setWidthResolution(const double widthResolution);
 
 private :
-  bool m_is_prescan;
-  float m_axialResolution;
-  float m_heightResolution;
-  float m_widthResolution;
+  usImageSettings m_imageSettings;
+  usImageSettings3D m_imageSettings3D;
+  std::string m_imageFileName;
 
+  double m_axialResolution;
+  double m_heightResolution;
+  double m_widthResolution;
 
   MHDHeader mhdHeader;
   std::map<std::string, int> imageTypeMap;

@@ -56,11 +56,11 @@ class VISP_EXPORT usImageIo
 {
 public:
 
-  //RF
-  static void write(const usImageRF2D &rfImage, const std::string filename);
-  static void read(usImageRF2D &rfImage,const std::string filename);
-  static void write(const usImageRF3D &rfImage3D, const std::string filename);
-  static void read(usImageRF3D &rfImage3D, const std::string filename);
+  //RF UChar
+  static void write(const usImageRF2D<unsigned char> &rfImage, const std::string filename);
+  static void read(usImageRF2D<unsigned char> &rfImage,const std::string filename);
+  static void write(const usImageRF3D<unsigned char> &rfImage3D, const std::string filename);
+  static void read(usImageRF3D<unsigned char> &rfImage3D, const std::string filename);
 
   //PreScan-unsigned char
 #ifdef VISP_HAVE_XML2
@@ -76,13 +76,13 @@ public:
   static void write(const usImagePreScan3D<double> &preScanImage3D, const std::string filename);
   static void read(usImagePreScan3D<double> &preScanImage3D,const std::string filename);
 
-  //postScan
+  //postScan Uchar
 #ifdef VISP_HAVE_XML2
-  static void writeXml(const usImagePostScan2D &postScanImage, const std::string filename);
-  static void readPostScan2DFromXml(usImagePostScan2D &postScanImage, const std::string filename);
+  static void writeXml(const usImagePostScan2D<unsigned char> &postScanImage, const std::string filename);
+  static void readXml(usImagePostScan2D<unsigned char> &postScanImage, const std::string filename);
 #endif //VISP_HAVE_XML2
-  static void write(const usImagePostScan3D &postScanImage3D, const std::string filename);
-  static void read(const usImagePostScan3D &postScanImage3D,std::string mhdFileName);
+  static void write(const usImagePostScan3D<unsigned char> &postScanImage3D, const std::string filename);
+  static void read(usImagePostScan3D<unsigned char> &postScanImage3D,std::string mhdFileName);
 };
 
 #endif //US_IMAGE_IO_H

@@ -43,28 +43,28 @@
 /**
 * Write 2D rf ultrasound image
 */
-void usImageIo::write(usImageRF2D &imageRf2D, const std::string filename) {
+void usImageIo::write(const usImageRF2D<unsigned char> &imageRf2D, const std::string filename) {
 
 }
 
 /**
 * Read 2D rf ultrasound image
 */
-void usImageIo::read(usImageRF2D &imageRf2D, const std::string filename) {
+void usImageIo::read(usImageRF2D<unsigned char> &imageRf2D, const std::string filename) {
 
 }
 
 /**
 * Write 3D rf ultrasound image
 */
-void usImageIo::write(usImageRF3D &imageRf3D, const std::string filename) {
+void usImageIo::write(const usImageRF3D<unsigned char> &imageRf3D, const std::string filename) {
 
 }
 
 /**
 * Read 3D rf ultrasound image
 */
-void usImageIo::readRF3D(usImageRF3D &imageRf3,const std::string filename) {
+void usImageIo::read(usImageRF3D<unsigned char> &imageRf3,const std::string filename) {
 
 }
 
@@ -72,7 +72,7 @@ void usImageIo::readRF3D(usImageRF3D &imageRf3,const std::string filename) {
 /**
 * Write 2D unsigned char prescan ultrasound image
 */
-void usImageIo::writeXml(usImagePreScan2D<unsigned char> &preScanImage, const std::string imageFilename) {
+void usImageIo::writeXml(const usImagePreScan2D<unsigned char> &preScanImage, const std::string imageFilename) {
     try {
         //writing image
         vpImageIo::write(preScanImage, imageFilename);
@@ -119,7 +119,7 @@ void usImageIo::readXml(usImagePreScan2D<unsigned char> &preScanImage,const std:
 /**
 * Write 3D unsigned char prescan ultrasound image
 */
-void usImageIo::write(usImagePreScan3D<unsigned char> &preScanImage, const std::string filename) {
+void usImageIo::write(const usImagePreScan3D<unsigned char> &preScanImage, const std::string filename) {
 
 }
 
@@ -133,7 +133,7 @@ void usImageIo::read(usImagePreScan3D<unsigned char> &preScanImage,const std::st
 /**
 * Write 2D double prescan ultrasound image
 */
-void usImageIo::write(usImagePreScan2D<double> &preScan2DImage, const std::string filename) {
+void usImageIo::write(const usImagePreScan2D<double> &preScan2DImage, const std::string filename) {
 
 }
 
@@ -147,14 +147,14 @@ void usImageIo::read(usImagePreScan2D<double> &preScan2D,std::string filename) {
 /**
 * Write 3D double prescan ultrasound image
 */
-void usImageIo::write(usImagePreScan3D<double> &preScan3DImage, const std::string filename) {
+void usImageIo::write(const usImagePreScan3D<double> &preScan3DImage, const std::string filename) {
 
 }
 
 /**
 * Read 3D double prescan ultrasound image
 */
-void usImageIo::readPreScan3DDouble(usImagePreScan3D<double> &preScan3DImage,std::string filename) {
+void usImageIo::read(usImagePreScan3D<double> &preScan3DImage,std::string filename) {
 
 }
 
@@ -164,7 +164,7 @@ void usImageIo::readPreScan3DDouble(usImagePreScan3D<double> &preScan3DImage,std
 * @param postScanImage Image to write
 * @param filename The file name without extenstion (same name for png and xml);
 */
-void usImageIo::writeXmlPng(usImagePostScan2D &postScanImage, const std::string filename) {
+void usImageIo::writeXml(const usImagePostScan2D<unsigned char> &postScanImage, const std::string filename) {
     try {
         std::string pngFileName = filename + ".png";
         std::string xmlFileName = filename + ".xml";
@@ -177,16 +177,14 @@ void usImageIo::writeXmlPng(usImagePostScan2D &postScanImage, const std::string 
     catch (std::exception e) {
         std::cout << "Error writing postScan image : " << std::endl;
         std::cout << e.what() << std::endl;
-        return false;
     }
-    return true;
 }
 
 /**
 * Read 2D postscan ultrasound image
 * @param xmlFilename The xml file name with .xml extenstion (make sure png file is in the same directory);
 */
-void usImageIo::readPostScan2DFromXml(usImagePostScan2D &postScanImage,const std::string xmlFilename) {
+void usImageIo::readXml(usImagePostScan2D<unsigned char> &postScanImage,const std::string xmlFilename) {
     usImageSettingsXmlParser xmlSettings;
     try {
         xmlSettings.parse(xmlFilename);
@@ -197,23 +195,23 @@ void usImageIo::readPostScan2DFromXml(usImagePostScan2D &postScanImage,const std
     }
 
     vpImage<unsigned char> image;
-    vpImageIo::read(image,xmlSettings.getImageFileName());
+    vpImageIo::read(postScanImage,xmlSettings.getImageFileName());
 
-    usImagePostScan2D postScanImage(image,xmlSettings.getImageSettings());
+    postScanImage.setImageSettings(xmlSettings.getImageSettings());
 }
 #endif //VISP_HAVE_XML2
 
 /**
 * Write 3D postscan ultrasound image and settings
 */
-void usImageIo::write(usImagePostScan3D &postScanImage, const std::string filename) {
+void usImageIo::write(const usImagePostScan3D<unsigned char> &postScanImage, const std::string filename) {
 
 }
 
 /**
 * Read 3D postscan ultrasound image
 */
-void usImageIo::readPostScan3D(usImagePostScan3D &postScanImage,std::string mhdFileName) {
+void usImageIo::read(usImagePostScan3D<unsigned char> &postScanImage,std::string mhdFileName) {
     usMetaHeaderParser mhdParser;
     usMetaHeaderParser::MHDHeader mhdHeader = mhdParser.readMHDHeader(mhdFileName.c_str());
 
@@ -228,5 +226,12 @@ void usImageIo::readPostScan3D(usImagePostScan3D &postScanImage,std::string mhdF
     std::cout << "headerSize: " << mhdHeader.headerSize << std::endl;
     std::cout << "msb: " << mhdHeader.msb << std::endl;
     std::cout << "imageType: " << mhdHeader.imageType << std::endl;
-    return usImagePostScan3D();
+    std::cout << "imageConvex: " << mhdHeader.isImageConvex;
+    std::cout << "motorConvex: " << mhdHeader.isMotorConvex;
+    std::cout << "probeRadius: " << mhdHeader.probeRadius;
+    std::cout << "scanLinePitch: " << mhdHeader.scanLinePitch;
+    std::cout << "motorradius: " << mhdHeader.motorRadius;
+    std::cout << "framePitch: " << mhdHeader.framePitch;
+
+
 }

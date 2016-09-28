@@ -84,7 +84,7 @@ class usImagePreScan2D : public vpImage<T>, public usImageSettings {
 
         double getAxialResolution() const;
 
-        void setAxialResolution(double axialResolution);
+        void setAxialResolution(const double axialResolution);
 
 private:
   double m_axialResolution;
@@ -210,7 +210,7 @@ double usImagePreScan2D<T>::getAxialResolution() const { return m_axialResolutio
 * @param axialResolution The axial resolution : distance(in meters) between 2 successive pixels acquired along a scanLine.
 */
 template<class T>
-void usImagePreScan2D<T>::setAxialResolution(double axialResolution)
+void usImagePreScan2D<T>::setAxialResolution(const double axialResolution)
 {
   m_axialResolution = axialResolution;
 }

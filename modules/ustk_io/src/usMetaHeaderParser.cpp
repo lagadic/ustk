@@ -23,6 +23,11 @@ usMetaHeaderParser::~usMetaHeaderParser()
 }
 
 
+void usMetaHeaderParser::readMHDHeader(const std::string fileName)
+{
+    readMHDHeader(fileName.c_str());
+}
+
 usMetaHeaderParser::MHDHeader  usMetaHeaderParser::readMHDHeader(const char * fileName)
 {
   std::string pathPrefix;
@@ -50,6 +55,13 @@ usMetaHeaderParser::MHDHeader  usMetaHeaderParser::readMHDHeader(const char * fi
   this->mhdHeader.position[3] = 0.0f;
   this->mhdHeader.msb = false;
   this->mhdHeader.headerSize = 0;
+  this->mhdHeader.imageType = UNKNOWN;
+  this->mhdHeader.isImageConvex = false;
+  this->mhdHeader.isMotorConvex = false;
+  this->mhdHeader.probeRadius = 0.0f;
+  this->mhdHeader.scanLinePitch = 0.0f;
+  this->mhdHeader.motorRadius = 0.0f;
+  this->mhdHeader.framePitch = 0.0f;
 
   std::ifstream file;
   file.open(fileName, std::ifstream::in);
@@ -150,6 +162,74 @@ usMetaHeaderParser::MHDHeader  usMetaHeaderParser::readMHDHeader(const char * fi
       std::map<std::string, int>::iterator mapIt = imageTypeMap.find(keyval);
       this->mhdHeader.imageType = ((mapIt != imageTypeMap.end()) ? (ImageType)mapIt->second : UNKNOWN );
     }
+    else if (keyword == "ScanLinePitch")
+    {
+      file >> this->mhdHeader.scanLinePitch;
+      std::getline(file, keyval, '\n');
+    }
+    else if (keyword == "ProbeRadius")
+    {
+      file >> this->mhdHeader.probeRadius;
+      std::getline(file, keyval, '\n');
+    }
+    else if (keyword == "IsImageConvex")
+    {
+      std::getline(file, keyval, '\n');
+      it=keyval.end();
+      keyval.erase(std::remove(keyval.begin(),keyval.end(),' '),it);
+      it=keyval.end();
+      keyval.erase(std::remove(keyval.begin(),keyval.end(),'\r'),it);
+      this->mhdHeader.isImageConvex = ((keyval == "True") || (keyval == "1"));
+    }
+    else if (keyword == "FramePitch")
+    {
+      file >> this->mhdHeader.framePitch;
+      std::getline(file, keyval, '\n');
+    }
+    else if (keyword == "MotorRadius")
+    {
+      file >> this->mhdHeader.motorRadius;
+      std::getline(file, keyval, '\n');
+    }
+    else if (keyword == "IsMotorConvex")
+    {
+      std::getline(file, keyval, '\n');
+      it=keyval.end();
+      keyval.erase(std::remove(keyval.begin(),keyval.end(),' '),it);
+      it=keyval.end();
+      keyval.erase(std::remove(keyval.begin(),keyval.end(),'\r'),it);
+      this->mhdHeader.isMotorConvex = ((keyval == "True") || (keyval == "1"));
+    }
+    else if (keyword == "AxialResolution")
+    {
+      if(this->mhdHeader.imageType == POSTSCAN_2D || this->mhdHeader.imageType == POSTSCAN_3D) {
+        throw(vpException(vpException::badValue, "bad header file : trying to assign an axial resolution to a postscan image"));
+      }
+      else {
+        file >> this->m_axialResolution;
+        std::getline(file, keyval, '\n');
+      }
+    }
+    else if (keyword == "HeightResolution")
+    {
+      if(this->mhdHeader.imageType == PRESCAN_2D || this->mhdHeader.imageType == PRESCAN_3D || this->mhdHeader.imageType == RF_2D || this->mhdHeader.imageType == RF_3D) {
+        throw(vpException(vpException::badValue, "bad header file : trying to assign a height resolution to a prescan image"));
+      }
+      else {
+        file >> this->m_heightResolution;
+        std::getline(file, keyval, '\n');
+      }
+    }
+    else if (keyword == "WidthResolution")
+    {
+      if(this->mhdHeader.imageType == PRESCAN_2D || this->mhdHeader.imageType == PRESCAN_3D || this->mhdHeader.imageType == RF_2D || this->mhdHeader.imageType == RF_3D) {
+        throw(vpException(vpException::badValue, "bad header file : trying to assign a height resolution to a prescan image"));
+      }
+      else {
+        file >> this->m_widthResolution;
+        std::getline(file, keyval, '\n');
+      }
+    }
     else
     {
       if (keyword != "")
@@ -164,12 +244,58 @@ usMetaHeaderParser::MHDHeader  usMetaHeaderParser::readMHDHeader(const char * fi
   return this->mhdHeader;
 }
 
-void parse(const std::string& filename)
+void usMetaHeaderParser::parse(const std::string& filename)
 {
 
 }
 
-void read(const std::string& filename)
+void usMetaHeaderParser::read(const std::string& filename)
 {
+  readMHDHeader(filename);
 
+  //basic common settings
+  this->m_imageSettings.setProbeRadius(mhdHeader.probeRadius);
+  this->m_imageSettings.setScanLinePitch(mhdHeader.scanLinePitch);
+  this->m_imageSettings.setImageConvex(mhdHeader.isImageConvex);
+  this->m_imageFileName = mhdHeader.rawFileName;
+
+  if(this->mhdHeader.imageType == RF_3D || this->mhdHeader.imageType == PRESCAN_3D || this->mhdHeader.imageType == POSTSCAN_3D) {
+    this->m_imageSettings3D.setProbeRadius(mhdHeader.probeRadius);
+    this->m_imageSettings3D.setScanLinePitch(mhdHeader.scanLinePitch);
+    this->m_imageSettings3D.setImageConvex(mhdHeader.isImageConvex);
+    this->m_imageSettings3D.setMotorRadius(mhdHeader.motorRadius);
+    this->m_imageSettings3D.setFramePitch(mhdHeader.framePitch);
+    this->m_imageSettings3D.setMotorConvex(mhdHeader.isMotorConvex);
+  }
+}
+
+//Data setters
+void usMetaHeaderParser::setImageSettings(const usImageSettings imageSettings)
+{
+  m_imageSettings = imageSettings;
+}
+
+void usMetaHeaderParser::setImageSettings3D(const usImageSettings3D imageSettings3D)
+{
+  m_imageSettings3D = imageSettings3D;
+}
+
+void usMetaHeaderParser::setImageFileName(const std::string imageFileName)
+{
+  m_imageFileName = imageFileName;
+}
+
+void usMetaHeaderParser::setAxialResolution(const double axialresolution)
+{
+  m_axialResolution = axialresolution;
+}
+
+void usMetaHeaderParser::setHeightResolution(const double heightResolution)
+{
+  m_heightResolution = heightResolution;
+}
+
+void usMetaHeaderParser::setWidthResolution(const double widthResolution)
+{
+  m_widthResolution = widthResolution;
 }

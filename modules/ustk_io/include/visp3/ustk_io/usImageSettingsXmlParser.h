@@ -89,16 +89,16 @@ public:
   // Data accessors.
   usImageSettings getImageSettings() const {return m_imageSettings;}
   std::string getImageFileName() const {return m_imageFileName;}
-  float getAxialResolution() const { return m_axialResolution; }
-  float getHeightResolution() const { return m_heightResolution; }
-  float getWidthResolution() const { return m_widthResolution; }
+  double getAxialResolution() const { return m_axialResolution; }
+  double getHeightResolution() const { return m_heightResolution; }
+  double getWidthResolution() const { return m_widthResolution; }
   bool isImagePreScan() const { return m_is_prescan; }
   
   //Data setters
-  void setImagePreScanSettings(usImagePreScan2D<unsigned char> &imagePrescan2D);
-  void setImagePostScanSettings(usImagePostScan2D<unsigned char> &imagePostcan2D);
-  void setImageSettings(float probeRadius, float scanLinePitch, bool isImageConvex, float axialResolution);
-  void setImageSettings(float probeRadius, float scanLinePitch, bool isImageConvex, float widthResolution, float heightResolution);
+  void setImagePreScanSettings(const usImagePreScan2D<unsigned char> &imagePrescan2D);
+  void setImagePostScanSettings(const usImagePostScan2D<unsigned char> &imagePostcan2D);
+  void setImageSettings(double probeRadius, double scanLinePitch, bool isImageConvex, double axialResolution);
+  void setImageSettings(double probeRadius, double scanLinePitch, bool isImageConvex, double widthResolution, double heightResolution);
   void setImageFileName(std::string imageFileName);
   void setImagePreScan(bool is_prescan) { m_is_prescan = is_prescan; }
 
@@ -108,9 +108,9 @@ private:
 
   //to manage different resolution types
   bool m_is_prescan;
-  float m_axialResolution;
-  float m_heightResolution;
-  float m_widthResolution;
+  double m_axialResolution;
+  double m_heightResolution;
+  double m_widthResolution;
 
   virtual void readMainClass (xmlDocPtr doc, xmlNodePtr node);
   virtual void writeMainClass (xmlNodePtr node);
