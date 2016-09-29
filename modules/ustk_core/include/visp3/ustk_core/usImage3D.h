@@ -110,12 +110,12 @@ public:
   }
 
   //! operator[] allows operation like I[i] = x.
-  inline Type *operator[]( const unsigned int i)   { if(i<m_size) {return planesIndex[i];} throw(vpException::badValue);}
-  inline Type *operator[]( const int i) { if(i<m_size) {return planesIndex[i];} throw(vpException::badValue);}
+  Type& operator[]( const unsigned int i)   { if(i<m_size) {return bitmap[i];} throw(vpException::badValue);}
+  Type& operator[]( const int i) { if(i<m_size) {return bitmap[i];} throw(vpException::badValue);}
 
   //! operator[] allows operation like x = I[i]
-  inline const  Type *operator[](unsigned int i) const { if(i<m_size) {return planesIndex[i];} throw(vpException::badValue);}
-  inline const  Type *operator[](int i) const { if(i<m_size) {return planesIndex[i];} throw(vpException::badValue);}
+  const  Type& operator[](unsigned int i) const { if(i<m_size) {return bitmap[i];} throw(vpException::badValue);}
+  const  Type& operator[](int i) const { if(i<m_size) {return bitmap[i];} throw(vpException::badValue);}
 
 
   /**
@@ -244,6 +244,9 @@ public:
   */
   void initData(Type value,int numberOfVloxels);
 
+
+  void resize(unsigned int dimx,unsigned int dimy,unsigned int dimz);
+
 protected:
 
 private:
@@ -317,7 +320,7 @@ usImage3D<Type>::init(unsigned int h, unsigned int w, unsigned int d)
           "cannot allocate bitmap ")) ;
   }
 
-  if (planesIndex == NULL)  planesIndex = new  Type*[m_dimx] ;
+  if (planesIndex == NULL)  planesIndex = new  Type*[m_dimx];
 //  vpERROR_TRACE("Allocate row %p",row) ;
   if (planesIndex == NULL)
   {
@@ -432,4 +435,11 @@ void usImage3D<Type>::initData(Type value,int numberOfVloxels)
     std::cout << "Bad allocation using std::fill_n() method." << std::endl;
   }
 }
+
+template<class Type>
+void usImage3D<Type>::resize(unsigned int dimx,unsigned int dimy,unsigned int dimz)
+{
+  init(dimx,dimy,dimz);
+}
+
 #endif //US_IMAGE_3D_H

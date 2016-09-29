@@ -39,6 +39,7 @@
 
 #include <visp3/ustk_io/usImageIo.h>
 #include <visp3/ustk_io/usImageSettingsXmlParser.h>
+#include <visp3/ustk_io/usRawFileParser.h>
 
 /**
 * Write 2D rf ultrasound image
@@ -71,6 +72,8 @@ void usImageIo::read(usImageRF3D<unsigned char> &imageRf3,const std::string file
 #ifdef VISP_HAVE_XML2
 /**
 * Write 2D unsigned char prescan ultrasound image
+* @param preScanImage The prescan image to write
+* @param imageFilename The image file name to write, with extension.
 */
 void usImageIo::writeXml(const usImagePreScan2D<unsigned char> &preScanImage, const std::string imageFilename) {
     try {
@@ -93,12 +96,11 @@ void usImageIo::writeXml(const usImagePreScan2D<unsigned char> &preScanImage, co
 
 /**
 * Read 2D unsigned char prescan ultrasound image
+* @param [out] preScanImage The prescan image to read.
+* @param [in] imageFilename The image file name to read, with .xml extension.
 */
-void usImageIo::readXml(usImagePreScan2D<unsigned char> &preScanImage,const std::string imageFilename)
+void usImageIo::readXml(usImagePreScan2D<unsigned char> &preScanImage,const std::string xmlFileName)
 {
-    //get xml filename from imageFilename
-    std::vector<std::string> splittedFileName = vpIoTools::splitChain(imageFilename, ".");
-    std::string xmlFileName = splittedFileName[0] + ".xml";
     //parsing xml file
     usImageSettingsXmlParser xmlSettings;
     try {
@@ -162,16 +164,19 @@ void usImageIo::read(usImagePreScan3D<double> &preScan3DImage,std::string filena
 /**
 * Write 2D postscan ultrasound image and settings
 * @param postScanImage Image to write
-* @param filename The file name without extenstion (same name for png and xml);
+* @param filename The image file name with the desired extenstion.
 */
-void usImageIo::writeXml(const usImagePostScan2D<unsigned char> &postScanImage, const std::string filename) {
+void usImageIo::writeXml(const usImagePostScan2D<unsigned char> &postScanImage, const std::string imageFilename) {
     try {
-        std::string pngFileName = filename + ".png";
-        std::string xmlFileName = filename + ".xml";
-        vpImageIo::writePNG(postScanImage, pngFileName);
+        //writing image
+        vpImageIo::writePNG(postScanImage, imageFilename);
+        //geting xml file name
+        std::vector<std::string> splittedFileName = vpIoTools::splitChain(imageFilename, ".");
+        std::string xmlFileName = splittedFileName[0] + ".xml";
+        //writing xml file using xml parser
         usImageSettingsXmlParser xmlSettings;
         xmlSettings.setImagePostScanSettings(postScanImage);
-        xmlSettings.setImageFileName(pngFileName);
+        xmlSettings.setImageFileName(imageFilename);
         xmlSettings.save(xmlFileName);
     }
     catch (std::exception e) {
@@ -204,23 +209,79 @@ void usImageIo::readXml(usImagePostScan2D<unsigned char> &postScanImage,const st
 /**
 * Write 3D postscan ultrasound image and settings
 */
-void usImageIo::write(const usImagePostScan3D<unsigned char> &postScanImage, const std::string filename) {
+void usImageIo::write(const usImagePostScan3D<unsigned char> &postScanImage, const std::string filename)
+{
+    //filling header
+    usMetaHeaderParser::MHDHeader header;
+    header.numberOfDimensions = 3;
+    header.elementType = usMetaHeaderParser::MET_UCHAR;
+    header.imageType = usMetaHeaderParser::POSTSCAN_3D;
+    header.elementSpacing[0] = postScanImage.getElementSpacingX();
+    header.elementSpacing[1] = postScanImage.getElementSpacingY();
+    header.elementSpacing[2] = postScanImage.getElementSpacingZ();
+    header.msb = false;
+    header.mhdFileName = filename + ".mhd";
+    header.rawFileName = filename + ".raw";
+    header.isImageConvex = postScanImage.isImageConvex();
+    header.isMotorConvex = postScanImage.isMotorConvex();
+    header.probeRadius = postScanImage.getProbeRadius();
+    header.scanLinePitch = postScanImage.getScanLinePitch();
+    header.motorRadius = postScanImage.getMotorRadius();
+    header.framePitch = postScanImage.getFramePitch();
+    //writing in file
+    usMetaHeaderParser mhdParser;
+    mhdParser.setMhdHeader(header);
+    mhdParser.parse();
 
+    //filling raw
+    usRawFileParser rawParser;
+    rawParser.write(postScanImage,header.rawFileName);
 }
 
 /**
 * Read 3D postscan ultrasound image
 */
 void usImageIo::read(usImagePostScan3D<unsigned char> &postScanImage,std::string mhdFileName) {
+
+    //header parsing
     usMetaHeaderParser mhdParser;
     mhdParser.read(mhdFileName);
     if (mhdParser.getImageType() != usMetaHeaderParser::POSTSCAN_3D) {
       throw(vpException(vpException::badValue,"Reading a non postscan3d image!"));
     }
-    postScanImage = mhdParser.getImageSettings3D();
+    if (mhdParser.getElementType() != usMetaHeaderParser::MET_UCHAR) {
+      throw(vpException(vpException::badValue,"Reading a non unisgned char image!"));
+    }
+    //resizing image in memory
+    postScanImage.resize(mhdParser.getImageSizeX(),mhdParser.getImageSizeY(),mhdParser.getImageSizeZ());
+    std::cout << "resizing : " << mhdParser.getImageSizeX() << "," << mhdParser.getImageSizeY() << ","<< mhdParser.getImageSizeZ() << std::endl;
+    std::cout << "result : " << postScanImage.getDimX() << "," << postScanImage.getDimY() << ","<< postScanImage.getDimZ() << std::endl;
+
+    //
+    usMetaHeaderParser::MHDHeader mhdHeader = mhdParser.getMhdHeader();
+    postScanImage.setProbeRadius(mhdHeader.probeRadius);
+    postScanImage.setScanLinePitch(mhdHeader.scanLinePitch);
+    postScanImage.setImageConvex(mhdHeader.isImageConvex);
+    postScanImage.setMotorRadius(mhdHeader.motorRadius);
+    postScanImage.setFramePitch(mhdHeader.framePitch);
+    postScanImage.setMotorConvex(mhdHeader.isMotorConvex);
+
     postScanImage.setWidthResolution(mhdParser.getWidthResolution());
     postScanImage.setHeightResolution(mhdParser.getHeightResolution());
-    std::cout << "raw filname: " << mhdParser.getImageFileName() << std::endl;
+
+    std::cout << "raw filname: " << mhdParser.getRawFileName() << std::endl;
+
+    //data parsing
+    usRawFileParser rawParser;
+    std::cout << "toto" << std::endl;
+    rawParser.read(postScanImage,mhdParser.getRawFileName());
+    std::cout << "toto2" << std::endl;
+
+
+
+
+
+
 /*
     std::cout << "mhdFileName: " << m_mhdHeader.mhdFileName << std::endl;
     std::cout << "rawFileName: " << mhdHeader.rawFileName << std::endl;

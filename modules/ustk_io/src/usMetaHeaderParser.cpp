@@ -1,7 +1,7 @@
 #include<visp3/core/vpException.h>
 #include <visp3/ustk_io/usMetaHeaderParser.h>
 #include <algorithm>
-
+#include <string>
 
 usMetaHeaderParser::usMetaHeaderParser()
 {
@@ -242,9 +242,76 @@ void  usMetaHeaderParser::readMHDHeader(const char * fileName)
   file.close();
 }
 
-void usMetaHeaderParser::parse(const std::string& filename)
+void usMetaHeaderParser::parse()
 {
+  // write header
+  std::ofstream mhdfile;
+  mhdfile.open( mhdHeader.mhdFileName.c_str() );
 
+  mhdfile << "NDims = " << mhdHeader.numberOfDimensions << "\n";;
+
+  if(mhdHeader.numberOfDimensions == 2) {
+    std::stringstream ss;
+    ss << "DimSize = " << mhdHeader.dim[0] << " " << mhdHeader.dim[1] << "\n";
+    std::string str = ss.str();
+    mhdfile << str;
+    std::stringstream ss2;
+    ss2 << "ElementSpacing = " << mhdHeader.elementSpacing[0] << " " << mhdHeader.elementSpacing[1] << "\n";
+    std::string str2 = ss2.str();
+    mhdfile << str2;
+  }
+  if(mhdHeader.numberOfDimensions == 3) {
+    std::stringstream ss;
+    ss << "DimSize = " << (int)mhdHeader.dim[0] << " " << (int)mhdHeader.dim[1] << " " << (int)mhdHeader.dim[2] << "\n";
+    std::string str = ss.str();
+    mhdfile << str;
+    std::stringstream ss2;
+    ss2 << "ElementSpacing = " << mhdHeader.elementSpacing[0] << " " << mhdHeader.elementSpacing[1] << " " << mhdHeader.elementSpacing[2] << "\n";
+    std::string str2 = ss2.str();
+    mhdfile << str2;
+  }
+
+  if(mhdHeader.elementType== MET_SHORT)
+    mhdfile << "ElementType = " <<  "MET_SHORT" << "\n";
+  else if(mhdHeader.elementType == MET_DOUBLE)
+    mhdfile << "ElementType = " <<  "MET_DOUBLE" << "\n";
+  else if(mhdHeader.elementType == MET_UCHAR)
+    mhdfile << "ElementType = " <<  "MET_UCHAR" << "\n";
+  else
+    mhdfile << "ElementType = " <<  "MET_UNKNOWN" << "\n";
+
+  mhdfile << "ElementByteOrderMSB = " << mhdHeader.msb <<"\n";
+
+  mhdfile << "ElementDataFile = " << mhdHeader.rawFileName << "\n";
+
+  if(mhdHeader.imageType== RF_2D)
+    mhdfile << "ElementType = " <<  "RF_2D" << "\n";
+  else if(mhdHeader.imageType == RF_3D)
+    mhdfile << "ElementType = " <<  "RF_3D" << "\n";
+  else if(mhdHeader.imageType == PRESCAN_2D)
+    mhdfile << "ElementType = " <<  "PRESCAN_2D" << "\n";
+  else if(mhdHeader.imageType == PRESCAN_3D)
+    mhdfile << "ElementType = " <<  "PRESCAN_3D" << "\n";
+  else if(mhdHeader.imageType == POSTSCAN_2D)
+    mhdfile << "ElementType = " <<  "POSTSCAN_2D" << "\n";
+  else if(mhdHeader.imageType == POSTSCAN_3D)
+    mhdfile << "ElementType = " <<  "POSTSCAN_3D" << "\n";
+  else
+    mhdfile << "ElementType = " <<  "MET_UNKNOWN" << "\n";
+
+  mhdfile << "IsImageConvex = " << mhdHeader.isImageConvex << "\n";
+
+  mhdfile << "IsMotorConvex = " << mhdHeader.isMotorConvex << "\n";
+
+  mhdfile << "ProbeRadius = " << mhdHeader.probeRadius << "\n";
+
+  mhdfile << "ScanLinePitch = " << mhdHeader.scanLinePitch << "\n";
+
+  mhdfile << "MotorRadius = " << mhdHeader.motorRadius << "\n";
+
+  mhdfile << "FramePitch = " << mhdHeader.framePitch << "\n";
+
+  mhdfile.close();
 }
 
 void usMetaHeaderParser::read(const std::string& filename)
@@ -255,7 +322,6 @@ void usMetaHeaderParser::read(const std::string& filename)
   this->m_imageSettings.setProbeRadius(mhdHeader.probeRadius);
   this->m_imageSettings.setScanLinePitch(mhdHeader.scanLinePitch);
   this->m_imageSettings.setImageConvex(mhdHeader.isImageConvex);
-  this->m_imageFileName = mhdHeader.rawFileName;
 
   if(this->mhdHeader.imageType == RF_3D || this->mhdHeader.imageType == PRESCAN_3D || this->mhdHeader.imageType == POSTSCAN_3D) {
     this->m_imageSettings3D.setProbeRadius(mhdHeader.probeRadius);
@@ -278,9 +344,9 @@ void usMetaHeaderParser::setImageSettings3D(const usImageSettings3D imageSetting
   m_imageSettings3D = imageSettings3D;
 }
 
-void usMetaHeaderParser::setImageFileName(const std::string imageFileName)
+void usMetaHeaderParser::setRawFileName(const std::string imageFileName)
 {
-  m_imageFileName = imageFileName;
+  mhdHeader.rawFileName = imageFileName;
 }
 
 void usMetaHeaderParser::setAxialResolution(const double axialresolution)
@@ -296,4 +362,9 @@ void usMetaHeaderParser::setHeightResolution(const double heightResolution)
 void usMetaHeaderParser::setWidthResolution(const double widthResolution)
 {
   m_widthResolution = widthResolution;
+}
+
+void usMetaHeaderParser::setMhdHeader(const MHDHeader header)
+{
+  mhdHeader = header;
 }

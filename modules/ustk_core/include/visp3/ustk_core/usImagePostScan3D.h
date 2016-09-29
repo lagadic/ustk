@@ -68,11 +68,11 @@ public:
 
   void setWidthResolution(double widthResolution);
 
-  double getWidthResolution();
+  double getWidthResolution() const;
 
   void setHeightResolution(double widthResolution);
 
-  double getHeightResolution();
+  double getHeightResolution() const;
 
 private:
   double m_widthResolution;
@@ -168,7 +168,7 @@ void usImagePostScan3D<T>::setWidthResolution(double widthResolution) { m_widthR
 * @return widthResolution Width resolution (in meters).
 */
 template<class T>
-double usImagePostScan3D<T>::getWidthResolution() { return m_heightResolution; }
+double usImagePostScan3D<T>::getWidthResolution() const { return m_heightResolution; }
 
 /**
 * Setter for width Resolution.
@@ -182,7 +182,7 @@ void usImagePostScan3D<T>::setHeightResolution(double heightResolution) { m_heig
 * @param heightResolution Height resolution (in meters) to set.
 */
 template<class T>
-double usImagePostScan3D<T>::getHeightResolution() { return m_heightResolution; }
+double usImagePostScan3D<T>::getHeightResolution() const { return m_heightResolution; }
 
 
 #endif // US_IMAGE_POSTSCAN_3D_H

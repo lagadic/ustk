@@ -46,7 +46,7 @@ public:
     unsigned int  numberOfDimensions;
     int  numberOfChannels;
     ElementType elementType;
-    unsigned int dim[4];
+    int dim[4];
     double elementSpacing[4];
     double position[4];
     int headerSize;
@@ -75,7 +75,11 @@ public:
 
   void readMHDHeader(const std::string fileName);
 
-  void parse(const std::string& filename);
+  void writeMHDHeader(const char * fileName);
+
+  void writeMHDHeader(const std::string fileName);
+
+  void parse();
 
   void read(const std::string& filename);
 
@@ -83,11 +87,16 @@ public:
   // Data accessors.
   usImageSettings getImageSettings() const {return m_imageSettings;}
   usImageSettings3D getImageSettings3D() const {return m_imageSettings3D;}
-  std::string getImageFileName() const {return m_imageFileName;}
+  std::string getRawFileName() const {return mhdHeader.rawFileName;}
   double getAxialResolution() const { return m_axialResolution; }
   double getHeightResolution() const { return m_heightResolution; }
   double getWidthResolution() const { return m_widthResolution; }
   ImageType getImageType() const { return mhdHeader.imageType; }
+  ElementType getElementType() const { return mhdHeader.elementType; }
+  unsigned int getImageSizeX() const { return mhdHeader.dim[0]; }
+  unsigned int getImageSizeY() const { return mhdHeader.dim[1]; }
+  unsigned int getImageSizeZ() const { return mhdHeader.dim[2]; }
+  MHDHeader getMhdHeader() const { return mhdHeader; }
 
   //Data setters
   void setImageSettings(const usImageSettings imageSettings);
@@ -96,12 +105,12 @@ public:
   void setAxialResolution(const double axialresolution);
   void setHeightResolution(const double heightResolution);
   void setWidthResolution(const double widthResolution);
+  void setRawFileName(const std::string rawFileName);
+  void setMhdHeader(MHDHeader header);
 
 private :
   usImageSettings m_imageSettings;
   usImageSettings3D m_imageSettings3D;
-  std::string m_imageFileName;
-
   double m_axialResolution;
   double m_heightResolution;
   double m_widthResolution;
@@ -109,5 +118,7 @@ private :
   MHDHeader mhdHeader;
   std::map<std::string, int> imageTypeMap;
   std::map<std::string, int> elementTypeMap;
+  std::map<int ,std::string> imageTypeReverseMap;
+  std::map<int ,std::string> elementTypeReverseMap;
 };
 #endif //US_META_HEADER_PARSER_H
