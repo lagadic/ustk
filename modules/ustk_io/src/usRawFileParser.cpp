@@ -18,10 +18,8 @@ void usRawFileParser::write(const usImagePostScan3D<unsigned char> &postScanImag
 {
   std::ofstream fileStream(rawFilename.c_str());
   unsigned int i = 0;
-  std::cout << "toto" << std::endl;
   while (i<postScanImage3D.getSize()){
     fileStream << postScanImage3D[i];
-    std::cout << i << std::endl;
     i++;
   }
   fileStream.close();

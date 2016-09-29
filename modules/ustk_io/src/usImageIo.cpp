@@ -219,6 +219,9 @@ void usImageIo::write(const usImagePostScan3D<unsigned char> &postScanImage, con
     header.elementSpacing[0] = postScanImage.getElementSpacingX();
     header.elementSpacing[1] = postScanImage.getElementSpacingY();
     header.elementSpacing[2] = postScanImage.getElementSpacingZ();
+    header.dim[0] = postScanImage.getDimX();
+    header.dim[1] = postScanImage.getDimY();
+    header.dim[2] = postScanImage.getDimZ();
     header.msb = false;
     header.mhdFileName = filename + ".mhd";
     header.rawFileName = filename + ".raw";
@@ -273,33 +276,5 @@ void usImageIo::read(usImagePostScan3D<unsigned char> &postScanImage,std::string
 
     //data parsing
     usRawFileParser rawParser;
-    std::cout << "toto" << std::endl;
     rawParser.read(postScanImage,mhdParser.getRawFileName());
-    std::cout << "toto2" << std::endl;
-
-
-
-
-
-
-/*
-    std::cout << "mhdFileName: " << m_mhdHeader.mhdFileName << std::endl;
-    std::cout << "rawFileName: " << mhdHeader.rawFileName << std::endl;
-    std::cout << "numberOfDimensions: " << mhdHeader.numberOfDimensions << std::endl;
-    std::cout << "numberOfChannels: " << mhdHeader.numberOfChannels << std::endl;
-    std::cout << "elementType: " << mhdHeader.elementType << std::endl;
-    std::cout << "dim: " << mhdHeader.dim[0] << ", " << mhdHeader.dim[1] << ", " << mhdHeader.dim[2] << ", " << mhdHeader.dim[3] << std::endl;
-    std::cout << "elementSpacing: " << mhdHeader.elementSpacing[0] << ", " << mhdHeader.elementSpacing[1] << ", " << mhdHeader.elementSpacing[2] << ", " << mhdHeader.elementSpacing[3] << std::endl;
-    std::cout << "position: " << mhdHeader.position[0] << ", " << mhdHeader.position[1] << ", " << mhdHeader.position[2] << ", " << mhdHeader.position[3] << std::endl;
-    std::cout << "headerSize: " << mhdHeader.headerSize << std::endl;
-    std::cout << "msb: " << mhdHeader.msb << std::endl;
-    std::cout << "imageType: " << mhdHeader.imageType << std::endl;
-    std::cout << "imageConvex: " << mhdHeader.isImageConvex;
-    std::cout << "motorConvex: " << mhdHeader.isMotorConvex;
-    std::cout << "probeRadius: " << mhdHeader.probeRadius;
-    std::cout << "scanLinePitch: " << mhdHeader.scanLinePitch;
-    std::cout << "motorradius: " << mhdHeader.motorRadius;
-    std::cout << "framePitch: " << mhdHeader.framePitch;*/
-
-
 }

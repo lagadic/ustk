@@ -251,23 +251,19 @@ void usMetaHeaderParser::parse()
   mhdfile << "NDims = " << mhdHeader.numberOfDimensions << "\n";;
 
   if(mhdHeader.numberOfDimensions == 2) {
-    std::stringstream ss;
-    ss << "DimSize = " << mhdHeader.dim[0] << " " << mhdHeader.dim[1] << "\n";
-    std::string str = ss.str();
+    char str[100];
+    sprintf(str, "DimSize = %d %d \n", mhdHeader.dim[0],mhdHeader.dim[1]);
     mhdfile << str;
-    std::stringstream ss2;
-    ss2 << "ElementSpacing = " << mhdHeader.elementSpacing[0] << " " << mhdHeader.elementSpacing[1] << "\n";
-    std::string str2 = ss2.str();
+    char str2[100];
+    sprintf(str2, "ElementSpacing = %f %f \n", mhdHeader.elementSpacing[0], mhdHeader.elementSpacing[1]);
     mhdfile << str2;
   }
   if(mhdHeader.numberOfDimensions == 3) {
-    std::stringstream ss;
-    ss << "DimSize = " << (int)mhdHeader.dim[0] << " " << (int)mhdHeader.dim[1] << " " << (int)mhdHeader.dim[2] << "\n";
-    std::string str = ss.str();
+    char str[100];
+    sprintf(str, "DimSize = %d %d %d \n", mhdHeader.dim[0],mhdHeader.dim[1],mhdHeader.dim[2]);
     mhdfile << str;
-    std::stringstream ss2;
-    ss2 << "ElementSpacing = " << mhdHeader.elementSpacing[0] << " " << mhdHeader.elementSpacing[1] << " " << mhdHeader.elementSpacing[2] << "\n";
-    std::string str2 = ss2.str();
+    char str2[100];
+    sprintf(str2, "ElementSpacing = %f %f %f \n", mhdHeader.elementSpacing[0], mhdHeader.elementSpacing[1],mhdHeader.elementSpacing[2]);
     mhdfile << str2;
   }
 
