@@ -110,7 +110,6 @@ void usImageIo::readXml(usImagePreScan2D<unsigned char> &preScanImage,const std:
         std::cout << "Error parsing postScan settings file" << std::endl;
         throw e;
     }
-
     vpImageIo::read(preScanImage, xmlSettings.getImageFileName());
 
     preScanImage.setImageSettings(xmlSettings.getImageSettings());
@@ -273,6 +272,7 @@ void usImageIo::read(usImagePostScan3D<unsigned char> &postScanImage,std::string
     postScanImage.setHeightResolution(mhdParser.getHeightResolution());
 
     std::cout << "raw filname: " << mhdParser.getRawFileName() << std::endl;
+    std::cout << system("pwd");
 
     //data parsing
     usRawFileParser rawParser;

@@ -37,6 +37,8 @@ UltrasoundImageType = POSTSCAN_3D
 
 #include <visp3/ustk_io/usMetaHeaderParser.h>
 
+#include <visp3/ustk_io/usImageIo.h>
+
 #include <string>
 
 /* -------------------------------------------------------------------------- */
@@ -141,8 +143,8 @@ int main(int argc, const char** argv)
     usMetaHeaderParser testReferenceSettings;
 
     std::cout <<  "-------------------------------------------------------" << std::endl ;
-    std::cout <<  "  testUSXmlParser.cpp" <<std::endl << std::endl ;
-    std::cout <<  "  writing and readind ultrasound data using a the US xml parser" << std::endl ;
+    std::cout <<  "  testUSMhdParser.cpp" <<std::endl << std::endl ;
+    std::cout <<  "  writing and reading ultrasound data using a the US mhd parser" << std::endl ;
     std::cout <<  "-------------------------------------------------------" << std::endl ;
     std::cout << std::endl ;
 
@@ -185,38 +187,66 @@ int main(int argc, const char** argv)
     }
 
     //Set input path to environement variable USTK_DATASET_PATH
-    std::cout << "test" << std::endl;
     ipath = "/home/mpouliqu/Documents/usData/ustk-tests-dataset";//vpIoTools::getenv(std::string("USTK_DATASET_PATH"));
 
     //Init values in reference parser (same values in file tested to read)
-    usImagePreScan2D<unsigned char> prescan2DReference;
-    prescan2DReference.setAxialResolution(0.0005f);
-    prescan2DReference.setScanLinePitch(0.0045f);
-    prescan2DReference.setProbeRadius(0.0547896);
-/*
-    testReferenceSettings.setImageSettings(prescan2DReference);
-    testReferenceSettings.setImageFileName(std::string("prescan2D.png"));
-    testReferenceSettings.setImagePreScan(true);
 
-    // Read ultrasound data using a Xml parser.
+    // Read ultrasound  using a mhd parser.
     {
-      usImageSettingsXmlParser parser;
+      usImagePostScan3D<unsigned char> postscan3DReference;
 
-      std::string filename = ipath + vpIoTools::path("/") + "prescan2D.xml";
-      parser.parse(filename);
 
+      postscan3DReference.resize(186,233,163);
+
+      postscan3DReference.setElementSpacingX(1);
+      postscan3DReference.setElementSpacingY(1);
+      postscan3DReference.setElementSpacingZ(1);
+
+      postscan3DReference.setScanLinePitch(0.0145);
+      postscan3DReference.setProbeRadius(0.554);
+      postscan3DReference.setFramePitch(0.258);
+      postscan3DReference.setMotorRadius(0.025);
+      postscan3DReference.setWidthResolution(0.0058);
+      postscan3DReference.setHeightResolution(0.0058);
+/*
+      std::cout << "Dim X : " << postscan3DReference.getDimX() << std::endl;
+      std::cout << "Dim Y : " << postscan3DReference.getDimY() << std::endl;
+      std::cout << "Dim Z: " << postscan3DReference.getDimZ() << std::endl;
+
+      std::cout << "Spacing X: " << postscan3DReference.getElementSpacingX() << std::endl;
+      std::cout << "Spacing Y: " << postscan3DReference.getElementSpacingY() << std::endl;
+      std::cout << "Spacing Z: " << postscan3DReference.getElementSpacingZ() << std::endl;
+
+      std::cout << "Scanline pitch : " << postscan3DReference.getScanLinePitch() << std::endl;
+      std::cout << "Probe Radius : " << postscan3DReference.getProbeRadius() << std::endl;
+      std::cout << "Frame pitch : " << postscan3DReference.getFramePitch() << std::endl;
+      std::cout << "Motor Radius : " << postscan3DReference.getMotorRadius() << std::endl;
+      std::cout << "Width resolution : " << postscan3DReference.getWidthResolution() << std::endl;
+      std::cout << "Height resolution : " << postscan3DReference.getHeightResolution() << std::endl;*/
+
+      usImagePostScan3D<unsigned char> postscan3D;
+      std::string filename = ipath + vpIoTools::path("/") + "postscan3d.mhd";
+      usImageIo::read(postscan3D,filename);
+      /*
       std::cout << "Read from " << filename << std::endl ;
-      std::cout << "image file name : " << parser.getImageFileName() << std::endl;
-      std::cout << "image is prescan : " << parser.isImagePreScan() << std::endl;
-      std::cout << "Axial resolution : " << parser.getAxialResolution() << std::endl;
-      std::cout << "Scanline pitch : " << parser.getImageSettings().getScanLinePitch() << std::endl;
-      std::cout << "Probe Radius : " << parser.getImageSettings().getProbeRadius() << std::endl;
-      if(parser==testReferenceSettings) {
+      std::cout << "Dim X : " << postscan3D.getDimX() << std::endl;
+      std::cout << "Dim Y : " << postscan3D.getDimY() << std::endl;
+      std::cout << "Dim Z: " << postscan3D.getDimZ() << std::endl;
+      std::cout << "Spacing X: " << postscan3D.getElementSpacingX() << std::endl;
+      std::cout << "Spacing Y: " << postscan3D.getElementSpacingY() << std::endl;
+      std::cout << "Spacing Z: " << postscan3D.getElementSpacingZ() << std::endl;
+      std::cout << "Scanline pitch : " << postscan3D.getScanLinePitch() << std::endl;
+      std::cout << "Probe Radius : " << postscan3D.getProbeRadius() << std::endl;
+      std::cout << "Frame pitch : " << postscan3D.getFramePitch() << std::endl;
+      std::cout << "Motor Radius : " << postscan3D.getMotorRadius() << std::endl;
+      std::cout << "Width resolution : " << postscan3D.getWidthResolution() << std::endl;
+      std::cout << "Height resolution : " << postscan3D.getHeightResolution() << std::endl;*/
+      if(postscan3D==postscan3DReference) {
+        std::cout << "postscan images equals" << std::endl;
         return 0;
       }
     }
-*/
-    filename = dirname + vpIoTools::path("/") + "dataTestXml.xml";
+
 
     // Write data using a parser.
     /*{

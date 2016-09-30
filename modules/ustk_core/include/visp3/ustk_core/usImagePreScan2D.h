@@ -74,6 +74,12 @@ class usImagePreScan2D : public vpImage<T>, public usImageSettings {
         //destructor
         ~usImagePreScan2D();
 
+        //assignement
+        usImagePreScan2D<T>& operator=(const usImagePreScan2D<T> &other);
+
+        //comparaison
+        bool operator==(const usImagePreScan2D<T> &other);
+
         //copying from vpImage
         void copyFrom(const vpImage<T> &I);
 
@@ -172,6 +178,30 @@ usImagePreScan2D<T>::usImagePreScan2D(const vpImage<T> &other, const usImageSett
 */
 template<class T>
 usImagePreScan2D<T>::~usImagePreScan2D() {}
+
+/**
+* Copy operator.
+*/
+template<class T>
+usImagePreScan2D<T>& usImagePreScan2D<T>::operator=(const usImagePreScan2D<T> &other)
+{
+    resize(other.getHeight(),other.getWidth());
+    setImageSettings(other);
+    m_axialResolution = other.getAxialResolution();
+}
+
+/**
+* Comparaison operator.
+*/
+template<class T>
+bool usImagePreScan2D<T>::operator==(const usImagePreScan2D<T> &other)
+{
+    return( this->getHeight() == other.getHeight() &&
+            this->getWidth() == other.getWidth() &&
+            this->getAxialResolution() == other.getAxialResolution() &&
+            this->getProbeRadius() == other.getProbeRadius() &&
+            this->isImageConvex() == other.isImageConvex());
+}
 
 /**
 * Copy from vpImage. From double image type.

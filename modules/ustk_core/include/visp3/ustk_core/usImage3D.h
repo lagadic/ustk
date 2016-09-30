@@ -101,6 +101,12 @@ public:
   usImage3D<Type> &operator=(const usImage3D<Type> &other);
 
   /**
+  * Comparaison operator.
+  * @param other The 3d image to compare. Comparing only parameters, not all volume voxel by voxel.
+  */
+  bool operator==(const usImage3D<Type> &other);
+
+  /**
   * Access operator.
   * @param index Index of the data to acess.
   */
@@ -304,8 +310,8 @@ usImage3D<Type>::init(unsigned int h, unsigned int w, unsigned int d)
     }
   }
 
-  this->m_dimx = w ;
-  this->m_dimy = h;
+  this->m_dimx = h;
+  this->m_dimy = w;
   this->m_dimz = d;
 
   m_size=m_dimx*m_dimy*m_dimz;
@@ -337,22 +343,22 @@ usImage3D<Type>::init(unsigned int h, unsigned int w, unsigned int d)
 
 
 template<class Type>
-usImage3D<Type>::usImage3D() : m_dimx(0), m_dimy(0), m_dimz(0), m_size(0),
-bitmap(NULL), planesIndex(NULL),m_elementSpacingX(1.0f), m_elementSpacingY(1.0f), m_elementSpacingZ(1.0f)
+usImage3D<Type>::usImage3D() : m_dimx(0), m_dimy(0), m_dimz(0), m_elementSpacingX(1.0f), m_elementSpacingY(1.0f), m_elementSpacingZ(1.0f),
+                               m_size(0),bitmap(NULL), planesIndex(NULL)
 {
 
 }
 
 template<class Type>
-usImage3D<Type>::usImage3D(unsigned int dimX, unsigned int dimY, unsigned int dimZ) : m_dimx(dimX), m_dimy(dimY), m_dimz(dimZ), m_size(dimX * dimY * dimZ),
-                                                                                      bitmap(NULL), planesIndex(NULL), m_elementSpacingX(1.0f), m_elementSpacingY(1.0f), m_elementSpacingZ(1.0f) {
+usImage3D<Type>::usImage3D(unsigned int dimX, unsigned int dimY, unsigned int dimZ) : m_dimx(dimX), m_dimy(dimY), m_dimz(dimZ),
+m_size(dimX * dimY * dimZ),m_elementSpacingX(1.0f), m_elementSpacingY(1.0f), m_elementSpacingZ(1.0f),m_size(0), bitmap(NULL), planesIndex(NULL) {
     init(dimX,dimY,dimZ);
 }
 
 template<class Type>
 usImage3D<Type>::usImage3D(unsigned int dimx, unsigned int dimy, unsigned int dimz,
   float elementSpacingX, float elementSpacingY, float elementSpacingZ)  : m_dimx(dimx), m_dimy(dimy), m_dimz(dimz), m_size(dimx * dimy * dimz),
-                                                                          bitmap(NULL), planesIndex(NULL), m_elementSpacingX(elementSpacingX), m_elementSpacingY(elementSpacingY), m_elementSpacingZ(elementSpacingZ) {
+  m_elementSpacingX(elementSpacingX), m_elementSpacingY(elementSpacingY), m_elementSpacingZ(elementSpacingZ),m_size(0),bitmap(NULL), planesIndex(NULL) {
     init(dimx,dimy,dimz);
 }
 
@@ -406,6 +412,17 @@ usImage3D<Type> &usImage3D<Type>::operator=(const usImage3D<Type> &other)
   m_elementSpacingZ = other.m_elementSpacingZ;
   memcpy(bitmap, other.bitmap, m_size * sizeof(Type));
   return *this;
+}
+
+template<class Type>
+bool usImage3D<Type>::operator==(const usImage3D<Type> &other)
+{
+    return (this->getDimX() == other.getDimX() &&
+            this->getDimY() == other.getDimY() &&
+            this->getDimZ() == other.getDimZ() &&
+            this->getElementSpacingX() == other.getElementSpacingX() &&
+            this->getElementSpacingY() == other.getElementSpacingY() &&
+            this->getElementSpacingZ() == other.getElementSpacingZ());
 }
 
 template<class Type>

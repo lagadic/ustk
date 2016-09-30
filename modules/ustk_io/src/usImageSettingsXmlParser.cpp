@@ -36,7 +36,7 @@
 #include<visp3/ustk_io/usImageSettingsXmlParser.h>
 #ifdef VISP_HAVE_XML2
 usImageSettingsXmlParser::usImageSettingsXmlParser()
- : m_imageSettings(), m_imageFileName(), m_heightResolution(0.0f), m_widthResolution(0.0f), m_axialResolution(0.0f)
+ : m_imageSettings(usImageSettings()), m_imageFileName(std::string("")), m_is_prescan(false), m_axialResolution(0.0f), m_heightResolution(0.0f), m_widthResolution(0.0f)
 {
   nodeMap["settings"] = CODE_XML_SETTINGS;
   nodeMap["image_type"] = CODE_XML_IMAGE_TYPE;
@@ -50,8 +50,8 @@ usImageSettingsXmlParser::usImageSettingsXmlParser()
 }
 
 usImageSettingsXmlParser::usImageSettingsXmlParser(usImageSettingsXmlParser& twinParser) : vpXmlParser(twinParser),
-  m_imageSettings(twinParser.getImageSettings()), m_imageFileName(twinParser.getImageFileName()), 
-  m_heightResolution(twinParser.getHeightResolution()), m_widthResolution(twinParser.getWidthResolution()), m_axialResolution(twinParser.getAxialResolution()), m_is_prescan(false)
+  m_imageSettings(twinParser.getImageSettings()), m_imageFileName(twinParser.getImageFileName()), m_is_prescan(false),
+  m_axialResolution(twinParser.getAxialResolution()), m_heightResolution(twinParser.getHeightResolution()), m_widthResolution(twinParser.getWidthResolution())
 {
 
 }
@@ -81,31 +81,39 @@ bool usImageSettingsXmlParser::operator ==(usImageSettingsXmlParser const& other
 void
 usImageSettingsXmlParser::readMainClass (xmlDocPtr doc, xmlNodePtr node)
 {
+  std::string value;
   for(xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;  dataNode = dataNode->next)  {
     if(dataNode->type == XML_ELEMENT_NODE){
       std::map<std::string, int>::iterator iter_data= this->nodeMap.find((char*)dataNode->name);
       if(iter_data != nodeMap.end()){
         switch (iter_data->second) {
         case CODE_XML_IMAGE_TYPE:
-          this->m_is_prescan = (strcmp(xmlReadStringChild(doc, dataNode).c_str(), "postscan") ? false : true);
+          value = xmlReadStringChild(doc, dataNode);
+          if(strcmp(value.c_str(), "postscan") != 0 &&
+             strcmp(value.c_str(), "prescan") != 0 &&
+             strcmp(value.c_str(), "rf") != 0) {
+             throw(vpException(vpException::fatalError, std::string("unknown image type in xml file")));
+             break;
+            }
+          this->m_is_prescan = (strcmp(value.c_str(), "postscan") ? true : false);
           break;
         case CODE_XML_AXIAL_RESOLUTION:
           if (this->m_is_prescan) {
             this->m_axialResolution = xmlReadDoubleChild(doc, dataNode);
             break;
           }
-          vpTRACE("Trying to assign an axial resolution to a postscan image !");
+          throw(vpException(vpException::fatalError, std::string("Trying to assign an axial resolution to a postscan image !")));
           break;
         case CODE_XML_HEIGHT_RESOLUTION:
           if (this->m_is_prescan) {
-            vpTRACE("Trying to assign a height resolution to a prescan image !");
+            throw(vpException(vpException::fatalError, std::string("Trying to assign an height resolution to a prescan image !")));
             break;
           }
           this->m_heightResolution = xmlReadDoubleChild(doc, dataNode);
           break;
         case CODE_XML_WIDTH_RESOLUTION :
           if (this->m_is_prescan) {
-            vpTRACE("Trying to assign a width resolution to a prescan image !");
+            throw(vpException(vpException::fatalError, std::string("Trying to assign an width resolution to a prescan image !")));
             break;
           }
           this->m_widthResolution = xmlReadDoubleChild(doc, dataNode);
@@ -119,9 +127,9 @@ usImageSettingsXmlParser::readMainClass (xmlDocPtr doc, xmlNodePtr node)
         case CODE_XML_IS_CONVEX:
           this->m_imageSettings.setImageConvex(xmlReadBoolChild(doc, dataNode));
           break;
-        case CODE_XML_ASSOCIATED_IMAGE_FILE_NAME:{
+        case CODE_XML_ASSOCIATED_IMAGE_FILE_NAME:
           this->m_imageFileName = xmlReadStringChild(doc, dataNode);
-        }break;
+        break;
         default:
           vpTRACE("unknown tag in readConfigNode : %d, %s", iter_data->second, (iter_data->first).c_str());
           break;

@@ -66,6 +66,8 @@ public:
 
   ~usImagePostScan3D();
 
+  bool operator ==(const usImagePostScan3D<T> &other);
+
   void setWidthResolution(double widthResolution);
 
   double getWidthResolution() const;
@@ -155,6 +157,26 @@ usImagePostScan3D<T>::usImagePostScan3D(const usImage3D<T> &otherImage, const us
 */
 template<class T>
 usImagePostScan3D<T>::~usImagePostScan3D() {}
+
+/**
+* Comparaison operator : compares all the setttings between two 3D postScan images, but not the voxels values.
+*/
+template<class T>
+bool usImagePostScan3D<T>::operator ==(usImagePostScan3D<T> const& other)
+{
+    return (this->getDimX() == other.getDimX() &&
+            this->getDimY() == other.getDimY() &&
+            this->getDimZ() == other.getDimZ() &&
+            this->getElementSpacingX() == other.getElementSpacingX() &&
+            this->getElementSpacingY() == other.getElementSpacingY() &&
+            this->getElementSpacingZ() == other.getElementSpacingZ() &&
+            this->getFramePitch() == other.getFramePitch() &&
+            this->getScanLinePitch() == other.getScanLinePitch() &&
+            this->getProbeRadius() == other.getProbeRadius() &&
+            this->getMotorRadius() == other.getMotorRadius() &&
+            this->getHeightResolution() == other.getHeightResolution() &&
+            this->getWidthResolution() == other.getWidthResolution());
+}
 
 /**
 * Setter for width Resolution.
