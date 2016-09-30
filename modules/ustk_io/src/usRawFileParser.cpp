@@ -11,7 +11,7 @@ void usRawFileParser::read(usImagePostScan3D<unsigned char> &postScanImage3D, co
     fileStream.write ((char*)&postScanImage3D[i], sizeof (unsigned char));
     i++;
   }
-    fileStream.close();
+  fileStream.close();
 }
 
 void usRawFileParser::write(const usImagePostScan3D<unsigned char> &postScanImage3D, const std::string rawFilename)

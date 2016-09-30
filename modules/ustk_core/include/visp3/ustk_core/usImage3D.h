@@ -73,7 +73,7 @@ public:
 
   /**
   * Constructor. Set the dimensions and element spacing of the volume.
-  * @param dimX size (in pixels) on X-axis 
+  * @param dimX size (in pixels) on X-axis
   * @param dimY size (in pixels) on Y-axis
   * @param dimZ size (in pixels) on Z-axis
   * @param spacingX distancee (in meters) between two voxels on X-axis
@@ -131,6 +131,17 @@ public:
   * @param d volume depth.
   */
   void init(unsigned int h, unsigned int w, unsigned int d);
+
+  /**
+  * initiation of the image.
+  * @param h volume height.
+  * @param w volume width.
+  * @param d volume depth.
+  * @param spacingX Element spacing in x axis.
+  * @param spacingY Element spacing in x axis.
+  * @param spacingZ Element spacing in x axis.
+  */
+  void init(unsigned int h, unsigned int w, unsigned int d, float spacingX, float spacingY, float spacingZ);
 
   /**
   * Modification operator.
@@ -245,7 +256,7 @@ public:
 
   /**
   * Initialize the data container with the specified value.
-  * @param value The data 
+  * @param value The data
   * @param numberOfVloxels number of voxels in the volume
   */
   void initData(Type value,int numberOfVloxels);
@@ -321,18 +332,18 @@ usImage3D<Type>::init(unsigned int h, unsigned int w, unsigned int d)
   //  vpERROR_TRACE("Allocate bitmap %p",bitmap) ;
   if (bitmap == NULL)
   {
-        vpERROR_TRACE("cannot allocate bitmap ") ;
+    vpERROR_TRACE("cannot allocate bitmap ") ;
     throw(vpException(vpException::memoryAllocationError,
-          "cannot allocate bitmap ")) ;
+                      "cannot allocate bitmap ")) ;
   }
 
   if (planesIndex == NULL)  planesIndex = new  Type*[m_dimx];
-//  vpERROR_TRACE("Allocate row %p",row) ;
+  //  vpERROR_TRACE("Allocate row %p",row) ;
   if (planesIndex == NULL)
   {
     vpERROR_TRACE("cannot allocate index ") ;
     throw(vpException(vpException::memoryAllocationError,
-          "cannot allocate index ")) ;
+                      "cannot allocate index ")) ;
   }
 
   //filling planesIndex
@@ -341,25 +352,34 @@ usImage3D<Type>::init(unsigned int h, unsigned int w, unsigned int d)
     planesIndex[i] = bitmap + i*m_dimx*m_dimy ;
 }
 
+template<class Type>
+void
+usImage3D<Type>::init(unsigned int h, unsigned int w, unsigned int d, float spacingX, float spacingY, float spacingZ)
+{
+  init(h,w,d);
+  m_elementSpacingX = spacingX;
+  m_elementSpacingY = spacingY;
+  m_elementSpacingZ = spacingZ;
+}
 
 template<class Type>
 usImage3D<Type>::usImage3D() : m_dimx(0), m_dimy(0), m_dimz(0), m_elementSpacingX(1.0f), m_elementSpacingY(1.0f), m_elementSpacingZ(1.0f),
-                               m_size(0),bitmap(NULL), planesIndex(NULL)
+  m_size(0),bitmap(NULL), planesIndex(NULL)
 {
 
 }
 
 template<class Type>
 usImage3D<Type>::usImage3D(unsigned int dimX, unsigned int dimY, unsigned int dimZ) : m_dimx(dimX), m_dimy(dimY), m_dimz(dimZ),
-m_size(dimX * dimY * dimZ),m_elementSpacingX(1.0f), m_elementSpacingY(1.0f), m_elementSpacingZ(1.0f),m_size(0), bitmap(NULL), planesIndex(NULL) {
-    init(dimX,dimY,dimZ);
+  m_size(dimX * dimY * dimZ),m_elementSpacingX(1.0f), m_elementSpacingY(1.0f), m_elementSpacingZ(1.0f),m_size(0), bitmap(NULL), planesIndex(NULL) {
+  init(dimX,dimY,dimZ);
 }
 
 template<class Type>
 usImage3D<Type>::usImage3D(unsigned int dimx, unsigned int dimy, unsigned int dimz,
-  float elementSpacingX, float elementSpacingY, float elementSpacingZ)  : m_dimx(dimx), m_dimy(dimy), m_dimz(dimz), m_size(dimx * dimy * dimz),
+                           float elementSpacingX, float elementSpacingY, float elementSpacingZ)  : m_dimx(dimx), m_dimy(dimy), m_dimz(dimz), m_size(dimx * dimy * dimz),
   m_elementSpacingX(elementSpacingX), m_elementSpacingY(elementSpacingY), m_elementSpacingZ(elementSpacingZ),m_size(0),bitmap(NULL), planesIndex(NULL) {
-    init(dimx,dimy,dimz);
+  init(dimx,dimy,dimz);
 }
 
 template<class Type>
@@ -396,8 +416,8 @@ template<class Type>
 usImage3D<Type> &usImage3D<Type>::operator=(const usImage3D<Type> &other)
 {
   if (m_dimx != other.m_dimx
-    || m_dimy != other.m_dimy
-    || m_dimz != other.m_dimz)
+      || m_dimy != other.m_dimy
+      || m_dimz != other.m_dimz)
   {
     m_dimx = other.m_dimx;
     m_dimy = other.m_dimy;
@@ -417,12 +437,20 @@ usImage3D<Type> &usImage3D<Type>::operator=(const usImage3D<Type> &other)
 template<class Type>
 bool usImage3D<Type>::operator==(const usImage3D<Type> &other)
 {
-    return (this->getDimX() == other.getDimX() &&
-            this->getDimY() == other.getDimY() &&
-            this->getDimZ() == other.getDimZ() &&
-            this->getElementSpacingX() == other.getElementSpacingX() &&
-            this->getElementSpacingY() == other.getElementSpacingY() &&
-            this->getElementSpacingZ() == other.getElementSpacingZ());
+  bool settingsOk = this->getDimX() == other.getDimX() &&
+      this->getDimY() == other.getDimY() &&
+      this->getDimZ() == other.getDimZ() &&
+      this->getElementSpacingX() == other.getElementSpacingX() &&
+      this->getElementSpacingY() == other.getElementSpacingY() &&
+      this->getElementSpacingZ() == other.getElementSpacingZ();
+
+  if(settingsOk) {
+    for (unsigned int i=0 ; i < m_size ; i++) {
+      if (bitmap[i] != other[i])
+        return false;
+    }
+  }
+  return true;
 }
 
 template<class Type>

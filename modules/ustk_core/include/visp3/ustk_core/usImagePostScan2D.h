@@ -2,14 +2,14 @@
  *
  * This file is part of the UsTk software.
  * Copyright (C) 2014 by Inria. All rights reserved.
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License ("GPL") as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
  * See the file COPYING at the root directory of this source
  * distribution for additional information about the GNU GPL.
- * 
+ *
  * This software was developed at:
  * INRIA Rennes - Bretagne Atlantique
  * Campus Universitaire de Beaulieu
@@ -19,7 +19,7 @@
  *
  * If you have questions regarding the use of this file, please contact the
  * authors at Alexandre.Krupa@inria.fr
- * 
+ *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
@@ -51,7 +51,7 @@
  */
 template<class T>
 class usImagePostScan2D : public vpImage<T>, public usImageSettings {
- public:
+public:
   usImagePostScan2D();
 
   usImagePostScan2D(unsigned int AN, unsigned int LN, double probeRadius, double scanLinePitch, bool isConvex);
@@ -65,6 +65,10 @@ class usImagePostScan2D : public vpImage<T>, public usImageSettings {
   usImagePostScan2D(const vpImage<T> &otherImage, const usImageSettings &otherSettings);
 
   ~usImagePostScan2D();
+
+  usImagePostScan2D<T> & operator =(const usImagePostScan2D<T> &other);
+
+  bool operator ==(const usImagePostScan2D<T> &other);
 
   void setWidthResolution(double widthResolution);
 
@@ -154,6 +158,37 @@ template<class T>
 usImagePostScan2D<T>::~usImagePostScan2D() {}
 
 /**
+* Assignement operator.
+*/
+template<class T>
+usImagePostScan2D<T> & usImagePostScan2D<T>::operator =(const usImagePostScan2D<T> &other)
+{
+  //from vpImage
+  vpImage<T>::operator=(other);
+
+  //from usImageSettings
+  usImageSettings::operator=(other);
+
+  //from this class
+  m_widthResolution = other.getWidthResolution();
+  m_heightResolution = other.getHeightResolution();
+
+  return *this;
+}
+
+/**
+* Comparaison operator.
+*/
+template<class T>
+bool usImagePostScan2D<T>::operator ==(const usImagePostScan2D<T> &other)
+{
+  return(vpImage<T>::operator== (other) &&
+         usImageSettings::operator ==(other) &&
+         m_widthResolution = other.getWidthResolution() &&
+      m_heightResolution = other.getHeightResolution());
+}
+
+/**
 * Setter for width Resolution.
 * @param widthResolution Width resolution (in meters) to set.
 */
@@ -188,9 +223,9 @@ double usImagePostScan2D<T>::getHeightResolution() const { return m_heightResolu
 template<class T>
 void usImagePostScan2D<T>::setImageSettings(const usImageSettings &settings)
 {
-    setProbeRadius(settings.getProbeRadius());
-    setScanLinePitch(settings.getScanLinePitch());
-    setImageConvex(settings.isImageConvex());
+  setProbeRadius(settings.getProbeRadius());
+  setScanLinePitch(settings.getScanLinePitch());
+  setImageConvex(settings.isImageConvex());
 }
 
 #endif // US_IMAGE_POSTSCAN_2D_H

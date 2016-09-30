@@ -2,14 +2,14 @@
  *
  * This file is part of the UsTk software.
  * Copyright (C) 2014 by Inria. All rights reserved.
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License ("GPL") as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
  * See the file COPYING at the root directory of this source
  * distribution for additional information about the GNU GPL.
- * 
+ *
  * This software was developed at:
  * INRIA Rennes - Bretagne Atlantique
  * Campus Universitaire de Beaulieu
@@ -19,7 +19,7 @@
  *
  * If you have questions regarding the use of this file, please contact the
  * authors at Alexandre.Krupa@inria.fr
- * 
+ *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
@@ -36,7 +36,7 @@
 #include<visp3/ustk_io/usImageSettingsXmlParser.h>
 #ifdef VISP_HAVE_XML2
 usImageSettingsXmlParser::usImageSettingsXmlParser()
- : m_imageSettings(usImageSettings()), m_imageFileName(std::string("")), m_is_prescan(false), m_axialResolution(0.0f), m_heightResolution(0.0f), m_widthResolution(0.0f)
+  : m_imageSettings(usImageSettings()), m_imageFileName(std::string("")), m_is_prescan(false), m_axialResolution(0.0f), m_heightResolution(0.0f), m_widthResolution(0.0f)
 {
   nodeMap["settings"] = CODE_XML_SETTINGS;
   nodeMap["image_type"] = CODE_XML_IMAGE_TYPE;
@@ -44,7 +44,7 @@ usImageSettingsXmlParser::usImageSettingsXmlParser()
   nodeMap["probe_radius"] = CODE_XML_PROBE_RADIUS;
   nodeMap["is_convex"] = CODE_XML_IS_CONVEX;
   nodeMap["axial_resolution"] = CODE_XML_AXIAL_RESOLUTION;
-  nodeMap["height_resolution"] = CODE_XML_HEIGHT_RESOLUTION; 
+  nodeMap["height_resolution"] = CODE_XML_HEIGHT_RESOLUTION;
   nodeMap["width_resolution"] = CODE_XML_WIDTH_RESOLUTION;
   nodeMap["image_file_name"] = CODE_XML_ASSOCIATED_IMAGE_FILE_NAME;
 }
@@ -71,11 +71,11 @@ usImageSettingsXmlParser::~usImageSettingsXmlParser()
 
 bool usImageSettingsXmlParser::operator ==(usImageSettingsXmlParser const& other)
 {
-    return (this->getImageSettings() == other.getImageSettings() &&
-       this->getImageFileName() == other.getImageFileName() &&
-       this->getAxialResolution() == other.getAxialResolution() &&
-       this->getHeightResolution() == other.getHeightResolution() &&
-       this->getWidthResolution() == other.getWidthResolution());
+  return (this->getImageSettings() == other.getImageSettings() &&
+          this->getImageFileName() == other.getImageFileName() &&
+          this->getAxialResolution() == other.getAxialResolution() &&
+          this->getHeightResolution() == other.getHeightResolution() &&
+          this->getWidthResolution() == other.getWidthResolution());
 }
 
 void
@@ -92,9 +92,9 @@ usImageSettingsXmlParser::readMainClass (xmlDocPtr doc, xmlNodePtr node)
           if(strcmp(value.c_str(), "postscan") != 0 &&
              strcmp(value.c_str(), "prescan") != 0 &&
              strcmp(value.c_str(), "rf") != 0) {
-             throw(vpException(vpException::fatalError, std::string("unknown image type in xml file")));
-             break;
-            }
+            throw(vpException(vpException::fatalError, std::string("unknown image type in xml file")));
+            break;
+          }
           this->m_is_prescan = (strcmp(value.c_str(), "postscan") ? true : false);
           break;
         case CODE_XML_AXIAL_RESOLUTION:
@@ -129,7 +129,7 @@ usImageSettingsXmlParser::readMainClass (xmlDocPtr doc, xmlNodePtr node)
           break;
         case CODE_XML_ASSOCIATED_IMAGE_FILE_NAME:
           this->m_imageFileName = xmlReadStringChild(doc, dataNode);
-        break;
+          break;
         default:
           vpTRACE("unknown tag in readConfigNode : %d, %s", iter_data->second, (iter_data->first).c_str());
           break;
@@ -197,6 +197,6 @@ void usImageSettingsXmlParser::setImageSettings(double probeRadius, double scanL
 
 void usImageSettingsXmlParser::setImageFileName(std::string imageFileName)
 { 
-  m_imageFileName = imageFileName; 
+  m_imageFileName = imageFileName;
 }
 #endif //VISP_HAVE_XML2

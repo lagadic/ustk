@@ -25,7 +25,7 @@ usMetaHeaderParser::~usMetaHeaderParser()
 
 void usMetaHeaderParser::readMHDHeader(const std::string fileName)
 {
-    readMHDHeader(fileName.c_str());
+  readMHDHeader(fileName.c_str());
 }
 
 void  usMetaHeaderParser::readMHDHeader(const char * fileName)
@@ -280,20 +280,34 @@ void usMetaHeaderParser::parse()
 
   mhdfile << "ElementDataFile = " << mhdHeader.rawFileName << "\n";
 
-  if(mhdHeader.imageType== RF_2D)
-    mhdfile << "ElementType = " <<  "RF_2D" << "\n";
-  else if(mhdHeader.imageType == RF_3D)
-    mhdfile << "ElementType = " <<  "RF_3D" << "\n";
-  else if(mhdHeader.imageType == PRESCAN_2D)
-    mhdfile << "ElementType = " <<  "PRESCAN_2D" << "\n";
-  else if(mhdHeader.imageType == PRESCAN_3D)
-    mhdfile << "ElementType = " <<  "PRESCAN_3D" << "\n";
-  else if(mhdHeader.imageType == POSTSCAN_2D)
-    mhdfile << "ElementType = " <<  "POSTSCAN_2D" << "\n";
-  else if(mhdHeader.imageType == POSTSCAN_3D)
-    mhdfile << "ElementType = " <<  "POSTSCAN_3D" << "\n";
+  if(mhdHeader.imageType== RF_2D) {
+    mhdfile << "UltrasoundImageType = " <<  "RF_2D" << "\n";
+    mhdfile << "AxialResolution = " << this->m_axialResolution << "\n";
+  }
+  else if(mhdHeader.imageType == RF_3D) {
+    mhdfile << "UltrasoundImageType = " <<  "RF_3D" << "\n";
+    mhdfile << "AxialResolution = " << this->m_axialResolution << "\n";
+  }
+  else if(mhdHeader.imageType == PRESCAN_2D) {
+    mhdfile << "UltrasoundImageType = " <<  "PRESCAN_2D" << "\n";
+    mhdfile << "AxialResolution = " << this->m_axialResolution << "\n";
+  }
+  else if(mhdHeader.imageType == PRESCAN_3D) {
+    mhdfile << "UltrasoundImageType = " <<  "PRESCAN_3D" << "\n";
+    mhdfile << "AxialResolution = " << this->m_axialResolution << "\n";
+  }
+  else if(mhdHeader.imageType == POSTSCAN_2D) {
+    mhdfile << "UltrasoundImageType = " <<  "POSTSCAN_2D" << "\n";
+    mhdfile << "HeightResolution = " << this->m_heightResolution << "\n";
+    mhdfile << "WidthResolution = " << this->m_widthResolution << "\n";
+  }
+  else if(mhdHeader.imageType == POSTSCAN_3D) {
+    mhdfile << "UltrasoundImageType = " <<  "POSTSCAN_3D" << "\n";
+    mhdfile << "HeightResolution = " << this->m_heightResolution << "\n";
+    mhdfile << "WidthResolution = " << this->m_widthResolution << "\n";
+  }
   else
-    mhdfile << "ElementType = " <<  "MET_UNKNOWN" << "\n";
+    mhdfile << "UltrasoundImageType = " <<  "MET_UNKNOWN" << "\n";
 
   mhdfile << "IsImageConvex = " << mhdHeader.isImageConvex << "\n";
 

@@ -2,14 +2,14 @@
  *
  * This file is part of the UsTk software.
  * Copyright (C) 2014 by Inria. All rights reserved.
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License ("GPL") as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
  * See the file COPYING at the root directory of this source
  * distribution for additional information about the GNU GPL.
- * 
+ *
  * This software was developed at:
  * INRIA Rennes - Bretagne Atlantique
  * Campus Universitaire de Beaulieu
@@ -19,7 +19,7 @@
  *
  * If you have questions regarding the use of this file, please contact the
  * authors at Alexandre.Krupa@inria.fr
- * 
+ *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
@@ -30,7 +30,7 @@
  *
  *****************************************************************************/
 
- /**
+/**
  * @file usImageSettings.cpp
  * @brief Generic ultrasound image settings.
  */
@@ -121,7 +121,7 @@ double usImageSettings::getScanLinePitch() const { return m_scanLinePitch; }
 * @param isConvex True if the probe used was convex, false if it was linear. Sets the probe radius to 0 in case of linear probe.
 */
 void usImageSettings::setImageConvex(const bool isConvex) {
-  m_isImageConvex = isConvex; 
+  m_isImageConvex = isConvex;
   if (!isConvex) {
     m_probeRadius = 0.0f;
   }
@@ -139,13 +139,13 @@ bool usImageSettings::isImageConvex() const { return m_isImageConvex; }
 void usImageSettings::printProbeSettings()
 {
   std::cout << "probe radius: " << m_probeRadius << std::endl
-    << "line angle: " << m_scanLinePitch << std::endl
-    << "convex probe used: " << m_isImageConvex << std::endl;
+            << "line angle: " << m_scanLinePitch << std::endl
+            << "convex probe used: " << m_isImageConvex << std::endl;
 }
 
 void usImageSettings::setImageSettings(const usImageSettings& other)
 {
-    m_scanLinePitch = other.getScanLinePitch();
-    m_probeRadius = other.getProbeRadius();
-    m_isImageConvex = other.isImageConvex();
+  m_scanLinePitch = other.getScanLinePitch();
+  m_probeRadius = other.getProbeRadius();
+  m_isImageConvex = other.isImageConvex();
 }

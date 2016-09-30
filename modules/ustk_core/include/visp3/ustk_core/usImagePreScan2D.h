@@ -2,14 +2,14 @@
  *
  * This file is part of the UsTk software.
  * Copyright (C) 2014 by Inria. All rights reserved.
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License ("GPL") as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
  * See the file COPYING at the root directory of this source
  * distribution for additional information about the GNU GPL.
- * 
+ *
  * This software was developed at:
  * INRIA Rennes - Bretagne Atlantique
  * Campus Universitaire de Beaulieu
@@ -19,7 +19,7 @@
  *
  * If you have questions regarding the use of this file, please contact the
  * authors at Alexandre.Krupa@inria.fr
- * 
+ *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
@@ -49,48 +49,48 @@
  */
 template<class T>
 class usImagePreScan2D : public vpImage<T>, public usImageSettings {
-    public:
-        //default constructors
-        usImagePreScan2D();
+public:
+  //default constructors
+  usImagePreScan2D();
 
-        //image size initialisation constructors
-        usImagePreScan2D(unsigned int AN, unsigned int LN);
+  //image size initialisation constructors
+  usImagePreScan2D(unsigned int AN, unsigned int LN);
 
-        //All parameters initialisation constructors
-        usImagePreScan2D(unsigned int AN, unsigned int LN, double probeRadius, double scanLinePitch, bool isConvex);
+  //All parameters initialisation constructors
+  usImagePreScan2D(unsigned int AN, unsigned int LN, double probeRadius, double scanLinePitch, bool isConvex);
 
-        //usImagePreScan2D copy constructor
-        usImagePreScan2D(const usImagePreScan2D &other);
+  //usImagePreScan2D copy constructor
+  usImagePreScan2D(const usImagePreScan2D &other);
 
-        //vpImage copy constructors
-        usImagePreScan2D(const vpImage<T> &other);
+  //vpImage copy constructors
+  usImagePreScan2D(const vpImage<T> &other);
 
-        //vpImage copy constructors
-        usImagePreScan2D(const usImageSettings &other);
+  //vpImage copy constructors
+  usImagePreScan2D(const usImageSettings &other);
 
-        //copy constructor from vpImage and usImageSettings
-        usImagePreScan2D(const vpImage<T> &other, const usImageSettings &otherSettings);
+  //copy constructor from vpImage and usImageSettings
+  usImagePreScan2D(const vpImage<T> &other, const usImageSettings &otherSettings);
 
-        //destructor
-        ~usImagePreScan2D();
+  //destructor
+  ~usImagePreScan2D();
 
-        //assignement
-        usImagePreScan2D<T>& operator=(const usImagePreScan2D<T> &other);
+  //assignement
+  usImagePreScan2D<T>& operator=(const usImagePreScan2D<T> &other);
 
-        //comparaison
-        bool operator==(const usImagePreScan2D<T> &other);
+  //comparaison
+  bool operator==(const usImagePreScan2D<T> &other);
 
-        //copying from vpImage
-        void copyFrom(const vpImage<T> &I);
+  //copying from vpImage
+  void copyFrom(const vpImage<T> &I);
 
-        //No setters for AN and LN because vpImage doesn't have setters for height and width. Those parameters have to be passed in the constructor.
-        unsigned int getAN() const;
+  //No setters for AN and LN because vpImage doesn't have setters for height and width. Those parameters have to be passed in the constructor.
+  unsigned int getAN() const;
 
-        unsigned int getLN() const;
+  unsigned int getLN() const;
 
-        double getAxialResolution() const;
+  double getAxialResolution() const;
 
-        void setAxialResolution(const double axialResolution);
+  void setAxialResolution(const double axialResolution);
 
 private:
   double m_axialResolution;
@@ -126,7 +126,7 @@ usImagePreScan2D<T>::usImagePreScan2D(unsigned int AN, unsigned int LN) : vpImag
 */
 template<class T>
 usImagePreScan2D<T>::usImagePreScan2D(unsigned int AN, unsigned int LN, double probeRadius, double scanLinePitch, bool isConvex) :
-    vpImage<T>(AN, LN), usImageSettings(probeRadius, scanLinePitch, isConvex)
+  vpImage<T>(AN, LN), usImageSettings(probeRadius, scanLinePitch, isConvex)
 {
 
 }
@@ -137,7 +137,7 @@ usImagePreScan2D<T>::usImagePreScan2D(unsigned int AN, unsigned int LN, double p
 */
 template<class T>
 usImagePreScan2D<T>::usImagePreScan2D(const usImagePreScan2D &other) :
-    vpImage<T>(other), usImageSettings(other)
+  vpImage<T>(other), usImageSettings(other)
 {
 
 }
@@ -168,7 +168,7 @@ usImagePreScan2D<T>::usImagePreScan2D(const usImageSettings &other) : usImageSet
 */
 template<class T>
 usImagePreScan2D<T>::usImagePreScan2D(const vpImage<T> &other, const usImageSettings &otherSettings) :
-    vpImage<T>(other), usImageSettings(otherSettings)
+  vpImage<T>(other), usImageSettings(otherSettings)
 {
 
 }
@@ -185,9 +185,14 @@ usImagePreScan2D<T>::~usImagePreScan2D() {}
 template<class T>
 usImagePreScan2D<T>& usImagePreScan2D<T>::operator=(const usImagePreScan2D<T> &other)
 {
-    resize(other.getHeight(),other.getWidth());
-    setImageSettings(other);
-    m_axialResolution = other.getAxialResolution();
+  //from vpImage
+  vpImage<T>::operator=(other);
+
+  //from usImageSettings
+  usImageSettings::operator=(other);
+
+  //from this class
+  m_axialResolution = other.getAxialResolution();
 }
 
 /**
@@ -196,11 +201,9 @@ usImagePreScan2D<T>& usImagePreScan2D<T>::operator=(const usImagePreScan2D<T> &o
 template<class T>
 bool usImagePreScan2D<T>::operator==(const usImagePreScan2D<T> &other)
 {
-    return( this->getHeight() == other.getHeight() &&
-            this->getWidth() == other.getWidth() &&
-            this->getAxialResolution() == other.getAxialResolution() &&
-            this->getProbeRadius() == other.getProbeRadius() &&
-            this->isImageConvex() == other.isImageConvex());
+  return(vpImage<T>::operator== (other) &&
+         usImageSettings::operator ==(other) &&
+         m_axialResolution == other.getAxialResolution());
 }
 
 /**
@@ -210,8 +213,8 @@ bool usImagePreScan2D<T>::operator==(const usImagePreScan2D<T> &other)
 template<class T>
 void usImagePreScan2D<T>::copyFrom(const vpImage<T> &I)
 {
-    resize(I.getHeight(), I.getWidth());
-    memcpy(this->bitmap, I.bitmap, I.getSize() * sizeof(T));
+  resize(I.getHeight(), I.getWidth());
+  memcpy(this->bitmap, I.bitmap, I.getSize() * sizeof(T));
 }
 
 /**

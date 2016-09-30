@@ -2,14 +2,14 @@
  *
  * This file is part of the UsTk software.
  * Copyright (C) 2014 by Inria. All rights reserved.
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License ("GPL") as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
  * See the file COPYING at the root directory of this source
  * distribution for additional information about the GNU GPL.
- * 
+ *
  * This software was developed at:
  * INRIA Rennes - Bretagne Atlantique
  * Campus Universitaire de Beaulieu
@@ -19,7 +19,7 @@
  *
  * If you have questions regarding the use of this file, please contact the
  * authors at Alexandre.Krupa@inria.fr
- * 
+ *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
@@ -30,7 +30,7 @@
  *
  *****************************************************************************/
 
- /**
+/**
  * @file usImageSettings3D.cpp
  * @brief Generic ultrasound 3D image settings.
  */
@@ -47,7 +47,7 @@
 * Basic Constructor, all settings set to default.
 */
 usImageSettings3D::usImageSettings3D() : usImageSettings(), m_motorRadius(0.0f), m_framePitch(0.0f) {}
-		   
+
 /**
 * Full Constructor, all settings availables
 * @param probeRadius Distance between the center point of the probe and the first pixel arc acquired, in meters (m).
@@ -59,7 +59,7 @@ usImageSettings3D::usImageSettings3D() : usImageSettings(), m_motorRadius(0.0f),
 * @param probeElementPitch Physic parameter of the probe : distance between 2 sucessive piezoelectric elements of the ultrasound probe.
 */
 usImageSettings3D::usImageSettings3D(double probeRadius, double motorRadius, double scanLinePitch, double framePitch, bool isImageConvex, bool isMotorConvex)
-                 : usImageSettings(probeRadius, scanLinePitch, isImageConvex), m_motorRadius(motorRadius), m_framePitch(framePitch), m_isMotorConvex(isMotorConvex) {}
+  : usImageSettings(probeRadius, scanLinePitch, isImageConvex), m_motorRadius(motorRadius), m_framePitch(framePitch), m_isMotorConvex(isMotorConvex) {}
 
 /**
 * Copy Constructor, all settings availables
@@ -78,23 +78,19 @@ usImageSettings3D::~usImageSettings3D() {}
 */
 usImageSettings3D& usImageSettings3D::operator=(const usImageSettings3D& other)
 {
-  setProbeRadius(other.getProbeRadius());
-  setScanLinePitch(other.getScanLinePitch());
-  setImageConvex(other.isImageConvex());
-  setMotorRadius(other.getMotorRadius());
-  setFramePitch(other.getFramePitch());
-  setMotorConvex(other.isMotorConvex());  
-
+  usImageSettings::operator =(other);
+  m_motorRadius = other.getMotorRadius();
+  m_framePitch = other.getFramePitch();
+  m_isMotorConvex = other.isMotorConvex();
   return *this;
 }
 
-inline bool usImageSettings3D::operator==(const usImageSettings3D& other)
+bool usImageSettings3D::operator==(const usImageSettings3D& other)
 {
-    return ( this->getProbeRadius() == other.getProbeRadius() &&
-             this->getScanLinePitch() == other.getScanLinePitch() &&
-             this->isImageConvex() == other.isImageConvex() &&
-             this->getFramePitch() == other.getFramePitch() &&
-             this->getMotorRadius() == other.getMotorRadius());
+  return (usImageSettings::operator ==(other) &&
+          this->getFramePitch() == other.getFramePitch() &&
+          this->getMotorRadius() == other.getMotorRadius() &&
+          this->isMotorConvex() == other.isMotorConvex());
 }
 
 //probe settings getters/setters

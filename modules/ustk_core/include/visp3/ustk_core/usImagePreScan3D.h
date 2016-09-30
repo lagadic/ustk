@@ -59,7 +59,7 @@ public:
 
   //All parameters initialisation constructors
   usImagePreScan3D(unsigned int AN, unsigned int LN, unsigned int FN, double probeRadius, double motorRadius, double scanLinePitch, double framePitch,
-    bool isImageConvex, bool isMotorConvex);
+                   bool isImageConvex, bool isMotorConvex);
 
   //usImagePreScan3D copy constructor
   usImagePreScan3D(const usImagePreScan3D &other);
@@ -75,6 +75,12 @@ public:
 
   //destructor
   ~usImagePreScan3D();
+
+  //assignement
+  usImagePreScan3D<T>& operator=(const usImagePreScan3D<T> &other);
+
+  //comparaison
+  bool operator==(const usImagePreScan3D<T> &other);
 
   //copying from usImage3D
   void copyFrom(const usImage3D<T> &I);
@@ -127,7 +133,7 @@ usImagePreScan3D<T>::usImagePreScan3D(unsigned int AN, unsigned int LN, unsigned
 */
 template<class T>
 usImagePreScan3D<T>::usImagePreScan3D(unsigned int AN, unsigned int LN, unsigned int FN, double probeRadius, double motorRadius, double scanLinePitch, double framePitch,
-  bool isImageConvex, bool isMotorConvex) :
+                                      bool isImageConvex, bool isMotorConvex) :
   usImage3D<T>(AN, LN, FN), usImageSettings3D(probeRadius, motorRadius, scanLinePitch, framePitch, isImageConvex, isMotorConvex)
 {
 
@@ -180,6 +186,33 @@ usImagePreScan3D<T>::usImagePreScan3D(const usImage3D<T> &other, const usImageSe
 */
 template<class T>
 usImagePreScan3D<T>::~usImagePreScan3D() {}
+
+/**
+* Copy operator.
+*/
+template<class T>
+usImagePreScan3D<T>& usImagePreScan3D<T>::operator=(const usImagePreScan3D<T> &other)
+{
+  //from vpImage
+  usImage3D<T>::operator=(other);
+
+  //from usImageSettings
+  usImageSettings3D::operator=(other);
+
+  //from this class
+  m_axialResolution = other.getAxialResolution();
+}
+
+/**
+* Comparaison operator.
+*/
+template<class T>
+bool usImagePreScan3D<T>::operator==(const usImagePreScan3D<T> &other)
+{
+  return(usImage3D<T>::operator== (other) &&
+         usImageSettings3D::operator ==(other) &&
+         m_axialResolution == other.getAxialResolution());
+}
 
 /**
 * Copy from usImage3D. From double image type.

@@ -11,7 +11,7 @@
 
   USTK MHD parser example.
   
-  This example contains the declaration of a class used to read and write data 
+  This example contains the declaration of a class used to read and write data
   in a mhd file like:
   \code
 NDims = 3
@@ -64,26 +64,26 @@ Print the program options.
 void usage(const char *name, const char *badparam, const std::string& opath, const std::string& user)
 {
   fprintf(stdout, "\n\
-Write and read data in a xml file.\n\
+          Write and read data in a xml file.\n\
           \n\
-SYNOPSIS\n\
-  %s [-o <output image path>] [-h]\n", name);
+          SYNOPSIS\n\
+          %s [-o <output image path>] [-h]\n", name);
 
-  fprintf(stdout, "\n\
-OPTIONS:                                               Default\n\
-  -o <output data path>                               %s\n\
-     Set data output path.\n\
-     From this directory, creates the \"%s\"\n\
-     subdirectory depending on the username, where \n\
-     prescan2D.xml file is written.\n\
-                  \n\
-  -h\n\
-     Print the help.\n\n", opath.c_str(), user.c_str());
+      fprintf(stdout, "\n\
+              OPTIONS:                                               Default\n\
+              -o <output data path>                               %s\n\
+              Set data output path.\n\
+              From this directory, creates the \"%s\"\n\
+              subdirectory depending on the username, where \n\
+              prescan2D.xml file is written.\n\
+              \n\
+              -h\n\
+              Print the help.\n\n", opath.c_str(), user.c_str());
 
-  if (badparam) {
-    fprintf(stderr, "ERROR: \n" );
-    fprintf(stderr, "\nBad parameter [%s]\n", badparam);
-  }
+              if (badparam) {
+                fprintf(stderr, "ERROR: \n" );
+                fprintf(stderr, "\nBad parameter [%s]\n", badparam);
+              }
 }
 
 /*!
@@ -185,83 +185,65 @@ int main(int argc, const char** argv)
         exit(-1);
       }
     }
-
     //Set input path to environement variable USTK_DATASET_PATH
-    ipath = "/home/mpouliqu/Documents/usData/ustk-tests-dataset";//vpIoTools::getenv(std::string("USTK_DATASET_PATH"));
+    ipath = vpIoTools::getenv(std::string("USTK_DATASET_PATH"));
+    filename = ipath + vpIoTools::path("/") + "postscan3d";
 
-    //Init values in reference parser (same values in file tested to read)
+    //Init values in reference parser (same values in file read in test)
+    usImagePostScan3D<unsigned char> postscan3DReference;
+    postscan3DReference.resize(186,233,163);
+    postscan3DReference.setElementSpacingX(1);
+    postscan3DReference.setElementSpacingY(1);
+    postscan3DReference.setElementSpacingZ(1);
+    postscan3DReference.setScanLinePitch(0.0145);
+    postscan3DReference.setProbeRadius(0.554);
+    postscan3DReference.setImageConvex(true);
+    postscan3DReference.setFramePitch(0.258);
+    postscan3DReference.setMotorRadius(0.025);
+    postscan3DReference.setMotorConvex(true);
+    postscan3DReference.setWidthResolution(0.0058);
+    postscan3DReference.setHeightResolution(0.0058);
 
-    // Read ultrasound  using a mhd parser.
-    {
-      usImagePostScan3D<unsigned char> postscan3DReference;
+    std::cout << "Read from " << filename << std::endl ;
+    std::cout << "Dim X : " << postscan3DReference.getDimX() << std::endl;
+    std::cout << "Dim Y : " << postscan3DReference.getDimY() << std::endl;
+    std::cout << "Dim Z: " << postscan3DReference.getDimZ() << std::endl;
+    std::cout << "Spacing X: " << postscan3DReference.getElementSpacingX() << std::endl;
+    std::cout << "Spacing Y: " << postscan3DReference.getElementSpacingY() << std::endl;
+    std::cout << "Spacing Z: " << postscan3DReference.getElementSpacingZ() << std::endl;
+    std::cout << "Scanline pitch : " << postscan3DReference.getScanLinePitch() << std::endl;
+    std::cout << "Probe Radius : " << postscan3DReference.getProbeRadius() << std::endl;
+    std::cout << "Frame pitch : " << postscan3DReference.getFramePitch() << std::endl;
+    std::cout << "Motor Radius : " << postscan3DReference.getMotorRadius() << std::endl;
+    std::cout << "Width resolution : " << postscan3DReference.getWidthResolution() << std::endl;
+    std::cout << "Height resolution : " << postscan3DReference.getHeightResolution() << std::endl;
 
+    //write image
+    usImageIo::write(postscan3DReference,filename);
 
-      postscan3DReference.resize(186,233,163);
+    //read the image we just wrote
+    usImagePostScan3D<unsigned char> postscan3D;
+    filename = ipath + vpIoTools::path("/") + "postscan3d.mhd";
+    usImageIo::read(postscan3D,filename);
 
-      postscan3DReference.setElementSpacingX(1);
-      postscan3DReference.setElementSpacingY(1);
-      postscan3DReference.setElementSpacingZ(1);
+    std::cout << "Read from " << filename << std::endl ;
+    std::cout << "Dim X : " << postscan3D.getDimX() << std::endl;
+    std::cout << "Dim Y : " << postscan3D.getDimY() << std::endl;
+    std::cout << "Dim Z: " << postscan3D.getDimZ() << std::endl;
+    std::cout << "Spacing X: " << postscan3D.getElementSpacingX() << std::endl;
+    std::cout << "Spacing Y: " << postscan3D.getElementSpacingY() << std::endl;
+    std::cout << "Spacing Z: " << postscan3D.getElementSpacingZ() << std::endl;
+    std::cout << "Scanline pitch : " << postscan3D.getScanLinePitch() << std::endl;
+    std::cout << "Probe Radius : " << postscan3D.getProbeRadius() << std::endl;
+    std::cout << "Frame pitch : " << postscan3D.getFramePitch() << std::endl;
+    std::cout << "Motor Radius : " << postscan3D.getMotorRadius() << std::endl;
+    std::cout << "Width resolution : " << postscan3D.getWidthResolution() << std::endl;
+    std::cout << "Height resolution : " << postscan3D.getHeightResolution() << std::endl;
 
-      postscan3DReference.setScanLinePitch(0.0145);
-      postscan3DReference.setProbeRadius(0.554);
-      postscan3DReference.setFramePitch(0.258);
-      postscan3DReference.setMotorRadius(0.025);
-      postscan3DReference.setWidthResolution(0.0058);
-      postscan3DReference.setHeightResolution(0.0058);
-/*
-      std::cout << "Dim X : " << postscan3DReference.getDimX() << std::endl;
-      std::cout << "Dim Y : " << postscan3DReference.getDimY() << std::endl;
-      std::cout << "Dim Z: " << postscan3DReference.getDimZ() << std::endl;
-
-      std::cout << "Spacing X: " << postscan3DReference.getElementSpacingX() << std::endl;
-      std::cout << "Spacing Y: " << postscan3DReference.getElementSpacingY() << std::endl;
-      std::cout << "Spacing Z: " << postscan3DReference.getElementSpacingZ() << std::endl;
-
-      std::cout << "Scanline pitch : " << postscan3DReference.getScanLinePitch() << std::endl;
-      std::cout << "Probe Radius : " << postscan3DReference.getProbeRadius() << std::endl;
-      std::cout << "Frame pitch : " << postscan3DReference.getFramePitch() << std::endl;
-      std::cout << "Motor Radius : " << postscan3DReference.getMotorRadius() << std::endl;
-      std::cout << "Width resolution : " << postscan3DReference.getWidthResolution() << std::endl;
-      std::cout << "Height resolution : " << postscan3DReference.getHeightResolution() << std::endl;*/
-
-      usImagePostScan3D<unsigned char> postscan3D;
-      std::string filename = ipath + vpIoTools::path("/") + "postscan3d.mhd";
-      usImageIo::read(postscan3D,filename);
-      /*
-      std::cout << "Read from " << filename << std::endl ;
-      std::cout << "Dim X : " << postscan3D.getDimX() << std::endl;
-      std::cout << "Dim Y : " << postscan3D.getDimY() << std::endl;
-      std::cout << "Dim Z: " << postscan3D.getDimZ() << std::endl;
-      std::cout << "Spacing X: " << postscan3D.getElementSpacingX() << std::endl;
-      std::cout << "Spacing Y: " << postscan3D.getElementSpacingY() << std::endl;
-      std::cout << "Spacing Z: " << postscan3D.getElementSpacingZ() << std::endl;
-      std::cout << "Scanline pitch : " << postscan3D.getScanLinePitch() << std::endl;
-      std::cout << "Probe Radius : " << postscan3D.getProbeRadius() << std::endl;
-      std::cout << "Frame pitch : " << postscan3D.getFramePitch() << std::endl;
-      std::cout << "Motor Radius : " << postscan3D.getMotorRadius() << std::endl;
-      std::cout << "Width resolution : " << postscan3D.getWidthResolution() << std::endl;
-      std::cout << "Height resolution : " << postscan3D.getHeightResolution() << std::endl;*/
-      if(postscan3D==postscan3DReference) {
-        std::cout << "postscan images equals" << std::endl;
-        return 0;
-      }
+    if(postscan3D==postscan3DReference) {
+      std::cout << "postscan images equals" << std::endl;
+      return 0;
     }
-
-
-    // Write data using a parser.
-    /*{
-      vpExampleDataParser parser1;
-
-      // Acquire data from measurments or tests.
-      parser1.setRange(3.5);
-      parser1.setStep(2);
-      parser1.setSizeFilter(5);
-      parser1.setName("cube");
-
-      std::cout << "Write data to " << filename << std::endl;
-      parser1.save(filename);
-    }*/
-
 
     // Clean up memory allocated by the xml library
     vpXmlParser::cleanup();

@@ -66,6 +66,8 @@ public:
 
   ~usImagePostScan3D();
 
+  usImagePostScan3D<T> & operator =(const usImagePostScan3D<T> &other);
+
   bool operator ==(const usImagePostScan3D<T> &other);
 
   void setWidthResolution(double widthResolution);
@@ -159,23 +161,34 @@ template<class T>
 usImagePostScan3D<T>::~usImagePostScan3D() {}
 
 /**
-* Comparaison operator : compares all the setttings between two 3D postScan images, but not the voxels values.
+* Assignement operator.
 */
 template<class T>
-bool usImagePostScan3D<T>::operator ==(usImagePostScan3D<T> const& other)
+usImagePostScan3D<T> & usImagePostScan3D<T>::operator =(const usImagePostScan3D<T> &other)
 {
-    return (this->getDimX() == other.getDimX() &&
-            this->getDimY() == other.getDimY() &&
-            this->getDimZ() == other.getDimZ() &&
-            this->getElementSpacingX() == other.getElementSpacingX() &&
-            this->getElementSpacingY() == other.getElementSpacingY() &&
-            this->getElementSpacingZ() == other.getElementSpacingZ() &&
-            this->getFramePitch() == other.getFramePitch() &&
-            this->getScanLinePitch() == other.getScanLinePitch() &&
-            this->getProbeRadius() == other.getProbeRadius() &&
-            this->getMotorRadius() == other.getMotorRadius() &&
-            this->getHeightResolution() == other.getHeightResolution() &&
-            this->getWidthResolution() == other.getWidthResolution());
+  //from usImage3D
+  usImage3D<T>::operator =(other);
+
+  //from usSettings3D
+  usImageSettings3D::operator =(other);
+
+  //from this class
+  m_widthResolution = other.getWidthResolution();
+  m_heightResolution = other.getHeightResolution();
+
+  return *this;
+}
+
+/**
+* Comparaison operator.
+*/
+template<class T>
+bool usImagePostScan3D<T>::operator == (usImagePostScan3D<T> const& other)
+{
+  return(usImage3D<T>::operator ==(other) &&
+         usImageSettings3D::operator ==(other) &&
+         m_widthResolution == other.getWidthResolution() &&
+         m_heightResolution == other.getHeightResolution());
 }
 
 /**

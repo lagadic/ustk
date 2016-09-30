@@ -76,22 +76,22 @@ void usImageIo::read(usImageRF3D<unsigned char> &imageRf3,const std::string file
 * @param imageFilename The image file name to write, with extension.
 */
 void usImageIo::writeXml(const usImagePreScan2D<unsigned char> &preScanImage, const std::string imageFilename) {
-    try {
-        //writing image
-        vpImageIo::write(preScanImage, imageFilename);
-        //writing xml
-        usImageSettingsXmlParser xmlSettings;
-        xmlSettings.setImagePreScanSettings(preScanImage);
-        xmlSettings.setImageFileName(imageFilename);
-        //get xml filename from imageFilename
-        std::vector<std::string> splittedFileName = vpIoTools::splitChain(imageFilename, ".");
-        std::string xmlFileName = splittedFileName[0] + ".xml";
-        xmlSettings.save(xmlFileName);
-    }
-    catch (std::exception e) {
-        std::cout << "Error writing postScan image : " << std::endl;
-        std::cout << e.what() << std::endl;
-    }
+  try {
+    //writing image
+    vpImageIo::write(preScanImage, imageFilename);
+    //writing xml
+    usImageSettingsXmlParser xmlSettings;
+    xmlSettings.setImagePreScanSettings(preScanImage);
+    xmlSettings.setImageFileName(imageFilename);
+    //get xml filename from imageFilename
+    std::vector<std::string> splittedFileName = vpIoTools::splitChain(imageFilename, ".");
+    std::string xmlFileName = splittedFileName[0] + ".xml";
+    xmlSettings.save(xmlFileName);
+  }
+  catch (std::exception e) {
+    std::cout << "Error writing postScan image : " << std::endl;
+    std::cout << e.what() << std::endl;
+  }
 }
 
 /**
@@ -101,19 +101,19 @@ void usImageIo::writeXml(const usImagePreScan2D<unsigned char> &preScanImage, co
 */
 void usImageIo::readXml(usImagePreScan2D<unsigned char> &preScanImage,const std::string xmlFileName)
 {
-    //parsing xml file
-    usImageSettingsXmlParser xmlSettings;
-    try {
-        xmlSettings.parse(xmlFileName);
-    }
-    catch (std::exception e) {
-        std::cout << "Error parsing postScan settings file" << std::endl;
-        throw e;
-    }
-    vpImageIo::read(preScanImage, xmlSettings.getImageFileName());
+  //parsing xml file
+  usImageSettingsXmlParser xmlSettings;
+  try {
+    xmlSettings.parse(xmlFileName);
+  }
+  catch (std::exception e) {
+    std::cout << "Error parsing postScan settings file" << std::endl;
+    throw e;
+  }
+  vpImageIo::read(preScanImage, xmlSettings.getImageFileName());
 
-    preScanImage.setImageSettings(xmlSettings.getImageSettings());
-    preScanImage.setAxialResolution(xmlSettings.getAxialResolution());
+  preScanImage.setImageSettings(xmlSettings.getImageSettings());
+  preScanImage.setAxialResolution(xmlSettings.getAxialResolution());
 }
 #endif //VISP_HAVE_XML2
 
@@ -166,22 +166,22 @@ void usImageIo::read(usImagePreScan3D<double> &preScan3DImage,std::string filena
 * @param filename The image file name with the desired extenstion.
 */
 void usImageIo::writeXml(const usImagePostScan2D<unsigned char> &postScanImage, const std::string imageFilename) {
-    try {
-        //writing image
-        vpImageIo::writePNG(postScanImage, imageFilename);
-        //geting xml file name
-        std::vector<std::string> splittedFileName = vpIoTools::splitChain(imageFilename, ".");
-        std::string xmlFileName = splittedFileName[0] + ".xml";
-        //writing xml file using xml parser
-        usImageSettingsXmlParser xmlSettings;
-        xmlSettings.setImagePostScanSettings(postScanImage);
-        xmlSettings.setImageFileName(imageFilename);
-        xmlSettings.save(xmlFileName);
-    }
-    catch (std::exception e) {
-        std::cout << "Error writing postScan image : " << std::endl;
-        std::cout << e.what() << std::endl;
-    }
+  try {
+    //writing image
+    vpImageIo::writePNG(postScanImage, imageFilename);
+    //geting xml file name
+    std::vector<std::string> splittedFileName = vpIoTools::splitChain(imageFilename, ".");
+    std::string xmlFileName = splittedFileName[0] + ".xml";
+    //writing xml file using xml parser
+    usImageSettingsXmlParser xmlSettings;
+    xmlSettings.setImagePostScanSettings(postScanImage);
+    xmlSettings.setImageFileName(imageFilename);
+    xmlSettings.save(xmlFileName);
+  }
+  catch (std::exception e) {
+    std::cout << "Error writing postScan image : " << std::endl;
+    std::cout << e.what() << std::endl;
+  }
 }
 
 /**
@@ -189,19 +189,19 @@ void usImageIo::writeXml(const usImagePostScan2D<unsigned char> &postScanImage, 
 * @param xmlFilename The xml file name with .xml extenstion (make sure png file is in the same directory);
 */
 void usImageIo::readXml(usImagePostScan2D<unsigned char> &postScanImage,const std::string xmlFilename) {
-    usImageSettingsXmlParser xmlSettings;
-    try {
-        xmlSettings.parse(xmlFilename);
-    }
-    catch(std::exception e) {
-        std::cout << "Error parsing postScan settings file" << std::endl;
-        throw e;
-    }
+  usImageSettingsXmlParser xmlSettings;
+  try {
+    xmlSettings.parse(xmlFilename);
+  }
+  catch(std::exception e) {
+    std::cout << "Error parsing postScan settings file" << std::endl;
+    throw e;
+  }
 
-    vpImage<unsigned char> image;
-    vpImageIo::read(postScanImage,xmlSettings.getImageFileName());
+  vpImage<unsigned char> image;
+  vpImageIo::read(postScanImage,xmlSettings.getImageFileName());
 
-    postScanImage.setImageSettings(xmlSettings.getImageSettings());
+  postScanImage.setImageSettings(xmlSettings.getImageSettings());
 }
 #endif //VISP_HAVE_XML2
 
@@ -210,34 +210,34 @@ void usImageIo::readXml(usImagePostScan2D<unsigned char> &postScanImage,const st
 */
 void usImageIo::write(const usImagePostScan3D<unsigned char> &postScanImage, const std::string filename)
 {
-    //filling header
-    usMetaHeaderParser::MHDHeader header;
-    header.numberOfDimensions = 3;
-    header.elementType = usMetaHeaderParser::MET_UCHAR;
-    header.imageType = usMetaHeaderParser::POSTSCAN_3D;
-    header.elementSpacing[0] = postScanImage.getElementSpacingX();
-    header.elementSpacing[1] = postScanImage.getElementSpacingY();
-    header.elementSpacing[2] = postScanImage.getElementSpacingZ();
-    header.dim[0] = postScanImage.getDimX();
-    header.dim[1] = postScanImage.getDimY();
-    header.dim[2] = postScanImage.getDimZ();
-    header.msb = false;
-    header.mhdFileName = filename + ".mhd";
-    header.rawFileName = filename + ".raw";
-    header.isImageConvex = postScanImage.isImageConvex();
-    header.isMotorConvex = postScanImage.isMotorConvex();
-    header.probeRadius = postScanImage.getProbeRadius();
-    header.scanLinePitch = postScanImage.getScanLinePitch();
-    header.motorRadius = postScanImage.getMotorRadius();
-    header.framePitch = postScanImage.getFramePitch();
-    //writing in file
-    usMetaHeaderParser mhdParser;
-    mhdParser.setMhdHeader(header);
-    mhdParser.parse();
+  //filling header
+  usMetaHeaderParser::MHDHeader header;
+  header.numberOfDimensions = 3;
+  header.elementType = usMetaHeaderParser::MET_UCHAR;
+  header.imageType = usMetaHeaderParser::POSTSCAN_3D;
+  header.elementSpacing[0] = postScanImage.getElementSpacingX();
+  header.elementSpacing[1] = postScanImage.getElementSpacingY();
+  header.elementSpacing[2] = postScanImage.getElementSpacingZ();
+  header.dim[0] = postScanImage.getDimX();
+  header.dim[1] = postScanImage.getDimY();
+  header.dim[2] = postScanImage.getDimZ();
+  header.msb = false;
+  header.mhdFileName = filename + ".mhd";
+  header.rawFileName = filename + ".raw";
+  header.isImageConvex = postScanImage.isImageConvex();
+  header.isMotorConvex = postScanImage.isMotorConvex();
+  header.probeRadius = postScanImage.getProbeRadius();
+  header.scanLinePitch = postScanImage.getScanLinePitch();
+  header.motorRadius = postScanImage.getMotorRadius();
+  header.framePitch = postScanImage.getFramePitch();
+  //writing in file
+  usMetaHeaderParser mhdParser;
+  mhdParser.setMhdHeader(header);
+  mhdParser.parse();
 
-    //filling raw
-    usRawFileParser rawParser;
-    rawParser.write(postScanImage,header.rawFileName);
+  //filling raw
+  usRawFileParser rawParser;
+  rawParser.write(postScanImage,header.rawFileName);
 }
 
 /**
@@ -245,36 +245,36 @@ void usImageIo::write(const usImagePostScan3D<unsigned char> &postScanImage, con
 */
 void usImageIo::read(usImagePostScan3D<unsigned char> &postScanImage,std::string mhdFileName) {
 
-    //header parsing
-    usMetaHeaderParser mhdParser;
-    mhdParser.read(mhdFileName);
-    if (mhdParser.getImageType() != usMetaHeaderParser::POSTSCAN_3D) {
-      throw(vpException(vpException::badValue,"Reading a non postscan3d image!"));
-    }
-    if (mhdParser.getElementType() != usMetaHeaderParser::MET_UCHAR) {
-      throw(vpException(vpException::badValue,"Reading a non unisgned char image!"));
-    }
-    //resizing image in memory
-    postScanImage.resize(mhdParser.getImageSizeX(),mhdParser.getImageSizeY(),mhdParser.getImageSizeZ());
-    std::cout << "resizing : " << mhdParser.getImageSizeX() << "," << mhdParser.getImageSizeY() << ","<< mhdParser.getImageSizeZ() << std::endl;
-    std::cout << "result : " << postScanImage.getDimX() << "," << postScanImage.getDimY() << ","<< postScanImage.getDimZ() << std::endl;
+  //header parsing
+  usMetaHeaderParser mhdParser;
+  mhdParser.read(mhdFileName);
+  if (mhdParser.getImageType() != usMetaHeaderParser::POSTSCAN_3D) {
+    throw(vpException(vpException::badValue,"Reading a non postscan3d image!"));
+  }
+  if (mhdParser.getElementType() != usMetaHeaderParser::MET_UCHAR) {
+    throw(vpException(vpException::badValue,"Reading a non unisgned char image!"));
+  }
+  //resizing image in memory
+  postScanImage.resize(mhdParser.getImageSizeX(),mhdParser.getImageSizeY(),mhdParser.getImageSizeZ());
+  std::cout << "resizing : " << mhdParser.getImageSizeX() << "," << mhdParser.getImageSizeY() << ","<< mhdParser.getImageSizeZ() << std::endl;
+  std::cout << "result : " << postScanImage.getDimX() << "," << postScanImage.getDimY() << ","<< postScanImage.getDimZ() << std::endl;
 
-    //
-    usMetaHeaderParser::MHDHeader mhdHeader = mhdParser.getMhdHeader();
-    postScanImage.setProbeRadius(mhdHeader.probeRadius);
-    postScanImage.setScanLinePitch(mhdHeader.scanLinePitch);
-    postScanImage.setImageConvex(mhdHeader.isImageConvex);
-    postScanImage.setMotorRadius(mhdHeader.motorRadius);
-    postScanImage.setFramePitch(mhdHeader.framePitch);
-    postScanImage.setMotorConvex(mhdHeader.isMotorConvex);
+  //
+  usMetaHeaderParser::MHDHeader mhdHeader = mhdParser.getMhdHeader();
+  postScanImage.setProbeRadius(mhdHeader.probeRadius);
+  postScanImage.setScanLinePitch(mhdHeader.scanLinePitch);
+  postScanImage.setImageConvex(mhdHeader.isImageConvex);
+  postScanImage.setMotorRadius(mhdHeader.motorRadius);
+  postScanImage.setFramePitch(mhdHeader.framePitch);
+  postScanImage.setMotorConvex(mhdHeader.isMotorConvex);
 
-    postScanImage.setWidthResolution(mhdParser.getWidthResolution());
-    postScanImage.setHeightResolution(mhdParser.getHeightResolution());
+  postScanImage.setWidthResolution(mhdParser.getWidthResolution());
+  postScanImage.setHeightResolution(mhdParser.getHeightResolution());
 
-    std::cout << "raw filname: " << mhdParser.getRawFileName() << std::endl;
-    std::cout << system("pwd");
+  std::cout << "raw filname: " << mhdParser.getRawFileName() << std::endl;
+  std::cout << system("pwd");
 
-    //data parsing
-    usRawFileParser rawParser;
-    rawParser.read(postScanImage,mhdParser.getRawFileName());
+  //data parsing
+  usRawFileParser rawParser;
+  rawParser.read(postScanImage,mhdParser.getRawFileName());
 }

@@ -58,7 +58,7 @@ public:
   usImageRF3D(unsigned int AN, unsigned int LN, unsigned int FN);
 
   usImageRF3D(unsigned int AN, unsigned int LN, unsigned int FN, double probeRadius, double motorRadius, double scanLinePitch, double framePitch,
-    bool isImageConvex, bool isMotorConvex);
+              bool isImageConvex, bool isMotorConvex);
 
   usImageRF3D(usImage3D<T> image3D, usImageSettings3D imageSettings);
 
@@ -69,6 +69,10 @@ public:
   usImageRF3D(const usImageRF3D<T> &other);
 
   ~usImageRF3D();
+
+  usImageRF3D<T>& operator=(const usImageRF3D<T> &other);
+
+  bool operator==(const usImageRF3D<T> &other);
 
   unsigned int getAN() const;
 
@@ -119,7 +123,7 @@ usImageRF3D<T>::usImageRF3D(unsigned int AN, unsigned int LN, unsigned int FN)
 */
 template<class T>
 usImageRF3D<T>::usImageRF3D(unsigned int AN, unsigned int LN, unsigned int FN, double probeRadius, double motorRadius, double scanLinePitch, double framePitch,
-  bool isImageConvex, bool isMotorConvex)
+                            bool isImageConvex, bool isMotorConvex)
   : usImage3D<T>(AN, LN, FN), usImageSettings3D(probeRadius, motorRadius, scanLinePitch, framePitch, isImageConvex, isMotorConvex)
 {
 
@@ -173,6 +177,33 @@ template<class T>
 usImageRF3D<T>::~usImageRF3D()
 {
 
+}
+
+/**
+* Copy operator.
+*/
+template<class T>
+usImageRF3D<T>& usImageRF3D<T>::operator=(const usImageRF3D<T> &other)
+{
+  //from vpImage
+  usImage3D<T>::operator=(other);
+
+  //from usImageSettings
+  usImageSettings3D::operator=(other);
+
+  //from this class
+  m_axialResolution = other.getAxialResolution();
+}
+
+/**
+* Comparaison operator.
+*/
+template<class T>
+bool usImageRF3D<T>::operator==(const usImageRF3D<T> &other)
+{
+  return(usImage3D<T>::operator== (other) &&
+         usImageSettings3D::operator ==(other) &&
+         m_axialResolution == other.getAxialResolution());
 }
 
 /**
