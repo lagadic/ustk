@@ -186,9 +186,7 @@ int main(int argc, const char** argv)
       }
     }
 
-    //Set input path to environement variable USTK_DATASET_PATH
-    ipath = vpIoTools::getenv(std::string("USTK_DATASET_PATH"));
-    filename = ipath + vpIoTools::path("/") + "prescan2D.png";
+    filename = opath + vpIoTools::path("/") + "prescan2D.png";
 
     //Init values in reference parser (same values in file read in test)
     usImagePreScan2D<unsigned char> prescan2DReference;
@@ -213,7 +211,7 @@ int main(int argc, const char** argv)
 
     //read the image we just wrote
     usImagePreScan2D<unsigned char> prescan2D;
-    filename = ipath + vpIoTools::path("/") + "prescan2D.xml";
+    filename = opath + vpIoTools::path("/") + "prescan2D.xml";
     usImageIo::readXml(prescan2D,filename);
 
 
@@ -234,6 +232,7 @@ int main(int argc, const char** argv)
 
     // Clean up memory allocated by the xml library
     vpXmlParser::cleanup();
+    std::cout << "Test failed !" << std::endl;
     return 1;
   }
   catch(vpException &e) {

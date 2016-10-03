@@ -74,7 +74,6 @@ public:
   ImageType getImageType() const { return mhdHeader.imageType; }
   std::string getRawFileName() const {return mhdHeader.rawFileName;}
   double getWidthResolution() const { return m_widthResolution; }
-  ImageType getImageType() const { return mhdHeader.imageType; }
   ElementType getElementType() const { return mhdHeader.elementType; }
   unsigned int getImageSizeX() const { return mhdHeader.dim[0]; }
   unsigned int getImageSizeY() const { return mhdHeader.dim[1]; }

@@ -185,9 +185,7 @@ int main(int argc, const char** argv)
         exit(-1);
       }
     }
-    //Set input path to environement variable USTK_DATASET_PATH
-    ipath = vpIoTools::getenv(std::string("USTK_DATASET_PATH"));
-    filename = ipath + vpIoTools::path("/") + "postscan3d";
+    filename = opath + vpIoTools::path("/") + "postscan3d";
 
     //Init values in reference parser (same values in file read in test)
     usImagePostScan3D<unsigned char> postscan3DReference;
@@ -223,7 +221,7 @@ int main(int argc, const char** argv)
 
     //read the image we just wrote
     usImagePostScan3D<unsigned char> postscan3D;
-    filename = ipath + vpIoTools::path("/") + "postscan3d.mhd";
+    filename = opath + vpIoTools::path("/") + "postscan3d.mhd";
     usImageIo::read(postscan3D,filename);
 
     std::cout << "Read from " << filename << std::endl ;
@@ -241,12 +239,13 @@ int main(int argc, const char** argv)
     std::cout << "Height resolution : " << postscan3D.getHeightResolution() << std::endl;
 
     if(postscan3D==postscan3DReference) {
-      std::cout << "postscan images equals" << std::endl;
+      std::cout << "Test passed !" << std::endl;
       return 0;
     }
 
     // Clean up memory allocated by the xml library
     vpXmlParser::cleanup();
+    std::cout << "Test failed !" << std::endl;
     return 1;
   }
   catch(vpException &e) {
