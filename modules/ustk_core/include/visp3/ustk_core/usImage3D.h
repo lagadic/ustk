@@ -94,6 +94,9 @@ public:
   */
   ~usImage3D();
 
+  /** @name Inherited functionalities from usImage3D */
+  //@{
+
   /**
   * Assignment operator.
   * @param other other 3D-image to copy
@@ -101,7 +104,7 @@ public:
   usImage3D<Type> &operator=(const usImage3D<Type> &other);
 
   /**
-  * Comparaison operator.
+  * Comparison operator.
   * @param other The 3d image to compare. Comparing only parameters, not all volume voxel by voxel.
   */
   bool operator==(const usImage3D<Type> &other);
@@ -261,8 +264,9 @@ public:
   */
   void initData(Type value,int numberOfVloxels);
 
-
   void resize(unsigned int dimx,unsigned int dimy,unsigned int dimz);
+
+  //@}
 
 protected:
 
@@ -371,14 +375,14 @@ usImage3D<Type>::usImage3D() : m_dimx(0), m_dimy(0), m_dimz(0), m_elementSpacing
 
 template<class Type>
 usImage3D<Type>::usImage3D(unsigned int dimX, unsigned int dimY, unsigned int dimZ) : m_dimx(dimX), m_dimy(dimY), m_dimz(dimZ),
-  m_size(dimX * dimY * dimZ),m_elementSpacingX(1.0f), m_elementSpacingY(1.0f), m_elementSpacingZ(1.0f),m_size(0), bitmap(NULL), planesIndex(NULL) {
+  m_size(dimX * dimY * dimZ),m_elementSpacingX(1.0f), m_elementSpacingY(1.0f), m_elementSpacingZ(1.0f), bitmap(NULL), planesIndex(NULL) {
   init(dimX,dimY,dimZ);
 }
 
 template<class Type>
 usImage3D<Type>::usImage3D(unsigned int dimx, unsigned int dimy, unsigned int dimz,
                            float elementSpacingX, float elementSpacingY, float elementSpacingZ)  : m_dimx(dimx), m_dimy(dimy), m_dimz(dimz), m_size(dimx * dimy * dimz),
-  m_elementSpacingX(elementSpacingX), m_elementSpacingY(elementSpacingY), m_elementSpacingZ(elementSpacingZ),m_size(0),bitmap(NULL), planesIndex(NULL) {
+  m_elementSpacingX(elementSpacingX), m_elementSpacingY(elementSpacingY), m_elementSpacingZ(elementSpacingZ), bitmap(NULL), planesIndex(NULL) {
   init(dimx,dimy,dimz);
 }
 

@@ -55,36 +55,33 @@
 class VISP_EXPORT usImageSettings {
 public:
   usImageSettings();
-  
-  usImageSettings(double probeRadius,
-                  double scanLinePitch,
-                  bool isConvex);
-
+  usImageSettings(double probeRadius, double scanLinePitch, bool isConvex);
   usImageSettings(const usImageSettings &other);
 
   virtual ~usImageSettings();
 
+  /** @name Inherited functionalities from usImageSettings */
+  //@{
+
+  double getProbeRadius() const;
+  double getScanLinePitch() const;
+
+  bool isImageConvex() const;
+
   usImageSettings& operator=(const usImageSettings& other);
 
-  //comparaison
-  bool operator ==(usImageSettings const& other);
+  //comparison
+  bool operator==(usImageSettings const& other);
+
+  virtual void printProbeSettings();
 
   //Settings form the probe
   void setImageSettings(const usImageSettings& other);
-
-  void setProbeRadius(const double probeRadius);
-  
-  double getProbeRadius() const;
-
-  void setScanLinePitch(const double scanLinePitch);
-
-  double getScanLinePitch() const;
-
   void setImageConvex(const bool isConvex);
+  void setProbeRadius(const double probeRadius);
+  void setScanLinePitch(const double scanLinePitch);  
 
-  bool isImageConvex() const;
-  
-  virtual void printProbeSettings();
+  //@}
 
 private:
   //Settings from the probe

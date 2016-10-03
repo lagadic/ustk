@@ -63,33 +63,16 @@ public:
   //Constructor
   usMetaHeaderParser();
   usMetaHeaderParser(std::string mhdFilename);
-
   //Desctructor
   virtual ~usMetaHeaderParser();
 
-  //comparaison
-  bool operator ==(usMetaHeaderParser const& other);
-
-  //Read/write operations
-  void readMHDHeader(const char * fileName);
-
-  void readMHDHeader(const std::string fileName);
-
-  void writeMHDHeader(const char * fileName);
-
-  void writeMHDHeader(const std::string fileName);
-
-  void parse();
-
-  void read(const std::string& filename);
-
-
   // Data accessors.
-  usImageSettings getImageSettings() const {return m_imageSettings;}
-  usImageSettings3D getImageSettings3D() const {return m_imageSettings3D;}
-  std::string getRawFileName() const {return mhdHeader.rawFileName;}
   double getAxialResolution() const { return m_axialResolution; }
   double getHeightResolution() const { return m_heightResolution; }
+  usImageSettings getImageSettings() const {return m_imageSettings;}
+  usImageSettings3D getImageSettings3D() const {return m_imageSettings3D;}
+  ImageType getImageType() const { return mhdHeader.imageType; }
+  std::string getRawFileName() const {return mhdHeader.rawFileName;}
   double getWidthResolution() const { return m_widthResolution; }
   ImageType getImageType() const { return mhdHeader.imageType; }
   ElementType getElementType() const { return mhdHeader.elementType; }
@@ -97,6 +80,15 @@ public:
   unsigned int getImageSizeY() const { return mhdHeader.dim[1]; }
   unsigned int getImageSizeZ() const { return mhdHeader.dim[2]; }
   MHDHeader getMhdHeader() const { return mhdHeader; }
+
+  //comparison
+  bool operator ==(usMetaHeaderParser const& other);
+
+  void parse();
+  //Read/write operations
+  void read(const std::string& filename);
+  void readMHDHeader(const char * fileName);
+  void readMHDHeader(const std::string fileName);
 
   //Data setters
   void setImageSettings(const usImageSettings imageSettings);
@@ -107,6 +99,9 @@ public:
   void setWidthResolution(const double widthResolution);
   void setRawFileName(const std::string rawFileName);
   void setMhdHeader(MHDHeader header);
+
+  void writeMHDHeader(const char * fileName);
+  void writeMHDHeader(const std::string fileName);
 
 private :
   usImageSettings m_imageSettings;

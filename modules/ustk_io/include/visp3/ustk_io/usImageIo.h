@@ -56,33 +56,38 @@ class VISP_EXPORT usImageIo
 {
 public:
 
-  //RF UChar
-  static void write(const usImageRF2D<unsigned char> &rfImage, const std::string filename);
+  /** @name RF io */
+  //@{
   static void read(usImageRF2D<unsigned char> &rfImage,const std::string filename);
-  static void write(const usImageRF3D<unsigned char> &rfImage3D, const std::string filename);
   static void read(usImageRF3D<unsigned char> &rfImage3D, const std::string filename);
+  static void write(const usImageRF2D<unsigned char> &rfImage, const std::string filename);
+  static void write(const usImageRF3D<unsigned char> &rfImage3D, const std::string filename);
+  //@}
 
-  //PreScan-unsigned char
+  /** @name Pre-scan io */
+  //@{
 #ifdef VISP_HAVE_XML2
   static void writeXml(const usImagePreScan2D<unsigned char> &preScanImage, const std::string xmlFilename);
   static void readXml(usImagePreScan2D<unsigned char> &preScanImage,const std::string xmlFilename);
 #endif //VISP_HAVE_XML2
-  static void write(const usImagePreScan3D<unsigned char> &preScanImage3D, const std::string filename);
   static void read(usImagePreScan3D<unsigned char> &preScanImage3D, const std::string filename);
-
-  //PreScan-double
-  static void write(const usImagePreScan2D<double> &preScanImage, const std::string filename);
   static void read(usImagePreScan2D<double> &preScanImage,const std::string filename);
-  static void write(const usImagePreScan3D<double> &preScanImage3D, const std::string filename);
   static void read(usImagePreScan3D<double> &preScanImage3D,const std::string filename);
 
-  //postScan Uchar
+  static void write(const usImagePreScan3D<unsigned char> &preScanImage3D, const std::string filename);
+  static void write(const usImagePreScan2D<double> &preScanImage, const std::string filename);
+  static void write(const usImagePreScan3D<double> &preScanImage3D, const std::string filename);
+  //@}
+
+  /** @name Post-scan io */
+  //@{
 #ifdef VISP_HAVE_XML2
   static void writeXml(const usImagePostScan2D<unsigned char> &postScanImage, const std::string filename);
   static void readXml(usImagePostScan2D<unsigned char> &postScanImage, const std::string filename);
 #endif //VISP_HAVE_XML2
-  static void write(const usImagePostScan3D<unsigned char> &postScanImage3D, const std::string filename);
   static void read(usImagePostScan3D<unsigned char> &postScanImage3D,std::string mhdFileName);
+  static void write(const usImagePostScan3D<unsigned char> &postScanImage3D, const std::string filename);
+  //@}
 };
 
 #endif //US_IMAGE_IO_H

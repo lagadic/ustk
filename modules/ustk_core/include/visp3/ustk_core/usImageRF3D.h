@@ -54,33 +54,23 @@ class usImageRF3D : public usImage3D<T>, public usImageSettings3D {
 public:
 
   usImageRF3D();
-
   usImageRF3D(unsigned int AN, unsigned int LN, unsigned int FN);
-
-  usImageRF3D(unsigned int AN, unsigned int LN, unsigned int FN, double probeRadius, double motorRadius, double scanLinePitch, double framePitch,
+  usImageRF3D(unsigned int AN, unsigned int LN, unsigned int FN,
+              double probeRadius, double motorRadius, double scanLinePitch, double framePitch,
               bool isImageConvex, bool isMotorConvex);
-
   usImageRF3D(usImage3D<T> image3D, usImageSettings3D imageSettings);
-
   usImageRF3D(usImage3D<T> image3D);
-
   usImageRF3D(usImageSettings3D imageSettings);
-  
   usImageRF3D(const usImageRF3D<T> &other);
-
   ~usImageRF3D();
 
-  usImageRF3D<T>& operator=(const usImageRF3D<T> &other);
-
-  bool operator==(const usImageRF3D<T> &other);
-
+  double getAxialResolution() const;
   unsigned int getAN() const;
-
+  unsigned int getFN() const;
   unsigned int getLN() const;
 
-  unsigned int getFN() const;
-
-  double getAxialResolution() const;
+  usImageRF3D<T>& operator=(const usImageRF3D<T> &other);
+  bool operator==(const usImageRF3D<T> &other);
 
   void setAxialResolution(double axialResolution);
 

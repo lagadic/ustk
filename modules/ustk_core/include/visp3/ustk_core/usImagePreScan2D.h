@@ -52,43 +52,35 @@ class usImagePreScan2D : public vpImage<T>, public usImageSettings {
 public:
   //default constructors
   usImagePreScan2D();
-
   //image size initialisation constructors
   usImagePreScan2D(unsigned int AN, unsigned int LN);
-
   //All parameters initialisation constructors
   usImagePreScan2D(unsigned int AN, unsigned int LN, double probeRadius, double scanLinePitch, bool isConvex);
-
   //usImagePreScan2D copy constructor
   usImagePreScan2D(const usImagePreScan2D &other);
-
   //vpImage copy constructors
   usImagePreScan2D(const vpImage<T> &other);
-
   //vpImage copy constructors
   usImagePreScan2D(const usImageSettings &other);
-
   //copy constructor from vpImage and usImageSettings
   usImagePreScan2D(const vpImage<T> &other, const usImageSettings &otherSettings);
 
   //destructor
   ~usImagePreScan2D();
 
-  //assignement
-  usImagePreScan2D<T>& operator=(const usImagePreScan2D<T> &other);
-
-  //comparaison
-  bool operator==(const usImagePreScan2D<T> &other);
-
   //copying from vpImage
   void copyFrom(const vpImage<T> &I);
 
+  double getAxialResolution() const;
   //No setters for AN and LN because vpImage doesn't have setters for height and width. Those parameters have to be passed in the constructor.
   unsigned int getAN() const;
-
   unsigned int getLN() const;
 
-  double getAxialResolution() const;
+  //assignement
+  usImagePreScan2D<T>& operator=(const usImagePreScan2D<T> &other);
+
+  //comparison
+  bool operator==(const usImagePreScan2D<T> &other);
 
   void setAxialResolution(const double axialResolution);
 

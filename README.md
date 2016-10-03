@@ -1,41 +1,39 @@
-### Ultrasound Toolkit - UsTk-1.0.0
+### Ultrasound Toolkit - UsTk
 
-Copyright (C) 2014 by Inria.
+Copyright (C) 2016 by Inria.
 
 #### Dependencies
-This UsTk project needs ViSP source code (https://github.com/lagadic/visp).
-For compilation, UsTk is considered as a set of ViSP modules. So ViSP and UsTk have to be compiled together. 
+This UsTk project needs [ViSP](https://visp.inria.fr) as third-party.
+For compilation, UsTk is considered as a set of ViSP external modules. So ViSP and UsTk have to be compiled together. 
 
-#### To compile :
-- make sure you have downloaded ViSP and UsTk sources codes.
-- create a binary directory (where UsTk and ViSP will be compiled)
-- from a command prompt, go to the binary directory you'vve created and run : cmake 'path_to_visp_sources' -DVISP_CONTRIB_MODULES_PATH='path_to_UsTk_sources'
-- CMake will create a makefile/project you can then compile in the binary directory
+#### How to build UsTK libraries
+- Create a workspace folder en enter in this folder
 
-Check https://visp.inria.fr/ for documentation.
+		$ mkdir <workspace>; cd <workspace>
+- Downloaded ViSP and UsTk sources codes
 
+		$ git clone https://github.com/lagadic/visp
+		$ git clone https://github.com/lagadic/ustk
+		
+- Make a build directory (where UsTk and ViSP will be compiled)
+ 		
+		$ mkdir ustk-build; cd ustk-build
+		
+- Configure the build setting UsTk as an external ViSP module
 
-This project is using the CMake build system.
+		$ cmake ../visp -DVISP_CONTRIB_MODULES_PATH=../ustk
+		
+- Note that with the previous command, all ViSP modules will be build besides UsTk. Since ViSP modules related to AR, detection, computer vision or tracking are not used by UsTk, their build could be turned off in order to speed up UsTk build. This could be achieved using:
+ 
+		$ cmake ../visp -DVISP_CONTRIB_MODULES_PATH=../ustk -DBUILD_MODULE_visp_ar=OFF -DBUILD_MODULE_visp_blob=OFF -DBUILD_MODULE_visp_detection=OFF -DBUILD_MODULE_visp_klt=OFF -DBUILD_MODULE_visp_mbt=OFF -DBUILD_MODULE_visp_me=OFF -DBUILD_MODULE_visp_tt=OFF -DBUILD_MODULE_visp_tt_mi=OFF -DBUILD_MODULE_visp_vision=OFF -DBUILD_MODULE_visp_visual_features=OFF -DBUILD_MODULE_visp_vs=OFF   
+		
+- Now on unix-like OS build ViSP and UsTk using
 
-CMake is a complete stand-alone platform-independant build-system 
-replacing autotools (autoconf/autoheader/automake/libtools) completely. 
-It depends just on installed cmake (tested with cmake cvs version). It
-needs a cmake 2.6.x or more recent version of cmake.
-See http://www.cmake.org for details.
+		$ make -j
 
-USAGE:
-=====
+#### How to build UsTK documentation
 
-1. On Unix platforms:
+UsTk documentation is part of ViSP documentation. To build UsTk doxygen documentation, run
 
-cd <ustk build dir>
-ccmake <ustk source dir>
-make
-make install
-
-2. On Windows, use the CMake GUI.
-
-----------------
-Pierre Chatelain
-Marc Pouliquen
+	$ make -j visp_doc
 

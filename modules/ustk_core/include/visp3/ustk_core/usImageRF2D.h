@@ -45,33 +45,26 @@
 
 /**
  * @class usImageRF2D
- * @brief 2D Rf ultrasound image.
+ * @brief 2D RF ultrasound image.
  *
- * This class represents a 2D ultrasound RF frame.
+ * This class represents a 2D ultrasound RF image. This image is nothing more than a vpImage that
+ * contains RF data and additional settings that give information about the acquisition process.
  */
 template<class T>
 class usImageRF2D : public vpImage<T>, public usImageSettings {
 public:
   
   usImageRF2D();
-
-  usImageRF2D(unsigned int AN, unsigned int LN);
-
-  usImageRF2D(unsigned int AN, unsigned int LN, double probeRadius, double scanLinePitch, bool isConvex);
-
+  usImageRF2D(unsigned int AN, unsigned int LN, double probeRadius=0, double scanLinePitch=0, bool isConvex=true, double axialResolution=0);
   usImageRF2D(const usImageRF2D &other);
-
   ~usImageRF2D();
 
-  usImageRF2D<T>& operator=(const usImageRF2D<T> &other);
-
-  bool operator==(const usImageRF2D<T> &other);
-
-  unsigned int getAN() const;
-
-  unsigned int  getLN() const;
-
   double getAxialResolution() const;
+  unsigned int getAN() const;
+  unsigned int getLN() const;
+
+  usImageRF2D<T>& operator=(const usImageRF2D<T> &other);
+  bool operator==(const usImageRF2D<T> &other);
 
   void setAxialResolution(double axialResolution);
 
@@ -85,19 +78,7 @@ private:
 * Constructor.
 */
 template<class T>
-usImageRF2D<T>::usImageRF2D() : vpImage<T>(), usImageSettings()
-{
-
-}
-
-/**
-* Initializing constructor for image dimentions.
-* @param AN number of A-samples in a line.
-* @param LN number of lines.
-*/
-template<class T>
-usImageRF2D<T>::usImageRF2D(unsigned int AN, unsigned int LN)
-  : vpImage<T>(AN, LN), usImageSettings()
+usImageRF2D<T>::usImageRF2D() : vpImage<T>(), usImageSettings(), m_axialResolution(0)
 {
 
 }
@@ -107,12 +88,14 @@ usImageRF2D<T>::usImageRF2D(unsigned int AN, unsigned int LN)
 * @param AN number of A-samples in a line.
 * @param LN number of lines.
 * @param probeRadius radius of the ultrasound probe used to acquire the RF image.
-* @param scanLinePitch Angle(rad) / Distance(m) between 2 lines of the ultrasound probe used to acquire the RF image. Angle if isConvex is true, distance if it's false.
+* @param scanLinePitch Angle(rad) / Distance(m) between 2 lines of the ultrasound probe used
+* to acquire the RF image. Angle if isConvex is true, distance if it's false.
 * @param isConvex Boolean to specify if the probe used was convex(true) or linear(false).
+* @param axialResolution The distance (in meters) between 2 successive pixels acquired along a scanline.
 */
 template<class T>
-usImageRF2D<T>::usImageRF2D(unsigned int AN, unsigned int LN, double probeRadius, double scanLinePitch, bool isConvex)
-  : vpImage<T>(AN, LN), usImageSettings(probeRadius, scanLinePitch, isConvex)
+usImageRF2D<T>::usImageRF2D(unsigned int AN, unsigned int LN, double probeRadius, double scanLinePitch, bool isConvex, double axialResolution)
+  : vpImage<T>(AN, LN), usImageSettings(probeRadius, scanLinePitch, isConvex), m_axialResolution(axialResolution)
 {
 
 }
@@ -180,7 +163,7 @@ unsigned int usImageRF2D<T>::getLN() const { return vpImage<T>::getWidth(); }
 
 /**
 * Getter for the axial resolution
-* @return The axial resolution : distance(in meters) between 2 successive pixels acquired along a scanLine.
+* @return The axial resolution : distance (in meters) between 2 successive pixels acquired along a scanLine.
 */
 template<class T>
 double usImageRF2D<T>::getAxialResolution() const { return m_axialResolution; }
