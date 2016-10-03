@@ -203,7 +203,7 @@ void usImagePostScan3D<T>::setWidthResolution(double widthResolution) { m_widthR
 * @return widthResolution Width resolution (in meters).
 */
 template<class T>
-double usImagePostScan3D<T>::getWidthResolution() const { return m_heightResolution; }
+double usImagePostScan3D<T>::getWidthResolution() const { return m_widthResolution; }
 
 /**
 * Setter for width Resolution.
