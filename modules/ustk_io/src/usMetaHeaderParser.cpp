@@ -223,7 +223,7 @@ void  usMetaHeaderParser::readMHDHeader(const char * fileName)
     else if (keyword == "WidthResolution")
     {
       if(this->mhdHeader.imageType == PRESCAN_2D || this->mhdHeader.imageType == PRESCAN_3D || this->mhdHeader.imageType == RF_2D || this->mhdHeader.imageType == RF_3D) {
-        throw(vpException(vpException::badValue, "bad header file : trying to assign a height resolution to a prescan image"));
+        throw(vpException(vpException::badValue, "bad header file : trying to assign a width resolution to a prescan image"));
       }
       else {
         file >> this->m_widthResolution;
