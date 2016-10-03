@@ -233,6 +233,8 @@ void usImageIo::write(const usImagePostScan3D<unsigned char> &postScanImage, con
   //writing in file
   usMetaHeaderParser mhdParser;
   mhdParser.setMhdHeader(header);
+  mhdParser.setHeightResolution(postScanImage.getHeightResolution());
+  mhdParser.setWidthResolution(postScanImage.getWidthResolution());
   mhdParser.parse();
 
   //filling raw
