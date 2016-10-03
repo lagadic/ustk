@@ -273,9 +273,6 @@ void usImageIo::read(usImagePostScan3D<unsigned char> &postScanImage,std::string
   postScanImage.setWidthResolution(mhdParser.getWidthResolution());
   postScanImage.setHeightResolution(mhdParser.getHeightResolution());
 
-  std::cout << "raw filname: " << mhdParser.getRawFileName() << std::endl;
-  std::cout << system("pwd");
-
   //data parsing
   usRawFileParser rawParser;
   rawParser.read(postScanImage,mhdParser.getRawFileName());
