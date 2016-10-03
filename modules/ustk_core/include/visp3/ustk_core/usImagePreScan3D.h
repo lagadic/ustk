@@ -53,45 +53,35 @@ class usImagePreScan3D : public usImage3D<T>, public usImageSettings3D {
 public:
   //default constructors
   usImagePreScan3D();
-
   //image size initialisation constructors
   usImagePreScan3D(unsigned int AN, unsigned int LN, unsigned int FN);
-
   //All parameters initialisation constructors
-  usImagePreScan3D(unsigned int AN, unsigned int LN, unsigned int FN, double probeRadius, double motorRadius, double scanLinePitch, double framePitch,
+  usImagePreScan3D(unsigned int AN, unsigned int LN, unsigned int FN,
+                   double probeRadius, double motorRadius, double scanLinePitch, double framePitch,
                    bool isImageConvex, bool isMotorConvex);
-
   //usImagePreScan3D copy constructor
   usImagePreScan3D(const usImagePreScan3D &other);
-
   //usImage3D copy constructor
   usImagePreScan3D(const usImage3D<T> &other);
-
   //usImageSettings3D copy constructor
   usImagePreScan3D(const usImageSettings3D &other);
-
   //copy constructor from usImage3D and usImageSettings3D
   usImagePreScan3D(const usImage3D<T> &other, const usImageSettings3D &otherSettings);
-
   //destructor
   ~usImagePreScan3D();
-
-  //assignement
-  usImagePreScan3D<T>& operator=(const usImagePreScan3D<T> &other);
-
-  //comparaison
-  bool operator==(const usImagePreScan3D<T> &other);
 
   //copying from usImage3D
   void copyFrom(const usImage3D<T> &I);
 
+  double getAxialResolution() const;
   unsigned int getAN() const;
-
+  unsigned int getFN() const;
   unsigned int getLN() const;
 
-  unsigned int getFN() const;
-
-  double getAxialResolution() const;
+  //assignement
+  usImagePreScan3D<T>& operator=(const usImagePreScan3D<T> &other);
+  //comparison
+  bool operator==(const usImagePreScan3D<T> &other);
 
   void setAxialResolution(double axialResolution);
 

@@ -55,32 +55,27 @@
 class VISP_EXPORT usImageSettings3D : public usImageSettings {
 public:
   usImageSettings3D();
-  
   usImageSettings3D(double probeRadius, double motorRadius, double scanLinePitch, double framePitch, bool isImageConvex, bool isMotorConvex);
-
   usImageSettings3D(const usImageSettings3D &other);
-
   virtual ~usImageSettings3D();
 
-  usImageSettings3D& operator=(const usImageSettings3D& other);
-
-  bool operator==(const usImageSettings3D& other);
-  
-  //Settings form the 3D probe
-
-  void setMotorRadius(double motorRadius);
-  
-  double getMotorRadius() const;
-
-  void setFramePitch(double framePitch);
-
+  /** @name Inherited functionalities from usImageSettings3D */
+  //@{
   double getFramePitch() const;
-
-  void setMotorConvex(bool isMotorConvex);
-
+  double getMotorRadius() const;
   bool isMotorConvex() const;
 
+  usImageSettings3D& operator=(const usImageSettings3D& other);
+  bool operator==(const usImageSettings3D& other);
+  
   virtual void printProbeSettings();
+
+  // Settings from the 3D probe
+  void setMotorRadius(double motorRadius);
+  void setFramePitch(double framePitch);
+  void setMotorConvex(bool isMotorConvex);
+
+  //@}
 
 private:
   //Settings from the 3D probe

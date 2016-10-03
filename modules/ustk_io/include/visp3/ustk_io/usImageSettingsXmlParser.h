@@ -83,14 +83,14 @@ public:
   usImageSettingsXmlParser& operator =(const usImageSettingsXmlParser& twinparser);
   virtual ~usImageSettingsXmlParser();
   
-  //comparaison
+  //comparison
   bool operator ==(usImageSettingsXmlParser const& other);
 
   // Data accessors.
-  usImageSettings getImageSettings() const {return m_imageSettings;}
-  std::string getImageFileName() const {return m_imageFileName;}
   double getAxialResolution() const { return m_axialResolution; }
   double getHeightResolution() const { return m_heightResolution; }
+  std::string getImageFileName() const {return m_imageFileName;}
+  usImageSettings getImageSettings() const {return m_imageSettings;}
   double getWidthResolution() const { return m_widthResolution; }
   bool isImagePreScan() const { return m_is_prescan; }
   

@@ -94,6 +94,9 @@ public:
   */
   ~usImage3D();
 
+  /** @name Inherited functionalities from usImage3D */
+  //@{
+
   /**
   * Assignment operator.
   * @param other other 3D-image to copy
@@ -101,7 +104,7 @@ public:
   usImage3D<Type> &operator=(const usImage3D<Type> &other);
 
   /**
-  * Comparaison operator.
+  * Comparison operator.
   * @param other The 3d image to compare. Comparing only parameters, not all volume voxel by voxel.
   */
   bool operator==(const usImage3D<Type> &other);
@@ -261,8 +264,9 @@ public:
   */
   void initData(Type value,int numberOfVloxels);
 
-
   void resize(unsigned int dimx,unsigned int dimy,unsigned int dimz);
+
+  //@}
 
 protected:
 

@@ -53,30 +53,25 @@ template<class T>
 class usImagePostScan3D : public usImage3D<T>, public usImageSettings3D {
 public:
   usImagePostScan3D();
-
-  usImagePostScan3D(unsigned int AN, unsigned int LN, unsigned int FN, double probeRadius, double motorRadius, double scanLinePitch, double framePitch, bool isImageConvex, bool isMotorConvex);
-
+  usImagePostScan3D(unsigned int AN, unsigned int LN, unsigned int FN,
+                    double probeRadius, double motorRadius, double scanLinePitch, double framePitch,
+                    bool isImageConvex, bool isMotorConvex);
   usImagePostScan3D(const usImagePostScan3D &other);
-
   usImagePostScan3D(const usImage3D<T> &other);
-
   usImagePostScan3D(const usImageSettings3D &other);
-
   usImagePostScan3D(const usImage3D<T> &otherImage, const usImageSettings3D &otherSettings);
-
   ~usImagePostScan3D();
+
+  double getHeightResolution() const;
+
+  double getWidthResolution() const;
 
   usImagePostScan3D<T> & operator =(const usImagePostScan3D<T> &other);
 
   bool operator ==(const usImagePostScan3D<T> &other);
 
-  void setWidthResolution(double widthResolution);
-
-  double getWidthResolution() const;
-
   void setHeightResolution(double widthResolution);
-
-  double getHeightResolution() const;
+  void setWidthResolution(double widthResolution);
 
 private:
   double m_widthResolution;

@@ -53,32 +53,23 @@ template<class T>
 class usImagePostScan2D : public vpImage<T>, public usImageSettings {
 public:
   usImagePostScan2D();
-
   usImagePostScan2D(unsigned int AN, unsigned int LN, double probeRadius, double scanLinePitch, bool isConvex);
-
   usImagePostScan2D(const usImagePostScan2D<T> &other);
-
   usImagePostScan2D(const vpImage<T> &other);
-
   usImagePostScan2D(const usImageSettings &other);
-
   usImagePostScan2D(const vpImage<T> &otherImage, const usImageSettings &otherSettings);
-
   ~usImagePostScan2D();
+
+  double getHeightResolution() const;
+  double getWidthResolution() const;
 
   usImagePostScan2D<T> & operator =(const usImagePostScan2D<T> &other);
 
   bool operator ==(const usImagePostScan2D<T> &other);
 
-  void setWidthResolution(double widthResolution);
-
-  double getWidthResolution() const;
-
   void setHeightResolution(double widthResolution);
-
-  double getHeightResolution() const;
-
   void setImageSettings(const usImageSettings &settings);
+  void setWidthResolution(double widthResolution);
 
 private:
   double m_widthResolution;
