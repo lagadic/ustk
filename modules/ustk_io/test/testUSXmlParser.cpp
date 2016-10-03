@@ -193,7 +193,7 @@ int main(int argc, const char** argv)
     //Init values in reference parser (same values in file read in test)
     usImagePreScan2D<unsigned char> prescan2DReference;
     prescan2DReference.setAxialResolution(0.0005);
-    prescan2DReference.setScanLinePitch(0.0045f);
+    prescan2DReference.setScanLinePitch(0.0045);
     prescan2DReference.setProbeRadius(0.05478);
     prescan2DReference.resize(320,128);
     prescan2DReference.setImageConvex(true);
@@ -209,6 +209,7 @@ int main(int argc, const char** argv)
     std::cout << "Convex probe : " << prescan2DReference.isImageConvex() << std::endl;
     std::cout << "Height : " << prescan2DReference.getHeight() << std::endl;
     std::cout << "Width : " << prescan2DReference.getWidth() << std::endl;
+    std::cout << "Axial resolution : " << prescan2DReference.getAxialResolution() << std::endl;
 
     //read the image we just wrote
     usImagePreScan2D<unsigned char> prescan2D;
@@ -223,8 +224,8 @@ int main(int argc, const char** argv)
     std::cout << "Convex probe : " << prescan2D.isImageConvex() << std::endl;
     std::cout << "Height : " << prescan2D.getHeight() << std::endl;
     std::cout << "Width : " << prescan2D.getWidth() << std::endl;
+    std::cout << "Axial resolution : " << prescan2D.getAxialResolution() << std::endl;
 
-    //checking settings values and 2 pixels values
     if(prescan2D==prescan2DReference) {
       std::cout << "Test passed !" << std::endl;
       return 0;
