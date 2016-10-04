@@ -36,9 +36,10 @@ before_install:
 
 before_script:
   - git clone https://github.com/lagadic/visp.git /tmp/visp
+  - git clone https://github.com/MarcPouliquenInria/ustk.git /tmp/ustk
   - mkdir build
   - cd build
-  - cmake /tmp/visp -DVISP_CONTRIB_MODULES_PATH=.. -DBUILD_MODULE_visp_ar=OFF -DBUILD_MODULE_visp_blob=OFF -DBUILD_MODULE_visp_detection=OFF -DBUILD_MODULE_visp_klt=OFF -DBUILD_MODULE_visp_mbt=OFF -DBUILD_MODULE_visp_me=OFF -DBUILD_MODULE_visp_tt=OFF -DBUILD_MODULE_visp_tt_mi=OFF -DBUILD_MODULE_visp_vision=OFF -DBUILD_MODULE_visp_visual_features=OFF -DBUILD_MODULE_visp_vs=OFF
+  - cmake /tmp/visp -DVISP_CONTRIB_MODULES_PATH=/tmp/ustk -DBUILD_MODULE_visp_ar=OFF -DBUILD_MODULE_visp_blob=OFF -DBUILD_MODULE_visp_detection=OFF -DBUILD_MODULE_visp_klt=OFF -DBUILD_MODULE_visp_mbt=OFF -DBUILD_MODULE_visp_me=OFF -DBUILD_MODULE_visp_tt=OFF -DBUILD_MODULE_visp_tt_mi=OFF -DBUILD_MODULE_visp_vision=OFF -DBUILD_MODULE_visp_visual_features=OFF -DBUILD_MODULE_visp_vs=OFF
 
 script: 
   - make
@@ -47,6 +48,7 @@ script:
 notifications:
   email:
     - Fabien.Spindler@inria.fr
+    - marc.pouliquen@inria.fr
   on_success: change
   on_failure: always
    
