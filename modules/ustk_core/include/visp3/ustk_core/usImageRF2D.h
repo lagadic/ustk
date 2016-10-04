@@ -67,6 +67,7 @@ public:
   bool operator==(const usImageRF2D<T> &other);
 
   void setAxialResolution(double axialResolution);
+  void setData(const vpImage<T> &image);
 
 private:
   double m_axialResolution;
@@ -176,5 +177,15 @@ template<class T>
 void usImageRF2D<T>::setAxialResolution(double axialResolution)
 {
   m_axialResolution = axialResolution;
+}
+
+/**
+* Setter for the image data.
+* @param image The image to set.
+*/
+template<class T>
+void usImageRF2D<T>::setData(const vpImage<T> &image)
+{
+  vpImage<T>::operator=(image);
 }
 #endif // US_IMAGE_RF_2D_H

@@ -67,6 +67,7 @@ public:
 
   bool operator ==(const usImagePostScan2D<T> &other);
 
+  void setData(const vpImage<T> &image);
   void setHeightResolution(double widthResolution);
   void setImageSettings(const usImageSettings &settings);
   void setWidthResolution(double widthResolution);
@@ -219,4 +220,12 @@ void usImagePostScan2D<T>::setImageSettings(const usImageSettings &settings)
   setImageConvex(settings.isImageConvex());
 }
 
+/**Setter for image.
+* @param settings Settings you want to copy.
+*/
+template<class T>
+void usImagePostScan2D<T>::setData(const vpImage<T> &image)
+{
+  vpImage<T>::operator=(other);
+}
 #endif // US_IMAGE_POSTSCAN_2D_H

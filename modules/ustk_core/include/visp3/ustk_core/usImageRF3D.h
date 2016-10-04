@@ -73,6 +73,7 @@ public:
   bool operator==(const usImageRF3D<T> &other);
 
   void setAxialResolution(double axialResolution);
+  void setData(const usImage3D<T> &image);
 
 private:
   double m_axialResolution;
@@ -230,4 +231,13 @@ void usImageRF3D<T>::setAxialResolution(double axialResolution) { m_axialResolut
 template<class T>
 double usImageRF3D<T>::getAxialResolution() const { return m_axialResolution; }
 
+/**
+* Setter for image data.
+* @param image The image to set.
+*/
+template<class T>
+void usImageRF3D<T>::setData(const usImage3D<T> &image)
+{
+  usImage3D<T>::operator=(image);
+}
 #endif // US_IMAGE_RF_3D_H

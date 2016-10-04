@@ -83,6 +83,7 @@ public:
   bool operator==(const usImagePreScan2D<T> &other);
 
   void setAxialResolution(const double axialResolution);
+  void setData(const vpImage<T> image);
 
 private:
   double m_axialResolution;
@@ -241,4 +242,13 @@ void usImagePreScan2D<T>::setAxialResolution(const double axialResolution)
   m_axialResolution = axialResolution;
 }
 
+/**
+* Setter for the image data.
+* @param image The image to set.
+*/
+template<class T>
+void usImagePreScan2D<T>::setData(const vpImage<T> image)
+{
+  vpImage<T>::operator=(image);
+}
 #endif // US_IMAGE_PRESCAN_2D_H

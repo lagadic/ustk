@@ -70,6 +70,7 @@ public:
 
   bool operator ==(const usImagePostScan3D<T> &other);
 
+  void setData(const usImage3D<T> &image3D);
   void setHeightResolution(double widthResolution);
   void setWidthResolution(double widthResolution);
 
@@ -214,5 +215,13 @@ void usImagePostScan3D<T>::setHeightResolution(double heightResolution) { m_heig
 template<class T>
 double usImagePostScan3D<T>::getHeightResolution() const { return m_heightResolution; }
 
-
+/**
+* Setter for image data.
+* @param image3D Image you want to set.
+*/
+template<class T>
+void usImagePostScan3D<T>::setData(const usImage3D<T> &image3D)
+{
+  usImage3D<T>::operator =(image3D);
+}
 #endif // US_IMAGE_POSTSCAN_3D_H

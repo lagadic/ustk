@@ -84,6 +84,7 @@ public:
   bool operator==(const usImagePreScan3D<T> &other);
 
   void setAxialResolution(double axialResolution);
+  void setData(const usImage3D<T> &image);
 
 private:
   double m_axialResolution;
@@ -255,4 +256,13 @@ void usImagePreScan3D<T>::setAxialResolution(double axialResolution)
   m_axialResolution = axialResolution;
 }
 
+/**
+* Setter for the image data.
+* @param image The image to set.
+*/
+template<class T>
+void usImagePreScan3D<T>::setData(const usImage3D<T> &image)
+{
+  usImage3D<T>::operator=(image);
+}
 #endif // US_IMAGE_PRESCAN_3D_H
