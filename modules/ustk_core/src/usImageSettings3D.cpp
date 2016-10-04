@@ -52,11 +52,10 @@ usImageSettings3D::usImageSettings3D() : usImageSettings(), m_motorRadius(0.0f),
 * Full Constructor, all settings availables
 * @param probeRadius Distance between the center point of the probe and the first pixel arc acquired, in meters (m).
 * @param motorRadius Distance between the rotation center of the probe motor and the first pixel arc acquired, in meters (m).
-* @param lineAngle Radius between 2 successives acquisiton lines in the probe, in radians (rad).
-* @param frameAngle Radius between 2 successives acquisiton planes in the probe, in radians (rad).
-* @param resolution Size of a pixel (we use square pixels), in meters(m) for postscan. For prescan image (not managed yet) : line angle (in radians) and axial resolution (meters).
-* @param BSampleFreq Sampling frequency used for B-Mode.
-* @param probeElementPitch Physic parameter of the probe : distance between 2 sucessive piezoelectric elements of the ultrasound probe.
+* @param scanLinePitch Radius between 2 successives acquisiton lines in the probe, in radians (rad).
+* @param framePitch Radius between 2 successives acquisiton planes in the probe, in radians (rad).
+* @param isImageConvex True if the probe used was convex, false otherwise.
+* @param isMotorConvex True if the probe motor used was convex, false otherwise.
 */
 usImageSettings3D::usImageSettings3D(double probeRadius, double motorRadius, double scanLinePitch, double framePitch, bool isImageConvex, bool isMotorConvex)
   : usImageSettings(probeRadius, scanLinePitch, isImageConvex), m_motorRadius(motorRadius), m_framePitch(framePitch), m_isMotorConvex(isMotorConvex) {}
@@ -109,7 +108,7 @@ double usImageSettings3D::getMotorRadius() const { return m_motorRadius; }
 
 /**
 * Set the frame angle (rad).
-* @param angle Frame angle of the probe in radians.
+* @param framePitch Frame angle of the probe in radians.
 */
 void usImageSettings3D::setFramePitch(double framePitch) { m_framePitch = framePitch; }
 

@@ -102,6 +102,7 @@ usImagePreScan3D<T>::usImagePreScan3D() : usImage3D<T>(), usImageSettings3D()
 * Initializing image size constructor. For double image type.
 * @param AN A-samples in a line (corresponds to image height in px).
 * @param LN Number of lines (corresponds to image width in px).
+* @param FN Number of frames (corresponds to image depth in px).
 */
 template<class T>
 usImagePreScan3D<T>::usImagePreScan3D(unsigned int AN, unsigned int LN, unsigned int FN) : usImage3D<T>(LN, AN, FN), usImageSettings3D()
@@ -161,8 +162,9 @@ usImagePreScan3D<T>::usImagePreScan3D(const usImageSettings3D &other) : usImageS
 }
 
 /**
-* Copy constructor. For double image type.
-* @param other usImageSettings3D you want to copy.
+* Copy constructor. For double image type
+* @param other usImage3D you want to copy.
+* @param otherSettings usImageSettings3D you want to copy.
 */
 template<class T>
 usImagePreScan3D<T>::usImagePreScan3D(const usImage3D<T> &other, const usImageSettings3D &otherSettings) :

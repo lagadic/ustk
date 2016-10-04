@@ -91,6 +91,7 @@ usImageRF3D<T>::usImageRF3D() : usImage3D<T>(), usImageSettings3D()
 * Initializing constructor for image dimentions.
 * @param[in] AN number of A-samples in a line.
 * @param[in] LN number of lines.
+* @param[in] FN number of frames.
 */
 template<class T>
 usImageRF3D<T>::usImageRF3D(unsigned int AN, unsigned int LN, unsigned int FN)
@@ -132,7 +133,6 @@ usImageRF3D<T>::usImageRF3D(usImage3D<T> image3D, usImageSettings3D imageSetting
 /**
 * Copy constructor from usImage3D and usImageSettings
 * @param image3D usImage3D to copy
-* @param imageSettings usImageSettings3D to copy
 */
 template<class T>
 usImageRF3D<T>::usImageRF3D(usImage3D<T> image3D) : usImage3D<T>(image3D) {
@@ -141,7 +141,6 @@ usImageRF3D<T>::usImageRF3D(usImage3D<T> image3D) : usImage3D<T>(image3D) {
 
 /**
 * Copy constructor from usImage3D and usImageSettings
-* @param image3D usImage3D to copy
 * @param imageSettings usImageSettings3D to copy
 */
 template<class T>
@@ -219,7 +218,7 @@ unsigned int  usImageRF3D<T>::getFN() const { return usImage3D<T>::getDimZ(); }
 
 /**
 * Setter for axial Resolution.
-* @param Axial resolution (in meters) to set.
+* @param axialResolution Axial resolution (in meters) to set.
 */
 template<class T>
 void usImageRF3D<T>::setAxialResolution(double axialResolution) { m_axialResolution = axialResolution; }

@@ -254,6 +254,7 @@ public:
   /**
   * Set the data container.
   * @param data The data container
+  * @param numberOfVloxels The number of voxels in the image.
   */
   void setData(Type* data, int numberOfVloxels);
 

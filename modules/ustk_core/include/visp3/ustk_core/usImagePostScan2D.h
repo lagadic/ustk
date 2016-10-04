@@ -202,7 +202,7 @@ void usImagePostScan2D<T>::setHeightResolution(double heightResolution) { m_heig
 
 /**
 * Setter for width Resolution.
-* @param heightResolution Height resolution (in meters) to set.
+* @return heightResolution Height resolution (in meters).
 */
 template<class T>
 double usImagePostScan2D<T>::getHeightResolution() const { return m_heightResolution; }

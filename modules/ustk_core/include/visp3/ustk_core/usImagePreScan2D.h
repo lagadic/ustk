@@ -156,7 +156,8 @@ usImagePreScan2D<T>::usImagePreScan2D(const usImageSettings &other) : usImageSet
 
 /**
 * Copy constructor. For double image type.
-* @param other usImageSettings you want to copy.
+* @param other vpImage you want to copy.
+* @param otherSettings usImageSettings you want to copy.
 */
 template<class T>
 usImagePreScan2D<T>::usImagePreScan2D(const vpImage<T> &other, const usImageSettings &otherSettings) :

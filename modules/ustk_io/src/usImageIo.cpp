@@ -42,28 +42,36 @@
 #include <visp3/ustk_io/usRawFileParser.h>
 
 /**
-* Write 2D rf ultrasound image
+* Write 2D rf ultrasound image.
+* @param imageRf2D The RF image to write.
+* @param filename The image file name to write.
 */
 void usImageIo::write(const usImageRF2D<unsigned char> &imageRf2D, const std::string filename) {
 
 }
 
 /**
-* Read 2D rf ultrasound image
+* Read 2D rf ultrasound image.
+* @param [out] imageRf2D The RF image to read.
+* @param [in] filename The image file name to read.
 */
 void usImageIo::read(usImageRF2D<unsigned char> &imageRf2D, const std::string filename) {
 
 }
 
 /**
-* Write 3D rf ultrasound image
+* Write 3D rf ultrasound image.
+* @param imageRf3D The RF image to write.
+* @param filename The image file name to write.
 */
 void usImageIo::write(const usImageRF3D<unsigned char> &imageRf3D, const std::string filename) {
 
 }
 
 /**
-* Read 3D rf ultrasound image
+* Read 3D rf ultrasound image.
+* @param [out] imageRf3 The RF image to read.
+* @param [in] filename The image file name to read.
 */
 void usImageIo::read(usImageRF3D<unsigned char> &imageRf3,const std::string filename) {
 
@@ -71,8 +79,8 @@ void usImageIo::read(usImageRF3D<unsigned char> &imageRf3,const std::string file
 
 #ifdef VISP_HAVE_XML2
 /**
-* Write 2D unsigned char prescan ultrasound image
-* @param preScanImage The prescan image to write
+* Write 2D unsigned char prescan ultrasound image.
+* @param preScanImage The prescan image to write.
 * @param imageFilename The image file name to write, with extension.
 */
 void usImageIo::writeXml(const usImagePreScan2D<unsigned char> &preScanImage, const std::string imageFilename) {
@@ -95,9 +103,9 @@ void usImageIo::writeXml(const usImagePreScan2D<unsigned char> &preScanImage, co
 }
 
 /**
-* Read 2D unsigned char prescan ultrasound image
+* Read 2D unsigned char prescan ultrasound image.
 * @param [out] preScanImage The prescan image to read.
-* @param [in] imageFilename The image file name to read, with .xml extension.
+* @param [in] xmlFileName The xml file name to read, with .xml extension.
 */
 void usImageIo::readXml(usImagePreScan2D<unsigned char> &preScanImage,const std::string xmlFileName)
 {
@@ -118,42 +126,54 @@ void usImageIo::readXml(usImagePreScan2D<unsigned char> &preScanImage,const std:
 #endif //VISP_HAVE_XML2
 
 /**
-* Write 3D unsigned char prescan ultrasound image
+* Write 3D unsigned char prescan ultrasound image.
+* @param preScanImage The prescan image to write.
+* @param filename The image file name to write.
 */
 void usImageIo::write(const usImagePreScan3D<unsigned char> &preScanImage, const std::string filename) {
 
 }
 
 /**
-* Read 3D unsigned char prescan ultrasound image
+* Read 3D unsigned char prescan ultrasound image.
+* @param [out] preScanImage The prescan image to read.
+* @param [in] filename The image file name to read, with .xml extension.
 */
 void usImageIo::read(usImagePreScan3D<unsigned char> &preScanImage,const std::string filename) {
 
 }
 
 /**
-* Write 2D double prescan ultrasound image
+* Write 2D double prescan ultrasound image.
+* @param preScan2DImage The prescan image to write.
+* @param filename The image file name to write.
 */
 void usImageIo::write(const usImagePreScan2D<double> &preScan2DImage, const std::string filename) {
 
 }
 
 /**
-* Read 2D double prescan ultrasound image
+* Read 2D double prescan ultrasound image.
+* @param [out] preScan2D The prescan image to read.
+* @param [in] filename The image file name to read.
 */
 void usImageIo::read(usImagePreScan2D<double> &preScan2D,std::string filename) {
 
 }
 
 /**
-* Write 3D double prescan ultrasound image
+* Write 3D double prescan ultrasound image.
+* @param preScan3DImage The prescan image to write.
+* @param filename The image file name to write.
 */
 void usImageIo::write(const usImagePreScan3D<double> &preScan3DImage, const std::string filename) {
 
 }
 
 /**
-* Read 3D double prescan ultrasound image
+* Read 3D double prescan ultrasound image.
+* @param [out] preScan3DImage The prescan image to read.
+* @param [in] filename The image file name to read.
 */
 void usImageIo::read(usImagePreScan3D<double> &preScan3DImage,std::string filename) {
 
@@ -161,9 +181,9 @@ void usImageIo::read(usImagePreScan3D<double> &preScan3DImage,std::string filena
 
 #ifdef VISP_HAVE_XML2
 /**
-* Write 2D postscan ultrasound image and settings
-* @param postScanImage Image to write
-* @param filename The image file name with the desired extenstion.
+* Write 2D postscan ultrasound image and settings.
+* @param postScanImage Image to write.
+* @param imageFilename The image file name with the desired extenstion.
 */
 void usImageIo::writeXml(const usImagePostScan2D<unsigned char> &postScanImage, const std::string imageFilename) {
   try {
@@ -185,8 +205,9 @@ void usImageIo::writeXml(const usImagePostScan2D<unsigned char> &postScanImage, 
 }
 
 /**
-* Read 2D postscan ultrasound image
-* @param xmlFilename The xml file name with .xml extenstion (make sure png file is in the same directory);
+* Read 2D postscan ultrasound image.
+* @param [out] postScanImage The postscan image to read.
+* @param [in] xmlFilename The xml file name with .xml extenstion.
 */
 void usImageIo::readXml(usImagePostScan2D<unsigned char> &postScanImage,const std::string xmlFilename) {
   usImageSettingsXmlParser xmlSettings;
@@ -207,6 +228,8 @@ void usImageIo::readXml(usImagePostScan2D<unsigned char> &postScanImage,const st
 
 /**
 * Write 3D postscan ultrasound image and settings
+* @param postScanImage Image to write.
+* @param filename The image file name with the desired extenstion.
 */
 void usImageIo::write(const usImagePostScan3D<unsigned char> &postScanImage, const std::string filename)
 {
@@ -244,6 +267,8 @@ void usImageIo::write(const usImagePostScan3D<unsigned char> &postScanImage, con
 
 /**
 * Read 3D postscan ultrasound image
+* @param [out] postScanImage The postscan image to read.
+* @param [in] mhdFileName The mhd file name with .mhd extenstion.
 */
 void usImageIo::read(usImagePostScan3D<unsigned char> &postScanImage,std::string mhdFileName) {
 
