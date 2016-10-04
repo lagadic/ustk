@@ -53,7 +53,7 @@ template<class T>
 class usImagePostScan2D : public vpImage<T>, public usImageSettings {
 public:
   usImagePostScan2D();
-  usImagePostScan2D(unsigned int AN, unsigned int LN, double probeRadius, double scanLinePitch, bool isConvex);
+  usImagePostScan2D(unsigned int a_nubmer, unsigned int line_number, double probeRadius, double scanLinePitch, bool isConvex);
   usImagePostScan2D(const usImagePostScan2D<T> &other);
   usImagePostScan2D(const vpImage<T> &other);
   usImagePostScan2D(const usImageSettings &other);
@@ -88,15 +88,15 @@ usImagePostScan2D<T>::usImagePostScan2D() : vpImage<T>(), usImageSettings()
 
 /**
 * Full constructor, all parameters settables.
-* @param AN number of A-samples in a line.
-* @param LN number of lines.
+* @param a_nubmer number of A-samples in a line.
+* @param line_number number of lines.
 * @param probeRadius radius of the ultrasound probe used to acquire the RF image.
 * @param scanLinePitch Angle(rad) / Distance(m) between 2 lines of the ultrasound probe used to acquire the RF image. Angle if isConvex is true, distance if it's false.
 * @param isConvex Boolean to specify if the probe used was convex(true) or linear(false).
 */
 template<class T>
-usImagePostScan2D<T>::usImagePostScan2D(unsigned int AN, unsigned int LN, double probeRadius, double scanLinePitch, bool isConvex)
-  : vpImage<T>(AN,LN), usImageSettings(probeRadius, scanLinePitch, isConvex)
+usImagePostScan2D<T>::usImagePostScan2D(unsigned int a_nubmer, unsigned int line_number, double probeRadius, double scanLinePitch, bool isConvex)
+  : vpImage<T>(a_nubmer, line_number), usImageSettings(probeRadius, scanLinePitch, isConvex)
 {
 
 }

@@ -53,9 +53,9 @@ public:
   //default constructors
   usImagePreScan2D();
   //image size initialisation constructors
-  usImagePreScan2D(unsigned int AN, unsigned int LN);
+  usImagePreScan2D(unsigned int a_number, unsigned int LN);
   //All parameters initialisation constructors
-  usImagePreScan2D(unsigned int AN, unsigned int LN, double probeRadius, double scanLinePitch, bool isConvex);
+  usImagePreScan2D(unsigned int a_number, unsigned int LN, double probeRadius, double scanLinePitch, bool isConvex);
   //usImagePreScan2D copy constructor
   usImagePreScan2D(const usImagePreScan2D &other);
   //vpImage copy constructors
@@ -72,9 +72,9 @@ public:
   void copyFrom(const vpImage<T> &I);
 
   double getAxialResolution() const;
-  //No setters for AN and LN because vpImage doesn't have setters for height and width. Those parameters have to be passed in the constructor.
-  unsigned int getAN() const;
-  unsigned int getLN() const;
+  //No setters for a_number and LN because vpImage doesn't have setters for height and width. Those parameters have to be passed in the constructor.
+  unsigned int getANumber() const;
+  unsigned int getLineNumber() const;
 
   //assignement
   usImagePreScan2D<T>& operator=(const usImagePreScan2D<T> &other);
@@ -100,26 +100,26 @@ usImagePreScan2D<T>::usImagePreScan2D() : vpImage<T>(), usImageSettings()
 
 /**
 * Initializing image size constructor. For double image type.
-* @param AN A-samples in a line (corresponds to image height in px).
-* @param LN Number of lines (corresponds to image width in px).
+* @param a_number A-samples in a line (corresponds to image height in px).
+* @param line_number Number of lines (corresponds to image width in px).
 */
 template<class T>
-usImagePreScan2D<T>::usImagePreScan2D(unsigned int AN, unsigned int LN) : vpImage<T>(LN, AN), usImageSettings()
+usImagePreScan2D<T>::usImagePreScan2D(unsigned int a_number, unsigned int line_number) : vpImage<T>(line_number, a_number), usImageSettings()
 {
 
 }
 
 /**
 * Initializing constructor for image size and probe settings. For double image type.
-* @param AN number of A-samples in a line.
-* @param LN number of lines.
+* @param a_number number of A-samples in a line.
+* @param line_number number of lines.
 * @param probeRadius radius of the ultrasound probe used to acquire the RF image.
 * @param scanLinePitch Angle(rad) / Distance(m) between 2 lines of the ultrasound probe used to acquire the RF image. Angle if isConvex is true, distance if it's false.
 * @param isConvex Boolean to specify if the probe used was convex(true) or linear(false).
 */
 template<class T>
-usImagePreScan2D<T>::usImagePreScan2D(unsigned int AN, unsigned int LN, double probeRadius, double scanLinePitch, bool isConvex) :
-  vpImage<T>(AN, LN), usImageSettings(probeRadius, scanLinePitch, isConvex)
+usImagePreScan2D<T>::usImagePreScan2D(unsigned int a_number, unsigned int line_number, double probeRadius, double scanLinePitch, bool isConvex) :
+  vpImage<T>(a_number, line_number), usImageSettings(probeRadius, scanLinePitch, isConvex)
 {
 
 }
@@ -213,17 +213,17 @@ void usImagePreScan2D<T>::copyFrom(const vpImage<T> &I)
 
 /**
 * Get the number of A-samples in a line.
-* @return AN number of A-samples in a line.
+* @return a_number Number of A-samples in a line.
 */
 template<class T>
-unsigned int usImagePreScan2D<T>::getAN() const { return vpImage<T>::getHeight(); }
+unsigned int usImagePreScan2D<T>::getANumber() const { return vpImage<T>::getHeight(); }
 
 /**
 * Get the number of lines.
-* @return LN number of lines.
+* @return line_number number of lines.
 */
 template<class T>
-unsigned int usImagePreScan2D<T>::getLN() const { return vpImage<T>::getWidth(); }
+unsigned int usImagePreScan2D<T>::getLineNumber() const { return vpImage<T>::getWidth(); }
 
 /**
 * Getter for the axial resolution

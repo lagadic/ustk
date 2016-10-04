@@ -55,13 +55,13 @@ class usImageRF2D : public vpImage<T>, public usImageSettings {
 public:
   
   usImageRF2D();
-  usImageRF2D(unsigned int AN, unsigned int LN, double probeRadius=0, double scanLinePitch=0, bool isConvex=true, double axialResolution=0);
+  usImageRF2D(unsigned int a_nmuber, unsigned int line_number, double probeRadius=0, double scanLinePitch=0, bool isConvex=true, double axialResolution=0);
   usImageRF2D(const usImageRF2D &other);
   ~usImageRF2D();
 
   double getAxialResolution() const;
-  unsigned int getAN() const;
-  unsigned int getLN() const;
+  unsigned int getANumber() const;
+  unsigned int getLineNumber() const;
 
   usImageRF2D<T>& operator=(const usImageRF2D<T> &other);
   bool operator==(const usImageRF2D<T> &other);
@@ -86,8 +86,8 @@ usImageRF2D<T>::usImageRF2D() : vpImage<T>(), usImageSettings(), m_axialResoluti
 
 /**
 * Initializing constructor.
-* @param AN number of A-samples in a line.
-* @param LN number of lines.
+* @param a_nmuber number of A-samples in a line.
+* @param line_number number of lines.
 * @param probeRadius radius of the ultrasound probe used to acquire the RF image.
 * @param scanLinePitch Angle(rad) / Distance(m) between 2 lines of the ultrasound probe used
 * to acquire the RF image. Angle if isConvex is true, distance if it's false.
@@ -95,8 +95,8 @@ usImageRF2D<T>::usImageRF2D() : vpImage<T>(), usImageSettings(), m_axialResoluti
 * @param axialResolution The distance (in meters) between 2 successive pixels acquired along a scanline.
 */
 template<class T>
-usImageRF2D<T>::usImageRF2D(unsigned int AN, unsigned int LN, double probeRadius, double scanLinePitch, bool isConvex, double axialResolution)
-  : vpImage<T>(AN, LN), usImageSettings(probeRadius, scanLinePitch, isConvex), m_axialResolution(axialResolution)
+usImageRF2D<T>::usImageRF2D(unsigned int a_nmuber, unsigned int line_number, double probeRadius, double scanLinePitch, bool isConvex, double axialResolution)
+  : vpImage<T>(a_nmuber, line_number), usImageSettings(probeRadius, scanLinePitch, isConvex), m_axialResolution(axialResolution)
 {
 
 }
@@ -150,17 +150,17 @@ bool usImageRF2D<T>::operator==(const usImageRF2D<T> &other)
 
 /**
 * Get the number of A-samples in a line.
-* @return AN number of A-samples in a line.
+* @return a_number of A-samples in a line.
 */
 template<class T>
-unsigned int usImageRF2D<T>::getAN() const { return vpImage<T>::getHeight(); }
+unsigned int usImageRF2D<T>::getANumber() const { return vpImage<T>::getHeight(); }
 
 /**
 * Get the number of lines.
-* @return LN number of lines.
+* @return line_number number of lines.
 */
 template<class T>
-unsigned int usImageRF2D<T>::getLN() const { return vpImage<T>::getWidth(); }
+unsigned int usImageRF2D<T>::getLineNumber() const { return vpImage<T>::getWidth(); }
 
 /**
 * Getter for the axial resolution
