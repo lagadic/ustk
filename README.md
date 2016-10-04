@@ -2,6 +2,8 @@
 
 Copyright (C) 2016 by Inria.
 
+[![Build Status](https://travis-ci.org/lagadic/ustk.png)](https://travis-ci.org/lagadic/ustk)
+
 #### Dependencies
 This UsTk project needs [ViSP](https://visp.inria.fr) as third-party.
 For compilation, UsTk is considered as a set of ViSP external modules. So ViSP and UsTk have to be compiled together. 

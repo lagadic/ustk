@@ -226,6 +226,6 @@ void usImagePostScan2D<T>::setImageSettings(const usImageSettings &settings)
 template<class T>
 void usImagePostScan2D<T>::setData(const vpImage<T> &image)
 {
-  vpImage<T>::operator=(other);
+  vpImage<T>::operator=(image);
 }
 #endif // US_IMAGE_POSTSCAN_2D_H
