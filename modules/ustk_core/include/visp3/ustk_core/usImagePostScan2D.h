@@ -181,7 +181,7 @@ void usImagePostScan2D<T>::setImageSettings(const usImagePostScanSettings &setti
 {
   setProbeRadius(settings.getProbeRadius());
   setScanLinePitch(settings.getScanLinePitch());
-  setImageConvex(settings.isImageConvex());
+  setProbeConvex(settings.isProbeConvex());
 }
 
 /**Setter for image.

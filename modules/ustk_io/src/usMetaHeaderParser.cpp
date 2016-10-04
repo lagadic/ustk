@@ -56,7 +56,7 @@ void  usMetaHeaderParser::readMHDHeader(const char * fileName)
   this->mhdHeader.msb = false;
   this->mhdHeader.headerSize = 0;
   this->mhdHeader.imageType = UNKNOWN;
-  this->mhdHeader.isImageConvex = false;
+  this->mhdHeader.isProbeConvex = false;
   this->mhdHeader.isMotorConvex = false;
   this->mhdHeader.probeRadius = 0.0f;
   this->mhdHeader.scanLinePitch = 0.0f;
@@ -172,14 +172,14 @@ void  usMetaHeaderParser::readMHDHeader(const char * fileName)
       file >> this->mhdHeader.probeRadius;
       std::getline(file, keyval, '\n');
     }
-    else if (keyword == "IsImageConvex")
+    else if (keyword == "IsProbeConvex")
     {
       std::getline(file, keyval, '\n');
       it=keyval.end();
       keyval.erase(std::remove(keyval.begin(),keyval.end(),' '),it);
       it=keyval.end();
       keyval.erase(std::remove(keyval.begin(),keyval.end(),'\r'),it);
-      this->mhdHeader.isImageConvex = ((keyval == "True") || (keyval == "1"));
+      this->mhdHeader.isProbeConvex = ((keyval == "True") || (keyval == "1"));
     }
     else if (keyword == "FramePitch")
     {
@@ -309,7 +309,7 @@ void usMetaHeaderParser::parse()
   else
     mhdfile << "UltrasoundImageType = " <<  "MET_UNKNOWN" << "\n";
 
-  mhdfile << "IsImageConvex = " << mhdHeader.isImageConvex << "\n";
+  mhdfile << "IsProbeConvex = " << mhdHeader.isProbeConvex << "\n";
 
   mhdfile << "IsMotorConvex = " << mhdHeader.isMotorConvex << "\n";
 
@@ -331,12 +331,12 @@ void usMetaHeaderParser::read(const std::string& filename)
   //basic common settings
   this->m_imageSettings.setProbeRadius(mhdHeader.probeRadius);
   this->m_imageSettings.setScanLinePitch(mhdHeader.scanLinePitch);
-  this->m_imageSettings.setImageConvex(mhdHeader.isImageConvex);
+  this->m_imageSettings.setProbeConvex(mhdHeader.isProbeConvex);
 
   if(this->mhdHeader.imageType == RF_3D || this->mhdHeader.imageType == PRESCAN_3D || this->mhdHeader.imageType == POSTSCAN_3D) {
     this->m_imageSettings3D.setProbeRadius(mhdHeader.probeRadius);
     this->m_imageSettings3D.setScanLinePitch(mhdHeader.scanLinePitch);
-    this->m_imageSettings3D.setImageConvex(mhdHeader.isImageConvex);
+    this->m_imageSettings3D.setProbeConvex(mhdHeader.isProbeConvex);
     this->m_imageSettings3D.setMotorRadius(mhdHeader.motorRadius);
     this->m_imageSettings3D.setFramePitch(mhdHeader.framePitch);
     this->m_imageSettings3D.setMotorConvex(mhdHeader.isMotorConvex);

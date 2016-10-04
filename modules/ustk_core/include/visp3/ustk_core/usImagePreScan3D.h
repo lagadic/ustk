@@ -115,13 +115,13 @@ usImagePreScan3D<T>::usImagePreScan3D(unsigned int AN, unsigned int LN, unsigned
 * @param motorRadius radius of the ultrasound probe motor used to acquire the RF image.
 * @param scanLinePitch angle(rad) / distance(m) between 2 lines of the ultrasound probe used to acquire the RF image.
 * @param framePitch angle(rad) / distance(m) between 2 lines of the ultrasound probe used to acquire the RF image.
-* @param isImageConvex Boolean to specyfy if the image was acquired by a convex probe(true) or by a linear probe (false).
+* @param isProbeConvex Boolean to specyfy if the image was acquired by a convex probe(true) or by a linear probe (false).
 * @param isMotorConvex Boolean to specyfy if the image was acquired by a rotating  motor(true) or by a linear motor (false).
 */
 template<class T>
 usImagePreScan3D<T>::usImagePreScan3D(unsigned int AN, unsigned int LN, unsigned int FN, double probeRadius, double motorRadius, double scanLinePitch, double framePitch,
-                                      bool isImageConvex, bool isMotorConvex, double axial_resolution) :
-  usImage3D<T>(AN, LN, FN), usImagePreScan3DSettings(probeRadius, motorRadius, scanLinePitch, framePitch, isImageConvex, isMotorConvex, axial_resolution)
+                                      bool isProbeConvex, bool isMotorConvex, double axial_resolution) :
+  usImage3D<T>(AN, LN, FN), usImagePreScan3DSettings(probeRadius, motorRadius, scanLinePitch, framePitch, isProbeConvex, isMotorConvex, axial_resolution)
 {
 
 }

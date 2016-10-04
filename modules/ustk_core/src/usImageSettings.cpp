@@ -46,15 +46,15 @@
 /**
 * Basic constructor, all settings set to default.
 */
-usImageSettings::usImageSettings() : m_probeRadius(0.0f), m_scanLinePitch(0.0f), m_isImageConvex(true) {}
+usImageSettings::usImageSettings() : m_probeRadius(0.0f), m_scanLinePitch(0.0f), m_isProbeConvex(true) {}
 
 /**
 * Full constructor with all the settings availables:
 * @param[in] probeRadius Distance between the center point of the probe and the first pixel arc acquired. Value in meters (m).
 * @param[in] scanLinePitch radius or distance between 2 successives acquisiton lines in the probe : in radians (rad) if the prove is convex, or in meters (m) if the probe is linear.
-* @param[in] isConvex Boolean to specify if the probe is convex or linear.
+* @param[in] isProbeConvex Boolean to specify if the probe is convex or linear.
 */
-usImageSettings::usImageSettings(double probeRadius, double scanLinePitch, bool isConvex) : m_probeRadius(probeRadius), m_scanLinePitch(scanLinePitch), m_isImageConvex(isConvex) {}
+usImageSettings::usImageSettings(double probeRadius, double scanLinePitch, bool isProbeConvex) : m_probeRadius(probeRadius), m_scanLinePitch(scanLinePitch), m_isProbeConvex(isProbeConvex) {}
 
 /**
 * Copy constructor.
@@ -78,7 +78,7 @@ usImageSettings& usImageSettings::operator=(const usImageSettings& other)
 {
   m_probeRadius = other.getProbeRadius();
   m_scanLinePitch = other.getScanLinePitch();
-  setImageConvex(other.isImageConvex());
+  setProbeConvex(other.isProbeConvex());
 
   return *this;
 }
@@ -91,14 +91,14 @@ bool usImageSettings::operator==(usImageSettings const& other)
 {
   return ( this->getProbeRadius() == other.getProbeRadius() &&
            this->getScanLinePitch() == other.getScanLinePitch() &&
-           this->isImageConvex() == other.isImageConvex());
+           this->isProbeConvex() == other.isProbeConvex());
 }
 //Image settings getters/setters
 
 /**
 * Set the probe radius (m).
 * @param[in] probeRadius Probe radius in meters. The probe radius is set to 0 in case of linear
-* probe type (see isImageConvex() and setImageConvex(bool) for more informations).
+* probe type (see isProbeConvex() and setProbeConvex(bool) for more informations).
 */
 void usImageSettings::setProbeRadius(const double probeRadius) { m_probeRadius = probeRadius; }
 
@@ -132,8 +132,8 @@ double usImageSettings::getScanLinePitch() const { return m_scanLinePitch; }
 * @param[in] isConvex True if the probe is convex, false if the probe is linear.
 * Sets the probe radius to 0 in case of a linear probe.
 */
-void usImageSettings::setImageConvex(const bool isConvex) {
-  m_isImageConvex = isConvex;
+void usImageSettings::setProbeConvex(const bool isConvex) {
+  m_isProbeConvex = isConvex;
   if (!isConvex) {
     m_probeRadius = 0.0f;
   }
@@ -143,7 +143,7 @@ void usImageSettings::setImageConvex(const bool isConvex) {
 * Returns the probe type.
 * @return True if the probe is convex, false if the probe is linear.
 */
-bool usImageSettings::isImageConvex() const { return m_isImageConvex; }
+bool usImageSettings::isProbeConvex() const { return m_isProbeConvex; }
 
 /**
 * Print probe settings information.
@@ -152,7 +152,7 @@ void usImageSettings::printProbeSettings()
 {
   std::cout << "probe radius: " << m_probeRadius << std::endl
             << "line angle: " << m_scanLinePitch << std::endl
-            << "convex probe used: " << m_isImageConvex << std::endl;
+            << "convex probe used: " << m_isProbeConvex << std::endl;
 }
 
 void usImageSettings::setImageSettings(const usImageSettings& other)

@@ -66,7 +66,7 @@ public:
     CODE_XML_IMAGE_TYPE,
     CODE_XML_SCANLINE_PITCH,
     CODE_XML_PROBE_RADIUS,
-    CODE_XML_IS_CONVEX,
+    CODE_XML_IS_PROBE_CONVEX,
     CODE_XML_AXIAL_RESOLUTION,
     CODE_XML_HEIGHT_RESOLUTION,
     CODE_XML_WIDTH_RESOLUTION,
@@ -98,8 +98,8 @@ public:
   //Data setters
   void setImagePreScanSettings(const usImagePreScan2D<unsigned char> &imagePrescan2D);
   void setImagePostScanSettings(const usImagePostScan2D<unsigned char> &imagePostcan2D);
-  void setImageSettings(double probeRadius, double scanLinePitch, bool isImageConvex, double axialResolution);
-  void setImageSettings(double probeRadius, double scanLinePitch, bool isImageConvex, double widthResolution, double heightResolution);
+  void setImageSettings(double probeRadius, double scanLinePitch, bool isProbeConvex, double axialResolution);
+  void setImageSettings(double probeRadius, double scanLinePitch, bool isProbeConvex, double widthResolution, double heightResolution);
   void setImageFileName(std::string imageFileName);
   void setImagePreScan(bool is_prescan) { m_is_prescan = is_prescan; }
 

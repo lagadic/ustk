@@ -87,12 +87,12 @@ usImageRF2D<T>::usImageRF2D() : vpImage<T>(), usImagePreScanSettings(), m_axialR
 * @param probeRadius radius of the ultrasound probe used to acquire the RF image.
 * @param scanLinePitch Angle(rad) / Distance(m) between 2 lines of the ultrasound probe used
 * to acquire the RF image. Angle if isConvex is true, distance if it's false.
-* @param isConvex Boolean to specify if the probe used was convex(true) or linear(false).
+* @param isProbeConvex Boolean to specify if the probe used was convex(true) or linear(false).
 * @param axialResolution The distance (in meters) between 2 successive pixels acquired along a scanline.
 */
 template<class T>
-usImageRF2D<T>::usImageRF2D(unsigned int a_nmuber, unsigned int line_number, double probeRadius, double scanLinePitch, bool isConvex, double axialResolution)
-  : vpImage<T>(a_nmuber, line_number), usImagePreScanSettings(probeRadius, scanLinePitch, isConvex, axialResolution)
+usImageRF2D<T>::usImageRF2D(unsigned int a_nmuber, unsigned int line_number, double probeRadius, double scanLinePitch, bool isProbeConvex, double axialResolution)
+  : vpImage<T>(a_nmuber, line_number), usImagePreScanSettings(probeRadius, scanLinePitch, isProbeConvex, axialResolution)
 {
 
 }

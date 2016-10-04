@@ -54,11 +54,11 @@ usImageSettings3D::usImageSettings3D() : usImageSettings(), m_motorRadius(0.0f),
 * @param motorRadius Distance between the rotation center of the probe motor and the first pixel arc acquired, in meters (m).
 * @param scanLinePitch Radius between 2 successives acquisiton lines in the probe, in radians (rad).
 * @param framePitch Radius between 2 successives acquisiton planes in the probe, in radians (rad).
-* @param isImageConvex True if the probe used was convex, false otherwise.
+* @param isProbeConvex True if the probe used was convex, false otherwise.
 * @param isMotorConvex True if the probe motor used was convex, false otherwise.
 */
-usImageSettings3D::usImageSettings3D(double probeRadius, double motorRadius, double scanLinePitch, double framePitch, bool isImageConvex, bool isMotorConvex)
-  : usImageSettings(probeRadius, scanLinePitch, isImageConvex), m_motorRadius(motorRadius), m_framePitch(framePitch), m_isMotorConvex(isMotorConvex) {}
+usImageSettings3D::usImageSettings3D(double probeRadius, double motorRadius, double scanLinePitch, double framePitch, bool isProbeConvex, bool isMotorConvex)
+  : usImageSettings(probeRadius, scanLinePitch, isProbeConvex), m_motorRadius(motorRadius), m_framePitch(framePitch), m_isMotorConvex(isMotorConvex) {}
 
 /**
 * Copy Constructor, all settings availables

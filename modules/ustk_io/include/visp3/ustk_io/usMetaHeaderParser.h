@@ -52,7 +52,7 @@ public:
     int headerSize;
     bool msb;
     ImageType imageType;
-    bool isImageConvex;
+    bool isProbeConvex;
     bool isMotorConvex;
     double probeRadius;
     double scanLinePitch;

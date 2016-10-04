@@ -66,7 +66,7 @@ public:
   double getProbeRadius() const;
   double getScanLinePitch() const;
 
-  bool isImageConvex() const;
+  bool isProbeConvex() const;
 
   usImageSettings& operator=(const usImageSettings& other);
 
@@ -77,7 +77,7 @@ public:
 
   //Settings form the probe
   void setImageSettings(const usImageSettings& other);
-  void setImageConvex(const bool isConvex);
+  void setProbeConvex(const bool isConvex);
   void setProbeRadius(const double probeRadius);
   void setScanLinePitch(const double scanLinePitch);  
 
@@ -87,7 +87,7 @@ private:
   //Settings from the probe
   double m_probeRadius;
   double m_scanLinePitch;
-  bool m_isImageConvex;
+  bool m_isProbeConvex;
 };
 
 #endif // US_IMAGE_SETTINGS_H

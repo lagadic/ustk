@@ -249,7 +249,7 @@ void usImageIo::write(const usImagePostScan3D<unsigned char> &postScanImage, con
   header.msb = false;
   header.mhdFileName = filename + ".mhd";
   header.rawFileName = filename + ".raw";
-  header.isImageConvex = postScanImage.isImageConvex();
+  header.isProbeConvex = postScanImage.isProbeConvex();
   header.isMotorConvex = postScanImage.isMotorConvex();
   header.probeRadius = postScanImage.getProbeRadius();
   header.scanLinePitch = postScanImage.getScanLinePitch();
@@ -291,7 +291,7 @@ void usImageIo::read(usImagePostScan3D<unsigned char> &postScanImage,std::string
   usImagePostScan3DSettings settings;
   settings.setProbeRadius(mhdHeader.probeRadius);
   settings.setScanLinePitch(mhdHeader.scanLinePitch);
-  settings.setImageConvex(mhdHeader.isImageConvex);
+  settings.setProbeConvex(mhdHeader.isProbeConvex);
   settings.setMotorRadius(mhdHeader.motorRadius);
   settings.setFramePitch(mhdHeader.framePitch);
   settings.setMotorConvex(mhdHeader.isMotorConvex);
