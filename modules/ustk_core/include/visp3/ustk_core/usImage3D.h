@@ -373,8 +373,8 @@ usImage3D<Type>::usImage3D() : m_a_number(0), m_line_number(0), m_frame_number(0
 }
 
 template<class Type>
-usImage3D<Type>::usImage3D(unsigned int a_number, unsigned int line_number, unsigned int frame_number) : m_a_number(dimX), m_line_number(dimY), m_frame_number(dimZ),
-  m_size(dimX * dimY * dimZ),m_elementSpacingX(1.0f), m_elementSpacingY(1.0f), m_elementSpacingZ(1.0f), bitmap(NULL), planesIndex(NULL) {
+usImage3D<Type>::usImage3D(unsigned int a_number, unsigned int line_number, unsigned int frame_number) : m_a_number(a_number), m_line_number(line_number), m_frame_number(frame_number),
+  m_size(a_number * line_number * frame_number),m_elementSpacingX(1.0f), m_elementSpacingY(1.0f), m_elementSpacingZ(1.0f), bitmap(NULL), planesIndex(NULL) {
   init(a_number, line_number, frame_number);
 }
 
