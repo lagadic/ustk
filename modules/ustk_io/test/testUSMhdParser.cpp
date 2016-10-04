@@ -203,9 +203,9 @@ int main(int argc, const char** argv)
     postscan3DReference.setHeightResolution(0.0058);
 
     std::cout << "Read from " << filename << std::endl ;
-    std::cout << "Dim X : " << postscan3DReference.getDimX() << std::endl;
-    std::cout << "Dim Y : " << postscan3DReference.getDimY() << std::endl;
-    std::cout << "Dim Z: " << postscan3DReference.getDimZ() << std::endl;
+    std::cout << "Dim X : " << postscan3DReference.getANumber() << std::endl;
+    std::cout << "Dim Y : " << postscan3DReference.getLineNumber() << std::endl;
+    std::cout << "Dim Z: " << postscan3DReference.getFrameNumber() << std::endl;
     std::cout << "Spacing X: " << postscan3DReference.getElementSpacingX() << std::endl;
     std::cout << "Spacing Y: " << postscan3DReference.getElementSpacingY() << std::endl;
     std::cout << "Spacing Z: " << postscan3DReference.getElementSpacingZ() << std::endl;
@@ -225,9 +225,9 @@ int main(int argc, const char** argv)
     usImageIo::read(postscan3D,filename);
 
     std::cout << "Read from " << filename << std::endl ;
-    std::cout << "Dim X : " << postscan3D.getDimX() << std::endl;
-    std::cout << "Dim Y : " << postscan3D.getDimY() << std::endl;
-    std::cout << "Dim Z: " << postscan3D.getDimZ() << std::endl;
+    std::cout << "Dim X : " << postscan3D.getANumber() << std::endl;
+    std::cout << "Dim Y : " << postscan3D.getLineNumber() << std::endl;
+    std::cout << "Dim Z: " << postscan3D.getFrameNumber() << std::endl;
     std::cout << "Spacing X: " << postscan3D.getElementSpacingX() << std::endl;
     std::cout << "Spacing Y: " << postscan3D.getElementSpacingY() << std::endl;
     std::cout << "Spacing Z: " << postscan3D.getElementSpacingZ() << std::endl;

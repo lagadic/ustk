@@ -52,7 +52,7 @@
 * @class usImage3D
 * @brief Representation of a physical image volume.
 *
-* This class is used to represent 3D data with physical information such as element spacing.
+* This class is used to represent 3D data with physical information.
 */
 template <class Type>
 class usImage3D
@@ -65,22 +65,22 @@ public:
 
   /**
   * Constructor. Set the dimensions and element spacing of the volume.
-  * @param dimX size (in pixels) on X-axis
-  * @param dimY size (in pixels) on Y-axis
-  * @param dimZ size (in pixels) on Z-axis
+  * @param a_number Number of A samples in a scanline.
+  * @param line_number Number of scanlines in a plane.
+  * @param frame_number Number of frames in the volume.
   */
-  usImage3D(unsigned int dimX, unsigned int dimY, unsigned int dimZ);
+  usImage3D(unsigned int a_number, unsigned int line_number, unsigned int frame_number);
 
   /**
   * Constructor. Set the dimensions and element spacing of the volume.
-  * @param dimX size (in pixels) on X-axis
-  * @param dimY size (in pixels) on Y-axis
-  * @param dimZ size (in pixels) on Z-axis
+  * @param a_number Number of A samples in a scanline.
+  * @param line_number Number of scanlines in a plane.
+  * @param frame_number Number of frames in the volume.
   * @param spacingX distancee (in meters) between two voxels on X-axis
   * @param spacingY distancee (in meters) between two voxels on Y-axis
   * @param spacingZ distancee (in meters) between two voxels on Z-axis
   */
-  usImage3D(unsigned int dimX, unsigned int dimY, unsigned int dimZ, float spacingX, float spacingY, float spacingZ);
+  usImage3D(unsigned int a_number, unsigned int line_number, unsigned int frame_number, float spacingX, float spacingY, float spacingZ);
 
   /**
   * Copy constructor. By default doesn't perform a deep copy.
@@ -129,11 +129,11 @@ public:
 
   /**
   * initiation of the image.
-  * @param h volume height.
-  * @param w volume width.
-  * @param d volume depth.
+  * @param a_number Number of A samples in a scanline.
+  * @param line_number Number of scanlines in a plane.
+  * @param frame_number Number of frames in the volume.
   */
-  void init(unsigned int h, unsigned int w, unsigned int d);
+  void init(unsigned int a_number, unsigned int line_number, unsigned int frame_number);
 
   /**
   * initiation of the image.
@@ -144,7 +144,7 @@ public:
   * @param spacingY Element spacing in x axis.
   * @param spacingZ Element spacing in x axis.
   */
-  void init(unsigned int h, unsigned int w, unsigned int d, float spacingX, float spacingY, float spacingZ);
+  void init(unsigned int a_number, unsigned int line_number, unsigned int frame_number, float spacingX, float spacingY, float spacingZ);
 
   /**
   * Modification operator.
@@ -164,7 +164,7 @@ public:
   */
   inline Type operator()(unsigned int indexX, unsigned int indexY, unsigned int indexZ) const
   {
-    return bitmap[(m_dimx * m_dimy) * indexZ + m_dimx*indexY + indexX];
+    return bitmap[(m_a_number * m_line_number) * indexZ + m_a_number*indexY + indexX];
   }
 
   /**
@@ -176,7 +176,7 @@ public:
   */
   inline void operator()(unsigned int indexX, unsigned int indexY, unsigned int indexZ, Type value)
   {
-    bitmap[(m_dimx * m_dimy)*indexZ + m_dimx*indexY + indexX] = value;
+    bitmap[(m_a_number * m_line_number)*indexZ + m_a_number*indexY + indexX] = value;
   }
 
   /**
@@ -186,22 +186,22 @@ public:
   unsigned int getSize() const { return m_size; }
 
   /**
-  * Get the volume height.
-  * @return The number of pixel on the x-axis.
+  * Get the number of A-samples in one scanline.
+  * @return The number of A-samples in one scanline.
   */
-  unsigned int getDimX() const { return m_dimx; }
+  unsigned int getANumber() const { return m_a_number; }
 
   /**
-  * Get the volume width.
-  * @return The number of pixel on the y-axis.
+  * Get the number of scanlines in one plane of the volume.
+  * @return The number of scanlines in one plane of the volume.
   */
-  unsigned int getDimY() const { return m_dimy; }
+  unsigned int getLineNumber() const { return m_line_number; }
 
   /**
-  * Get the volume depth.
-  * @return The number of pixel on the z-axis.
+  * Get the number of planes in the volume.
+  * @return The number of planes in the volume.
   */
-  unsigned int getDimZ() const { return m_dimz; }
+  unsigned int getFrameNumber() const { return m_frame_number; }
 
   /**
   * Get the element spacing along the x-axis.
@@ -272,9 +272,9 @@ public:
 protected:
 
 private:
-  unsigned int m_dimx; /**< Volume height in pixels (number of pixels on the x-axis)*/
-  unsigned int m_dimy; /**< Volume width in pixels (number of pixels on the x-axis)*/
-  unsigned int m_dimz; /**< Volume depth in pixels (number of pixels on the x-axis)*/
+  unsigned int m_a_number; /**< Volume height in pixels (number of pixels on the x-axis)*/
+  unsigned int m_line_number; /**< Volume width in pixels (number of pixels on the x-axis)*/
+  unsigned int m_frame_number; /**< Volume depth in pixels (number of pixels on the x-axis)*/
   float m_elementSpacingX; /**< Element spacing along the x-axis, in meters */
   float m_elementSpacingY; /**< Element spacing along the y-axis, in meters */
   float m_elementSpacingZ; /**< Element spacing along the z-axis, in meters */
@@ -290,11 +290,10 @@ private:
 /*!
   \brief Image initialization
 
-  Allocate memory for an [h x w x d] image.
-
-  \param w : Image width.
-  \param h : Image height.
-  \param d : Image depth.
+  Allocate memory for an [a_number x line_number x frame_number] image.
+  \param a_number : Number of A samples in a scanline.
+  \param line_number : Number of scanlines in a plane.
+  \param frame_number : Number of frames in the volume.
 
   Element of the bitmap are not initialized
 
@@ -306,18 +305,17 @@ private:
 
 */
 template<class Type>
-void
-usImage3D<Type>::init(unsigned int h, unsigned int w, unsigned int d)
+inline void usImage3D<Type>::init(unsigned int a_number, unsigned int line_number, unsigned int frame_number)
 {
-  if ((h != this->m_dimx) || (w != this->m_dimy)) {
-    if (planesIndex != NULL)  {
+  if ((a_number != this->m_a_number) || (line_number != this->m_line_number)) {
+    if (planesIndex != NULL) {
       vpDEBUG_TRACE(10,"Destruction index[]");
       delete [] planesIndex;
       planesIndex = NULL;
     }
   }
 
-  if ((h != this->m_dimx) || (w != this->m_dimy) || (d != this->m_dimz))
+  if ((a_number != this->m_a_number) || (line_number != this->m_line_number) || (frame_number != this->m_frame_number))
   {
     if (bitmap != NULL) {
       vpDEBUG_TRACE(10,"Destruction bitmap[]") ;
@@ -326,11 +324,11 @@ usImage3D<Type>::init(unsigned int h, unsigned int w, unsigned int d)
     }
   }
 
-  this->m_dimx = h;
-  this->m_dimy = w;
-  this->m_dimz = d;
+  this->m_a_number = a_number;
+  this->m_line_number = line_number;
+  this->m_frame_number = frame_number;
 
-  m_size=m_dimx*m_dimy*m_dimz;
+  m_size=m_a_number*m_line_number*m_frame_number;
 
   if (bitmap == NULL)  bitmap = new  Type[m_size] ;
 
@@ -342,7 +340,7 @@ usImage3D<Type>::init(unsigned int h, unsigned int w, unsigned int d)
                       "cannot allocate bitmap ")) ;
   }
 
-  if (planesIndex == NULL)  planesIndex = new  Type*[m_dimx];
+  if (planesIndex == NULL)  planesIndex = new  Type*[m_a_number];
   //  vpERROR_TRACE("Allocate row %p",row) ;
   if (planesIndex == NULL)
   {
@@ -353,38 +351,38 @@ usImage3D<Type>::init(unsigned int h, unsigned int w, unsigned int d)
 
   //filling planesIndex
   unsigned int i ;
-  for ( i =0  ; i < m_dimz ; i++)
-    planesIndex[i] = bitmap + i*m_dimx*m_dimy ;
+  for ( i =0  ; i < m_frame_number ; i++)
+    planesIndex[i] = bitmap + i*m_a_number*m_line_number ;
 }
 
 template<class Type>
 void
-usImage3D<Type>::init(unsigned int h, unsigned int w, unsigned int d, float spacingX, float spacingY, float spacingZ)
+usImage3D<Type>::init(unsigned int a_number, unsigned int line_number, unsigned int frame_number, float spacingX, float spacingY, float spacingZ)
 {
-  init(h,w,d);
+  init(a_number, line_number, frame_number);
   m_elementSpacingX = spacingX;
   m_elementSpacingY = spacingY;
   m_elementSpacingZ = spacingZ;
 }
 
 template<class Type>
-usImage3D<Type>::usImage3D() : m_dimx(0), m_dimy(0), m_dimz(0), m_elementSpacingX(1.0f), m_elementSpacingY(1.0f), m_elementSpacingZ(1.0f),
+usImage3D<Type>::usImage3D() : m_a_number(0), m_line_number(0), m_frame_number(0), m_elementSpacingX(1.0f), m_elementSpacingY(1.0f), m_elementSpacingZ(1.0f),
   m_size(0),bitmap(NULL), planesIndex(NULL)
 {
 
 }
 
 template<class Type>
-usImage3D<Type>::usImage3D(unsigned int dimX, unsigned int dimY, unsigned int dimZ) : m_dimx(dimX), m_dimy(dimY), m_dimz(dimZ),
+usImage3D<Type>::usImage3D(unsigned int a_number, unsigned int line_number, unsigned int frame_number) : m_a_number(dimX), m_line_number(dimY), m_frame_number(dimZ),
   m_size(dimX * dimY * dimZ),m_elementSpacingX(1.0f), m_elementSpacingY(1.0f), m_elementSpacingZ(1.0f), bitmap(NULL), planesIndex(NULL) {
-  init(dimX,dimY,dimZ);
+  init(a_number, line_number, frame_number);
 }
 
 template<class Type>
-usImage3D<Type>::usImage3D(unsigned int dimx, unsigned int dimy, unsigned int dimz,
-                           float elementSpacingX, float elementSpacingY, float elementSpacingZ)  : m_dimx(dimx), m_dimy(dimy), m_dimz(dimz), m_size(dimx * dimy * dimz),
+usImage3D<Type>::usImage3D(unsigned int a_number, unsigned int line_number, unsigned int frame_number,
+                           float elementSpacingX, float elementSpacingY, float elementSpacingZ)  : m_a_number(a_number), m_line_number(line_number), m_frame_number(frame_number), m_size(a_number * line_number * frame_number),
   m_elementSpacingX(elementSpacingX), m_elementSpacingY(elementSpacingY), m_elementSpacingZ(elementSpacingZ), bitmap(NULL), planesIndex(NULL) {
-  init(dimx,dimy,dimz);
+  init(a_number, line_number, frame_number);
 }
 
 template<class Type>
@@ -392,7 +390,7 @@ usImage3D<Type>::usImage3D(const usImage3D<Type> &volume, const bool copy)
 {
   init(volume.getDimX(),volume.getDimY(),volume.getDimZ());
 
-  m_size = m_dimx * m_dimy * m_dimz;
+  m_size = m_a_number * m_line_number * m_frame_number;
   m_elementSpacingX = volume.getElementSpacingX();
   m_elementSpacingY = volume.getElementSpacingY();
   m_elementSpacingZ = volume.getElementSpacingZ();
@@ -420,14 +418,14 @@ usImage3D<Type>::~usImage3D()
 template<class Type>
 usImage3D<Type> &usImage3D<Type>::operator=(const usImage3D<Type> &other)
 {
-  if (m_dimx != other.m_dimx
-      || m_dimy != other.m_dimy
-      || m_dimz != other.m_dimz)
+  if (m_a_number != other.m_a_number
+      || m_line_number != other.m_line_number
+      || m_frame_number != other.m_frame_number)
   {
-    m_dimx = other.m_dimx;
-    m_dimy = other.m_dimy;
-    m_dimz = other.m_dimz;
-    m_size = m_dimx * m_dimy * m_dimz;
+    m_a_number = other.m_a_number;
+    m_line_number = other.m_line_number;
+    m_frame_number = other.m_frame_number;
+    m_size = m_a_number * m_line_number * m_frame_number;
     if (bitmap) delete[]bitmap;
     bitmap = new Type[m_size];
   }
@@ -442,9 +440,9 @@ usImage3D<Type> &usImage3D<Type>::operator=(const usImage3D<Type> &other)
 template<class Type>
 bool usImage3D<Type>::operator==(const usImage3D<Type> &other)
 {
-  bool settingsOk = this->getDimX() == other.getDimX() &&
-      this->getDimY() == other.getDimY() &&
-      this->getDimZ() == other.getDimZ() &&
+  bool settingsOk = this->getANumber() == other.getANumber() &&
+      this->getLineNumber() == other.getLineNumber() &&
+      this->getFrameNumber() == other.getFrameNumber() &&
       this->getElementSpacingX() == other.getElementSpacingX() &&
       this->getElementSpacingY() == other.getElementSpacingY() &&
       this->getElementSpacingZ() == other.getElementSpacingZ();

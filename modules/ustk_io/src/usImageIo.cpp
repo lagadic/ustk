@@ -241,9 +241,9 @@ void usImageIo::write(const usImagePostScan3D<unsigned char> &postScanImage, con
   header.elementSpacing[0] = postScanImage.getElementSpacingX();
   header.elementSpacing[1] = postScanImage.getElementSpacingY();
   header.elementSpacing[2] = postScanImage.getElementSpacingZ();
-  header.dim[0] = postScanImage.getDimX();
-  header.dim[1] = postScanImage.getDimY();
-  header.dim[2] = postScanImage.getDimZ();
+  header.dim[0] = postScanImage.getANumber();
+  header.dim[1] = postScanImage.getLineNumber();
+  header.dim[2] = postScanImage.getFrameNumber();
   header.msb = false;
   header.mhdFileName = filename + ".mhd";
   header.rawFileName = filename + ".raw";
@@ -284,7 +284,7 @@ void usImageIo::read(usImagePostScan3D<unsigned char> &postScanImage,std::string
   //resizing image in memory
   postScanImage.resize(mhdParser.getImageSizeX(),mhdParser.getImageSizeY(),mhdParser.getImageSizeZ());
   std::cout << "resizing : " << mhdParser.getImageSizeX() << "," << mhdParser.getImageSizeY() << ","<< mhdParser.getImageSizeZ() << std::endl;
-  std::cout << "result : " << postScanImage.getDimX() << "," << postScanImage.getDimY() << ","<< postScanImage.getDimZ() << std::endl;
+  std::cout << "result : " << postScanImage.getANumber() << "," << postScanImage.getLineNumber() << ","<< postScanImage.getFrameNumber() << std::endl;
 
   //
   usMetaHeaderParser::MHDHeader mhdHeader = mhdParser.getMhdHeader();
