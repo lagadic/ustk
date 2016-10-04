@@ -53,9 +53,12 @@ class VISP_EXPORT usImagePostScan3DSettings : public usImageSettings3D {
 public:
   usImagePostScan3DSettings();
 
+  usImagePostScan3DSettings(double probeRadius, double scanLinePitch, bool isProbeConvex, double motorRadius, double framePitch, bool isMotorConvex, double height_resolution, double width_resolution);
+
   virtual ~usImagePostScan3DSettings();
 
   usImagePostScan3DSettings& operator=(const usImagePostScan3DSettings& other);
+
   bool operator==(const usImagePostScan3DSettings& other);
 
   void setWidthResolution(const double widthResolution);

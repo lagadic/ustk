@@ -41,7 +41,7 @@
 
 #include <visp3/ustk_core/usImage3D.h>
 
-#include <visp3/ustk_core/usImageSettings3D.h>
+#include <visp3/ustk_core/usImagePreScan3DSettings.h>
 
 /**
 * @class usImageRF3D
@@ -50,21 +50,20 @@
 * This class represents a 3D ultrasound RF frame.
 */
 template<class T>
-class usImageRF3D : public usImage3D<T>, public usImageSettings3D {
+class usImageRF3D : public usImage3D<T>, public usImagePreScan3DSettings {
 public:
 
   usImageRF3D();
   usImageRF3D(unsigned int AN, unsigned int LN, unsigned int FN);
   usImageRF3D(unsigned int AN, unsigned int LN, unsigned int FN,
               double probeRadius, double motorRadius, double scanLinePitch, double framePitch,
-              bool isImageConvex, bool isMotorConvex);
-  usImageRF3D(usImage3D<T> image3D, usImageSettings3D imageSettings);
+              bool isImageConvex, bool isMotorConvex, double axial_resolution);
+  usImageRF3D(usImage3D<T> image3D, usImagePreScan3DSettings imageSettings);
   usImageRF3D(usImage3D<T> image3D);
-  usImageRF3D(usImageSettings3D imageSettings);
+  usImageRF3D(usImagePreScan3DSettings imageSettings);
   usImageRF3D(const usImageRF3D<T> &other);
   ~usImageRF3D();
 
-  double getAxialResolution() const;
   unsigned int getAN() const;
   unsigned int getFN() const;
   unsigned int getLN() const;
@@ -72,18 +71,15 @@ public:
   usImageRF3D<T>& operator=(const usImageRF3D<T> &other);
   bool operator==(const usImageRF3D<T> &other);
 
-  void setAxialResolution(double axialResolution);
   void setData(const usImage3D<T> &image);
-
-private:
-  double m_axialResolution;
+  void setSettings(const usImagePreScan3DSettings &settings);
 };
 
 /**
 * Basic constructor.
 */
 template<class T>
-usImageRF3D<T>::usImageRF3D() : usImage3D<T>(), usImageSettings3D()
+usImageRF3D<T>::usImageRF3D() : usImage3D<T>(), usImagePreScan3DSettings()
 {
 
 }
@@ -96,7 +92,7 @@ usImageRF3D<T>::usImageRF3D() : usImage3D<T>(), usImageSettings3D()
 */
 template<class T>
 usImageRF3D<T>::usImageRF3D(unsigned int AN, unsigned int LN, unsigned int FN)
-  : usImage3D<T>(AN, LN, FN), usImageSettings3D()
+  : usImage3D<T>(AN, LN, FN), usImagePreScan3DSettings()
 {
 
 }
@@ -115,8 +111,8 @@ usImageRF3D<T>::usImageRF3D(unsigned int AN, unsigned int LN, unsigned int FN)
 */
 template<class T>
 usImageRF3D<T>::usImageRF3D(unsigned int AN, unsigned int LN, unsigned int FN, double probeRadius, double motorRadius, double scanLinePitch, double framePitch,
-                            bool isImageConvex, bool isMotorConvex)
-  : usImage3D<T>(AN, LN, FN), usImageSettings3D(probeRadius, motorRadius, scanLinePitch, framePitch, isImageConvex, isMotorConvex)
+                            bool isImageConvex, bool isMotorConvex, double axial_resolution)
+  : usImage3D<T>(AN, LN, FN), usImagePreScan3DSettings(probeRadius, motorRadius, scanLinePitch, framePitch, isImageConvex, isMotorConvex)
 {
 
 }
@@ -124,10 +120,10 @@ usImageRF3D<T>::usImageRF3D(unsigned int AN, unsigned int LN, unsigned int FN, d
 /**
 * Copy constructor from usImage3D and usImageSettings
 * @param image3D usImage3D to copy
-* @param imageSettings usImageSettings3D to copy
+* @param imageSettings usImagePreScan3DSettings to copy
 */
 template<class T>
-usImageRF3D<T>::usImageRF3D(usImage3D<T> image3D, usImageSettings3D imageSettings) : usImage3D<T>(image3D), usImageSettings3D(imageSettings) {
+usImageRF3D<T>::usImageRF3D(usImage3D<T> image3D, usImagePreScan3DSettings imageSettings) : usImage3D<T>(image3D), usImagePreScan3DSettings(imageSettings) {
 
 }
 
@@ -142,10 +138,10 @@ usImageRF3D<T>::usImageRF3D(usImage3D<T> image3D) : usImage3D<T>(image3D) {
 
 /**
 * Copy constructor from usImage3D and usImageSettings
-* @param imageSettings usImageSettings3D to copy
+* @param imageSettings usImagePreScan3DSettings to copy
 */
 template<class T>
-usImageRF3D<T>::usImageRF3D(usImageSettings3D imageSettings) : usImageSettings3D(imageSettings) {
+usImageRF3D<T>::usImageRF3D(usImagePreScan3DSettings imageSettings) : usImagePreScan3DSettings(imageSettings) {
 
 }
 
@@ -155,7 +151,7 @@ usImageRF3D<T>::usImageRF3D(usImageSettings3D imageSettings) : usImageSettings3D
 */
 template<class T>
 usImageRF3D<T>::usImageRF3D(const usImageRF3D& other)
-  : usImage3D<T>(other), usImageSettings3D(other)
+  : usImage3D<T>(other), usImagePreScan3DSettings(other)
 {
 
 }
@@ -179,7 +175,7 @@ usImageRF3D<T>& usImageRF3D<T>::operator=(const usImageRF3D<T> &other)
   usImage3D<T>::operator=(other);
 
   //from usImageSettings
-  usImageSettings3D::operator=(other);
+  usImagePreScan3DSettings::operator=(other);
 
   //from this class
   m_axialResolution = other.getAxialResolution();
@@ -192,7 +188,7 @@ template<class T>
 bool usImageRF3D<T>::operator==(const usImageRF3D<T> &other)
 {
   return(usImage3D<T>::operator== (other) &&
-         usImageSettings3D::operator ==(other) &&
+         usImagePreScan3DSettings::operator ==(other) &&
          m_axialResolution == other.getAxialResolution());
 }
 
@@ -218,20 +214,6 @@ template<class T>
 unsigned int  usImageRF3D<T>::getFN() const { return usImage3D<T>::getDimZ(); }
 
 /**
-* Setter for axial Resolution.
-* @param axialResolution Axial resolution (in meters) to set.
-*/
-template<class T>
-void usImageRF3D<T>::setAxialResolution(double axialResolution) { m_axialResolution = axialResolution; }
-
-/**
-* Getter for axial Resolution.
-* @return Axial resolution (in meters).
-*/
-template<class T>
-double usImageRF3D<T>::getAxialResolution() const { return m_axialResolution; }
-
-/**
 * Setter for image data.
 * @param image The image to set.
 */
@@ -239,5 +221,15 @@ template<class T>
 void usImageRF3D<T>::setData(const usImage3D<T> &image)
 {
   usImage3D<T>::operator=(image);
+}
+
+/**
+* Setter for image settings.
+* @param settings The settings to set.
+*/
+template<class T>
+void usImageRF3D<T>::setSettings(const usImagePreScan3DSettings &settings)
+{
+  usImagePreScan3DSettings::operator=(settings);
 }
 #endif // US_IMAGE_RF_3D_H

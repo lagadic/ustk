@@ -41,6 +41,22 @@ usImagePostScanSettings::usImagePostScanSettings() : usImageSettings(), m_height
 }
 
 /**
+* Full parameters constructor, all parameters settables.
+*/
+usImagePostScanSettings::usImagePostScanSettings(double probeRadius, double scanLinePitch, bool isConvex, double height_resolution, double width_resolution) : usImageSettings(probeRadius, scanLinePitch, isConvex), m_heightResolution(height_resolution), m_widthResolution(width_resolution)
+{
+
+}
+
+/**
+* Full parameters constructor, all parameters settables.
+*/
+usImagePostScanSettings::usImagePostScanSettings(usImageSettings basicSettings, double height_resolution, double width_resolution) : usImageSettings(basicSettings), m_heightResolution(height_resolution) ,m_widthResolution(width_resolution)
+{
+
+}
+
+/**
 * Destructor.
 */
 usImagePostScanSettings::~usImagePostScanSettings() {}

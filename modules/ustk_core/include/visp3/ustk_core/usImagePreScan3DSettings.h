@@ -34,8 +34,8 @@
 * @brief Ultrasound image settings for 3D postscan images.
 */
 
-#ifndef US_IMAGE_POSTSCAN_3D_SETTINGS_H
-#define US_IMAGE_POSTSCAN_3D_SETTINGS_H
+#ifndef US_IMAGE_PRESCAN_3D_SETTINGS_H
+#define US_IMAGE_PRESCAN_3D_SETTINGS_H
 
 //std includes
 #include <iostream>
@@ -53,6 +53,8 @@ class VISP_EXPORT usImagePreScan3DSettings : public usImageSettings3D {
 public:
   usImagePreScan3DSettings();
 
+  usImagePreScan3DSettings(double probeRadius, double scanLinePitch, bool isProbeConvex, double motorRadius, double framePitch, bool isMotorConvex, double axial_resolution);
+
   virtual ~usImagePreScan3DSettings();
 
   usImagePreScan3DSettings& operator=(const usImagePreScan3DSettings& other);
@@ -68,4 +70,4 @@ private:
   double m_axialResolution;
 };
 
-#endif // US_IMAGE_POSTSCAN_3D_SETTINGS_H
+#endif // US_IMAGE_PRESCAN_3D_SETTINGS_H

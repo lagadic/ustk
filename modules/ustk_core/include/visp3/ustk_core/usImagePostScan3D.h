@@ -41,7 +41,7 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/ustk_core/usImage3D.h>
 
-#include <visp3/ustk_core/usImageSettings3D.h>
+#include <visp3/ustk_core/usImagePostScan3DSettings.h>
 
 /**
 * @class usImagePostScan3D
@@ -50,33 +50,23 @@
 * This class represents a 3D ultrasound postscan frame.
 */
 template<class T>
-class usImagePostScan3D : public usImage3D<T>, public usImageSettings3D {
+class usImagePostScan3D : public usImage3D<T>, public usImagePostScan3DSettings {
 public:
   usImagePostScan3D();
   usImagePostScan3D(unsigned int AN, unsigned int LN, unsigned int FN,
                     double probeRadius, double motorRadius, double scanLinePitch, double framePitch,
-                    bool isImageConvex, bool isMotorConvex);
+                    bool isImageConvex, bool isMotorConvex,
+                    double heightResolution, double widthResolution);
   usImagePostScan3D(const usImagePostScan3D &other);
-  usImagePostScan3D(const usImage3D<T> &other);
-  usImagePostScan3D(const usImageSettings3D &other);
-  usImagePostScan3D(const usImage3D<T> &otherImage, const usImageSettings3D &otherSettings);
+  usImagePostScan3D(const usImage3D<T> &otherImage, const usImagePostScan3DSettings &otherSettings);
   ~usImagePostScan3D();
-
-  double getHeightResolution() const;
-
-  double getWidthResolution() const;
 
   usImagePostScan3D<T> & operator =(const usImagePostScan3D<T> &other);
 
   bool operator ==(const usImagePostScan3D<T> &other);
 
   void setData(const usImage3D<T> &image3D);
-  void setHeightResolution(double widthResolution);
-  void setWidthResolution(double widthResolution);
-
-private:
-  double m_widthResolution;
-  double m_heightResolution;
+  void setSettings(const usImagePostScan3DSettings &postScan3DSettings);
 };
 
 
@@ -84,7 +74,7 @@ private:
 * Basic constructor, all parameters set to default values
 */
 template<class T>
-usImagePostScan3D<T>::usImagePostScan3D() : usImage3D<T>(), usImageSettings3D()
+usImagePostScan3D<T>::usImagePostScan3D() : usImage3D<T>(), usImagePostScan3DSettings()
 {
 
 }
@@ -100,10 +90,12 @@ usImagePostScan3D<T>::usImagePostScan3D() : usImage3D<T>(), usImageSettings3D()
 * @param framePitch angle(rad) / distance(m) between 2 lines of the ultrasound probe used to acquire the RF image.
 * @param isImageConvex Boolean to specyfy if the image was acquired by a convex probe(true) or by a linear probe (false).
 * @param isMotorConvex Boolean to specyfy if the image was acquired by a rotating  motor(true) or by a linear motor (false).
+* @param heightResolution Image height resolution.
+* @param widthResolution Image width resolution.
 */
 template<class T>
-usImagePostScan3D<T>::usImagePostScan3D(unsigned int AN, unsigned int LN, unsigned int FN, double probeRadius, double motorRadius, double scanLinePitch, double framePitch, bool isImageConvex, bool isMotorConvex)
-  : usImage3D<T>(), usImageSettings3D(probeRadius, motorRadius, scanLinePitch, framePitch, isImageConvex, isMotorConvex)
+usImagePostScan3D<T>::usImagePostScan3D(unsigned int AN, unsigned int LN, unsigned int FN, double probeRadius, double motorRadius, double scanLinePitch, double framePitch, bool isImageConvex, bool isMotorConvex, double heightResolution, double widthResolution)
+  : usImage3D<T>(), usImagePostScan3DSettings(probeRadius, motorRadius, scanLinePitch, framePitch, isImageConvex, isMotorConvex, heightResolution, widthResolution)
 {
 
 }
@@ -113,39 +105,18 @@ usImagePostScan3D<T>::usImagePostScan3D(unsigned int AN, unsigned int LN, unsign
 * @param other usImagePostScan3D to copy
 */
 template<class T>
-usImagePostScan3D<T>::usImagePostScan3D(const usImagePostScan3D &other) : usImage3D<T>(other), usImageSettings3D(other)
-{
-
-}
-
-
-/**
-* Constructor from usImage3D
-* @param other usImage3D<unsigned char> to copy
-*/
-template<class T>
-usImagePostScan3D<T>::usImagePostScan3D(const usImage3D<T> &other) : usImage3D<T>(other)
+usImagePostScan3D<T>::usImagePostScan3D(const usImagePostScan3D &other) : usImage3D<T>(other), usImagePostScan3DSettings(other)
 {
 
 }
 
 /**
-* Constructor from usImageSettings3D.
-* @param other usImageSettings3D to copy
-*/
-template<class T>
-usImagePostScan3D<T>::usImagePostScan3D(const usImageSettings3D &other) : usImageSettings3D(other)
-{
-
-}
-
-/**
-* Constructor from usImage3D and usImageSettings3D.
+* Constructor from usImage3D and usImagePostScan3DSettings.
 * @param otherImage usImage3D<unsigned char> to copy
-* @param otherSettings usImageSettings3D to copy
+* @param otherSettings usImagePostScan3DSettings to copy
 */
 template<class T>
-usImagePostScan3D<T>::usImagePostScan3D(const usImage3D<T> &otherImage, const usImageSettings3D &otherSettings) : usImage3D<T>(otherImage), usImageSettings3D(otherSettings)
+usImagePostScan3D<T>::usImagePostScan3D(const usImage3D<T> &otherImage, const usImagePostScan3DSettings &otherSettings) : usImage3D<T>(otherImage), usImagePostScan3DSettings(otherSettings)
 {
 
 }
@@ -166,7 +137,7 @@ usImagePostScan3D<T> & usImagePostScan3D<T>::operator =(const usImagePostScan3D<
   usImage3D<T>::operator =(other);
 
   //from usSettings3D
-  usImageSettings3D::operator =(other);
+  usImagePostScan3DSettings::operator =(other);
 
   //from this class
   m_widthResolution = other.getWidthResolution();
@@ -182,38 +153,10 @@ template<class T>
 bool usImagePostScan3D<T>::operator == (usImagePostScan3D<T> const& other)
 {
   return(usImage3D<T>::operator ==(other) &&
-         usImageSettings3D::operator ==(other) &&
-         m_widthResolution == other.getWidthResolution() &&
-         m_heightResolution == other.getHeightResolution());
+         usImagePostScan3DSettings::operator ==(other) &&
+         getWidthResolution() == other.getWidthResolution() &&
+         getHeightResolution() == other.getHeightResolution());
 }
-
-/**
-* Setter for width Resolution.
-* @param widthResolution Width resolution (in meters) to set.
-*/
-template<class T>
-void usImagePostScan3D<T>::setWidthResolution(double widthResolution) { m_widthResolution = widthResolution; }
-
-/**
-* Getter for width Resolution.
-* @return widthResolution Width resolution (in meters).
-*/
-template<class T>
-double usImagePostScan3D<T>::getWidthResolution() const { return m_widthResolution; }
-
-/**
-* Setter for width Resolution.
-* @param heightResolution Height resolution (in meters) to set.
-*/
-template<class T>
-void usImagePostScan3D<T>::setHeightResolution(double heightResolution) { m_heightResolution = heightResolution; }
-
-/**
-* Setter for width Resolution.
-* @return heightResolution Height resolution (in meters) of the image.
-*/
-template<class T>
-double usImagePostScan3D<T>::getHeightResolution() const { return m_heightResolution; }
 
 /**
 * Setter for image data.
@@ -223,5 +166,15 @@ template<class T>
 void usImagePostScan3D<T>::setData(const usImage3D<T> &image3D)
 {
   usImage3D<T>::operator =(image3D);
+}
+
+/**
+* Setter for image data.
+* @param postScan3DSettings Image settings you want to set.
+*/
+template<class T>
+void  usImagePostScan3D<T>::setSettings(const usImagePostScan3DSettings &postScan3DSettings)
+{
+  usImagePostScan3DSettings::operator=(postScan3DSettings);
 }
 #endif // US_IMAGE_POSTSCAN_3D_H

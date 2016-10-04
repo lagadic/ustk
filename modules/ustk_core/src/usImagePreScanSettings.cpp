@@ -47,6 +47,15 @@ usImagePreScanSettings::usImagePreScanSettings() : usImageSettings(), m_axialRes
 }
 
 /**
+* Full settings constructor.
+*/
+usImagePreScanSettings::usImagePreScanSettings(double probeRadius, double scanLinePitch, bool isProbeConvex, double axial_resolution) :
+  usImageSettings(probeRadius, scanLinePitch, isProbeConvex), m_axialResolution(axial_resolution)
+{
+
+}
+
+/**
 * Destructor.
 */
 usImagePreScanSettings::~usImagePreScanSettings() {}

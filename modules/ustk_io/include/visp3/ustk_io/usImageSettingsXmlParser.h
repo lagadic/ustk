@@ -42,6 +42,7 @@
 #define US_IMAGE_SETTINGS_XML_PARSER_H
 #include <iostream>
 #include <visp3/ustk_core/usImageSettings.h>
+#include <visp3/ustk_core/usImagePostScanSettings.h>
 #include <visp3/ustk_core/usImagePreScan2D.h>
 #include <visp3/ustk_core/usImagePostScan2D.h>
 #include <visp3/core/vpXmlParser.h>
@@ -90,7 +91,7 @@ public:
   double getAxialResolution() const { return m_axialResolution; }
   double getHeightResolution() const { return m_heightResolution; }
   std::string getImageFileName() const {return m_imageFileName;}
-  usImageSettings getImageSettings() const {return m_imageSettings;}
+  usImageSettings getImageSettings() const {return usImagePostScanSettings(m_imageSettings, getHeightResolution(),getWidthResolution());}
   double getWidthResolution() const { return m_widthResolution; }
   bool isImagePreScan() const { return m_is_prescan; }
   

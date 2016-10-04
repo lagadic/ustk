@@ -47,6 +47,17 @@ usImagePostScan3DSettings::usImagePostScan3DSettings() : usImageSettings3D(), m_
 }
 
 /**
+* Full settings constructor, all settings availables.
+*/
+usImagePostScan3DSettings::usImagePostScan3DSettings(double probeRadius, double scanLinePitch, bool isProbeConvex,
+  double motorRadius, double framePitch, bool isMotorConvex,
+  double height_resolution, double width_resolution) : usImageSettings3D(probeRadius,motorRadius,scanLinePitch,framePitch,isProbeConvex,isMotorConvex), 
+                                                       m_widthResolution(width_resolution), m_heightResolution(height_resolution)
+{
+
+}
+
+/**
 * Destructor.
 */
 usImagePostScan3DSettings::~usImagePostScan3DSettings() {}
@@ -57,7 +68,7 @@ usImagePostScan3DSettings::~usImagePostScan3DSettings() {}
 */
 usImagePostScan3DSettings& usImagePostScan3DSettings::operator=(const usImagePostScan3DSettings& other)
 {
-  usImageSettings::operator=(other);
+  usImageSettings3D::operator=(other);
   m_widthResolution = other.getWidthResolution();
   m_heightResolution = other.getHeightResolution();
 

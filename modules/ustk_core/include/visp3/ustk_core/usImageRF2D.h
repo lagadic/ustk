@@ -41,7 +41,7 @@
 
 #include <visp3/core/vpImage.h>
 
-#include <visp3/ustk_core/usImageSettings.h>
+#include <visp3/ustk_core/usImagePreScanSettings.h>
 
 /**
  * @class usImageRF2D
@@ -51,7 +51,7 @@
  * contains RF data and additional settings that give information about the acquisition process.
  */
 template<class T>
-class usImageRF2D : public vpImage<T>, public usImageSettings {
+class usImageRF2D : public vpImage<T>, public usImagePreScanSettings {
 public:
   
   usImageRF2D();
@@ -59,18 +59,14 @@ public:
   usImageRF2D(const usImageRF2D &other);
   ~usImageRF2D();
 
-  double getAxialResolution() const;
   unsigned int getANumber() const;
   unsigned int getLineNumber() const;
 
   usImageRF2D<T>& operator=(const usImageRF2D<T> &other);
   bool operator==(const usImageRF2D<T> &other);
 
-  void setAxialResolution(double axialResolution);
   void setData(const vpImage<T> &image);
-
-private:
-  double m_axialResolution;
+  void setSettings(const usImagePreScanSettings &settings);
 };
 
 
@@ -79,7 +75,7 @@ private:
 * Constructor.
 */
 template<class T>
-usImageRF2D<T>::usImageRF2D() : vpImage<T>(), usImageSettings(), m_axialResolution(0)
+usImageRF2D<T>::usImageRF2D() : vpImage<T>(), usImagePreScanSettings(), m_axialResolution(0)
 {
 
 }
@@ -96,7 +92,7 @@ usImageRF2D<T>::usImageRF2D() : vpImage<T>(), usImageSettings(), m_axialResoluti
 */
 template<class T>
 usImageRF2D<T>::usImageRF2D(unsigned int a_nmuber, unsigned int line_number, double probeRadius, double scanLinePitch, bool isConvex, double axialResolution)
-  : vpImage<T>(a_nmuber, line_number), usImageSettings(probeRadius, scanLinePitch, isConvex), m_axialResolution(axialResolution)
+  : vpImage<T>(a_nmuber, line_number), usImagePreScanSettings(probeRadius, scanLinePitch, isConvex, axialResolution)
 {
 
 }
@@ -107,7 +103,7 @@ usImageRF2D<T>::usImageRF2D(unsigned int a_nmuber, unsigned int line_number, dou
 */
 template<class T>
 usImageRF2D<T>::usImageRF2D(const usImageRF2D& other)
-  : vpImage<T>(other), usImageSettings(other)
+  : vpImage<T>(other), usImagePreScanSettings(other)
 {
 
 }
@@ -130,8 +126,8 @@ usImageRF2D<T>& usImageRF2D<T>::operator=(const usImageRF2D<T> &other)
   //from vpImage
   vpImage<T>::operator=(other);
 
-  //from usImageSettings
-  usImageSettings::operator=(other);
+  //from usImagePreScanSettings
+  usImagePreScanSettings::operator=(other);
 
   //from this class
   m_axialResolution = other.getAxialResolution();
@@ -144,8 +140,8 @@ template<class T>
 bool usImageRF2D<T>::operator==(const usImageRF2D<T> &other)
 {
   return(vpImage<T>::operator== (other) &&
-         usImageSettings::operator ==(other) &&
-         m_axialResolution == other.getAxialResolution());
+         usImagePreScanSettings::operator ==(other) &&
+         getAxialResolution() == other.getAxialResolution());
 }
 
 /**
@@ -163,23 +159,6 @@ template<class T>
 unsigned int usImageRF2D<T>::getLineNumber() const { return vpImage<T>::getWidth(); }
 
 /**
-* Getter for the axial resolution
-* @return The axial resolution : distance (in meters) between 2 successive pixels acquired along a scanLine.
-*/
-template<class T>
-double usImageRF2D<T>::getAxialResolution() const { return m_axialResolution; }
-
-/**
-* Setter for the axial resolution
-* @param axialResolution The axial resolution : distance(in meters) between 2 successive pixels acquired along a scanLine.
-*/
-template<class T>
-void usImageRF2D<T>::setAxialResolution(double axialResolution)
-{
-  m_axialResolution = axialResolution;
-}
-
-/**
 * Setter for the image data.
 * @param image The image to set.
 */
@@ -187,5 +166,15 @@ template<class T>
 void usImageRF2D<T>::setData(const vpImage<T> &image)
 {
   vpImage<T>::operator=(image);
+}
+
+/**
+* Setter for the image settings.
+* @param image The image to set.
+*/
+template<class T>
+void usImageRF2D<T>::setSettings(const usImagePreScanSettings &settings)
+{
+  usImagePreScanSettings::operator=(settings);
 }
 #endif // US_IMAGE_RF_2D_H

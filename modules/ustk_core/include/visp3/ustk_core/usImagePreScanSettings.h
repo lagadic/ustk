@@ -57,6 +57,8 @@ class VISP_EXPORT usImagePreScanSettings : public usImageSettings {
 public:
   usImagePreScanSettings();
 
+  usImagePreScanSettings(double probeRadius, double scanLinePitch, bool isProbeConvex, double axial_resolution);
+
   virtual ~usImagePreScanSettings();
 
   usImagePreScanSettings& operator=(const usImagePreScanSettings& other);

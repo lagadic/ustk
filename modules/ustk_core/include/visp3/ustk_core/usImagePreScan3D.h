@@ -40,7 +40,7 @@
 
 #include <visp3/ustk_core/usImage3D.h>
 
-#include <visp3/ustk_core/usImageSettings3D.h>
+#include <visp3/ustk_core/usImagePreScan3DSettings.h>
 
 /**
 * @class usImagePreScan3D
@@ -49,7 +49,7 @@
 * This class represents a 3D ultrasound prescan frame.
 */
 template<class T>
-class usImagePreScan3D : public usImage3D<T>, public usImageSettings3D {
+class usImagePreScan3D : public usImage3D<T>, public usImagePreScan3DSettings {
 public:
   //default constructors
   usImagePreScan3D();
@@ -58,22 +58,21 @@ public:
   //All parameters initialisation constructors
   usImagePreScan3D(unsigned int AN, unsigned int LN, unsigned int FN,
                    double probeRadius, double motorRadius, double scanLinePitch, double framePitch,
-                   bool isImageConvex, bool isMotorConvex);
+                   bool isImageConvex, bool isMotorConvex, double axial_resolution);
   //usImagePreScan3D copy constructor
   usImagePreScan3D(const usImagePreScan3D &other);
   //usImage3D copy constructor
   usImagePreScan3D(const usImage3D<T> &other);
-  //usImageSettings3D copy constructor
-  usImagePreScan3D(const usImageSettings3D &other);
-  //copy constructor from usImage3D and usImageSettings3D
-  usImagePreScan3D(const usImage3D<T> &other, const usImageSettings3D &otherSettings);
+  //usImagePreScan3DSettings copy constructor
+  usImagePreScan3D(const usImagePreScan3DSettings &other);
+  //copy constructor from usImage3D and usImagePreScan3DSettings
+  usImagePreScan3D(const usImage3D<T> &other, const usImagePreScan3DSettings &otherSettings);
   //destructor
   ~usImagePreScan3D();
 
   //copying from usImage3D
   void copyFrom(const usImage3D<T> &I);
 
-  double getAxialResolution() const;
   unsigned int getAN() const;
   unsigned int getFN() const;
   unsigned int getLN() const;
@@ -83,18 +82,14 @@ public:
   //comparison
   bool operator==(const usImagePreScan3D<T> &other);
 
-  void setAxialResolution(double axialResolution);
   void setData(const usImage3D<T> &image);
-
-private:
-  double m_axialResolution;
 };
 
 /**
 * Basic constructor, all settings set to default.
 */
 template<class T>
-usImagePreScan3D<T>::usImagePreScan3D() : usImage3D<T>(), usImageSettings3D()
+usImagePreScan3D<T>::usImagePreScan3D() : usImage3D<T>(), usImagePreScan3DSettings()
 {
 
 }
@@ -106,7 +101,7 @@ usImagePreScan3D<T>::usImagePreScan3D() : usImage3D<T>(), usImageSettings3D()
 * @param FN Number of frames (corresponds to image depth in px).
 */
 template<class T>
-usImagePreScan3D<T>::usImagePreScan3D(unsigned int AN, unsigned int LN, unsigned int FN) : usImage3D<T>(LN, AN, FN), usImageSettings3D()
+usImagePreScan3D<T>::usImagePreScan3D(unsigned int AN, unsigned int LN, unsigned int FN) : usImage3D<T>(LN, AN, FN), usImagePreScan3DSettings()
 {
 
 }
@@ -125,8 +120,8 @@ usImagePreScan3D<T>::usImagePreScan3D(unsigned int AN, unsigned int LN, unsigned
 */
 template<class T>
 usImagePreScan3D<T>::usImagePreScan3D(unsigned int AN, unsigned int LN, unsigned int FN, double probeRadius, double motorRadius, double scanLinePitch, double framePitch,
-                                      bool isImageConvex, bool isMotorConvex) :
-  usImage3D<T>(AN, LN, FN), usImageSettings3D(probeRadius, motorRadius, scanLinePitch, framePitch, isImageConvex, isMotorConvex)
+                                      bool isImageConvex, bool isMotorConvex, double axial_resolution) :
+  usImage3D<T>(AN, LN, FN), usImagePreScan3DSettings(probeRadius, motorRadius, scanLinePitch, framePitch, isImageConvex, isMotorConvex, axial_resolution)
 {
 
 }
@@ -137,7 +132,7 @@ usImagePreScan3D<T>::usImagePreScan3D(unsigned int AN, unsigned int LN, unsigned
 */
 template<class T>
 usImagePreScan3D<T>::usImagePreScan3D(const usImagePreScan3D &other) :
-  usImage3D<T>(other), usImageSettings3D(other)
+  usImage3D<T>(other), usImagePreScan3DSettings(other)
 {
 
 }
@@ -154,10 +149,10 @@ usImagePreScan3D<T>::usImagePreScan3D(const usImage3D<T> &other) : usImage3D<T>(
 
 /**
 * Copy constructor.
-* @param other usImageSettings3D you want to copy.
+* @param other usImagePreScan3DSettings you want to copy.
 */
 template<class T>
-usImagePreScan3D<T>::usImagePreScan3D(const usImageSettings3D &other) : usImageSettings3D(other)
+usImagePreScan3D<T>::usImagePreScan3D(const usImagePreScan3DSettings &other) : usImagePreScan3DSettings(other)
 {
 
 }
@@ -165,11 +160,11 @@ usImagePreScan3D<T>::usImagePreScan3D(const usImageSettings3D &other) : usImageS
 /**
 * Copy constructor. For double image type
 * @param other usImage3D you want to copy.
-* @param otherSettings usImageSettings3D you want to copy.
+* @param otherSettings usImagePreScan3DSettings you want to copy.
 */
 template<class T>
-usImagePreScan3D<T>::usImagePreScan3D(const usImage3D<T> &other, const usImageSettings3D &otherSettings) :
-  usImage3D<T>(other), usImageSettings3D(otherSettings)
+usImagePreScan3D<T>::usImagePreScan3D(const usImage3D<T> &other, const usImagePreScan3DSettings &otherSettings) :
+  usImage3D<T>(other), usImagePreScan3DSettings(otherSettings)
 {
 
 }
@@ -190,7 +185,7 @@ usImagePreScan3D<T>& usImagePreScan3D<T>::operator=(const usImagePreScan3D<T> &o
   usImage3D<T>::operator=(other);
 
   //from usImageSettings
-  usImageSettings3D::operator=(other);
+  usImagePreScan3DSettings::operator=(other);
 
   //from this class
   m_axialResolution = other.getAxialResolution();
@@ -203,7 +198,7 @@ template<class T>
 bool usImagePreScan3D<T>::operator==(const usImagePreScan3D<T> &other)
 {
   return(usImage3D<T>::operator== (other) &&
-         usImageSettings3D::operator ==(other) &&
+         usImagePreScan3DSettings::operator ==(other) &&
          m_axialResolution == other.getAxialResolution());
 }
 
@@ -238,23 +233,6 @@ unsigned int usImagePreScan3D<T>::getLN() const { return usImage3D<T>::getWidth(
 */
 template<class T>
 unsigned int usImagePreScan3D<T>::getFN() const { return usImage3D<T>::getDepth(); }
-
-/**
-* Getter for the axial resolution
-* @return The axial resolution : distance(in meters) between 2 successive pixels acquired along a scanLine.
-*/
-template<class T>
-double usImagePreScan3D<T>::getAxialResolution() const { return m_axialResolution; }
-
-/**
-* Setter for the axial resolution
-* @param axialResolution The axial resolution : distance(in meters) between 2 successive pixels acquired along a scanLine.
-*/
-template<class T>
-void usImagePreScan3D<T>::setAxialResolution(double axialResolution)
-{
-  m_axialResolution = axialResolution;
-}
 
 /**
 * Setter for the image data.

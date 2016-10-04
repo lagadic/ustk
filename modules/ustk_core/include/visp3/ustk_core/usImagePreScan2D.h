@@ -39,7 +39,7 @@
 
 #include <visp3/core/vpImage.h>
 
-#include <visp3/ustk_core/usImageSettings.h>
+#include <visp3/ustk_core/usImagePreScanSettings.h>
 
 /**
  * @class usImagePreScan2D
@@ -48,22 +48,22 @@
  * This class represents a 2D ultrasound prescan frame.
  */
 template<class T>
-class usImagePreScan2D : public vpImage<T>, public usImageSettings {
+class usImagePreScan2D : public vpImage<T>, public usImagePreScanSettings {
 public:
   //default constructors
   usImagePreScan2D();
   //image size initialisation constructors
   usImagePreScan2D(unsigned int a_number, unsigned int LN);
   //All parameters initialisation constructors
-  usImagePreScan2D(unsigned int a_number, unsigned int LN, double probeRadius, double scanLinePitch, bool isConvex);
+  usImagePreScan2D(unsigned int a_number, unsigned int line_number, double probeRadius, double scanLinePitch, bool isConvex, double axial_resolution);
   //usImagePreScan2D copy constructor
   usImagePreScan2D(const usImagePreScan2D &other);
   //vpImage copy constructors
   usImagePreScan2D(const vpImage<T> &other);
   //vpImage copy constructors
-  usImagePreScan2D(const usImageSettings &other);
-  //copy constructor from vpImage and usImageSettings
-  usImagePreScan2D(const vpImage<T> &other, const usImageSettings &otherSettings);
+  usImagePreScan2D(const usImagePreScanSettings &other);
+  //copy constructor from vpImage and usImagePreScanSettings
+  usImagePreScan2D(const vpImage<T> &other, const usImagePreScanSettings &otherSettings);
 
   //destructor
   ~usImagePreScan2D();
@@ -71,7 +71,6 @@ public:
   //copying from vpImage
   void copyFrom(const vpImage<T> &I);
 
-  double getAxialResolution() const;
   //No setters for a_number and LN because vpImage doesn't have setters for height and width. Those parameters have to be passed in the constructor.
   unsigned int getANumber() const;
   unsigned int getLineNumber() const;
@@ -82,18 +81,14 @@ public:
   //comparison
   bool operator==(const usImagePreScan2D<T> &other);
 
-  void setAxialResolution(const double axialResolution);
   void setData(const vpImage<T> image);
-
-private:
-  double m_axialResolution;
 };
 
 /**
 * Basic constructor, all settings set to default. For double data.
 */
 template<class T>
-usImagePreScan2D<T>::usImagePreScan2D() : vpImage<T>(), usImageSettings()
+usImagePreScan2D<T>::usImagePreScan2D() : vpImage<T>(), usImagePreScanSettings()
 {
 
 }
@@ -104,7 +99,7 @@ usImagePreScan2D<T>::usImagePreScan2D() : vpImage<T>(), usImageSettings()
 * @param line_number Number of lines (corresponds to image width in px).
 */
 template<class T>
-usImagePreScan2D<T>::usImagePreScan2D(unsigned int a_number, unsigned int line_number) : vpImage<T>(line_number, a_number), usImageSettings()
+usImagePreScan2D<T>::usImagePreScan2D(unsigned int a_number, unsigned int line_number) : vpImage<T>(line_number, a_number), usImagePreScanSettings()
 {
 
 }
@@ -116,10 +111,11 @@ usImagePreScan2D<T>::usImagePreScan2D(unsigned int a_number, unsigned int line_n
 * @param probeRadius radius of the ultrasound probe used to acquire the RF image.
 * @param scanLinePitch Angle(rad) / Distance(m) between 2 lines of the ultrasound probe used to acquire the RF image. Angle if isConvex is true, distance if it's false.
 * @param isConvex Boolean to specify if the probe used was convex(true) or linear(false).
+* @param axial_resolution Image axial resolution.
 */
 template<class T>
-usImagePreScan2D<T>::usImagePreScan2D(unsigned int a_number, unsigned int line_number, double probeRadius, double scanLinePitch, bool isConvex) :
-  vpImage<T>(a_number, line_number), usImageSettings(probeRadius, scanLinePitch, isConvex)
+usImagePreScan2D<T>::usImagePreScan2D(unsigned int a_number, unsigned int line_number, double probeRadius, double scanLinePitch, bool isConvex, double axial_resolution) :
+  vpImage<T>(a_number, line_number), usImagePreScanSettings(probeRadius, scanLinePitch, isConvex, axial_resolution)
 {
 
 }
@@ -130,7 +126,7 @@ usImagePreScan2D<T>::usImagePreScan2D(unsigned int a_number, unsigned int line_n
 */
 template<class T>
 usImagePreScan2D<T>::usImagePreScan2D(const usImagePreScan2D &other) :
-  vpImage<T>(other), usImageSettings(other)
+  vpImage<T>(other), usImagePreScanSettings(other)
 {
 
 }
@@ -147,10 +143,10 @@ usImagePreScan2D<T>::usImagePreScan2D(const vpImage<T> &other) : vpImage<T>(othe
 
 /**
 * Copy constructor.
-* @param other usImageSettings you want to copy.
+* @param other usImagePreScanSettings you want to copy.
 */
 template<class T>
-usImagePreScan2D<T>::usImagePreScan2D(const usImageSettings &other) : usImageSettings(other)
+usImagePreScan2D<T>::usImagePreScan2D(const usImagePreScanSettings &other) : usImagePreScanSettings(other)
 {
 
 }
@@ -158,11 +154,11 @@ usImagePreScan2D<T>::usImagePreScan2D(const usImageSettings &other) : usImageSet
 /**
 * Copy constructor. For double image type.
 * @param other vpImage you want to copy.
-* @param otherSettings usImageSettings you want to copy.
+* @param otherSettings usImagePreScanSettings you want to copy.
 */
 template<class T>
-usImagePreScan2D<T>::usImagePreScan2D(const vpImage<T> &other, const usImageSettings &otherSettings) :
-  vpImage<T>(other), usImageSettings(otherSettings)
+usImagePreScan2D<T>::usImagePreScan2D(const vpImage<T> &other, const usImagePreScanSettings &otherSettings) :
+  vpImage<T>(other), usImagePreScanSettings(otherSettings)
 {
 
 }
@@ -182,8 +178,8 @@ usImagePreScan2D<T>& usImagePreScan2D<T>::operator=(const usImagePreScan2D<T> &o
   //from vpImage
   vpImage<T>::operator=(other);
 
-  //from usImageSettings
-  usImageSettings::operator=(other);
+  //from usImagePreScanSettings
+  usImagePreScanSettings::operator=(other);
 
   //from this class
   m_axialResolution = other.getAxialResolution();
@@ -196,8 +192,8 @@ template<class T>
 bool usImagePreScan2D<T>::operator==(const usImagePreScan2D<T> &other)
 {
   return(vpImage<T>::operator== (other) &&
-         usImageSettings::operator ==(other) &&
-         m_axialResolution == other.getAxialResolution());
+         usImagePreScanSettings::operator ==(other) &&
+         getAxialResolution() == other.getAxialResolution());
 }
 
 /**
@@ -224,23 +220,6 @@ unsigned int usImagePreScan2D<T>::getANumber() const { return vpImage<T>::getHei
 */
 template<class T>
 unsigned int usImagePreScan2D<T>::getLineNumber() const { return vpImage<T>::getWidth(); }
-
-/**
-* Getter for the axial resolution
-* @return The axial resolution : distance(in meters) between 2 successive pixels acquired along a scanLine.
-*/
-template<class T>
-double usImagePreScan2D<T>::getAxialResolution() const { return m_axialResolution; }
-
-/**
-* Setter for the axial resolution
-* @param axialResolution The axial resolution : distance(in meters) between 2 successive pixels acquired along a scanLine.
-*/
-template<class T>
-void usImagePreScan2D<T>::setAxialResolution(const double axialResolution)
-{
-  m_axialResolution = axialResolution;
-}
 
 /**
 * Setter for the image data.

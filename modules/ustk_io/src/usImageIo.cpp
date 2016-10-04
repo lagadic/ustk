@@ -39,6 +39,8 @@
 
 #include <visp3/ustk_io/usImageIo.h>
 #include <visp3/ustk_io/usImageSettingsXmlParser.h>
+#include <visp3/ustk_core/usImagePostScan3DSettings.h>
+#include <visp3/ustk_core/usImagePreScanSettings.h>
 #include <visp3/ustk_io/usRawFileParser.h>
 
 /**
@@ -222,7 +224,7 @@ void usImageIo::readXml(usImagePostScan2D<unsigned char> &postScanImage,const st
   vpImage<unsigned char> image;
   vpImageIo::read(postScanImage,xmlSettings.getImageFileName());
 
-  postScanImage.setImageSettings(xmlSettings.getImageSettings());
+  postScanImage.setImageSettings(usImagePostScanSettings(xmlSettings.getImageSettings(), xmlSettings.getHeightResolution(),xmlSettings.getWidthResolution()));
 }
 #endif //VISP_HAVE_XML2
 
@@ -283,20 +285,19 @@ void usImageIo::read(usImagePostScan3D<unsigned char> &postScanImage,std::string
   }
   //resizing image in memory
   postScanImage.resize(mhdParser.getImageSizeX(),mhdParser.getImageSizeY(),mhdParser.getImageSizeZ());
-  std::cout << "resizing : " << mhdParser.getImageSizeX() << "," << mhdParser.getImageSizeY() << ","<< mhdParser.getImageSizeZ() << std::endl;
-  std::cout << "result : " << postScanImage.getANumber() << "," << postScanImage.getLineNumber() << ","<< postScanImage.getFrameNumber() << std::endl;
 
-  //
   usMetaHeaderParser::MHDHeader mhdHeader = mhdParser.getMhdHeader();
-  postScanImage.setProbeRadius(mhdHeader.probeRadius);
-  postScanImage.setScanLinePitch(mhdHeader.scanLinePitch);
-  postScanImage.setImageConvex(mhdHeader.isImageConvex);
-  postScanImage.setMotorRadius(mhdHeader.motorRadius);
-  postScanImage.setFramePitch(mhdHeader.framePitch);
-  postScanImage.setMotorConvex(mhdHeader.isMotorConvex);
 
-  postScanImage.setWidthResolution(mhdParser.getWidthResolution());
-  postScanImage.setHeightResolution(mhdParser.getHeightResolution());
+  usImagePostScan3DSettings settings;
+  settings.setProbeRadius(mhdHeader.probeRadius);
+  settings.setScanLinePitch(mhdHeader.scanLinePitch);
+  settings.setImageConvex(mhdHeader.isImageConvex);
+  settings.setMotorRadius(mhdHeader.motorRadius);
+  settings.setFramePitch(mhdHeader.framePitch);
+  settings.setMotorConvex(mhdHeader.isMotorConvex);
+  settings.setWidthResolution(mhdParser.getWidthResolution());
+  settings.setHeightResolution(mhdParser.getHeightResolution());
+  postScanImage.setSettings(settings);
 
   //data parsing
   usRawFileParser rawParser;
