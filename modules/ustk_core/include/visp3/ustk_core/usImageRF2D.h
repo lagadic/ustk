@@ -75,7 +75,7 @@ public:
 * Constructor.
 */
 template<class T>
-usImageRF2D<T>::usImageRF2D() : vpImage<T>(), usImagePreScanSettings(), m_axialResolution(0)
+usImageRF2D<T>::usImageRF2D() : vpImage<T>(), usImagePreScanSettings()
 {
 
 }
@@ -128,9 +128,6 @@ usImageRF2D<T>& usImageRF2D<T>::operator=(const usImageRF2D<T> &other)
 
   //from usImagePreScanSettings
   usImagePreScanSettings::operator=(other);
-
-  //from this class
-  m_axialResolution = other.getAxialResolution();
 }
 
 /**
@@ -140,8 +137,7 @@ template<class T>
 bool usImageRF2D<T>::operator==(const usImageRF2D<T> &other)
 {
   return(vpImage<T>::operator== (other) &&
-         usImagePreScanSettings::operator ==(other) &&
-         getAxialResolution() == other.getAxialResolution());
+         usImagePreScanSettings::operator ==(other));
 }
 
 /**
