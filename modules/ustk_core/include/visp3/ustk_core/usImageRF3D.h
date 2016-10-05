@@ -108,6 +108,7 @@ usImageRF3D<T>::usImageRF3D(unsigned int AN, unsigned int LN, unsigned int FN)
 * @param[in] framePitch angle(rad) / distance(m) between 2 lines of the ultrasound probe used to acquire the RF image.
 * @param[in] isProbeConvex Boolean to specyfy if the image was acquired by a convex probe(true) or by a linear probe (false).
 * @param[in] isMotorConvex Boolean to specyfy if the image was acquired by a rotating  motor(true) or by a linear motor (false).
+* @param[in] axial_resolution The distance (in meters) between 2 successive pixels acquired along a scanline.
 */
 template<class T>
 usImageRF3D<T>::usImageRF3D(unsigned int AN, unsigned int LN, unsigned int FN, double probeRadius, double motorRadius, double scanLinePitch, double framePitch,

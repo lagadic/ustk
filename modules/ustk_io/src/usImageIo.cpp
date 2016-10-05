@@ -83,18 +83,18 @@ void usImageIo::read(usImageRF3D<unsigned char> &imageRf3,const std::string file
 /**
 * Write 2D unsigned char prescan ultrasound image.
 * @param preScanImage The prescan image to write.
-* @param imageFilename The image file name to write, with extension.
+* @param imageFileName The image file name to write, with extension.
 */
-void usImageIo::writeXml(const usImagePreScan2D<unsigned char> &preScanImage, const std::string imageFilename) {
+void usImageIo::writeXml(const usImagePreScan2D<unsigned char> & preScanImage, const std::string imageFileName) {
   try {
     //writing image
-    vpImageIo::write(preScanImage, imageFilename);
+    vpImageIo::write(preScanImage, imageFileName);
     //writing xml
     usImageSettingsXmlParser xmlSettings;
     xmlSettings.setImagePreScanSettings(preScanImage);
-    xmlSettings.setImageFileName(imageFilename);
-    //get xml filename from imageFilename
-    std::vector<std::string> splittedFileName = vpIoTools::splitChain(imageFilename, ".");
+    xmlSettings.setImageFileName(imageFileName);
+    //get xml filename from imageFileName
+    std::vector<std::string> splittedFileName = vpIoTools::splitChain(imageFileName, ".");
     std::string xmlFileName = splittedFileName[0] + ".xml";
     xmlSettings.save(xmlFileName);
   }

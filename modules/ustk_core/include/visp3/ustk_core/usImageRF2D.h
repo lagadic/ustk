@@ -166,7 +166,7 @@ void usImageRF2D<T>::setData(const vpImage<T> &image)
 
 /**
 * Setter for the image settings.
-* @param image The image to set.
+* @param settings The new settings.
 */
 template<class T>
 void usImageRF2D<T>::setImageSettings(const usImagePreScanSettings &settings)

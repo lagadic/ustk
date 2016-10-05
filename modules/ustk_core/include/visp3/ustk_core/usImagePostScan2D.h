@@ -181,8 +181,9 @@ void usImagePostScan2D<T>::setImageSettings(const usImagePostScanSettings &setti
   setWidthResolution(settings.getWidthResolution());
 }
 
-/**Setter for image.
-* @param settings Settings you want to copy.
+/**
+* Setter for image.
+* @param image Settings you want to copy.
 */
 template<class T>
 void usImagePostScan2D<T>::setData(const vpImage<T> &image)
