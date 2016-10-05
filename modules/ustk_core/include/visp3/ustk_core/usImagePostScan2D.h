@@ -44,10 +44,36 @@
 #include <visp3/ustk_core/usImagePostScanSettings.h>
 
 /**
- * @class usImagePostScan2D
- * @brief 2D postscan ultrasound image.
- *
- * This class represents a 2D ultrasound postscan frame.
+ @class usImagePostScan2D
+ @brief 2D postscan ultrasound image.
+
+ This class represents a 2D ultrasound postscan frame.
+
+   <h3>Example</h3>
+  The following example shows how to build a 2D postscan ultrasound image from a vpImage, and from acquisiton settings.
+
+  \code
+
+
+    #include <visp3/ustk_core/usImagePostScan2D.h>
+
+    int main()
+    {
+      // Update settings
+      unsigned int AN = ;
+      unsigned int LN = ;
+      double probeRadius = ;
+      double scanLinePitch = ;
+      bool isProbeConvex = true;
+      double heightResolution = ;
+      double widthResolution = ;
+      usImagePostScan2DSettings   imageSettings(probeRadius, scanLinePitch, isProbeConvex, heightResolution, widthResolution);
+      vpImage<unsigne char> I(AN, LN);
+      usImagePreScan2D postScan2d;
+      postScan2d.setData(I);
+      postScan2d.setImageSettings(imageSettings);
+    }
+  \endcode
  */
 template<class T>
 class usImagePostScan2D : public vpImage<T>, public usImagePostScanSettings {

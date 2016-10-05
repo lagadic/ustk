@@ -42,10 +42,35 @@
 #include <visp3/ustk_core/usImagePreScanSettings.h>
 
 /**
- * @class usImagePreScan2D
- * @brief 2D prescan ultrasound image.
- *
- * This class represents a 2D ultrasound prescan frame.
+ @class usImagePreScan2D
+ @brief 2D prescan ultrasound image.
+
+  <h3>Example</h3>
+  The following example shows how to build a 2D prescan ultrasound image from a usImage3D, and from acquisiton settings.
+
+  \code
+
+
+    #include <visp3/ustk_core/usImagePreScan2D.h>
+
+    int main()
+    {
+      // Update settings
+      unsigned int AN = ;
+      unsigned int LN = ;
+      double probeRadius = ;
+      double scanLinePitch = ;
+      bool isProbeConvex = true;
+      double axialResolution = ;
+      usImagePreScan2DSettings   imageSettings(probeRadius, scanLinePitch, isProbeConvex, axialResolution);
+      vpImage<unsigne char> I(AN, LN);
+      usImagePreScan2D preScan2d;
+      preScan2d.setData(I);
+      preScan2d.setImageSettings(imageSettings);
+    }
+  \endcode
+
+ This class represents a 2D ultrasound prescan frame.
  */
 template<class T>
 class usImagePreScan2D : public vpImage<T>, public usImagePreScanSettings {

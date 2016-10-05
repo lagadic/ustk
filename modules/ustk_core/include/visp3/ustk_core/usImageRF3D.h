@@ -43,11 +43,40 @@
 
 #include <visp3/ustk_core/usImagePreScan3DSettings.h>
 
-/**
-* @class usImageRF3D
-* @brief 3D RF ultrasound image.
-*
-* This class represents a 3D ultrasound RF frame.
+/*!
+ @class usImageRF3D
+ @brief 3D RF ultrasound image.
+ This class represents a 3D ultrasound RF volume.
+
+  <h3>Example</h3>
+  The following example shows how to build a RF3D ultrasound image from a usImage3D, and from acquisiton settings.
+
+  \code
+
+
+    #include <visp3/ustk_core/usImageRF3D.h>
+
+    int main()
+    {
+      // Update settings
+      unsigned int AN = ;
+      unsigned int LN = ;
+      unsigned int FN = ;
+      double probeRadius = ;
+      double scanLinePitch = ;
+      bool isProbeConvex = true;
+      double motorRadius = ;
+      double framePitch = ;
+      bool isMotorConvex = true;
+      double axialResolution = ;
+      usImagePreScan3DSettings  imageSettings(probeRadius, scanLinePitch, isProbeConvex, motorRadius, framePitch, isMotorConvex, axialResolution);
+      usImage3D<unsigne char> I(AN, LN, FN);
+      usImageRF3D rf3d;
+      rf3d.setData(I);
+      rf3d.setImageSettings(imageSettings);
+    }
+  \endcode
+
 */
 template<class T>
 class usImageRF3D : public usImage3D<T>, public usImagePreScan3DSettings {

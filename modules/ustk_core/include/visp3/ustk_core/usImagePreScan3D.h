@@ -42,11 +42,40 @@
 
 #include <visp3/ustk_core/usImagePreScan3DSettings.h>
 
-/**
-* @class usImagePreScan3D
-* @brief 3D prescan ultrasound image.
-*
-* This class represents a 3D ultrasound prescan frame.
+/*!
+ @class usImagePreScan3D
+ @brief 3D prescan ultrasound image.
+
+ This class represents a 3D ultrasound prescan frame.
+
+  <h3>Example</h3>
+  The following example shows how to build a 3D prescan ultrasound image from a usImage3D, and from acquisiton settings.
+
+  \code
+
+
+    #include <visp3/ustk_core/usImagePreScan3D.h>
+
+    int main()
+    {
+      // Update settings
+      unsigned int AN = ;
+      unsigned int LN = ;
+      unsigned int FN = ;
+      double probeRadius = ;
+      double scanLinePitch = ;
+      bool isProbeConvex = true;
+      double motorRadius = ;
+      double framePitch = ;
+      bool isMotorConvex = true;
+      double axialResolution = ;
+      usImagePreScan3DSettings   imageSettings(probeRadius, scanLinePitch, isProbeConvex, motorRadius, framePitch, isMotorConvex, axialResolution);
+      usImage3D<unsigne char> I(AN, LN, FN);
+      usImagePreScan3D preScan3d;
+      preScan3d.setData(I);
+      preScan3d.setImageSettings(imageSettings);
+    }
+  \endcode
 */
 template<class T>
 class usImagePreScan3D : public usImage3D<T>, public usImagePreScan3DSettings {

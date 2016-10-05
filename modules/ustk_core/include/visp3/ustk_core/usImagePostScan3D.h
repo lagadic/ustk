@@ -44,10 +44,39 @@
 #include <visp3/ustk_core/usImagePostScan3DSettings.h>
 
 /**
-* @class usImagePostScan3D
-* @brief 3D postscan ultrasound image.
-*
-* This class represents a 3D ultrasound postscan frame.
+ @class usImagePostScan3D
+ @brief This class represents a 3D ultrasound postscan volume.
+
+  <h3>Example</h3>
+  The following example shows how to build a 3D postscan ultrasound image from a usImage3D, and from acquisiton settings.
+
+  \code
+
+
+    #include <visp3/ustk_core/usImagePostScan3D.h>
+
+    int main()
+    {
+      // Update settings
+      unsigned int AN = ;
+      unsigned int LN = ;
+      unsigned int FN = ;
+      double probeRadius = ;
+      double scanLinePitch = ;
+      bool isProbeConvex = true;
+      double motorRadius = ;
+      double framePitch = ;
+      bool isMotorConvex = true;
+      double heightResolution = ;
+      double widthResolution = ;
+      usImagePostScan3DSettings   imageSettings(probeRadius, scanLinePitch, isProbeConvex, motorRadius, framePitch, isMotorConvex, heightResolution, widthResolution);
+      usImage3D<unsigne char> I(AN, LN, FN);
+      usImagePreScan3D postScan3d;
+      postScan3d.setData(I);
+      postScan3d.setImageSettings(imageSettings);
+    }
+  \endcode
+
 */
 template<class T>
 class usImagePostScan3D : public usImage3D<T>, public usImagePostScan3DSettings {
