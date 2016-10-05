@@ -247,7 +247,7 @@ void usImageIo::write(const usImagePostScan3D<unsigned char> &postScanImage, con
   header.dim[1] = postScanImage.getLineNumber();
   header.dim[2] = postScanImage.getFrameNumber();
   header.msb = false;
-  header.mhdFileName = filename + ".mhd";
+  header.MHDFileName = filename + ".mhd";
   header.rawFileName = filename + ".raw";
   header.isProbeConvex = postScanImage.isProbeConvex();
   header.isMotorConvex = postScanImage.isMotorConvex();
@@ -257,7 +257,7 @@ void usImageIo::write(const usImagePostScan3D<unsigned char> &postScanImage, con
   header.framePitch = postScanImage.getFramePitch();
   //writing in file
   usMetaHeaderParser mhdParser;
-  mhdParser.setMhdHeader(header);
+  mhdParser.setMHDHeader(header);
   mhdParser.setHeightResolution(postScanImage.getHeightResolution());
   mhdParser.setWidthResolution(postScanImage.getWidthResolution());
   mhdParser.parse();
@@ -286,7 +286,7 @@ void usImageIo::read(usImagePostScan3D<unsigned char> &postScanImage,std::string
   //resizing image in memory
   postScanImage.resize(mhdParser.getImageSizeX(),mhdParser.getImageSizeY(),mhdParser.getImageSizeZ());
 
-  usMetaHeaderParser::MHDHeader mhdHeader = mhdParser.getMhdHeader();
+  usMetaHeaderParser::MHDHeader mhdHeader = mhdParser.getMHDHeader();
 
   usImagePostScan3DSettings settings;
   settings.setProbeRadius(mhdHeader.probeRadius);
