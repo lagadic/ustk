@@ -186,7 +186,7 @@ int main(int argc, const char** argv)
       }
     }
 
-    filename = opath + vpIoTools::path("/") + "prescan2D.png";
+    filename = opath + vpIoTools::path("/") + "prescan2D.xml";
 
     //Init values in reference parser (same values in file read in test)
     usImagePreScan2D<unsigned char> prescan2DReference;
@@ -198,7 +198,7 @@ int main(int argc, const char** argv)
     prescan2DReference(95,200,64);
     prescan2DReference(116,80,36);
 
-    usImageIo::writeXml(prescan2DReference,filename);
+    usImageIo::write(prescan2DReference,filename);
 
     std::cout << "Read from " << filename << std::endl ;
     std::cout << "Axial resolution : " << prescan2DReference.getAxialResolution() << std::endl;
@@ -212,7 +212,7 @@ int main(int argc, const char** argv)
     //read the image we just wrote
     usImagePreScan2D<unsigned char> prescan2D;
     filename = opath + vpIoTools::path("/") + "prescan2D.xml";
-    usImageIo::readXml(prescan2D,filename);
+    usImageIo::read(prescan2D,filename);
 
 
     std::cout << "Read from " << filename << std::endl ;
