@@ -41,7 +41,7 @@
 /**
 * Default constructor, all parameters set de default values.
 */
-usImagePreScan3DSettings::usImagePreScan3DSettings() : usImageSettings3D(), m_axialResolution(0.0)
+usImagePreScan3DSettings::usImagePreScan3DSettings() : usImage3DSettings(), m_axialResolution(0.0)
 {
 
 }
@@ -50,7 +50,7 @@ usImagePreScan3DSettings::usImagePreScan3DSettings() : usImageSettings3D(), m_ax
 * Full settings constructor.
 */
 usImagePreScan3DSettings::usImagePreScan3DSettings(double probeRadius, double scanLinePitch, bool isProbeConvex, double motorRadius, double framePitch, bool isMotorConvex, double axial_resolution) :
-  usImageSettings3D(probeRadius, motorRadius, scanLinePitch, framePitch, isProbeConvex, isMotorConvex), m_axialResolution(axial_resolution)
+  usImage3DSettings(probeRadius, motorRadius, scanLinePitch, framePitch, isProbeConvex, isMotorConvex), m_axialResolution(axial_resolution)
 {
 
 }
@@ -78,7 +78,7 @@ usImagePreScan3DSettings& usImagePreScan3DSettings::operator=(const usImagePreSc
 */
 bool usImagePreScan3DSettings::operator==(const usImagePreScan3DSettings& other)
 {
-  return(usImageSettings3D::operator==(other) &&
+  return(usImage3DSettings::operator==(other) &&
     m_axialResolution == other.getAxialResolution());
 }
 

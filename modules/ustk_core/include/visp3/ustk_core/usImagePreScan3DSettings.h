@@ -44,12 +44,12 @@
 #include <visp3/core/vpConfig.h>
 
 //ustk includes
-#include <visp3/ustk_core/usImageSettings3D.h>
+#include <visp3/ustk_core/usImage3DSettings.h>
 /**
 * @class usImagePreScan3DSettings
 * @brief Ultrasound image settings for 3D postscan images.
 */
-class VISP_EXPORT usImagePreScan3DSettings : public usImageSettings3D {
+class VISP_EXPORT usImagePreScan3DSettings : public usImage3DSettings {
 public:
   usImagePreScan3DSettings();
 

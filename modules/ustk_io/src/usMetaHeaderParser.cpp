@@ -349,7 +349,7 @@ void usMetaHeaderParser::setImageSettings(const usImageSettings imageSettings)
   m_imageSettings = imageSettings;
 }
 
-void usMetaHeaderParser::setImageSettings3D(const usImageSettings3D imageSettings3D)
+void usMetaHeaderParser::setImageSettings3D(const usImage3DSettings imageSettings3D)
 {
   m_imageSettings3D = imageSettings3D;
 }

@@ -70,7 +70,7 @@ public:
   double getAxialResolution() const { return m_axialResolution; }
   double getHeightResolution() const { return m_heightResolution; }
   usImageSettings getImageSettings() const {return m_imageSettings;}
-  usImageSettings3D getImageSettings3D() const {return m_imageSettings3D;}
+  usImage3DSettings getImageSettings3D() const {return m_imageSettings3D;}
   ImageType getImageType() const { return mhdHeader.imageType; }
   std::string getRawFileName() const {return mhdHeader.rawFileName;}
   double getWidthResolution() const { return m_widthResolution; }
@@ -91,7 +91,7 @@ public:
 
   //Data setters
   void setImageSettings(const usImageSettings imageSettings);
-  void setImageSettings3D(const usImageSettings3D imageSettings3D);
+  void setImageSettings3D(const usImage3DSettings imageSettings3D);
   void setImageFileName(const std::string imageFileName);
   void setAxialResolution(const double axialresolution);
   void setHeightResolution(const double heightResolution);
@@ -104,7 +104,7 @@ public:
 
 private :
   usImageSettings m_imageSettings;
-  usImageSettings3D m_imageSettings3D;
+  usImage3DSettings m_imageSettings3D;
   double m_axialResolution;
   double m_heightResolution;
   double m_widthResolution;

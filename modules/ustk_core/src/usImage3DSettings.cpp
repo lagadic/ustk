@@ -31,7 +31,7 @@
  *****************************************************************************/
 
 /**
- * @file usImageSettings3D.cpp
+ * @file usImage3DSettings.cpp
  * @brief Generic ultrasound 3D image settings.
  */
 
@@ -39,14 +39,14 @@
 #include <iostream>
 
 //visp includes
-#include <visp3/ustk_core/usImageSettings3D.h>
+#include <visp3/ustk_core/usImage3DSettings.h>
 
 //ustk includes
 
 /**
 * Basic Constructor, all settings set to default.
 */
-usImageSettings3D::usImageSettings3D() : usImageSettings(), m_motorRadius(0.0f), m_framePitch(0.0f) {}
+usImage3DSettings::usImage3DSettings() : usImageSettings(), m_motorRadius(0.0f), m_framePitch(0.0f) {}
 
 /**
 * Full Constructor, all settings availables
@@ -57,25 +57,25 @@ usImageSettings3D::usImageSettings3D() : usImageSettings(), m_motorRadius(0.0f),
 * @param isProbeConvex True if the probe used was convex, false otherwise.
 * @param isMotorConvex True if the probe motor used was convex, false otherwise.
 */
-usImageSettings3D::usImageSettings3D(double probeRadius, double motorRadius, double scanLinePitch, double framePitch, bool isProbeConvex, bool isMotorConvex)
+usImage3DSettings::usImage3DSettings(double probeRadius, double motorRadius, double scanLinePitch, double framePitch, bool isProbeConvex, bool isMotorConvex)
   : usImageSettings(probeRadius, scanLinePitch, isProbeConvex), m_motorRadius(motorRadius), m_framePitch(framePitch), m_isMotorConvex(isMotorConvex) {}
 
 /**
 * Copy Constructor, all settings availables
-* @param other usImageSettings3D you want to copy.
+* @param other usImage3DSettings you want to copy.
 */
-usImageSettings3D::usImageSettings3D(const usImageSettings3D &other) : usImageSettings(other), m_motorRadius(other.getMotorRadius()), m_framePitch(other.getFramePitch()), m_isMotorConvex(other.isMotorConvex()) {}
+usImage3DSettings::usImage3DSettings(const usImage3DSettings &other) : usImageSettings(other), m_motorRadius(other.getMotorRadius()), m_framePitch(other.getFramePitch()), m_isMotorConvex(other.isMotorConvex()) {}
 
 /**
 * Destructor.
 */
-usImageSettings3D::~usImageSettings3D() {}
+usImage3DSettings::~usImage3DSettings() {}
 
 /**
 * Assignment operator.
-* @param other usImageSettings3D you want to copy.
+* @param other usImage3DSettings you want to copy.
 */
-usImageSettings3D& usImageSettings3D::operator=(const usImageSettings3D& other)
+usImage3DSettings& usImage3DSettings::operator=(const usImage3DSettings& other)
 {
   usImageSettings::operator =(other);
   m_motorRadius = other.getMotorRadius();
@@ -84,7 +84,7 @@ usImageSettings3D& usImageSettings3D::operator=(const usImageSettings3D& other)
   return *this;
 }
 
-bool usImageSettings3D::operator==(const usImageSettings3D& other)
+bool usImage3DSettings::operator==(const usImage3DSettings& other)
 {
   return (usImageSettings::operator ==(other) &&
           this->getFramePitch() == other.getFramePitch() &&
@@ -98,31 +98,31 @@ bool usImageSettings3D::operator==(const usImageSettings3D& other)
 * Set the motor  radius (m).
 * @param motorRadius Motor radius in meters.
 */
-void usImageSettings3D::setMotorRadius(double motorRadius) { m_motorRadius = motorRadius; }
+void usImage3DSettings::setMotorRadius(double motorRadius) { m_motorRadius = motorRadius; }
 
 /**
 * Get the probe radius (m).
 * @return motorRadius Motor radius in meters.
 */
-double usImageSettings3D::getMotorRadius() const { return m_motorRadius; }
+double usImage3DSettings::getMotorRadius() const { return m_motorRadius; }
 
 /**
 * Set the frame angle (rad).
 * @param framePitch Frame angle of the probe in radians.
 */
-void usImageSettings3D::setFramePitch(double framePitch) { m_framePitch = framePitch; }
+void usImage3DSettings::setFramePitch(double framePitch) { m_framePitch = framePitch; }
 
 /**
 * Get the frame angle (rad).
 * @return m_lineAngle Frame angle of the probe in radians.
 */
-double usImageSettings3D::getFramePitch() const { return m_framePitch; }
+double usImage3DSettings::getFramePitch() const { return m_framePitch; }
 
 /**
 * Set the motor type : convex or linear (from probe type used to acquire the image).
 * @param isMotorConvex Boolean to specify the motor type : true for convex, false for linear.
 */
-void usImageSettings3D::setMotorConvexity(bool isMotorConvex) {
+void usImage3DSettings::setMotorConvexity(bool isMotorConvex) {
   m_isMotorConvex = isMotorConvex;
   if (!isMotorConvex) {
     setMotorRadius(0.0f);
@@ -133,12 +133,12 @@ void usImageSettings3D::setMotorConvexity(bool isMotorConvex) {
 * Get the motor type : convex or linear (from probe type used to acquire the image).
 * @return isMotorConvex Boolean to specify the motor type : true for convex, false for linear.
 */
-bool usImageSettings3D::isMotorConvex() const { return m_isMotorConvex; }
+bool usImage3DSettings::isMotorConvex() const { return m_isMotorConvex; }
 
 /**
 * Print probe settings information.
 */
-void usImageSettings3D::printProbeSettings() 
+void usImage3DSettings::printProbeSettings()
 {
   usImageSettings::printProbeSettings();
   std::cout << "motor radius : " << m_motorRadius << std::endl
