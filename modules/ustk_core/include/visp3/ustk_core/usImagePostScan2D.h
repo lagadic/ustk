@@ -53,7 +53,7 @@ template<class T>
 class usImagePostScan2D : public vpImage<T>, public usImagePostScanSettings {
 public:
   usImagePostScan2D();
-  usImagePostScan2D(unsigned int a_nubmer, unsigned int line_number, double probeRadius, double scanLinePitch, bool isProbeConvex, double height_resolution, double width_resolution);
+  usImagePostScan2D(unsigned int a_nubmer, unsigned int line_number, double probeRadius=0.0, double scanLinePitch=0.0, bool isProbeConvex=false, double height_resolution=0.0, double width_resolution=0.0);
   usImagePostScan2D(const usImagePostScan2D<T> &other);
   usImagePostScan2D(const vpImage<T> &other);
   usImagePostScan2D(const usImagePostScanSettings &other);

@@ -52,10 +52,8 @@ class usImagePreScan2D : public vpImage<T>, public usImagePreScanSettings {
 public:
   //default constructors
   usImagePreScan2D();
-  //image size initialisation constructors
-  usImagePreScan2D(unsigned int a_number, unsigned int LN);
   //All parameters initialisation constructors
-  usImagePreScan2D(unsigned int a_number, unsigned int line_number, double probeRadius, double scanLinePitch, bool isConvex, double axial_resolution);
+  usImagePreScan2D(unsigned int a_number, unsigned int line_number, double probeRadius=0.0, double scanLinePitch=0.0, bool isConvex=false, double axial_resolution=0.0);
   //usImagePreScan2D copy constructor
   usImagePreScan2D(const usImagePreScan2D &other);
   //vpImage copy constructors
@@ -90,17 +88,6 @@ public:
 */
 template<class T>
 usImagePreScan2D<T>::usImagePreScan2D() : vpImage<T>(), usImagePreScanSettings()
-{
-
-}
-
-/**
-* Initializing image size constructor. For double image type.
-* @param a_number A-samples in a line (corresponds to image height in px).
-* @param line_number Number of lines (corresponds to image width in px).
-*/
-template<class T>
-usImagePreScan2D<T>::usImagePreScan2D(unsigned int a_number, unsigned int line_number) : vpImage<T>(line_number, a_number), usImagePreScanSettings()
 {
 
 }

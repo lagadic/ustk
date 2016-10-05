@@ -54,9 +54,9 @@ class usImagePostScan3D : public usImage3D<T>, public usImagePostScan3DSettings 
 public:
   usImagePostScan3D();
   usImagePostScan3D(unsigned int AN, unsigned int LN, unsigned int FN,
-                    double probeRadius, double motorRadius, double scanLinePitch, double framePitch,
-                    bool isImageConvex, bool isMotorConvex,
-                    double heightResolution, double widthResolution);
+                    double probeRadius=0.0, double motorRadius=0.0, double scanLinePitch=0.0, double framePitch=0.0,
+                    bool isImageConvex=false, bool isMotorConvex=false,
+                    double heightResolution=0.0, double widthResolution=0.0);
   usImagePostScan3D(const usImagePostScan3D &other);
   usImagePostScan3D(const usImage3D<T> &otherImage, const usImagePostScan3DSettings &otherSettings);
   ~usImagePostScan3D();

@@ -54,10 +54,9 @@ class usImageRF3D : public usImage3D<T>, public usImagePreScan3DSettings {
 public:
 
   usImageRF3D();
-  usImageRF3D(unsigned int AN, unsigned int LN, unsigned int FN);
   usImageRF3D(unsigned int AN, unsigned int LN, unsigned int FN,
-              double probeRadius, double motorRadius, double scanLinePitch, double framePitch,
-              bool isImageConvex, bool isMotorConvex, double axial_resolution);
+              double probeRadius=0.0, double motorRadius=0.0, double scanLinePitch=0.0, double framePitch=0.0,
+              bool isImageConvex=false, bool isMotorConvex=false, double axial_resolution=0.0);
   usImageRF3D(usImage3D<T> image3D, usImagePreScan3DSettings imageSettings);
   usImageRF3D(usImage3D<T> image3D);
   usImageRF3D(usImagePreScan3DSettings imageSettings);
@@ -80,19 +79,6 @@ public:
 */
 template<class T>
 usImageRF3D<T>::usImageRF3D() : usImage3D<T>(), usImagePreScan3DSettings()
-{
-
-}
-
-/**
-* Initializing constructor for image dimentions.
-* @param[in] AN number of A-samples in a line.
-* @param[in] LN number of lines.
-* @param[in] FN number of frames.
-*/
-template<class T>
-usImageRF3D<T>::usImageRF3D(unsigned int AN, unsigned int LN, unsigned int FN)
-  : usImage3D<T>(AN, LN, FN), usImagePreScan3DSettings()
 {
 
 }
