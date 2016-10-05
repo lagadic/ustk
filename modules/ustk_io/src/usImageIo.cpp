@@ -129,7 +129,7 @@ void usImageIo::write(const usImagePreScan2D<unsigned char> & preScanImage, cons
       std::cout << "Error writing postScan image : " << std::endl;
       std::cout << e.what() << std::endl;
     }
-#elif
+#else
     throw(vpException(vpException::fatalError,"Requires xml2"));
 #endif
   }
@@ -167,7 +167,7 @@ void usImageIo::read(usImagePreScan2D<unsigned char> &preScanImage,const std::st
     preScanImage.setImageSettings(usImagePreScanSettings(xmlSettings.getImageSettings().getProbeRadius(),
       xmlSettings.getImageSettings().getScanLinePitch(), xmlSettings.getImageSettings().isProbeConvex(), xmlSettings.getAxialResolution()));
     preScanImage.setAxialResolution(xmlSettings.getAxialResolution());
-#elif
+#else
     throw(vpException(vpException::fatalEtrror, "Requires xml2 library"));
 #endif //VISP_HAVE_XML2
   }
@@ -257,7 +257,7 @@ void usImageIo::write(const usImagePostScan2D<unsigned char> &postScanImage, con
       std::cout << "Error writing postScan image : " << std::endl;
       std::cout << e.what() << std::endl;
     }
-#elif
+#else
     throw(vpException(vpException::fatalError, "Requires xml2 library"));
 #endif
   }
