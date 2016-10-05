@@ -39,23 +39,23 @@ void  usMetaHeaderParser::readMHDHeader(const std::string fileName)
   this->header.dim[1] = 1;
   this->header.dim[2] = 1;
   this->header.dim[3] = 1;
-  this->header.elementSpacing[0] = 1.0f;
-  this->header.elementSpacing[1] = 1.0f;
-  this->header.elementSpacing[2] = 1.0f;
-  this->header.elementSpacing[3] = 1.0f;
-  this->header.position[0] = 0.0f;
-  this->header.position[1] = 0.0f;
-  this->header.position[2] = 0.0f;
-  this->header.position[3] = 0.0f;
+  this->header.elementSpacing[0] = 1.0;
+  this->header.elementSpacing[1] = 1.0;
+  this->header.elementSpacing[2] = 1.0;
+  this->header.elementSpacing[3] = 1.0;
+  this->header.position[0] = 0.0;
+  this->header.position[1] = 0.0;
+  this->header.position[2] = 0.0;
+  this->header.position[3] = 0.0;
   this->header.msb = false;
   this->header.headerSize = 0;
   this->header.imageType = UNKNOWN;
   this->header.isProbeConvex = false;
   this->header.isMotorConvex = false;
-  this->header.probeRadius = 0.0f;
-  this->header.scanLinePitch = 0.0f;
-  this->header.motorRadius = 0.0f;
-  this->header.framePitch = 0.0f;
+  this->header.probeRadius = 0.0;
+  this->header.scanLinePitch = 0.0;
+  this->header.motorRadius = 0.0;
+  this->header.framePitch = 0.0;
 
   std::ifstream file;
   file.open(fileName.c_str(), std::ifstream::in);
@@ -275,27 +275,37 @@ void usMetaHeaderParser::parse()
   MHDfile << "ElementDataFile = " << header.rawFileName << "\n";
 
   if(header.imageType== RF_2D) {
+    MHDfile << "Comment = Availables ultrasound image types are RF_2D, RF_3D, PRESCAN_2D, PRESCAN_3D, POSTSCAN_2D and POSTSCAN_3D.\n";
     MHDfile << "UltrasoundImageType = " <<  "RF_2D" << "\n";
+    MHDfile << "Comment = The axial resolution is the distance in meters between two successives A-samples in a scanline.\n";
     MHDfile << "AxialResolution = " << this->m_axialResolution << "\n";
   }
   else if(header.imageType == RF_3D) {
+    MHDfile << "Comment = Availables ultrasound image types are RF_2D, RF_3D, PRESCAN_2D, PRESCAN_3D, POSTSCAN_2D and POSTSCAN_3D.\n";
     MHDfile << "UltrasoundImageType = " <<  "RF_3D" << "\n";
+    MHDfile << "Comment = The axial resolution is the distance in meters between two successives A-samples in a scanline.\n";
     MHDfile << "AxialResolution = " << this->m_axialResolution << "\n";
   }
   else if(header.imageType == PRESCAN_2D) {
+    MHDfile << "Comment = Availables ultrasound image types are RF_2D, RF_3D, PRESCAN_2D, PRESCAN_3D, POSTSCAN_2D and POSTSCAN_3D.\n";
     MHDfile << "UltrasoundImageType = " <<  "PRESCAN_2D" << "\n";
+    MHDfile << "Comment = The axial resolution is the distance in meters between two successives A-samples in a scanline.\n";
     MHDfile << "AxialResolution = " << this->m_axialResolution << "\n";
   }
   else if(header.imageType == PRESCAN_3D) {
+    MHDfile << "Comment = Availables ultrasound image types are RF_2D, RF_3D, PRESCAN_2D, PRESCAN_3D, POSTSCAN_2D and POSTSCAN_3D.\n";
     MHDfile << "UltrasoundImageType = " <<  "PRESCAN_3D" << "\n";
+    MHDfile << "Comment = The axial resolution is the distance in meters between two successives A-samples in a scanline.\n";
     MHDfile << "AxialResolution = " << this->m_axialResolution << "\n";
   }
   else if(header.imageType == POSTSCAN_2D) {
+    MHDfile << "Comment = Availables ultrasound image types are RF_2D, RF_3D, PRESCAN_2D, PRESCAN_3D, POSTSCAN_2D and POSTSCAN_3D.\n";
     MHDfile << "UltrasoundImageType = " <<  "POSTSCAN_2D" << "\n";
     MHDfile << "HeightResolution = " << this->m_heightResolution << "\n";
     MHDfile << "WidthResolution = " << this->m_widthResolution << "\n";
   }
   else if(header.imageType == POSTSCAN_3D) {
+    MHDfile << "Comment = Availables ultrasound image types are RF_2D, RF_3D, PRESCAN_2D, PRESCAN_3D, POSTSCAN_2D and POSTSCAN_3D.\n";
     MHDfile << "UltrasoundImageType = " <<  "POSTSCAN_3D" << "\n";
     MHDfile << "HeightResolution = " << this->m_heightResolution << "\n";
     MHDfile << "WidthResolution = " << this->m_widthResolution << "\n";
@@ -303,16 +313,22 @@ void usMetaHeaderParser::parse()
   else
     MHDfile << "UltrasoundImageType = " <<  "MET_UNKNOWN" << "\n";
 
+  MHDfile << "Comment = True if probe used was convex, false if linear. \n";
   MHDfile << "IsProbeConvex = " << header.isProbeConvex << "\n";
 
+  MHDfile << "Comment = True if 3d probe motor used was convex, false if linear. \n";
   MHDfile << "IsMotorConvex = " << header.isMotorConvex << "\n";
 
+  MHDfile << "Comment = Radius between the scanlines intersection and the first pixel of each line acquired. 0 if linear probe.\n";
   MHDfile << "ProbeRadius = " << header.probeRadius << "\n";
 
+  MHDfile << "Comment = Distance between 2 scanlines.\n";
   MHDfile << "ScanLinePitch = " << header.scanLinePitch << "\n";
 
+  MHDfile << "Comment = Only in 3d. Radius between the probe motor center and the first pixel of each line acquired. 0 if linear motor.\n";
   MHDfile << "MotorRadius = " << header.motorRadius << "\n";
 
+  MHDfile << "Comment = Only in 3d. Distance between 2 successive frames.\n";
   MHDfile << "FramePitch = " << header.framePitch << "\n";
 
   MHDfile.close();
