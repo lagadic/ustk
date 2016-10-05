@@ -83,18 +83,18 @@ void usImageIo::read(usImageRF3D<unsigned char> &imageRf3,const std::string file
 /**
 * Write 2D unsigned char prescan ultrasound image.
 * @param preScanImage The prescan image to write.
-* @param imageFilename The image file name to write, with extension.
+* @param imageFileName The image file name to write, with extension.
 */
-void usImageIo::writeXml(const usImagePreScan2D<unsigned char> &preScanImage, const std::string imageFilename) {
+void usImageIo::writeXml(const usImagePreScan2D<unsigned char> & preScanImage, const std::string imageFileName) {
   try {
     //writing image
-    vpImageIo::write(preScanImage, imageFilename);
+    vpImageIo::write(preScanImage, imageFileName);
     //writing xml
     usImageSettingsXmlParser xmlSettings;
     xmlSettings.setImagePreScanSettings(preScanImage);
-    xmlSettings.setImageFileName(imageFilename);
-    //get xml filename from imageFilename
-    std::vector<std::string> splittedFileName = vpIoTools::splitChain(imageFilename, ".");
+    xmlSettings.setImageFileName(imageFileName);
+    //get xml filename from imageFileName
+    std::vector<std::string> splittedFileName = vpIoTools::splitChain(imageFileName, ".");
     std::string xmlFileName = splittedFileName[0] + ".xml";
     xmlSettings.save(xmlFileName);
   }
@@ -247,7 +247,7 @@ void usImageIo::write(const usImagePostScan3D<unsigned char> &postScanImage, con
   header.dim[1] = postScanImage.getLineNumber();
   header.dim[2] = postScanImage.getFrameNumber();
   header.msb = false;
-  header.mhdFileName = filename + ".mhd";
+  header.MHDFileName = filename + ".mhd";
   header.rawFileName = filename + ".raw";
   header.isProbeConvex = postScanImage.isProbeConvex();
   header.isMotorConvex = postScanImage.isMotorConvex();
@@ -257,7 +257,7 @@ void usImageIo::write(const usImagePostScan3D<unsigned char> &postScanImage, con
   header.framePitch = postScanImage.getFramePitch();
   //writing in file
   usMetaHeaderParser mhdParser;
-  mhdParser.setMhdHeader(header);
+  mhdParser.setMHDHeader(header);
   mhdParser.setHeightResolution(postScanImage.getHeightResolution());
   mhdParser.setWidthResolution(postScanImage.getWidthResolution());
   mhdParser.parse();
@@ -277,7 +277,7 @@ void usImageIo::read(usImagePostScan3D<unsigned char> &postScanImage,std::string
   //header parsing
   usMetaHeaderParser mhdParser;
   mhdParser.read(mhdFileName);
-  if (mhdParser.getImageType() != usMetaHeaderParser::POSTSCAN_3D) {
+  if (mhdParser.getImageType() != usMetaHeaderParser::POSTSCAN_3D && mhdParser.getImageType() != usMetaHeaderParser::NOT_SET) {
     throw(vpException(vpException::badValue,"Reading a non postscan3d image!"));
   }
   if (mhdParser.getElementType() != usMetaHeaderParser::MET_UCHAR) {
@@ -286,7 +286,7 @@ void usImageIo::read(usImagePostScan3D<unsigned char> &postScanImage,std::string
   //resizing image in memory
   postScanImage.resize(mhdParser.getImageSizeX(),mhdParser.getImageSizeY(),mhdParser.getImageSizeZ());
 
-  usMetaHeaderParser::MHDHeader mhdHeader = mhdParser.getMhdHeader();
+  usMetaHeaderParser::MHDHeader mhdHeader = mhdParser.getMHDHeader();
 
   usImagePostScan3DSettings settings;
   settings.setProbeRadius(mhdHeader.probeRadius);

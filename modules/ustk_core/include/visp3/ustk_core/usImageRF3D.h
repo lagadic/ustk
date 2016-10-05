@@ -43,21 +43,47 @@
 
 #include <visp3/ustk_core/usImagePreScan3DSettings.h>
 
-/**
-* @class usImageRF3D
-* @brief 3D RF ultrasound image.
-*
-* This class represents a 3D ultrasound RF frame.
+/*!
+ @class usImageRF3D
+ @brief 3D RF ultrasound image.
+ This class represents a 3D ultrasound RF volume.
+
+  <h3>Example</h3>
+  The following example shows how to build a RF3D ultrasound image from a usImage3D, and from acquisiton settings.
+
+  \code
+    #include <visp3/ustk_core/usImageRF3D.h>
+
+    int main()
+    {
+      // Update settings
+      unsigned int AN = 200;
+      unsigned int LN = 200;
+      unsigned int FN = 30;
+      double probeRadius = 0.0006;
+      double scanLinePitch = 0.0007;
+      bool isProbeConvex = true;
+      double motorRadius = 0.004;
+      double framePitch = 0.06;
+      bool isMotorConvex = true;
+      double axialResolution = 0.001;
+      usImagePreScan3DSettings  imageSettings(probeRadius, scanLinePitch, isProbeConvex, motorRadius, framePitch, isMotorConvex, axialResolution);
+      usImage3D<unsigned char> I(AN, LN, FN);
+      usImageRF3D<unsigned char> rf3d;
+      rf3d.setData(I);
+      rf3d.setImageSettings(imageSettings);
+    }
+  \endcode
+
 */
 template<class T>
 class usImageRF3D : public usImage3D<T>, public usImagePreScan3DSettings {
 public:
 
   usImageRF3D();
-  usImageRF3D(unsigned int AN, unsigned int LN, unsigned int FN);
   usImageRF3D(unsigned int AN, unsigned int LN, unsigned int FN,
-              double probeRadius, double motorRadius, double scanLinePitch, double framePitch,
-              bool isImageConvex, bool isMotorConvex, double axial_resolution);
+              double probeRadius=0.0, double motorRadius=0.0, double scanLinePitch=0.0, double framePitch=0.0,
+              bool isImageConvex=false, bool isMotorConvex=false, double axial_resolution=0.0);
   usImageRF3D(usImage3D<T> image3D, usImagePreScan3DSettings imageSettings);
   usImageRF3D(usImage3D<T> image3D);
   usImageRF3D(usImagePreScan3DSettings imageSettings);
@@ -85,19 +111,6 @@ usImageRF3D<T>::usImageRF3D() : usImage3D<T>(), usImagePreScan3DSettings()
 }
 
 /**
-* Initializing constructor for image dimentions.
-* @param[in] AN number of A-samples in a line.
-* @param[in] LN number of lines.
-* @param[in] FN number of frames.
-*/
-template<class T>
-usImageRF3D<T>::usImageRF3D(unsigned int AN, unsigned int LN, unsigned int FN)
-  : usImage3D<T>(AN, LN, FN), usImagePreScan3DSettings()
-{
-
-}
-
-/**
 * Full initializing constructor.
 * @param[in] AN number of A-samples in a line.
 * @param[in] LN number of lines.
@@ -108,6 +121,7 @@ usImageRF3D<T>::usImageRF3D(unsigned int AN, unsigned int LN, unsigned int FN)
 * @param[in] framePitch angle(rad) / distance(m) between 2 lines of the ultrasound probe used to acquire the RF image.
 * @param[in] isProbeConvex Boolean to specyfy if the image was acquired by a convex probe(true) or by a linear probe (false).
 * @param[in] isMotorConvex Boolean to specyfy if the image was acquired by a rotating  motor(true) or by a linear motor (false).
+* @param[in] axial_resolution The distance (in meters) between 2 successive pixels acquired along a scanline.
 */
 template<class T>
 usImageRF3D<T>::usImageRF3D(unsigned int AN, unsigned int LN, unsigned int FN, double probeRadius, double motorRadius, double scanLinePitch, double framePitch,

@@ -44,16 +44,42 @@
 #include <visp3/ustk_core/usImagePostScanSettings.h>
 
 /**
- * @class usImagePostScan2D
- * @brief 2D postscan ultrasound image.
- *
- * This class represents a 2D ultrasound postscan frame.
+ @class usImagePostScan2D
+ @brief 2D postscan ultrasound image.
+
+ This class represents a 2D ultrasound postscan frame.
+
+   <h3>Example</h3>
+  The following example shows how to build a 2D postscan ultrasound image from a vpImage, and from acquisiton settings.
+
+  \code
+
+
+    #include <visp3/ustk_core/usImagePostScan2D.h>
+
+    int main()
+    {
+      // Update settings
+      unsigned int AN = 200;
+      unsigned int LN = 200;
+      double probeRadius = 0.045;
+      double scanLinePitch = 0.0012;
+      bool isProbeConvex = true;
+      double heightResolution = 0.002;
+      double widthResolution = 0.004;
+      usImagePostScanSettings   imageSettings(probeRadius, scanLinePitch, isProbeConvex, heightResolution, widthResolution);
+      vpImage<unsigned char> I(AN, LN);
+      usImagePostScan2D<unsigned char> postScan2d;
+      postScan2d.setData(I);
+      postScan2d.setImageSettings(imageSettings);
+    }
+  \endcode
  */
 template<class T>
 class usImagePostScan2D : public vpImage<T>, public usImagePostScanSettings {
 public:
   usImagePostScan2D();
-  usImagePostScan2D(unsigned int a_nubmer, unsigned int line_number, double probeRadius, double scanLinePitch, bool isProbeConvex, double height_resolution, double width_resolution);
+  usImagePostScan2D(unsigned int a_nubmer, unsigned int line_number, double probeRadius=0.0, double scanLinePitch=0.0, bool isProbeConvex=false, double height_resolution=0.0, double width_resolution=0.0);
   usImagePostScan2D(const usImagePostScan2D<T> &other);
   usImagePostScan2D(const vpImage<T> &other);
   usImagePostScan2D(const usImagePostScanSettings &other);
@@ -181,8 +207,9 @@ void usImagePostScan2D<T>::setImageSettings(const usImagePostScanSettings &setti
   setWidthResolution(settings.getWidthResolution());
 }
 
-/**Setter for image.
-* @param settings Settings you want to copy.
+/**
+* Setter for image.
+* @param image Settings you want to copy.
 */
 template<class T>
 void usImagePostScan2D<T>::setData(const vpImage<T> &image)

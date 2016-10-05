@@ -30,12 +30,12 @@
  *****************************************************************************/
 
 /**
- * @file usImageSettings3D.h
+ * @file usImage3DSettings.h
  * @brief Generic ultrasound 3D image settings.
  */
 
-#ifndef US_IMAGE_SETTINGS_3D_H
-#define US_IMAGE_SETTINGS_3D_H
+#ifndef US_IMAGE_3D_SETTINGS_H
+#define US_IMAGE_3D_SETTINGS_H
 
 //std includes
 #include <iostream>
@@ -47,26 +47,26 @@
 #include <visp3/ustk_core/usImageSettings.h>
 
 /**
- * @class usImageSettings3D
+ * @class usImage3DSettings
  * @brief Generic class for 3D ultrasound data : storage of probe settings.
  *
  * This class represents a ultrasound image settings.
  */
-class VISP_EXPORT usImageSettings3D : public usImageSettings {
+class VISP_EXPORT usImage3DSettings : public usImageSettings {
 public:
-  usImageSettings3D();
-  usImageSettings3D(double probeRadius, double motorRadius, double scanLinePitch, double framePitch, bool isImageConvex, bool isMotorConvex);
-  usImageSettings3D(const usImageSettings3D &other);
-  virtual ~usImageSettings3D();
+  usImage3DSettings();
+  usImage3DSettings(double probeRadius, double motorRadius, double scanLinePitch, double framePitch, bool isImageConvex, bool isMotorConvex);
+  usImage3DSettings(const usImage3DSettings &other);
+  virtual ~usImage3DSettings();
 
-  /** @name Inherited functionalities from usImageSettings3D */
+  /** @name Inherited functionalities from usImage3DSettings */
   //@{
   double getFramePitch() const;
   double getMotorRadius() const;
   bool isMotorConvex() const;
 
-  usImageSettings3D& operator=(const usImageSettings3D& other);
-  bool operator==(const usImageSettings3D& other);
+  usImage3DSettings& operator=(const usImage3DSettings& other);
+  bool operator==(const usImage3DSettings& other);
   
   virtual void printProbeSettings();
 
@@ -84,4 +84,4 @@ private:
   bool m_isMotorConvex;
 };
 
-#endif // US_IMAGE_SETTINGS_3D_H
+#endif // US_IMAGE_3D_SETTINGS_H

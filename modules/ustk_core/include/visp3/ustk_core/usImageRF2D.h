@@ -43,12 +43,35 @@
 
 #include <visp3/ustk_core/usImagePreScanSettings.h>
 
-/**
- * @class usImageRF2D
- * @brief 2D RF ultrasound image.
- *
- * This class represents a 2D ultrasound RF image. This image is nothing more than a vpImage that
- * contains RF data and additional settings that give information about the acquisition process.
+/*!
+ @class usImageRF2D
+ @brief 2D RF ultrasound image.
+
+ This class represents a 2D ultrasound RF image. This image is nothing more than a vpImage that
+  contains RF data and additional settings that give information about the acquisition process.
+
+  <h3>Example</h3>
+  The following example shows how to build a RF2D ultrasound image from a vpImage, and from acquisiton settings.
+
+  \code
+    #include <visp3/ustk_core/usImageRF2D.h>
+
+    int main()
+    {
+      // Update settings
+      unsigned int AN = 200;
+      unsigned int LN = 200;
+      double probeRadius = 0.007;
+      double scanLinePitch = 0.0006;
+      bool isProbeConvex = true;
+      double axialResolution = 0.002;
+      usImagePreScanSettings imageSettings(probeRadius, scanLinePitch, isProbeConvex, axialResolution);
+      vpImage<unsigned char> I(AN, LN);
+      usImageRF2D<unsigned char> rf2d;
+      rf2d.setData(I);
+      rf2d.setImageSettings(imageSettings);
+    }
+  \endcode
  */
 template<class T>
 class usImageRF2D : public vpImage<T>, public usImagePreScanSettings {
@@ -166,7 +189,7 @@ void usImageRF2D<T>::setData(const vpImage<T> &image)
 
 /**
 * Setter for the image settings.
-* @param image The image to set.
+* @param settings The new settings.
 */
 template<class T>
 void usImageRF2D<T>::setImageSettings(const usImagePreScanSettings &settings)

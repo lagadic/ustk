@@ -31,6 +31,7 @@ public:
 
   typedef enum {
     UNKNOWN = -1,
+    NOT_SET,
     RF_2D,
     RF_3D,
     PRESCAN_2D,
@@ -41,7 +42,7 @@ public:
 
   struct MHDHeader
   {
-    std::string mhdFileName;
+    std::string MHDFileName;
     std::string rawFileName;
     unsigned int  numberOfDimensions;
     int  numberOfChannels;
@@ -62,7 +63,7 @@ public:
 
   //Constructor
   usMetaHeaderParser();
-  usMetaHeaderParser(std::string mhdFilename);
+  usMetaHeaderParser(std::string MHDFilename);
   //Desctructor
   virtual ~usMetaHeaderParser();
 
@@ -70,15 +71,15 @@ public:
   double getAxialResolution() const { return m_axialResolution; }
   double getHeightResolution() const { return m_heightResolution; }
   usImageSettings getImageSettings() const {return m_imageSettings;}
-  usImageSettings3D getImageSettings3D() const {return m_imageSettings3D;}
-  ImageType getImageType() const { return mhdHeader.imageType; }
-  std::string getRawFileName() const {return mhdHeader.rawFileName;}
+  usImage3DSettings getImage3DSettings() const {return m_image3DSettings;}
+  ImageType getImageType() const { return header.imageType; }
+  std::string getRawFileName() const {return header.rawFileName;}
   double getWidthResolution() const { return m_widthResolution; }
-  ElementType getElementType() const { return mhdHeader.elementType; }
-  unsigned int getImageSizeX() const { return mhdHeader.dim[0]; }
-  unsigned int getImageSizeY() const { return mhdHeader.dim[1]; }
-  unsigned int getImageSizeZ() const { return mhdHeader.dim[2]; }
-  MHDHeader getMhdHeader() const { return mhdHeader; }
+  ElementType getElementType() const { return header.elementType; }
+  unsigned int getImageSizeX() const { return header.dim[0]; }
+  unsigned int getImageSizeY() const { return header.dim[1]; }
+  unsigned int getImageSizeZ() const { return header.dim[2]; }
+  MHDHeader getMHDHeader() const { return header; }
 
   //comparison
   bool operator ==(usMetaHeaderParser const& other);
@@ -86,30 +87,26 @@ public:
   void parse();
   //Read/write operations
   void read(const std::string& filename);
-  void readMHDHeader(const char * fileName);
   void readMHDHeader(const std::string fileName);
 
   //Data setters
   void setImageSettings(const usImageSettings imageSettings);
-  void setImageSettings3D(const usImageSettings3D imageSettings3D);
+  void setImage3DSettings(const usImage3DSettings image3DSettings);
   void setImageFileName(const std::string imageFileName);
   void setAxialResolution(const double axialresolution);
   void setHeightResolution(const double heightResolution);
   void setWidthResolution(const double widthResolution);
   void setRawFileName(const std::string rawFileName);
-  void setMhdHeader(MHDHeader header);
-
-  void writeMHDHeader(const char * fileName);
-  void writeMHDHeader(const std::string fileName);
+  void setMHDHeader(MHDHeader header);
 
 private :
   usImageSettings m_imageSettings;
-  usImageSettings3D m_imageSettings3D;
+  usImage3DSettings m_image3DSettings;
   double m_axialResolution;
   double m_heightResolution;
   double m_widthResolution;
 
-  MHDHeader mhdHeader;
+  MHDHeader header;
   std::map<std::string, int> imageTypeMap;
   std::map<std::string, int> elementTypeMap;
   std::map<int ,std::string> imageTypeReverseMap;

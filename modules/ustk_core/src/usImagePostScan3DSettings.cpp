@@ -41,7 +41,7 @@
 /**
 * Default constructor, all parameters set de default values.
 */
-usImagePostScan3DSettings::usImagePostScan3DSettings() : usImageSettings3D(), m_widthResolution(0.0), m_heightResolution(0.0)
+usImagePostScan3DSettings::usImagePostScan3DSettings() : usImage3DSettings(), m_widthResolution(0.0), m_heightResolution(0.0)
 {
 
 }
@@ -51,7 +51,7 @@ usImagePostScan3DSettings::usImagePostScan3DSettings() : usImageSettings3D(), m_
 */
 usImagePostScan3DSettings::usImagePostScan3DSettings(double probeRadius, double scanLinePitch, bool isProbeConvex,
   double motorRadius, double framePitch, bool isMotorConvex,
-  double height_resolution, double width_resolution) : usImageSettings3D(probeRadius,motorRadius,scanLinePitch,framePitch,isProbeConvex,isMotorConvex), 
+  double height_resolution, double width_resolution) : usImage3DSettings(probeRadius,motorRadius,scanLinePitch,framePitch,isProbeConvex,isMotorConvex),
                                                        m_widthResolution(width_resolution), m_heightResolution(height_resolution)
 {
 
@@ -68,7 +68,7 @@ usImagePostScan3DSettings::~usImagePostScan3DSettings() {}
 */
 usImagePostScan3DSettings& usImagePostScan3DSettings::operator=(const usImagePostScan3DSettings& other)
 {
-  usImageSettings3D::operator=(other);
+  usImage3DSettings::operator=(other);
   m_widthResolution = other.getWidthResolution();
   m_heightResolution = other.getHeightResolution();
 
@@ -81,7 +81,7 @@ usImagePostScan3DSettings& usImagePostScan3DSettings::operator=(const usImagePos
 */
 bool usImagePostScan3DSettings::operator==(const usImagePostScan3DSettings& other)
 {
-  return(usImageSettings3D::operator==(other) &&
+  return(usImage3DSettings::operator==(other) &&
     m_widthResolution == other.getWidthResolution() &&
     m_heightResolution == other.getHeightResolution());
 }

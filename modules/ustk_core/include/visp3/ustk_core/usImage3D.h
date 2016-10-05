@@ -137,9 +137,9 @@ public:
 
   /**
   * initiation of the image.
-  * @param h volume height.
-  * @param w volume width.
-  * @param d volume depth.
+  * @param a_number Number of A samples in a scanline.
+  * @param line_number Number of scanlines in a plane.
+  * @param frame_number Number of frames in the volume.
   * @param spacingX Element spacing in x axis.
   * @param spacingY Element spacing in x axis.
   * @param spacingZ Element spacing in x axis.
@@ -205,55 +205,55 @@ public:
 
   /**
   * Get the element spacing along the x-axis.
-  * @return The element spacing along the x-axis
+  * @return The element spacing along the x-axis.
   */
   float getElementSpacingX() const { return m_elementSpacingX; }
 
   /**
   * Get the element spacing along the y-axis.
-  * @return The element spacing along the y-axis
+  * @return The element spacing along the y-axis.
   */
   float getElementSpacingY() const { return m_elementSpacingY; }
 
   /**
   * Get the element spacing along the z-axis.
-  * @return The element spacing along the z-axis
+  * @return The element spacing along the z-axis.
   */
   float getElementSpacingZ() const { return m_elementSpacingZ; }
 
   /**
   * Set the element spacing along the x-axis.
-  * @param elementSpacingX The element spacing along the x-axis
+  * @param elementSpacingX The element spacing along the x-axis.
   */
   void setElementSpacingX(float elementSpacingX) { m_elementSpacingX = elementSpacingX; }
 
   /**
   * Set the element spacing along the y-axis.
-  * @param elementSpacingY The element spacing along the y-axis
+  * @param elementSpacingY The element spacing along the y-axis.
   */
   void setElementSpacingY(float elementSpacingY) { m_elementSpacingY = elementSpacingY; }
 
   /**
   * Set the element spacing along the z-axis.
-  * @param elementSpacingZ The element spacing along the z-axis
+  * @param elementSpacingZ The element spacing along the z-axis.
   */
   void setElementSpacingZ(float elementSpacingZ) { m_elementSpacingZ = elementSpacingZ; }
 
   /**
   * Get the pointer to the data container.
-  * @return The pointer to the data container
+  * @return The pointer to the data container.
   */
   Type* getData() { return bitmap; }
 
   /**
   * Get the pointer to the const data container.
-  * @return The pointer to the const data container
+  * @return The pointer to the const data container.
   */
   Type* getConstData() const { return bitmap; }
 
   /**
   * Set the data container.
-  * @param data The data container
+  * @param data The data container.
   * @param numberOfVloxels The number of voxels in the image.
   */
   void setData(Type* data, int numberOfVloxels);

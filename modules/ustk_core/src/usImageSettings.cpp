@@ -72,7 +72,7 @@ usImageSettings::~usImageSettings() {}
 
 /**
 * Assignment operator.
-* @param[in] other usImageSettings you want to copy.
+* @param other usImageSettings you want to copy.
 */
 usImageSettings& usImageSettings::operator=(const usImageSettings& other)
 {
@@ -97,7 +97,7 @@ bool usImageSettings::operator==(usImageSettings const& other)
 
 /**
 * Set the probe radius (m).
-* @param[in] probeRadius Probe radius in meters. The probe radius is set to 0 in case of linear
+* @param probeRadius Probe radius in meters. The probe radius is set to 0 in case of linear
 * probe type (see isProbeConvex() and setProbeConvex(bool) for more informations).
 */
 void usImageSettings::setProbeRadius(const double probeRadius) { m_probeRadius = probeRadius; }
@@ -110,7 +110,7 @@ double usImageSettings::getProbeRadius() const { return m_probeRadius; }
 
 /**
 * Set the scan line pitch.
-* @param[in] scanLinePitch If the probe is convex, this parameters refers to the angle in radians between
+* @param scanLinePitch If the probe is convex, this parameters refers to the angle in radians between
 * two successive lines acquired by the probe. If the probe is linear, this parameters refers to the distance
 * in meters between two successive lines acquired by the probe.
 */
@@ -129,7 +129,7 @@ double usImageSettings::getScanLinePitch() const { return m_scanLinePitch; }
 
 /**
 * Set the probe type.
-* @param[in] isConvex True if the probe is convex, false if the probe is linear.
+* @param[in] isProbeConvex True if the probe is convex, false if the probe is linear.
 * Sets the probe radius to 0 in case of a linear probe.
 */
 void usImageSettings::setProbeConvexity(const bool isProbeConvex) {

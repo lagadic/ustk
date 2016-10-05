@@ -42,20 +42,41 @@
 #include <visp3/ustk_core/usImagePreScanSettings.h>
 
 /**
- * @class usImagePreScan2D
- * @brief 2D prescan ultrasound image.
- *
- * This class represents a 2D ultrasound prescan frame.
+ @class usImagePreScan2D
+ @brief 2D prescan ultrasound image.
+
+  <h3>Example</h3>
+  The following example shows how to build a 2D prescan ultrasound image from a usImage3D, and from acquisiton settings.
+
+  \code
+    #include <visp3/ustk_core/usImagePreScan2D.h>
+
+    int main()
+    {
+      // Update settings
+      unsigned int AN = 200;
+      unsigned int LN = 200;
+      double probeRadius = 0.06;
+      double scanLinePitch = 0.04;
+      bool isProbeConvex = true;
+      double axialResolution = 0.005;
+      usImagePreScanSettings imageSettings(probeRadius, scanLinePitch, isProbeConvex, axialResolution);
+      vpImage<unsigned char> I(AN, LN);
+      usImagePreScan2D<unsigned char> preScan2d;
+      preScan2d.setData(I);
+      preScan2d.setImageSettings(imageSettings);
+    }
+  \endcode
+
+ This class represents a 2D ultrasound prescan frame.
  */
 template<class T>
 class usImagePreScan2D : public vpImage<T>, public usImagePreScanSettings {
 public:
   //default constructors
   usImagePreScan2D();
-  //image size initialisation constructors
-  usImagePreScan2D(unsigned int a_number, unsigned int LN);
   //All parameters initialisation constructors
-  usImagePreScan2D(unsigned int a_number, unsigned int line_number, double probeRadius, double scanLinePitch, bool isConvex, double axial_resolution);
+  usImagePreScan2D(unsigned int a_number, unsigned int line_number, double probeRadius=0.0, double scanLinePitch=0.0, bool isConvex=false, double axial_resolution=0.0);
   //usImagePreScan2D copy constructor
   usImagePreScan2D(const usImagePreScan2D &other);
   //vpImage copy constructors
@@ -90,17 +111,6 @@ public:
 */
 template<class T>
 usImagePreScan2D<T>::usImagePreScan2D() : vpImage<T>(), usImagePreScanSettings()
-{
-
-}
-
-/**
-* Initializing image size constructor. For double image type.
-* @param a_number A-samples in a line (corresponds to image height in px).
-* @param line_number Number of lines (corresponds to image width in px).
-*/
-template<class T>
-usImagePreScan2D<T>::usImagePreScan2D(unsigned int a_number, unsigned int line_number) : vpImage<T>(line_number, a_number), usImagePreScanSettings()
 {
 
 }

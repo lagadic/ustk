@@ -44,19 +44,48 @@
 #include <visp3/ustk_core/usImagePostScan3DSettings.h>
 
 /**
-* @class usImagePostScan3D
-* @brief 3D postscan ultrasound image.
-*
-* This class represents a 3D ultrasound postscan frame.
+ @class usImagePostScan3D
+ @brief This class represents a 3D ultrasound postscan volume.
+
+  <h3>Example</h3>
+  The following example shows how to build a 3D postscan ultrasound image from a usImage3D, and from acquisiton settings.
+
+  \code
+
+
+    #include <visp3/ustk_core/usImagePostScan3D.h>
+
+    int main()
+    {
+      // Update settings
+      unsigned int AN = 200;
+      unsigned int LN = 200;
+      unsigned int FN = 20;
+      double probeRadius = 0.045;
+      double scanLinePitch = 0.01;
+      bool isProbeConvex = true;
+      double motorRadius = 0.07;
+      double framePitch = 0.05;
+      bool isMotorConvex = true;
+      double heightResolution = 0.004;
+      double widthResolution = 0.007;
+      usImagePostScan3DSettings   imageSettings(probeRadius, scanLinePitch, isProbeConvex, motorRadius, framePitch, isMotorConvex, heightResolution, widthResolution);
+      usImage3D<unsigned char> I(AN, LN, FN);
+      usImagePostScan3D<unsigned char> postScan3d;
+      postScan3d.setData(I);
+      postScan3d.setImageSettings(imageSettings);
+    }
+  \endcode
+
 */
 template<class T>
 class usImagePostScan3D : public usImage3D<T>, public usImagePostScan3DSettings {
 public:
   usImagePostScan3D();
   usImagePostScan3D(unsigned int AN, unsigned int LN, unsigned int FN,
-                    double probeRadius, double motorRadius, double scanLinePitch, double framePitch,
-                    bool isImageConvex, bool isMotorConvex,
-                    double heightResolution, double widthResolution);
+                    double probeRadius=0.0, double motorRadius=0.0, double scanLinePitch=0.0, double framePitch=0.0,
+                    bool isImageConvex=false, bool isMotorConvex=false,
+                    double heightResolution=0.0, double widthResolution=0.0);
   usImagePostScan3D(const usImagePostScan3D &other);
   usImagePostScan3D(const usImage3D<T> &otherImage, const usImagePostScan3DSettings &otherSettings);
   ~usImagePostScan3D();
