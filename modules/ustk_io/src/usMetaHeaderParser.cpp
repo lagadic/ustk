@@ -49,7 +49,7 @@ void  usMetaHeaderParser::readMHDHeader(const std::string fileName)
   this->header.position[3] = 0.0;
   this->header.msb = false;
   this->header.headerSize = 0;
-  this->header.imageType = UNKNOWN;
+  this->header.imageType = NOT_SET;
   this->header.isProbeConvex = false;
   this->header.isMotorConvex = false;
   this->header.probeRadius = 0.0;

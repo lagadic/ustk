@@ -31,6 +31,7 @@ public:
 
   typedef enum {
     UNKNOWN = -1,
+    NOT_SET,
     RF_2D,
     RF_3D,
     PRESCAN_2D,

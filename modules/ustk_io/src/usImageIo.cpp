@@ -277,7 +277,7 @@ void usImageIo::read(usImagePostScan3D<unsigned char> &postScanImage,std::string
   //header parsing
   usMetaHeaderParser mhdParser;
   mhdParser.read(mhdFileName);
-  if (mhdParser.getImageType() != usMetaHeaderParser::POSTSCAN_3D) {
+  if (mhdParser.getImageType() != usMetaHeaderParser::POSTSCAN_3D && mhdParser.getImageType() != usMetaHeaderParser::NOT_SET) {
     throw(vpException(vpException::badValue,"Reading a non postscan3d image!"));
   }
   if (mhdParser.getElementType() != usMetaHeaderParser::MET_UCHAR) {
