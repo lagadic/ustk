@@ -80,7 +80,7 @@ public:
   bool operator==(const usImagePreScan3D<T> &other);
 
   void setData(const usImage3D<T> &image);
-  void setImageSettings(const usImagePreScan3DSettings settings);
+  void setImageSettings(const usImagePreScan3DSettings &settings);
 };
 
 /**
@@ -232,7 +232,7 @@ void usImagePreScan3D<T>::setData(const usImage3D<T> &image)
 * @param settings The new image settings.
 */
 template<class T>
-void setImageSettings(const usImagePreScan3DSettings settings)
+void setImageSettings(const usImagePreScan3DSettings &settings)
 {
   usImagePreScan3DSettings::operator=(settings);
 }
