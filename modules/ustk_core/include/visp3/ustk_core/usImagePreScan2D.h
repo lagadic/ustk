@@ -82,6 +82,7 @@ public:
   bool operator==(const usImagePreScan2D<T> &other);
 
   void setData(const vpImage<T> image);
+  void setImageSettings(const usImagePreScanSettings settings);
 };
 
 /**
@@ -180,9 +181,6 @@ usImagePreScan2D<T>& usImagePreScan2D<T>::operator=(const usImagePreScan2D<T> &o
 
   //from usImagePreScanSettings
   usImagePreScanSettings::operator=(other);
-
-  //from this class
-  m_axialResolution = other.getAxialResolution();
 }
 
 /**
@@ -192,8 +190,7 @@ template<class T>
 bool usImagePreScan2D<T>::operator==(const usImagePreScan2D<T> &other)
 {
   return(vpImage<T>::operator== (other) &&
-         usImagePreScanSettings::operator ==(other) &&
-         getAxialResolution() == other.getAxialResolution());
+         usImagePreScanSettings::operator ==(other));
 }
 
 /**
@@ -229,5 +226,15 @@ template<class T>
 void usImagePreScan2D<T>::setData(const vpImage<T> image)
 {
   vpImage<T>::operator=(image);
+}
+
+/**
+* Setter for the image settings.
+* @param settings The new image settings.
+*/
+template<class T>
+void usImagePreScan2D<T>::setImageSettings(const usImagePreScanSettings settings)
+{
+  usImagePreScanSettings::operator=(settings);
 }
 #endif // US_IMAGE_PRESCAN_2D_H

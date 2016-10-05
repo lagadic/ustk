@@ -66,7 +66,7 @@ public:
   bool operator ==(const usImagePostScan3D<T> &other);
 
   void setData(const usImage3D<T> &image3D);
-  void setSettings(const usImagePostScan3DSettings &postScan3DSettings);
+  void setImageSettings(const usImagePostScan3DSettings &postScan3DSettings);
 };
 
 
@@ -139,10 +139,6 @@ usImagePostScan3D<T> & usImagePostScan3D<T>::operator =(const usImagePostScan3D<
   //from usSettings3D
   usImagePostScan3DSettings::operator =(other);
 
-  //from this class
-  m_widthResolution = other.getWidthResolution();
-  m_heightResolution = other.getHeightResolution();
-
   return *this;
 }
 
@@ -153,9 +149,7 @@ template<class T>
 bool usImagePostScan3D<T>::operator == (usImagePostScan3D<T> const& other)
 {
   return(usImage3D<T>::operator ==(other) &&
-         usImagePostScan3DSettings::operator ==(other) &&
-         getWidthResolution() == other.getWidthResolution() &&
-         getHeightResolution() == other.getHeightResolution());
+         usImagePostScan3DSettings::operator ==(other));
 }
 
 /**
@@ -173,7 +167,7 @@ void usImagePostScan3D<T>::setData(const usImage3D<T> &image3D)
 * @param postScan3DSettings Image settings you want to set.
 */
 template<class T>
-void  usImagePostScan3D<T>::setSettings(const usImagePostScan3DSettings &postScan3DSettings)
+void  usImagePostScan3D<T>::setImageSettings(const usImagePostScan3DSettings &postScan3DSettings)
 {
   usImagePostScan3DSettings::operator=(postScan3DSettings);
 }

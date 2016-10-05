@@ -70,9 +70,6 @@ public:
   //destructor
   ~usImagePreScan3D();
 
-  //copying from usImage3D
-  void copyFrom(const usImage3D<T> &I);
-
   unsigned int getAN() const;
   unsigned int getFN() const;
   unsigned int getLN() const;
@@ -83,6 +80,7 @@ public:
   bool operator==(const usImagePreScan3D<T> &other);
 
   void setData(const usImage3D<T> &image);
+  void setImageSettings(const usImagePreScan3DSettings settings);
 };
 
 /**
@@ -186,9 +184,6 @@ usImagePreScan3D<T>& usImagePreScan3D<T>::operator=(const usImagePreScan3D<T> &o
 
   //from usImageSettings
   usImagePreScan3DSettings::operator=(other);
-
-  //from this class
-  m_axialResolution = other.getAxialResolution();
 }
 
 /**
@@ -198,19 +193,7 @@ template<class T>
 bool usImagePreScan3D<T>::operator==(const usImagePreScan3D<T> &other)
 {
   return(usImage3D<T>::operator== (other) &&
-         usImagePreScan3DSettings::operator ==(other) &&
-         m_axialResolution == other.getAxialResolution());
-}
-
-/**
-* Copy from usImage3D. From double image type.
-* @param I usImage3D<double> to copy.
-*/
-template<class T>
-void usImagePreScan3D<T>::copyFrom(const usImage3D<T> &I)
-{
-  //resize(I.getHeight(), I.getWidth());B
-  //memcpy(bitmap, I.bitmap, I.getSize() * sizeof(double));
+         usImagePreScan3DSettings::operator ==(other));
 }
 
 /**
@@ -242,5 +225,15 @@ template<class T>
 void usImagePreScan3D<T>::setData(const usImage3D<T> &image)
 {
   usImage3D<T>::operator=(image);
+}
+
+/**
+* Setter for the image settings.
+* @param settings The new image settings.
+*/
+template<class T>
+void setImageSettings(const usImagePreScan3DSettings settings)
+{
+  usImagePreScan3DSettings::operator=(other);
 }
 #endif // US_IMAGE_PRESCAN_3D_H

@@ -53,7 +53,7 @@ template<class T>
 class usImagePostScan2D : public vpImage<T>, public usImagePostScanSettings {
 public:
   usImagePostScan2D();
-  usImagePostScan2D(unsigned int a_nubmer, unsigned int line_number, double probeRadius, double scanLinePitch, bool isProbeConvex, double axial_resolution);
+  usImagePostScan2D(unsigned int a_nubmer, unsigned int line_number, double probeRadius, double scanLinePitch, bool isProbeConvex, double height_resolution, double width_resolution);
   usImagePostScan2D(const usImagePostScan2D<T> &other);
   usImagePostScan2D(const vpImage<T> &other);
   usImagePostScan2D(const usImagePostScanSettings &other);
@@ -84,11 +84,12 @@ usImagePostScan2D<T>::usImagePostScan2D() : vpImage<T>(), usImagePostScanSetting
 * @param probeRadius radius of the ultrasound probe used to acquire the RF image.
 * @param scanLinePitch Angle(rad) / Distance(m) between 2 lines of the ultrasound probe used to acquire the RF image. Angle if isConvex is true, distance if it's false.
 * @param isProbeConvex Boolean to specify if the probe used was convex(true) or linear(false).
-* @param axial_resolution Axial resolution of the image.
+* @param height_resolution Height resolution of the image.
+* @param width_resolution Width resolution of the image.
 */
 template<class T>
-usImagePostScan2D<T>::usImagePostScan2D(unsigned int a_nubmer, unsigned int line_number, double probeRadius, double scanLinePitch, bool isProbeConvex, double axial_resolution)
-  : vpImage<T>(a_nubmer, line_number), usImagePostScanSettings(probeRadius, scanLinePitch, isProbeConvex, axial_resolution)
+usImagePostScan2D<T>::usImagePostScan2D(unsigned int a_nubmer, unsigned int line_number, double probeRadius, double scanLinePitch, bool isProbeConvex, double height_resolution, double width_resolution)
+  : vpImage<T>(a_nubmer, line_number), usImagePostScanSettings(probeRadius, scanLinePitch, isProbeConvex, height_resolution, width_resolution)
 {
 
 }
@@ -153,10 +154,6 @@ usImagePostScan2D<T> & usImagePostScan2D<T>::operator =(const usImagePostScan2D<
   //from usImagePostScanSettings
   usImagePostScanSettings::operator=(other);
 
-  //from this class
-  m_widthResolution = other.getWidthResolution();
-  m_heightResolution = other.getHeightResolution();
-
   return *this;
 }
 
@@ -167,9 +164,7 @@ template<class T>
 bool usImagePostScan2D<T>::operator ==(const usImagePostScan2D<T> &other)
 {
   return(vpImage<T>::operator== (other) &&
-         usImagePostScanSettings::operator ==(other) &&
-         m_widthResolution = other.getWidthResolution() &&
-      m_heightResolution = other.getHeightResolution());
+         usImagePostScanSettings::operator ==(other));
 }
 
 /**
@@ -182,6 +177,8 @@ void usImagePostScan2D<T>::setImageSettings(const usImagePostScanSettings &setti
   setProbeRadius(settings.getProbeRadius());
   setScanLinePitch(settings.getScanLinePitch());
   setProbeConvex(settings.isProbeConvex());
+  setHeightResolution(settings.getHeightResolution());
+  setWidthResolution(settings.getWidthResolution());
 }
 
 /**Setter for image.

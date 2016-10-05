@@ -122,7 +122,7 @@ void usImageIo::readXml(usImagePreScan2D<unsigned char> &preScanImage,const std:
   }
   vpImageIo::read(preScanImage, xmlSettings.getImageFileName());
 
-  preScanImage.setImageSettings(xmlSettings.getImageSettings());
+  preScanImage.setImageSettings(usImagePreScanSettings(xmlSettings.getImageSettings().getProbeRadius(), xmlSettings.getImageSettings().getScanLinePitch(),xmlSettings.getImageSettings().isProbeConvex(), xmlSettings.getAxialResolution()));
   preScanImage.setAxialResolution(xmlSettings.getAxialResolution());
 }
 #endif //VISP_HAVE_XML2
@@ -297,7 +297,7 @@ void usImageIo::read(usImagePostScan3D<unsigned char> &postScanImage,std::string
   settings.setMotorConvex(mhdHeader.isMotorConvex);
   settings.setWidthResolution(mhdParser.getWidthResolution());
   settings.setHeightResolution(mhdParser.getHeightResolution());
-  postScanImage.setSettings(settings);
+  postScanImage.setImageSettings(settings);
 
   //data parsing
   usRawFileParser rawParser;
