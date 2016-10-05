@@ -73,7 +73,7 @@ public:
   // Settings from the 3D probe
   void setMotorRadius(double motorRadius);
   void setFramePitch(double framePitch);
-  void setMotorConvex(bool isMotorConvex);
+  void setMotorConvexity(bool isMotorConvex);
 
   //@}
 

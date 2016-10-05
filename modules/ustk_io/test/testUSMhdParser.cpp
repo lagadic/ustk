@@ -195,10 +195,10 @@ int main(int argc, const char** argv)
     postscan3DReference.setElementSpacingZ(1);
     postscan3DReference.setScanLinePitch(0.0145);
     postscan3DReference.setProbeRadius(0.554);
-    postscan3DReference.setProbeConvex(true);
+    postscan3DReference.setProbeConvexity(true);
     postscan3DReference.setFramePitch(0.258);
     postscan3DReference.setMotorRadius(0.025);
-    postscan3DReference.setMotorConvex(true);
+    postscan3DReference.setMotorConvexity(true);
     postscan3DReference.setWidthResolution(0.0058);
     postscan3DReference.setHeightResolution(0.0058);
 

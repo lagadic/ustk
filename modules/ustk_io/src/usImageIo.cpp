@@ -291,10 +291,10 @@ void usImageIo::read(usImagePostScan3D<unsigned char> &postScanImage,std::string
   usImagePostScan3DSettings settings;
   settings.setProbeRadius(mhdHeader.probeRadius);
   settings.setScanLinePitch(mhdHeader.scanLinePitch);
-  settings.setProbeConvex(mhdHeader.isProbeConvex);
+  settings.setProbeConvexity(mhdHeader.isProbeConvex);
   settings.setMotorRadius(mhdHeader.motorRadius);
   settings.setFramePitch(mhdHeader.framePitch);
-  settings.setMotorConvex(mhdHeader.isMotorConvex);
+  settings.setMotorConvexity(mhdHeader.isMotorConvex);
   settings.setWidthResolution(mhdParser.getWidthResolution());
   settings.setHeightResolution(mhdParser.getHeightResolution());
   postScanImage.setImageSettings(settings);

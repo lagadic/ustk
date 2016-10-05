@@ -331,15 +331,15 @@ void usMetaHeaderParser::read(const std::string& filename)
   //basic common settings
   this->m_imageSettings.setProbeRadius(mhdHeader.probeRadius);
   this->m_imageSettings.setScanLinePitch(mhdHeader.scanLinePitch);
-  this->m_imageSettings.setProbeConvex(mhdHeader.isProbeConvex);
+  this->m_imageSettings.setProbeConvexity(mhdHeader.isProbeConvex);
 
   if(this->mhdHeader.imageType == RF_3D || this->mhdHeader.imageType == PRESCAN_3D || this->mhdHeader.imageType == POSTSCAN_3D) {
     this->m_imageSettings3D.setProbeRadius(mhdHeader.probeRadius);
     this->m_imageSettings3D.setScanLinePitch(mhdHeader.scanLinePitch);
-    this->m_imageSettings3D.setProbeConvex(mhdHeader.isProbeConvex);
+    this->m_imageSettings3D.setProbeConvexity(mhdHeader.isProbeConvex);
     this->m_imageSettings3D.setMotorRadius(mhdHeader.motorRadius);
     this->m_imageSettings3D.setFramePitch(mhdHeader.framePitch);
-    this->m_imageSettings3D.setMotorConvex(mhdHeader.isMotorConvex);
+    this->m_imageSettings3D.setMotorConvexity(mhdHeader.isMotorConvex);
   }
 }
 

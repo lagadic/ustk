@@ -78,7 +78,7 @@ usImageSettings& usImageSettings::operator=(const usImageSettings& other)
 {
   m_probeRadius = other.getProbeRadius();
   m_scanLinePitch = other.getScanLinePitch();
-  setProbeConvex(other.isProbeConvex());
+  m_isProbeConvex = other.isProbeConvex();
 
   return *this;
 }
@@ -132,9 +132,9 @@ double usImageSettings::getScanLinePitch() const { return m_scanLinePitch; }
 * @param[in] isConvex True if the probe is convex, false if the probe is linear.
 * Sets the probe radius to 0 in case of a linear probe.
 */
-void usImageSettings::setProbeConvex(const bool isConvex) {
-  m_isProbeConvex = isConvex;
-  if (!isConvex) {
+void usImageSettings::setProbeConvexity(const bool isProbeConvex) {
+  m_isProbeConvex = isProbeConvex;
+  if (!isProbeConvex) {
     m_probeRadius = 0.0f;
   }
 }

@@ -125,7 +125,7 @@ usImageSettingsXmlParser::readMainClass (xmlDocPtr doc, xmlNodePtr node)
           this->m_imageSettings.setProbeRadius(xmlReadDoubleChild(doc, dataNode));
           break;
         case CODE_XML_IS_PROBE_CONVEX:
-          this->m_imageSettings.setProbeConvex(xmlReadBoolChild(doc, dataNode));
+          this->m_imageSettings.setProbeConvexity(xmlReadBoolChild(doc, dataNode));
           break;
         case CODE_XML_ASSOCIATED_IMAGE_FILE_NAME:
           this->m_imageFileName = xmlReadStringChild(doc, dataNode);
@@ -159,7 +159,7 @@ usImageSettingsXmlParser::writeMainClass(xmlNodePtr node)
 
 void usImageSettingsXmlParser::setImagePreScanSettings(const usImagePreScan2D<unsigned char>& imagePrescan2D)
 {
-  m_imageSettings.setProbeConvex(imagePrescan2D.isProbeConvex());
+  m_imageSettings.setProbeConvexity(imagePrescan2D.isProbeConvex());
   m_imageSettings.setProbeRadius(imagePrescan2D.getProbeRadius());
   m_imageSettings.setScanLinePitch(imagePrescan2D.getScanLinePitch());
   m_axialResolution = imagePrescan2D.getAxialResolution();
@@ -168,7 +168,7 @@ void usImageSettingsXmlParser::setImagePreScanSettings(const usImagePreScan2D<un
 
 void usImageSettingsXmlParser::setImagePostScanSettings(const usImagePostScan2D<unsigned char>& imagePostcan2D)
 {
-  m_imageSettings.setProbeConvex(imagePostcan2D.isProbeConvex());
+  m_imageSettings.setProbeConvexity(imagePostcan2D.isProbeConvex());
   m_imageSettings.setProbeRadius(imagePostcan2D.getProbeRadius());
   m_imageSettings.setScanLinePitch(imagePostcan2D.getScanLinePitch());
   m_heightResolution = imagePostcan2D.getHeightResolution();
@@ -180,7 +180,7 @@ void usImageSettingsXmlParser::setImageSettings(double probeRadius, double scanL
 {
   m_imageSettings.setProbeRadius(probeRadius);
   m_imageSettings.setScanLinePitch(scanLinePitch);
-  m_imageSettings.setProbeConvex(isProbeConvex);
+  m_imageSettings.setProbeConvexity(isProbeConvex);
   m_axialResolution = axialResolution;
   m_is_prescan = true;
 }
@@ -189,7 +189,7 @@ void usImageSettingsXmlParser::setImageSettings(double probeRadius, double scanL
 {
   m_imageSettings.setProbeRadius(probeRadius);
   m_imageSettings.setScanLinePitch(scanLinePitch);
-  m_imageSettings.setProbeConvex(isProbeConvex);
+  m_imageSettings.setProbeConvexity(isProbeConvex);
   m_heightResolution = heightResolution;
   m_widthResolution = widthResolution;
   m_is_prescan = false;

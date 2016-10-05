@@ -234,6 +234,6 @@ void usImagePreScan3D<T>::setData(const usImage3D<T> &image)
 template<class T>
 void setImageSettings(const usImagePreScan3DSettings settings)
 {
-  usImagePreScan3DSettings::operator=(other);
+  usImagePreScan3DSettings::operator=(settings);
 }
 #endif // US_IMAGE_PRESCAN_3D_H

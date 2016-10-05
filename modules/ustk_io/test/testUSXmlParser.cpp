@@ -194,7 +194,7 @@ int main(int argc, const char** argv)
     prescan2DReference.setScanLinePitch(0.0045);
     prescan2DReference.setProbeRadius(0.05478);
     prescan2DReference.resize(320,128);
-    prescan2DReference.setProbeConvex(true);
+    prescan2DReference.setProbeConvexity(true);
     prescan2DReference(95,200,64);
     prescan2DReference(116,80,36);
 

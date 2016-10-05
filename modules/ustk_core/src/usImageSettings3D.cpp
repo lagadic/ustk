@@ -122,7 +122,7 @@ double usImageSettings3D::getFramePitch() const { return m_framePitch; }
 * Set the motor type : convex or linear (from probe type used to acquire the image).
 * @param isMotorConvex Boolean to specify the motor type : true for convex, false for linear.
 */
-void usImageSettings3D::setMotorConvex(bool isMotorConvex) {
+void usImageSettings3D::setMotorConvexity(bool isMotorConvex) {
   m_isMotorConvex = isMotorConvex;
   if (!isMotorConvex) {
     setMotorRadius(0.0f);

@@ -77,7 +77,7 @@ public:
 
   //Settings form the probe
   void setImageSettings(const usImageSettings& other);
-  void setProbeConvex(const bool isConvex);
+  void setProbeConvexity(const bool isProbeConvex);
   void setProbeRadius(const double probeRadius);
   void setScanLinePitch(const double scanLinePitch);  
 
