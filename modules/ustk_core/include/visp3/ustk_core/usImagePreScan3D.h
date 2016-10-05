@@ -52,26 +52,24 @@
   The following example shows how to build a 3D prescan ultrasound image from a usImage3D, and from acquisiton settings.
 
   \code
-
-
     #include <visp3/ustk_core/usImagePreScan3D.h>
 
     int main()
     {
       // Update settings
-      unsigned int AN = ;
-      unsigned int LN = ;
-      unsigned int FN = ;
-      double probeRadius = ;
-      double scanLinePitch = ;
+      unsigned int AN = 200;
+      unsigned int LN = 200;
+      unsigned int FN = 10;
+      double probeRadius = 0.008;
+      double scanLinePitch = 0.004;
       bool isProbeConvex = true;
-      double motorRadius = ;
-      double framePitch = ;
+      double motorRadius = 0.0008;
+      double framePitch = 0.05;
       bool isMotorConvex = true;
-      double axialResolution = ;
+      double axialResolution = 0.004;
       usImagePreScan3DSettings   imageSettings(probeRadius, scanLinePitch, isProbeConvex, motorRadius, framePitch, isMotorConvex, axialResolution);
-      usImage3D<unsigne char> I(AN, LN, FN);
-      usImagePreScan3D preScan3d;
+      usImage3D<unsigned char> I(AN, LN, FN);
+      usImagePreScan3D<unsigned char> preScan3d;
       preScan3d.setData(I);
       preScan3d.setImageSettings(imageSettings);
     }

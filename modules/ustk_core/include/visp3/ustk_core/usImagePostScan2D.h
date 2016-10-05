@@ -60,16 +60,16 @@
     int main()
     {
       // Update settings
-      unsigned int AN = ;
-      unsigned int LN = ;
-      double probeRadius = ;
-      double scanLinePitch = ;
+      unsigned int AN = 200;
+      unsigned int LN = 200;
+      double probeRadius = 0.045;
+      double scanLinePitch = 0.0012;
       bool isProbeConvex = true;
-      double heightResolution = ;
-      double widthResolution = ;
-      usImagePostScan2DSettings   imageSettings(probeRadius, scanLinePitch, isProbeConvex, heightResolution, widthResolution);
-      vpImage<unsigne char> I(AN, LN);
-      usImagePreScan2D postScan2d;
+      double heightResolution = 0.002;
+      double widthResolution = 0.004;
+      usImagePostScanSettings   imageSettings(probeRadius, scanLinePitch, isProbeConvex, heightResolution, widthResolution);
+      vpImage<unsigned char> I(AN, LN);
+      usImagePostScan2D<unsigned char> postScan2d;
       postScan2d.setData(I);
       postScan2d.setImageSettings(imageSettings);
     }

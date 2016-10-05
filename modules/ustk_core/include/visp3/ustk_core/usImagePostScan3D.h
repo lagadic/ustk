@@ -58,20 +58,20 @@
     int main()
     {
       // Update settings
-      unsigned int AN = ;
-      unsigned int LN = ;
-      unsigned int FN = ;
-      double probeRadius = ;
-      double scanLinePitch = ;
+      unsigned int AN = 200;
+      unsigned int LN = 200;
+      unsigned int FN = 20;
+      double probeRadius = 0.045;
+      double scanLinePitch = 0.01;
       bool isProbeConvex = true;
-      double motorRadius = ;
-      double framePitch = ;
+      double motorRadius = 0.07;
+      double framePitch = 0.05;
       bool isMotorConvex = true;
-      double heightResolution = ;
-      double widthResolution = ;
+      double heightResolution = 0.004;
+      double widthResolution = 0.007;
       usImagePostScan3DSettings   imageSettings(probeRadius, scanLinePitch, isProbeConvex, motorRadius, framePitch, isMotorConvex, heightResolution, widthResolution);
-      usImage3D<unsigne char> I(AN, LN, FN);
-      usImagePreScan3D postScan3d;
+      usImage3D<unsigned char> I(AN, LN, FN);
+      usImagePostScan3D<unsigned char> postScan3d;
       postScan3d.setData(I);
       postScan3d.setImageSettings(imageSettings);
     }

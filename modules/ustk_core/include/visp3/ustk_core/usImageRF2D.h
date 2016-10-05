@@ -54,22 +54,20 @@
   The following example shows how to build a RF2D ultrasound image from a vpImage, and from acquisiton settings.
 
   \code
-
-
     #include <visp3/ustk_core/usImageRF2D.h>
 
     int main()
     {
       // Update settings
-      unsigned int AN = ;
-      unsigned int LN = ;
-      double probeRadius = ;
-      double scanLinePitch = ;
+      unsigned int AN = 200;
+      unsigned int LN = 200;
+      double probeRadius = 0.007;
+      double scanLinePitch = 0.0006;
       bool isProbeConvex = true;
-      double axialResolution = ;
+      double axialResolution = 0.002;
       usImagePreScanSettings imageSettings(probeRadius, scanLinePitch, isProbeConvex, axialResolution);
-      vpImage<unsigne char> I(AN, LN);
-      usImageRF2D rf2d;
+      vpImage<unsigned char> I(AN, LN);
+      usImageRF2D<unsigned char> rf2d;
       rf2d.setData(I);
       rf2d.setImageSettings(imageSettings);
     }

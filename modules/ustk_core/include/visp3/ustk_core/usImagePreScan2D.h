@@ -49,22 +49,20 @@
   The following example shows how to build a 2D prescan ultrasound image from a usImage3D, and from acquisiton settings.
 
   \code
-
-
     #include <visp3/ustk_core/usImagePreScan2D.h>
 
     int main()
     {
       // Update settings
-      unsigned int AN = ;
-      unsigned int LN = ;
-      double probeRadius = ;
-      double scanLinePitch = ;
+      unsigned int AN = 200;
+      unsigned int LN = 200;
+      double probeRadius = 0.06;
+      double scanLinePitch = 0.04;
       bool isProbeConvex = true;
-      double axialResolution = ;
-      usImagePreScan2DSettings   imageSettings(probeRadius, scanLinePitch, isProbeConvex, axialResolution);
-      vpImage<unsigne char> I(AN, LN);
-      usImagePreScan2D preScan2d;
+      double axialResolution = 0.005;
+      usImagePreScanSettings imageSettings(probeRadius, scanLinePitch, isProbeConvex, axialResolution);
+      vpImage<unsigned char> I(AN, LN);
+      usImagePreScan2D<unsigned char> preScan2d;
       preScan2d.setData(I);
       preScan2d.setImageSettings(imageSettings);
     }

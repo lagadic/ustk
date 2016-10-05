@@ -52,26 +52,24 @@
   The following example shows how to build a RF3D ultrasound image from a usImage3D, and from acquisiton settings.
 
   \code
-
-
     #include <visp3/ustk_core/usImageRF3D.h>
 
     int main()
     {
       // Update settings
-      unsigned int AN = ;
-      unsigned int LN = ;
-      unsigned int FN = ;
-      double probeRadius = ;
-      double scanLinePitch = ;
+      unsigned int AN = 200;
+      unsigned int LN = 200;
+      unsigned int FN = 30;
+      double probeRadius = 0.0006;
+      double scanLinePitch = 0.0007;
       bool isProbeConvex = true;
-      double motorRadius = ;
-      double framePitch = ;
+      double motorRadius = 0.004;
+      double framePitch = 0.06;
       bool isMotorConvex = true;
-      double axialResolution = ;
+      double axialResolution = 0.001;
       usImagePreScan3DSettings  imageSettings(probeRadius, scanLinePitch, isProbeConvex, motorRadius, framePitch, isMotorConvex, axialResolution);
-      usImage3D<unsigne char> I(AN, LN, FN);
-      usImageRF3D rf3d;
+      usImage3D<unsigned char> I(AN, LN, FN);
+      usImageRF3D<unsigned char> rf3d;
       rf3d.setData(I);
       rf3d.setImageSettings(imageSettings);
     }
