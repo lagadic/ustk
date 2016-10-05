@@ -231,9 +231,9 @@ void usImageIo::readXml(usImagePostScan2D<unsigned char> &postScanImage,const st
 /**
 * Write 3D postscan ultrasound image and settings
 * @param postScanImage Image to write.
-* @param filename The image file name with the desired extenstion.
+* @param mhdFilename The mhd file name.
 */
-void usImageIo::write(const usImagePostScan3D<unsigned char> &postScanImage, const std::string filename)
+void usImageIo::write(const usImagePostScan3D<unsigned char> &postScanImage, const std::string mhdFilename)
 {
   //filling header
   usMetaHeaderParser::MHDHeader header;
@@ -247,8 +247,8 @@ void usImageIo::write(const usImagePostScan3D<unsigned char> &postScanImage, con
   header.dim[1] = postScanImage.getLineNumber();
   header.dim[2] = postScanImage.getFrameNumber();
   header.msb = false;
-  header.MHDFileName = filename + ".mhd";
-  header.rawFileName = filename + ".raw";
+  header.MHDFileName = mhdFilename;
+  header.rawFileName  = vpIoTools::splitChain(mhdFilename, ".")[0].append(".raw");
   header.isProbeConvex = postScanImage.isProbeConvex();
   header.isMotorConvex = postScanImage.isMotorConvex();
   header.probeRadius = postScanImage.getProbeRadius();

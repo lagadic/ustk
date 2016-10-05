@@ -185,7 +185,7 @@ int main(int argc, const char** argv)
         exit(-1);
       }
     }
-    filename = opath + vpIoTools::path("/") + "postscan3d";
+    filename = opath + vpIoTools::path("/") + "postscan3d.mhd";
 
     //Init values in reference parser (same values in file read in test)
     usImagePostScan3D<unsigned char> postscan3DReference;
