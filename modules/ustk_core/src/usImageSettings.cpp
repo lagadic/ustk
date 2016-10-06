@@ -137,7 +137,7 @@ double usImageSettings::getScanLinePitch() const { return m_scanLinePitch; }
 void usImageSettings::setProbeConvexity(const bool isTransducerConvex) {
   m_isTransducerConvex = isTransducerConvex;
   if (!isTransducerConvex) {
-    m_probeRadius = 0.0f;
+    m_probeRadius = 0.0;
   }
 }
 

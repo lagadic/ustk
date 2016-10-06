@@ -167,7 +167,7 @@ void  usMetaHeaderParser::readMHDHeader(const std::string fileName)
       file >> this->header.probeRadius;
       std::getline(file, keyval, '\n');
     }
-    else if (keyword == "IsProbeConvex")
+    else if (keyword == "IsTransducerConvex")
     {
       std::getline(file, keyval, '\n');
       it=keyval.end();
@@ -186,7 +186,7 @@ void  usMetaHeaderParser::readMHDHeader(const std::string fileName)
       file >> this->header.motorRadius;
       std::getline(file, keyval, '\n');
     }
-    else if (keyword == "IsMotorConvex")
+    else if (keyword == "IsMotorRotating")
     {
       std::getline(file, keyval, '\n');
       it=keyval.end();

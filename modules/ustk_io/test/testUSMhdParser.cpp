@@ -211,8 +211,10 @@ int main(int argc, const char** argv)
     std::cout << "Spacing Z: " << postscan3DReference.getElementSpacingZ() << std::endl;
     std::cout << "Scanline pitch : " << postscan3DReference.getScanLinePitch() << std::endl;
     std::cout << "Probe Radius : " << postscan3DReference.getProbeRadius() << std::endl;
+    std::cout << "transducer convexity : " << postscan3DReference.isTransducerConvex() << std::endl;
     std::cout << "Frame pitch : " << postscan3DReference.getFramePitch() << std::endl;
     std::cout << "Motor Radius : " << postscan3DReference.getMotorRadius() << std::endl;
+    std::cout << "motor convexity : " << postscan3DReference.isMotorRotating() << std::endl;
     std::cout << "Width resolution : " << postscan3DReference.getWidthResolution() << std::endl;
     std::cout << "Height resolution : " << postscan3DReference.getHeightResolution() << std::endl;
 
@@ -234,7 +236,9 @@ int main(int argc, const char** argv)
     std::cout << "Scanline pitch : " << postscan3D.getScanLinePitch() << std::endl;
     std::cout << "Probe Radius : " << postscan3D.getProbeRadius() << std::endl;
     std::cout << "Frame pitch : " << postscan3D.getFramePitch() << std::endl;
+    std::cout << "transducer convexity : " << postscan3DReference.isTransducerConvex() << std::endl;
     std::cout << "Motor Radius : " << postscan3D.getMotorRadius() << std::endl;
+    std::cout << "motor convexity : " << postscan3D.isMotorRotating() << std::endl;
     std::cout << "Width resolution : " << postscan3D.getWidthResolution() << std::endl;
     std::cout << "Height resolution : " << postscan3D.getHeightResolution() << std::endl;
 
