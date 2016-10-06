@@ -205,6 +205,17 @@ bool usImagePreScan2D<T>::operator==(const usImagePreScan2D<T> &other)
 }
 
 /**
+* Operator to print image informations on a stream.
+*/
+template<class T>
+std::ostream& operator<<(std::ostream& out, const usImagePreScan2D<T> &other)
+{
+  out << static_cast<const usImagePreScanSettings &>(other);
+  return out << "number of A-samples in a scanline : " << other.getANumber() << std::endl <<
+    "number of scanlines : " << other.getLineNumber() << std::endl;
+}
+
+/**
 * Copy from vpImage. From double image type.
 * @param I vpImage<double> to copy.
 */

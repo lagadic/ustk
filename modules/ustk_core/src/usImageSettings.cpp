@@ -95,6 +95,7 @@ bool usImageSettings::operator==(usImageSettings const& other)
            this->getScanLinePitch() == other.getScanLinePitch() &&
            this->isTransducerConvex() == other.isTransducerConvex());
 }
+
 //Image settings getters/setters
 
 /**
@@ -146,16 +147,6 @@ void usImageSettings::setProbeConvexity(const bool isTransducerConvex) {
 * @return True if the probe is convex, false if the probe is linear.
 */
 bool usImageSettings::isTransducerConvex() const { return m_isTransducerConvex; }
-
-/**
-* Print probe settings information.
-*/
-void usImageSettings::printProbeSettings()
-{
-  std::cout << "probe radius: " << m_probeRadius << std::endl
-            << "line angle: " << m_scanLinePitch << std::endl
-            << "convex probe used: " << m_isTransducerConvex << std::endl;
-}
 
 /*!
  * Assignment operator.

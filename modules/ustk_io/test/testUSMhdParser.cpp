@@ -125,8 +125,6 @@ bool getOptions(int argc, const char **argv, std::string &opath, const std::stri
   return true;
 }
 
-
-
 /* -------------------------------------------------------------------------- */
 /*                               MAIN FUNCTION                                */
 /* -------------------------------------------------------------------------- */
@@ -227,7 +225,9 @@ int main(int argc, const char** argv)
     usImageIo::read(postscan3D,filename);
 
     std::cout << "Read from " << filename << std::endl ;
-    std::cout << "Dim X : " << postscan3D.getANumber() << std::endl;
+    std::cout << static_cast<const usImage3D<unsigned char> &>(postscan3D);
+    //std::cout << postscan3D ;
+    /*<< postscan3D.getANumber() << std::endl;
     std::cout << "Dim Y : " << postscan3D.getLineNumber() << std::endl;
     std::cout << "Dim Z: " << postscan3D.getFrameNumber() << std::endl;
     std::cout << "Spacing X: " << postscan3D.getElementSpacingX() << std::endl;
@@ -241,6 +241,8 @@ int main(int argc, const char** argv)
     std::cout << "motor convexity : " << postscan3D.isMotorRotating() << std::endl;
     std::cout << "Width resolution : " << postscan3D.getWidthResolution() << std::endl;
     std::cout << "Height resolution : " << postscan3D.getHeightResolution() << std::endl;
+
+    std::cout << postscan3D;*/
 
     if(postscan3D==postscan3DReference) {
       std::cout << "Test passed !" << std::endl;

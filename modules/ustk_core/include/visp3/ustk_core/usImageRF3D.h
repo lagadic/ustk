@@ -90,12 +90,9 @@ public:
   usImageRF3D(const usImageRF3D<T> &other);
   ~usImageRF3D();
 
-  unsigned int getAN() const;
-  unsigned int getFN() const;
-  unsigned int getLN() const;
-
   usImageRF3D<T>& operator=(const usImageRF3D<T> &other);
   bool operator==(const usImageRF3D<T> &other);
+  std::ostream& operator<<(std::ostream& out);
 
   void setData(const usImage3D<T> &image);
   void setImageSettings(const usImagePreScan3DSettings &settings);
@@ -203,25 +200,25 @@ bool usImageRF3D<T>::operator==(const usImageRF3D<T> &other)
 }
 
 /**
-* Get the number of A-samples in a line.
-* @return AN number of A-samples in a line.
+* Information printing operator.
+* @param out Stream you want to write in.
 */
 template<class T>
-unsigned int usImageRF3D<T>::getAN() const { return usImage3D<T>::getDimX(); }
+std::ostream& usImageRF3D<T>::operator<<(std::ostream& out)
+{
+  return usImage3D<T>::operator<<(out) <<
+    usImagePreScan3DSettings::operator<<(out);
+}
 
 /**
-* Get the number of lines.
-* @return LN number of lines.
+* Prints information in a stream.
 */
 template<class T>
-unsigned int  usImageRF3D<T>::getLN() const { return usImage3D<T>::getDimY(); }
-
-/**
-* Get the number of frames.
-* @return FN number of frames.
-*/
-template<class T>
-unsigned int  usImageRF3D<T>::getFN() const { return usImage3D<T>::getDimZ(); }
+std::ostream& operator<<(std::ostream& out, const usImageRF3D<T> &other)
+{
+  return out << static_cast<const usImage3D<T> &>(other) <<
+    static_cast<const usImagePreScan3DSettings &>(other);
+}
 
 /**
 * Setter for image data.

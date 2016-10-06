@@ -88,6 +88,9 @@ public:
 
   bool operator ==(const usImagePostScan2D<T> &other);
 
+  unsigned int getANumber() const;
+  unsigned int getLineNumber() const;
+
   void setData(const vpImage<T> &image);
   void setImageSettings(const usImagePostScanSettings &settings);
 };
@@ -191,6 +194,31 @@ bool usImagePostScan2D<T>::operator ==(const usImagePostScan2D<T> &other)
   return(vpImage<T>::operator== (other) &&
          usImagePostScanSettings::operator ==(other));
 }
+
+/**
+* Operator to print image informations on a stream.
+*/
+template<class T>
+std::ostream& operator<<(std::ostream& out, const usImagePostScan2D<T> &other)
+{
+  out << static_cast<const usImagePostScanSettings &>(other);
+  return out << "number of A-samples in a scanline : " << other.getANumber() << std::endl <<
+  "number of scanlines : " << other.getLineNumber() << std::endl;
+}
+
+/**
+* Get the number of A-samples in a line.
+* @return a_number Number of A-samples in a line.
+*/
+template<class T>
+unsigned int usImagePostScan2D<T>::getANumber() const { return vpImage<T>::getHeight(); }
+
+/**
+* Get the number of lines.
+* @return line_number number of lines.
+*/
+template<class T>
+unsigned int usImagePostScan2D<T>::getLineNumber() const { return vpImage<T>::getWidth(); }
 
 /**
 * Setter for all imageSettings.

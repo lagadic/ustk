@@ -388,7 +388,7 @@ usImage3D<Type>::usImage3D(unsigned int a_number, unsigned int line_number, unsi
 template<class Type>
 usImage3D<Type>::usImage3D(const usImage3D<Type> &volume, const bool copy)
 {
-  init(volume.getDimX(),volume.getDimY(),volume.getDimZ());
+  init(volume.getANumber(),volume.getLineNumber(),volume.getFrameNumber());
 
   m_size = m_a_number * m_line_number * m_frame_number;
   m_elementSpacingX = volume.getElementSpacingX();
@@ -454,6 +454,14 @@ bool usImage3D<Type>::operator==(const usImage3D<Type> &other)
     }
   }
   return true;
+}
+
+template<class Type>
+std::ostream& operator<<(std::ostream& out, const usImage3D<Type> &other)
+{
+  return out << "number of A-samples in a scanline : " << other.getANumber() << std::endl
+             << "number of scanlines in a frame : " << other.getLineNumber() << std::endl
+             << "number of frames : " << other.getFrameNumber() << std::endl;
 }
 
 template<class Type>

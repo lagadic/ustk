@@ -75,4 +75,14 @@ private:
   double m_heightResolution;
 };
 
+/**
+* Operator to print image informations on a stream.
+*/
+std::ostream& operator<<(std::ostream& out, const usImagePostScan3DSettings &other)
+{
+  out << static_cast<const usImage3DSettings &>(other);
+  return out << "Height resolution : " << other.getHeightResolution() <<
+         "Width resolution : " << other.getWidthResolution();
+}
+
 #endif // US_IMAGE_POSTSCAN_3D_SETTINGS_H

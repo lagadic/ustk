@@ -164,6 +164,17 @@ bool usImageRF2D<T>::operator==(const usImageRF2D<T> &other)
 }
 
 /**
+* Operator to print image informations on a stream.
+*/
+template<class T>
+std::ostream& operator<<(std::ostream& out, const usImageRF2D<T> &other)
+{
+  return out << static_cast<const usImagePreScanSettings &>(other) <<
+    "number of A-samples in a scanline : " << other.getANumber() << std::endl <<
+    "number of scanlines : " << other.getLineNumber() << std::endl;
+}
+
+/**
 * Get the number of A-samples in a line.
 * @return a_number of A-samples in a line.
 */

@@ -177,8 +177,18 @@ usImagePostScan3D<T> & usImagePostScan3D<T>::operator =(const usImagePostScan3D<
 template<class T>
 bool usImagePostScan3D<T>::operator == (usImagePostScan3D<T> const& other)
 {
-  return(usImage3D<T>::operator ==(other) &&
-         usImagePostScan3DSettings::operator ==(other));
+  return usImage3D<T>::operator ==(other) &&
+         usImagePostScan3DSettings::operator ==(other);
+}
+
+/**
+* Operator to print image informations on a stream.
+*/
+template<class T>
+std::ostream& operator<<(std::ostream& out, const usImagePostScan3D<T> &other)
+{
+  out << static_cast<const usImagePostScan3DSettings &>(other);
+  return out << static_cast<const usImagePostScan3DSettings &>(other);
 }
 
 /**

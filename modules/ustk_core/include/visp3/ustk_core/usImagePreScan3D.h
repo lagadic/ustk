@@ -95,10 +95,6 @@ public:
   //destructor
   ~usImagePreScan3D();
 
-  unsigned int getAN() const;
-  unsigned int getFN() const;
-  unsigned int getLN() const;
-
   //assignement
   usImagePreScan3D<T>& operator=(const usImagePreScan3D<T> &other);
   //comparison
@@ -211,25 +207,14 @@ bool usImagePreScan3D<T>::operator==(const usImagePreScan3D<T> &other)
 }
 
 /**
-* Get the number of A-samples in a line.
-* @return AN number of A-samples in a line.
+* Prints information in a stream.
 */
 template<class T>
-unsigned int usImagePreScan3D<T>::getAN() const { return usImage3D<T>::getHeight(); }
-
-/**
-* Get the number of lines.
-* @return LN number of lines.
-*/
-template<class T>
-unsigned int usImagePreScan3D<T>::getLN() const { return usImage3D<T>::getWidth(); }
-
-/**
-* Get the number of frames.
-* @return FN number of frames.
-*/
-template<class T>
-unsigned int usImagePreScan3D<T>::getFN() const { return usImage3D<T>::getDepth(); }
+std::ostream& operator<<(std::ostream& out, const usImagePreScan3D<T> &other)
+{
+  return out << static_cast<const usImage3D<T> &>(other) <<
+    static_cast<const usImagePreScan3DSettings &>(other);
+}
 
 /**
 * Setter for the image data.

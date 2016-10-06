@@ -134,13 +134,3 @@ void usImage3DSettings::setMotorConvexity(bool isMotorRotating) {
 * @return isMotorRotating Boolean to specify the motor type : true for convex, false for linear.
 */
 bool usImage3DSettings::isMotorRotating() const { return m_isMotorRotating; }
-
-/**
-* Print probe settings information.
-*/
-void usImage3DSettings::printProbeSettings()
-{
-  usImageSettings::printProbeSettings();
-  std::cout << "motor radius : " << m_motorRadius << std::endl
-            << "frame angle : " << m_framePitch << std::endl;
-}

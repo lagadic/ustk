@@ -81,4 +81,13 @@ private:
   double m_axialResolution;
 };
 
+/**
+* Prints information in a stream.
+*/
+template<class T>
+std::ostream& operator<<(std::ostream& out, const usImagePreScanSettings &other)
+{
+  return out << static_cast<const usImageSettings &>(other) <<
+    "Axial resolution : " << other.getAxialResolution() << std::endl;
+}
 #endif // US_IMAGE_PRESCAN_SETTINGS_H
