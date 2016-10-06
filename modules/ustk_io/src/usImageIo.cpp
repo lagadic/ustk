@@ -39,7 +39,7 @@
 
 #include <visp3/ustk_io/usImageIo.h>
 #include <visp3/ustk_io/usImageSettingsXmlParser.h>
-#include <visp3/ustk_core/usImagePostScan3DSettings.h>
+#include <visp3/ustk_core/usMotorSettings.h>
 #include <visp3/ustk_core/usImagePreScanSettings.h>
 #include <visp3/ustk_io/usRawFileParser.h>
 
@@ -164,9 +164,8 @@ void usImageIo::read(usImagePreScan2D<unsigned char> &preScanImage,const std::st
     }
     vpImageIo::read(preScanImage, xmlSettings.getImageFileName());
 
-    preScanImage.setImageSettings(usImagePreScanSettings(xmlSettings.getImageSettings().getProbeRadius(),
-      xmlSettings.getImageSettings().getScanLinePitch(), xmlSettings.getImageSettings().isTransducerConvex(), xmlSettings.getAxialResolution()));
-    preScanImage.setAxialResolution(xmlSettings.getAxialResolution());
+    preScanImage.setImageSettings(usImagePreScanSettings(xmlSettings.getImagePreScanSettings().getProbeRadius(),
+      xmlSettings.getImagePreScanSettings().getScanLinePitch(), xmlSettings.getImagePreScanSettings().isTransducerConvex(), xmlSettings.getImagePreScanSettings().getAxialResolution()));
 #else
     throw(vpException(vpException::fatalEtrror, "Requires xml2 library"));
 #endif //VISP_HAVE_XML2
@@ -290,7 +289,10 @@ void usImageIo::read(usImagePostScan2D<unsigned char> &postScanImage,const std::
     vpImage<unsigned char> image;
     vpImageIo::read(postScanImage, xmlSettings.getImageFileName());
 
-    postScanImage.setImageSettings(usImagePostScanSettings(xmlSettings.getImageSettings(), xmlSettings.getHeightResolution(), xmlSettings.getWidthResolution()));
+    postScanImage.setImageSettings(usImagePostScanSettings(xmlSettings.getImagePostScanSettings().getProbeRadius(), 
+      xmlSettings.getImagePostScanSettings().getScanLinePitch(),
+      xmlSettings.getImagePostScanSettings().isTransducerConvex(),
+      xmlSettings.getImagePostScanSettings().getHeightResolution(), xmlSettings.getImagePostScanSettings().getWidthResolution()));
 #endif
   }
   else if (headerFormat == FORMAT_MHD) {
@@ -378,16 +380,19 @@ void usImageIo::read(usImagePostScan3D<unsigned char> &postScanImage,std::string
 
     usMetaHeaderParser::MHDHeader mhdHeader = mhdParser.getMHDHeader();
 
-    usImagePostScan3DSettings settings;
+    usImagePostScanSettings settings;
     settings.setProbeRadius(mhdHeader.probeRadius);
     settings.setScanLinePitch(mhdHeader.scanLinePitch);
-    settings.setProbeConvexity(mhdHeader.isTransducerConvex);
-    settings.setMotorRadius(mhdHeader.motorRadius);
-    settings.setFramePitch(mhdHeader.framePitch);
-    settings.setMotorConvexity(mhdHeader.isMotorRotating);
+    settings.setTransducerConvexity(mhdHeader.isTransducerConvex);
     settings.setWidthResolution(mhdParser.getWidthResolution());
     settings.setHeightResolution(mhdParser.getHeightResolution());
     postScanImage.setImageSettings(settings);
+    usMotorSettings motorSettings;
+    motorSettings.setMotorRadius(mhdHeader.motorRadius);
+    motorSettings.setFramePitch(mhdHeader.framePitch);
+    motorSettings.setMotorConvexity(mhdHeader.isMotorRotating);
+    postScanImage.setMotorSettings(motorSettings);
+      
 
     //data parsing
     usRawFileParser rawParser;

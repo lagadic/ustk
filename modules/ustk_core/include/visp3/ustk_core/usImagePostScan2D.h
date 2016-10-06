@@ -92,7 +92,6 @@ public:
   unsigned int getLineNumber() const;
 
   void setData(const vpImage<T> &image);
-  void setImageSettings(const usImagePostScanSettings &settings);
 };
 
 /**
@@ -219,20 +218,6 @@ unsigned int usImagePostScan2D<T>::getANumber() const { return vpImage<T>::getHe
 */
 template<class T>
 unsigned int usImagePostScan2D<T>::getLineNumber() const { return vpImage<T>::getWidth(); }
-
-/**
-* Setter for all imageSettings.
-* @param settings Settings you want to copy.
-*/
-template<class T>
-void usImagePostScan2D<T>::setImageSettings(const usImagePostScanSettings &settings)
-{
-  setProbeRadius(settings.getProbeRadius());
-  setScanLinePitch(settings.getScanLinePitch());
-  setProbeConvexity(settings.isTransducerConvex());
-  setHeightResolution(settings.getHeightResolution());
-  setWidthResolution(settings.getWidthResolution());
-}
 
 /**
 * Setter for image.

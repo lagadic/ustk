@@ -193,7 +193,7 @@ int main(int argc, const char** argv)
     postscan3DReference.setElementSpacingZ(1);
     postscan3DReference.setScanLinePitch(0.0145);
     postscan3DReference.setProbeRadius(0.554);
-    postscan3DReference.setProbeConvexity(true);
+    postscan3DReference.setTransducerConvexity(true);
     postscan3DReference.setFramePitch(0.258);
     postscan3DReference.setMotorRadius(0.025);
     postscan3DReference.setMotorConvexity(true);

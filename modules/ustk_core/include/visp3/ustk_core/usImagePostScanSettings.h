@@ -44,30 +44,30 @@
 #include <visp3/core/vpConfig.h>
 
 //ustk includes
-#include <visp3/ustk_core/usImageSettings.h>
+#include <visp3/ustk_core/usTransducerSettings.h>
 
 /**
  * @class usImagePostScanSettings
  * @brief Settings associated to ultrasound post-scan images.
  *
  * This class represents ultrasound pre-scan image settings which are:
- * - the common settings implemented in usImageSettings for all ultrasound images.
+ * - the common settings implemented in usTransducerSettings for all ultrasound images.
  *   We recall that these common settings are:
  *   - the type of ultrasound transducer used for data acquisition: convex or linear
  *   - the transducer radius in meters (value set to zero for a linear transducer)
  *   - the scan line pitch that corresponds to the angle (in radians) between
  *     to succesive scan lines beams when the transducer is convex, or to the distance (in meters)
- *     when the transducer is linear. See usImageSettings description for more details.
+ *     when the transducer is linear. See usTransducerSettings description for more details.
  *   .
  * - the image with and height resolution which corresponds to the size (in meters) of a pixel
  *   in the image.
  */
-class VISP_EXPORT usImagePostScanSettings : public usImageSettings {
+class VISP_EXPORT usImagePostScanSettings : public usTransducerSettings {
 public:
   usImagePostScanSettings();
   usImagePostScanSettings(const usImagePostScanSettings &other);
   usImagePostScanSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex, double height_resolution, double width_resolution);
-  usImagePostScanSettings(const usImageSettings basicSettings, double height_resolution, double width_resolution);
+  usImagePostScanSettings(const usTransducerSettings basicSettings, double height_resolution, double width_resolution);
   virtual ~usImagePostScanSettings();
 
   double getHeightResolution() const;
@@ -78,6 +78,7 @@ public:
 
   void setHeightResolution(const double heightResolution);
   void setWidthResolution(const double widthResolution);
+  void setImageSettings(const usImagePostScanSettings& postScanSettings);
 
 private:
   //Settings from the probe

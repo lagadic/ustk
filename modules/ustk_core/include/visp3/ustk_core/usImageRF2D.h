@@ -89,7 +89,6 @@ public:
   bool operator==(const usImageRF2D<T> &other);
 
   void setData(const vpImage<T> &image);
-  void setImageSettings(const usImagePreScanSettings &settings);
 };
 
 
@@ -198,13 +197,4 @@ void usImageRF2D<T>::setData(const vpImage<T> &image)
   vpImage<T>::operator=(image);
 }
 
-/**
-* Setter for the image settings.
-* @param settings The new settings.
-*/
-template<class T>
-void usImageRF2D<T>::setImageSettings(const usImagePreScanSettings &settings)
-{
-  usImagePreScanSettings::operator=(settings);
-}
 #endif // US_IMAGE_RF_2D_H

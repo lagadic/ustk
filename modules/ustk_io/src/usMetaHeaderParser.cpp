@@ -342,29 +342,26 @@ void usMetaHeaderParser::read(const std::string& filename)
   readMHDHeader(filename);
 
   //basic common settings
-  this->m_imageSettings.setProbeRadius(header.probeRadius);
-  this->m_imageSettings.setScanLinePitch(header.scanLinePitch);
-  this->m_imageSettings.setProbeConvexity(header.isTransducerConvex);
+  this->m_transducerSettings.setProbeRadius(header.probeRadius);
+  this->m_transducerSettings.setScanLinePitch(header.scanLinePitch);
+  this->m_transducerSettings.setTransducerConvexity(header.isTransducerConvex);
 
   if(this->header.imageType == RF_3D || this->header.imageType == PRESCAN_3D || this->header.imageType == POSTSCAN_3D) {
-    this->m_image3DSettings.setProbeRadius(header.probeRadius);
-    this->m_image3DSettings.setScanLinePitch(header.scanLinePitch);
-    this->m_image3DSettings.setProbeConvexity(header.isTransducerConvex);
-    this->m_image3DSettings.setMotorRadius(header.motorRadius);
-    this->m_image3DSettings.setFramePitch(header.framePitch);
-    this->m_image3DSettings.setMotorConvexity(header.isMotorRotating);
+    this->m_motorSettings.setMotorRadius(header.motorRadius);
+    this->m_motorSettings.setFramePitch(header.framePitch);
+    this->m_motorSettings.setMotorConvexity(header.isMotorRotating);
   }
 }
 
 //Data setters
-void usMetaHeaderParser::setImageSettings(const usImageSettings imageSettings)
+void usMetaHeaderParser::setTransducerSettings(const usTransducerSettings transducerSettings)
 {
-  m_imageSettings = imageSettings;
+  m_transducerSettings = transducerSettings;
 }
 
-void usMetaHeaderParser::setImage3DSettings(const usImage3DSettings image3DSettings)
+void usMetaHeaderParser::setMotorSettings(const usMotorSettings motorSettings)
 {
-  m_image3DSettings = image3DSettings;
+  m_motorSettings = motorSettings;
 }
 
 void usMetaHeaderParser::setRawFileName(const std::string imageFileName)

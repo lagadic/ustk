@@ -70,8 +70,8 @@ public:
   // Data accessors.
   double getAxialResolution() const { return m_axialResolution; }
   double getHeightResolution() const { return m_heightResolution; }
-  usImageSettings getImageSettings() const {return m_imageSettings;}
-  usImage3DSettings getImage3DSettings() const {return m_image3DSettings;}
+  usTransducerSettings getTransducerSettings() const {return m_transducerSettings;}
+  usMotorSettings getMotorSettings() const {return m_motorSettings;}
   ImageType getImageType() const { return header.imageType; }
   std::string getRawFileName() const {return header.rawFileName;}
   double getWidthResolution() const { return m_widthResolution; }
@@ -90,8 +90,8 @@ public:
   void readMHDHeader(const std::string fileName);
 
   //Data setters
-  void setImageSettings(const usImageSettings imageSettings);
-  void setImage3DSettings(const usImage3DSettings image3DSettings);
+  void setTransducerSettings(const usTransducerSettings transducerSettings);
+  void setMotorSettings(const usMotorSettings motorSettings);
   void setImageFileName(const std::string imageFileName);
   void setAxialResolution(const double axialresolution);
   void setHeightResolution(const double heightResolution);
@@ -100,8 +100,8 @@ public:
   void setMHDHeader(MHDHeader header);
 
 private :
-  usImageSettings m_imageSettings;
-  usImage3DSettings m_image3DSettings;
+  usTransducerSettings m_transducerSettings;
+  usMotorSettings m_motorSettings;
   double m_axialResolution;
   double m_heightResolution;
   double m_widthResolution;

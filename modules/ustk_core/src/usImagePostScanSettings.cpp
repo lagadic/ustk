@@ -35,7 +35,7 @@
  /**
  * Default constructor, all parameters set de default values.
  */
-usImagePostScanSettings::usImagePostScanSettings() : usImageSettings(), m_widthResolution(0.0), m_heightResolution(0.0)
+usImagePostScanSettings::usImagePostScanSettings() : usTransducerSettings(), m_widthResolution(0.0), m_heightResolution(0.0)
 {
 
 }
@@ -43,7 +43,7 @@ usImagePostScanSettings::usImagePostScanSettings() : usImageSettings(), m_widthR
 /**
 * Copy constructor.
 */
-usImagePostScanSettings::usImagePostScanSettings(const usImagePostScanSettings &other) : usImageSettings(other), m_widthResolution(other.getHeightResolution()), m_heightResolution(other.getWidthResolution())
+usImagePostScanSettings::usImagePostScanSettings(const usImagePostScanSettings &other) : usTransducerSettings(other), m_widthResolution(other.getHeightResolution()), m_heightResolution(other.getWidthResolution())
 {
 
 }
@@ -51,7 +51,7 @@ usImagePostScanSettings::usImagePostScanSettings(const usImagePostScanSettings &
 /**
 * Full parameters constructor, all parameters settables.
 */
-usImagePostScanSettings::usImagePostScanSettings(double probeRadius, double scanLinePitch, bool isConvex, double height_resolution, double width_resolution) : usImageSettings(probeRadius, scanLinePitch, isConvex), m_widthResolution(width_resolution), m_heightResolution(height_resolution)
+usImagePostScanSettings::usImagePostScanSettings(double probeRadius, double scanLinePitch, bool isConvex, double height_resolution, double width_resolution) : usTransducerSettings(probeRadius, scanLinePitch, isConvex), m_widthResolution(width_resolution), m_heightResolution(height_resolution)
 {
 
 }
@@ -59,7 +59,7 @@ usImagePostScanSettings::usImagePostScanSettings(double probeRadius, double scan
 /**
 * Full parameters constructor, all parameters settables.
 */
-usImagePostScanSettings::usImagePostScanSettings(usImageSettings basicSettings, double height_resolution, double width_resolution) : usImageSettings(basicSettings), m_widthResolution(width_resolution), m_heightResolution(height_resolution)
+usImagePostScanSettings::usImagePostScanSettings(usTransducerSettings basicSettings, double height_resolution, double width_resolution) : usTransducerSettings(basicSettings), m_widthResolution(width_resolution), m_heightResolution(height_resolution)
 {
 
 }
@@ -75,7 +75,7 @@ usImagePostScanSettings::~usImagePostScanSettings() {}
 */
 usImagePostScanSettings& usImagePostScanSettings::operator=(const usImagePostScanSettings& other)
 {
-  usImageSettings::operator=(other);
+  usTransducerSettings::operator=(other);
   m_heightResolution = other.getHeightResolution();
   m_widthResolution = other.getWidthResolution();
 
@@ -88,7 +88,7 @@ usImagePostScanSettings& usImagePostScanSettings::operator=(const usImagePostSca
 */
 bool usImagePostScanSettings::operator==(const usImagePostScanSettings& other)
 {
-  return(usImageSettings::operator==(other) &&
+  return(usTransducerSettings::operator==(other) &&
     m_widthResolution == other.getWidthResolution() &&
     m_heightResolution == other.getHeightResolution());
 }
@@ -98,7 +98,7 @@ bool usImagePostScanSettings::operator==(const usImagePostScanSettings& other)
 */
 VISP_EXPORT std::ostream& operator<<(std::ostream& out, const usImagePostScanSettings &other)
 {
-  out << static_cast<const usImageSettings &>(other);
+  out << static_cast<const usTransducerSettings &>(other);
   return out << "Height resolution : " << other.getHeightResolution() <<
     "Width resolution : " << other.getWidthResolution();
 }
@@ -135,4 +135,12 @@ void usImagePostScanSettings::setHeightResolution(const double heightResolution)
 double usImagePostScanSettings::getHeightResolution() const
 {
   return m_heightResolution;
+}
+
+/**
+* Height resolution getter.
+*/
+void usImagePostScanSettings::setImageSettings(const usImagePostScanSettings& postScanSettings)
+{
+  *this = postScanSettings;
 }

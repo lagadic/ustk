@@ -41,7 +41,7 @@
 #ifndef US_IMAGE_SETTINGS_XML_PARSER_H
 #define US_IMAGE_SETTINGS_XML_PARSER_H
 #include <iostream>
-#include <visp3/ustk_core/usImageSettings.h>
+#include <visp3/ustk_core/usTransducerSettings.h>
 #include <visp3/ustk_core/usImagePostScanSettings.h>
 #include <visp3/ustk_core/usImagePreScan2D.h>
 #include <visp3/ustk_core/usImagePostScan2D.h>
@@ -88,11 +88,9 @@ public:
   bool operator ==(usImageSettingsXmlParser const& other);
 
   // Data accessors.
-  double getAxialResolution() const { return m_axialResolution; }
-  double getHeightResolution() const { return m_heightResolution; }
   std::string getImageFileName() const {return m_imageFileName;}
-  usImageSettings getImageSettings() const {return usImagePostScanSettings(m_imageSettings, getHeightResolution(),getWidthResolution());}
-  double getWidthResolution() const { return m_widthResolution; }
+  usImagePostScanSettings getImagePostScanSettings() const {return m_postScanSettings;}
+  usImagePreScanSettings getImagePreScanSettings() const { return m_preScanSettings; }
   bool isImagePreScan() const { return m_is_prescan; }
   
   //Data setters
@@ -104,14 +102,12 @@ public:
   void setImagePreScan(bool is_prescan) { m_is_prescan = is_prescan; }
 
 private:
-  usImageSettings m_imageSettings;
+  usImagePostScanSettings m_postScanSettings;
+  usImagePreScanSettings m_preScanSettings;
   std::string m_imageFileName;
 
   //to manage different resolution types
   bool m_is_prescan;
-  double m_axialResolution;
-  double m_heightResolution;
-  double m_widthResolution;
 
   virtual void readMainClass (xmlDocPtr doc, xmlNodePtr node);
   virtual void writeMainClass (xmlNodePtr node);

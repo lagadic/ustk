@@ -31,7 +31,7 @@
  *****************************************************************************/
 
 /**
- * @file usImageSettings.h
+ * @file usImagePreScanSettings.h
  * @brief Generic ultrasound image settings.
  */
 
@@ -45,25 +45,25 @@
 #include <visp3/core/vpConfig.h>
 
 //ustk includes
-#include<visp3/ustk_core/usImageSettings.h>
+#include<visp3/ustk_core/usTransducerSettings.h>
 
 /**
  * @class usImagePreScanSettings
  * @brief Settings associated to ultrasound pre-scan images.
  *
  * This class represents ultrasound pre-scan image settings which are:
- * - the common settings implemented in usImageSettings corresponding to the transducer settings.
+ * - the common settings implemented in usTransducerSettings corresponding to the transducer settings.
  *   We recall that these common settings are:
  *   - the type of ultrasound transducer used for data acquisition: convex or linear
  *   - the transducer radius in meters (value set to zero for a linear transducer)
  *   - the scan line pitch that corresponds to the angle (in radians) between
  *     to successive scan lines beams when the transducer is convex, or to the distance (in meters)
- *     when the transducer is linear. See usImageSettings description for more details.
+ *     when the transducer is linear. See usTransducerSettings description for more details.
  *   .
  * - the image axial resolution which corresponds to the size (in meters) of a pixel along the
  *   scan line beam.
  */
-class VISP_EXPORT usImagePreScanSettings : public usImageSettings {
+class VISP_EXPORT usImagePreScanSettings : public usTransducerSettings {
 public:
   usImagePreScanSettings();
   usImagePreScanSettings(const usImagePreScanSettings &other);
@@ -76,6 +76,7 @@ public:
   bool operator==(const usImagePreScanSettings& other);
 
   void setAxialResolution(const double axialResolution);
+  void setImageSettings(const usImagePreScanSettings& preScanSettings);
 
 private:
   //Settings from the probe

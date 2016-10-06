@@ -42,7 +42,7 @@
 * Default constructor, all parameters set with default values.
 */
 usImagePreScanSettings::usImagePreScanSettings()
-  : usImageSettings(), m_axialResolution(0.0)
+  : usTransducerSettings(), m_axialResolution(0.0)
 {
 
 }
@@ -51,7 +51,7 @@ usImagePreScanSettings::usImagePreScanSettings()
 * Copy constructor.
 */
 usImagePreScanSettings::usImagePreScanSettings(const usImagePreScanSettings &other)
-  : usImageSettings(other), m_axialResolution(other.getAxialResolution())
+  : usTransducerSettings(other), m_axialResolution(other.getAxialResolution())
 {
 
 }
@@ -60,9 +60,17 @@ usImagePreScanSettings::usImagePreScanSettings(const usImagePreScanSettings &oth
 * Full settings constructor.
 */
 usImagePreScanSettings::usImagePreScanSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex, double axial_resolution)
-  : usImageSettings(probeRadius, scanLinePitch, isTransducerConvex), m_axialResolution(axial_resolution)
+  : usTransducerSettings(probeRadius, scanLinePitch, isTransducerConvex), m_axialResolution(axial_resolution)
 {
 
+}
+
+/**
+* Full settings constructor.
+*/
+void usImagePreScanSettings::setImageSettings(const usImagePreScanSettings& preScanSettings)
+{
+  *this = preScanSettings;
 }
 
 /**
@@ -76,7 +84,7 @@ usImagePreScanSettings::~usImagePreScanSettings() {}
 */
 usImagePreScanSettings& usImagePreScanSettings::operator=(const usImagePreScanSettings& other)
 {
-  usImageSettings::operator=(other);
+  usTransducerSettings::operator=(other);
   m_axialResolution = other.getAxialResolution();
 
   return *this;
@@ -88,7 +96,7 @@ usImagePreScanSettings& usImagePreScanSettings::operator=(const usImagePreScanSe
 */
 bool usImagePreScanSettings::operator==(const usImagePreScanSettings& other)
 {
-  return(usImageSettings::operator==(other) &&
+  return(usTransducerSettings::operator==(other) &&
     m_axialResolution == other.getAxialResolution());
 }
 
@@ -98,7 +106,7 @@ bool usImagePreScanSettings::operator==(const usImagePreScanSettings& other)
 template<class T> VISP_EXPORT
 std::ostream& operator<<(std::ostream& out, const usImagePreScanSettings &other)
 {
-  return out << static_cast<const usImageSettings &>(other) <<
+  return out << static_cast<const usTransducerSettings &>(other) <<
     "Axial resolution : " << other.getAxialResolution() << std::endl;
 }
 

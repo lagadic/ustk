@@ -41,7 +41,8 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/ustk_core/usImage3D.h>
 
-#include <visp3/ustk_core/usImagePostScan3DSettings.h>
+#include <visp3/ustk_core/usMotorSettings.h>
+#include <visp3/ustk_core/usImagePostScanSettings.h>
 
 /**
  @class usImagePostScan3D
@@ -69,7 +70,7 @@
       bool isMotorRotating = true;
       double heightResolution = 0.004;
       double widthResolution = 0.007;
-      usImagePostScan3DSettings   imageSettings(probeRadius, scanLinePitch, isTransducerConvex, motorRadius, framePitch, isMotorRotating, heightResolution, widthResolution);
+      usMotorSettings   imageSettings(probeRadius, scanLinePitch, isTransducerConvex, motorRadius, framePitch, isMotorRotating, heightResolution, widthResolution);
       usImage3D<unsigned char> I(AN, LN, FN);
       usImagePostScan3D<unsigned char> postScan3d;
       postScan3d.setData(I);
@@ -79,7 +80,7 @@
 
 */
 template<class T>
-class usImagePostScan3D : public usImage3D<T>, public usImagePostScan3DSettings {
+class usImagePostScan3D : public usImage3D<T>, public usImagePostScanSettings,public usMotorSettings {
 public:
   usImagePostScan3D();
   usImagePostScan3D(unsigned int AN, unsigned int LN, unsigned int FN,
@@ -87,7 +88,7 @@ public:
                     bool isImageConvex=false, bool isMotorRotating=false,
                     double heightResolution=0.0, double widthResolution=0.0);
   usImagePostScan3D(const usImagePostScan3D &other);
-  usImagePostScan3D(const usImage3D<T> &otherImage, const usImagePostScan3DSettings &otherSettings);
+  usImagePostScan3D(const usImage3D<T> &otherImage, const usImagePostScanSettings &postScanSettings, const usMotorSettings &motorSettings);
   ~usImagePostScan3D();
 
   usImagePostScan3D<T> & operator =(const usImagePostScan3D<T> &other);
@@ -95,7 +96,6 @@ public:
   bool operator ==(const usImagePostScan3D<T> &other);
 
   void setData(const usImage3D<T> &image3D);
-  void setImageSettings(const usImagePostScan3DSettings &postScan3DSettings);
 };
 
 
@@ -103,7 +103,7 @@ public:
 * Basic constructor, all parameters set to default values
 */
 template<class T>
-usImagePostScan3D<T>::usImagePostScan3D() : usImage3D<T>(), usImagePostScan3DSettings()
+usImagePostScan3D<T>::usImagePostScan3D() : usImage3D<T>(), usImagePostScanSettings(), usMotorSettings()
 {
 
 }
@@ -124,7 +124,7 @@ usImagePostScan3D<T>::usImagePostScan3D() : usImage3D<T>(), usImagePostScan3DSet
 */
 template<class T>
 usImagePostScan3D<T>::usImagePostScan3D(unsigned int AN, unsigned int LN, unsigned int FN, double probeRadius, double motorRadius, double scanLinePitch, double framePitch, bool isTransducerConvex, bool isMotorRotating, double heightResolution, double widthResolution)
-  : usImage3D<T>(), usImagePostScan3DSettings(probeRadius, motorRadius, scanLinePitch, framePitch, isTransducerConvex, isMotorRotating, heightResolution, widthResolution)
+  : usImage3D<T>(AN,LN,FN), usImagePostScanSettings(probeRadius, scanLinePitch, isTransducerConvex,heightResolution,widthResolution), usMotorSettings( motorRadius, framePitch, isMotorRotating)
 {
 
 }
@@ -134,18 +134,20 @@ usImagePostScan3D<T>::usImagePostScan3D(unsigned int AN, unsigned int LN, unsign
 * @param other usImagePostScan3D to copy
 */
 template<class T>
-usImagePostScan3D<T>::usImagePostScan3D(const usImagePostScan3D &other) : usImage3D<T>(other), usImagePostScan3DSettings(other)
+usImagePostScan3D<T>::usImagePostScan3D(const usImagePostScan3D &other) : usImage3D<T>(other), usImagePostScanSettings(other), usMotorSettings(other)
 {
 
 }
 
 /**
-* Constructor from usImage3D and usImagePostScan3DSettings.
+* Constructor from usImage3D and usMotorSettings.
 * @param otherImage usImage3D<unsigned char> to copy
-* @param otherSettings usImagePostScan3DSettings to copy
+* @param postScanSettings usImagePostScanSettings to copy
+* @param motorSettings usMotorSettings to copy
 */
 template<class T>
-usImagePostScan3D<T>::usImagePostScan3D(const usImage3D<T> &otherImage, const usImagePostScan3DSettings &otherSettings) : usImage3D<T>(otherImage), usImagePostScan3DSettings(otherSettings)
+usImagePostScan3D<T>::usImagePostScan3D(const usImage3D<T> &otherImage, const usImagePostScanSettings &postScanSettings, const usMotorSettings &motorSettings) : 
+  usImage3D<T>(otherImage), usImagePostScanSettings(postScanSettings), usMotorSettings(motorSettings)
 {
 
 }
@@ -166,7 +168,7 @@ usImagePostScan3D<T> & usImagePostScan3D<T>::operator =(const usImagePostScan3D<
   usImage3D<T>::operator =(other);
 
   //from usSettings3D
-  usImagePostScan3DSettings::operator =(other);
+  usMotorSettings::operator =(other);
 
   return *this;
 }
@@ -178,7 +180,8 @@ template<class T>
 bool usImagePostScan3D<T>::operator == (usImagePostScan3D<T> const& other)
 {
   return usImage3D<T>::operator ==(other) &&
-         usImagePostScan3DSettings::operator ==(other);
+        usImagePostScanSettings::operator==(other) &&
+         usMotorSettings::operator ==(other);
 }
 
 /**
@@ -187,7 +190,8 @@ bool usImagePostScan3D<T>::operator == (usImagePostScan3D<T> const& other)
 template<class T> std::ostream& operator<<(std::ostream& out, const usImagePostScan3D<T> &other)
 {
   return out << static_cast<const usImage3D<T> &>(other) <<
-  static_cast<const usImagePostScan3DSettings &>(other);
+    static_cast<const usImagePostScanSettings &>(other) <<
+    static_cast<const usMotorSettings &>(other);
 }
 
 /**
@@ -198,15 +202,5 @@ template<class T>
 void usImagePostScan3D<T>::setData(const usImage3D<T> &image3D)
 {
   usImage3D<T>::operator =(image3D);
-}
-
-/**
-* Setter for image data.
-* @param postScan3DSettings Image settings you want to set.
-*/
-template<class T>
-void  usImagePostScan3D<T>::setImageSettings(const usImagePostScan3DSettings &postScan3DSettings)
-{
-  usImagePostScan3DSettings::operator=(postScan3DSettings);
 }
 #endif // US_IMAGE_POSTSCAN_3D_H
