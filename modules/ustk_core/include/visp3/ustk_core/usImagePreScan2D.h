@@ -89,9 +89,6 @@ public:
   //destructor
   ~usImagePreScan2D();
 
-  //copying from vpImage
-  void copyFrom(const vpImage<T> &I);
-
   //No setters for a_number and LN because vpImage doesn't have setters for height and width. Those parameters have to be passed in the constructor.
   unsigned int getANumber() const;
   unsigned int getLineNumber() const;
@@ -213,17 +210,6 @@ std::ostream& operator<<(std::ostream& out, const usImagePreScan2D<T> &other)
   return out << static_cast<const usImagePreScanSettings &>(other) << 
     "number of A-samples in a scanline : " << other.getANumber() << std::endl <<
     "number of scanlines : " << other.getLineNumber() << std::endl;
-}
-
-/**
-* Copy from vpImage. From double image type.
-* @param I vpImage<double> to copy.
-*/
-template<class T>
-void usImagePreScan2D<T>::copyFrom(const vpImage<T> &I)
-{
-  resize(I.getHeight(), I.getWidth());
-  memcpy(this->bitmap, I.bitmap, I.getSize() * sizeof(T));
 }
 
 /**

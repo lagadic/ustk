@@ -92,7 +92,6 @@ public:
 
   usImageRF3D<T>& operator=(const usImageRF3D<T> &other);
   bool operator==(const usImageRF3D<T> &other);
-  std::ostream& operator<<(std::ostream& out);
 
   void setData(const usImage3D<T> &image);
   void setImageSettings(const usImagePreScan3DSettings &settings);
@@ -197,17 +196,6 @@ bool usImageRF3D<T>::operator==(const usImageRF3D<T> &other)
 {
   return(usImage3D<T>::operator== (other) &&
          usImagePreScan3DSettings::operator ==(other));
-}
-
-/**
-* Information printing operator.
-* @param out Stream you want to write in.
-*/
-template<class T>
-std::ostream& usImageRF3D<T>::operator<<(std::ostream& out)
-{
-  return usImage3D<T>::operator<<(out) <<
-    usImagePreScan3DSettings::operator<<(out);
 }
 
 /**
