@@ -11,18 +11,16 @@
 #include <sstream>
 
 #include <visp3/core/vpConfig.h>
-#include <visp3/ustk_core/usImagePostScan2D.h>
-#include <visp3/ustk_core/usImagePostScan3D.h>
-#include <visp3/ustk_core/usImagePreScan2D.h>
-#include <visp3/ustk_core/usImagePreScan3D.h>
-#include <visp3/ustk_core/usImageRF2D.h>
-#include <visp3/ustk_core/usImageRF3D.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/ustk_core/usImage3D.h>
 
 class VISP_EXPORT usRawFileParser {
 
 public:
-  void read(usImagePostScan3D<unsigned char> &postScanImage3D, const std::string mhdFileName);
-  void write(const usImagePostScan3D<unsigned char> &postScanImage3D, const std::string rawFileName);
+  void read(usImage3D<unsigned char> &image3D, const std::string mhdFileName);
+  void write(const usImage3D<unsigned char> &image3D, const std::string rawFileName);
+  void read(vpImage<unsigned char> &image2D, const std::string mhdFileName);
+  void write(const vpImage<unsigned char> &image2D, const std::string rawFileName);
 
 };
 #endif //US_RAW_FILE_PARSER_H
