@@ -86,6 +86,16 @@ bool usImagePostScanSettings::operator==(const usImagePostScanSettings& other)
 }
 
 /**
+* Operator to print image informations on a stream.
+*/
+VISP_EXPORT std::ostream& operator<<(std::ostream& out, const usImagePostScanSettings &other)
+{
+  out << static_cast<const usImageSettings &>(other);
+  return out << "Height resolution : " << other.getHeightResolution() <<
+    "Width resolution : " << other.getWidthResolution();
+}
+
+/**
 * Width resolution setter.
 * @param widthResolution Width resolution to set.
 */

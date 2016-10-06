@@ -83,6 +83,15 @@ bool usImagePreScan3DSettings::operator==(const usImagePreScan3DSettings& other)
 }
 
 /**
+* Prints information in a stream.
+*/
+VISP_EXPORT std::ostream& operator<<(std::ostream& out, const usImagePreScan3DSettings &other)
+{
+  return out << static_cast<const usImage3DSettings &>(other) <<
+    "Axial resolution : " << other.getAxialResolution() << std::endl;
+}
+
+/**
 * Axial resolution setter.
 * @param axialResolution Axial resloution to assign to the settings.
 */

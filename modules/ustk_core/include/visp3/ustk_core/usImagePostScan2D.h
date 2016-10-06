@@ -201,8 +201,8 @@ bool usImagePostScan2D<T>::operator ==(const usImagePostScan2D<T> &other)
 template<class T>
 std::ostream& operator<<(std::ostream& out, const usImagePostScan2D<T> &other)
 {
-  out << static_cast<const usImagePostScanSettings &>(other);
-  return out << "number of A-samples in a scanline : " << other.getANumber() << std::endl <<
+  return out << static_cast<const usImagePostScanSettings &>(other) <<
+  "number of A-samples in a scanline : " << other.getANumber() << std::endl <<
   "number of scanlines : " << other.getLineNumber() << std::endl;
 }
 

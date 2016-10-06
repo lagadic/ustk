@@ -86,6 +86,7 @@ public:
 
   usImage3DSettings& operator=(const usImage3DSettings& other);
   bool operator==(const usImage3DSettings& other);
+  friend VISP_EXPORT std::ostream& operator<<(std::ostream& out, const usImage3DSettings& other);
 
   // Settings from the 3D probe
   void setMotorRadius(double motorRadius);
@@ -101,16 +102,4 @@ private:
   bool m_isMotorRotating;
 };
 
-
-/**
-* Print probe settings information.
-*/
-std::ostream& operator<<(std::ostream& out, const usImage3DSettings& other)
-{
-  out << static_cast<const usImageSettings &>(other);
-
-  return out << "motor radius : " << other.getMotorRadius() << std::endl
-    << "frame angle : " << other.getFramePitch() << std::endl
-    << "is motor rotating : " << other.isMotorRotating() << std::endl;
-}
 #endif // US_IMAGE_3D_SETTINGS_H

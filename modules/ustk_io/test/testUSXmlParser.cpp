@@ -200,14 +200,8 @@ int main(int argc, const char** argv)
 
     usImageIo::write(prescan2DReference,filename);
 
-    std::cout << "Read from " << filename << std::endl ;
-    std::cout << "Axial resolution : " << prescan2DReference.getAxialResolution() << std::endl;
-    std::cout << "Probe Radius : " << prescan2DReference.getProbeRadius() << std::endl;
-    std::cout << "ScanLine pitch : " << prescan2DReference.getScanLinePitch() << std::endl;
-    std::cout << "Convex probe : " << prescan2DReference.isTransducerConvex() << std::endl;
-    std::cout << "Height : " << prescan2DReference.getHeight() << std::endl;
-    std::cout << "Width : " << prescan2DReference.getWidth() << std::endl;
-    std::cout << "Axial resolution : " << prescan2DReference.getAxialResolution() << std::endl;
+    std::cout << "Written in " << filename << std::endl;
+    std::cout << prescan2DReference;
 
     //read the image we just wrote
     usImagePreScan2D<unsigned char> prescan2D;
@@ -216,13 +210,7 @@ int main(int argc, const char** argv)
 
 
     std::cout << "Read from " << filename << std::endl ;
-    std::cout << "Axial resolution : " << prescan2D.getAxialResolution() << std::endl;
-    std::cout << "Probe Radius : " << prescan2D.getProbeRadius() << std::endl;
-    std::cout << "ScanLine pitch : " << prescan2D.getScanLinePitch() << std::endl;
-    std::cout << "Convex probe : " << prescan2D.isTransducerConvex() << std::endl;
-    std::cout << "Height : " << prescan2D.getHeight() << std::endl;
-    std::cout << "Width : " << prescan2D.getWidth() << std::endl;
-    std::cout << "Axial resolution : " << prescan2D.getAxialResolution() << std::endl;
+    std::cout << prescan2D;
 
     if(prescan2D==prescan2DReference) {
       std::cout << "Test passed !" << std::endl;

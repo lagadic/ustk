@@ -88,7 +88,7 @@ bool usImagePostScan3DSettings::operator==(const usImagePostScan3DSettings& othe
 /**
 * Operator to print image informations on a stream.
 */
-template<class T>
+template<class T> VISP_EXPORT
 std::ostream& operator<<(std::ostream& out, const usImagePostScan3DSettings &other)
 {
   out << static_cast<const usImage3DSettings &>(other);

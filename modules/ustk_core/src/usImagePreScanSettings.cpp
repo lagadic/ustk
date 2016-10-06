@@ -84,6 +84,16 @@ bool usImagePreScanSettings::operator==(const usImagePreScanSettings& other)
 }
 
 /**
+* Prints information in a stream.
+*/
+template<class T> VISP_EXPORT
+std::ostream& operator<<(std::ostream& out, const usImagePreScanSettings &other)
+{
+  return out << static_cast<const usImageSettings &>(other) <<
+    "Axial resolution : " << other.getAxialResolution() << std::endl;
+}
+
+/**
 * Axial resolution setter.
 * @param axialResolution Axial resloution to assign to the settings.
 */

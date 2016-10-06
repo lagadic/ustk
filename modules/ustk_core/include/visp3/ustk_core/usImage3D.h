@@ -456,8 +456,7 @@ bool usImage3D<Type>::operator==(const usImage3D<Type> &other)
   return true;
 }
 
-template<class Type>
-std::ostream& operator<<(std::ostream& out, const usImage3D<Type> &other)
+template<class Type> std::ostream& operator<<(std::ostream& out, const usImage3D<Type> &other)
 {
   return out << "number of A-samples in a scanline : " << other.getANumber() << std::endl
              << "number of scanlines in a frame : " << other.getLineNumber() << std::endl

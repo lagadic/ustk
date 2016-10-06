@@ -209,7 +209,7 @@ bool usImagePreScan3D<T>::operator==(const usImagePreScan3D<T> &other)
 /**
 * Prints information in a stream.
 */
-template<class T>
+template<class T> 
 std::ostream& operator<<(std::ostream& out, const usImagePreScan3D<T> &other)
 {
   return out << static_cast<const usImage3D<T> &>(other) <<

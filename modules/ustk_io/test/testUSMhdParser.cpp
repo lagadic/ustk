@@ -200,21 +200,8 @@ int main(int argc, const char** argv)
     postscan3DReference.setWidthResolution(0.0058);
     postscan3DReference.setHeightResolution(0.0058);
 
-    std::cout << "Read from " << filename << std::endl ;
-    std::cout << "Dim X : " << postscan3DReference.getANumber() << std::endl;
-    std::cout << "Dim Y : " << postscan3DReference.getLineNumber() << std::endl;
-    std::cout << "Dim Z: " << postscan3DReference.getFrameNumber() << std::endl;
-    std::cout << "Spacing X: " << postscan3DReference.getElementSpacingX() << std::endl;
-    std::cout << "Spacing Y: " << postscan3DReference.getElementSpacingY() << std::endl;
-    std::cout << "Spacing Z: " << postscan3DReference.getElementSpacingZ() << std::endl;
-    std::cout << "Scanline pitch : " << postscan3DReference.getScanLinePitch() << std::endl;
-    std::cout << "Probe Radius : " << postscan3DReference.getProbeRadius() << std::endl;
-    std::cout << "transducer convexity : " << postscan3DReference.isTransducerConvex() << std::endl;
-    std::cout << "Frame pitch : " << postscan3DReference.getFramePitch() << std::endl;
-    std::cout << "Motor Radius : " << postscan3DReference.getMotorRadius() << std::endl;
-    std::cout << "motor convexity : " << postscan3DReference.isMotorRotating() << std::endl;
-    std::cout << "Width resolution : " << postscan3DReference.getWidthResolution() << std::endl;
-    std::cout << "Height resolution : " << postscan3DReference.getHeightResolution() << std::endl;
+    std::cout << "Written in " << filename << std::endl ;
+    std::cout << postscan3DReference;
 
     //write image
     usImageIo::write(postscan3DReference,filename);
@@ -225,24 +212,7 @@ int main(int argc, const char** argv)
     usImageIo::read(postscan3D,filename);
 
     std::cout << "Read from " << filename << std::endl ;
-    std::cout << static_cast<const usImage3D<unsigned char> &>(postscan3D);
-    //std::cout << postscan3D ;
-    /*<< postscan3D.getANumber() << std::endl;
-    std::cout << "Dim Y : " << postscan3D.getLineNumber() << std::endl;
-    std::cout << "Dim Z: " << postscan3D.getFrameNumber() << std::endl;
-    std::cout << "Spacing X: " << postscan3D.getElementSpacingX() << std::endl;
-    std::cout << "Spacing Y: " << postscan3D.getElementSpacingY() << std::endl;
-    std::cout << "Spacing Z: " << postscan3D.getElementSpacingZ() << std::endl;
-    std::cout << "Scanline pitch : " << postscan3D.getScanLinePitch() << std::endl;
-    std::cout << "Probe Radius : " << postscan3D.getProbeRadius() << std::endl;
-    std::cout << "Frame pitch : " << postscan3D.getFramePitch() << std::endl;
-    std::cout << "transducer convexity : " << postscan3DReference.isTransducerConvex() << std::endl;
-    std::cout << "Motor Radius : " << postscan3D.getMotorRadius() << std::endl;
-    std::cout << "motor convexity : " << postscan3D.isMotorRotating() << std::endl;
-    std::cout << "Width resolution : " << postscan3D.getWidthResolution() << std::endl;
-    std::cout << "Height resolution : " << postscan3D.getHeightResolution() << std::endl;
-
-    std::cout << postscan3D;*/
+    std::cout << postscan3D;
 
     if(postscan3D==postscan3DReference) {
       std::cout << "Test passed !" << std::endl;

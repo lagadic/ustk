@@ -80,6 +80,7 @@ public:
   //comparison
   bool operator==(usImageSettings const& other);
 
+  friend VISP_EXPORT std::ostream& operator<<(std::ostream& out, const usImageSettings &other);
   //Settings form the probe
   void setImageSettings(const usImageSettings& other);
   void setProbeConvexity(const bool isTransducerConvex);
@@ -94,16 +95,5 @@ private:
   double m_scanLinePitch;
   bool m_isTransducerConvex;
 };
-
-/**
-* Print transducer informations in a ostream.
-* @return True if the settings are the same, false otherwise.
-*/
-std::ostream& operator<<(std::ostream& out, const usImageSettings &other)
-{
-  return out << "probe radius: " << other.getProbeRadius() << std::endl
-    << "line angle: " << other.getScanLinePitch() << std::endl
-    << "convex probe used: " << other.isTransducerConvex() << std::endl;
-}
 
 #endif // US_IMAGE_SETTINGS_H

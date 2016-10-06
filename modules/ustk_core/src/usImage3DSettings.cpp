@@ -92,6 +92,18 @@ bool usImage3DSettings::operator==(const usImage3DSettings& other)
           this->isMotorRotating() == other.isMotorRotating());
 }
 
+/**
+* Print probe settings information.
+*/
+VISP_EXPORT std::ostream& operator<<(std::ostream& out, const usImage3DSettings& other)
+{
+  out << static_cast<const usImageSettings &>(other);
+
+  return out << "motor radius : " << other.getMotorRadius() << std::endl
+    << "frame angle : " << other.getFramePitch() << std::endl
+    << "is motor rotating : " << other.isMotorRotating() << std::endl;
+}
+
 //probe settings getters/setters
 
 /**
