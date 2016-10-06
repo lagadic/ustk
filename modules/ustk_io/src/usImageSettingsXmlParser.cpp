@@ -102,18 +102,18 @@ usImageSettingsXmlParser::readMainClass (xmlDocPtr doc, xmlNodePtr node)
             this->m_axialResolution = xmlReadDoubleChild(doc, dataNode);
             break;
           }
-          throw(vpException(vpException::fatalError, std::string("Trying to assign an axial resolution to a postscan image !")));
+          throw(vpException(vpException::fatalError, std::string("Trying to assign an axial resolution to a post-scan image !")));
           break;
         case CODE_XML_HEIGHT_RESOLUTION:
           if (this->m_is_prescan) {
-            throw(vpException(vpException::fatalError, std::string("Trying to assign an height resolution to a prescan image !")));
+            throw(vpException(vpException::fatalError, std::string("Trying to assign an height resolution to a pre-scan image !")));
             break;
           }
           this->m_heightResolution = xmlReadDoubleChild(doc, dataNode);
           break;
         case CODE_XML_WIDTH_RESOLUTION :
           if (this->m_is_prescan) {
-            throw(vpException(vpException::fatalError, std::string("Trying to assign an width resolution to a prescan image !")));
+            throw(vpException(vpException::fatalError, std::string("Trying to assign an width resolution to a pre-scan image !")));
             break;
           }
           this->m_widthResolution = xmlReadDoubleChild(doc, dataNode);
@@ -153,13 +153,13 @@ usImageSettingsXmlParser::writeMainClass(xmlNodePtr node)
   }
   xmlWriteDoubleChild(node, "scanline_pitch", m_imageSettings.getScanLinePitch());
   xmlWriteDoubleChild(node, "probe_radius", m_imageSettings.getProbeRadius());
-  xmlWriteBoolChild(node, "is_probe_convex", m_imageSettings.isProbeConvex());
+  xmlWriteBoolChild(node, "is_probe_convex", m_imageSettings.isTransducerConvex());
   xmlWriteCharChild(node, "image_file_name", m_imageFileName.c_str());
 }
 
 void usImageSettingsXmlParser::setImagePreScanSettings(const usImagePreScan2D<unsigned char>& imagePrescan2D)
 {
-  m_imageSettings.setProbeConvexity(imagePrescan2D.isProbeConvex());
+  m_imageSettings.setProbeConvexity(imagePrescan2D.isTransducerConvex());
   m_imageSettings.setProbeRadius(imagePrescan2D.getProbeRadius());
   m_imageSettings.setScanLinePitch(imagePrescan2D.getScanLinePitch());
   m_axialResolution = imagePrescan2D.getAxialResolution();
@@ -168,7 +168,7 @@ void usImageSettingsXmlParser::setImagePreScanSettings(const usImagePreScan2D<un
 
 void usImageSettingsXmlParser::setImagePostScanSettings(const usImagePostScan2D<unsigned char>& imagePostcan2D)
 {
-  m_imageSettings.setProbeConvexity(imagePostcan2D.isProbeConvex());
+  m_imageSettings.setProbeConvexity(imagePostcan2D.isTransducerConvex());
   m_imageSettings.setProbeRadius(imagePostcan2D.getProbeRadius());
   m_imageSettings.setScanLinePitch(imagePostcan2D.getScanLinePitch());
   m_heightResolution = imagePostcan2D.getHeightResolution();
@@ -176,20 +176,20 @@ void usImageSettingsXmlParser::setImagePostScanSettings(const usImagePostScan2D<
   m_is_prescan = false;
 }
 
-void usImageSettingsXmlParser::setImageSettings(double probeRadius, double scanLinePitch, bool isProbeConvex, double axialResolution)
+void usImageSettingsXmlParser::setImageSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex, double axialResolution)
 {
   m_imageSettings.setProbeRadius(probeRadius);
   m_imageSettings.setScanLinePitch(scanLinePitch);
-  m_imageSettings.setProbeConvexity(isProbeConvex);
+  m_imageSettings.setProbeConvexity(isTransducerConvex);
   m_axialResolution = axialResolution;
   m_is_prescan = true;
 }
 
-void usImageSettingsXmlParser::setImageSettings(double probeRadius, double scanLinePitch, bool isProbeConvex, double widthResolution, double heightResolution)
+void usImageSettingsXmlParser::setImageSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex, double widthResolution, double heightResolution)
 {
   m_imageSettings.setProbeRadius(probeRadius);
   m_imageSettings.setScanLinePitch(scanLinePitch);
-  m_imageSettings.setProbeConvexity(isProbeConvex);
+  m_imageSettings.setProbeConvexity(isTransducerConvex);
   m_heightResolution = heightResolution;
   m_widthResolution = widthResolution;
   m_is_prescan = false;

@@ -32,7 +32,7 @@
 
 /**
  * @file usImagePostScan2D.h
- * @brief 2D postscan ultrasound image.
+ * @brief 2D post-scan ultrasound image.
  */
 
 #ifndef US_IMAGE_POSTSCAN_2D_H
@@ -45,16 +45,14 @@
 
 /**
  @class usImagePostScan2D
- @brief 2D postscan ultrasound image.
+ @brief 2D post-scan ultrasound image.
 
- This class represents a 2D ultrasound postscan frame.
+ This class represents a 2D ultrasound post-scan frame.
 
    <h3>Example</h3>
-  The following example shows how to build a 2D postscan ultrasound image from a vpImage, and from acquisiton settings.
+  The following example shows how to build a 2D post-scan ultrasound image from a vpImage, and from acquisiton settings.
 
   \code
-
-
     #include <visp3/ustk_core/usImagePostScan2D.h>
 
     int main()
@@ -64,10 +62,10 @@
       unsigned int LN = 200;
       double probeRadius = 0.045;
       double scanLinePitch = 0.0012;
-      bool isProbeConvex = true;
+      bool isTransducerConvex = true;
       double heightResolution = 0.002;
       double widthResolution = 0.004;
-      usImagePostScanSettings   imageSettings(probeRadius, scanLinePitch, isProbeConvex, heightResolution, widthResolution);
+      usImagePostScanSettings   imageSettings(probeRadius, scanLinePitch, isTransducerConvex, heightResolution, widthResolution);
       vpImage<unsigned char> I(AN, LN);
       usImagePostScan2D<unsigned char> postScan2d;
       postScan2d.setData(I);
@@ -79,7 +77,7 @@ template<class T>
 class usImagePostScan2D : public vpImage<T>, public usImagePostScanSettings {
 public:
   usImagePostScan2D();
-  usImagePostScan2D(unsigned int a_nubmer, unsigned int line_number, double probeRadius=0.0, double scanLinePitch=0.0, bool isProbeConvex=false, double height_resolution=0.0, double width_resolution=0.0);
+  usImagePostScan2D(unsigned int a_nubmer, unsigned int line_number, double probeRadius=0.0, double scanLinePitch=0.0, bool isTransducerConvex=false, double height_resolution=0.0, double width_resolution=0.0);
   usImagePostScan2D(const usImagePostScan2D<T> &other);
   usImagePostScan2D(const vpImage<T> &other);
   usImagePostScan2D(const usImagePostScanSettings &other);
@@ -108,14 +106,15 @@ usImagePostScan2D<T>::usImagePostScan2D() : vpImage<T>(), usImagePostScanSetting
 * @param a_nubmer number of A-samples in a line.
 * @param line_number number of lines.
 * @param probeRadius radius of the ultrasound probe used to acquire the RF image.
-* @param scanLinePitch Angle(rad) / Distance(m) between 2 lines of the ultrasound probe used to acquire the RF image. Angle if isConvex is true, distance if it's false.
-* @param isProbeConvex Boolean to specify if the probe used was convex(true) or linear(false).
+* @param scanLinePitch Angle (radians) or distance (meters) between 2 lines of the ultrasound probe
+* used to acquire the RF image. Angle if \e isTransducerConvex is true, distance otherwise.
+* @param isTransducerConvex Boolean to specify if the probe transducer is convex (true) or linear (false).
 * @param height_resolution Height resolution of the image.
 * @param width_resolution Width resolution of the image.
 */
 template<class T>
-usImagePostScan2D<T>::usImagePostScan2D(unsigned int a_nubmer, unsigned int line_number, double probeRadius, double scanLinePitch, bool isProbeConvex, double height_resolution, double width_resolution)
-  : vpImage<T>(a_nubmer, line_number), usImagePostScanSettings(probeRadius, scanLinePitch, isProbeConvex, height_resolution, width_resolution)
+usImagePostScan2D<T>::usImagePostScan2D(unsigned int a_nubmer, unsigned int line_number, double probeRadius, double scanLinePitch, bool isTransducerConvex, double height_resolution, double width_resolution)
+  : vpImage<T>(a_nubmer, line_number), usImagePostScanSettings(probeRadius, scanLinePitch, isTransducerConvex, height_resolution, width_resolution)
 {
 
 }
@@ -202,7 +201,7 @@ void usImagePostScan2D<T>::setImageSettings(const usImagePostScanSettings &setti
 {
   setProbeRadius(settings.getProbeRadius());
   setScanLinePitch(settings.getScanLinePitch());
-  setProbeConvexity(settings.isProbeConvex());
+  setProbeConvexity(settings.isTransducerConvex());
   setHeightResolution(settings.getHeightResolution());
   setWidthResolution(settings.getWidthResolution());
 }

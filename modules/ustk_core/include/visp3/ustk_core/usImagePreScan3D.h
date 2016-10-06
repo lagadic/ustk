@@ -32,7 +32,7 @@
 
 /**
 * @file usImagePreScan3D.h
-* @brief 3D prescan ultrasound image.
+* @brief 3D pre-scan ultrasound image.
 */
 
 #ifndef US_IMAGE_PRESCAN_3D_H
@@ -44,12 +44,12 @@
 
 /*!
  @class usImagePreScan3D
- @brief 3D prescan ultrasound image.
+ @brief 3D pre-scan ultrasound image.
 
- This class represents a 3D ultrasound prescan frame.
+ This class represents a 3D ultrasound pre-scan frame.
 
   <h3>Example</h3>
-  The following example shows how to build a 3D prescan ultrasound image from a usImage3D, and from acquisiton settings.
+  The following example shows how to build a 3D pre-scan ultrasound image from a usImage3D, and from acquisiton settings.
 
   \code
     #include <visp3/ustk_core/usImagePreScan3D.h>
@@ -62,12 +62,12 @@
       unsigned int FN = 10;
       double probeRadius = 0.008;
       double scanLinePitch = 0.004;
-      bool isProbeConvex = true;
+      bool isTransducerConvex = true;
       double motorRadius = 0.0008;
       double framePitch = 0.05;
-      bool isMotorConvex = true;
+      bool isMotorRotating = true;
       double axialResolution = 0.004;
-      usImagePreScan3DSettings   imageSettings(probeRadius, scanLinePitch, isProbeConvex, motorRadius, framePitch, isMotorConvex, axialResolution);
+      usImagePreScan3DSettings   imageSettings(probeRadius, scanLinePitch, isTransducerConvex, motorRadius, framePitch, isMotorRotating, axialResolution);
       usImage3D<unsigned char> I(AN, LN, FN);
       usImagePreScan3D<unsigned char> preScan3d;
       preScan3d.setData(I);
@@ -83,7 +83,7 @@ public:
   //All parameters initialisation constructors
   usImagePreScan3D(unsigned int AN, unsigned int LN, unsigned int FN,
                    double probeRadius=0.0, double motorRadius=0.0, double scanLinePitch=0.0, double framePitch=0.0,
-                   bool isImageConvex=false, bool isMotorConvex=false, double axial_resolution=0.0);
+                   bool isImageConvex=false, bool isMotorRotating=false, double axial_resolution=0.0);
   //usImagePreScan3D copy constructor
   usImagePreScan3D(const usImagePreScan3D &other);
   //usImage3D copy constructor
@@ -126,14 +126,14 @@ usImagePreScan3D<T>::usImagePreScan3D() : usImage3D<T>(), usImagePreScan3DSettin
 * @param motorRadius radius of the ultrasound probe motor used to acquire the RF image.
 * @param scanLinePitch angle(rad) / distance(m) between 2 lines of the ultrasound probe used to acquire the RF image.
 * @param framePitch angle(rad) / distance(m) between 2 lines of the ultrasound probe used to acquire the RF image.
-* @param isProbeConvex Boolean to specyfy if the image was acquired by a convex probe(true) or by a linear probe (false).
-* @param isMotorConvex Boolean to specyfy if the image was acquired by a rotating  motor(true) or by a linear motor (false).
+* @param isTransducerConvex Boolean to specify if the image is acquired by a convex probe transducer (true) or by a linear probe transducer (false).
+* @param isMotorRotating Boolean to specify if the image is acquired by a rotating  motor (true) or by a linear motor (false).
 * @param axial_resolution Axial resolution of the image.
 */
 template<class T>
 usImagePreScan3D<T>::usImagePreScan3D(unsigned int AN, unsigned int LN, unsigned int FN, double probeRadius, double motorRadius, double scanLinePitch, double framePitch,
-                                      bool isProbeConvex, bool isMotorConvex, double axial_resolution) :
-  usImage3D<T>(AN, LN, FN), usImagePreScan3DSettings(probeRadius, motorRadius, scanLinePitch, framePitch, isProbeConvex, isMotorConvex, axial_resolution)
+                                      bool isTransducerConvex, bool isMotorRotating, double axial_resolution) :
+  usImage3D<T>(AN, LN, FN), usImagePreScan3DSettings(probeRadius, motorRadius, scanLinePitch, framePitch, isTransducerConvex, isMotorRotating, axial_resolution)
 {
 
 }

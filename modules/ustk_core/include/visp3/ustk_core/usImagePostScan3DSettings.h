@@ -31,7 +31,7 @@
 
 /**
  * @file usImagePostScan3DSettings.h
- * @brief Ultrasound image settings for 3D postscan images.
+ * @brief Ultrasound image settings for 3D post-scan images.
  */
 
 #ifndef US_IMAGE_POSTSCAN_3D_SETTINGS_H
@@ -47,27 +47,27 @@
 #include <visp3/ustk_core/usImage3DSettings.h>
 /**
  * @class usImagePostScan3DSettings
- * @brief Ultrasound image settings for 3D postscan images.
+ *
+ * This class represents 3D ultrasound post-scan image settings which are:
+ * - the common settings corresponding to the transducer and motor settings.
+ *   See usImage3DSettings for more details.
+ * - the image with and height resolution which corresponds to the size (in meters) of a pixel
+ *   in the image.
  */
 class VISP_EXPORT usImagePostScan3DSettings : public usImage3DSettings {
 public:
   usImagePostScan3DSettings();
-
-  usImagePostScan3DSettings(double probeRadius, double scanLinePitch, bool isProbeConvex, double motorRadius, double framePitch, bool isMotorConvex, double height_resolution, double width_resolution);
-
+  usImagePostScan3DSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex, double motorRadius, double framePitch, bool isMotorRotating, double height_resolution, double width_resolution);
   virtual ~usImagePostScan3DSettings();
 
-  usImagePostScan3DSettings& operator=(const usImagePostScan3DSettings& other);
-
-  bool operator==(const usImagePostScan3DSettings& other);
-
-  void setWidthResolution(const double widthResolution);
-
+  double getHeightResolution() const;
   double getWidthResolution() const;
 
-  void setHeightResolution(const double heightResolution);
+  usImagePostScan3DSettings& operator=(const usImagePostScan3DSettings& other);
+  bool operator==(const usImagePostScan3DSettings& other);
 
-  double getHeightResolution() const;
+  void setHeightResolution(const double heightResolution);
+  void setWidthResolution(const double widthResolution);
 
 private:
   //Settings from the probe

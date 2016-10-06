@@ -104,8 +104,8 @@ void usImageIo::read(usImageRF3D<unsigned char> &imageRf3,const std::string head
 }
 
 /**
-* Write 2D unsigned char prescan ultrasound image.
-* @param preScanImage The prescan image to write.
+* Write 2D unsigned char pre-scan ultrasound image.
+* @param preScanImage The pre-scan image to write.
 * @param headerFileName The header file name to write, with extension.
 * @param imageExtension The image extention name to write (ex : ".png").
 */
@@ -144,8 +144,8 @@ void usImageIo::write(const usImagePreScan2D<unsigned char> & preScanImage, cons
 }
 
 /**
-* Read 2D unsigned char prescan ultrasound image.
-* @param [out] preScanImage The prescan image to read.
+* Read 2D unsigned char pre-scan ultrasound image.
+* @param [out] preScanImage The pre-scan image to read.
 * @param [in] headerFileName The header file name to read, with extension.
 */
 void usImageIo::read(usImagePreScan2D<unsigned char> &preScanImage,const std::string headerFileName)
@@ -165,7 +165,7 @@ void usImageIo::read(usImagePreScan2D<unsigned char> &preScanImage,const std::st
     vpImageIo::read(preScanImage, xmlSettings.getImageFileName());
 
     preScanImage.setImageSettings(usImagePreScanSettings(xmlSettings.getImageSettings().getProbeRadius(),
-      xmlSettings.getImageSettings().getScanLinePitch(), xmlSettings.getImageSettings().isProbeConvex(), xmlSettings.getAxialResolution()));
+      xmlSettings.getImageSettings().getScanLinePitch(), xmlSettings.getImageSettings().isTransducerConvex(), xmlSettings.getAxialResolution()));
     preScanImage.setAxialResolution(xmlSettings.getAxialResolution());
 #else
     throw(vpException(vpException::fatalEtrror, "Requires xml2 library"));
@@ -180,8 +180,8 @@ void usImageIo::read(usImagePreScan2D<unsigned char> &preScanImage,const std::st
 }
 
 /**
-* Write 3D unsigned char prescan ultrasound image.
-* @param preScanImage The prescan image to write.
+* Write 3D unsigned char pre-scan ultrasound image.
+* @param preScanImage The pre-scan image to write.
 * @param filename The image file name to write.
 */
 void usImageIo::write(const usImagePreScan3D<unsigned char> &preScanImage, const std::string filename) {
@@ -189,8 +189,8 @@ void usImageIo::write(const usImagePreScan3D<unsigned char> &preScanImage, const
 }
 
 /**
-* Read 3D unsigned char prescan ultrasound image.
-* @param [out] preScanImage The prescan image to read.
+* Read 3D unsigned char pre-scan ultrasound image.
+* @param [out] preScanImage The pre-scan image to read.
 * @param [in] filename The image file name to read, with .xml extension.
 */
 void usImageIo::read(usImagePreScan3D<unsigned char> &preScanImage,const std::string filename) {
@@ -198,8 +198,8 @@ void usImageIo::read(usImagePreScan3D<unsigned char> &preScanImage,const std::st
 }
 
 /**
-* Write 2D double prescan ultrasound image.
-* @param preScan2DImage The prescan image to write.
+* Write 2D double pre-scan ultrasound image.
+* @param preScan2DImage The pre-scan image to write.
 * @param filename The image file name to write.
 */
 void usImageIo::write(const usImagePreScan2D<double> &preScan2DImage, const std::string filename) {
@@ -207,8 +207,8 @@ void usImageIo::write(const usImagePreScan2D<double> &preScan2DImage, const std:
 }
 
 /**
-* Read 2D double prescan ultrasound image.
-* @param [out] preScan2D The prescan image to read.
+* Read 2D double pre-scan ultrasound image.
+* @param [out] preScan2D The pre-scan image to read.
 * @param [in] filename The image file name to read.
 */
 void usImageIo::read(usImagePreScan2D<double> &preScan2D,std::string filename) {
@@ -216,8 +216,8 @@ void usImageIo::read(usImagePreScan2D<double> &preScan2D,std::string filename) {
 }
 
 /**
-* Write 3D double prescan ultrasound image.
-* @param preScan3DImage The prescan image to write.
+* Write 3D double pre-scan ultrasound image.
+* @param preScan3DImage The pre-scan image to write.
 * @param filename The image file name to write.
 */
 void usImageIo::write(const usImagePreScan3D<double> &preScan3DImage, const std::string filename) {
@@ -225,8 +225,8 @@ void usImageIo::write(const usImagePreScan3D<double> &preScan3DImage, const std:
 }
 
 /**
-* Read 3D double prescan ultrasound image.
-* @param [out] preScan3DImage The prescan image to read.
+* Read 3D double pre-scan ultrasound image.
+* @param [out] preScan3DImage The pre-scan image to read.
 * @param [in] filename The image file name to read.
 */
 void usImageIo::read(usImagePreScan3D<double> &preScan3DImage,std::string filename) {
@@ -234,7 +234,7 @@ void usImageIo::read(usImagePreScan3D<double> &preScan3DImage,std::string filena
 }
 
 /**
-* Write 2D postscan ultrasound image and settings.
+* Write 2D post-scan ultrasound image and settings.
 * @param postScanImage Image to write.
 * @param headerFileName The header file name with the desired extension.
 * @param imageExtension The image extension.
@@ -270,8 +270,8 @@ void usImageIo::write(const usImagePostScan2D<unsigned char> &postScanImage, con
 }
 
 /**
-* Read 2D postscan ultrasound image.
-* @param [out] postScanImage The postscan image to read.
+* Read 2D post-scan ultrasound image.
+* @param [out] postScanImage The post-scan image to read.
 * @param [in] headerFileName The header file name with.
 */
 void usImageIo::read(usImagePostScan2D<unsigned char> &postScanImage,const std::string headerFileName) {
@@ -302,7 +302,7 @@ void usImageIo::read(usImagePostScan2D<unsigned char> &postScanImage,const std::
 }
 
 /**
-* Write 3D postscan ultrasound image and settings
+* Write 3D post-scan ultrasound image and settings
 * @param postScanImage Image to write.
 * @param mhdFilename The header file name.
 * @param imageExtension The image file extension.
@@ -330,8 +330,8 @@ void usImageIo::write(const usImagePostScan3D<unsigned char> &postScanImage, con
     header.msb = false;
     header.MHDFileName = headerFileName;
     header.rawFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(imageExtension);
-    header.isProbeConvex = postScanImage.isProbeConvex();
-    header.isMotorConvex = postScanImage.isMotorConvex();
+    header.isTransducerConvex = postScanImage.isTransducerConvex();
+    header.isMotorRotating = postScanImage.isMotorRotating();
     header.probeRadius = postScanImage.getProbeRadius();
     header.scanLinePitch = postScanImage.getScanLinePitch();
     header.motorRadius = postScanImage.getMotorRadius();
@@ -352,8 +352,8 @@ void usImageIo::write(const usImagePostScan3D<unsigned char> &postScanImage, con
 }
 
 /**
-* Read 3D postscan ultrasound image
-* @param [out] postScanImage The postscan image to read.
+* Read 3D post-scan ultrasound image
+* @param [out] postScanImage The post-scan image to read.
 * @param [in] mhdFileName The mhd file name with .mhd extenstion.
 */
 void usImageIo::read(usImagePostScan3D<unsigned char> &postScanImage,std::string headerFileName) {
@@ -368,10 +368,10 @@ void usImageIo::read(usImagePostScan3D<unsigned char> &postScanImage,std::string
     usMetaHeaderParser mhdParser;
     mhdParser.read(headerFileName);
     if (mhdParser.getImageType() != usMetaHeaderParser::POSTSCAN_3D && mhdParser.getImageType() != usMetaHeaderParser::NOT_SET) {
-      throw(vpException(vpException::badValue,"Reading a non postscan3d image!"));
+      throw(vpException(vpException::badValue,"Reading a non post-scan 3D image!"));
     }
     if (mhdParser.getElementType() != usMetaHeaderParser::MET_UCHAR) {
-      throw(vpException(vpException::badValue,"Reading a non unisgned char image!"));
+      throw(vpException(vpException::badValue,"Reading a non unsigned char image!"));
     }
     //resizing image in memory
     postScanImage.resize(mhdParser.getImageSizeX(),mhdParser.getImageSizeY(),mhdParser.getImageSizeZ());
@@ -381,10 +381,10 @@ void usImageIo::read(usImagePostScan3D<unsigned char> &postScanImage,std::string
     usImagePostScan3DSettings settings;
     settings.setProbeRadius(mhdHeader.probeRadius);
     settings.setScanLinePitch(mhdHeader.scanLinePitch);
-    settings.setProbeConvexity(mhdHeader.isProbeConvex);
+    settings.setProbeConvexity(mhdHeader.isTransducerConvex);
     settings.setMotorRadius(mhdHeader.motorRadius);
     settings.setFramePitch(mhdHeader.framePitch);
-    settings.setMotorConvexity(mhdHeader.isMotorConvex);
+    settings.setMotorConvexity(mhdHeader.isMotorRotating);
     settings.setWidthResolution(mhdParser.getWidthResolution());
     settings.setHeightResolution(mhdParser.getHeightResolution());
     postScanImage.setImageSettings(settings);

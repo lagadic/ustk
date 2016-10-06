@@ -63,9 +63,9 @@
       unsigned int LN = 200;
       double probeRadius = 0.007;
       double scanLinePitch = 0.0006;
-      bool isProbeConvex = true;
+      bool isTransducerConvex = true;
       double axialResolution = 0.002;
-      usImagePreScanSettings imageSettings(probeRadius, scanLinePitch, isProbeConvex, axialResolution);
+      usImagePreScanSettings imageSettings(probeRadius, scanLinePitch, isTransducerConvex, axialResolution);
       vpImage<unsigned char> I(AN, LN);
       usImageRF2D<unsigned char> rf2d;
       rf2d.setData(I);
@@ -78,7 +78,7 @@ class usImageRF2D : public vpImage<T>, public usImagePreScanSettings {
 public:
   
   usImageRF2D();
-  usImageRF2D(unsigned int a_number, unsigned int line_number, double probeRadius=0, double scanLinePitch=0, bool isConvex=true, double axialResolution=0);
+  usImageRF2D(unsigned int a_number, unsigned int line_number, double probeRadius=0, double scanLinePitch=0, bool isTransducerConvex=true, double axialResolution=0);
   usImageRF2D(const usImageRF2D &other);
   ~usImageRF2D();
 
@@ -108,14 +108,14 @@ usImageRF2D<T>::usImageRF2D() : vpImage<T>(), usImagePreScanSettings()
 * @param a_number number of A-samples in a line.
 * @param line_number number of lines.
 * @param probeRadius radius of the ultrasound probe used to acquire the RF image.
-* @param scanLinePitch Angle(rad) / Distance(m) between 2 lines of the ultrasound probe used
-* to acquire the RF image. Angle if isConvex is true, distance if it's false.
-* @param isProbeConvex Boolean to specify if the probe used was convex(true) or linear(false).
+* @param scanLinePitch Angle (radians) or distance (meters) between 2 lines of the ultrasound probe used
+* to acquire the RF image. Angle if isTransducerConvex is true, distance otherwise.
+* @param isTransducerConvex Boolean to specify if the probe transducer is convex (true) or linear (false).
 * @param axialResolution The distance (in meters) between 2 successive pixels acquired along a scanline.
 */
 template<class T>
-usImageRF2D<T>::usImageRF2D(unsigned int a_number, unsigned int line_number, double probeRadius, double scanLinePitch, bool isProbeConvex, double axialResolution)
-  : vpImage<T>(a_number, line_number), usImagePreScanSettings(probeRadius, scanLinePitch, isProbeConvex, axialResolution)
+usImageRF2D<T>::usImageRF2D(unsigned int a_number, unsigned int line_number, double probeRadius, double scanLinePitch, bool isTransducerConvex, double axialResolution)
+  : vpImage<T>(a_number, line_number), usImagePreScanSettings(probeRadius, scanLinePitch, isTransducerConvex, axialResolution)
 {
 
 }

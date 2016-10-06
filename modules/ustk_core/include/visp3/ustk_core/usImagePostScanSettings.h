@@ -31,7 +31,7 @@
 
 /**
  * @file usImagePostScanSettings.h
- * @brief Ultrasound image settings for 2D postscan images.
+ * @brief Ultrasound image settings for 2D post-scan images.
  */
 
 #ifndef US_IMAGE_POSTSCAN_SETTINGS_H
@@ -48,29 +48,35 @@
 
 /**
  * @class usImagePostScanSettings
- * @brief Ultrasound image settings for 2D postscan images.
+ * @brief Settings associated to ultrasound post-scan images.
+ *
+ * This class represents ultrasound pre-scan image settings which are:
+ * - the common settings implemented in usImageSettings for all ultrasound images.
+ *   We recall that these common settings are:
+ *   - the type of ultrasound transducer used for data acquisition: convex or linear
+ *   - the transducer radius in meters (value set to zero for a linear transducer)
+ *   - the scan line pitch that corresponds to the angle (in radians) between
+ *     to succesive scan lines beams when the transducer is convex, or to the distance (in meters)
+ *     when the transducer is linear. See usImageSettings description for more details.
+ *   .
+ * - the image with and height resolution which corresponds to the size (in meters) of a pixel
+ *   in the image.
  */
 class VISP_EXPORT usImagePostScanSettings : public usImageSettings {
 public:
   usImagePostScanSettings();
-
-  usImagePostScanSettings(double probeRadius, double scanLinePitch, bool isConvex, double height_resolution, double width_resolution);
-
+  usImagePostScanSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex, double height_resolution, double width_resolution);
   usImagePostScanSettings(const usImageSettings basicSettings, double height_resolution, double width_resolution);
-
   virtual ~usImagePostScanSettings();
 
-  usImagePostScanSettings& operator=(const usImagePostScanSettings& other);
-
-  bool operator==(const usImagePostScanSettings& other);
-
-  void setWidthResolution(const double widthResolution);
-
+  double getHeightResolution() const;
   double getWidthResolution() const;
 
-  void setHeightResolution(const double heightResolution);
+  usImagePostScanSettings& operator=(const usImagePostScanSettings& other);
+  bool operator==(const usImagePostScanSettings& other);
 
-  double getHeightResolution() const;
+  void setHeightResolution(const double heightResolution);
+  void setWidthResolution(const double widthResolution);
 
 private:
   //Settings from the probe

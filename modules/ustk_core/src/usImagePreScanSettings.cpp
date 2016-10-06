@@ -39,9 +39,10 @@
 #include<visp3/ustk_core/usImagePreScanSettings.h>
 
 /**
-* Default constructor, all parameters set de default values.
+* Default constructor, all parameters set with default values.
 */
-usImagePreScanSettings::usImagePreScanSettings() : usImageSettings(), m_axialResolution(0.0)
+usImagePreScanSettings::usImagePreScanSettings()
+  : usImageSettings(), m_axialResolution(0.0)
 {
 
 }
@@ -49,8 +50,8 @@ usImagePreScanSettings::usImagePreScanSettings() : usImageSettings(), m_axialRes
 /**
 * Full settings constructor.
 */
-usImagePreScanSettings::usImagePreScanSettings(double probeRadius, double scanLinePitch, bool isProbeConvex, double axial_resolution) :
-  usImageSettings(probeRadius, scanLinePitch, isProbeConvex), m_axialResolution(axial_resolution)
+usImagePreScanSettings::usImagePreScanSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex, double axial_resolution)
+  : usImageSettings(probeRadius, scanLinePitch, isTransducerConvex), m_axialResolution(axial_resolution)
 {
 
 }
@@ -92,7 +93,7 @@ void usImagePreScanSettings::setAxialResolution(const double axialResolution)
 }
 
 /**
-* Width resolution getter.
+* Axial resolution getter.
 */
 double usImagePreScanSettings::getAxialResolution() const
 {

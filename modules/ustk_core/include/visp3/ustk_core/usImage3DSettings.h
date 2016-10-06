@@ -48,14 +48,33 @@
 
 /**
  * @class usImage3DSettings
- * @brief Generic class for 3D ultrasound data : storage of probe settings.
  *
- * This class represents a ultrasound image settings.
+ * @brief Generic class for 3D ultrasound data common settings associated to the 3D probe used
+ * during acquisition.
+ *
+ * This class represents common 3D ultrasound image settings which are:
+ * - the common settings implemented in usImageSettings corresponding to the transducer settings.
+ *   We recall that these common settings are:
+ *   - the type of ultrasound transducer used for data acquisition: convex or linear
+ *   - the transducer radius in meters (value set to zero for a linear transducer)
+ *   - the scan line pitch that corresponds to the angle (in radians) between
+ *     to successive scan lines beams when the transducer is convex, or to the distance (in meters)
+ *     when the transducer is linear. See usImageSettings description for more details.
+ *   .
+ * - the common settings corresponding to the motor used to procude the third dimension.
+ *   These settings are:
+ *   - the type of motor used to move the transducer: convex or linear
+ *   - the motor radius (value set to zero for a linear motor)
+ *   - the frame pitch that corresponds to the angle (in radians) between
+ *     to successive data acquisitions when the motor is convex, or to the distance (in meters)
+ *     when the motor is linear.
+ *   .
+ *
  */
 class VISP_EXPORT usImage3DSettings : public usImageSettings {
 public:
   usImage3DSettings();
-  usImage3DSettings(double probeRadius, double motorRadius, double scanLinePitch, double framePitch, bool isImageConvex, bool isMotorConvex);
+  usImage3DSettings(double probeRadius, double motorRadius, double scanLinePitch, double framePitch, bool isImageConvex, bool isMotorRotating);
   usImage3DSettings(const usImage3DSettings &other);
   virtual ~usImage3DSettings();
 
@@ -63,7 +82,7 @@ public:
   //@{
   double getFramePitch() const;
   double getMotorRadius() const;
-  bool isMotorConvex() const;
+  bool isMotorRotating() const;
 
   usImage3DSettings& operator=(const usImage3DSettings& other);
   bool operator==(const usImage3DSettings& other);
@@ -73,7 +92,7 @@ public:
   // Settings from the 3D probe
   void setMotorRadius(double motorRadius);
   void setFramePitch(double framePitch);
-  void setMotorConvexity(bool isMotorConvex);
+  void setMotorConvexity(bool isMotorRotating);
 
   //@}
 
@@ -81,7 +100,7 @@ private:
   //Settings from the 3D probe
   double m_motorRadius;
   double m_framePitch;
-  bool m_isMotorConvex;
+  bool m_isMotorRotating;
 };
 
 #endif // US_IMAGE_3D_SETTINGS_H

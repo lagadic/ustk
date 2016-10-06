@@ -31,7 +31,7 @@
 
 /**
  * @file usImagePreScan2D.h
- * @brief 2D prescan ultrasound image.
+ * @brief 2D pre-scan ultrasound image.
  */
 
 #ifndef US_IMAGE_PRESCAN_2D_H
@@ -43,10 +43,10 @@
 
 /**
  @class usImagePreScan2D
- @brief 2D prescan ultrasound image.
+ @brief 2D pre-scan ultrasound image.
 
   <h3>Example</h3>
-  The following example shows how to build a 2D prescan ultrasound image from a usImage3D, and from acquisiton settings.
+  The following example shows how to build a 2D pre-scan ultrasound image from a usImage3D, and from acquisiton settings.
 
   \code
     #include <visp3/ustk_core/usImagePreScan2D.h>
@@ -58,9 +58,9 @@
       unsigned int LN = 200;
       double probeRadius = 0.06;
       double scanLinePitch = 0.04;
-      bool isProbeConvex = true;
+      bool isTransducerConvex = true;
       double axialResolution = 0.005;
-      usImagePreScanSettings imageSettings(probeRadius, scanLinePitch, isProbeConvex, axialResolution);
+      usImagePreScanSettings imageSettings(probeRadius, scanLinePitch, isTransducerConvex, axialResolution);
       vpImage<unsigned char> I(AN, LN);
       usImagePreScan2D<unsigned char> preScan2d;
       preScan2d.setData(I);
@@ -68,7 +68,7 @@
     }
   \endcode
 
- This class represents a 2D ultrasound prescan frame.
+ This class represents a 2D ultrasound pre-scan frame.
  */
 template<class T>
 class usImagePreScan2D : public vpImage<T>, public usImagePreScanSettings {
@@ -76,7 +76,7 @@ public:
   //default constructors
   usImagePreScan2D();
   //All parameters initialisation constructors
-  usImagePreScan2D(unsigned int a_number, unsigned int line_number, double probeRadius=0.0, double scanLinePitch=0.0, bool isConvex=false, double axial_resolution=0.0);
+  usImagePreScan2D(unsigned int a_number, unsigned int line_number, double probeRadius=0.0, double scanLinePitch=0.0, bool isTransducerConvex=false, double axial_resolution=0.0);
   //usImagePreScan2D copy constructor
   usImagePreScan2D(const usImagePreScan2D &other);
   //vpImage copy constructors
@@ -120,13 +120,14 @@ usImagePreScan2D<T>::usImagePreScan2D() : vpImage<T>(), usImagePreScanSettings()
 * @param a_number number of A-samples in a line.
 * @param line_number number of lines.
 * @param probeRadius radius of the ultrasound probe used to acquire the RF image.
-* @param scanLinePitch Angle(rad) / Distance(m) between 2 lines of the ultrasound probe used to acquire the RF image. Angle if isConvex is true, distance if it's false.
-* @param isProbeConvex Boolean to specify if the probe used was convex(true) or linear(false).
+* @param scanLinePitch Angle (radians) or distance (meters) between 2 lines of the ultrasound probe used
+* to acquire the RF image. Angle if \e isTransducerConvex is true, distance otherwise.
+* @param isTransducerConvex Boolean to specify if the probe transducer is convex (true) or linear (false).
 * @param axial_resolution Image axial resolution.
 */
 template<class T>
-usImagePreScan2D<T>::usImagePreScan2D(unsigned int a_number, unsigned int line_number, double probeRadius, double scanLinePitch, bool isProbeConvex, double axial_resolution) :
-  vpImage<T>(a_number, line_number), usImagePreScanSettings(probeRadius, scanLinePitch, isProbeConvex, axial_resolution)
+usImagePreScan2D<T>::usImagePreScan2D(unsigned int a_number, unsigned int line_number, double probeRadius, double scanLinePitch, bool isTransducerConvex, double axial_resolution) :
+  vpImage<T>(a_number, line_number), usImagePreScanSettings(probeRadius, scanLinePitch, isTransducerConvex, axial_resolution)
 {
 
 }

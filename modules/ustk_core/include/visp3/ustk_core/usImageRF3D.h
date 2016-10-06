@@ -62,12 +62,12 @@
       unsigned int FN = 30;
       double probeRadius = 0.0006;
       double scanLinePitch = 0.0007;
-      bool isProbeConvex = true;
+      bool isTransducerConvex = true;
       double motorRadius = 0.004;
       double framePitch = 0.06;
-      bool isMotorConvex = true;
+      bool isMotorRotating = true;
       double axialResolution = 0.001;
-      usImagePreScan3DSettings  imageSettings(probeRadius, scanLinePitch, isProbeConvex, motorRadius, framePitch, isMotorConvex, axialResolution);
+      usImagePreScan3DSettings  imageSettings(probeRadius, scanLinePitch, isTransducerConvex, motorRadius, framePitch, isMotorRotating, axialResolution);
       usImage3D<unsigned char> I(AN, LN, FN);
       usImageRF3D<unsigned char> rf3d;
       rf3d.setData(I);
@@ -83,7 +83,7 @@ public:
   usImageRF3D();
   usImageRF3D(unsigned int AN, unsigned int LN, unsigned int FN,
               double probeRadius=0.0, double motorRadius=0.0, double scanLinePitch=0.0, double framePitch=0.0,
-              bool isImageConvex=false, bool isMotorConvex=false, double axial_resolution=0.0);
+              bool isImageConvex=false, bool isMotorRotating=false, double axial_resolution=0.0);
   usImageRF3D(usImage3D<T> image3D, usImagePreScan3DSettings imageSettings);
   usImageRF3D(usImage3D<T> image3D);
   usImageRF3D(usImagePreScan3DSettings imageSettings);
@@ -119,14 +119,14 @@ usImageRF3D<T>::usImageRF3D() : usImage3D<T>(), usImagePreScan3DSettings()
 * @param[in] motorRadius radius of the ultrasound probe motor used to acquire the RF image.
 * @param[in] scanLinePitch angle(rad) / distance(m) between 2 lines of the ultrasound probe used to acquire the RF image.
 * @param[in] framePitch angle(rad) / distance(m) between 2 lines of the ultrasound probe used to acquire the RF image.
-* @param[in] isProbeConvex Boolean to specyfy if the image was acquired by a convex probe(true) or by a linear probe (false).
-* @param[in] isMotorConvex Boolean to specyfy if the image was acquired by a rotating  motor(true) or by a linear motor (false).
+* @param[in] isTransducerConvex Boolean to specify if the image is acquired by a convex probe(true) or by a linear probe (false).
+* @param[in] isMotorRotating Boolean to specify if the image is acquired by a rotating  motor(true) or by a linear motor (false).
 * @param[in] axial_resolution The distance (in meters) between 2 successive pixels acquired along a scanline.
 */
 template<class T>
 usImageRF3D<T>::usImageRF3D(unsigned int AN, unsigned int LN, unsigned int FN, double probeRadius, double motorRadius, double scanLinePitch, double framePitch,
-                            bool isProbeConvex, bool isMotorConvex, double axial_resolution)
-  : usImage3D<T>(AN, LN, FN), usImagePreScan3DSettings(probeRadius, motorRadius, scanLinePitch, framePitch, isProbeConvex, isMotorConvex, axial_resolution)
+                            bool isTransducerConvex, bool isMotorRotating, double axial_resolution)
+  : usImage3D<T>(AN, LN, FN), usImagePreScan3DSettings(probeRadius, motorRadius, scanLinePitch, framePitch, isTransducerConvex, isMotorRotating, axial_resolution)
 {
 
 }

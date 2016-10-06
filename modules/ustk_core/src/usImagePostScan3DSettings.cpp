@@ -49,9 +49,9 @@ usImagePostScan3DSettings::usImagePostScan3DSettings() : usImage3DSettings(), m_
 /**
 * Full settings constructor, all settings availables.
 */
-usImagePostScan3DSettings::usImagePostScan3DSettings(double probeRadius, double scanLinePitch, bool isProbeConvex,
-  double motorRadius, double framePitch, bool isMotorConvex,
-  double height_resolution, double width_resolution) : usImage3DSettings(probeRadius,motorRadius,scanLinePitch,framePitch,isProbeConvex,isMotorConvex),
+usImagePostScan3DSettings::usImagePostScan3DSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex,
+  double motorRadius, double framePitch, bool isMotorRotating,
+  double height_resolution, double width_resolution) : usImage3DSettings(probeRadius,motorRadius,scanLinePitch,framePitch,isTransducerConvex,isMotorRotating),
                                                        m_widthResolution(width_resolution), m_heightResolution(height_resolution)
 {
 

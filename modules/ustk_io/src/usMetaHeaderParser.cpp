@@ -50,8 +50,8 @@ void  usMetaHeaderParser::readMHDHeader(const std::string fileName)
   this->header.msb = false;
   this->header.headerSize = 0;
   this->header.imageType = NOT_SET;
-  this->header.isProbeConvex = false;
-  this->header.isMotorConvex = false;
+  this->header.isTransducerConvex = false;
+  this->header.isMotorRotating = false;
   this->header.probeRadius = 0.0;
   this->header.scanLinePitch = 0.0;
   this->header.motorRadius = 0.0;
@@ -174,7 +174,7 @@ void  usMetaHeaderParser::readMHDHeader(const std::string fileName)
       keyval.erase(std::remove(keyval.begin(),keyval.end(),' '),it);
       it=keyval.end();
       keyval.erase(std::remove(keyval.begin(),keyval.end(),'\r'),it);
-      this->header.isProbeConvex = ((keyval == "True") || (keyval == "1"));
+      this->header.isTransducerConvex = ((keyval == "True") || (keyval == "1"));
     }
     else if (keyword == "FramePitch")
     {
@@ -193,12 +193,12 @@ void  usMetaHeaderParser::readMHDHeader(const std::string fileName)
       keyval.erase(std::remove(keyval.begin(),keyval.end(),' '),it);
       it=keyval.end();
       keyval.erase(std::remove(keyval.begin(),keyval.end(),'\r'),it);
-      this->header.isMotorConvex = ((keyval == "True") || (keyval == "1"));
+      this->header.isMotorRotating = ((keyval == "True") || (keyval == "1"));
     }
     else if (keyword == "AxialResolution")
     {
       if(this->header.imageType == POSTSCAN_2D || this->header.imageType == POSTSCAN_3D) {
-        throw(vpException(vpException::badValue, "bad header file : trying to assign an axial resolution to a postscan image"));
+        throw(vpException(vpException::badValue, "bad header file : trying to assign an axial resolution to a post-scan image"));
       }
       else {
         file >> this->m_axialResolution;
@@ -208,7 +208,7 @@ void  usMetaHeaderParser::readMHDHeader(const std::string fileName)
     else if (keyword == "HeightResolution")
     {
       if(this->header.imageType == PRESCAN_2D || this->header.imageType == PRESCAN_3D || this->header.imageType == RF_2D || this->header.imageType == RF_3D) {
-        throw(vpException(vpException::badValue, "bad header file : trying to assign a height resolution to a prescan image"));
+        throw(vpException(vpException::badValue, "bad header file : trying to assign a height resolution to a pre-scan image"));
       }
       else {
         file >> this->m_heightResolution;
@@ -218,7 +218,7 @@ void  usMetaHeaderParser::readMHDHeader(const std::string fileName)
     else if (keyword == "WidthResolution")
     {
       if(this->header.imageType == PRESCAN_2D || this->header.imageType == PRESCAN_3D || this->header.imageType == RF_2D || this->header.imageType == RF_3D) {
-        throw(vpException(vpException::badValue, "bad header file : trying to assign a width resolution to a prescan image"));
+        throw(vpException(vpException::badValue, "bad header file : trying to assign a width resolution to a pre-scan image"));
       }
       else {
         file >> this->m_widthResolution;
@@ -316,11 +316,11 @@ void usMetaHeaderParser::parse()
   else
     MHDfile << "UltrasoundImageType = " <<  "MET_UNKNOWN" << "\n";
 
-  MHDfile << "Comment = True if probe used was convex, false if linear. \n";
-  MHDfile << "IsProbeConvex = " << header.isProbeConvex << "\n";
+  MHDfile << "Comment = True if probe transducer is convex, false if linear. \n";
+  MHDfile << "IsTransducerConvex = " << header.isTransducerConvex << "\n";
 
-  MHDfile << "Comment = True if 3d probe motor used was convex, false if linear. \n";
-  MHDfile << "IsMotorConvex = " << header.isMotorConvex << "\n";
+  MHDfile << "Comment = True if 3D probe motor is totating, false if linear. \n";
+  MHDfile << "IsMotorRotating = " << header.isMotorRotating << "\n";
 
   MHDfile << "Comment = Radius between the scanlines intersection and the first pixel of each line acquired. 0 if linear probe.\n";
   MHDfile << "ProbeRadius = " << header.probeRadius << "\n";
@@ -344,15 +344,15 @@ void usMetaHeaderParser::read(const std::string& filename)
   //basic common settings
   this->m_imageSettings.setProbeRadius(header.probeRadius);
   this->m_imageSettings.setScanLinePitch(header.scanLinePitch);
-  this->m_imageSettings.setProbeConvexity(header.isProbeConvex);
+  this->m_imageSettings.setProbeConvexity(header.isTransducerConvex);
 
   if(this->header.imageType == RF_3D || this->header.imageType == PRESCAN_3D || this->header.imageType == POSTSCAN_3D) {
     this->m_image3DSettings.setProbeRadius(header.probeRadius);
     this->m_image3DSettings.setScanLinePitch(header.scanLinePitch);
-    this->m_image3DSettings.setProbeConvexity(header.isProbeConvex);
+    this->m_image3DSettings.setProbeConvexity(header.isTransducerConvex);
     this->m_image3DSettings.setMotorRadius(header.motorRadius);
     this->m_image3DSettings.setFramePitch(header.framePitch);
-    this->m_image3DSettings.setMotorConvexity(header.isMotorConvex);
+    this->m_image3DSettings.setMotorConvexity(header.isMotorRotating);
   }
 }
 

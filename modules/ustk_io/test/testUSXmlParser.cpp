@@ -204,7 +204,7 @@ int main(int argc, const char** argv)
     std::cout << "Axial resolution : " << prescan2DReference.getAxialResolution() << std::endl;
     std::cout << "Probe Radius : " << prescan2DReference.getProbeRadius() << std::endl;
     std::cout << "ScanLine pitch : " << prescan2DReference.getScanLinePitch() << std::endl;
-    std::cout << "Convex probe : " << prescan2DReference.isProbeConvex() << std::endl;
+    std::cout << "Convex probe : " << prescan2DReference.isTransducerConvex() << std::endl;
     std::cout << "Height : " << prescan2DReference.getHeight() << std::endl;
     std::cout << "Width : " << prescan2DReference.getWidth() << std::endl;
     std::cout << "Axial resolution : " << prescan2DReference.getAxialResolution() << std::endl;
@@ -219,7 +219,7 @@ int main(int argc, const char** argv)
     std::cout << "Axial resolution : " << prescan2D.getAxialResolution() << std::endl;
     std::cout << "Probe Radius : " << prescan2D.getProbeRadius() << std::endl;
     std::cout << "ScanLine pitch : " << prescan2D.getScanLinePitch() << std::endl;
-    std::cout << "Convex probe : " << prescan2D.isProbeConvex() << std::endl;
+    std::cout << "Convex probe : " << prescan2D.isTransducerConvex() << std::endl;
     std::cout << "Height : " << prescan2D.getHeight() << std::endl;
     std::cout << "Width : " << prescan2D.getWidth() << std::endl;
     std::cout << "Axial resolution : " << prescan2D.getAxialResolution() << std::endl;

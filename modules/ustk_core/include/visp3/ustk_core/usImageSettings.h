@@ -48,14 +48,21 @@
 
 /**
  * @class usImageSettings
- * @brief Generic class for ultrasound data : storage of probe and scanner settings.
+ * @brief Generic class for 2D ultrasound data common settings associated to the type of probe used during acquisition.
  *
- * This class represents a ultrasound image settings.
+ * This class represents ultrasound image common settings which are:
+ * - the type of ultrasound transducer used for data acquisition: convex or linear
+ * - the transducer radius \f$R\f$ in meters (value set to zero for a linear transducer)
+ * - the scan line pitch that corresponds to the angle \f$\alpha\f$ (in radians) between
+ *   to successive scan lines beams when the transducer is convex, or to the distance \f$d\f$
+ *   (in meters) when the transducer is linear.
+ *
+ * \image html img-usProbeSettings.png
  */
 class VISP_EXPORT usImageSettings {
 public:
   usImageSettings();
-  usImageSettings(double probeRadius, double scanLinePitch, bool isConvex);
+  usImageSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex);
   usImageSettings(const usImageSettings &other);
 
   virtual ~usImageSettings();
@@ -66,7 +73,7 @@ public:
   double getProbeRadius() const;
   double getScanLinePitch() const;
 
-  bool isProbeConvex() const;
+  bool isTransducerConvex() const;
 
   usImageSettings& operator=(const usImageSettings& other);
 
@@ -77,7 +84,7 @@ public:
 
   //Settings form the probe
   void setImageSettings(const usImageSettings& other);
-  void setProbeConvexity(const bool isProbeConvex);
+  void setProbeConvexity(const bool isTransducerConvex);
   void setProbeRadius(const double probeRadius);
   void setScanLinePitch(const double scanLinePitch);  
 
@@ -87,7 +94,7 @@ private:
   //Settings from the probe
   double m_probeRadius;
   double m_scanLinePitch;
-  bool m_isProbeConvex;
+  bool m_isTransducerConvex;
 };
 
 #endif // US_IMAGE_SETTINGS_H

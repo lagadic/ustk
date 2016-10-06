@@ -49,8 +49,8 @@ usImagePreScan3DSettings::usImagePreScan3DSettings() : usImage3DSettings(), m_ax
 /**
 * Full settings constructor.
 */
-usImagePreScan3DSettings::usImagePreScan3DSettings(double probeRadius, double scanLinePitch, bool isProbeConvex, double motorRadius, double framePitch, bool isMotorConvex, double axial_resolution) :
-  usImage3DSettings(probeRadius, motorRadius, scanLinePitch, framePitch, isProbeConvex, isMotorConvex), m_axialResolution(axial_resolution)
+usImagePreScan3DSettings::usImagePreScan3DSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex, double motorRadius, double framePitch, bool isMotorRotating, double axial_resolution) :
+  usImage3DSettings(probeRadius, motorRadius, scanLinePitch, framePitch, isTransducerConvex, isMotorRotating), m_axialResolution(axial_resolution)
 {
 
 }

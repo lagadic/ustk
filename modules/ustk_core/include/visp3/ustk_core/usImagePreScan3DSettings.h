@@ -31,7 +31,7 @@
 
 /**
 * @file usImagePreScan3DSettings.h
-* @brief Ultrasound image settings for 3D postscan images.
+* @brief Ultrasound image settings for 3D post-scan images.
 */
 
 #ifndef US_IMAGE_PRESCAN_3D_SETTINGS_H
@@ -47,23 +47,26 @@
 #include <visp3/ustk_core/usImage3DSettings.h>
 /**
 * @class usImagePreScan3DSettings
-* @brief Ultrasound image settings for 3D postscan images.
+ * @brief Settings associated to 3D ultrasound pre-scan images.
+ *
+ * This class represents 3D ultrasound pre-scan image settings which are:
+ * - the common settings corresponding to the transducer and motor settings.
+ *   See usImage3DSettings for more details.
+ * - the image axial resolution which corresponds to the size (in meters) of a pixel along the
+ *   scan line beam.
 */
 class VISP_EXPORT usImagePreScan3DSettings : public usImage3DSettings {
 public:
   usImagePreScan3DSettings();
-
-  usImagePreScan3DSettings(double probeRadius, double scanLinePitch, bool isProbeConvex, double motorRadius, double framePitch, bool isMotorConvex, double axial_resolution);
-
+  usImagePreScan3DSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex, double motorRadius, double framePitch, bool isMotorRotating, double axial_resolution);
   virtual ~usImagePreScan3DSettings();
 
-  usImagePreScan3DSettings& operator=(const usImagePreScan3DSettings& other);
+  double getAxialResolution() const;
 
+  usImagePreScan3DSettings& operator=(const usImagePreScan3DSettings& other);
   bool operator==(const usImagePreScan3DSettings& other);
 
   void setAxialResolution(const double axialResolution);
-
-  double getAxialResolution() const;
 
 private:
   //Settings from the probe

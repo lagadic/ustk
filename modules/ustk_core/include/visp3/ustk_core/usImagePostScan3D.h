@@ -32,7 +32,7 @@
 
 /**
 * @file usImagePostScan3D.h
-* @brief 3D postscan ultrasound image.
+* @brief 3D post-scan ultrasound image.
 */
 
 #ifndef US_IMAGE_POSTSCAN_3D_H
@@ -45,10 +45,10 @@
 
 /**
  @class usImagePostScan3D
- @brief This class represents a 3D ultrasound postscan volume.
+ @brief This class represents a 3D ultrasound post-scan volume.
 
   <h3>Example</h3>
-  The following example shows how to build a 3D postscan ultrasound image from a usImage3D, and from acquisiton settings.
+  The following example shows how to build a 3D post-scan ultrasound image from a usImage3D, and from acquisiton settings.
 
   \code
 
@@ -63,13 +63,13 @@
       unsigned int FN = 20;
       double probeRadius = 0.045;
       double scanLinePitch = 0.01;
-      bool isProbeConvex = true;
+      bool isTransducerConvex = true;
       double motorRadius = 0.07;
       double framePitch = 0.05;
-      bool isMotorConvex = true;
+      bool isMotorRotating = true;
       double heightResolution = 0.004;
       double widthResolution = 0.007;
-      usImagePostScan3DSettings   imageSettings(probeRadius, scanLinePitch, isProbeConvex, motorRadius, framePitch, isMotorConvex, heightResolution, widthResolution);
+      usImagePostScan3DSettings   imageSettings(probeRadius, scanLinePitch, isTransducerConvex, motorRadius, framePitch, isMotorRotating, heightResolution, widthResolution);
       usImage3D<unsigned char> I(AN, LN, FN);
       usImagePostScan3D<unsigned char> postScan3d;
       postScan3d.setData(I);
@@ -84,7 +84,7 @@ public:
   usImagePostScan3D();
   usImagePostScan3D(unsigned int AN, unsigned int LN, unsigned int FN,
                     double probeRadius=0.0, double motorRadius=0.0, double scanLinePitch=0.0, double framePitch=0.0,
-                    bool isImageConvex=false, bool isMotorConvex=false,
+                    bool isImageConvex=false, bool isMotorRotating=false,
                     double heightResolution=0.0, double widthResolution=0.0);
   usImagePostScan3D(const usImagePostScan3D &other);
   usImagePostScan3D(const usImage3D<T> &otherImage, const usImagePostScan3DSettings &otherSettings);
@@ -117,14 +117,14 @@ usImagePostScan3D<T>::usImagePostScan3D() : usImage3D<T>(), usImagePostScan3DSet
 * @param motorRadius radius of the ultrasound probe motor used to acquire the RF image.
 * @param scanLinePitch angle(rad) / distance(m) between 2 lines of the ultrasound probe used to acquire the RF image.
 * @param framePitch angle(rad) / distance(m) between 2 lines of the ultrasound probe used to acquire the RF image.
-* @param isProbeConvex Boolean to specyfy if the image was acquired by a convex probe(true) or by a linear probe (false).
-* @param isMotorConvex Boolean to specyfy if the image was acquired by a rotating  motor(true) or by a linear motor (false).
+* @param isTransducerConvex Boolean to specify if the image is acquired by a convex probe transducer (true) or by a linear probe transducer (false).
+* @param isMotorRotating Boolean to specify if the image is acquired by a rotating  motor (true) or by a linear motor (false).
 * @param heightResolution Image height resolution.
 * @param widthResolution Image width resolution.
 */
 template<class T>
-usImagePostScan3D<T>::usImagePostScan3D(unsigned int AN, unsigned int LN, unsigned int FN, double probeRadius, double motorRadius, double scanLinePitch, double framePitch, bool isProbeConvex, bool isMotorConvex, double heightResolution, double widthResolution)
-  : usImage3D<T>(), usImagePostScan3DSettings(probeRadius, motorRadius, scanLinePitch, framePitch, isProbeConvex, isMotorConvex, heightResolution, widthResolution)
+usImagePostScan3D<T>::usImagePostScan3D(unsigned int AN, unsigned int LN, unsigned int FN, double probeRadius, double motorRadius, double scanLinePitch, double framePitch, bool isTransducerConvex, bool isMotorRotating, double heightResolution, double widthResolution)
+  : usImage3D<T>(), usImagePostScan3DSettings(probeRadius, motorRadius, scanLinePitch, framePitch, isTransducerConvex, isMotorRotating, heightResolution, widthResolution)
 {
 
 }

@@ -46,15 +46,17 @@
 /**
 * Basic constructor, all settings set to default.
 */
-usImageSettings::usImageSettings() : m_probeRadius(0.0f), m_scanLinePitch(0.0f), m_isProbeConvex(true) {}
+usImageSettings::usImageSettings()
+  : m_probeRadius(0.0f), m_scanLinePitch(0.0f), m_isTransducerConvex(true) {}
 
 /**
 * Full constructor with all the settings availables:
 * @param[in] probeRadius Distance between the center point of the probe and the first pixel arc acquired. Value in meters (m).
 * @param[in] scanLinePitch radius or distance between 2 successives acquisiton lines in the probe : in radians (rad) if the prove is convex, or in meters (m) if the probe is linear.
-* @param[in] isProbeConvex Boolean to specify if the probe is convex or linear.
+* @param[in] isTransducerConvex Boolean to specify if the probe is convex or linear.
 */
-usImageSettings::usImageSettings(double probeRadius, double scanLinePitch, bool isProbeConvex) : m_probeRadius(probeRadius), m_scanLinePitch(scanLinePitch), m_isProbeConvex(isProbeConvex) {}
+usImageSettings::usImageSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex)
+  : m_probeRadius(probeRadius), m_scanLinePitch(scanLinePitch), m_isTransducerConvex(isTransducerConvex) {}
 
 /**
 * Copy constructor.
@@ -72,13 +74,13 @@ usImageSettings::~usImageSettings() {}
 
 /**
 * Assignment operator.
-* @param other usImageSettings you want to copy.
+* @param other settings you want to copy.
 */
 usImageSettings& usImageSettings::operator=(const usImageSettings& other)
 {
   m_probeRadius = other.getProbeRadius();
   m_scanLinePitch = other.getScanLinePitch();
-  m_isProbeConvex = other.isProbeConvex();
+  m_isTransducerConvex = other.isTransducerConvex();
 
   return *this;
 }
@@ -91,14 +93,14 @@ bool usImageSettings::operator==(usImageSettings const& other)
 {
   return ( this->getProbeRadius() == other.getProbeRadius() &&
            this->getScanLinePitch() == other.getScanLinePitch() &&
-           this->isProbeConvex() == other.isProbeConvex());
+           this->isTransducerConvex() == other.isTransducerConvex());
 }
 //Image settings getters/setters
 
 /**
 * Set the probe radius (m).
 * @param probeRadius Probe radius in meters. The probe radius is set to 0 in case of linear
-* probe type (see isProbeConvex() and setProbeConvex(bool) for more informations).
+* probe type (see isTransducerConvex() and setProbeConvex(bool) for more informations).
 */
 void usImageSettings::setProbeRadius(const double probeRadius) { m_probeRadius = probeRadius; }
 
@@ -129,12 +131,12 @@ double usImageSettings::getScanLinePitch() const { return m_scanLinePitch; }
 
 /**
 * Set the probe type.
-* @param[in] isProbeConvex True if the probe is convex, false if the probe is linear.
+* @param[in] isTransducerConvex True if the probe is convex, false if the probe is linear.
 * Sets the probe radius to 0 in case of a linear probe.
 */
-void usImageSettings::setProbeConvexity(const bool isProbeConvex) {
-  m_isProbeConvex = isProbeConvex;
-  if (!isProbeConvex) {
+void usImageSettings::setProbeConvexity(const bool isTransducerConvex) {
+  m_isTransducerConvex = isTransducerConvex;
+  if (!isTransducerConvex) {
     m_probeRadius = 0.0f;
   }
 }
@@ -143,7 +145,7 @@ void usImageSettings::setProbeConvexity(const bool isProbeConvex) {
 * Returns the probe type.
 * @return True if the probe is convex, false if the probe is linear.
 */
-bool usImageSettings::isProbeConvex() const { return m_isProbeConvex; }
+bool usImageSettings::isTransducerConvex() const { return m_isTransducerConvex; }
 
 /**
 * Print probe settings information.
@@ -152,9 +154,16 @@ void usImageSettings::printProbeSettings()
 {
   std::cout << "probe radius: " << m_probeRadius << std::endl
             << "line angle: " << m_scanLinePitch << std::endl
-            << "convex probe used: " << m_isProbeConvex << std::endl;
+            << "convex probe used: " << m_isTransducerConvex << std::endl;
 }
 
+/*!
+ * Assignment operator.
+ *
+ * @param other settings you want to assign.
+ *
+ * \sa operator=()
+ */
 void usImageSettings::setImageSettings(const usImageSettings& other)
 {
   *this = other;
