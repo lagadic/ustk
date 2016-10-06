@@ -58,6 +58,7 @@
 class VISP_EXPORT usImagePreScan3DSettings : public usImage3DSettings {
 public:
   usImagePreScan3DSettings();
+  usImagePreScan3DSettings(const usImagePreScan3DSettings & other);
   usImagePreScan3DSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex, double motorRadius, double framePitch, bool isMotorRotating, double axial_resolution);
   virtual ~usImagePreScan3DSettings();
 

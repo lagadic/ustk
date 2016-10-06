@@ -41,6 +41,14 @@ usImagePostScanSettings::usImagePostScanSettings() : usImageSettings(), m_widthR
 }
 
 /**
+* Copy constructor.
+*/
+usImagePostScanSettings::usImagePostScanSettings(const usImagePostScanSettings &other) : usImageSettings(other), m_widthResolution(other.getHeightResolution()), m_heightResolution(other.getWidthResolution())
+{
+
+}
+
+/**
 * Full parameters constructor, all parameters settables.
 */
 usImagePostScanSettings::usImagePostScanSettings(double probeRadius, double scanLinePitch, bool isConvex, double height_resolution, double width_resolution) : usImageSettings(probeRadius, scanLinePitch, isConvex), m_widthResolution(width_resolution), m_heightResolution(height_resolution)

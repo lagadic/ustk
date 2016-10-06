@@ -65,6 +65,7 @@
 class VISP_EXPORT usImagePostScanSettings : public usImageSettings {
 public:
   usImagePostScanSettings();
+  usImagePostScanSettings(const usImagePostScanSettings &other);
   usImagePostScanSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex, double height_resolution, double width_resolution);
   usImagePostScanSettings(const usImageSettings basicSettings, double height_resolution, double width_resolution);
   virtual ~usImagePostScanSettings();

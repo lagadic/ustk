@@ -48,6 +48,15 @@ usImagePreScanSettings::usImagePreScanSettings()
 }
 
 /**
+* Copy constructor.
+*/
+usImagePreScanSettings::usImagePreScanSettings(const usImagePreScanSettings &other)
+  : usImageSettings(other), m_axialResolution(other.getAxialResolution())
+{
+
+}
+
+/**
 * Full settings constructor.
 */
 usImagePreScanSettings::usImagePreScanSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex, double axial_resolution)

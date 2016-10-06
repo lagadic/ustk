@@ -47,6 +47,14 @@ usImagePreScan3DSettings::usImagePreScan3DSettings() : usImage3DSettings(), m_ax
 }
 
 /**
+* Default constructor, all parameters set de default values.
+*/
+usImagePreScan3DSettings::usImagePreScan3DSettings(const usImagePreScan3DSettings & other) : usImage3DSettings(other), m_axialResolution(other.getAxialResolution())
+{
+
+}
+
+/**
 * Full settings constructor.
 */
 usImagePreScan3DSettings::usImagePreScan3DSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex, double motorRadius, double framePitch, bool isMotorRotating, double axial_resolution) :

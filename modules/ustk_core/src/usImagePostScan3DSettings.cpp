@@ -47,6 +47,14 @@ usImagePostScan3DSettings::usImagePostScan3DSettings() : usImage3DSettings(), m_
 }
 
 /**
+* Copy constructor.
+*/
+usImagePostScan3DSettings::usImagePostScan3DSettings(const usImagePostScan3DSettings &other) : usImage3DSettings(other), m_widthResolution(other.getWidthResolution()), m_heightResolution(other.getHeightResolution())
+{
+
+}
+
+/**
 * Full settings constructor, all settings availables.
 */
 usImagePostScan3DSettings::usImagePostScan3DSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex,
