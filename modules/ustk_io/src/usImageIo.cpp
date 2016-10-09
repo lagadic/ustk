@@ -72,8 +72,63 @@ std::string usImageIo::getExtension(const std::string &filename)
 * @param imageRf2D The RF image to write.
 * @param headerFileName The header file name to write.
 */
-void usImageIo::write(const usImageRF2D<unsigned char> &imageRf2D, const std::string headerFileName) {
+void usImageIo::write(const usImageRF2D<unsigned char> &imageRf2D, const std::string headerFileName, const std::string imageExtesion2D) {
+  //checking header type
+  usImageIo::usHeaderFormatType headerFormat = getHeaderFormat(headerFileName);
+  if (headerFormat == FORMAT_XML) {
+    std::string imageFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(imageExtesion2D);
+#ifdef VISP_HAVE_XML2
+    try {
+      //writing image
+      vpImageIo::write(imageRf2D, imageFileName);
+      //writing xml
+      usImageSettingsXmlParser xmlSettings;
+      xmlSettings.setImagePreScan(true);
+      xmlSettings.setImagePreScanSettings(imageRf2D);
+      xmlSettings.setImageFileName(imageFileName);
+      //write xml
+      xmlSettings.save(headerFileName);
+    }
+    catch (std::exception e) {
+      std::cout << "Error writing rf image : " << std::endl;
+      std::cout << e.what() << std::endl;
+    }
+#else
+    throw(vpException(vpException::fatalError, "Requires xml2"));
+#endif
+  }
+  else if (headerFormat == FORMAT_MHD) {
+    std::string imageFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(".raw");
+    //filling header
+    usMetaHeaderParser::MHDHeader header;
+    header.numberOfDimensions = 3;
+    header.elementType = usMetaHeaderParser::MET_UCHAR;
+    header.imageType = usMetaHeaderParser::RF_2D;
+    header.elementSpacing[0] = 1;
+    header.elementSpacing[1] = 1;
+    header.elementSpacing[2] = 1;
+    header.dim[0] = imageRf2D.getANumber();
+    header.dim[1] = imageRf2D.getLineNumber();
+    header.dim[2] = 1;
+    header.msb = false;
+    header.MHDFileName = headerFileName;
+    header.rawFileName = imageFileName;
+    header.isTransducerConvex = imageRf2D.isTransducerConvex();
+    header.probeRadius = imageRf2D.getProbeRadius();
+    header.scanLinePitch = imageRf2D.getScanLinePitch();
+    //writing in file
+    usMetaHeaderParser mhdParser;
+    mhdParser.setMHDHeader(header);
+    mhdParser.setAxialResolution(imageRf2D.getAxialResolution());
+    mhdParser.parse();
 
+    //filling raw
+    usRawFileParser rawParser;
+    rawParser.write(imageRf2D, header.rawFileName);
+  }
+  else {
+    throw(vpException(vpException::fatalError, "Unknown extension."));
+  }
 }
 
 /**
@@ -82,7 +137,54 @@ void usImageIo::write(const usImageRF2D<unsigned char> &imageRf2D, const std::st
 * @param [in] headerFileName The header file name to read.
 */
 void usImageIo::read(usImageRF2D<unsigned char> &imageRf2D, const std::string headerFileName) {
+  usImageIo::usHeaderFormatType headerFormat = getHeaderFormat(headerFileName);
+  if (headerFormat == FORMAT_XML) {
+#ifdef VISP_HAVE_XML2
+    //parsing xml file
+    usImageSettingsXmlParser xmlSettings;
+    try {
+      xmlSettings.parse(headerFileName);
+    }
+    catch (std::exception e) {
+      std::cout << "Error parsing rf settings file" << std::endl;
+      throw e;
+    }
+    vpImageIo::read(imageRf2D, xmlSettings.getImageFileName());
 
+    imageRf2D.setImageSettings(usImagePreScanSettings(xmlSettings.getImagePreScanSettings().getProbeRadius(),
+      xmlSettings.getImagePreScanSettings().getScanLinePitch(), xmlSettings.getImagePreScanSettings().isTransducerConvex(), xmlSettings.getImagePreScanSettings().getAxialResolution()));
+#else
+    throw(vpException(vpException::fatalEtrror, "Requires xml2 library"));
+#endif //VISP_HAVE_XML2
+  }
+  else if (headerFormat == FORMAT_MHD) {
+    //header parsing
+    usMetaHeaderParser mhdParser;
+    mhdParser.read(headerFileName);
+    if (mhdParser.getImageType() != usMetaHeaderParser::RF_2D && mhdParser.getImageType() != usMetaHeaderParser::NOT_SET) {
+      throw(vpException(vpException::badValue, "Reading a non rf 2D image!"));
+    }
+    if (mhdParser.getElementType() != usMetaHeaderParser::MET_UCHAR) {
+      throw(vpException(vpException::badValue, "Reading a non unsigned char image!"));
+    }
+    //resizing image in memory
+    imageRf2D.resize(mhdParser.getImageSizeX(), mhdParser.getImageSizeY());
+
+    usMetaHeaderParser::MHDHeader mhdHeader = mhdParser.getMHDHeader();
+
+    usImagePreScanSettings settings;
+    settings.setProbeRadius(mhdHeader.probeRadius);
+    settings.setScanLinePitch(mhdHeader.scanLinePitch);
+    settings.setTransducerConvexity(mhdHeader.isTransducerConvex);
+    settings.setAxialResolution(mhdParser.getAxialResolution());
+    imageRf2D.setImageSettings(settings);
+
+    //data parsing
+    usRawFileParser rawParser;
+    rawParser.read(imageRf2D, mhdParser.getRawFileName());
+  }
+  else
+    throw(vpException(vpException::fatalError, "Unknown header format."));
 }
 
 /**
@@ -90,8 +192,53 @@ void usImageIo::read(usImageRF2D<unsigned char> &imageRf2D, const std::string he
 * @param imageRf3D The RF image to write.
 * @param headerFileName The header file name to write.
 */
-void usImageIo::write(const usImageRF3D<unsigned char> &imageRf3D, const std::string headerFileName) {
+void usImageIo::write(const usImageRF3D<unsigned char> &imageRf3D, const std::string headerFileName, const std::string imageExtesion2D) {
+  //checking header type
+  usImageIo::usHeaderFormatType headerFormat = getHeaderFormat(headerFileName);
+  if (headerFormat == FORMAT_XML) {
+    std::string imageFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(imageExtesion2D);
+#ifdef VISP_HAVE_XML2
+    //case of a set of successive 2D frames
+#else
+    throw(vpException(vpException::fatalError, "Requires xml2"));
+#endif
+  }
+  else if (headerFormat == FORMAT_MHD) {
+    std::string imageFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(".raw");
+    //filling header
+    usMetaHeaderParser::MHDHeader header;
+    header.numberOfDimensions = 3;
+    header.elementType = usMetaHeaderParser::MET_UCHAR;
+    header.imageType = usMetaHeaderParser::RF_3D;
+    header.elementSpacing[0] = 1;
+    header.elementSpacing[1] = 1;
+    header.elementSpacing[2] = 1;
+    header.dim[0] = imageRf3D.getANumber();
+    header.dim[1] = imageRf3D.getLineNumber();
+    header.dim[1] = imageRf3D.getFrameNumber();
+    header.dim[2] = 1;
+    header.msb = false;
+    header.MHDFileName = headerFileName;
+    header.rawFileName = imageFileName;
+    header.isTransducerConvex = imageRf3D.isTransducerConvex();
+    header.probeRadius = imageRf3D.getProbeRadius();
+    header.scanLinePitch = imageRf3D.getScanLinePitch();
+    header.isMotorRotating = imageRf3D.isMotorRotating();
+    header.motorRadius = imageRf3D.getMotorRadius();
+    header.framePitch = imageRf3D.getFramePitch();
+    //writing in file
+    usMetaHeaderParser mhdParser;
+    mhdParser.setMHDHeader(header);
+    mhdParser.setAxialResolution(imageRf3D.getAxialResolution());
+    mhdParser.parse();
 
+    //filling raw
+    usRawFileParser rawParser;
+    rawParser.write(imageRf3D, header.rawFileName);
+  }
+  else {
+    throw(vpException(vpException::fatalError, "Unknown extension."));
+  }
 }
 
 /**
@@ -100,7 +247,48 @@ void usImageIo::write(const usImageRF3D<unsigned char> &imageRf3D, const std::st
 * @param [in] headerFileName The header file name to read.
 */
 void usImageIo::read(usImageRF3D<unsigned char> &imageRf3,const std::string headerFileName) {
+  usImageIo::usHeaderFormatType headerFormat = getHeaderFormat(headerFileName);
+  if (headerFormat == FORMAT_XML) {
+#ifdef VISP_HAVE_XML2
+    //case of a set of sucessive 2D frames
+#else
+    throw(vpException(vpException::fatalEtrror, "Requires xml2 library"));
+#endif //VISP_HAVE_XML2
+  }
+  else if (headerFormat == FORMAT_MHD) {
+    //header parsing
+    usMetaHeaderParser mhdParser;
+    mhdParser.read(headerFileName);
+    if (mhdParser.getImageType() != usMetaHeaderParser::RF_3D && mhdParser.getImageType() != usMetaHeaderParser::NOT_SET) {
+      throw(vpException(vpException::badValue, "Reading a non rf 3D image!"));
+    }
+    if (mhdParser.getElementType() != usMetaHeaderParser::MET_UCHAR) {
+      throw(vpException(vpException::badValue, "Reading a non unsigned char image!"));
+    }
+    //resizing image in memory
+    imageRf3.resize(mhdParser.getImageSizeX(), mhdParser.getImageSizeY(), mhdParser.getImageSizeZ());
 
+    usMetaHeaderParser::MHDHeader mhdHeader = mhdParser.getMHDHeader();
+
+    usImagePreScanSettings settings;
+    settings.setProbeRadius(mhdHeader.probeRadius);
+    settings.setScanLinePitch(mhdHeader.scanLinePitch);
+    settings.setTransducerConvexity(mhdHeader.isTransducerConvex);
+    settings.setAxialResolution(mhdParser.getAxialResolution());
+    imageRf3.setImageSettings(settings);
+
+    usMotorSettings motorSettings;
+    motorSettings.setMotorRadius(mhdHeader.motorRadius);
+    motorSettings.setFramePitch(mhdHeader.framePitch);
+    motorSettings.setMotorConvexity(mhdHeader.isMotorRotating);
+    imageRf3.setMotorSettings(motorSettings);
+
+    //data parsing
+    usRawFileParser rawParser;
+    rawParser.read(imageRf3, mhdParser.getRawFileName());
+  }
+  else
+    throw(vpException(vpException::fatalError, "Unknown header format."));
 }
 
 /**
@@ -109,17 +297,18 @@ void usImageIo::read(usImageRF3D<unsigned char> &imageRf3,const std::string head
 * @param headerFileName The header file name to write, with extension.
 * @param imageExtension The image extention name to write (ex : ".png").
 */
-void usImageIo::write(const usImagePreScan2D<unsigned char> & preScanImage, const std::string headerFileName, const std::string imageExtension) {
+void usImageIo::write(const usImagePreScan2D<unsigned char> & preScanImage, const std::string headerFileName, const std::string imageExtesion2D) {
   //checking header type
   usImageIo::usHeaderFormatType headerFormat = getHeaderFormat(headerFileName);
   if (headerFormat == FORMAT_XML) {
-    std::string imageFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(imageExtension);
+    std::string imageFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(imageExtesion2D);
 #ifdef VISP_HAVE_XML2
     try {
       //writing image
       vpImageIo::write(preScanImage, imageFileName);
       //writing xml
       usImageSettingsXmlParser xmlSettings;
+      xmlSettings.setImagePreScan(true);
       xmlSettings.setImagePreScanSettings(preScanImage);
       xmlSettings.setImageFileName(imageFileName);
       //write xml
@@ -229,11 +418,11 @@ void usImageIo::read(usImagePreScan2D<unsigned char> &preScanImage,const std::st
 * @param preScanImage The pre-scan image to write.
 * @param filename The image file name to write.
 */
-void usImageIo::write(const usImagePreScan3D<unsigned char> &preScanImage, const std::string headerFileName) {
+void usImageIo::write(const usImagePreScan3D<unsigned char> &preScanImage, const std::string headerFileName, const std::string imageExtesion2D) {
   //checking header type
   usImageIo::usHeaderFormatType headerFormat = getHeaderFormat(headerFileName);
   if (headerFormat == FORMAT_XML) {
-    std::string imageFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(".png");
+    std::string imageFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(imageExtesion2D);
 #ifdef VISP_HAVE_XML2
   //case of a set of successive 2D frames
 #else
@@ -333,7 +522,7 @@ void usImageIo::read(usImagePreScan3D<unsigned char> &preScanImage,const std::st
 * @param preScan2DImage The pre-scan image to write.
 * @param filename The image file name to write.
 */
-void usImageIo::write(const usImagePreScan2D<double> &preScan2DImage, const std::string filename) {
+void usImageIo::write(const usImagePreScan2D<double> &preScan2DImage, const std::string filename, const std::string imageExtesion2D) {
 
 }
 
@@ -351,7 +540,7 @@ void usImageIo::read(usImagePreScan2D<double> &preScan2D,std::string filename) {
 * @param preScan3DImage The pre-scan image to write.
 * @param filename The image file name to write.
 */
-void usImageIo::write(const usImagePreScan3D<double> &preScan3DImage, const std::string filename) {
+void usImageIo::write(const usImagePreScan3D<double> &preScan3DImage, const std::string filename, const std::string imageExtesion2D) {
 
 }
 
@@ -370,11 +559,11 @@ void usImageIo::read(usImagePreScan3D<double> &preScan3DImage,std::string filena
 * @param headerFileName The header file name with the desired extension.
 * @param imageExtension The image extension.
 */
-void usImageIo::write(const usImagePostScan2D<unsigned char> &postScanImage, const std::string headerFileName,const std::string imageExtension) {
+void usImageIo::write(const usImagePostScan2D<unsigned char> &postScanImage, const std::string headerFileName, const std::string imageExtesion2D) {
   usImageIo::usHeaderFormatType headerFormat = getHeaderFormat(headerFileName);
   if (headerFormat == FORMAT_XML) {
 #ifdef VISP_HAVE_XML2
-    std::string imageFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(imageExtension);
+    std::string imageFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(imageExtesion2D);
     try {
       //writing image
       vpImageIo::writePNG(postScanImage, imageFileName);
@@ -452,6 +641,8 @@ void usImageIo::read(usImagePostScan2D<unsigned char> &postScanImage,const std::
       xmlSettings.getImagePostScanSettings().getScanLinePitch(),
       xmlSettings.getImagePostScanSettings().isTransducerConvex(),
       xmlSettings.getImagePostScanSettings().getHeightResolution(), xmlSettings.getImagePostScanSettings().getWidthResolution()));
+#else
+    throw(vpException(vpException::fatalError, "Requires xml2 library"));
 #endif
   }
   else if (headerFormat == FORMAT_MHD) {
@@ -492,12 +683,14 @@ void usImageIo::read(usImagePostScan2D<unsigned char> &postScanImage,const std::
 * @param mhdFilename The header file name.
 * @param imageExtension The image file extension.
 */
-void usImageIo::write(const usImagePostScan3D<unsigned char> &postScanImage, const std::string headerFileName, const std::string imageExtension)
+void usImageIo::write(const usImagePostScan3D<unsigned char> &postScanImage, const std::string headerFileName, const std::string imageExtesion2D)
 {
   usImageIo::usHeaderFormatType headerFormat = getHeaderFormat(headerFileName);
   if (headerFormat == FORMAT_XML) {
 #ifdef VISP_HAVE_XML2
     //case of a set of sucessive 2D frames
+#else
+    throw(vpException(vpException::fatalError, "Requires xml2 library"));
 #endif
   }
   else if (headerFormat == FORMAT_MHD) {
@@ -514,7 +707,7 @@ void usImageIo::write(const usImagePostScan3D<unsigned char> &postScanImage, con
     header.dim[2] = postScanImage.getFrameNumber();
     header.msb = false;
     header.MHDFileName = headerFileName;
-    header.rawFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(imageExtension);
+    header.rawFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(".raw");
     header.isTransducerConvex = postScanImage.isTransducerConvex();
     header.isMotorRotating = postScanImage.isMotorRotating();
     header.probeRadius = postScanImage.getProbeRadius();
@@ -546,6 +739,8 @@ void usImageIo::read(usImagePostScan3D<unsigned char> &postScanImage,std::string
   if (headerFormat == FORMAT_XML) {
 #ifdef VISP_HAVE_XML2
     //case of a set of successive 2D frames
+#else
+    throw(vpException(vpException::fatalError, "Requires xml2 library"));
 #endif
   }
   else if (headerFormat == FORMAT_MHD) {

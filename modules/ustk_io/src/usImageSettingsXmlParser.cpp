@@ -162,23 +162,14 @@ usImageSettingsXmlParser::writeMainClass(xmlNodePtr node)
   xmlWriteCharChild(node, "image_file_name", m_imageFileName.c_str());
 }
 
-void usImageSettingsXmlParser::setImagePreScanSettings(const usImagePreScan2D<unsigned char>& imagePrescan2D)
+void usImageSettingsXmlParser::setImagePreScanSettings(const usImagePreScanSettings imagePrescanSettings)
 {
-  m_preScanSettings.setTransducerConvexity(imagePrescan2D.isTransducerConvex());
-  m_preScanSettings.setProbeRadius(imagePrescan2D.getProbeRadius());
-  m_preScanSettings.setScanLinePitch(imagePrescan2D.getScanLinePitch());
-  m_preScanSettings.setAxialResolution(imagePrescan2D.getAxialResolution());
-  m_is_prescan = true;
+  m_preScanSettings = imagePrescanSettings;
 }
 
-void usImageSettingsXmlParser::setImagePostScanSettings(const usImagePostScan2D<unsigned char>& imagePostcan2D)
+void usImageSettingsXmlParser::setImagePostScanSettings(const usImagePostScanSettings& imagePostScanSettings)
 {
-  m_postScanSettings.setTransducerConvexity(imagePostcan2D.isTransducerConvex());
-  m_postScanSettings.setProbeRadius(imagePostcan2D.getProbeRadius());
-  m_postScanSettings.setScanLinePitch(imagePostcan2D.getScanLinePitch());
-  m_postScanSettings.setHeightResolution(imagePostcan2D.getHeightResolution());
-  m_postScanSettings.setWidthResolution(imagePostcan2D.getWidthResolution());
-  m_is_prescan = false;
+  m_postScanSettings = imagePostScanSettings;
 }
 
 void usImageSettingsXmlParser::setImageSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex, double axialResolution)

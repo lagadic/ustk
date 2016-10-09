@@ -94,8 +94,8 @@ public:
   bool isImagePreScan() const { return m_is_prescan; }
   
   //Data setters
-  void setImagePreScanSettings(const usImagePreScan2D<unsigned char> &imagePrescan2D);
-  void setImagePostScanSettings(const usImagePostScan2D<unsigned char> &imagePostcan2D);
+  void setImagePreScanSettings(const usImagePreScanSettings imagePrescanSettings);
+  void setImagePostScanSettings(const usImagePostScanSettings& imagePostScanSettings);
   void setImageSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex, double axialResolution);
   void setImageSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex, double widthResolution, double heightResolution);
   void setImageFileName(std::string imageFileName);

@@ -72,8 +72,8 @@ public:
   //@{
   static void read(usImageRF2D<unsigned char> &rfImage,const std::string headerFileName);
   static void read(usImageRF3D<unsigned char> &rfImage3D, const std::string headerFileName);
-  static void write(const usImageRF2D<unsigned char> &rfImage, const std::string headerFileName);
-  static void write(const usImageRF3D<unsigned char> &rfImage3D, const std::string headerFileName);
+  static void write(const usImageRF2D<unsigned char> &rfImage, const std::string headerFileName, const std::string imageExtesion2D = ".png");
+  static void write(const usImageRF3D<unsigned char> &rfImage3D, const std::string headerFileName, const std::string imageExtesion2D = ".png");
   //@}
 
   /** @name Pre-scan io */
@@ -83,10 +83,10 @@ public:
   static void read(usImagePreScan2D<double> &preScanImage,const std::string headerFileName);
   static void read(usImagePreScan3D<double> &preScanImage3D,const std::string headerFileName);
 
-  static void write(const usImagePreScan2D<unsigned char> &preScanImage, const std::string headerFileName, const std::string imageExtension = ".png");
-  static void write(const usImagePreScan3D<unsigned char> &preScanImage3D, const std::string headerFileName);
-  static void write(const usImagePreScan2D<double> &preScanImage, const std::string headerFileName);
-  static void write(const usImagePreScan3D<double> &preScanImage3D, const std::string headerFileName);
+  static void write(const usImagePreScan2D<unsigned char> &preScanImage, const std::string headerFileName, const std::string imageExtesion2D = ".png");
+  static void write(const usImagePreScan3D<unsigned char> &preScanImage3D, const std::string headerFileName, const std::string imageExtesion2D = ".png");
+  static void write(const usImagePreScan2D<double> &preScanImage, const std::string headerFileName, const std::string imageExtesion2D = ".png");
+  static void write(const usImagePreScan3D<double> &preScanImage3D, const std::string headerFileName, const std::string imageExtesion2D = ".png");
   //@}
 
   /** @name Post-scan io */
@@ -94,8 +94,8 @@ public:
   static void read(usImagePostScan2D<unsigned char> &postScanImage, const std::string headerFileName);
   static void read(usImagePostScan3D<unsigned char> &postScanImage3D, std::string headerFileName);
 
-  static void write(const usImagePostScan2D<unsigned char> &postScanImage, const std::string headerFileName, const std::string imageExtension = ".png");
-  static void write(const usImagePostScan3D<unsigned char> &postScanImage3D, const std::string headerFileName, const std::string imageExtension = ".raw");
+  static void write(const usImagePostScan2D<unsigned char> &postScanImage, const std::string headerFileName, const std::string imageExtesion2D = ".png");
+  static void write(const usImagePostScan3D<unsigned char> &postScanImage3D, const std::string headerFileName, const std::string imageExtesion2D = ".png");
   //@}
 };
 

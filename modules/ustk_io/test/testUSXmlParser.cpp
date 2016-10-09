@@ -144,7 +144,7 @@ int main(int argc, const char** argv)
 
     std::cout <<  "-------------------------------------------------------" << std::endl ;
     std::cout <<  "  testUSXmlParser.cpp" <<std::endl << std::endl ;
-    std::cout <<  "  writing and readind ultrasound data using a the US xml parser" << std::endl ;
+    std::cout <<  "  writing and reading ultrasound data using a the US xml parser" << std::endl ;
     std::cout <<  "-------------------------------------------------------" << std::endl ;
     std::cout << std::endl ;
 
