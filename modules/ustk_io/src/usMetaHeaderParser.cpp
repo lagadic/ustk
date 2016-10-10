@@ -59,7 +59,7 @@ void  usMetaHeaderParser::readMHDHeader(const std::string fileName)
 
   std::ifstream file;
   file.open(fileName.c_str(), std::ifstream::in);
-  file >> std::scientific;
+  //file >> std::scientific;
   if (!file.good()) {
     throw vpException(vpException::fatalError, std::string("Error opening .mhd file."));
   }

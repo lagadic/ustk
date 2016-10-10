@@ -45,6 +45,7 @@
 #include <visp3/ustk_core/usImagePostScanSettings.h>
 #include <visp3/ustk_core/usImagePreScan2D.h>
 #include <visp3/ustk_core/usImagePostScan2D.h>
+#include <visp3/ustk_core/usMotorSettings.h>
 #include <visp3/core/vpXmlParser.h>
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpIoTools.h>
@@ -67,6 +68,9 @@ public:
     CODE_XML_SCANLINE_PITCH,
     CODE_XML_PROBE_RADIUS,
     CODE_XML_IS_PROBE_CONVEX,
+    CODE_XML_FRAME_PITCH,
+    CODE_XML_MOTOR_RADIUS,
+    CODE_XML_IS_MOTOR_ROTATING,
     CODE_XML_AXIAL_RESOLUTION,
     CODE_XML_HEIGHT_RESOLUTION,
     CODE_XML_WIDTH_RESOLUTION,
@@ -91,23 +95,28 @@ public:
   std::string getImageFileName() const {return m_imageFileName;}
   usImagePostScanSettings getImagePostScanSettings() const {return m_postScanSettings;}
   usImagePreScanSettings getImagePreScanSettings() const { return m_preScanSettings; }
+  usMotorSettings getMotorSettings() const { return m_motorSettings; }
   bool isImagePreScan() const { return m_is_prescan; }
+  bool isImage3D() const { return m_is_3D; }
   
   //Data setters
   void setImagePreScanSettings(const usImagePreScanSettings imagePrescanSettings);
   void setImagePostScanSettings(const usImagePostScanSettings& imagePostScanSettings);
   void setImageSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex, double axialResolution);
   void setImageSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex, double widthResolution, double heightResolution);
+  void setMotorSettings(const usMotorSettings &motorSettings);
   void setImageFileName(std::string imageFileName);
   void setImagePreScan(bool is_prescan) { m_is_prescan = is_prescan; }
 
 private:
   usImagePostScanSettings m_postScanSettings;
   usImagePreScanSettings m_preScanSettings;
+  usMotorSettings m_motorSettings;
   std::string m_imageFileName;
 
   //to manage different resolution types
   bool m_is_prescan;
+  bool m_is_3D;
 
   virtual void readMainClass (xmlDocPtr doc, xmlNodePtr node);
   virtual void writeMainClass (xmlNodePtr node);

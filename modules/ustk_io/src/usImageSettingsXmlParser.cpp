@@ -36,13 +36,16 @@
 #include<visp3/ustk_io/usImageSettingsXmlParser.h>
 #ifdef VISP_HAVE_XML2
 usImageSettingsXmlParser::usImageSettingsXmlParser()
-  : m_postScanSettings(usImagePostScanSettings()), m_preScanSettings(usImagePreScanSettings()), m_imageFileName(std::string("")), m_is_prescan(false)
+  : m_postScanSettings(usImagePostScanSettings()), m_preScanSettings(usImagePreScanSettings()), m_motorSettings(), m_imageFileName(std::string("")), m_is_prescan(false), m_is_3D(false)
 {
   nodeMap["settings"] = CODE_XML_SETTINGS;
   nodeMap["image_type"] = CODE_XML_IMAGE_TYPE;
   nodeMap["scanline_pitch"] = CODE_XML_SCANLINE_PITCH;
   nodeMap["probe_radius"] = CODE_XML_PROBE_RADIUS;
   nodeMap["is_probe_convex"] = CODE_XML_IS_PROBE_CONVEX;
+  nodeMap["frame_pitch"] = CODE_XML_FRAME_PITCH;
+  nodeMap["motor_radius"] = CODE_XML_MOTOR_RADIUS;
+  nodeMap["is_motor_rotating"] = CODE_XML_IS_MOTOR_ROTATING;
   nodeMap["axial_resolution"] = CODE_XML_AXIAL_RESOLUTION;
   nodeMap["height_resolution"] = CODE_XML_HEIGHT_RESOLUTION;
   nodeMap["width_resolution"] = CODE_XML_WIDTH_RESOLUTION;
@@ -50,7 +53,7 @@ usImageSettingsXmlParser::usImageSettingsXmlParser()
 }
 
 usImageSettingsXmlParser::usImageSettingsXmlParser(usImageSettingsXmlParser& twinParser) : vpXmlParser(twinParser),
-m_postScanSettings(twinParser.getImagePostScanSettings()), m_preScanSettings(twinParser.getImagePreScanSettings()), m_imageFileName(twinParser.getImageFileName()), m_is_prescan(false)
+m_postScanSettings(twinParser.getImagePostScanSettings()), m_preScanSettings(twinParser.getImagePreScanSettings()), m_motorSettings(), m_imageFileName(twinParser.getImageFileName()), m_is_prescan(false), m_is_3D(false)
 {
 
 }
@@ -60,6 +63,9 @@ usImageSettingsXmlParser& usImageSettingsXmlParser::operator =(const usImageSett
   m_postScanSettings = twinparser.getImagePostScanSettings();
   m_preScanSettings = twinparser.getImagePreScanSettings();
   m_imageFileName = twinparser.getImageFileName();
+  m_motorSettings = twinparser.getMotorSettings();
+  m_is_prescan = twinparser.isImagePreScan();
+  m_is_prescan = twinparser.isImage3D();
 
   return *this;
 }
@@ -73,7 +79,10 @@ bool usImageSettingsXmlParser::operator ==(usImageSettingsXmlParser const& other
 {
   return (this->getImagePostScanSettings() == other.getImagePostScanSettings() &&
     this->getImagePreScanSettings() == other.getImagePreScanSettings() &&
-    this->getImageFileName() == other.getImageFileName());
+    this->getImageFileName() == other.getImageFileName() &&
+    this->getMotorSettings() == other.getMotorSettings() &&
+    this->isImage3D() == other.isImage3D() &&
+    this->isImagePreScan() == other.isImagePreScan());
 }
 
 void
@@ -128,6 +137,15 @@ usImageSettingsXmlParser::readMainClass (xmlDocPtr doc, xmlNodePtr node)
           this->m_postScanSettings.setTransducerConvexity(xmlReadBoolChild(doc, dataNode));
           this->m_preScanSettings.setTransducerConvexity(xmlReadBoolChild(doc, dataNode));
           break;
+        case CODE_XML_FRAME_PITCH:
+          this->m_motorSettings.setFramePitch(xmlReadDoubleChild(doc, dataNode));
+          break;
+        case CODE_XML_MOTOR_RADIUS:
+          this->m_motorSettings.setMotorRadius(xmlReadDoubleChild(doc, dataNode));
+          break;
+        case CODE_XML_IS_MOTOR_ROTATING:
+          this->m_motorSettings.setMotorConvexity(xmlReadBoolChild(doc, dataNode));
+          break;
         case CODE_XML_ASSOCIATED_IMAGE_FILE_NAME:
           this->m_imageFileName = xmlReadStringChild(doc, dataNode);
           break;
@@ -159,6 +177,11 @@ usImageSettingsXmlParser::writeMainClass(xmlNodePtr node)
     xmlWriteDoubleChild(node, "width_resolution", m_postScanSettings.getWidthResolution());
     xmlWriteDoubleChild(node, "height_resolution", m_postScanSettings.getHeightResolution());
   }
+  if (m_is_3D) {
+    xmlWriteDoubleChild(node, "frame_pitch", m_motorSettings.getFramePitch());
+    xmlWriteDoubleChild(node, "motor_radius", m_motorSettings.getMotorRadius());
+    xmlWriteBoolChild(node, "is_motor_rotating", m_motorSettings.isMotorRotating());
+  }
   xmlWriteCharChild(node, "image_file_name", m_imageFileName.c_str());
 }
 
@@ -189,6 +212,12 @@ void usImageSettingsXmlParser::setImageSettings(double probeRadius, double scanL
   m_postScanSettings.setHeightResolution(widthResolution);
   m_postScanSettings.setWidthResolution(heightResolution);
   m_is_prescan = false;
+}
+
+void usImageSettingsXmlParser::setMotorSettings(const usMotorSettings &motorSettings)
+{
+  m_is_3D = true;
+  m_motorSettings = motorSettings;
 }
 
 void usImageSettingsXmlParser::setImageFileName(std::string imageFileName)
