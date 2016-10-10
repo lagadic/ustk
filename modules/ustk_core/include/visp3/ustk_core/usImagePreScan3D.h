@@ -169,6 +169,7 @@ usImagePreScan3D<T>::usImagePreScan3D(const usImagePreScanSettings &other) : usI
 * Copy constructor. For double image type
 * @param other usImage3D you want to copy.
 * @param otherSettings usImagePreScanSettings you want to copy.
+* @param motorSettings usMotorSettings you want to copy.
 */
 template<class T>
 usImagePreScan3D<T>::usImagePreScan3D(const usImage3D<T> &other, const usImagePreScanSettings &otherSettings, const usMotorSettings &motorSettings) :

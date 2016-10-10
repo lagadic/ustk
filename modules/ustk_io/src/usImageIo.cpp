@@ -71,6 +71,7 @@ std::string usImageIo::getExtension(const std::string &filename)
 * Write 2D rf ultrasound image.
 * @param imageRf2D The RF image to write.
 * @param headerFileName The header file name to write.
+* @param imageExtesion2D The 2D image extension.
 */
 void usImageIo::write(const usImageRF2D<unsigned char> &imageRf2D, const std::string headerFileName, const std::string imageExtesion2D) {
   //checking header type
@@ -191,6 +192,7 @@ void usImageIo::read(usImageRF2D<unsigned char> &imageRf2D, const std::string he
 * Write 3D rf ultrasound image.
 * @param imageRf3D The RF image to write.
 * @param headerFileName The header file name to write.
+* @param imageExtesion2D The 2D image extension.
 */
 void usImageIo::write(const usImageRF3D<unsigned char> &imageRf3D, const std::string headerFileName, const std::string imageExtesion2D) {
   //checking header type
@@ -295,7 +297,7 @@ void usImageIo::read(usImageRF3D<unsigned char> &imageRf3,const std::string head
 * Write 2D unsigned char pre-scan ultrasound image.
 * @param preScanImage The pre-scan image to write.
 * @param headerFileName The header file name to write, with extension.
-* @param imageExtension The image extention name to write (ex : ".png").
+* @param imageExtesion2D The image extention name to write (ex : ".png").
 */
 void usImageIo::write(const usImagePreScan2D<unsigned char> & preScanImage, const std::string headerFileName, const std::string imageExtesion2D) {
   //checking header type
@@ -416,7 +418,8 @@ void usImageIo::read(usImagePreScan2D<unsigned char> &preScanImage,const std::st
 /**
 * Write 3D unsigned char pre-scan ultrasound image.
 * @param preScanImage The pre-scan image to write.
-* @param filename The image file name to write.
+* @param headerFileName The image file name to write.
+* @param imageExtesion2D The 2D image extension.
 */
 void usImageIo::write(const usImagePreScan3D<unsigned char> &preScanImage, const std::string headerFileName, const std::string imageExtesion2D) {
   //checking header type
@@ -470,7 +473,7 @@ void usImageIo::write(const usImagePreScan3D<unsigned char> &preScanImage, const
 /**
 * Read 3D unsigned char pre-scan ultrasound image.
 * @param [out] preScanImage The pre-scan image to read.
-* @param [in] filename The image file name to read, with .xml extension.
+* @param [in] headerFileName The image file name to read, with .xml extension.
 */
 void usImageIo::read(usImagePreScan3D<unsigned char> &preScanImage,const std::string headerFileName) {
   usImageIo::usHeaderFormatType headerFormat = getHeaderFormat(headerFileName);
@@ -520,36 +523,38 @@ void usImageIo::read(usImagePreScan3D<unsigned char> &preScanImage,const std::st
 /**
 * Write 2D double pre-scan ultrasound image.
 * @param preScan2DImage The pre-scan image to write.
-* @param filename The image file name to write.
+* @param headerFileName The image file name to write.
+* @param imageExtesion2D The 2D image extension.
 */
-void usImageIo::write(const usImagePreScan2D<double> &preScan2DImage, const std::string filename, const std::string imageExtesion2D) {
+void usImageIo::write(const usImagePreScan2D<double> &preScan2DImage, const std::string headerFileName, const std::string imageExtesion2D) {
 
 }
 
 /**
 * Read 2D double pre-scan ultrasound image.
 * @param [out] preScan2D The pre-scan image to read.
-* @param [in] filename The image file name to read.
+* @param [in] headerFileName The image file name to read.
 */
-void usImageIo::read(usImagePreScan2D<double> &preScan2D,std::string filename) {
+void usImageIo::read(usImagePreScan2D<double> &preScan2D,std::string headerFileName) {
 
 }
 
 /**
 * Write 3D double pre-scan ultrasound image.
 * @param preScan3DImage The pre-scan image to write.
-* @param filename The image file name to write.
+* @param headerFileName The image file name to write.
+* @param imageExtesion2D The 2D image extension.
 */
-void usImageIo::write(const usImagePreScan3D<double> &preScan3DImage, const std::string filename, const std::string imageExtesion2D) {
+void usImageIo::write(const usImagePreScan3D<double> &preScan3DImage, const std::string headerFileName, const std::string imageExtesion2D) {
 
 }
 
 /**
 * Read 3D double pre-scan ultrasound image.
 * @param [out] preScan3DImage The pre-scan image to read.
-* @param [in] filename The image file name to read.
+* @param [in] headerFileName The image file name to read.
 */
-void usImageIo::read(usImagePreScan3D<double> &preScan3DImage,std::string filename) {
+void usImageIo::read(usImagePreScan3D<double> &preScan3DImage,std::string headerFileName) {
 
 }
 
@@ -557,7 +562,7 @@ void usImageIo::read(usImagePreScan3D<double> &preScan3DImage,std::string filena
 * Write 2D post-scan ultrasound image and settings.
 * @param postScanImage Image to write.
 * @param headerFileName The header file name with the desired extension.
-* @param imageExtension The image extension.
+* @param imageExtesion2D The 2D image extension.
 */
 void usImageIo::write(const usImagePostScan2D<unsigned char> &postScanImage, const std::string headerFileName, const std::string imageExtesion2D) {
   usImageIo::usHeaderFormatType headerFormat = getHeaderFormat(headerFileName);
@@ -680,8 +685,8 @@ void usImageIo::read(usImagePostScan2D<unsigned char> &postScanImage,const std::
 /**
 * Write 3D post-scan ultrasound image and settings
 * @param postScanImage Image to write.
-* @param mhdFilename The header file name.
-* @param imageExtension The image file extension.
+* @param headerFileName The header file name.
+* @param imageExtesion2D The 2D image extension.
 */
 void usImageIo::write(const usImagePostScan3D<unsigned char> &postScanImage, const std::string headerFileName, const std::string imageExtesion2D)
 {
@@ -732,7 +737,7 @@ void usImageIo::write(const usImagePostScan3D<unsigned char> &postScanImage, con
 /**
 * Read 3D post-scan ultrasound image
 * @param [out] postScanImage The post-scan image to read.
-* @param [in] mhdFileName The mhd file name with .mhd extenstion.
+* @param [in] headerFileName The mhd file name with .mhd extenstion.
 */
 void usImageIo::read(usImagePostScan3D<unsigned char> &postScanImage,std::string headerFileName) {
   usImageIo::usHeaderFormatType headerFormat = getHeaderFormat(headerFileName);
