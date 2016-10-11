@@ -370,12 +370,6 @@ void usMetaHeaderParser::parse()
   else
     MHDfile << "UltrasoundImageType = " <<  "MET_UNKNOWN" << "\n";
 
-
-
-
-
-
-
   MHDfile.close();
 }
 

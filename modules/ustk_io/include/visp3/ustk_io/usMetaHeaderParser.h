@@ -76,9 +76,9 @@ public:
   std::string getRawFileName() const {return header.rawFileName;}
   double getWidthResolution() const { return m_widthResolution; }
   ElementType getElementType() const { return header.elementType; }
-  unsigned int getImageSizeX() const { return header.dim[0]; }
-  unsigned int getImageSizeY() const { return header.dim[1]; }
-  unsigned int getImageSizeZ() const { return header.dim[2]; }
+  unsigned int getANumber() const { return header.dim[0]; }
+  unsigned int getLineNumber() const { return header.dim[1]; }
+  unsigned int getFrameNumber() const { return header.dim[2]; }
   MHDHeader getMHDHeader() const { return header; }
 
   //comparison
