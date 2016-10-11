@@ -116,7 +116,7 @@ usImagePostScan2D<T>::usImagePostScan2D() : vpImage<T>(), usImagePostScanSetting
 */
 template<class T>
 usImagePostScan2D<T>::usImagePostScan2D(unsigned int a_nubmer, unsigned int line_number, double probeRadius, double scanLinePitch, bool isTransducerConvex, double height_resolution, double width_resolution)
-  : vpImage<T>(a_nubmer, line_number), usImagePostScanSettings(probeRadius, scanLinePitch, isTransducerConvex, height_resolution, width_resolution)
+  : vpImage<T>(a_nubmer, line_number,0), usImagePostScanSettings(probeRadius, scanLinePitch, isTransducerConvex, height_resolution, width_resolution)
 {
 
 }

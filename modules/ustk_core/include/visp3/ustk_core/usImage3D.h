@@ -87,7 +87,7 @@ public:
   * @param image other 3D-image to copy
   * @param copy boolean to select if deep copy is performed or not (not a deep copy by default)
   */
-  usImage3D(const usImage3D<Type> &image, const bool copy = false);
+  usImage3D(const usImage3D<Type> &image, const bool copy = true);
 
   /**
   * Destructor.

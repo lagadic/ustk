@@ -204,7 +204,7 @@ template<class T>
 bool usImagePreScan3D<T>::operator==(const usImagePreScan3D<T> &other)
 {
   return(usImage3D<T>::operator== (other) &&
-         usImagePreScanSettings::operator ==(other));
+         usImagePreScanSettings::operator== (other));
 }
 
 /**

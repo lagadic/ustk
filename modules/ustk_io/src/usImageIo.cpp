@@ -186,8 +186,6 @@ void usImageIo::read(usImageRF2D<unsigned char> &imageRf2D, const std::string he
     if (mhdParser.getElementType() != usMetaHeaderParser::MET_UCHAR) {
       throw(vpException(vpException::badValue, "Reading a non unsigned char image!"));
     }
-    //resizing image in memory
-    imageRf2D.resize(mhdParser.getANumber(), mhdParser.getLineNumber());
 
     usMetaHeaderParser::MHDHeader mhdHeader = mhdParser.getMHDHeader();
 
@@ -197,6 +195,9 @@ void usImageIo::read(usImageRF2D<unsigned char> &imageRf2D, const std::string he
     settings.setTransducerConvexity(mhdHeader.isTransducerConvex);
     settings.setAxialResolution(mhdParser.getAxialResolution());
     imageRf2D.setImageSettings(settings);
+
+    //resizing image in memory
+    imageRf2D.resize(mhdParser.getANumber(), mhdParser.getLineNumber());
 
     //data parsing
     usRawFileParser rawParser;

@@ -72,6 +72,7 @@ public:
   //@{
   static void read(usImageRF2D<unsigned char> &rfImage,const std::string headerFileName);
   static void read(usImageRF3D<unsigned char> &rfImage3D, const std::string headerFileName);
+
   static void write(const usImageRF2D<unsigned char> &rfImage, const std::string headerFileName, const std::string imageExtesion2D);
   static void write(const usImageRF2D<unsigned char> &rfImage, const std::string headerFileName);
   static void write(const usImageRF3D<unsigned char> &rfImage3D, const std::string headerFileName, const std::string imageExtesion2D);
