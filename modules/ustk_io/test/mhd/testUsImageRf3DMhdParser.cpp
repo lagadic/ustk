@@ -7,7 +7,7 @@
 
 
 /*!
-  \example testUSMhdParser.cpp
+  \example testUsImageRf3DMhdParser.cpp
 
   USTK MHD parser example.
   
@@ -19,8 +19,8 @@ DimSize = 186 233 163
 ElementType = MET_UCHAR
 ElementSpacing = 1 1 1
 ElementByteOrderMSB = False
-ElementDataFile = postscan3d.raw
-UltrasoundImageType = POSTSCAN_3D
+ElementDataFile = rf3d.raw
+UltrasoundImageType = RF_3D
   \endcode
   
 */
@@ -182,7 +182,7 @@ int main(int argc, const char** argv)
         exit(-1);
       }
     }
-    filename = opath + vpIoTools::path("/") + "postscan3d.mhd";
+    filename = opath + vpIoTools::path("/") + "rf3d.mhd";
 
     //Init values in reference parser (same values in file read in test)
     usImageRF3D<unsigned char> rf3DReference;
@@ -199,7 +199,7 @@ int main(int argc, const char** argv)
 
     //read the image we just wrote
     usImageRF3D<unsigned char> rf3D;
-    filename = opath + vpIoTools::path("/") + "postscan3d.mhd";
+    filename = opath + vpIoTools::path("/") + "rf3d.mhd";
     usImageIo::read(rf3D,filename);
 
     std::cout << "Read from " << filename << std::endl ;

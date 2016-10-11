@@ -74,6 +74,7 @@ public:
   double getWidthResolution() const;
 
   usImagePostScanSettings& operator=(const usImagePostScanSettings& other);
+  friend VISP_EXPORT std::ostream& operator<<(std::ostream& out, const usTransducerSettings &other);
   bool operator==(const usImagePostScanSettings& other);
 
   void setHeightResolution(const double heightResolution);

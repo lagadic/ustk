@@ -83,6 +83,14 @@ public:
     SEQUENCE_ERROR
   } vpXmlCodeSequenceType;
 
+  typedef enum
+  {
+    IMAGE_TYPE_UNKNOWN = -1,
+    IMAGE_TYPE_RF,
+    IMAGE_TYPE_PRESCAN,
+    IMAGE_TYPE_POSTSCAN
+  } usImageType;
+  
   usImageSettingsXmlParser();
   usImageSettingsXmlParser(usImageSettingsXmlParser& twinParser);
   usImageSettingsXmlParser& operator =(const usImageSettingsXmlParser& twinparser);
@@ -96,17 +104,17 @@ public:
   usImagePostScanSettings getImagePostScanSettings() const {return m_postScanSettings;}
   usImagePreScanSettings getImagePreScanSettings() const { return m_preScanSettings; }
   usMotorSettings getMotorSettings() const { return m_motorSettings; }
-  bool isImagePreScan() const { return m_is_prescan; }
+  usImageType getImageType() const { return m_image_type; }
   bool isImage3D() const { return m_is_3D; }
   
   //Data setters
   void setImagePreScanSettings(const usImagePreScanSettings imagePrescanSettings);
   void setImagePostScanSettings(const usImagePostScanSettings& imagePostScanSettings);
-  void setImageSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex, double axialResolution);
+  void usImageSettingsXmlParser::setImageSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex, double axialResolution, usImageType image_type);
   void setImageSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex, double widthResolution, double heightResolution);
   void setMotorSettings(const usMotorSettings &motorSettings);
   void setImageFileName(std::string imageFileName);
-  void setImagePreScan(bool is_prescan) { m_is_prescan = is_prescan; }
+  void setImageType(usImageType image_type) { m_image_type = image_type; }
 
 private:
   usImagePostScanSettings m_postScanSettings;
@@ -115,7 +123,7 @@ private:
   std::string m_imageFileName;
 
   //to manage different resolution types
-  bool m_is_prescan;
+  usImageType m_image_type;
   bool m_is_3D;
 
   virtual void readMainClass (xmlDocPtr doc, xmlNodePtr node);

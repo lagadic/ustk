@@ -100,7 +100,7 @@ void usImageIo::write(const usImageRF2D<unsigned char> &imageRf2D, const std::st
       vpImageIo::write(imageRf2D, imageFileName);
       //writing xml
       usImageSettingsXmlParser xmlSettings;
-      xmlSettings.setImagePreScan(true);
+      xmlSettings.setImageType(usImageSettingsXmlParser::usImageType::IMAGE_TYPE_RF);
       xmlSettings.setImagePreScanSettings(imageRf2D);
       xmlSettings.setImageFileName(imageFileName);
       //write xml
@@ -364,7 +364,7 @@ void usImageIo::write(const usImagePreScan2D<unsigned char> & preScanImage, cons
       vpImageIo::write(preScanImage, imageFileName);
       //writing xml
       usImageSettingsXmlParser xmlSettings;
-      xmlSettings.setImagePreScan(true);
+      xmlSettings.setImageType(usImageSettingsXmlParser::usImageType::IMAGE_TYPE_PRESCAN);
       xmlSettings.setImagePreScanSettings(preScanImage);
       xmlSettings.setImageFileName(imageFileName);
       //write xml
@@ -665,6 +665,7 @@ void usImageIo::write(const usImagePostScan2D<unsigned char> &postScanImage, con
       //writing xml file using xml parser
       usImageSettingsXmlParser xmlSettings;
       xmlSettings.setImagePostScanSettings(postScanImage);
+      xmlSettings.setImageType(usImageSettingsXmlParser::usImageType::IMAGE_TYPE_POSTSCAN);
       xmlSettings.setImageFileName(imageFileName);
       xmlSettings.save(headerFileName);
     }

@@ -98,9 +98,9 @@ bool usImagePostScanSettings::operator==(const usImagePostScanSettings& other)
 */
 VISP_EXPORT std::ostream& operator<<(std::ostream& out, const usImagePostScanSettings &other)
 {
-  out << static_cast<const usTransducerSettings &>(other);
-  return out << "Height resolution : " << other.getHeightResolution() <<
-    "Width resolution : " << other.getWidthResolution();
+  return out << static_cast<const usTransducerSettings &>(other) << 
+      "Height resolution : " << other.getHeightResolution() <<
+      "Width resolution : " << other.getWidthResolution();
 }
 
 /**
