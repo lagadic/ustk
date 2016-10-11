@@ -122,15 +122,13 @@ void usImageIo::write(const usImageRF2D<unsigned char> &imageRf2D, const std::st
     std::string imageFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(".raw");
     //filling header
     usMetaHeaderParser::MHDHeader header;
-    header.numberOfDimensions = 3;
+    header.numberOfDimensions = 2;
     header.elementType = usMetaHeaderParser::MET_UCHAR;
     header.imageType = usMetaHeaderParser::RF_2D;
     header.elementSpacing[0] = 1;
     header.elementSpacing[1] = 1;
-    header.elementSpacing[2] = 1;
     header.dim[0] = imageRf2D.getANumber();
     header.dim[1] = imageRf2D.getLineNumber();
-    header.dim[2] = 1;
     header.msb = false;
     header.MHDFileName = headerFileName;
     header.rawFileName = imageFileName;
@@ -386,15 +384,13 @@ void usImageIo::write(const usImagePreScan2D<unsigned char> & preScanImage, cons
     std::string imageFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(".raw");
     //filling header
     usMetaHeaderParser::MHDHeader header;
-    header.numberOfDimensions = 3;
+    header.numberOfDimensions = 2;
     header.elementType = usMetaHeaderParser::MET_UCHAR;
     header.imageType = usMetaHeaderParser::PRESCAN_2D;
     header.elementSpacing[0] = 1;
     header.elementSpacing[1] = 1;
-    header.elementSpacing[2] = 1;
     header.dim[0] = preScanImage.getANumber();
     header.dim[1] = preScanImage.getLineNumber();
-    header.dim[2] = 1;
     header.msb = false;
     header.MHDFileName = headerFileName;
     header.rawFileName = imageFileName;
@@ -687,15 +683,13 @@ void usImageIo::write(const usImagePostScan2D<unsigned char> &postScanImage, con
     std::string imageFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(".raw");
     //filling header
     usMetaHeaderParser::MHDHeader header;
-    header.numberOfDimensions = 3;
+    header.numberOfDimensions = 2;
     header.elementType = usMetaHeaderParser::MET_UCHAR;
     header.imageType = usMetaHeaderParser::POSTSCAN_2D;
     header.elementSpacing[0] = 1;
     header.elementSpacing[1] = 1;
-    header.elementSpacing[2] = 1;
     header.dim[0] = postScanImage.getANumber();
     header.dim[1] = postScanImage.getLineNumber();
-    header.dim[2] = 1;
     header.msb = false;
     header.MHDFileName = headerFileName;
     header.rawFileName = imageFileName;

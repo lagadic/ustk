@@ -158,6 +158,8 @@ usImageRF2D<T>& usImageRF2D<T>::operator=(const usImageRF2D<T> &other)
 template<class T>
 bool usImageRF2D<T>::operator==(const usImageRF2D<T> &other)
 {
+  std::cout << (int)vpImage<T>::operator== (other) << std::endl;
+  std::cout << (int)usImagePreScanSettings::operator ==(other) << std::endl;
   return(vpImage<T>::operator== (other) &&
          usImagePreScanSettings::operator ==(other));
 }
