@@ -429,7 +429,7 @@ void usImageIo::read(usImagePreScan2D<unsigned char> &preScanImage,const std::st
       xmlSettings.parse(headerFileName);
     }
     catch (std::exception e) {
-      std::cout << "Error parsing postScan settings file" << std::endl;
+      std::cout << "Error parsing pre-scan settings file" << std::endl;
       throw e;
     }
     vpImageIo::read(preScanImage, xmlSettings.getImageFileName());
@@ -730,6 +730,7 @@ void usImageIo::read(usImagePostScan2D<unsigned char> &postScanImage,const std::
     }
     catch (std::exception e) {
       std::cout << "Error parsing postScan settings file" << std::endl;
+      std::cout << "file name : " << headerFileName << std::endl;
       throw e;
     }
 

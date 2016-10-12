@@ -192,8 +192,6 @@ usImagePostScan2D<T> & usImagePostScan2D<T>::operator =(const usImagePostScan2D<
 template<class T>
 bool usImagePostScan2D<T>::operator ==(const usImagePostScan2D<T> &other)
 {
-  std::cout << (int)vpImage<T>::operator== (other) << std::endl;
-  std::cout << (int)usImagePostScanSettings::operator ==(other) << std::endl;
   return(vpImage<T>::operator== (other) &&
          usImagePostScanSettings::operator ==(other));
 }

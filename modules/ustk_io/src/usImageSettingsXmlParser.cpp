@@ -139,25 +139,24 @@ usImageSettingsXmlParser::readMainClass (xmlDocPtr doc, xmlNodePtr node)
             throw(vpException(vpException::fatalError, std::string("unknown image type in xml file")));
           break;
         case CODE_XML_AXIAL_RESOLUTION:
-          if (this->m_image_type != IMAGE_TYPE_POSTSCAN) {
+          if (this->m_image_type == IMAGE_TYPE_PRESCAN || this->m_image_type == IMAGE_TYPE_RF) {
             this->m_preScanSettings.setAxialResolution(xmlReadDoubleChild(doc, dataNode));
-            break;
           }
-          throw(vpException(vpException::fatalError, std::string("Trying to assign an axial resolution to a post-scan image !")));
+          else 
+            throw(vpException(vpException::fatalError, std::string("Trying to assign an axial resolution to a post-scan image !")));
           break;
         case CODE_XML_HEIGHT_RESOLUTION:
-          if (this->m_image_type == IMAGE_TYPE_POSTSCAN) {
+          if (this->m_image_type == IMAGE_TYPE_RF || this->m_image_type == IMAGE_TYPE_PRESCAN) {
             throw(vpException(vpException::fatalError, std::string("Trying to assign an height resolution to a pre-scan image !")));
-            break;
           }
-          this->m_postScanSettings.setHeightResolution(xmlReadDoubleChild(doc, dataNode));
+          else 
+            this->m_postScanSettings.setHeightResolution(xmlReadDoubleChild(doc, dataNode));
           break;
         case CODE_XML_WIDTH_RESOLUTION :
-          if (this->m_image_type == IMAGE_TYPE_POSTSCAN) {
+          if (this->m_image_type == IMAGE_TYPE_RF || this->m_image_type == IMAGE_TYPE_PRESCAN) {
             throw(vpException(vpException::fatalError, std::string("Trying to assign an width resolution to a pre-scan image !")));
-            break;
-          }
-          this->m_postScanSettings.setHeightResolution(xmlReadDoubleChild(doc, dataNode));
+          } else
+            this->m_postScanSettings.setWidthResolution(xmlReadDoubleChild(doc, dataNode));
           break;
         case CODE_XML_SCANLINE_PITCH:
           this->m_postScanSettings.setScanLinePitch(xmlReadDoubleChild(doc, dataNode));
@@ -205,7 +204,6 @@ usImageSettingsXmlParser::writeMainClass(xmlNodePtr node)
     xmlWriteDoubleChild(node, "probe_radius", m_preScanSettings.getProbeRadius());
     xmlWriteBoolChild(node, "is_probe_convex", m_preScanSettings.isTransducerConvex());
     xmlWriteDoubleChild(node, "axial_resolution", m_preScanSettings.getAxialResolution());
-    xmlWriteCharChild(node, "image_file_name", m_imageFileName.c_str());
   }
   if (this->m_image_type == IMAGE_TYPE_PRESCAN) {
     xmlWriteStringChild(node, "image_type", std::string("prescan"));
@@ -213,10 +211,8 @@ usImageSettingsXmlParser::writeMainClass(xmlNodePtr node)
     xmlWriteDoubleChild(node, "probe_radius", m_preScanSettings.getProbeRadius());
     xmlWriteBoolChild(node, "is_probe_convex", m_preScanSettings.isTransducerConvex());
     xmlWriteDoubleChild(node, "axial_resolution", m_preScanSettings.getAxialResolution());
-    xmlWriteCharChild(node, "image_file_name", m_imageFileName.c_str());
   }
   else if (this->m_image_type == IMAGE_TYPE_POSTSCAN) {
-    std::cout << "toto" << std::endl;
     xmlWriteStringChild(node, "image_type", std::string("postscan"));
     xmlWriteDoubleChild(node, "scanline_pitch", m_postScanSettings.getScanLinePitch());
     xmlWriteDoubleChild(node, "probe_radius", m_postScanSettings.getProbeRadius());
