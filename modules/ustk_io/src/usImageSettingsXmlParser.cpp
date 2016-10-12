@@ -36,7 +36,9 @@
 #include<visp3/ustk_io/usImageSettingsXmlParser.h>
 #ifdef VISP_HAVE_XML2
 usImageSettingsXmlParser::usImageSettingsXmlParser()
-  : m_postScanSettings(usImagePostScanSettings()), m_preScanSettings(usImagePreScanSettings()), m_motorSettings(), m_imageFileName(std::string("")), m_image_type(usImageType::IMAGE_TYPE_UNKNOWN), m_is_3D(false)
+  : m_postScanSettings(usImagePostScanSettings()), m_preScanSettings(usImagePreScanSettings()),
+    m_motorSettings(), m_imageFileName(std::string("")),
+    m_image_type(usImageSettingsXmlParser::IMAGE_TYPE_UNKNOWN), m_is_3D(false)
 {
   nodeMap["settings"] = CODE_XML_SETTINGS;
   nodeMap["image_type"] = CODE_XML_IMAGE_TYPE;
@@ -52,8 +54,11 @@ usImageSettingsXmlParser::usImageSettingsXmlParser()
   nodeMap["image_file_name"] = CODE_XML_ASSOCIATED_IMAGE_FILE_NAME;
 }
 
-usImageSettingsXmlParser::usImageSettingsXmlParser(usImageSettingsXmlParser& twinParser) : vpXmlParser(twinParser),
-m_postScanSettings(twinParser.getImagePostScanSettings()), m_preScanSettings(twinParser.getImagePreScanSettings()), m_motorSettings(), m_imageFileName(twinParser.getImageFileName()), m_image_type(usImageType::IMAGE_TYPE_UNKNOWN), m_is_3D(false)
+usImageSettingsXmlParser::usImageSettingsXmlParser(usImageSettingsXmlParser& twinParser)
+  : vpXmlParser(twinParser), m_postScanSettings(twinParser.getImagePostScanSettings()),
+    m_preScanSettings(twinParser.getImagePreScanSettings()), m_motorSettings(),
+    m_imageFileName(twinParser.getImageFileName()),
+    m_image_type(usImageSettingsXmlParser::IMAGE_TYPE_UNKNOWN), m_is_3D(false)
 {
 
 }
@@ -97,13 +102,13 @@ usImageSettingsXmlParser::readMainClass (xmlDocPtr doc, xmlNodePtr node)
         case CODE_XML_IMAGE_TYPE:
           value = xmlReadStringChild(doc, dataNode);
           if (strcmp(value.c_str(), "postscan") == 0) {
-            this->m_image_type = usImageType::IMAGE_TYPE_POSTSCAN;
+            this->m_image_type = usImageSettingsXmlParser::IMAGE_TYPE_POSTSCAN;
           }
           else if (strcmp(value.c_str(), "prescan") == 0) {
-            this->m_image_type = usImageType::IMAGE_TYPE_PRESCAN;
+            this->m_image_type = usImageSettingsXmlParser::IMAGE_TYPE_PRESCAN;
           }
           else if (strcmp(value.c_str(), "rf") == 0) {
-            this->m_image_type = usImageType::IMAGE_TYPE_RF;
+            this->m_image_type = usImageSettingsXmlParser::IMAGE_TYPE_RF;
           }
           else
             throw(vpException(vpException::fatalError, std::string("unknown image type in xml file")));
@@ -214,7 +219,7 @@ void usImageSettingsXmlParser::setImageSettings(double probeRadius, double scanL
   m_preScanSettings.setProbeRadius(probeRadius);
   m_preScanSettings.setScanLinePitch(scanLinePitch);
   m_preScanSettings.setAxialResolution(axialResolution);
-  if(image_type == usImageType::IMAGE_TYPE_PRESCAN || image_type == usImageType::IMAGE_TYPE_RF)
+  if(image_type == usImageSettingsXmlParser::IMAGE_TYPE_PRESCAN || image_type == usImageSettingsXmlParser::IMAGE_TYPE_RF)
     m_image_type = image_type;
 }
 
@@ -225,7 +230,7 @@ void usImageSettingsXmlParser::setImageSettings(double probeRadius, double scanL
   m_postScanSettings.setScanLinePitch(scanLinePitch);
   m_postScanSettings.setHeightResolution(widthResolution);
   m_postScanSettings.setWidthResolution(heightResolution);
-  m_image_type = usImageType::IMAGE_TYPE_POSTSCAN;
+  m_image_type = usImageSettingsXmlParser::IMAGE_TYPE_POSTSCAN;
 }
 
 void usImageSettingsXmlParser::setMotorSettings(const usMotorSettings &motorSettings)

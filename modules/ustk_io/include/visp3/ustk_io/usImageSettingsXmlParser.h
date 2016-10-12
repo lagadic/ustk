@@ -110,7 +110,7 @@ public:
   //Data setters
   void setImagePreScanSettings(const usImagePreScanSettings imagePrescanSettings);
   void setImagePostScanSettings(const usImagePostScanSettings& imagePostScanSettings);
-  void usImageSettingsXmlParser::setImageSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex, double axialResolution, usImageType image_type);
+  void setImageSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex, double axialResolution, usImageType image_type);
   void setImageSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex, double widthResolution, double heightResolution);
   void setMotorSettings(const usMotorSettings &motorSettings);
   void setImageFileName(std::string imageFileName);
