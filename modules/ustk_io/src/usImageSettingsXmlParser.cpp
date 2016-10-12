@@ -33,8 +33,13 @@
  * @file usImageSettingsXmlParser.cpp
  * @brief Input/output operations between ultrasound image settings and the assiciated xml files.
  */
+
 #include<visp3/ustk_io/usImageSettingsXmlParser.h>
 #ifdef VISP_HAVE_XML2
+
+ /**
+ * Default constructor.
+ */
 usImageSettingsXmlParser::usImageSettingsXmlParser()
   : m_postScanSettings(usImagePostScanSettings()), m_preScanSettings(usImagePreScanSettings()),
     m_motorSettings(), m_imageFileName(std::string("")),
@@ -54,15 +59,23 @@ usImageSettingsXmlParser::usImageSettingsXmlParser()
   nodeMap["image_file_name"] = CODE_XML_ASSOCIATED_IMAGE_FILE_NAME;
 }
 
+/**
+* Copy constructor.
+* @param twinParser usImageSettingsXmlParser to copy.
+*/
 usImageSettingsXmlParser::usImageSettingsXmlParser(usImageSettingsXmlParser& twinParser)
   : vpXmlParser(twinParser), m_postScanSettings(twinParser.getImagePostScanSettings()),
     m_preScanSettings(twinParser.getImagePreScanSettings()), m_motorSettings(),
     m_imageFileName(twinParser.getImageFileName()),
-    m_image_type(usImageSettingsXmlParser::IMAGE_TYPE_UNKNOWN), m_is_3D(false)
+    m_image_type(twinParser.getImageType()), m_is_3D(twinParser.isImage3D())
 {
 
 }
 
+/**
+* Assignement operator.
+* @param twinparser usImageSettingsXmlParser to assign.
+*/
 usImageSettingsXmlParser& usImageSettingsXmlParser::operator =(const usImageSettingsXmlParser& twinparser)
 {
   m_postScanSettings = twinparser.getImagePostScanSettings();
@@ -75,11 +88,18 @@ usImageSettingsXmlParser& usImageSettingsXmlParser::operator =(const usImageSett
   return *this;
 }
 
+/**
+* Destructor.
+*/
 usImageSettingsXmlParser::~usImageSettingsXmlParser()
 {
   
 }
 
+/**
+* Comparaison operator.
+* @param other usImageSettingsXmlParser to compare with.
+*/
 bool usImageSettingsXmlParser::operator ==(usImageSettingsXmlParser const& other)
 {
   return (this->getImagePostScanSettings() == other.getImagePostScanSettings() &&
@@ -90,6 +110,11 @@ bool usImageSettingsXmlParser::operator ==(usImageSettingsXmlParser const& other
     this->getImageType() == other.getImageType());
 }
 
+/**
+* Reading method, called by vpXmlParser::parse().
+* @param doc a pointer representing the document
+* @param node : the root node of the document
+*/
 void
 usImageSettingsXmlParser::readMainClass (xmlDocPtr doc, xmlNodePtr node)
 {
@@ -167,6 +192,10 @@ usImageSettingsXmlParser::readMainClass (xmlDocPtr doc, xmlNodePtr node)
   }
 }
 
+/**
+* Writing method, called by vpXmlParser::save().
+* @param node : the root node of the document
+*/
 void 
 usImageSettingsXmlParser::writeMainClass(xmlNodePtr node)
 {
@@ -203,26 +232,55 @@ usImageSettingsXmlParser::writeMainClass(xmlNodePtr node)
   xmlWriteCharChild(node, "image_file_name", m_imageFileName.c_str());
 }
 
+/**
+* Setter for pre-scan settings.
+* @param imagePrescanSettings : settings to write in the xml file.
+*/
 void usImageSettingsXmlParser::setImagePreScanSettings(const usImagePreScanSettings imagePrescanSettings)
 {
   m_preScanSettings = imagePrescanSettings;
 }
 
+/**
+* Setter for post-scan settings.
+* @param imagePostScanSettings : settings to write in the xml file.
+*/
 void usImageSettingsXmlParser::setImagePostScanSettings(const usImagePostScanSettings& imagePostScanSettings)
 {
   m_postScanSettings = imagePostScanSettings;
 }
 
-void usImageSettingsXmlParser::setImageSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex, double axialResolution, usImageType image_type)
+/**
+* Setter for pre-scan settings. Each transducer setting available.
+* @param probeRadius : the probe rabius.
+* @param scanLinePitch : the scanline pitch.
+* @param isTransducerConvex : the transducer type (true if convex transducer, false if linear).
+* @param axialResolution : the image axial resolution.
+* @param image_type : image type (rf or pre-scan).
+*/
+void usImageSettingsXmlParser::setImageSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex, double axialResolution, usImageType image_type) 
 {
-  m_preScanSettings.setTransducerConvexity(isTransducerConvex);
-  m_preScanSettings.setProbeRadius(probeRadius);
-  m_preScanSettings.setScanLinePitch(scanLinePitch);
-  m_preScanSettings.setAxialResolution(axialResolution);
-  if(image_type == usImageSettingsXmlParser::IMAGE_TYPE_PRESCAN || image_type == usImageSettingsXmlParser::IMAGE_TYPE_RF)
+  if (image_type == usImageSettingsXmlParser::IMAGE_TYPE_PRESCAN || image_type == usImageSettingsXmlParser::IMAGE_TYPE_RF)
+  {
+    m_preScanSettings.setTransducerConvexity(isTransducerConvex);
+    m_preScanSettings.setProbeRadius(probeRadius);
+    m_preScanSettings.setScanLinePitch(scanLinePitch);
+    m_preScanSettings.setAxialResolution(axialResolution);
     m_image_type = image_type;
+  }
+  else {
+    throw(vpException(vpException::fatalError, "trying to write axial resolution in a image not rf nor pre-scan !"));
+  }
 }
 
+/**
+* Setter for post-scan settings. Each transducer setting available.
+* @param probeRadius : the probe rabius.
+* @param scanLinePitch : the scanline pitch.
+* @param isTransducerConvex : the transducer type (true if convex transducer, false if linear).
+* @param widthResolution : the image width resolution.
+* @param heightResolution : the image height resolution.
+*/
 void usImageSettingsXmlParser::setImageSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex, double widthResolution, double heightResolution)
 {
   m_postScanSettings.setTransducerConvexity(isTransducerConvex);
@@ -233,12 +291,20 @@ void usImageSettingsXmlParser::setImageSettings(double probeRadius, double scanL
   m_image_type = usImageSettingsXmlParser::IMAGE_TYPE_POSTSCAN;
 }
 
+/**
+* Setter for motor settings (3D images).
+* @param motorSettings : motor settings to write in the xml file.
+*/
 void usImageSettingsXmlParser::setMotorSettings(const usMotorSettings &motorSettings)
 {
   m_is_3D = true;
   m_motorSettings = motorSettings;
 }
 
+/**
+* Setter for image file name associated to the settings wrote in the xml file.
+* @param imageFileName : image file name with extestion.
+*/
 void usImageSettingsXmlParser::setImageFileName(std::string imageFileName)
 { 
   m_imageFileName = imageFileName;

@@ -1,8 +1,46 @@
+/****************************************************************************
+*
+* This file is part of the UsTk software.
+* Copyright (C) 2014 by Inria. All rights reserved.
+*
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License ("GPL") as
+* published by the Free Software Foundation, either version 3 of the
+* License, or (at your option) any later version.
+* See the file COPYING at the root directory of this source
+* distribution for additional information about the GNU GPL.
+*
+* This software was developed at:
+* INRIA Rennes - Bretagne Atlantique
+* Campus Universitaire de Beaulieu
+* 35042 Rennes Cedex
+* France
+* http://www.irisa.fr/lagadic
+*
+* If you have questions regarding the use of this file, please contact the
+* authors at Alexandre.Krupa@inria.fr
+*
+* This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+* WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+*
+*
+* Authors:
+* Marc Pouliquen
+*
+*****************************************************************************/
+
+/**
+* @file usMetaHeaderParser.cpp
+* @brief Input/output operations between ultrasound settings and mhd files.
+*/
 #include<visp3/core/vpException.h>
 #include <visp3/ustk_io/usMetaHeaderParser.h>
 #include <algorithm>
 #include <string>
 
+/**
+* Default constructor.
+*/
 usMetaHeaderParser::usMetaHeaderParser()
 {
   elementTypeMap["MET_UCHAR"] = MET_UCHAR;
@@ -17,11 +55,18 @@ usMetaHeaderParser::usMetaHeaderParser()
   imageTypeMap["POSTSCAN_3D"] = POSTSCAN_3D;
 }
 
+/**
+* Destructor.
+*/
 usMetaHeaderParser::~usMetaHeaderParser()
 {
 
 }
 
+/**
+* Reading method.
+* @param fileName the mhd file to read.
+*/
 void  usMetaHeaderParser::readMHDHeader(const std::string fileName)
 {
   std::string pathPrefix;
@@ -237,6 +282,9 @@ void  usMetaHeaderParser::readMHDHeader(const std::string fileName)
   file.close();
 }
 
+/**
+* Writing method.
+*/
 void usMetaHeaderParser::parse()
 {
   // write header
@@ -378,11 +426,15 @@ void usMetaHeaderParser::parse()
   }
 }
 
+/**
+* Reading method.
+* @param filename the mhd file to read.
+*/
 void usMetaHeaderParser::read(const std::string& filename)
 {
   readMHDHeader(filename);
 
-  //basic common settings
+  //basic transducer settings
   this->m_transducerSettings.setProbeRadius(header.probeRadius);
   this->m_transducerSettings.setScanLinePitch(header.scanLinePitch);
   this->m_transducerSettings.setTransducerConvexity(header.isTransducerConvex);
@@ -394,37 +446,64 @@ void usMetaHeaderParser::read(const std::string& filename)
   }
 }
 
-//Data setters
+/**
+* Transducer settings setter.
+* @param transducerSettings usTransducerSettings to set.
+*/
 void usMetaHeaderParser::setTransducerSettings(const usTransducerSettings transducerSettings)
 {
   m_transducerSettings = transducerSettings;
 }
 
+/**
+* Motor settings setter (for 3D images).
+* @param motorSettings usMotorSettings to set.
+*/
 void usMetaHeaderParser::setMotorSettings(const usMotorSettings motorSettings)
 {
   m_motorSettings = motorSettings;
 }
 
+/**
+* Image file name setter.
+* @param imageFileName Image file name (with .raw extesion).
+*/
 void usMetaHeaderParser::setRawFileName(const std::string imageFileName)
 {
   header.rawFileName = imageFileName;
 }
 
+/**
+* Image axial resolution setter (for rf or pre-scan images).
+* @param axialresolution Image axial resolution.
+*/
 void usMetaHeaderParser::setAxialResolution(const double axialresolution)
 {
   m_axialResolution = axialresolution;
 }
 
+/**
+* Image height resolution setter (for post-scan images).
+* @param heightResolution Image height resolution.
+*/
 void usMetaHeaderParser::setHeightResolution(const double heightResolution)
 {
   m_heightResolution = heightResolution;
 }
 
+/**
+* Image width resolution setter (for post-scan images).
+* @param widthResolution Image width resolution.
+*/
 void usMetaHeaderParser::setWidthResolution(const double widthResolution)
 {
   m_widthResolution = widthResolution;
 }
 
+/**
+* Mhd header setter (to set all informations contained in the mhd file).
+* @param header MHDHeader to set.
+*/
 void usMetaHeaderParser::setMHDHeader(const MHDHeader header)
 {
   this->header = header;
