@@ -7,7 +7,7 @@
 
 
 /*!
-  \example testUImageRf2DMhdParser.cpp
+  \example testUsImageRf2DMhdParser.cpp
 
   USTK MHD parser example.
   

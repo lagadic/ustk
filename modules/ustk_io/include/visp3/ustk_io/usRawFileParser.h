@@ -14,6 +14,11 @@
 #include <visp3/core/vpImage.h>
 #include <visp3/ustk_core/usImage3D.h>
 
+/**
+ * @class usRawFileParser
+ * @brief Raw data parser.
+ * @ingroup module_ustk_io
+ */
 class VISP_EXPORT usRawFileParser {
 
 public:

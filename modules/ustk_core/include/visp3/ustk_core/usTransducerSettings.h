@@ -49,6 +49,7 @@
 /**
  * @class usTransducerSettings
  * @brief Generic class for 2D ultrasound data common settings associated to the type of probe used during acquisition.
+ * @ingroup module_ustk_core
  *
  * This class represents ultrasound image common settings which are:
  * - the type of ultrasound transducer used for data acquisition: convex or linear

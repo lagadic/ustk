@@ -45,6 +45,7 @@
 /*!
  @class usImagePreScan3D
  @brief 3D pre-scan ultrasound image.
+ @ingroup module_ustk_core
 
  This class represents a 3D ultrasound pre-scan frame.
 

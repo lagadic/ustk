@@ -7,7 +7,7 @@
 
 
 /*!
-  \example testUsImagePostScanMhdParser.cpp
+  \example testUsImagePostScan3DMhdParser.cpp
 
   USTK MHD parser example.
   

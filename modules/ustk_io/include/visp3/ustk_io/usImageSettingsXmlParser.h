@@ -55,9 +55,8 @@
 /**
  * @class usImageSettingsXmlParser
  * @brief Input/output operations between ultrasound image settings and the assiciated xml files.
+ * @ingroup module_ustk_io
  */
-
-
 class VISP_EXPORT usImageSettingsXmlParser: public vpXmlParser
 {
 public:

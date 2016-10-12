@@ -47,6 +47,8 @@
 /*!
  @class usImageRF3D
  @brief 3D RF ultrasound image.
+ @ingroup module_ustk_core
+
  This class represents a 3D ultrasound RF volume.
 
   <h3>Example</h3>

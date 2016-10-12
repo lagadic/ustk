@@ -18,6 +18,11 @@
 #include <visp3/ustk_core/usImageRF2D.h>
 #include <visp3/ustk_core/usImageRF3D.h>
 
+/**
+ * @class usMetaHeaderParser
+ * @brief Meta header data (MHD) parser.
+ * @ingroup module_ustk_io
+ */
 class VISP_EXPORT usMetaHeaderParser {
 
 public:

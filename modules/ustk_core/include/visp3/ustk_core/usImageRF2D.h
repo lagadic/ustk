@@ -46,6 +46,7 @@
 /*!
  @class usImageRF2D
  @brief 2D RF ultrasound image.
+ @ingroup module_ustk_core
 
  This class represents a 2D ultrasound RF image. This image is nothing more than a vpImage that
   contains RF data and additional settings that give information about the acquisition process.
