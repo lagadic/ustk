@@ -55,10 +55,10 @@
 #include <visp3/ustk_core/usImageRF3D.h>
 
 /**
-* @class usMetaHeaderParser
-* @brief Input/output operations between ultrasound image settings and the assiciated mhd files.
-*/
-
+ * @class usMetaHeaderParser
+ * @brief Meta header data (MHD) parser.
+ * @ingroup module_ustk_io
+ */
 class VISP_EXPORT usMetaHeaderParser {
 
 public:

@@ -49,6 +49,7 @@
 /**
  * @class usImagePostScanSettings
  * @brief Settings associated to ultrasound post-scan images.
+ * @ingroup module_ustk_core
  *
  * This class represents ultrasound pre-scan image settings which are:
  * - the common settings implemented in usTransducerSettings for all ultrasound images.

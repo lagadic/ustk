@@ -44,6 +44,7 @@
 /**
  @class usImagePreScan2D
  @brief 2D pre-scan ultrasound image.
+ @ingroup module_ustk_core
 
   <h3>Example</h3>
   The following example shows how to build a 2D pre-scan ultrasound image from a usImage3D, and from acquisiton settings.

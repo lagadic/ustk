@@ -46,6 +46,7 @@
 /**
  @class usImagePostScan2D
  @brief 2D post-scan ultrasound image.
+ @ingroup module_ustk_core
 
  This class represents a 2D ultrasound post-scan frame.
 

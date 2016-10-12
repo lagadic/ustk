@@ -1,0 +1,23 @@
+/*******************************************
+ * Module ustk
+ *******************************************/
+/*!
+  \defgroup module_ustk ustk: Ultrasound tool kit
+  Ultrasound tool kit content.
+*/
+/*******************************************
+ * Module ustk_core
+ *******************************************/
+/*!
+  \ingroup module_ustk
+  \defgroup module_ustk_core ustk_core: UsTK core module
+  Ultrasound tool kit core module content.
+*/
+/*******************************************
+ * Module ustk_io
+ *******************************************/
+/*!
+  \ingroup module_ustk
+  \defgroup module_ustk_io ustk_io: UsTK I/O module
+  Ultrasound tool kit I/O module content.
+*/

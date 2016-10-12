@@ -47,6 +47,7 @@
 /**
  @class usImagePostScan3D
  @brief This class represents a 3D ultrasound post-scan volume.
+ @ingroup module_ustk_core
 
   <h3>Example</h3>
   The following example shows how to build a 3D post-scan ultrasound image from a usImage3D, and from acquisiton settings.

@@ -51,6 +51,8 @@
  *
  * @brief Generic class for 3D ultrasound motor settings associated to the 3D probe used
  * during acquisition.
+ * @ingroup module_ustk_core
+ *
  *
  * This class represents motor settings for 3D ultrasound images which are:
  * - the common settings corresponding to the motor used to procude the third dimension.

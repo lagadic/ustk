@@ -51,10 +51,10 @@
 #include <visp3/ustk_core/usImage3D.h>
 
 /**
-* @class usRawFileParser
-* @brief Input/output operations between ultrasound images and the assiciated raw files.
-*/
-
+ * @class usRawFileParser
+ * @brief Raw data parser.
+ * @ingroup module_ustk_io
+ */
 class VISP_EXPORT usRawFileParser {
 
 public:

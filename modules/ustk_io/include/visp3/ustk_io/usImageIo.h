@@ -51,6 +51,8 @@
 /**
  * @class usImageIo
  * @brief Input/output operations between ultrasound data and files (header + image file).
+ * @ingroup module_ustk_io
+ *
  */
 class VISP_EXPORT usImageIo
 {
