@@ -73,6 +73,7 @@ public:
 
   double getHeightResolution() const;
   double getWidthResolution() const;
+  usImagePostScanSettings getImageSettings() const;
 
   usImagePostScanSettings& operator=(const usImagePostScanSettings& other);
   friend VISP_EXPORT std::ostream& operator<<(std::ostream& out, const usTransducerSettings &other);

@@ -144,3 +144,11 @@ void usImagePostScanSettings::setImageSettings(const usImagePostScanSettings& po
 {
   *this = postScanSettings;
 }
+
+/**
+* Settings getter.
+*/
+usImagePostScanSettings usImagePostScanSettings::getImageSettings() const
+{
+  return *this;
+}

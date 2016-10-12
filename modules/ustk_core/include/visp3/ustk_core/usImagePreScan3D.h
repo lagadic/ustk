@@ -42,6 +42,8 @@
 
 #include <visp3/ustk_core/usImagePreScanSettings.h>
 
+#include <visp3/ustk_core/usMotorSettings.h>
+
 /*!
  @class usImagePreScan3D
  @brief 3D pre-scan ultrasound image.

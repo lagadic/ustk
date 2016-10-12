@@ -49,6 +49,7 @@
 
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpException.h>
+#include <visp3/core/vpImage.h>
 
 /**
 * @class usSequence
@@ -71,30 +72,30 @@ public:
   ~usSequence();
   
   //operators overload
-  void operator=(const usSequence<ImageType> &other);
+  usSequence<ImageType> & operator=(const usSequence<ImageType> &other);
   bool operator==(const usSequence<ImageType> &other);
-  friend std::ostream& operator<<(std::ostream& out, const usSequence<ImageType> &other);
+  //template<ImageType> friend std::ostream& operator<<(std::ostream& out, const usSequence<ImageType> &other);
   
   //attributes getters/setters
-  int getImageNumber() const {return m_imageNumber;};
-  double getFrameRate() const {return m_frameRate;};
-  std::string getSequenceName() const {return m_sequenceName;};
+  int getSequence() const {return m_sequence;}
+  int getSequenceSize() const {return m_sequence.size();}
+  double getFrameRate() const {return m_frameRate;}
+  std::string getSequenceName() const {return m_sequenceName;}
   
-  void setFrameRate(const double &frameRate) {m_frameRate = frameRate;};
-  void setSequenceName(const std::string &sequenceName) {m_sequenceName = sequenceName;};
+  void setFrameRate(const double &frameRate) {m_frameRate = frameRate;}
+  void setSequenceName(const std::string &sequenceName) {m_sequenceName = sequenceName;}
   
   //data accessor
-  ImageType* at(int imageNumber) const {if(imageNumber>=0 && imageNumber<=m_imageNumber){return m_sequence[imageNumber];}throw(vpException(vpException::badValue,"Image Number out of range !");};
+  ImageType at(int imageNumber) const {if(imageNumber>=0 && imageNumber<=getSequenceSize()){return m_sequence[imageNumber];}throw(vpException(vpException::badValue,"Image Number out of range !"));}
   
   //data insertion
-  void insert(ImageType* imageToInsert, int imageNumber);
+  void insert(ImageType imageToInsert, int imageNumber);
   
   //data deletion
   void deleteImage(int imageNumber);
   
 private:
-  ImageType **m_sequence;
-  int m_imageNumber;
+  std::vector<ImageType> m_sequence;
   double m_frameRate;
   std::string m_sequenceName;
 };
@@ -107,7 +108,7 @@ private:
 * Constructor.
 */
 template<class ImageType>
-usSequence<ImageType>::usSequence() : m_sequence(NULL), m_imageNumber(0), m_frameRate(0.0), m_sequenceName("")
+usSequence<ImageType>::usSequence() : m_sequence(), m_frameRate(0.0), m_sequenceName("")
 {
 
 }
@@ -117,7 +118,7 @@ usSequence<ImageType>::usSequence() : m_sequence(NULL), m_imageNumber(0), m_fram
 * TO DO
 */
 template<class ImageType>
-usSequence<ImageType>::usSequence(const usSequence<ImageType> &sequence) : m_sequence(NULL), m_imageNumber(sequence.getImageNumber()), m_frameRate(sequence.getFrameRate()), m_sequenceName(sequence.getSequenceName())
+usSequence<ImageType>::usSequence(const usSequence<ImageType> &sequence) : m_sequence(sequence.getSequence()), m_frameRate(sequence.getFrameRate()), m_sequenceName(sequence.getSequenceName())
 {
 
 }
@@ -128,12 +129,7 @@ usSequence<ImageType>::usSequence(const usSequence<ImageType> &sequence) : m_seq
 template<class ImageType>
 usSequence<ImageType>::~usSequence()
 {
-  if (m_sequence) {
-	for(int i = 0; i<m_imageNumber; i++) {
-	  delete m_sequence[i];
-	}
-  }
-  m_sequence = NULL;
+
 }
 
 /**
@@ -159,11 +155,11 @@ bool usSequence<ImageType>::operator==(const usSequence<ImageType> &other)
 /**
 * Ostream class information printer operator. TO DO
 */
-template<class ImageType> std::ostream& operator<<(std::ostream& out, const usSequence<ImageType> &other)
+/*template<class ImageType> std::ostream& operator<<(std::ostream& out, const usSequence<ImageType> &other)
 {
   return out << ""
 				<< std::endl;
-}
+}*/
 
 /**
 * Insertion of a new image in the sequence.
@@ -171,19 +167,9 @@ template<class ImageType> std::ostream& operator<<(std::ostream& out, const usSe
 * @param imageNumber Position where the image will be inserted in the sequence.
 */
 template<class ImageType>
-void usSequence<ImageType>::insert(ImageType* imageToInsert, int imageNumber)
+void usSequence<ImageType>::insert(ImageType imageToInsert, int imageNumber)
 {
-  if(imageNumber<0 || imageNumber>m_imageNumber) {
-    throw(vpException(vpException::badValue,"Image number out of sequence, cannot perform insertion !"));
-  }
-  //sequence re-organisation
-  m_sequence[m_imageNumber+1] = new ImageType*;
-  for(int i=imageNumber; i<m_imageNumber+1; i++) {
-    m_sequence[i+1] = m_sequence[i];
-  }
-  //insertion
-  *m_sequence[imageNumber] = *imageToInsert;
-  m_imageNumber++;
+  m_sequence.insert(m_sequence.begin()+imageNumber,imageToInsert);
 }
 
 /**
@@ -193,17 +179,7 @@ void usSequence<ImageType>::insert(ImageType* imageToInsert, int imageNumber)
 template<class ImageType>
 void usSequence<ImageType>::deleteImage(int imageNumber)
 {
-  if(imageNumber<0 || imageNumber>m_imageNumber) {
-    throw(vpException(vpException::badValue,"Image number out of sequence, cannot perform deletion !"));
-  }
-  //delete image
-  delete m_sequence[imageNumber];
-  //sequence re-organisation
-  for(int i=imageNumber; i<m_imageNumber; i++) {
-    m_sequence[i] = m_sequence[i+1];
-  }
-  m_sequence[m_imageNumber] = NULL;
-  m_imageNumber--;
+  m_sequence.erase(imageNumber);
 }
 
 #endif //US_SEQUENCE_H
