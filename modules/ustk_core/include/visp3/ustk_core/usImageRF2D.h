@@ -151,6 +151,8 @@ usImageRF2D<T>& usImageRF2D<T>::operator=(const usImageRF2D<T> &other)
 
   //from usImagePreScanSettings
   usImagePreScanSettings::operator=(other);
+
+  return *this;
 }
 
 /**

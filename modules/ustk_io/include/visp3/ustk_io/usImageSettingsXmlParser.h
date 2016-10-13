@@ -73,7 +73,11 @@ public:
     CODE_XML_AXIAL_RESOLUTION,
     CODE_XML_HEIGHT_RESOLUTION,
     CODE_XML_WIDTH_RESOLUTION,
-    CODE_XML_ASSOCIATED_IMAGE_FILE_NAME
+    CODE_XML_ASSOCIATED_IMAGE_FILE_NAME,
+    CODE_XML_SEQUENCE_NAME,
+    CODE_XML_SEQUENCE_FRAME_RATE,
+    CODE_XML_SEQUENCE_FIRST_IMAGE_NUMBER,
+    CODE_XML_SEQUENCE_LAST_IMAGE_NUMBER,
   } vpXmlCodeType;
 
   typedef enum
@@ -87,7 +91,7 @@ public:
     IMAGE_TYPE_UNKNOWN = -1,
     IMAGE_TYPE_RF,
     IMAGE_TYPE_PRESCAN,
-    IMAGE_TYPE_POSTSCAN
+    IMAGE_TYPE_POSTSCAN,
   } usImageType;
   
   usImageSettingsXmlParser();
@@ -105,6 +109,12 @@ public:
   usMotorSettings getMotorSettings() const { return m_motorSettings; }
   usImageType getImageType() const { return m_image_type; }
   bool isImage3D() const { return m_is_3D; }
+  //image sequence data
+  bool isSequence() const {return m_is_sequence;}
+  double getSequenceFrameRate() const {return m_sequence_frame_rate;}
+  std::string getSequenceName () const {return m_sequence_name;}
+  int getSequenceStartNumber() const {return m_sequence_start;}
+  int getSequenceStopNumber() const {return m_sequence_stop;}
   
   //Data setters
   void setImagePreScanSettings(const usImagePreScanSettings imagePrescanSettings);
@@ -114,6 +124,12 @@ public:
   void setMotorSettings(const usMotorSettings &motorSettings);
   void setImageFileName(std::string imageFileName);
   void setImageType(usImageType image_type) { m_image_type = image_type; }
+  //image sequence data
+  void setSequenceType(bool isSequence) {m_is_sequence = isSequence;}
+  void setSequenceFrameRate(double sequenceFrameRate) {m_sequence_frame_rate=sequenceFrameRate;}
+  void setSequenceName (std::string sequenceName) {m_sequence_name = sequenceName;}
+  void setSequenceStartNumber(int sequenceStartNumber) {m_sequence_start = sequenceStartNumber;}
+  void setSequenceStopNumber(int sequenceStopNumber) {m_sequence_stop = sequenceStopNumber;}
 
 private:
   usImagePostScanSettings m_postScanSettings;
@@ -124,6 +140,12 @@ private:
   //to manage different resolution types
   usImageType m_image_type;
   bool m_is_3D;
+  //to manage usltrasound images sequences
+  bool m_is_sequence;
+  double m_sequence_frame_rate;
+  std::string m_sequence_name;
+  int m_sequence_start;
+  int m_sequence_stop;
 
   virtual void readMainClass (xmlDocPtr doc, xmlNodePtr node);
   virtual void writeMainClass (xmlNodePtr node);

@@ -337,13 +337,16 @@ void usImageIo::read(usImageRF3D<unsigned char> &imageRf3,const std::string head
 * @param headerFileName The header file name to write, with extension.
 */
 void usImageIo::write(const usImagePreScan2D<unsigned char> & preScanImage, const std::string headerFileName) {
-  //checking header type
+//checking header type
   usImageIo::usHeaderFormatType headerFormat = getHeaderFormat(headerFileName);
   if (headerFormat == FORMAT_XML) {
-    write(preScanImage, headerFileName, ".png");
+    write(preScanImage,headerFileName,".png");
   }
   else if (headerFormat == FORMAT_MHD) {
-    write(preScanImage, headerFileName, ".raw");
+    write(preScanImage,headerFileName,".raw");
+  }
+  else {
+    throw(vpException(vpException::fatalError, "Unknown extension."));
   }
 }
 
@@ -435,7 +438,8 @@ void usImageIo::read(usImagePreScan2D<unsigned char> &preScanImage,const std::st
     vpImageIo::read(preScanImage, xmlSettings.getImageFileName());
 
     preScanImage.setImageSettings(usImagePreScanSettings(xmlSettings.getImagePreScanSettings().getProbeRadius(),
-      xmlSettings.getImagePreScanSettings().getScanLinePitch(), xmlSettings.getImagePreScanSettings().isTransducerConvex(), xmlSettings.getImagePreScanSettings().getAxialResolution()));
+      xmlSettings.getImagePreScanSettings().getScanLinePitch(), xmlSettings.getImagePreScanSettings().isTransducerConvex(),
+       xmlSettings.getImagePreScanSettings().getAxialResolution()));
 #else
     throw(vpException(vpException::fatalEtrror, "Requires xml2 library"));
 #endif //VISP_HAVE_XML2

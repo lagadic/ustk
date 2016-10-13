@@ -57,6 +57,10 @@ usImageSettingsXmlParser::usImageSettingsXmlParser()
   nodeMap["height_resolution"] = CODE_XML_HEIGHT_RESOLUTION;
   nodeMap["width_resolution"] = CODE_XML_WIDTH_RESOLUTION;
   nodeMap["image_file_name"] = CODE_XML_ASSOCIATED_IMAGE_FILE_NAME;
+  nodeMap["sequence_name"] = CODE_XML_SEQUENCE_NAME;
+  nodeMap["sequence_frame_rate"] = CODE_XML_SEQUENCE_FRAME_RATE;
+  nodeMap["sequence_start_number"] = CODE_XML_SEQUENCE_FIRST_IMAGE_NUMBER;
+  nodeMap["sequence_stop_number"] = CODE_XML_SEQUENCE_LAST_IMAGE_NUMBER;
 }
 
 /**
@@ -182,6 +186,22 @@ usImageSettingsXmlParser::readMainClass (xmlDocPtr doc, xmlNodePtr node)
         case CODE_XML_ASSOCIATED_IMAGE_FILE_NAME:
           this->m_imageFileName = xmlReadStringChild(doc, dataNode);
           break;
+        case CODE_XML_SEQUENCE_NAME:
+          this->m_sequence_name = xmlReadStringChild(doc, dataNode);
+          this->m_is_sequence = true;
+          break;
+        case CODE_XML_SEQUENCE_FRAME_RATE:
+          this->m_sequence_frame_rate = xmlReadDoubleChild(doc, dataNode);
+          this->m_is_sequence = true;
+          break;
+        case CODE_XML_SEQUENCE_FIRST_IMAGE_NUMBER:
+          this->m_sequence_start = xmlReadIntChild(doc, dataNode);
+          this->m_is_sequence = true;
+          break;
+        case CODE_XML_SEQUENCE_LAST_IMAGE_NUMBER:
+          this->m_sequence_stop= xmlReadIntChild(doc, dataNode);
+          this->m_is_sequence = true;
+          break;
         default:
           vpTRACE("unknown tag in readConfigNode : %d, %s", iter_data->second, (iter_data->first).c_str());
           break;
@@ -224,6 +244,12 @@ usImageSettingsXmlParser::writeMainClass(xmlNodePtr node)
     xmlWriteDoubleChild(node, "frame_pitch", m_motorSettings.getFramePitch());
     xmlWriteDoubleChild(node, "motor_radius", m_motorSettings.getMotorRadius());
     xmlWriteBoolChild(node, "is_motor_rotating", m_motorSettings.isMotorRotating());
+  }
+  if (m_is_sequence) {
+    xmlWriteStringChild(node, "sequence_name", this->m_sequence_name);
+    xmlWriteDoubleChild(node, "sequence_frame_rate", this->m_sequence_frame_rate);
+    xmlWriteIntChild(node, "sequence_start_number", this->m_sequence_start);
+    xmlWriteIntChild(node, "sequence_stop_number", this->m_sequence_stop);
   }
   xmlWriteCharChild(node, "image_file_name", m_imageFileName.c_str());
 }
