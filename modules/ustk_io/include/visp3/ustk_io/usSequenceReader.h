@@ -173,19 +173,19 @@ void usSequenceReader<ImageType>::setLastFrameIndex(long lastIndex)
 }
 
 /**
-* Sequence last index setter.
+* Sequence opening for generic image type : not implemented.
 */
 template<class ImageType>
 void usSequenceReader<ImageType>::open(ImageType &image)
 {
-  //not implemented
+  throw(vpException(vpException::notImplementedError));
 }
 
 /**
-* Sequence last index setter.
+* Sequence opening for usImageRF2D type.
 */
 template<>
-void usSequenceReader<usImageRF2D<unsigned char> >::open(usImageRF2D<unsigned char> &image)
+inline void usSequenceReader<usImageRF2D<unsigned char> >::open(usImageRF2D<unsigned char> &image)
 {
   if(!m_fileNameIsSet)
     throw(vpException(vpException::badValue, "Sequence settings file name not set"));
@@ -198,8 +198,72 @@ void usSequenceReader<usImageRF2D<unsigned char> >::open(usImageRF2D<unsigned ch
   m_frameRate = xmlParser.getSequenceFrameRate();
   m_genericImageFileName = xmlParser.getImageFileName();
 
-  //saving the settings for all the sequence
+  //saving the settings for all the rf sequence
   m_frame.setImageSettings(xmlParser.getImagePreScanSettings());
+
+  //Reading image
+  char buffer[10];
+  sprintf(buffer,"%ld",m_firstFrame);
+  std::string imageFileName = vpIoTools::getNameWE(m_genericImageFileName) + buffer + vpIoTools::getFileExtension(m_genericImageFileName);
+  std::cout << imageFileName << std::endl;
+  vpImageIo::read(image,imageFileName);
+  image.setImageSettings(m_frame);
+
+  m_frameCount = m_firstFrame + 1;
+  is_open = true;
+}
+
+/**
+* Sequence opening for usImagePreScan2D type.
+*/
+template<>
+inline void usSequenceReader<usImagePreScan2D<unsigned char> >::open(usImagePreScan2D<unsigned char> &image)
+{
+  if(!m_fileNameIsSet)
+    throw(vpException(vpException::badValue, "Sequence settings file name not set"));
+
+  usImageSettingsXmlParser xmlParser;
+  xmlParser.parse(m_sequenceFileName);
+
+  setFirstFrameIndex(xmlParser.getSequenceStartNumber());
+  setLastFrameIndex(xmlParser.getSequenceStopNumber());
+  m_frameRate = xmlParser.getSequenceFrameRate();
+  m_genericImageFileName = xmlParser.getImageFileName();
+
+  //saving the settings for all the pre-scan sequence
+  m_frame.setImageSettings(xmlParser.getImagePreScanSettings());
+
+  //Reading image
+  char buffer[10];
+  sprintf(buffer,"%ld",m_firstFrame);
+  std::string imageFileName = vpIoTools::getNameWE(m_genericImageFileName) + buffer + vpIoTools::getFileExtension(m_genericImageFileName);
+  std::cout << imageFileName << std::endl;
+  vpImageIo::read(image,imageFileName);
+  image.setImageSettings(m_frame);
+
+  m_frameCount = m_firstFrame + 1;
+  is_open = true;
+}
+
+/**
+* Sequence opening for usImagePreScan2D type.
+*/
+template<>
+inline void usSequenceReader<usImagePostScan2D<unsigned char> >::open(usImagePostScan2D<unsigned char> &image)
+{
+  if(!m_fileNameIsSet)
+    throw(vpException(vpException::badValue, "Sequence settings file name not set"));
+
+  usImageSettingsXmlParser xmlParser;
+  xmlParser.parse(m_sequenceFileName);
+
+  setFirstFrameIndex(xmlParser.getSequenceStartNumber());
+  setLastFrameIndex(xmlParser.getSequenceStopNumber());
+  m_frameRate = xmlParser.getSequenceFrameRate();
+  m_genericImageFileName = xmlParser.getImageFileName();
+
+  //saving the settings for all the post scan sequence
+  m_frame.setImageSettings(xmlParser.getImagePostScanSettings());
 
   //Reading image
   char buffer[10];

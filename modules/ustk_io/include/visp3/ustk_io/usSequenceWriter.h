@@ -31,7 +31,7 @@
 
 /**
 * @file usSequenceWriter.h
-* @brief Writing of sequences of ultrasound images .
+* @brief Writing of sequences of ultrasound images.
 *
 * This class is used to write multiple ultrasound images.
 */
@@ -113,7 +113,7 @@ private:
 * Constructor.
 */
 template<class ImageType>
-usSequenceWriter<ImageType>::usSequenceWriter() : m_frameRate(0.0), m_firstFrame(0), m_firstFrameIsSet(false),
+usSequenceWriter<ImageType>::usSequenceWriter() : m_frame(), m_frameRate(0.0), m_firstFrame(0), m_firstFrameIsSet(false),
   m_frameCount(0), m_sequenceFileName(""),m_genericImageFileName(""),m_imagesExtension(".png"), m_fileNameIsSet(false), is_open(false)
 {
 
@@ -206,21 +206,19 @@ void usSequenceWriter<ImageType>::open(ImageType &image)
 }
 
 /**
-* Sequence closing.
+* Sequence closing for generic image type. NOT IMPLEMENTED !
 */
 template<class ImageType>
 void usSequenceWriter<ImageType>::close()
 {
-  if(!is_open)
-    return;
-  //not implemented
+  throw(vpException(vpException::notImplementedError));
 }
 
 /**
-* Sequence closing.
+* Sequence closing for usImageRF2D.
 */
 template<>
-void usSequenceWriter<usImageRF2D<unsigned char> >::close()
+void usSequenceWriter< usImageRF2D < unsigned char > >::close()
 {
   if(!is_open)
     return;
@@ -229,6 +227,46 @@ void usSequenceWriter<usImageRF2D<unsigned char> >::close()
   usImageSettingsXmlParser xmlParser;
   xmlParser.setImagePreScanSettings(m_frame);
   xmlParser.setImageType(usImageSettingsXmlParser::IMAGE_TYPE_RF);
+  xmlParser.setSequenceFrameRate(m_frameRate);
+  xmlParser.setSequenceStartNumber(m_firstFrame);
+  xmlParser.setSequenceStopNumber(m_frameCount-1);
+  xmlParser.setImageFileName(vpIoTools::splitChain(vpIoTools::getName(m_sequenceFileName),".")[0] + m_imagesExtension); //just image name without any directory name
+  xmlParser.save(m_sequenceFileName);
+}
+
+/**
+* Sequence closing for usImagePreScan2D.
+*/
+template<>
+void usSequenceWriter < usImagePreScan2D < unsigned char > >::close()
+{
+  if(!is_open)
+    return;
+
+  //saving settings
+  usImageSettingsXmlParser xmlParser;
+  xmlParser.setImagePreScanSettings(m_frame);
+  xmlParser.setImageType(usImageSettingsXmlParser::IMAGE_TYPE_PRESCAN);
+  xmlParser.setSequenceFrameRate(m_frameRate);
+  xmlParser.setSequenceStartNumber(m_firstFrame);
+  xmlParser.setSequenceStopNumber(m_frameCount-1);
+  xmlParser.setImageFileName(vpIoTools::splitChain(vpIoTools::getName(m_sequenceFileName),".")[0] + m_imagesExtension); //just image name without any directory name
+  xmlParser.save(m_sequenceFileName);
+}
+
+/**
+* Sequence closing for usImagePostScan2D.
+*/
+template<>
+void usSequenceWriter<usImagePostScan2D<unsigned char> >::close()
+{
+  if(!is_open)
+    return;
+
+  //saving settings
+  usImageSettingsXmlParser xmlParser;
+  xmlParser.setImagePostScanSettings(m_frame);
+  xmlParser.setImageType(usImageSettingsXmlParser::IMAGE_TYPE_POSTSCAN);
   xmlParser.setSequenceFrameRate(m_frameRate);
   xmlParser.setSequenceStartNumber(m_firstFrame);
   xmlParser.setSequenceStopNumber(m_frameCount-1);

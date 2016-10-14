@@ -147,8 +147,9 @@ private:
   int m_sequence_start;
   int m_sequence_stop;
 
-  virtual void readMainClass (xmlDocPtr doc, xmlNodePtr node);
-  virtual void writeMainClass (xmlNodePtr node);
+protected:
+   void readMainClass (xmlDocPtr doc, xmlNodePtr node);
+   void writeMainClass (xmlNodePtr node);
 };
 #endif //US_IMAGE_SETTINGS_XML_PARSER_H
 #endif //VISP_HAVE_XML2

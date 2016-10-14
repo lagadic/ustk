@@ -42,7 +42,7 @@
  */
 usImageSettingsXmlParser::usImageSettingsXmlParser()
   : m_postScanSettings(usImagePostScanSettings()), m_preScanSettings(usImagePreScanSettings()),
-    m_motorSettings(), m_imageFileName(std::string("")),
+    m_motorSettings(usMotorSettings()), m_imageFileName(std::string("")),
     m_image_type(usImageSettingsXmlParser::IMAGE_TYPE_UNKNOWN), m_is_3D(false)
 {
   nodeMap["settings"] = CODE_XML_SETTINGS;
