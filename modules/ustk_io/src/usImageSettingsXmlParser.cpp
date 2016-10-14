@@ -57,7 +57,7 @@ usImageSettingsXmlParser::usImageSettingsXmlParser()
   nodeMap["height_resolution"] = CODE_XML_HEIGHT_RESOLUTION;
   nodeMap["width_resolution"] = CODE_XML_WIDTH_RESOLUTION;
   nodeMap["image_file_name"] = CODE_XML_ASSOCIATED_IMAGE_FILE_NAME;
-  nodeMap["sequence_name"] = CODE_XML_SEQUENCE_NAME;
+  //nodeMap["sequence_name"] = CODE_XML_SEQUENCE_NAME;
   nodeMap["sequence_frame_rate"] = CODE_XML_SEQUENCE_FRAME_RATE;
   nodeMap["sequence_start_number"] = CODE_XML_SEQUENCE_FIRST_IMAGE_NUMBER;
   nodeMap["sequence_stop_number"] = CODE_XML_SEQUENCE_LAST_IMAGE_NUMBER;
@@ -186,10 +186,10 @@ usImageSettingsXmlParser::readMainClass (xmlDocPtr doc, xmlNodePtr node)
         case CODE_XML_ASSOCIATED_IMAGE_FILE_NAME:
           this->m_imageFileName = xmlReadStringChild(doc, dataNode);
           break;
-        case CODE_XML_SEQUENCE_NAME:
+        /*case CODE_XML_SEQUENCE_NAME:
           this->m_sequence_name = xmlReadStringChild(doc, dataNode);
           this->m_is_sequence = true;
-          break;
+          break;*/
         case CODE_XML_SEQUENCE_FRAME_RATE:
           this->m_sequence_frame_rate = xmlReadDoubleChild(doc, dataNode);
           this->m_is_sequence = true;
@@ -246,7 +246,8 @@ usImageSettingsXmlParser::writeMainClass(xmlNodePtr node)
     xmlWriteBoolChild(node, "is_motor_rotating", m_motorSettings.isMotorRotating());
   }
   if (m_is_sequence) {
-    xmlWriteStringChild(node, "sequence_name", this->m_sequence_name);
+  std::cout << "writing sequence parameters" << std::endl;
+    //xmlWriteStringChild(node, "sequence_name", this->m_sequence_name);
     xmlWriteDoubleChild(node, "sequence_frame_rate", this->m_sequence_frame_rate);
     xmlWriteIntChild(node, "sequence_start_number", this->m_sequence_start);
     xmlWriteIntChild(node, "sequence_stop_number", this->m_sequence_stop);

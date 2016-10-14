@@ -74,7 +74,7 @@ public:
     CODE_XML_HEIGHT_RESOLUTION,
     CODE_XML_WIDTH_RESOLUTION,
     CODE_XML_ASSOCIATED_IMAGE_FILE_NAME,
-    CODE_XML_SEQUENCE_NAME,
+    //CODE_XML_SEQUENCE_NAME,
     CODE_XML_SEQUENCE_FRAME_RATE,
     CODE_XML_SEQUENCE_FIRST_IMAGE_NUMBER,
     CODE_XML_SEQUENCE_LAST_IMAGE_NUMBER,
@@ -112,7 +112,7 @@ public:
   //image sequence data
   bool isSequence() const {return m_is_sequence;}
   double getSequenceFrameRate() const {return m_sequence_frame_rate;}
-  std::string getSequenceName () const {return m_sequence_name;}
+  //std::string getSequenceName () const {return m_sequence_name;}
   int getSequenceStartNumber() const {return m_sequence_start;}
   int getSequenceStopNumber() const {return m_sequence_stop;}
   
@@ -126,10 +126,10 @@ public:
   void setImageType(usImageType image_type) { m_image_type = image_type; }
   //image sequence data
   void setSequenceType(bool isSequence) {m_is_sequence = isSequence;}
-  void setSequenceFrameRate(double sequenceFrameRate) {m_sequence_frame_rate=sequenceFrameRate;}
-  void setSequenceName (std::string sequenceName) {m_sequence_name = sequenceName;}
-  void setSequenceStartNumber(int sequenceStartNumber) {m_sequence_start = sequenceStartNumber;}
-  void setSequenceStopNumber(int sequenceStopNumber) {m_sequence_stop = sequenceStopNumber;}
+  void setSequenceFrameRate(double sequenceFrameRate) {m_sequence_frame_rate=sequenceFrameRate; m_is_sequence=true;}
+  //void setSequenceName (std::string sequenceName) {m_sequence_name = sequenceName; m_is_sequence=true;}
+  void setSequenceStartNumber(int sequenceStartNumber) {m_sequence_start = sequenceStartNumber; m_is_sequence=true;}
+  void setSequenceStopNumber(int sequenceStopNumber) {m_sequence_stop = sequenceStopNumber; m_is_sequence=true;}
 
 private:
   usImagePostScanSettings m_postScanSettings;
