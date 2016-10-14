@@ -205,10 +205,7 @@ int main(int argc, const char** argv)
     std::vector<usImageRF2D<unsigned char> > ImageBuffer;
 
     reader.setSequenceFileName(filename);
-    usImageRF2D<unsigned char> rf2D;
-    ImageBuffer.push_back(rf2D);
     i = 0;
-    reader.acquire(ImageBuffer.at(i));
     while(i<reader.end()) {
       usImageRF2D<unsigned char> rf2D;
       ImageBuffer.push_back(rf2D);

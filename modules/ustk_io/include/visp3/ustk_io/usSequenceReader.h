@@ -174,21 +174,22 @@ void usSequenceReader<ImageType>::setLastFrameIndex(long lastIndex)
 
 /**
 * Sequence opening for generic image type : not implemented.
-*/
+*
 template<class ImageType>
 void usSequenceReader<ImageType>::open(ImageType &image)
 {
   throw(vpException(vpException::notImplementedError));
-}
+}*/
 
 /**
 * Sequence opening for usImageRF2D type.
 */
 template<>
-inline void usSequenceReader<usImageRF2D<unsigned char> >::open(usImageRF2D<unsigned char> &image)
+void usSequenceReader<usImageRF2D<unsigned char> >::open(usImageRF2D<unsigned char> &image)
 {
-  if(!m_fileNameIsSet)
+  if(!m_fileNameIsSet) {
     throw(vpException(vpException::badValue, "Sequence settings file name not set"));
+  }
 
   usImageSettingsXmlParser xmlParser;
   xmlParser.parse(m_sequenceFileName);
@@ -217,10 +218,11 @@ inline void usSequenceReader<usImageRF2D<unsigned char> >::open(usImageRF2D<unsi
 * Sequence opening for usImagePreScan2D type.
 */
 template<>
-inline void usSequenceReader<usImagePreScan2D<unsigned char> >::open(usImagePreScan2D<unsigned char> &image)
+void usSequenceReader<usImagePreScan2D<unsigned char> >::open(usImagePreScan2D<unsigned char> &image)
 {
-  if(!m_fileNameIsSet)
+  if(!m_fileNameIsSet) {
     throw(vpException(vpException::badValue, "Sequence settings file name not set"));
+  }
 
   usImageSettingsXmlParser xmlParser;
   xmlParser.parse(m_sequenceFileName);
@@ -249,10 +251,11 @@ inline void usSequenceReader<usImagePreScan2D<unsigned char> >::open(usImagePreS
 * Sequence opening for usImagePreScan2D type.
 */
 template<>
-inline void usSequenceReader<usImagePostScan2D<unsigned char> >::open(usImagePostScan2D<unsigned char> &image)
+void usSequenceReader<usImagePostScan2D<unsigned char> >::open(usImagePostScan2D<unsigned char> &image)
 {
-  if(!m_fileNameIsSet)
+  if(!m_fileNameIsSet) {
     throw(vpException(vpException::badValue, "Sequence settings file name not set"));
+  }
 
   usImageSettingsXmlParser xmlParser;
   xmlParser.parse(m_sequenceFileName);

@@ -34,12 +34,13 @@
  * @brief Input/output operations between ultrasound image settings and the assiciated xml files.
  */
 
+#ifndef US_IMAGE_SETTINGS_XML_PARSER_H
+#define US_IMAGE_SETTINGS_XML_PARSER_H
+
 #include <visp3/core/vpConfig.h>
 
 #ifdef VISP_HAVE_XML2
 
-#ifndef US_IMAGE_SETTINGS_XML_PARSER_H
-#define US_IMAGE_SETTINGS_XML_PARSER_H
 #include <iostream>
 #include <visp3/ustk_core/usTransducerSettings.h>
 #include <visp3/ustk_core/usImagePostScanSettings.h>
@@ -60,6 +61,11 @@
 class VISP_EXPORT usImageSettingsXmlParser: public vpXmlParser
 {
 public:
+  usImageSettingsXmlParser();
+  usImageSettingsXmlParser(usImageSettingsXmlParser& twinParser);
+  usImageSettingsXmlParser& operator =(const usImageSettingsXmlParser& twinparser);
+  virtual ~usImageSettingsXmlParser();
+
   typedef enum{
     CODE_XML_BAD = -1,
     CODE_XML_SETTINGS,
@@ -93,11 +99,7 @@ public:
     IMAGE_TYPE_PRESCAN,
     IMAGE_TYPE_POSTSCAN,
   } usImageType;
-  
-  usImageSettingsXmlParser();
-  usImageSettingsXmlParser(usImageSettingsXmlParser& twinParser);
-  usImageSettingsXmlParser& operator =(const usImageSettingsXmlParser& twinparser);
-  virtual ~usImageSettingsXmlParser();
+
   
   //comparison
   bool operator ==(usImageSettingsXmlParser const& other);
