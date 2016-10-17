@@ -20,8 +20,8 @@
  * If you have questions regarding the use of this file, please contact the
  * authors at Alexandre.Krupa@inria.fr
  *
- * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ * This file is provided AS IS with NO WARRBModeSampleNumberTY OF BModeSampleNumberY KIND, INCLUDING THE
+ * WARRBModeSampleNumberTY OF DESIGN, MERCHBModeSampleNumberTABILITY BModeSampleNumberD FITNESS FOR A PARTICULAR PURPOSE.
  *
  *
  * Authors:
@@ -55,14 +55,14 @@
     int main()
     {
       // Update settings
-      unsigned int AN = 200;
-      unsigned int LN = 200;
+      unsigned int BModeSampleNumber = 200;
+      unsigned int lineNumber = 200;
       double probeRadius = 0.06;
       double scanLinePitch = 0.04;
       bool isTransducerConvex = true;
       double axialResolution = 0.005;
       usImagePreScanSettings imageSettings(probeRadius, scanLinePitch, isTransducerConvex, axialResolution);
-      vpImage<unsigned char> I(AN, LN);
+      vpImage<unsigned char> I(BModeSampleNumber, lineNumber);
       usImagePreScan2D<unsigned char> preScan2d;
       preScan2d.setData(I);
       preScan2d.setImageSettings(imageSettings);
@@ -77,7 +77,7 @@ public:
   //default constructors
   usImagePreScan2D();
   //All parameters initialisation constructors
-  usImagePreScan2D(unsigned int a_number, unsigned int line_number, double probeRadius=0.0, double scanLinePitch=0.0, bool isTransducerConvex=false, double axial_resolution=0.0);
+  usImagePreScan2D(unsigned int BModeSampleNumber, unsigned int lineNumber, double probeRadius=0.0, double scanLinePitch=0.0, bool isTransducerConvex=false, double axial_resolution=0.0);
   //usImagePreScan2D copy constructor
   usImagePreScan2D(const usImagePreScan2D &other);
   //vpImage copy constructors
@@ -90,8 +90,8 @@ public:
   //destructor
   ~usImagePreScan2D();
 
-  //No setters for a_number and LN because vpImage doesn't have setters for height and width. Those parameters have to be passed in the constructor.
-  unsigned int getANumber() const;
+  //No setters for BModeSampleNumber and lineNumber because vpImage doesn't have setters for height and width. Those parameters have to be passed in the constructor.
+  unsigned int getBModeSampleNumber() const;
   unsigned int getLineNumber() const;
 
   //assignement
@@ -114,9 +114,9 @@ usImagePreScan2D<T>::usImagePreScan2D() : vpImage<T>(), usImagePreScanSettings()
 }
 
 /**
-* Initializing constructor for image size and probe settings. For double image type.
-* @param a_number number of A-samples in a line.
-* @param line_number number of lines.
+* Initializing constructor for image size and probe settings.
+* @param BModeSampleNumber number of B-mode samples in a line.
+* @param lineNumber number of lines.
 * @param probeRadius radius of the ultrasound probe used to acquire the RF image.
 * @param scanLinePitch Angle (radians) or distance (meters) between 2 lines of the ultrasound probe used
 * to acquire the RF image. Angle if \e isTransducerConvex is true, distance otherwise.
@@ -124,14 +124,14 @@ usImagePreScan2D<T>::usImagePreScan2D() : vpImage<T>(), usImagePreScanSettings()
 * @param axial_resolution Image axial resolution.
 */
 template<class T>
-usImagePreScan2D<T>::usImagePreScan2D(unsigned int a_number, unsigned int line_number, double probeRadius, double scanLinePitch, bool isTransducerConvex, double axial_resolution) :
-  vpImage<T>(a_number, line_number), usImagePreScanSettings(probeRadius, scanLinePitch, isTransducerConvex, axial_resolution)
+usImagePreScan2D<T>::usImagePreScan2D(unsigned int BModeSampleNumber, unsigned int lineNumber, double probeRadius, double scanLinePitch, bool isTransducerConvex, double axial_resolution) :
+  vpImage<T>(BModeSampleNumber, lineNumber), usImagePreScanSettings(probeRadius, scanLinePitch, isTransducerConvex, axial_resolution)
 {
 
 }
 
 /**
-* Copy constructor. For double image type.
+* Copy constructor.
 * @param other usImagePreScan2D image you want to copy.
 */
 template<class T>
@@ -142,7 +142,7 @@ usImagePreScan2D<T>::usImagePreScan2D(const usImagePreScan2D &other) :
 }
 
 /**
-* Copy constructor. For double image type.
+* Copy constructor.
 * @param other vpImage<double> image you want to copy.
 */
 template<class T>
@@ -162,7 +162,7 @@ usImagePreScan2D<T>::usImagePreScan2D(const usImagePreScanSettings &other) : usI
 }
 
 /**
-* Copy constructor. For double image type.
+* Copy constructor.
 * @param other vpImage you want to copy.
 * @param otherSettings usImagePreScanSettings you want to copy.
 */
@@ -209,23 +209,23 @@ template<class T>
 std::ostream& operator<<(std::ostream& out, const usImagePreScan2D<T> &other)
 {
   return out << static_cast<const usImagePreScanSettings &>(other) << 
-    "number of A-samples in a scanline : " << other.getANumber() << std::endl <<
+    "number of B-mode samples in a scanline : " << other.getBModeSampleNumber() << std::endl <<
     "number of scanlines : " << other.getLineNumber() << std::endl;
 }
 
 /**
 * Get the number of A-samples in a line.
-* @return a_number Number of A-samples in a line.
+* @return BModeSampleNumber Number of A-samples in a line.
 */
 template<class T>
-unsigned int usImagePreScan2D<T>::getANumber() const { return vpImage<T>::getHeight(); }
+unsigned int usImagePreScan2D<T>::getBModeSampleNumber() const { return getHeight(); }
 
 /**
 * Get the number of lines.
-* @return line_number number of lines.
+* @return lineNumber number of lines.
 */
 template<class T>
-unsigned int usImagePreScan2D<T>::getLineNumber() const { return vpImage<T>::getWidth(); }
+unsigned int usImagePreScan2D<T>::getLineNumber() const { return getWidth(); }
 
 /**
 * Setter for the image data.

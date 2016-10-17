@@ -20,8 +20,8 @@
 * If you have questions regarding the use of this file, please contact the
 * authors at Alexandre.Krupa@inria.fr
 *
-* This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-* WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+* This file is provided AS IS with NO WARRdimXTY OF dimXY KIND, INCLUDING THE
+* WARRdimXTY OF DESIGN, MERCHdimXTABILITY dimXD FITNESS FOR A PARTICULAR PURPOSE.
 *
 *
 * Authors:
@@ -60,9 +60,9 @@
     int main()
     {
       // Update settings
-      unsigned int AN = 200;
-      unsigned int LN = 200;
-      unsigned int FN = 20;
+      unsigned int dimX = 200;
+      unsigned int dimY = 200;
+      unsigned int dimZ = 20;
       double probeRadius = 0.045;
       double scanLinePitch = 0.01;
       bool isTransducerConvex = true;
@@ -72,7 +72,7 @@
       double heightResolution = 0.004;
       double widthResolution = 0.007;
       usMotorSettings   imageSettings(probeRadius, scanLinePitch, isTransducerConvex, motorRadius, framePitch, isMotorRotating, heightResolution, widthResolution);
-      usImage3D<unsigned char> I(AN, LN, FN);
+      usImage3D<unsigned char> I(dimX, dimY, dimZ);
       usImagePostScan3D<unsigned char> postScan3d;
       postScan3d.setData(I);
       postScan3d.setImageSettings(imageSettings);
@@ -84,7 +84,7 @@ template<class T>
 class usImagePostScan3D : public usImage3D<T>, public usImagePostScanSettings,public usMotorSettings {
 public:
   usImagePostScan3D();
-  usImagePostScan3D(unsigned int AN, unsigned int LN, unsigned int FN,
+  usImagePostScan3D(unsigned int dimX, unsigned int dimY, unsigned int dimZ,
                     double probeRadius=0.0, double motorRadius=0.0, double scanLinePitch=0.0, double framePitch=0.0,
                     bool isImageConvex=false, bool isMotorRotating=false,
                     double heightResolution=0.0, double widthResolution=0.0);
@@ -111,9 +111,9 @@ usImagePostScan3D<T>::usImagePostScan3D() : usImage3D<T>(), usImagePostScanSetti
 
 /**
 * Complete constructor, all parameters availables.
-* @param AN A-samples in a line (corresponds to image height in px).
-* @param LN Number of lines (corresponds to image width in px).
-* @param FN Number of Frames.
+* @param dimX A-samples in a line (corresponds to image height in px).
+* @param dimY Number of lines (corresponds to image width in px).
+* @param dimZ Number of Frames.
 * @param probeRadius radius of the ultrasound probe used to acquire the RF image.
 * @param motorRadius radius of the ultrasound probe motor used to acquire the RF image.
 * @param scanLinePitch angle(rad) / distance(m) between 2 lines of the ultrasound probe used to acquire the RF image.
@@ -124,8 +124,8 @@ usImagePostScan3D<T>::usImagePostScan3D() : usImage3D<T>(), usImagePostScanSetti
 * @param widthResolution Image width resolution.
 */
 template<class T>
-usImagePostScan3D<T>::usImagePostScan3D(unsigned int AN, unsigned int LN, unsigned int FN, double probeRadius, double motorRadius, double scanLinePitch, double framePitch, bool isTransducerConvex, bool isMotorRotating, double heightResolution, double widthResolution)
-  : usImage3D<T>(AN,LN,FN), usImagePostScanSettings(probeRadius, scanLinePitch, isTransducerConvex,heightResolution,widthResolution), usMotorSettings( motorRadius, framePitch, isMotorRotating)
+usImagePostScan3D<T>::usImagePostScan3D(unsigned int dimX, unsigned int dimY, unsigned int dimZ, double probeRadius, double motorRadius, double scanLinePitch, double framePitch, bool isTransducerConvex, bool isMotorRotating, double heightResolution, double widthResolution)
+  : usImage3D<T>(dimX,dimY,dimZ), usImagePostScanSettings(probeRadius, scanLinePitch, isTransducerConvex,heightResolution,widthResolution), usMotorSettings( motorRadius, framePitch, isMotorRotating)
 {
 
 }

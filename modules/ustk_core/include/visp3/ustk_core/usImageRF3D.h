@@ -20,8 +20,8 @@
 * If you have questions regarding the use of this file, please contact the
 * authors at Alexandre.Krupa@inria.fr
 *
-* This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-* WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+* This file is provided AS IS with NO WARRRFSampleNumberTY OF RFSampleNumberY KIND, INCLUDING THE
+* WARRRFSampleNumberTY OF DESIGN, MERCHRFSampleNumberTABILITY RFSampleNumberD FITNESS FOR A PARTICULAR PURPOSE.
 *
 *
 * Authors:
@@ -60,9 +60,9 @@
     int main()
     {
       // Update settings
-      unsigned int AN = 200;
-      unsigned int LN = 200;
-      unsigned int FN = 30;
+      unsigned int RFSampleNumber = 200;
+      unsigned int lineNumber = 200;
+      unsigned int frameNumber = 30;
       double probeRadius = 0.0006;
       double scanLinePitch = 0.0007;
       bool isTransducerConvex = true;
@@ -71,7 +71,7 @@
       bool isMotorRotating = true;
       double axialResolution = 0.001;
       usImagePreScanSettings  imageSettings(probeRadius, scanLinePitch, isTransducerConvex, motorRadius, framePitch, isMotorRotating, axialResolution);
-      usImage3D<unsigned char> I(AN, LN, FN);
+      usImage3D<unsigned char> I(RFSampleNumber, lineNumber, frameNumber);
       usImageRF3D<unsigned char> rf3d;
       rf3d.setData(I);
       rf3d.setImageSettings(imageSettings);
@@ -84,7 +84,7 @@ class usImageRF3D : public usImage3D<T>, public usImagePreScanSettings, public u
 public:
 
   usImageRF3D();
-  usImageRF3D(unsigned int AN, unsigned int LN, unsigned int FN,
+  usImageRF3D(unsigned int RFSampleNumber, unsigned int lineNumber, unsigned int frameNumber,
               double probeRadius=0.0, double motorRadius=0.0, double scanLinePitch=0.0, double framePitch=0.0,
     bool isImageConvex = false, bool isMotorRotating = false, double axial_resolution = 0.0); 
   usImageRF3D(usImage3D<T> image3D, usImagePreScanSettings imageSettings, usMotorSettings motorSettings);
@@ -95,6 +95,10 @@ public:
 
   usImageRF3D<T>& operator=(const usImageRF3D<T> &other);
   bool operator==(const usImageRF3D<T> &other);
+
+  unsigned int getRFSampleNumber() const ;
+  unsigned int getLineNumber() const ;
+  unsigned int getFrameNumber() const ;
 
   void setData(const usImage3D<T> &image);
 };
@@ -110,9 +114,9 @@ usImageRF3D<T>::usImageRF3D() : usImage3D<T>(), usImagePreScanSettings(), usMoto
 
 /**
 * Full initializing constructor.
-* @param[in] AN number of A-samples in a line.
-* @param[in] LN number of lines.
-* @param[in] FN number of frames.
+* @param[in] RFSampleNumber number of A-samples in a line.
+* @param[in] lineNumber number of lines.
+* @param[in] frameNumber number of frames.
 * @param[in] probeRadius radius of the ultrasound probe used to acquire the RF image.
 * @param[in] motorRadius radius of the ultrasound probe motor used to acquire the RF image.
 * @param[in] scanLinePitch angle(rad) / distance(m) between 2 lines of the ultrasound probe used to acquire the RF image.
@@ -122,9 +126,9 @@ usImageRF3D<T>::usImageRF3D() : usImage3D<T>(), usImagePreScanSettings(), usMoto
 * @param[in] axial_resolution The distance (in meters) between 2 successive pixels acquired along a scanline.
 */
 template<class T>
-usImageRF3D<T>::usImageRF3D(unsigned int AN, unsigned int LN, unsigned int FN, double probeRadius, double motorRadius, double scanLinePitch, double framePitch,
+usImageRF3D<T>::usImageRF3D(unsigned int RFSampleNumber, unsigned int lineNumber, unsigned int frameNumber, double probeRadius, double motorRadius, double scanLinePitch, double framePitch,
                             bool isTransducerConvex, bool isMotorRotating, double axial_resolution)
-  : usImage3D<T>(AN, LN, FN), usImagePreScanSettings(probeRadius, scanLinePitch, isTransducerConvex, axial_resolution), usMotorSettings(motorRadius, framePitch, isMotorRotating)
+  : usImage3D<T>(RFSampleNumber, lineNumber, frameNumber), usImagePreScanSettings(probeRadius, scanLinePitch, isTransducerConvex, axial_resolution), usMotorSettings(motorRadius, framePitch, isMotorRotating)
 {
 
 }
@@ -209,6 +213,30 @@ std::ostream& operator<<(std::ostream& out, const usImageRF3D<T> &other)
 {
   return out << static_cast<const usImage3D<T> &>(other) <<
     static_cast<const usImagePreScanSettings &>(other);
+}
+
+/**
+* Gets the number of RF samples along a scanline.
+*/
+template<class T>
+unsigned int usImageRF3D<T>::getRFSampleNumber() const {
+  return getDimY();
+}
+
+/**
+* Gets the number of scanlines used to acquire the volume.
+*/
+template<class T>
+unsigned int usImageRF3D<T>::getLineNumber() const {
+  return getDimX();
+}
+
+/**
+* Prints information in a stream.
+*/
+template<class T>
+unsigned int usImageRF3D<T>::getFrameNumber() const {
+  return getDimZ();
 }
 
 /**

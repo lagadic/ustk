@@ -20,8 +20,8 @@
 * If you have questions regarding the use of this file, please contact the
 * authors at Alexandre.Krupa@inria.fr
 *
-* This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-* WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+* This file is provided AS IS with NO WARRBModeSampleNumberTY OF BModeSampleNumberY KIND, INCLUDING THE
+* WARRBModeSampleNumberTY OF DESIGN, MERCHBModeSampleNumberTABILITY BModeSampleNumberD FITNESS FOR A PARTICULAR PURPOSE.
 *
 *
 * Authors:
@@ -58,9 +58,9 @@
     int main()
     {
       // Update settings
-      unsigned int AN = 200;
-      unsigned int LN = 200;
-      unsigned int FN = 10;
+      unsigned int BModeSampleNumber = 200;
+      unsigned int lineNumber = 200;
+      unsigned int frameNumber = 10;
       double probeRadius = 0.008;
       double scanLinePitch = 0.004;
       bool isTransducerConvex = true;
@@ -69,7 +69,7 @@
       bool isMotorRotating = true;
       double axialResolution = 0.004;
       usImagePreScanSettings   imageSettings(probeRadius, scanLinePitch, isTransducerConvex, motorRadius, framePitch, isMotorRotating, axialResolution);
-      usImage3D<unsigned char> I(AN, LN, FN);
+      usImage3D<unsigned char> I(BModeSampleNumber, lineNumber, frameNumber);
       usImagePreScan3D<unsigned char> preScan3d;
       preScan3d.setData(I);
       preScan3d.setImageSettings(imageSettings);
@@ -82,7 +82,7 @@ public:
   //default constructors
   usImagePreScan3D();
   //All parameters initialisation constructors
-  usImagePreScan3D(unsigned int AN, unsigned int LN, unsigned int FN,
+  usImagePreScan3D(unsigned int BModeSampleNumber, unsigned int lineNumber, unsigned int frameNumber,
                    double probeRadius=0.0, double motorRadius=0.0, double scanLinePitch=0.0, double framePitch=0.0,
                    bool isImageConvex=false, bool isMotorRotating=false, double axial_resolution=0.0);
   //usImagePreScan3D copy constructor
@@ -101,6 +101,10 @@ public:
   //comparison
   bool operator==(const usImagePreScan3D<T> &other);
 
+  unsigned int getBModeSampleNumber() const;
+  unsigned int getLineNumber() const;
+  unsigned int getFrameNumber() const;
+
   void setData(const usImage3D<T> &image);
   void setImageSettings(const usImagePreScanSettings &settings);
   void setMotorSettings(const usMotorSettings &settings);
@@ -117,9 +121,9 @@ usImagePreScan3D<T>::usImagePreScan3D() : usImage3D<T>(), usImagePreScanSettings
 
 /**
 * Initializing constructor for image size and probe settings. For double image type.
-* @param AN A-samples in a line (corresponds to image height in px).
-* @param LN Number of lines (corresponds to image width in px).
-* @param FN Number of Frames.
+* @param BModeSampleNumber B-mode samples in a line (in px).
+* @param lineNumber Number of lines (in px).
+* @param frameNumber Number of Frames.
 * @param probeRadius radius of the ultrasound probe used to acquire the RF image.
 * @param motorRadius radius of the ultrasound probe motor used to acquire the RF image.
 * @param scanLinePitch angle(rad) / distance(m) between 2 lines of the ultrasound probe used to acquire the RF image.
@@ -129,9 +133,9 @@ usImagePreScan3D<T>::usImagePreScan3D() : usImage3D<T>(), usImagePreScanSettings
 * @param axial_resolution Axial resolution of the image.
 */
 template<class T>
-usImagePreScan3D<T>::usImagePreScan3D(unsigned int AN, unsigned int LN, unsigned int FN, double probeRadius, double motorRadius, double scanLinePitch, double framePitch,
+usImagePreScan3D<T>::usImagePreScan3D(unsigned int BModeSampleNumber, unsigned int lineNumber, unsigned int frameNumber, double probeRadius, double motorRadius, double scanLinePitch, double framePitch,
                                       bool isTransducerConvex, bool isMotorRotating, double axial_resolution) :
-  usImage3D<T>(AN, LN, FN), usImagePreScanSettings(probeRadius, scanLinePitch, isTransducerConvex, axial_resolution), usMotorSettings(motorRadius, framePitch, isMotorRotating)
+  usImage3D<T>(BModeSampleNumber, lineNumber, frameNumber), usImagePreScanSettings(probeRadius, scanLinePitch, isTransducerConvex, axial_resolution), usMotorSettings(motorRadius, framePitch, isMotorRotating)
 {
 
 }
@@ -216,6 +220,31 @@ std::ostream& operator<<(std::ostream& out, const usImagePreScan3D<T> &other)
 {
   return out << static_cast<const usImage3D<T> &>(other) <<
     static_cast<const usImagePreScanSettings &>(other);
+}
+
+/**
+* Gets the number of B-mode samples along a scanline (volume height in px).
+*/
+template<class T>
+unsigned int usImagePreScan3D<T>::getBModeSampleNumber() const {
+  return getDimY();
+}
+
+
+/**
+* Gets the number of scanlines (volume width in px).
+*/
+template<class T>
+unsigned int usImagePreScan3D<T>::getLineNumber() const {
+  return getDimX();
+}
+
+/**
+* Gets the number of 2D frames in the volume.
+*/
+template<class T>
+unsigned int usImagePreScan3D<T>::getFrameNumber() const {
+  return getDimZ();
 }
 
 /**
