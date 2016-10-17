@@ -78,7 +78,7 @@ template<class T>
 class usImagePostScan2D : public vpImage<T>, public usImagePostScanSettings {
 public:
   usImagePostScan2D();
-  usImagePostScan2D(unsigned int a_nubmer, unsigned int line_number, double probeRadius=0.0, double scanLinePitch=0.0, bool isTransducerConvex=false, double height_resolution=0.0, double width_resolution=0.0);
+  usImagePostScan2D(unsigned int width, unsigned int height, double probeRadius=0.0, double scanLinePitch=0.0, bool isTransducerConvex=false, double height_resolution=0.0, double width_resolution=0.0);
   usImagePostScan2D(const usImagePostScan2D<T> &other);
   usImagePostScan2D(const vpImage<T> &other);
   usImagePostScan2D(const usImagePostScanSettings &other);
@@ -90,8 +90,8 @@ public:
 
   bool operator ==(const usImagePostScan2D<T> &other);
 
-  unsigned int getANumber() const;
-  unsigned int getLineNumber() const;
+  unsigned int getDimX() const;
+  unsigned int getDimY() const;
 
   void setData(const vpImage<T> &image);
 };
@@ -107,8 +107,8 @@ usImagePostScan2D<T>::usImagePostScan2D() : vpImage<T>(), usImagePostScanSetting
 
 /**
 * Full constructor, all parameters settables.
-* @param a_nubmer number of A-samples in a line.
-* @param line_number number of lines.
+* @param width number of pixels along x axis.
+* @param height number of lines.
 * @param probeRadius radius of the ultrasound probe used to acquire the RF image.
 * @param scanLinePitch Angle (radians) or distance (meters) between 2 lines of the ultrasound probe
 * used to acquire the RF image. Angle if \e isTransducerConvex is true, distance otherwise.
@@ -117,8 +117,8 @@ usImagePostScan2D<T>::usImagePostScan2D() : vpImage<T>(), usImagePostScanSetting
 * @param width_resolution Width resolution of the image.
 */
 template<class T>
-usImagePostScan2D<T>::usImagePostScan2D(unsigned int a_nubmer, unsigned int line_number, double probeRadius, double scanLinePitch, bool isTransducerConvex, double height_resolution, double width_resolution)
-  : vpImage<T>(a_nubmer, line_number,0), usImagePostScanSettings(probeRadius, scanLinePitch, isTransducerConvex, height_resolution, width_resolution)
+usImagePostScan2D<T>::usImagePostScan2D(unsigned int width, unsigned int height, double probeRadius, double scanLinePitch, bool isTransducerConvex, double height_resolution, double width_resolution)
+  : vpImage<T>(width, height,0), usImagePostScanSettings(probeRadius, scanLinePitch, isTransducerConvex, height_resolution, width_resolution)
 {
 
 }
@@ -203,23 +203,25 @@ template<class T>
 std::ostream& operator<<(std::ostream& out, const usImagePostScan2D<T> &other)
 {
   return out << static_cast<const usImagePostScanSettings &>(other) <<
-  "number of A-samples in a scanline : " << other.getANumber() << std::endl <<
-  "number of scanlines : " << other.getLineNumber() << std::endl;
+  "image width " << other.getWidth() << std::endl <<
+  "image height : " << other.getHeight() << std::endl;
 }
 
 /**
-* Get the number of A-samples in a line.
-* @return a_number Number of A-samples in a line.
+* Returns the size of the image along the x axis (in pixels).
 */
 template<class T>
-unsigned int usImagePostScan2D<T>::getANumber() const { return vpImage<T>::getHeight(); }
+unsigned int usImagePostScan2D<T>::getDimX() const {
+  return(getWidth());
+}
 
 /**
-* Get the number of lines.
-* @return line_number number of lines.
+* Returns the size of the image along the y axis (in pixels).
 */
 template<class T>
-unsigned int usImagePostScan2D<T>::getLineNumber() const { return vpImage<T>::getWidth(); }
+unsigned int usImagePostScan2D<T>::getDimY() const {
+  return(getHeight());
+}
 
 /**
 * Setter for image.
