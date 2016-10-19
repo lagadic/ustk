@@ -239,13 +239,13 @@ void  usMetaHeaderParser::readMHDHeader(const std::string fileName)
       it=keyval.end();
       keyval.erase(std::remove(keyval.begin(),keyval.end(),'\r'),it);
       if (keyval == "LinearMotor") {
-        this->header.motorRadius = usMotorSettings::LinearMotor;
+        this->header.motorType = usMotorSettings::LinearMotor;
       }
       else if (keyval == "TiltingMotor") {
-        this->header.motorRadius = usMotorSettings::TiltingMotor;
+        this->header.motorType = usMotorSettings::TiltingMotor;
       }
       else if (keyval == "RotationalMotor") {
-        this->header.motorRadius = usMotorSettings::RotationalMotor;
+        this->header.motorType = usMotorSettings::RotationalMotor;
       }
       else {
         throw(vpException(vpException::badValue, "Unknown motor type"));
