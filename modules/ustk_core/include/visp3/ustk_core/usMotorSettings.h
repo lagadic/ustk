@@ -67,8 +67,15 @@
  */
 class VISP_EXPORT usMotorSettings {
 public:
+  //enum for motor rotation type
+  typedef enum {
+    LinearMotor = 0,
+    TiltingMotor,
+    RotationalMotor
+  } usMotorType;
+
   usMotorSettings();
-  usMotorSettings(double motorRadius, double framePitch, bool isMotorRotating);
+  usMotorSettings(double motorRadius, double framePitch, usMotorType m_motorType);
   usMotorSettings(const usMotorSettings &other);
   virtual ~usMotorSettings();
 
@@ -76,7 +83,7 @@ public:
   //@{
   double getFramePitch() const;
   double getMotorRadius() const;
-  bool isMotorRotating() const;
+  usMotorType getMotorType() const;
 
   usMotorSettings& operator=(const usMotorSettings& other);
   bool operator==(const usMotorSettings& other);
@@ -85,7 +92,7 @@ public:
   // Settings from the 3D probe
   void setMotorRadius(double motorRadius);
   void setFramePitch(double framePitch);
-  void setMotorConvexity(bool isMotorRotating);
+  void setMotorType(usMotorType m_motorType);
   void setMotorSettings(const usMotorSettings &other);
 
   //@}
@@ -94,7 +101,7 @@ private:
   //Settings from the 3D probe
   double m_motorRadius;
   double m_framePitch;
-  bool m_isMotorRotating;
+  usMotorType m_motorType;
 };
 
 #endif // US_MOTOR_SETTINGS_H
