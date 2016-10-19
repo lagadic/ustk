@@ -186,11 +186,11 @@ int main(int argc, const char** argv)
 
     usSequenceWriter<usImageRF2D<unsigned char> > writer;
     writer.setSequenceFileName(filename);
+    writer.setImageFileName(std::string("sequenceRF2D%04d.png"));
     writer.setFrameRate(15);
-    writer.open(ImageBufferRef.at(0));
     int i=0;
     while( i<4) {
-      writer.saveImage(ImageBufferRef.at(i+1));
+      writer.saveImage(ImageBufferRef.at(i));
       i++;
     }
     writer.close();
@@ -205,14 +205,16 @@ int main(int argc, const char** argv)
     std::vector<usImageRF2D<unsigned char> > ImageBuffer;
 
     reader.setSequenceFileName(filename);
+    usImageRF2D<unsigned char> first;
+    reader.open(first);
+    ImageBuffer.push_back(first);
     i = 0;
-    while(i<reader.end()) {
+    while(!reader.end()) {
       usImageRF2D<unsigned char> rf2D;
+      reader.acquire(rf2D);
       ImageBuffer.push_back(rf2D);
-      reader.acquire(ImageBuffer.at(i));
       i++;
     }
-
 
     std::cout << "Read from " << filename << std::endl ;
     std::cout << ImageBuffer.at(0);
@@ -234,7 +236,6 @@ int main(int argc, const char** argv)
 
     // Clean up memory allocated by the xml library
     vpXmlParser::cleanup();
-
     return testPassed;
   }
   catch(vpException &e) {

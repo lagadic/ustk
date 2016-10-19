@@ -73,7 +73,7 @@ public:
   double getFrameRate() const;
 
   void setSequenceFileName(const std::string &sequenceFileName);
-  void setImageFileNameExtension(const std::string &imageExtension);
+  void setImageFileName(const std::string &imageFileName);
 
   void setFirstFrameIndex(long firstIndex);
 
@@ -98,8 +98,8 @@ private:
   /** file name of sequence settings file (ex : sequence.xml), images files names are deduced from it.*/
   std::string m_sequenceFileName;
   std::string m_genericImageFileName;
-  std::string m_imagesExtension;
-  bool m_fileNameIsSet;
+  bool m_headerFileNameIsSet;
+  bool m_imageFileNameIsSet;
 
   /** Top know if the sequence is already open*/
   bool is_open;
@@ -114,7 +114,7 @@ private:
 */
 template<class ImageType>
 usSequenceWriter<ImageType>::usSequenceWriter() : m_frame(), m_frameRate(0.0), m_firstFrame(0), m_firstFrameIsSet(false),
-  m_frameCount(0), m_sequenceFileName(""),m_genericImageFileName(""),m_imagesExtension(".png"), m_fileNameIsSet(false), is_open(false)
+  m_frameCount(0), m_sequenceFileName(""),m_genericImageFileName(""), m_headerFileNameIsSet(false), m_imageFileNameIsSet(false), is_open(false)
 {
 
 }
@@ -147,22 +147,23 @@ double usSequenceWriter<ImageType>::getFrameRate() const
 }
 
 /**
-* Settings fileName setter.
+* Settings fileName setter, with parents direcotries (relative or absolute). (ex : "../../myheader.xml", or : "/tmp/myheader.xml")
 */
 template<class ImageType>
 void usSequenceWriter<ImageType>::setSequenceFileName(const std::string &sequenceFileName)
 {
   m_sequenceFileName = sequenceFileName;
-  m_fileNameIsSet = true;
+  m_headerFileNameIsSet = true;
 }
 
 /**
-* Image file extension setter. Set by default to ".png"
+* Image generic file name setter. ex : "rf2d%04d.png". Don't precise any directory, the images will be written in the same directory as the header.
 */
 template<class ImageType>
-void usSequenceWriter<ImageType>::setImageFileNameExtension(const std::string &imageExtension)
+void usSequenceWriter<ImageType>::setImageFileName(const std::string &imageFileName)
 {
-  m_imagesExtension = imageExtension;
+  m_genericImageFileName = imageFileName;
+  m_imageFileNameIsSet = true;
 }
 
 /**
@@ -181,8 +182,8 @@ void usSequenceWriter<ImageType>::setFirstFrameIndex(long firstIndex)
 template<class ImageType>
 void usSequenceWriter<ImageType>::open(ImageType &image)
 {
-  if(!m_fileNameIsSet)
-    throw(vpException(vpException::badValue, "Sequence settings file name not set"));
+  if(!m_headerFileNameIsSet || !m_imageFileNameIsSet )
+    throw(vpException(vpException::badValue, "file names not set"));
 
   //if not first index set, we begin at index 0
   if(!m_firstFrameIsSet) {
@@ -195,11 +196,9 @@ void usSequenceWriter<ImageType>::open(ImageType &image)
   m_frame = image;
 
   //Reading image
-  char buffer[10];
-  sprintf(buffer,"%ld",m_firstFrame);
-  m_genericImageFileName = vpIoTools::splitChain(m_sequenceFileName,".")[0] + buffer + m_imagesExtension;
-  std::cout << m_genericImageFileName << std::endl;
-  vpImageIo::write(image,m_genericImageFileName);
+  char buffer[50];
+  sprintf(buffer, m_genericImageFileName.c_str(),m_firstFrame);
+  vpImageIo::write(image, buffer);
 
   m_frameCount = m_firstFrame + 1;
   is_open = true;
@@ -230,7 +229,7 @@ void usSequenceWriter< usImageRF2D < unsigned char > >::close()
   xmlParser.setSequenceFrameRate(m_frameRate);
   xmlParser.setSequenceStartNumber(m_firstFrame);
   xmlParser.setSequenceStopNumber(m_frameCount-1);
-  xmlParser.setImageFileName(vpIoTools::splitChain(vpIoTools::getName(m_sequenceFileName),".")[0] + m_imagesExtension); //just image name without any directory name
+  xmlParser.setImageFileName(m_genericImageFileName); //just image name without any directory name
   xmlParser.save(m_sequenceFileName);
 }
 
@@ -250,7 +249,7 @@ void usSequenceWriter < usImagePreScan2D < unsigned char > >::close()
   xmlParser.setSequenceFrameRate(m_frameRate);
   xmlParser.setSequenceStartNumber(m_firstFrame);
   xmlParser.setSequenceStopNumber(m_frameCount-1);
-  xmlParser.setImageFileName(vpIoTools::splitChain(vpIoTools::getName(m_sequenceFileName),".")[0] + m_imagesExtension); //just image name without any directory name
+  xmlParser.setImageFileName(m_genericImageFileName); //just image name without any directory name
   xmlParser.save(m_sequenceFileName);
 }
 
@@ -270,7 +269,7 @@ void usSequenceWriter<usImagePostScan2D<unsigned char> >::close()
   xmlParser.setSequenceFrameRate(m_frameRate);
   xmlParser.setSequenceStartNumber(m_firstFrame);
   xmlParser.setSequenceStopNumber(m_frameCount-1);
-  xmlParser.setImageFileName(vpIoTools::splitChain(vpIoTools::getName(m_sequenceFileName),".")[0] + m_imagesExtension); //just image name without any directory name
+  xmlParser.setImageFileName(m_genericImageFileName); //just image name without any directory name
   xmlParser.save(m_sequenceFileName);
 }
 
@@ -280,17 +279,17 @@ void usSequenceWriter<usImagePostScan2D<unsigned char> >::close()
 template<class ImageType>
 void usSequenceWriter<ImageType>::saveImage(ImageType &image)
 {
-  if(!is_open)
-    throw(vpException(vpException::fatalError,"trying to save an image without previously open the sequence"));
+  if (!is_open)
+    open(image);
 
   //Writing image
-  char buffer[10];
-  sprintf(buffer,"%ld",m_frameCount);
-  std::string imageFileName = vpIoTools::splitChain(m_sequenceFileName,".")[0] + buffer + m_imagesExtension;
+  char buffer[50];
+  sprintf(buffer, m_genericImageFileName.c_str(),m_frameCount);
+  std::string imageFileName = vpIoTools::getParent(m_sequenceFileName) + vpIoTools::path("/") + buffer;
 
   vpImageIo::write(image,imageFileName);
 
-  m_frameCount++;
+  m_frameCount = m_frameCount + 1;
 }
 
 #endif //US_SEQUENCE_WRITER_H

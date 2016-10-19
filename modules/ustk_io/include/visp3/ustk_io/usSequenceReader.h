@@ -197,14 +197,15 @@ void usSequenceReader<usImageRF2D<unsigned char> >::open(usImageRF2D<unsigned ch
   setLastFrameIndex(xmlParser.getSequenceStopNumber());
   m_frameRate = xmlParser.getSequenceFrameRate();
   m_genericImageFileName = xmlParser.getImageFileName();
+  std::cout << m_genericImageFileName << std::endl;
 
   //saving the settings for all the rf sequence
   m_frame.setImageSettings(xmlParser.getImagePreScanSettings());
 
   //Reading image
-  char buffer[10];
-  sprintf(buffer,"%ld",m_firstFrame);
-  std::string imageFileName = vpIoTools::getNameWE(m_genericImageFileName) + buffer + vpIoTools::getFileExtension(m_genericImageFileName);
+  char buffer[50];
+  sprintf(buffer, m_genericImageFileName.c_str(),m_firstFrame);
+  std::string imageFileName = buffer;
   std::cout << imageFileName << std::endl;
   vpImageIo::read(image,imageFileName);
   image.setImageSettings(m_frame);
@@ -235,10 +236,9 @@ void usSequenceReader<usImagePreScan2D<unsigned char> >::open(usImagePreScan2D<u
   m_frame.setImageSettings(xmlParser.getImagePreScanSettings());
 
   //Reading image
-  char buffer[10];
-  sprintf(buffer,"%ld",m_firstFrame);
-  std::string imageFileName = vpIoTools::getNameWE(m_genericImageFileName) + buffer + vpIoTools::getFileExtension(m_genericImageFileName);
-  std::cout << imageFileName << std::endl;
+  char buffer[50];
+  sprintf(buffer, m_genericImageFileName.c_str(), m_firstFrame);
+  std::string imageFileName = buffer;
   vpImageIo::read(image,imageFileName);
   image.setImageSettings(m_frame);
 
@@ -268,9 +268,9 @@ void usSequenceReader<usImagePostScan2D<unsigned char> >::open(usImagePostScan2D
   m_frame.setImageSettings(xmlParser.getImagePostScanSettings());
 
   //Reading image
-  char buffer[10];
-  sprintf(buffer,"%ld",m_firstFrame);
-  std::string imageFileName = vpIoTools::getNameWE(m_genericImageFileName) + buffer + vpIoTools::getFileExtension(m_genericImageFileName);
+  char buffer[50];
+  sprintf(buffer, m_genericImageFileName.c_str(), m_firstFrame);
+  std::string imageFileName = buffer;
   vpImageIo::read(image,imageFileName);
   image.setImageSettings(m_frame);
 
@@ -284,19 +284,20 @@ void usSequenceReader<usImagePostScan2D<unsigned char> >::open(usImagePostScan2D
 template<class ImageType>
 void usSequenceReader<ImageType>::acquire(ImageType &image)
 {
-  if(!is_open)
-    open(image);
+  if (!is_open) {
+    this->open(image);
+    return;
+  }
 
   //Reading image
-  char buffer[10];
-  sprintf(buffer,"%ld",m_frameCount);
-  std::string imageFileName = vpIoTools::getNameWE(m_genericImageFileName) + buffer + vpIoTools::getFileExtension(m_genericImageFileName);
+  char buffer[50];
+  sprintf(buffer, m_genericImageFileName.c_str(), m_firstFrame);
+  std::string imageFileName = buffer;
 
   vpImageIo::read(image,imageFileName);
   image.setImageSettings(m_frame);
 
   m_frameCount++;
-  is_open = true;
 }
 
 /**
@@ -305,17 +306,18 @@ void usSequenceReader<ImageType>::acquire(ImageType &image)
 template<class ImageType>
 void usSequenceReader<ImageType>::getFrame(ImageType &image,int position)
 {
-  if(!is_open)
-    is_open(image);
-
+  if (!is_open) {
+    open(image);
+    return;
+  }
   if(position < m_firstFrame || position > m_lastFrame) {
     throw(vpException(vpException::badValue,"position out of range"));
   }
 
   //Reading image
-  char buffer[10];
-  sprintf(buffer,"%ld",position);
-  std::string imageFileName = vpIoTools::getNameWE(m_genericImageFileName) + buffer + vpIoTools::getFileExtension(m_genericImageFileName);
+  char buffer[50];
+  sprintf(buffer, m_genericImageFileName.c_str(), m_firstFrame);
+  std::string imageFileName = buffer;
 
   vpImageIo::read(image,imageFileName);
   image.setImageSettins(m_frame);
