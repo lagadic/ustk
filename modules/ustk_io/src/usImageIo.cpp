@@ -102,6 +102,8 @@ void usImageIo::write(const usImageRF2D<unsigned char> &imageRf2D, const std::st
       usImageSettingsXmlParser xmlSettings;
       xmlSettings.setImageType(usImageSettingsXmlParser::IMAGE_TYPE_RF);
       xmlSettings.setImagePreScanSettings(imageRf2D);
+      //just writing the image file name without parents directories (header and image are in the same directory).
+      imageFileName = vpIoTools::getName(imageFileName);
       xmlSettings.setImageFileName(imageFileName);
       //write xml
       xmlSettings.save(headerFileName);
@@ -131,7 +133,8 @@ void usImageIo::write(const usImageRF2D<unsigned char> &imageRf2D, const std::st
     header.dim[1] = imageRf2D.getLineNumber();
     header.msb = false;
     header.MHDFileName = headerFileName;
-    header.rawFileName = imageFileName;
+    //remove full path for image file name (located in the same directory as the mhd
+    header.rawFileName = vpIoTools::getName(imageFileName);
     header.isTransducerConvex = imageRf2D.isTransducerConvex();
     header.probeRadius = imageRf2D.getProbeRadius();
     header.scanLinePitch = imageRf2D.getScanLinePitch();
@@ -143,7 +146,7 @@ void usImageIo::write(const usImageRF2D<unsigned char> &imageRf2D, const std::st
 
     //filling raw
     usRawFileParser rawParser;
-    rawParser.write(imageRf2D, header.rawFileName);
+    rawParser.write(imageRf2D, imageFileName);
   }
   else {
     throw(vpException(vpException::fatalError, "Unknown extension."));
@@ -160,6 +163,7 @@ void usImageIo::read(usImageRF2D<unsigned char> &imageRf2D, const std::string he
   if (headerFormat == FORMAT_XML) {
 #ifdef VISP_HAVE_XML2
     //parsing xml file
+    std::cout << headerFileName << std::endl;
     usImageSettingsXmlParser xmlSettings;
     try {
       xmlSettings.parse(headerFileName);
@@ -168,7 +172,8 @@ void usImageIo::read(usImageRF2D<unsigned char> &imageRf2D, const std::string he
       std::cout << "Error parsing rf settings file" << std::endl;
       throw e;
     }
-    vpImageIo::read(imageRf2D, xmlSettings.getImageFileName());
+    std::string fullImageFileName = vpIoTools::getParent(headerFileName) + vpIoTools::path("/") + xmlSettings.getImageFileName();
+    vpImageIo::read(imageRf2D, fullImageFileName);
 
     imageRf2D.setImageSettings(usImagePreScanSettings(xmlSettings.getImagePreScanSettings().getProbeRadius(),
       xmlSettings.getImagePreScanSettings().getScanLinePitch(), xmlSettings.getImagePreScanSettings().isTransducerConvex(), xmlSettings.getImagePreScanSettings().getAxialResolution()));
@@ -259,7 +264,8 @@ void usImageIo::write(const usImageRF3D<unsigned char> &imageRf3D, const std::st
     header.dim[2] = 1;
     header.msb = false;
     header.MHDFileName = headerFileName;
-    header.rawFileName = imageFileName;
+    //remove full path for image file name (located in the same directory as the mhd
+    header.rawFileName = vpIoTools::getName(imageFileName);
     header.isTransducerConvex = imageRf3D.isTransducerConvex();
     header.probeRadius = imageRf3D.getProbeRadius();
     header.scanLinePitch = imageRf3D.getScanLinePitch();
@@ -274,7 +280,7 @@ void usImageIo::write(const usImageRF3D<unsigned char> &imageRf3D, const std::st
 
     //filling raw
     usRawFileParser rawParser;
-    rawParser.write(imageRf3D, header.rawFileName);
+    rawParser.write(imageRf3D, imageFileName);
   }
   else {
     throw(vpException(vpException::fatalError, "Unknown extension."));
@@ -369,6 +375,8 @@ void usImageIo::write(const usImagePreScan2D<unsigned char> & preScanImage, cons
       usImageSettingsXmlParser xmlSettings;
       xmlSettings.setImageType(usImageSettingsXmlParser::IMAGE_TYPE_PRESCAN);
       xmlSettings.setImagePreScanSettings(preScanImage);
+      //just writing the image file name without parents directories (header and image are in the same directory).
+      imageFileName = vpIoTools::getName(imageFileName);
       xmlSettings.setImageFileName(imageFileName);
       //write xml
       xmlSettings.save(headerFileName);
@@ -397,7 +405,8 @@ void usImageIo::write(const usImagePreScan2D<unsigned char> & preScanImage, cons
     header.dim[1] = preScanImage.getBModeSampleNumber();
     header.msb = false;
     header.MHDFileName = headerFileName;
-    header.rawFileName = imageFileName;
+    //remove full path for image file name (located in the same directory as the mhd
+    header.rawFileName = vpIoTools::getName(imageFileName);
     header.isTransducerConvex = preScanImage.isTransducerConvex();
     header.probeRadius = preScanImage.getProbeRadius();
     header.scanLinePitch = preScanImage.getScanLinePitch();
@@ -409,7 +418,7 @@ void usImageIo::write(const usImagePreScan2D<unsigned char> & preScanImage, cons
 
     //filling raw
     usRawFileParser rawParser;
-    rawParser.write(preScanImage, header.rawFileName);
+    rawParser.write(preScanImage, imageFileName);
   }
   else {
     throw(vpException(vpException::fatalError, "Unknown extension."));
@@ -435,7 +444,8 @@ void usImageIo::read(usImagePreScan2D<unsigned char> &preScanImage,const std::st
       std::cout << "Error parsing pre-scan settings file" << std::endl;
       throw e;
     }
-    vpImageIo::read(preScanImage, xmlSettings.getImageFileName());
+    std::string fullImageFileName = vpIoTools::getParent(headerFileName) + vpIoTools::path("/") + xmlSettings.getImageFileName();
+    vpImageIo::read(preScanImage, fullImageFileName);
 
     preScanImage.setImageSettings(usImagePreScanSettings(xmlSettings.getImagePreScanSettings().getProbeRadius(),
       xmlSettings.getImagePreScanSettings().getScanLinePitch(), xmlSettings.getImagePreScanSettings().isTransducerConvex(),
@@ -525,7 +535,8 @@ void usImageIo::write(const usImagePreScan3D<unsigned char> &preScanImage, const
     header.dim[2] = preScanImage.getDimZ();
     header.msb = false;
     header.MHDFileName = headerFileName;
-    header.rawFileName = imageFileName;
+    //remove full path for image file name (located in the same directory as the mhd
+    header.rawFileName = vpIoTools::getName(imageFileName);
     header.isTransducerConvex = preScanImage.isTransducerConvex();
     header.probeRadius = preScanImage.getProbeRadius();
     header.scanLinePitch = preScanImage.getScanLinePitch();
@@ -540,7 +551,7 @@ void usImageIo::write(const usImagePreScan3D<unsigned char> &preScanImage, const
 
     //filling raw
     usRawFileParser rawParser;
-    rawParser.write(preScanImage, header.rawFileName);
+    rawParser.write(preScanImage, imageFileName);
   }
   else {
     throw(vpException(vpException::fatalError, "Unknown extension."));
@@ -671,6 +682,8 @@ void usImageIo::write(const usImagePostScan2D<unsigned char> &postScanImage, con
       usImageSettingsXmlParser xmlSettings;
       xmlSettings.setImagePostScanSettings(postScanImage);
       xmlSettings.setImageType(usImageSettingsXmlParser::IMAGE_TYPE_POSTSCAN);
+      //just writing the image file name without parents directories (header and image are in the same directory).
+      imageFileName = vpIoTools::getName(imageFileName);
       xmlSettings.setImageFileName(imageFileName);
       xmlSettings.save(headerFileName);
     }
@@ -699,7 +712,8 @@ void usImageIo::write(const usImagePostScan2D<unsigned char> &postScanImage, con
     header.dim[1] = postScanImage.getDimY();
     header.msb = false;
     header.MHDFileName = headerFileName;
-    header.rawFileName = imageFileName;
+    //remove full path for image file name (located in the same directory as the mhd
+    header.rawFileName = vpIoTools::getName(imageFileName);
     header.isTransducerConvex = postScanImage.isTransducerConvex();
     header.probeRadius = postScanImage.getProbeRadius();
     header.scanLinePitch = postScanImage.getScanLinePitch();
@@ -712,7 +726,7 @@ void usImageIo::write(const usImagePostScan2D<unsigned char> &postScanImage, con
 
     //filling raw
     usRawFileParser rawParser;
-    rawParser.write(postScanImage, header.rawFileName);
+    rawParser.write(postScanImage, imageFileName);
   }
   else
     throw(vpException(vpException::fatalError, "Unknown header format."));
@@ -736,8 +750,8 @@ void usImageIo::read(usImagePostScan2D<unsigned char> &postScanImage,const std::
       std::cout << "file name : " << headerFileName << std::endl;
       throw e;
     }
-
-    vpImageIo::read(postScanImage, xmlSettings.getImageFileName());
+    std::string fullImageFileName = vpIoTools::getParent(headerFileName) + vpIoTools::path("/") + xmlSettings.getImageFileName();
+    vpImageIo::read(postScanImage, fullImageFileName);
 
     postScanImage.setImageSettings(usImagePostScanSettings(xmlSettings.getImagePostScanSettings().getProbeRadius(), 
       xmlSettings.getImagePostScanSettings().getScanLinePitch(),
@@ -815,6 +829,7 @@ void usImageIo::write(const usImagePostScan3D<unsigned char> &postScanImage, con
     if (imageExtesion2D != ".raw") {
       throw(vpException(vpException::fatalError, "mhd files goes with .raw image extension"));
     }
+    std::string imageFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(".raw");
     //filling header
     usMetaHeaderParser::MHDHeader header;
     header.numberOfDimensions = 3;
@@ -828,7 +843,8 @@ void usImageIo::write(const usImagePostScan3D<unsigned char> &postScanImage, con
     header.dim[2] = postScanImage.getDimZ();
     header.msb = false;
     header.MHDFileName = headerFileName;
-    header.rawFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(".raw");
+    //remove full path for image file name (located in the same directory as the mhd
+    header.rawFileName = vpIoTools::getName(imageFileName);
     header.isTransducerConvex = postScanImage.isTransducerConvex();
     header.motorType = postScanImage.getMotorType();
     header.probeRadius = postScanImage.getProbeRadius();
@@ -844,7 +860,7 @@ void usImageIo::write(const usImagePostScan3D<unsigned char> &postScanImage, con
 
     //filling raw
     usRawFileParser rawParser;
-    rawParser.write(postScanImage, header.rawFileName);
+    rawParser.write(postScanImage, imageFileName);
   }
   else
     throw(vpException(vpException::fatalError, "Unknown header format."));
