@@ -212,7 +212,7 @@ std::ostream& operator<<(std::ostream& out, const usImagePostScan2D<T> &other)
 */
 template<class T>
 unsigned int usImagePostScan2D<T>::getDimX() const {
-  return(getWidth());
+  return vpImage<T>::getWidth();
 }
 
 /**
@@ -220,7 +220,7 @@ unsigned int usImagePostScan2D<T>::getDimX() const {
 */
 template<class T>
 unsigned int usImagePostScan2D<T>::getDimY() const {
-  return(getHeight());
+  return vpImage<T>::getHeight();
 }
 
 /**

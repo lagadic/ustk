@@ -218,14 +218,14 @@ std::ostream& operator<<(std::ostream& out, const usImagePreScan2D<T> &other)
 * @return BModeSampleNumber Number of A-samples in a line.
 */
 template<class T>
-unsigned int usImagePreScan2D<T>::getBModeSampleNumber() const { return getHeight(); }
+unsigned int usImagePreScan2D<T>::getBModeSampleNumber() const { return vpImage<T>::getHeight(); }
 
 /**
 * Get the number of lines.
 * @return lineNumber number of lines.
 */
 template<class T>
-unsigned int usImagePreScan2D<T>::getLineNumber() const { return getWidth(); }
+unsigned int usImagePreScan2D<T>::getLineNumber() const { return vpImage<T>::getWidth(); }
 
 /**
 * Setter for the image data.

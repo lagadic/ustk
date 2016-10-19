@@ -229,7 +229,7 @@ std::ostream& operator<<(std::ostream& out, const usImagePreScan3D<T> &other)
 */
 template<class T>
 unsigned int usImagePreScan3D<T>::getBModeSampleNumber() const {
-  return getDimY();
+  return usImage3D<T>::getDimY();
 }
 
 
@@ -238,7 +238,7 @@ unsigned int usImagePreScan3D<T>::getBModeSampleNumber() const {
 */
 template<class T>
 unsigned int usImagePreScan3D<T>::getLineNumber() const {
-  return getDimX();
+  return usImage3D<T>::getDimX();
 }
 
 /**
@@ -246,7 +246,7 @@ unsigned int usImagePreScan3D<T>::getLineNumber() const {
 */
 template<class T>
 unsigned int usImagePreScan3D<T>::getFrameNumber() const {
-  return getDimZ();
+  return usImage3D<T>::getDimZ();
 }
 
 /**

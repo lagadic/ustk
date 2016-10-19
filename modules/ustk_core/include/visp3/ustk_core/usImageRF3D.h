@@ -220,7 +220,7 @@ std::ostream& operator<<(std::ostream& out, const usImageRF3D<T> &other)
 */
 template<class T>
 unsigned int usImageRF3D<T>::getRFSampleNumber() const {
-  return getDimY();
+  return usImage3D<T>::getDimY();
 }
 
 /**
@@ -228,7 +228,7 @@ unsigned int usImageRF3D<T>::getRFSampleNumber() const {
 */
 template<class T>
 unsigned int usImageRF3D<T>::getLineNumber() const {
-  return getDimX();
+  return usImage3D<T>::getDimX();
 }
 
 /**
@@ -236,7 +236,7 @@ unsigned int usImageRF3D<T>::getLineNumber() const {
 */
 template<class T>
 unsigned int usImageRF3D<T>::getFrameNumber() const {
-  return getDimZ();
+  return usImage3D<T>::getDimZ();
 }
 
 /**
