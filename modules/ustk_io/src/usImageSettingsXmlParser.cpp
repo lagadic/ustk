@@ -52,7 +52,7 @@ usImageSettingsXmlParser::usImageSettingsXmlParser()
   nodeMap["is_probe_convex"] = CODE_XML_IS_PROBE_CONVEX;
   nodeMap["frame_pitch"] = CODE_XML_FRAME_PITCH;
   nodeMap["motor_radius"] = CODE_XML_MOTOR_RADIUS;
-  nodeMap["is_motor_rotating"] = CODE_XML_IS_MOTOR_ROTATING;
+  nodeMap["motor_type"] = CODE_XML_MOTOR_TYPE;
   nodeMap["axial_resolution"] = CODE_XML_AXIAL_RESOLUTION;
   nodeMap["height_resolution"] = CODE_XML_HEIGHT_RESOLUTION;
   nodeMap["width_resolution"] = CODE_XML_WIDTH_RESOLUTION;
@@ -138,6 +138,7 @@ usImageSettingsXmlParser::readMainClass (xmlDocPtr doc, xmlNodePtr node)
           else
             throw(vpException(vpException::fatalError, std::string("unknown image type in xml file")));
           break;
+          value = "";
         case CODE_XML_AXIAL_RESOLUTION:
           if (this->m_image_type == IMAGE_TYPE_PRESCAN || this->m_image_type == IMAGE_TYPE_RF) {
             this->m_preScanSettings.setAxialResolution(xmlReadDoubleChild(doc, dataNode));
@@ -176,8 +177,20 @@ usImageSettingsXmlParser::readMainClass (xmlDocPtr doc, xmlNodePtr node)
         case CODE_XML_MOTOR_RADIUS:
           this->m_motorSettings.setMotorRadius(xmlReadDoubleChild(doc, dataNode));
           break;
-        case CODE_XML_IS_MOTOR_ROTATING:
-          this->m_motorSettings.setMotorConvexity(xmlReadBoolChild(doc, dataNode));
+        case CODE_XML_MOTOR_TYPE:
+          value = xmlReadStringChild(doc, dataNode);
+          if (strcmp(value.c_str(), "linear_motor") == 0) {
+            this->m_motorSettings.setMotorType(usMotorSettings::LinearMotor);
+          }
+          else if (strcmp(value.c_str(), "tilting_motor") == 0) {
+            this->m_motorSettings.setMotorType(usMotorSettings::TiltingMotor);
+          }
+          else if (strcmp(value.c_str(), "rotational_motor") == 0) {
+            this->m_motorSettings.setMotorType(usMotorSettings::RotationalMotor);
+          }
+          else
+            throw(vpException(vpException::fatalError, std::string("unknown image type in xml file")));
+          value = "";
           break;
         case CODE_XML_ASSOCIATED_IMAGE_FILE_NAME:
           this->m_imageFileName = xmlReadStringChild(doc, dataNode);
@@ -223,9 +236,16 @@ usImageSettingsXmlParser::writeMainClass(xmlNodePtr node)
   if (m_is_3D) {
     xmlWriteDoubleChild(node, "frame_pitch", m_motorSettings.getFramePitch());
     xmlWriteDoubleChild(node, "motor_radius", m_motorSettings.getMotorRadius());
-    xmlWriteBoolChild(node, "is_motor_rotating", m_motorSettings.isMotorRotating());
+    if (m_motorSettings.getMotorType() == usMotorSettings::LinearMotor) {
+      xmlWriteStringChild(node, "motor_type", std::string("linear_motor"));
+    }
+    else if (m_motorSettings.getMotorType() == usMotorSettings::TiltingMotor) {
+      xmlWriteStringChild(node, "motor_type", std::string("tilting_motor"));
+    }
+    else if (m_motorSettings.getMotorType() == usMotorSettings::RotationalMotor) {
+      xmlWriteStringChild(node, "motor_type", std::string("rotational_motor"));
+    }
   }
-  xmlWriteCharChild(node, "image_file_name", m_imageFileName.c_str());
 }
 
 /**

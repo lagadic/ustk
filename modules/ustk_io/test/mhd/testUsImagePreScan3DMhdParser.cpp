@@ -196,7 +196,7 @@ int main(int argc, const char** argv)
     prescan3DReference.setTransducerConvexity(true);
     prescan3DReference.setFramePitch(0.258);
     prescan3DReference.setMotorRadius(0.025);
-    prescan3DReference.setMotorConvexity(true);
+    prescan3DReference.setMotorType(usMotorSettings::TiltingMotor);
     prescan3DReference.setAxialResolution(0.0058);
 
     std::cout << "Written in " << filename << std::endl ;

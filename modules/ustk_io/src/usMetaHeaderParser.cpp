@@ -96,7 +96,7 @@ void  usMetaHeaderParser::readMHDHeader(const std::string fileName)
   this->header.headerSize = 0;
   this->header.imageType = NOT_SET;
   this->header.isTransducerConvex = false;
-  this->header.isMotorRotating = false;
+  this->header.motorType = usMotorSettings::LinearMotor;
   this->header.probeRadius = 0.0;
   this->header.scanLinePitch = 0.0;
   this->header.motorRadius = 0.0;
@@ -231,14 +231,25 @@ void  usMetaHeaderParser::readMHDHeader(const std::string fileName)
       file >> this->header.motorRadius;
       std::getline(file, keyval, '\n');
     }
-    else if (keyword == "IsMotorRotating")
+    else if (keyword == "MotorType")
     {
       std::getline(file, keyval, '\n');
       it=keyval.end();
       keyval.erase(std::remove(keyval.begin(),keyval.end(),' '),it);
       it=keyval.end();
       keyval.erase(std::remove(keyval.begin(),keyval.end(),'\r'),it);
-      this->header.isMotorRotating = ((keyval == "True") || (keyval == "1"));
+      if (keyval == "LinearMotor") {
+        this->header.motorRadius = usMotorSettings::LinearMotor;
+      }
+      else if (keyval == "TiltingMotor") {
+        this->header.motorRadius = usMotorSettings::TiltingMotor;
+      }
+      else if (keyval == "RotationalMotor") {
+        this->header.motorRadius = usMotorSettings::RotationalMotor;
+      }
+      else {
+        throw(vpException(vpException::badValue, "Unknown motor type"));
+      }
     }
     else if (keyword == "AxialResolution")
     {
@@ -347,8 +358,16 @@ void usMetaHeaderParser::parse()
       MHDfile << "ProbeRadius = " << header.probeRadius << "\n";
       MHDfile << "Comment = Distance between 2 scanlines.\n";
       MHDfile << "ScanLinePitch = " << header.scanLinePitch << "\n";
-      MHDfile << "Comment = True if 3D probe motor is totating, false if linear. \n";
-      MHDfile << "IsMotorRotating = " << header.isMotorRotating << "\n";
+      MHDfile << "Comment = Probe motor type : LinearMotor, TiltingMotor (for small roatations), or RotationalMotor (for 306° rotation).\n";
+      if (header.motorType == usMotorSettings::LinearMotor) {
+        MHDfile << "MotorType = " << "LinearMotor" << "\n";
+      }
+      else if (header.motorType == usMotorSettings::TiltingMotor) {
+        MHDfile << "MotorType = " << "TiltingMotor" << "\n";
+      }
+      else if (header.motorType == usMotorSettings::RotationalMotor) {
+        MHDfile << "MotorType = " << "RotationalMotor" << "\n";
+      }
       MHDfile << "Comment = Only in 3d. Radius between the probe motor center and the first pixel of each line acquired. 0 if linear motor.\n";
       MHDfile << "MotorRadius = " << header.motorRadius << "\n";
       MHDfile << "Comment = Only in 3d. Distance between 2 successive frames.\n";
@@ -377,8 +396,16 @@ void usMetaHeaderParser::parse()
       MHDfile << "ProbeRadius = " << header.probeRadius << "\n";
       MHDfile << "Comment = Distance between 2 scanlines.\n";
       MHDfile << "ScanLinePitch = " << header.scanLinePitch << "\n";
-      MHDfile << "Comment = True if 3D probe motor is totating, false if linear. \n";
-      MHDfile << "IsMotorRotating = " << header.isMotorRotating << "\n";
+      MHDfile << "Comment = Probe motor type : LinearMotor, TiltingMotor (for small roatations), or RotationalMotor (for 306° rotation).\n";
+      if (header.motorType == usMotorSettings::LinearMotor) {
+        MHDfile << "MotorType = " << "LinearMotor" << "\n";
+      }
+      else if (header.motorType == usMotorSettings::TiltingMotor) {
+        MHDfile << "MotorType = " << "TiltingMotor" << "\n";
+      }
+      else if (header.motorType == usMotorSettings::RotationalMotor) {
+        MHDfile << "MotorType = " << "RotationalMotor" << "\n";
+      }
       MHDfile << "Comment = Only in 3d. Radius between the probe motor center and the first pixel of each line acquired. 0 if linear motor.\n";
       MHDfile << "MotorRadius = " << header.motorRadius << "\n";
       MHDfile << "Comment = Only in 3d. Distance between 2 successive frames.\n";
@@ -407,8 +434,16 @@ void usMetaHeaderParser::parse()
       MHDfile << "ProbeRadius = " << header.probeRadius << "\n";
       MHDfile << "Comment = Distance between 2 scanlines.\n";
       MHDfile << "ScanLinePitch = " << header.scanLinePitch << "\n";
-      MHDfile << "Comment = True if 3D probe motor is totating, false if linear. \n";
-      MHDfile << "IsMotorRotating = " << header.isMotorRotating << "\n";
+      MHDfile << "Comment = Probe motor type : LinearMotor, TiltingMotor (for small roatations), or RotationalMotor (for 306° rotation).\n";
+      if (header.motorType == usMotorSettings::LinearMotor) {
+        MHDfile << "MotorType = " << "LinearMotor" << "\n";
+      }
+      else if (header.motorType == usMotorSettings::TiltingMotor) {
+        MHDfile << "MotorType = " << "TiltingMotor" << "\n";
+      }
+      else if (header.motorType == usMotorSettings::RotationalMotor) {
+        MHDfile << "MotorType = " << "RotationalMotor" << "\n";
+      }
       MHDfile << "Comment = Only in 3d. Radius between the probe motor center and the first pixel of each line acquired. 0 if linear motor.\n";
       MHDfile << "MotorRadius = " << header.motorRadius << "\n";
       MHDfile << "Comment = Only in 3d. Distance between 2 successive frames.\n";
@@ -442,7 +477,7 @@ void usMetaHeaderParser::read(const std::string& filename)
   if(this->header.imageType == RF_3D || this->header.imageType == PRESCAN_3D || this->header.imageType == POSTSCAN_3D) {
     this->m_motorSettings.setMotorRadius(header.motorRadius);
     this->m_motorSettings.setFramePitch(header.framePitch);
-    this->m_motorSettings.setMotorConvexity(header.isMotorRotating);
+    this->m_motorSettings.setMotorType(header.motorType);
   }
 }
 

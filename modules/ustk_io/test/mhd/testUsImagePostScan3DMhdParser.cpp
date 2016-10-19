@@ -196,7 +196,7 @@ int main(int argc, const char** argv)
     postscan3DReference.setTransducerConvexity(true);
     postscan3DReference.setFramePitch(0.258);
     postscan3DReference.setMotorRadius(0.025);
-    postscan3DReference.setMotorConvexity(true);
+    postscan3DReference.setMotorType(usMotorSettings::TiltingMotor);
     postscan3DReference.setWidthResolution(0.0058);
     postscan3DReference.setHeightResolution(0.0058);
 
