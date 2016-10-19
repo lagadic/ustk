@@ -77,7 +77,6 @@ public:
 
   void setFirstFrameIndex(long firstIndex);
 
-  void open(ImageType &image);
   void close();
 
   void saveImage(ImageType &image);
@@ -103,6 +102,9 @@ private:
 
   /** Top know if the sequence is already open*/
   bool is_open;
+
+
+  void open(ImageType &image);
 };
 
 /****************************************************************************
