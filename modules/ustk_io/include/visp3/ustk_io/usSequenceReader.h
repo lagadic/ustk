@@ -197,7 +197,6 @@ void usSequenceReader<usImageRF2D<unsigned char> >::open(usImageRF2D<unsigned ch
   setLastFrameIndex(xmlParser.getSequenceStopNumber());
   m_frameRate = xmlParser.getSequenceFrameRate();
   m_genericImageFileName = xmlParser.getImageFileName();
-  std::cout << m_genericImageFileName << std::endl;
 
   //saving the settings for all the rf sequence
   m_frame.setImageSettings(xmlParser.getImagePreScanSettings());
@@ -205,8 +204,11 @@ void usSequenceReader<usImageRF2D<unsigned char> >::open(usImageRF2D<unsigned ch
   //Reading image
   char buffer[50];
   sprintf(buffer, m_genericImageFileName.c_str(),m_firstFrame);
-  std::string imageFileName = buffer;
-  std::cout << imageFileName << std::endl;
+  std::string parentName = vpIoTools::getParent(m_sequenceFileName);
+  if(!parentName.empty()) {
+    parentName = parentName + vpIoTools::path("/");
+  }
+  std::string imageFileName =  parentName + buffer;
   vpImageIo::read(image,imageFileName);
   image.setImageSettings(m_frame);
 
@@ -238,7 +240,11 @@ void usSequenceReader<usImagePreScan2D<unsigned char> >::open(usImagePreScan2D<u
   //Reading image
   char buffer[50];
   sprintf(buffer, m_genericImageFileName.c_str(), m_firstFrame);
-  std::string imageFileName = buffer;
+  std::string parentName = vpIoTools::getParent(m_sequenceFileName);
+  if(!parentName.empty()) {
+    parentName = parentName + vpIoTools::path("/");
+  }
+  std::string imageFileName =  parentName + buffer;
   vpImageIo::read(image,imageFileName);
   image.setImageSettings(m_frame);
 
@@ -270,7 +276,11 @@ void usSequenceReader<usImagePostScan2D<unsigned char> >::open(usImagePostScan2D
   //Reading image
   char buffer[50];
   sprintf(buffer, m_genericImageFileName.c_str(), m_firstFrame);
-  std::string imageFileName = buffer;
+  std::string parentName = vpIoTools::getParent(m_sequenceFileName);
+  if(!parentName.empty()) {
+    parentName = parentName + vpIoTools::path("/");
+  }
+  std::string imageFileName =  parentName + buffer;
   vpImageIo::read(image,imageFileName);
   image.setImageSettings(m_frame);
 
@@ -291,8 +301,12 @@ void usSequenceReader<ImageType>::acquire(ImageType &image)
 
   //Reading image
   char buffer[50];
-  sprintf(buffer, m_genericImageFileName.c_str(), m_firstFrame);
-  std::string imageFileName = buffer;
+  sprintf(buffer, m_genericImageFileName.c_str(), m_frameCount);
+  std::string parentName = vpIoTools::getParent(m_sequenceFileName);
+  if(!parentName.empty()) {
+    parentName = parentName + vpIoTools::path("/");
+  }
+  std::string imageFileName =  parentName + buffer;
 
   vpImageIo::read(image,imageFileName);
   image.setImageSettings(m_frame);

@@ -232,7 +232,7 @@ void usSequenceWriter< usImageRF2D < unsigned char > >::close()
   xmlParser.setSequenceFrameRate(m_frameRate);
   xmlParser.setSequenceStartNumber(m_firstFrame);
   xmlParser.setSequenceStopNumber(m_frameCount-1);
-  xmlParser.setImageFileName(m_genericImageFileName); //just image name without any directory name
+  xmlParser.setImageFileName(m_genericImageFileName);
   xmlParser.save(m_sequenceFileName);
 }
 
@@ -252,7 +252,7 @@ void usSequenceWriter < usImagePreScan2D < unsigned char > >::close()
   xmlParser.setSequenceFrameRate(m_frameRate);
   xmlParser.setSequenceStartNumber(m_firstFrame);
   xmlParser.setSequenceStopNumber(m_frameCount-1);
-  xmlParser.setImageFileName(m_genericImageFileName); //just image name without any directory name
+  xmlParser.setImageFileName(m_genericImageFileName);
   xmlParser.save(m_sequenceFileName);
 }
 
@@ -272,7 +272,7 @@ void usSequenceWriter<usImagePostScan2D<unsigned char> >::close()
   xmlParser.setSequenceFrameRate(m_frameRate);
   xmlParser.setSequenceStartNumber(m_firstFrame);
   xmlParser.setSequenceStopNumber(m_frameCount-1);
-  xmlParser.setImageFileName(m_genericImageFileName); //just image name without any directory name
+  xmlParser.setImageFileName(m_genericImageFileName);
   xmlParser.save(m_sequenceFileName);
 }
 

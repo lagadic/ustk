@@ -231,7 +231,7 @@ usImageSettingsXmlParser::readMainClass (xmlDocPtr doc, xmlNodePtr node)
 void 
 usImageSettingsXmlParser::writeMainClass(xmlNodePtr node)
 {
-  std::string imageFileName = vpIoTools::getName(m_imageFileName);
+  std::string imageFileName = m_imageFileName;
   xmlWriteStringChild(node, "image_file_name", imageFileName);
   if (this->m_image_type == IMAGE_TYPE_RF) {
     xmlWriteStringChild(node, "image_type", std::string("rf"));

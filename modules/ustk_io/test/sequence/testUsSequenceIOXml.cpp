@@ -186,7 +186,7 @@ int main(int argc, const char** argv)
 
     usSequenceWriter<usImageRF2D<unsigned char> > writer;
     writer.setSequenceFileName(filename);
-    writer.setImageFileName(std::string("sequenceRF2D%04d.png"));
+    writer.setImageFileName(std::string("toto/sequenceRF2D%04d.png"));
     writer.setFrameRate(15);
     int i=0;
     while( i<4) {
