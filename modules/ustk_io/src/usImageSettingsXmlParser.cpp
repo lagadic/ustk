@@ -275,7 +275,6 @@ usImageSettingsXmlParser::writeMainClass(xmlNodePtr node)
     xmlWriteIntChild(node, "sequence_start_number", this->m_sequence_start);
     xmlWriteIntChild(node, "sequence_stop_number", this->m_sequence_stop);
   }
-  xmlWriteCharChild(node, "image_file_name", m_imageFileName.c_str());
 }
 
 /**
