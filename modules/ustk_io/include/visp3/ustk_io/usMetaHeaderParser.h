@@ -95,7 +95,7 @@ public:
     bool msb;
     ImageType imageType;
     bool isTransducerConvex;
-    bool isMotorRotating;
+    usMotorSettings::usMotorType motorType;
     double probeRadius;
     double scanLinePitch;
     double motorRadius;

@@ -263,7 +263,7 @@ void usImageIo::write(const usImageRF3D<unsigned char> &imageRf3D, const std::st
     header.isTransducerConvex = imageRf3D.isTransducerConvex();
     header.probeRadius = imageRf3D.getProbeRadius();
     header.scanLinePitch = imageRf3D.getScanLinePitch();
-    header.isMotorRotating = imageRf3D.isMotorRotating();
+    header.motorType = imageRf3D.getMotorType();
     header.motorRadius = imageRf3D.getMotorRadius();
     header.framePitch = imageRf3D.getFramePitch();
     //writing in file
@@ -320,7 +320,7 @@ void usImageIo::read(usImageRF3D<unsigned char> &imageRf3,const std::string head
     usMotorSettings motorSettings;
     motorSettings.setMotorRadius(mhdHeader.motorRadius);
     motorSettings.setFramePitch(mhdHeader.framePitch);
-    motorSettings.setMotorConvexity(mhdHeader.isMotorRotating);
+    motorSettings.setMotorType(mhdHeader.motorType);
     imageRf3.setMotorSettings(motorSettings);
 
     //data parsing
@@ -529,7 +529,7 @@ void usImageIo::write(const usImagePreScan3D<unsigned char> &preScanImage, const
     header.isTransducerConvex = preScanImage.isTransducerConvex();
     header.probeRadius = preScanImage.getProbeRadius();
     header.scanLinePitch = preScanImage.getScanLinePitch();
-    header.isMotorRotating = preScanImage.isMotorRotating();
+    header.motorType = preScanImage.getMotorType();
     header.motorRadius = preScanImage.getMotorRadius();
     header.framePitch = preScanImage.getFramePitch();
     //writing in file
@@ -586,7 +586,7 @@ void usImageIo::read(usImagePreScan3D<unsigned char> &preScanImage,const std::st
     usMotorSettings motorSettings;
     motorSettings.setMotorRadius(mhdHeader.motorRadius);
     motorSettings.setFramePitch(mhdHeader.framePitch);
-    motorSettings.setMotorConvexity(mhdHeader.isMotorRotating);
+    motorSettings.setMotorType(mhdHeader.motorType);
     preScanImage.setMotorSettings(motorSettings);
 
     //data parsing
@@ -830,7 +830,7 @@ void usImageIo::write(const usImagePostScan3D<unsigned char> &postScanImage, con
     header.MHDFileName = headerFileName;
     header.rawFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(".raw");
     header.isTransducerConvex = postScanImage.isTransducerConvex();
-    header.isMotorRotating = postScanImage.isMotorRotating();
+    header.motorType = postScanImage.getMotorType();
     header.probeRadius = postScanImage.getProbeRadius();
     header.scanLinePitch = postScanImage.getScanLinePitch();
     header.motorRadius = postScanImage.getMotorRadius();
@@ -889,7 +889,7 @@ void usImageIo::read(usImagePostScan3D<unsigned char> &postScanImage,std::string
     usMotorSettings motorSettings;
     motorSettings.setMotorRadius(mhdHeader.motorRadius);
     motorSettings.setFramePitch(mhdHeader.framePitch);
-    motorSettings.setMotorConvexity(mhdHeader.isMotorRotating);
+    motorSettings.setMotorType(mhdHeader.motorType);
     postScanImage.setMotorSettings(motorSettings);
       
 
