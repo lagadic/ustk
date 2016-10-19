@@ -236,7 +236,7 @@ int main(int argc, const char** argv)
 
     // Clean up memory allocated by the xml library
     vpXmlParser::cleanup();
-    std::cout << "exit code : " << (int)testPassed << std::endl;
+    std::cout << "Test exit code : " << (int)!testPassed << std::endl;
     return !testPassed;
   }
   catch(vpException &e) {
