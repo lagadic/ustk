@@ -46,7 +46,7 @@
 /**
 * Basic Constructor, all settings set to default.
 */
-usMotorSettings::usMotorSettings() : m_motorRadius(0.0), m_framePitch(0.0), m_isMotorRotating(true) {}
+usMotorSettings::usMotorSettings() : m_motorRadius(0.0), m_framePitch(0.0), m_motorType(LinearMotor) {}
 
 /**
 * Full Constructor, all settings availables
@@ -54,13 +54,13 @@ usMotorSettings::usMotorSettings() : m_motorRadius(0.0), m_framePitch(0.0), m_is
 * @param framePitch Radius between 2 successives acquisiton planes in the probe, in radians (rad).
 * @param isMotorRotating True if the probe motor is rotating, false otherwise.
 */
-usMotorSettings::usMotorSettings(double motorRadius, double framePitch, bool isMotorRotating) : m_motorRadius(motorRadius), m_framePitch(framePitch), m_isMotorRotating(isMotorRotating) {}
+usMotorSettings::usMotorSettings(double motorRadius, double framePitch, usMotorType motorType) : m_motorRadius(motorRadius), m_framePitch(framePitch), m_motorType(motorType) {}
 
 /**
 * Copy Constructor, all settings availables
 * @param other usMotorSettings you want to copy.
 */
-usMotorSettings::usMotorSettings(const usMotorSettings &other) : m_motorRadius(other.getMotorRadius()), m_framePitch(other.getFramePitch()), m_isMotorRotating(other.isMotorRotating()) {}
+usMotorSettings::usMotorSettings(const usMotorSettings &other) : m_motorRadius(other.getMotorRadius()), m_framePitch(other.getFramePitch()), m_motorType(other.getMotorType()) {}
 
 /**
 * Destructor.
@@ -75,7 +75,7 @@ usMotorSettings& usMotorSettings::operator=(const usMotorSettings& other)
 {
   m_motorRadius = other.getMotorRadius();
   m_framePitch = other.getFramePitch();
-  m_isMotorRotating = other.isMotorRotating();
+  m_motorType = other.getMotorType();
   return *this;
 }
 
@@ -83,7 +83,7 @@ bool usMotorSettings::operator==(const usMotorSettings& other)
 {
   return (this->getFramePitch() == other.getFramePitch() &&
           this->getMotorRadius() == other.getMotorRadius() &&
-          this->isMotorRotating() == other.isMotorRotating());
+          this->getMotorType() == other.getMotorType());
 }
 
 /**
@@ -93,7 +93,7 @@ VISP_EXPORT std::ostream& operator<<(std::ostream& out, const usMotorSettings& o
 {
   return out << "motor radius : " << other.getMotorRadius() << std::endl
     << "frame angle : " << other.getFramePitch() << std::endl
-    << "is motor rotating : " << other.isMotorRotating() << std::endl;
+    << "motor type : " << other.getMotorType() << std::endl;
 }
 
 //probe settings getters/setters
@@ -124,24 +124,24 @@ double usMotorSettings::getFramePitch() const { return m_framePitch; }
 
 /**
 * Set the motor type : convex or linear (from probe type used to acquire the image).
-* @param isMotorRotating Boolean to specify the motor type : true for a rotating motor, false for a linear motor.
+* @param isMotorRotating Motor type to specify the motor type : LinearMotor, TiltingMotor (for a rotative motor), RotationalMotor (for a 306° rotative motor).
 */
-void usMotorSettings::setMotorConvexity(bool isMotorRotating) {
-  m_isMotorRotating = isMotorRotating;
-  if (!isMotorRotating) {
+void usMotorSettings::setMotorType(usMotorType motorType) {
+  m_motorType = motorType;
+  if (motorType== LinearMotor) {
     setMotorRadius(0.0);
   }
 }
 
 /**
-* Get the motor type : convex or linear (from probe type used to acquire the image).
-* @return isMotorRotating Boolean to specify the motor type : true for convex, false for linear.
+* Get the motor type : linear, titling (small rotation angle) or rotational (360° rotation).
+* @return usMotorType to get the motor type.
 */
-bool usMotorSettings::isMotorRotating() const { return m_isMotorRotating; }
+usMotorSettings::usMotorType usMotorSettings::getMotorType() const { return m_motorType; }
 
 /**
-* Get the motor type : convex or linear (from probe type used to acquire the image).
-* @return isMotorRotating Boolean to specify the motor type : true for convex, false for linear.
+* Set the motor settings from other usMotorSettings.
+* @return usMotorSettings instance modified.
 */
 void usMotorSettings::setMotorSettings(const usMotorSettings &other)
 {
