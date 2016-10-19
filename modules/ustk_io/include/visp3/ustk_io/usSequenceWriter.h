@@ -199,8 +199,9 @@ void usSequenceWriter<ImageType>::open(ImageType &image)
 
   //Reading image
   char buffer[50];
-  sprintf(buffer, m_genericImageFileName.c_str(),m_firstFrame);
-  vpImageIo::write(image, buffer);
+  sprintf(buffer, m_genericImageFileName.c_str(),m_frameCount);
+  std::string imageFileName = vpIoTools::getParent(m_sequenceFileName) + vpIoTools::path("/") + buffer;
+  vpImageIo::write(image, imageFileName);
 
   m_frameCount = m_firstFrame + 1;
   is_open = true;
@@ -281,8 +282,10 @@ void usSequenceWriter<usImagePostScan2D<unsigned char> >::close()
 template<class ImageType>
 void usSequenceWriter<ImageType>::saveImage(ImageType &image)
 {
-  if (!is_open)
+  if (!is_open) {
     open(image);
+    return; //first image has been written by open();
+  }
 
   //Writing image
   char buffer[50];

@@ -193,6 +193,7 @@ int main(int argc, const char** argv)
       writer.saveImage(ImageBufferRef.at(i));
       i++;
     }
+    std::cout << "read i : " << i <<std::endl;
     writer.close();
 
     std::cout << "Written in " << filename << std::endl;
@@ -206,8 +207,8 @@ int main(int argc, const char** argv)
 
     reader.setSequenceFileName(filename);
     usImageRF2D<unsigned char> first;
-    reader.open(first);
-    ImageBuffer.push_back(first);
+    //reader.open(first);
+    //ImageBuffer.push_back(first);
     i = 0;
     while(!reader.end()) {
       usImageRF2D<unsigned char> rf2D;
@@ -215,6 +216,7 @@ int main(int argc, const char** argv)
       ImageBuffer.push_back(rf2D);
       i++;
     }
+    std::cout << "read i : " << i <<std::endl;
 
     std::cout << "Read from " << filename << std::endl ;
     std::cout << ImageBuffer.at(0);
