@@ -149,7 +149,7 @@ double usSequenceWriter<ImageType>::getFrameRate() const
 }
 
 /**
-* Settings fileName setter, with parents direcotries (relative or absolute). (ex : "../../myheader.xml", or : "/tmp/myheader.xml")
+* File name setter, with parents direcotries (relative or absolute). (ex : "../../myheader.xml", or : "/tmp/myheader.xml")
 */
 template<class ImageType>
 void usSequenceWriter<ImageType>::setSequenceFileName(const std::string &sequenceFileName)

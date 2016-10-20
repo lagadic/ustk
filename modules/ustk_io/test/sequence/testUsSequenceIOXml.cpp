@@ -180,7 +180,7 @@ int main(int argc, const char** argv)
     rf2DReference(116,80,36);
 
     std::vector<usImageRF2D<unsigned char> > ImageBufferRef;
-    for(int i=0;i<5;i++) {
+    for(int i=0;i<4;i++) {
       ImageBufferRef.push_back(rf2DReference);
     }
 
@@ -226,12 +226,17 @@ int main(int argc, const char** argv)
 
     if(reader.getFrameRate() != writer.getFrameRate() || ImageBuffer.size() != ImageBufferRef.size()){
       testPassed = false;
+      std::cout << "reader framerate : " << reader.getFrameRate() << std::endl;
+      std::cout << "writer framerate : " << writer.getFrameRate() << std::endl;
+      std::cout << "size buff : " << ImageBuffer.size() << std::endl;
+      std::cout << "size buff ref :  " << ImageBufferRef.size() << std::endl;
     }
 
     //checking every image
     for(unsigned int i = 0; i < ImageBuffer.size();i++) {
       if(ImageBuffer.at(i) != ImageBufferRef.at(i) ) {
         testPassed = false;
+        std::cout << "images not equal at index : " << i << std::endl;
       }
     }
 
