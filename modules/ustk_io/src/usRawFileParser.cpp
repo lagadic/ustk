@@ -44,7 +44,7 @@
 * @param image3D 3D-image to fill.
 * @param rawFilename File name of the image to read (with .raw extension).
 */
-void usRawFileParser::read(usImage3D<unsigned char> &image3D, const std::string rawFilename)
+void usRawFileParser::read(usImage3D<unsigned char> &image3D, const std::string &rawFilename)
 {
   std::fstream fileStream(rawFilename.c_str(), std::ios::in | std::ios::binary);
   unsigned int i = 0;
@@ -60,7 +60,7 @@ void usRawFileParser::read(usImage3D<unsigned char> &image3D, const std::string 
 * @param image3D 3D-image to write.
 * @param rawFilename File name of the image to write (with .raw extension).
 */
-void usRawFileParser::write(const usImage3D<unsigned char> &image3D, const std::string rawFilename)
+void usRawFileParser::write(const usImage3D<unsigned char> &image3D, const std::string &rawFilename)
 {
   std::fstream fileStream(rawFilename.c_str(), std::ios::out | std::ios::binary);
   unsigned int i = 0;
@@ -76,7 +76,7 @@ void usRawFileParser::write(const usImage3D<unsigned char> &image3D, const std::
 * @param image2D 2D-image to fill.
 * @param rawFilename File name of the image to read (with .raw extension).
 */
-void usRawFileParser::read(vpImage<unsigned char> &image2D, const std::string rawFilename)
+void usRawFileParser::read(vpImage<unsigned char> &image2D, const std::string &rawFilename)
 {
   std::fstream fileStream(rawFilename.c_str(), std::ios::in | std::ios::binary);
   for (unsigned int i = 0; i < image2D.getWidth(); i++) {
@@ -92,7 +92,7 @@ void usRawFileParser::read(vpImage<unsigned char> &image2D, const std::string ra
 * @param image2D 2D-image to write.
 * @param rawFilename File name of the image to write (with .raw extension).
 */
-void usRawFileParser::write(const vpImage<unsigned char> &image2D, const std::string rawFilename)
+void usRawFileParser::write(const vpImage<unsigned char> &image2D, const std::string &rawFilename)
 {
   std::fstream fileStream(rawFilename.c_str(), std::ios::out | std::ios::binary);
   for (unsigned int i = 0; i < image2D.getWidth(); i++) {

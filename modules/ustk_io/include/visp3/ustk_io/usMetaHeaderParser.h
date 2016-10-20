@@ -104,7 +104,7 @@ public:
 
   //Constructor
   usMetaHeaderParser();
-  usMetaHeaderParser(std::string MHDFilename);
+  usMetaHeaderParser(const std::string &MHDFilename);
   //Desctructor
   virtual ~usMetaHeaderParser();
 
@@ -127,16 +127,16 @@ public:
 
   void parse();
 
-  void read(const std::string& filename);
-  void readMHDHeader(const std::string fileName);
+  void read(const std::string &filename);
+  void readMHDHeader(const std::string &fileName);
 
   //Setters
   void setAxialResolution(const double axialresolution);
   void setHeightResolution(const double heightResolution);
-  void setImageFileName(const std::string imageFileName);
+  void setImageFileName(const std::string &imageFileName);
   void setMHDHeader(MHDHeader header);
   void setMotorSettings(const usMotorSettings motorSettings);
-  void setRawFileName(const std::string rawFileName);
+  void setRawFileName(const std::string &rawFileName);
   void setTransducerSettings(const usTransducerSettings transducerSettings);
   void setWidthResolution(const double widthResolution);
 

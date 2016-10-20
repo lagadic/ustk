@@ -67,7 +67,7 @@ usMetaHeaderParser::~usMetaHeaderParser()
 * Reading method.
 * @param fileName the mhd file to read.
 */
-void  usMetaHeaderParser::readMHDHeader(const std::string fileName)
+void  usMetaHeaderParser::readMHDHeader(const std::string &fileName)
 {
   std::string pathPrefix;
   std::string tmp;
@@ -503,7 +503,7 @@ void usMetaHeaderParser::setMotorSettings(const usMotorSettings motorSettings)
 * Image file name setter.
 * @param imageFileName Image file name (with .raw extesion).
 */
-void usMetaHeaderParser::setRawFileName(const std::string imageFileName)
+void usMetaHeaderParser::setRawFileName(const std::string &imageFileName)
 {
   header.rawFileName = imageFileName;
 }

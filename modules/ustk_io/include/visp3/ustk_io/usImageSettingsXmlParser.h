@@ -116,7 +116,7 @@ public:
   bool operator ==(usImageSettingsXmlParser const& other);
   
   //Data setters
-  void setImageFileName(std::string imageFileName);
+  void setImageFileName(const std::string &imageFileName);
   void setImagePreScanSettings(const usImagePreScanSettings imagePrescanSettings);
   void setImagePostScanSettings(const usImagePostScanSettings& imagePostScanSettings);
   void setImageSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex, double axialResolution, usImageType image_type);

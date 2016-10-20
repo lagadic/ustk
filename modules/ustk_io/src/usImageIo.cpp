@@ -97,7 +97,7 @@ void usImageIo::write(const usImageRF2D<unsigned char> &imageRf2D, const std::st
   //checking header type
   usImageIo::usHeaderFormatType headerFormat = getHeaderFormat(headerFileName);
   if (headerFormat == FORMAT_XML) {
-    std::string &imageFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(imageExtension2D);
+    std::string imageFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(imageExtension2D);
 #ifdef VISP_HAVE_XML2
     try {
       //writing image
@@ -125,7 +125,7 @@ void usImageIo::write(const usImageRF2D<unsigned char> &imageRf2D, const std::st
       throw(vpException(vpException::fatalError, "mhd files goes with .raw image extension"));
     }
 
-    std::string &imageFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(".raw");
+    std::string imageFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(".raw");
     //filling header
     usMetaHeaderParser::MHDHeader header;
     header.numberOfDimensions = 2;
@@ -257,7 +257,7 @@ void usImageIo::write(const usImageRF3D<unsigned char> &imageRf3D, const std::st
     if (imageExtension2D != ".raw") {
       throw(vpException(vpException::fatalError, "mhd files goes with .raw image extension"));
     }
-    std::string &imageFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(".raw");
+    std::string imageFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(".raw");
     //filling header
     usMetaHeaderParser::MHDHeader header;
     header.numberOfDimensions = 3;
@@ -534,7 +534,7 @@ void usImageIo::write(const usImagePreScan3D<unsigned char> &preScanImage, const
     if (imageExtension2D != ".raw") {
       throw(vpException(vpException::fatalError, "mhd files goes with .raw image extension"));
     }
-    std::string &imageFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(".raw");
+    std::string imageFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(".raw");
     //filling header
     usMetaHeaderParser::MHDHeader header;
     header.numberOfDimensions = 3;
@@ -705,7 +705,7 @@ void usImageIo::write(const usImagePostScan2D<unsigned char> &postScanImage, con
   usImageIo::usHeaderFormatType headerFormat = getHeaderFormat(headerFileName);
   if (headerFormat == FORMAT_XML) {
 #ifdef VISP_HAVE_XML2
-    std::string &imageFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(imageExtension2D);
+    std::string imageFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(imageExtension2D);
     try {
       //writing image
       vpImageIo::writePNG(postScanImage, imageFileName);
@@ -731,7 +731,7 @@ void usImageIo::write(const usImagePostScan2D<unsigned char> &postScanImage, con
       throw(vpException(vpException::fatalError, "mhd files goes with .raw image extension"));
     }
     //mhd writing
-    std::string &imageFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(".raw");
+    std::string imageFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(".raw");
     //filling header
     usMetaHeaderParser::MHDHeader header;
     header.numberOfDimensions = 2;
@@ -863,7 +863,7 @@ void usImageIo::write(const usImagePostScan3D<unsigned char> &postScanImage, con
     if (imageExtension2D != ".raw") {
       throw(vpException(vpException::fatalError, "mhd files goes with .raw image extension"));
     }
-    std::string &imageFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(".raw");
+    std::string imageFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(".raw");
     //filling header
     usMetaHeaderParser::MHDHeader header;
     header.numberOfDimensions = 3;

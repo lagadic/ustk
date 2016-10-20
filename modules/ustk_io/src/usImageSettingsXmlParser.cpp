@@ -351,7 +351,7 @@ void usImageSettingsXmlParser::setMotorSettings(const usMotorSettings &motorSett
 * Setter for image file name associated to the settings wrote in the xml file.
 * @param imageFileName : image file name with extestion.
 */
-void usImageSettingsXmlParser::setImageFileName(std::string imageFileName)
+void usImageSettingsXmlParser::setImageFileName(const std::string &imageFileName)
 { 
   m_imageFileName = imageFileName;
 }
