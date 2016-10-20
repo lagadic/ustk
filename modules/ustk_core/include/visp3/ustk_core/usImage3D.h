@@ -174,9 +174,9 @@ public:
   /**
   * Initialize the data container with the specified value.
   * @param value The data
-  * @param numberOfVloxels number of voxels in the volume
+  * @param numberOfVoxels number of voxels in the volume
   */
-  void initData(Type value,int numberOfVloxels);
+  void initData(Type value,int numberOfVoxels);
 
   /**
   * Assignment operator.
@@ -251,9 +251,9 @@ public:
   /**
   * Set the data container.
   * @param data The data container.
-  * @param numberOfVloxels The number of voxels in the image.
+  * @param numberOfVoxels The number of voxels in the image.
   */
-  void setData(Type* data, int numberOfVloxels);
+  void setData(Type* data, int numberOfVoxels);
 
   /**
   * Set the element spacing along the x-axis.
@@ -477,10 +477,10 @@ template<class Type> std::ostream& operator<<(std::ostream& out, const usImage3D
 }
 
 template<class Type>
-void usImage3D<Type>::setData(Type* data, int numberOfVloxels)
+void usImage3D<Type>::setData(Type* data, int numberOfVoxels)
 {
   try {
-    m_size =numberOfVloxels;
+    m_size =numberOfVoxels;
     memcpy(bitmap, data, m_size * sizeof(Type));
   }
   catch (std::exception e)
@@ -491,10 +491,10 @@ void usImage3D<Type>::setData(Type* data, int numberOfVloxels)
 }
 
 template<class Type>
-void usImage3D<Type>::initData(Type value,int numberOfVloxels)
+void usImage3D<Type>::initData(Type value, int numberOfVoxels)
 {
   try {
-    m_size =numberOfVloxels;
+    m_size =numberOfVoxels;
     std::fill_n(bitmap, m_size, value);
   }
   catch (std::exception e)
