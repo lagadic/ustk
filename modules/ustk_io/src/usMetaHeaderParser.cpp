@@ -358,7 +358,7 @@ void usMetaHeaderParser::parse()
       MHDfile << "ProbeRadius = " << header.probeRadius << "\n";
       MHDfile << "Comment = Distance between 2 scanlines.\n";
       MHDfile << "ScanLinePitch = " << header.scanLinePitch << "\n";
-      MHDfile << "Comment = Probe motor type : LinearMotor, TiltingMotor (for small roatations), or RotationalMotor (for 306° rotation).\n";
+      MHDfile << "Comment = Probe motor type : LinearMotor, TiltingMotor (for small roatations), or RotationalMotor (for 360 deg rotation).\n";
       if (header.motorType == usMotorSettings::LinearMotor) {
         MHDfile << "MotorType = " << "LinearMotor" << "\n";
       }
@@ -396,7 +396,7 @@ void usMetaHeaderParser::parse()
       MHDfile << "ProbeRadius = " << header.probeRadius << "\n";
       MHDfile << "Comment = Distance between 2 scanlines.\n";
       MHDfile << "ScanLinePitch = " << header.scanLinePitch << "\n";
-      MHDfile << "Comment = Probe motor type : LinearMotor, TiltingMotor (for small roatations), or RotationalMotor (for 306° rotation).\n";
+      MHDfile << "Comment = Probe motor type : LinearMotor, TiltingMotor (for small roatations), or RotationalMotor (for 360 deg rotation).\n";
       if (header.motorType == usMotorSettings::LinearMotor) {
         MHDfile << "MotorType = " << "LinearMotor" << "\n";
       }
@@ -434,7 +434,7 @@ void usMetaHeaderParser::parse()
       MHDfile << "ProbeRadius = " << header.probeRadius << "\n";
       MHDfile << "Comment = Distance between 2 scanlines.\n";
       MHDfile << "ScanLinePitch = " << header.scanLinePitch << "\n";
-      MHDfile << "Comment = Probe motor type : LinearMotor, TiltingMotor (for small roatations), or RotationalMotor (for 306° rotation).\n";
+      MHDfile << "Comment = Probe motor type : LinearMotor, TiltingMotor (for small roatations), or RotationalMotor (for 360 deg rotation).\n";
       if (header.motorType == usMotorSettings::LinearMotor) {
         MHDfile << "MotorType = " << "LinearMotor" << "\n";
       }

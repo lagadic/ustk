@@ -134,7 +134,7 @@ void usMotorSettings::setMotorType(usMotorType motorType) {
 }
 
 /**
-* Get the motor type : linear, titling (small rotation angle) or rotational (360° rotation).
+* Get the motor type : linear, titling (small rotation angle) or rotational (360&deg; rotation).
 * @return usMotorType to get the motor type.
 */
 usMotorSettings::usMotorType usMotorSettings::getMotorType() const { return m_motorType; }

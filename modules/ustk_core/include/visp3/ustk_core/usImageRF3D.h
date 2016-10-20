@@ -122,13 +122,17 @@ usImageRF3D<T>::usImageRF3D() : usImage3D<T>(), usImagePreScanSettings(), usMoto
 * @param scanLinePitch angle(rad) / distance(m) between 2 lines of the ultrasound probe used to acquire the RF image.
 * @param framePitch angle(rad) / distance(m) between 2 lines of the ultrasound probe used to acquire the RF image.
 * @param isTransducerConvex Boolean to specify if the image is acquired by a convex probe(true) or by a linear probe (false).
-* @param motorType usMotorType to specify if the image is acquired by a linear motor (LinearMotor), by a small angle rotation motor (TiltingMotor), or by a 360° roatation motor (RotationalMotor).
+* @param motorType usMotorType to specify if the image is acquired by a linear motor (LinearMotor),
+* by a small angle rotation motor (TiltingMotor), or by a 360&deg; roatation motor (RotationalMotor).
 * @param axial_resolution The distance (in meters) between 2 successive pixels acquired along a scanline.
 */
 template<class T>
-usImageRF3D<T>::usImageRF3D(unsigned int RFSampleNumber, unsigned int lineNumber, unsigned int frameNumber, double probeRadius, double motorRadius, double scanLinePitch, double framePitch,
+usImageRF3D<T>::usImageRF3D(unsigned int RFSampleNumber, unsigned int lineNumber, unsigned int frameNumber,
+                            double probeRadius, double motorRadius, double scanLinePitch, double framePitch,
                             bool isTransducerConvex, usMotorSettings::usMotorType motorType, double axial_resolution)
-  : usImage3D<T>(RFSampleNumber, lineNumber, frameNumber), usImagePreScanSettings(probeRadius, scanLinePitch, isTransducerConvex, axial_resolution), usMotorSettings(motorRadius, framePitch, motorType)
+  : usImage3D<T>(RFSampleNumber, lineNumber, frameNumber),
+    usImagePreScanSettings(probeRadius, scanLinePitch, isTransducerConvex, axial_resolution),
+    usMotorSettings(motorRadius, framePitch, motorType)
 {
 
 }
@@ -140,7 +144,9 @@ usImageRF3D<T>::usImageRF3D(unsigned int RFSampleNumber, unsigned int lineNumber
 * @param motorSettings usMotorSettings to copy.
 */
 template<class T>
-usImageRF3D<T>::usImageRF3D(usImage3D<T> image3D, usImagePreScanSettings imageSettings, usMotorSettings motorSettings) : usImage3D<T>(image3D), usImagePreScanSettings(imageSettings), usMotorSettings(motorSettings) {
+usImageRF3D<T>::usImageRF3D(usImage3D<T> image3D, usImagePreScanSettings imageSettings, usMotorSettings motorSettings)
+  : usImage3D<T>(image3D), usImagePreScanSettings(imageSettings), usMotorSettings(motorSettings)
+{
 
 }
 
@@ -149,7 +155,8 @@ usImageRF3D<T>::usImageRF3D(usImage3D<T> image3D, usImagePreScanSettings imageSe
 * @param image3D usImage3D to copy
 */
 template<class T>
-usImageRF3D<T>::usImageRF3D(usImage3D<T> image3D) : usImage3D<T>(image3D) {
+usImageRF3D<T>::usImageRF3D(usImage3D<T> image3D) : usImage3D<T>(image3D)
+{
 
 }
 
@@ -158,7 +165,8 @@ usImageRF3D<T>::usImageRF3D(usImage3D<T> image3D) : usImage3D<T>(image3D) {
 * @param imageSettings usImagePreScanSettings to copy
 */
 template<class T>
-usImageRF3D<T>::usImageRF3D(usImagePreScanSettings imageSettings) : usImagePreScanSettings(imageSettings) {
+usImageRF3D<T>::usImageRF3D(usImagePreScanSettings imageSettings) : usImagePreScanSettings(imageSettings)
+{
 
 }
 

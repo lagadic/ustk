@@ -130,14 +130,20 @@ usImagePreScan3D<T>::usImagePreScan3D() : usImage3D<T>(), usImagePreScanSettings
 * @param motorRadius radius of the ultrasound probe motor used to acquire the RF image.
 * @param scanLinePitch angle(rad) / distance(m) between 2 lines of the ultrasound probe used to acquire the RF image.
 * @param framePitch angle(rad) / distance(m) between 2 lines of the ultrasound probe used to acquire the RF image.
-* @param motorType usMotorType to specify if the image is acquired by a linear motor (LinearMotor), by a small angle rotation motor (TiltingMotor), or by a 360° roatation motor (RotationalMotor).
-* @param isMotorRotating Boolean to specify if the image is acquired by a rotating  motor (true) or by a linear motor (false).
+* @param motorType usMotorType to specify if the image is acquired by a linear motor (LinearMotor),
+* by a small angle rotation motor (TiltingMotor), or by a 360&deg; roatation motor (RotationalMotor).
+* @param isMotorRotating Boolean to specify if the image is acquired by a rotating  motor (true) or
+* by a linear motor (false).
 * @param axial_resolution Axial resolution of the image.
 */
 template<class T>
-usImagePreScan3D<T>::usImagePreScan3D(unsigned int BModeSampleNumber, unsigned int lineNumber, unsigned int frameNumber, double probeRadius, double motorRadius, double scanLinePitch, double framePitch,
-                                      bool isTransducerConvex, usMotorSettings::usMotorType motorType, double axial_resolution) :
-  usImage3D<T>(BModeSampleNumber, lineNumber, frameNumber), usImagePreScanSettings(probeRadius, scanLinePitch, isTransducerConvex, axial_resolution), usMotorSettings(motorRadius, framePitch, motorType)
+usImagePreScan3D<T>::usImagePreScan3D(unsigned int BModeSampleNumber, unsigned int lineNumber,
+                                      unsigned int frameNumber, double probeRadius, double motorRadius,
+                                      double scanLinePitch, double framePitch,
+                                      bool isTransducerConvex, usMotorSettings::usMotorType motorType, double axial_resolution)
+  : usImage3D<T>(BModeSampleNumber, lineNumber, frameNumber),
+    usImagePreScanSettings(probeRadius, scanLinePitch, isTransducerConvex, axial_resolution),
+    usMotorSettings(motorRadius, framePitch, motorType)
 {
 
 }
@@ -147,7 +153,8 @@ usImagePreScan3D<T>::usImagePreScan3D(unsigned int BModeSampleNumber, unsigned i
 * @param other usImagePreScan3D image you want to copy.
 */
 template<class T>
-usImagePreScan3D<T>::usImagePreScan3D(const usImagePreScan3D &other) : usImage3D<T>(other), usImagePreScanSettings(other), usMotorSettings(other)
+usImagePreScan3D<T>::usImagePreScan3D(const usImagePreScan3D &other)
+  : usImage3D<T>(other), usImagePreScanSettings(other), usMotorSettings(other)
 {
 
 }

@@ -120,13 +120,20 @@ usImagePostScan3D<T>::usImagePostScan3D() : usImage3D<T>(), usImagePostScanSetti
 * @param scanLinePitch angle(rad) / distance(m) between 2 lines of the ultrasound probe used to acquire the RF image.
 * @param framePitch angle(rad) / distance(m) between 2 lines of the ultrasound probe used to acquire the RF image.
 * @param isTransducerConvex Boolean to specify if the image is acquired by a convex probe transducer (true) or by a linear probe transducer (false).
-* @param motorType usMotorType to specify if the image is acquired by a linear motor (LinearMotor), by a small angle rotation motor (TiltingMotor), or by a 360° roatation motor (RotationalMotor).
+* @param motorType usMotorType to specify if the image is acquired by a linear motor (LinearMotor),
+* by a small angle rotation motor (TiltingMotor), or by a 360&deg; roatation motor (RotationalMotor).
 * @param heightResolution Image height resolution.
 * @param widthResolution Image width resolution.
 */
 template<class T>
-usImagePostScan3D<T>::usImagePostScan3D(unsigned int dimX, unsigned int dimY, unsigned int dimZ, double probeRadius, double motorRadius, double scanLinePitch, double framePitch, bool isTransducerConvex, usMotorSettings::usMotorType motorType, double heightResolution, double widthResolution)
-  : usImage3D<T>(dimX,dimY,dimZ), usImagePostScanSettings(probeRadius, scanLinePitch, isTransducerConvex,heightResolution,widthResolution), usMotorSettings( motorRadius, framePitch, motorType)
+usImagePostScan3D<T>::usImagePostScan3D(unsigned int dimX, unsigned int dimY, unsigned int dimZ,
+                                        double probeRadius, double motorRadius, double scanLinePitch,
+                                        double framePitch, bool isTransducerConvex,
+                                        usMotorSettings::usMotorType motorType,
+                                        double heightResolution, double widthResolution)
+  : usImage3D<T>(dimX, dimY, dimZ),
+    usImagePostScanSettings(probeRadius, scanLinePitch, isTransducerConvex, heightResolution,widthResolution),
+    usMotorSettings( motorRadius, framePitch, motorType)
 {
 
 }
@@ -136,7 +143,8 @@ usImagePostScan3D<T>::usImagePostScan3D(unsigned int dimX, unsigned int dimY, un
 * @param other usImagePostScan3D to copy
 */
 template<class T>
-usImagePostScan3D<T>::usImagePostScan3D(const usImagePostScan3D &other) : usImage3D<T>(other), usImagePostScanSettings(other), usMotorSettings(other)
+usImagePostScan3D<T>::usImagePostScan3D(const usImagePostScan3D &other)
+  : usImage3D<T>(other), usImagePostScanSettings(other), usMotorSettings(other)
 {
 
 }
@@ -148,8 +156,8 @@ usImagePostScan3D<T>::usImagePostScan3D(const usImagePostScan3D &other) : usImag
 * @param motorSettings usMotorSettings to copy
 */
 template<class T>
-usImagePostScan3D<T>::usImagePostScan3D(const usImage3D<T> &otherImage, const usImagePostScanSettings &postScanSettings, const usMotorSettings &motorSettings) : 
-  usImage3D<T>(otherImage), usImagePostScanSettings(postScanSettings), usMotorSettings(motorSettings)
+usImagePostScan3D<T>::usImagePostScan3D(const usImage3D<T> &otherImage, const usImagePostScanSettings &postScanSettings, const usMotorSettings &motorSettings)
+  : usImage3D<T>(otherImage), usImagePostScanSettings(postScanSettings), usMotorSettings(motorSettings)
 {
 
 }
