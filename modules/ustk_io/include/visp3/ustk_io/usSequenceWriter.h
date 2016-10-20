@@ -159,13 +159,21 @@ void usSequenceWriter<ImageType>::setSequenceFileName(const std::string &sequenc
 }
 
 /**
-* Image generic file name setter. ex : "rf2d%04d.png". Don't precise any directory, the images will be written in the same directory as the header.
+* Image generic file name setter. ex : "rf2d%04d.png". If you want to write the images in a subdirectory of where the header is, add the subdirs names in the file name (ex :"mySubDir/myserie%04d.png". Otherwise the images will be written in the same directory as the header.
 */
 template<class ImageType>
 void usSequenceWriter<ImageType>::setImageFileName(const std::string &imageFileName)
 {
-  m_genericImageFileName = imageFileName;
-  m_imageFileNameIsSet = true;
+  //create subdirectory if there is one
+  if(m_headerFileNameIsSet) {
+    std::string relativePathToHeader = vpIoTools::getParent(imageFileName);
+    if(!relativePathToHeader.empty()) {
+      std::string fullDirName = vpIoTools::getParent(m_sequenceFileName) + vpIoTools::path("/") + relativePathToHeader;
+      vpIoTools::makeDirectory(fullDirName);
+    }
+    m_genericImageFileName = imageFileName;
+    m_imageFileNameIsSet = true;
+  }
 }
 
 /**
