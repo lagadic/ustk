@@ -107,7 +107,7 @@ public:
   }
 
   //get image by its number in the sequence
-  void getFrame(ImageType &image,int position);
+  void getFrame(ImageType &image,int index);
 
   //attributes getters/setters
   double getFrameRate() const {return m_frameRate;}
@@ -127,7 +127,7 @@ public:
 ****************************************************************************/
 
 /**
-* Constructor.
+* Default constructor.
 */
 template<class ImageType>
 usSequenceReader<ImageType>::usSequenceReader() : m_frame(), m_frameRate(0.0), m_firstFrame(0), m_firstFrameIsSet(false),
@@ -147,6 +147,7 @@ usSequenceReader<ImageType>::~usSequenceReader()
 
 /**
 * Settings fileName setter.
+* @param sequenceFileName Relative or absolute file name of the sequence header.
 */
 template<class ImageType>
 void usSequenceReader<ImageType>::setSequenceFileName(const std::string &sequenceFileName)
@@ -157,6 +158,7 @@ void usSequenceReader<ImageType>::setSequenceFileName(const std::string &sequenc
 
 /**
 * Sequence first index setter.
+* @param firstIndex First index of the sequence.
 */
 template<class ImageType>
 void usSequenceReader<ImageType>::setFirstFrameIndex(long firstIndex)
@@ -167,6 +169,7 @@ void usSequenceReader<ImageType>::setFirstFrameIndex(long firstIndex)
 
 /**
 * Sequence last index setter.
+* @param lastIndex Last index of the sequence.
 */
 template<class ImageType>
 void usSequenceReader<ImageType>::setLastFrameIndex(long lastIndex)
@@ -186,6 +189,7 @@ void usSequenceReader<ImageType>::open(ImageType &image)
 
 /**
 * Sequence opening for usImageRF2D type.
+* @param image First image of the sequence to read.
 */
 template<>
 void usSequenceReader<usImageRF2D<unsigned char> >::open(usImageRF2D<unsigned char> &image)
@@ -221,6 +225,7 @@ void usSequenceReader<usImageRF2D<unsigned char> >::open(usImageRF2D<unsigned ch
 
 /**
 * Sequence opening for usImagePreScan2D type.
+* @param image First image of the sequence to read.
 */
 template<>
 void usSequenceReader<usImagePreScan2D<unsigned char> >::open(usImagePreScan2D<unsigned char> &image)
@@ -257,6 +262,7 @@ void usSequenceReader<usImagePreScan2D<unsigned char> >::open(usImagePreScan2D<u
 
 /**
 * Sequence opening for usImagePreScan2D type.
+* @param image First image of the sequence to read.
 */
 template<>
 void usSequenceReader<usImagePostScan2D<unsigned char> >::open(usImagePostScan2D<unsigned char> &image)
@@ -292,7 +298,8 @@ void usSequenceReader<usImagePostScan2D<unsigned char> >::open(usImagePostScan2D
 }
 
 /**
-* Sequence last index setter.
+* Sequence image acquisition (grabber-style : an internal counter is incremented to open next image at the next call).
+* @param image Image of the sequence to read.
 */
 template<class ImageType>
 void usSequenceReader<ImageType>::acquire(ImageType &image)
@@ -318,16 +325,18 @@ void usSequenceReader<ImageType>::acquire(ImageType &image)
 }
 
 /**
-* Sequence last index setter.
+* Sequence image acquisition with selection of the index (bypassing the internal counter).
+* @param image Image of the sequence to read.
+* @param index Index of the image you want to acquire.
 */
 template<class ImageType>
-void usSequenceReader<ImageType>::getFrame(ImageType &image,int position)
+void usSequenceReader<ImageType>::getFrame(ImageType &image, int index)
 {
   if (!is_open) {
     open(image);
     return;
   }
-  if(position < m_firstFrame || position > m_lastFrame) {
+  if(index < m_firstFrame || index > m_lastFrame) {
     throw(vpException(vpException::badValue,"position out of range"));
   }
 

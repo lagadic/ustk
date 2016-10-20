@@ -109,7 +109,7 @@ private:
 ****************************************************************************/
 
 /**
-* Constructor.
+* Default constructor.
 */
 template<class ImageType>
 usSequenceWriter<ImageType>::usSequenceWriter() : m_frame(), m_frameRate(0.0), m_firstFrame(0), m_firstFrameIsSet(false),
@@ -129,6 +129,7 @@ usSequenceWriter<ImageType>::~usSequenceWriter()
 
 /**
 * FrameRate setter.
+* @param frameRate Frame rate to set.
 */
 template<class ImageType>
 void usSequenceWriter<ImageType>::setFrameRate(double frameRate)
@@ -138,6 +139,7 @@ void usSequenceWriter<ImageType>::setFrameRate(double frameRate)
 
 /**
 * FrameRate getter.
+* @return frameRate Frame rate of the sequence.
 */
 template<class ImageType>
 double usSequenceWriter<ImageType>::getFrameRate() const
@@ -146,7 +148,8 @@ double usSequenceWriter<ImageType>::getFrameRate() const
 }
 
 /**
-* File name setter, with parents direcotries (relative or absolute). (ex : "../../myheader.xml", or : "/tmp/myheader.xml")
+* File name setter, with parents direcotries (relative or absolute).
+* @param sequenceFileName File name, ex : "../../myheader.xml", or : "/tmp/myheader.xml".
 */
 template<class ImageType>
 void usSequenceWriter<ImageType>::setSequenceFileName(const std::string &sequenceFileName)
@@ -156,7 +159,9 @@ void usSequenceWriter<ImageType>::setSequenceFileName(const std::string &sequenc
 }
 
 /**
-* Image generic file name setter. ex : "rf2d%04d.png". If you want to write the images in a subdirectory of where the header is, add the subdirs names in the file name (ex :"mySubDir/myserie%04d.png". Otherwise the images will be written in the same directory as the header.
+* Image generic file name setter. ex : "rf2d%04d.png". If you want to write the images in a subdirectory of where the header is,
+* add the subdirs names in the file name (ex :"mySubDir/myserie%04d.png". Otherwise the images will be written in the same directory as the header.
+* @param imageFileName Image file name, relatively to the header.
 */
 template<class ImageType>
 void usSequenceWriter<ImageType>::setImageFileName(const std::string &imageFileName)
@@ -175,6 +180,7 @@ void usSequenceWriter<ImageType>::setImageFileName(const std::string &imageFileN
 
 /**
 * Sequence first index setter.
+* @param firstIndex Sequence first index.
 */
 template<class ImageType>
 void usSequenceWriter<ImageType>::setFirstFrameIndex(long firstIndex)
@@ -185,6 +191,7 @@ void usSequenceWriter<ImageType>::setFirstFrameIndex(long firstIndex)
 
 /**
 * Sequence opening.
+* @param image First image to write.
 */
 template<class ImageType>
 void usSequenceWriter<ImageType>::open(ImageType &image)
@@ -222,7 +229,7 @@ void usSequenceWriter<ImageType>::close()
 }
 
 /**
-* Sequence closing for usImageRF2D.
+* Sequence closing for usImageRF2D. Writes the header.
 */
 template<>
 void usSequenceWriter< usImageRF2D < unsigned char > >::close()
@@ -242,7 +249,7 @@ void usSequenceWriter< usImageRF2D < unsigned char > >::close()
 }
 
 /**
-* Sequence closing for usImagePreScan2D.
+* Sequence closing for usImagePreScan2D. Writes the header.
 */
 template<>
 void usSequenceWriter < usImagePreScan2D < unsigned char > >::close()
@@ -262,7 +269,7 @@ void usSequenceWriter < usImagePreScan2D < unsigned char > >::close()
 }
 
 /**
-* Sequence closing for usImagePostScan2D.
+* Sequence closing for usImagePostScan2D. Writes the header.
 */
 template<>
 void usSequenceWriter<usImagePostScan2D<unsigned char> >::close()
@@ -283,6 +290,7 @@ void usSequenceWriter<usImagePostScan2D<unsigned char> >::close()
 
 /**
 * Sequence last index setter.
+* @param image Next image to write.
 */
 template<class ImageType>
 void usSequenceWriter<ImageType>::saveImage(ImageType &image)
