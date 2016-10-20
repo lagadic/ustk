@@ -49,6 +49,7 @@ usImagePreScanSettings::usImagePreScanSettings()
 
 /**
 * Copy constructor.
+* @param other Image settings to copy.
 */
 usImagePreScanSettings::usImagePreScanSettings(const usImagePreScanSettings &other)
   : usTransducerSettings(other), m_axialResolution(other.getAxialResolution())
@@ -58,15 +59,20 @@ usImagePreScanSettings::usImagePreScanSettings(const usImagePreScanSettings &oth
 
 /**
 * Full settings constructor.
+* @param probeRadius Radius of the probe used to acquire the image.
+* @param scanLinePitch Pitch between 2 scanlines (in radians if isTransducerConvex = true, in meters otherwise).
+* @param isTransducerConvex True if transducer used to acquire the image is convex.
+* @param axialResolution Image axial resolution in meters (distance between two samples in a scanline).
 */
-usImagePreScanSettings::usImagePreScanSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex, double axial_resolution)
-  : usTransducerSettings(probeRadius, scanLinePitch, isTransducerConvex), m_axialResolution(axial_resolution)
+usImagePreScanSettings::usImagePreScanSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex, double axialResolution)
+  : usTransducerSettings(probeRadius, scanLinePitch, isTransducerConvex), m_axialResolution(axialResolution)
 {
 
 }
 
 /**
-* Full settings constructor.
+* Copy constructor.
+* @param preScanSettings Pre-scan settings to copy.
 */
 void usImagePreScanSettings::setImageSettings(const usImagePreScanSettings& preScanSettings)
 {

@@ -65,21 +65,18 @@ class usSequenceWriter
 public:
 
   usSequenceWriter();
-
   ~usSequenceWriter();
-
-  //attributes getters/setters
-  void setFrameRate(double frameRate);
-  double getFrameRate() const;
-
-  void setSequenceFileName(const std::string &sequenceFileName);
-  void setImageFileName(const std::string &imageFileName);
-
-  void setFirstFrameIndex(long firstIndex);
 
   void close();
 
+  double getFrameRate() const;
+
   void saveImage(ImageType &image);
+
+  void setFirstFrameIndex(long firstIndex);
+  void setFrameRate(double frameRate);
+  void setImageFileName(const std::string &imageFileName);
+  void setSequenceFileName(const std::string &sequenceFileName);
 
 private:
   /** Ultrasound image settings saved for writing at end of sequence*/

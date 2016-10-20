@@ -90,10 +90,10 @@ public:
   friend VISP_EXPORT std::ostream& operator<<(std::ostream& out, const usMotorSettings& other);
 
   // Settings from the 3D probe
-  void setMotorRadius(double motorRadius);
   void setFramePitch(double framePitch);
-  void setMotorType(usMotorType m_motorType);
+  void setMotorRadius(double motorRadius);
   void setMotorSettings(const usMotorSettings &other);
+  void setMotorType(usMotorType m_motorType);
 
   //@}
 

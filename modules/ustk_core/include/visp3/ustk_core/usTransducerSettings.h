@@ -77,11 +77,9 @@ public:
   bool isTransducerConvex() const;
 
   usTransducerSettings& operator=(const usTransducerSettings& other);
-
-  //comparison
   bool operator==(usTransducerSettings const& other);
-
   friend VISP_EXPORT std::ostream& operator<<(std::ostream& out, const usTransducerSettings &other);
+
   //Settings form the probe
   void setTransducerSettings(const usTransducerSettings& other);
   void setTransducerConvexity(const bool isTransducerConvex);

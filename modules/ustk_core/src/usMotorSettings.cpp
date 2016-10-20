@@ -52,15 +52,23 @@ usMotorSettings::usMotorSettings() : m_motorRadius(0.0), m_framePitch(0.0), m_mo
 * Full Constructor, all settings availables
 * @param motorRadius Distance between the rotation center of the probe motor and the first pixel arc acquired, in meters (m).
 * @param framePitch Radius between 2 successives acquisiton planes in the probe, in radians (rad).
-* @param isMotorRotating True if the probe motor is rotating, false otherwise.
+* @param motorType Motor type of the probe used.
 */
-usMotorSettings::usMotorSettings(double motorRadius, double framePitch, usMotorType motorType) : m_motorRadius(motorRadius), m_framePitch(framePitch), m_motorType(motorType) {}
+usMotorSettings::usMotorSettings(double motorRadius, double framePitch, usMotorType motorType)
+: m_motorRadius(motorRadius), m_framePitch(framePitch), m_motorType(motorType)
+{
+
+}
 
 /**
 * Copy Constructor, all settings availables
 * @param other usMotorSettings you want to copy.
 */
-usMotorSettings::usMotorSettings(const usMotorSettings &other) : m_motorRadius(other.getMotorRadius()), m_framePitch(other.getFramePitch()), m_motorType(other.getMotorType()) {}
+usMotorSettings::usMotorSettings(const usMotorSettings &other) : m_motorRadius(other.getMotorRadius()),
+ m_framePitch(other.getFramePitch()), m_motorType(other.getMotorType())
+ {
+
+ }
 
 /**
 * Destructor.
@@ -102,31 +110,44 @@ VISP_EXPORT std::ostream& operator<<(std::ostream& out, const usMotorSettings& o
 * Set the motor  radius (m).
 * @param motorRadius Motor radius in meters.
 */
-void usMotorSettings::setMotorRadius(double motorRadius) { m_motorRadius = motorRadius; }
+void usMotorSettings::setMotorRadius(double motorRadius)
+{
+  m_motorRadius = motorRadius;
+}
 
 /**
 * Get the probe radius (m).
 * @return motorRadius Motor radius in meters.
 */
-double usMotorSettings::getMotorRadius() const { return m_motorRadius; }
+double usMotorSettings::getMotorRadius() const
+{
+  return m_motorRadius;
+}
 
 /**
 * Set the frame angle (rad).
 * @param framePitch Frame angle of the probe in radians.
 */
-void usMotorSettings::setFramePitch(double framePitch) { m_framePitch = framePitch; }
+void usMotorSettings::setFramePitch(double framePitch)
+{
+  m_framePitch = framePitch;
+}
 
 /**
 * Get the frame angle (rad).
 * @return m_lineAngle Frame angle of the probe in radians.
 */
-double usMotorSettings::getFramePitch() const { return m_framePitch; }
+double usMotorSettings::getFramePitch() const
+{
+  return m_framePitch;
+}
 
 /**
 * Set the motor type : convex or linear (from probe type used to acquire the image).
-* @param isMotorRotating Motor type to specify the motor type : LinearMotor, TiltingMotor (for a rotative motor), RotationalMotor (for a 306° rotative motor).
+* @param motorType Motor type to specify the motor type : LinearMotor, TiltingMotor (for a rotative motor), RotationalMotor (for a 360&deg; rotative motor).
 */
-void usMotorSettings::setMotorType(usMotorType motorType) {
+void usMotorSettings::setMotorType(usMotorType motorType)
+{
   m_motorType = motorType;
   if (motorType== LinearMotor) {
     setMotorRadius(0.0);
@@ -137,7 +158,10 @@ void usMotorSettings::setMotorType(usMotorType motorType) {
 * Get the motor type : linear, titling (small rotation angle) or rotational (360&deg; rotation).
 * @return usMotorType to get the motor type.
 */
-usMotorSettings::usMotorType usMotorSettings::getMotorType() const { return m_motorType; }
+usMotorSettings::usMotorType usMotorSettings::getMotorType() const
+{
+  return m_motorType;
+}
 
 /**
 * Set the motor settings from other usMotorSettings.

@@ -94,19 +94,8 @@ public:
 
   ~usSequenceReader();
 
-  //attributes getters/setters
-  double getFrameRate() const {return m_frameRate;}
-
-  void setSequenceFileName(const std::string &sequenceFileName);
-
-  void setFirstFrameIndex(long firstIndex);
-  void setLastFrameIndex(long lastIndex);
-
-  void open(ImageType &image);
   //get images in grabber style
   void acquire(ImageType &image);
-  //get image by its number in the sequence
-  void getFrame(ImageType &image,int position);
 
   /*!
     \return true if the end of the sequence is reached.
@@ -116,6 +105,20 @@ public:
       return true;
     return false;
   }
+
+  //get image by its number in the sequence
+  void getFrame(ImageType &image,int position);
+
+  //attributes getters/setters
+  double getFrameRate() const {return m_frameRate;}
+
+  void open(ImageType &image);
+
+  void setFirstFrameIndex(long firstIndex);
+  void setLastFrameIndex(long lastIndex);
+  void setSequenceFileName(const std::string &sequenceFileName);
+
+
 
 };
 

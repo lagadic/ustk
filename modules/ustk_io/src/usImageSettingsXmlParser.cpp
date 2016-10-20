@@ -57,7 +57,6 @@ usImageSettingsXmlParser::usImageSettingsXmlParser()
   nodeMap["height_resolution"] = CODE_XML_HEIGHT_RESOLUTION;
   nodeMap["width_resolution"] = CODE_XML_WIDTH_RESOLUTION;
   nodeMap["image_file_name"] = CODE_XML_ASSOCIATED_IMAGE_FILE_NAME;
-  //nodeMap["sequence_name"] = CODE_XML_SEQUENCE_NAME;
   nodeMap["sequence_frame_rate"] = CODE_XML_SEQUENCE_FRAME_RATE;
   nodeMap["sequence_start_number"] = CODE_XML_SEQUENCE_FIRST_IMAGE_NUMBER;
   nodeMap["sequence_stop_number"] = CODE_XML_SEQUENCE_LAST_IMAGE_NUMBER;
@@ -303,7 +302,8 @@ void usImageSettingsXmlParser::setImagePostScanSettings(const usImagePostScanSet
 * @param axialResolution : the image axial resolution.
 * @param image_type : image type (rf or pre-scan).
 */
-void usImageSettingsXmlParser::setImageSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex, double axialResolution, usImageType image_type) 
+void usImageSettingsXmlParser::setImageSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex,
+                                                double axialResolution, usImageType image_type)
 {
   if (image_type == usImageSettingsXmlParser::IMAGE_TYPE_PRESCAN || image_type == usImageSettingsXmlParser::IMAGE_TYPE_RF)
   {
@@ -326,7 +326,8 @@ void usImageSettingsXmlParser::setImageSettings(double probeRadius, double scanL
 * @param widthResolution : the image width resolution.
 * @param heightResolution : the image height resolution.
 */
-void usImageSettingsXmlParser::setImageSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex, double widthResolution, double heightResolution)
+void usImageSettingsXmlParser::setImageSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex,
+                                                double widthResolution, double heightResolution)
 {
   m_postScanSettings.setTransducerConvexity(isTransducerConvex);
   m_postScanSettings.setProbeRadius(probeRadius);

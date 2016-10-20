@@ -63,7 +63,8 @@ std::string usImageIo::getExtension(const std::string &filename)
 {
   // extract the extension
   size_t dot = filename.find_last_of(".");
-  std::string ext = filename.substr(dot, filename.size() - 1);
+  std::string filenameCopy = filename;
+  std::string ext = filenameCopy.substr(dot, filenameCopy.size() - 1);
   return ext;
 }
 
@@ -72,7 +73,8 @@ std::string usImageIo::getExtension(const std::string &filename)
 * @param imageRf2D The RF image to write.
 * @param headerFileName The header file name to write.
 */
-void usImageIo::write(const usImageRF2D<unsigned char> &imageRf2D, const std::string headerFileName) {
+void usImageIo::write(const usImageRF2D<unsigned char> &imageRf2D, const std::string &headerFileName)
+{
   //checking header type
   usImageIo::usHeaderFormatType headerFormat = getHeaderFormat(headerFileName);
   if (headerFormat == FORMAT_XML) {
@@ -89,11 +91,13 @@ void usImageIo::write(const usImageRF2D<unsigned char> &imageRf2D, const std::st
 * @param headerFileName The header file name to write.
 * @param imageExtension2D The 2D image extension.
 */
-void usImageIo::write(const usImageRF2D<unsigned char> &imageRf2D, const std::string headerFileName, const std::string imageExtension2D) {
+void usImageIo::write(const usImageRF2D<unsigned char> &imageRf2D, const std::string &headerFileName,
+ const std::string &imageExtension2D)
+{
   //checking header type
   usImageIo::usHeaderFormatType headerFormat = getHeaderFormat(headerFileName);
   if (headerFormat == FORMAT_XML) {
-    std::string imageFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(imageExtension2D);
+    std::string &imageFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(imageExtension2D);
 #ifdef VISP_HAVE_XML2
     try {
       //writing image
@@ -121,7 +125,7 @@ void usImageIo::write(const usImageRF2D<unsigned char> &imageRf2D, const std::st
       throw(vpException(vpException::fatalError, "mhd files goes with .raw image extension"));
     }
 
-    std::string imageFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(".raw");
+    std::string &imageFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(".raw");
     //filling header
     usMetaHeaderParser::MHDHeader header;
     header.numberOfDimensions = 2;
@@ -158,7 +162,8 @@ void usImageIo::write(const usImageRF2D<unsigned char> &imageRf2D, const std::st
 * @param [out] imageRf2D The RF image to read.
 * @param [in] headerFileName The header file name to read.
 */
-void usImageIo::read(usImageRF2D<unsigned char> &imageRf2D, const std::string headerFileName) {
+void usImageIo::read(usImageRF2D<unsigned char> &imageRf2D, const std::string &headerFileName)
+{
   usImageIo::usHeaderFormatType headerFormat = getHeaderFormat(headerFileName);
   if (headerFormat == FORMAT_XML) {
 #ifdef VISP_HAVE_XML2
@@ -176,7 +181,8 @@ void usImageIo::read(usImageRF2D<unsigned char> &imageRf2D, const std::string he
     vpImageIo::read(imageRf2D, fullImageFileName);
 
     imageRf2D.setImageSettings(usImagePreScanSettings(xmlSettings.getImagePreScanSettings().getProbeRadius(),
-      xmlSettings.getImagePreScanSettings().getScanLinePitch(), xmlSettings.getImagePreScanSettings().isTransducerConvex(), xmlSettings.getImagePreScanSettings().getAxialResolution()));
+      xmlSettings.getImagePreScanSettings().getScanLinePitch(), xmlSettings.getImagePreScanSettings().isTransducerConvex(),
+      xmlSettings.getImagePreScanSettings().getAxialResolution()));
 #else
     throw(vpException(vpException::fatalEtrror, "Requires xml2 library"));
 #endif //VISP_HAVE_XML2
@@ -217,7 +223,8 @@ void usImageIo::read(usImageRF2D<unsigned char> &imageRf2D, const std::string he
 * @param imageRf3D The RF image to write.
 * @param headerFileName The header file name to write.
 */
-void usImageIo::write(const usImageRF3D<unsigned char> &imageRf3D, const std::string headerFileName) {
+void usImageIo::write(const usImageRF3D<unsigned char> &imageRf3D, const std::string &headerFileName)
+{
   //checking header type
   usImageIo::usHeaderFormatType headerFormat = getHeaderFormat(headerFileName);
   if (headerFormat == FORMAT_XML) {
@@ -234,7 +241,8 @@ void usImageIo::write(const usImageRF3D<unsigned char> &imageRf3D, const std::st
 * @param headerFileName The header file name to write.
 * @param imageExtension2D The 2D image extension.
 */
-void usImageIo::write(const usImageRF3D<unsigned char> &imageRf3D, const std::string headerFileName, const std::string imageExtension2D) {
+void usImageIo::write(const usImageRF3D<unsigned char> &imageRf3D, const std::string &headerFileName, const std::string &imageExtension2D)
+{
   //checking header type
   usImageIo::usHeaderFormatType headerFormat = getHeaderFormat(headerFileName);
   if (headerFormat == FORMAT_XML) {
@@ -249,7 +257,7 @@ void usImageIo::write(const usImageRF3D<unsigned char> &imageRf3D, const std::st
     if (imageExtension2D != ".raw") {
       throw(vpException(vpException::fatalError, "mhd files goes with .raw image extension"));
     }
-    std::string imageFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(".raw");
+    std::string &imageFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(".raw");
     //filling header
     usMetaHeaderParser::MHDHeader header;
     header.numberOfDimensions = 3;
@@ -292,7 +300,8 @@ void usImageIo::write(const usImageRF3D<unsigned char> &imageRf3D, const std::st
 * @param [out] imageRf3 The RF image to read.
 * @param [in] headerFileName The header file name to read.
 */
-void usImageIo::read(usImageRF3D<unsigned char> &imageRf3,const std::string headerFileName) {
+void usImageIo::read(usImageRF3D<unsigned char> &imageRf3, const std::string &headerFileName)
+{
   usImageIo::usHeaderFormatType headerFormat = getHeaderFormat(headerFileName);
   if (headerFormat == FORMAT_XML) {
 #ifdef VISP_HAVE_XML2
@@ -342,7 +351,8 @@ void usImageIo::read(usImageRF3D<unsigned char> &imageRf3,const std::string head
 * @param preScanImage The pre-scan image to write.
 * @param headerFileName The header file name to write, with extension.
 */
-void usImageIo::write(const usImagePreScan2D<unsigned char> & preScanImage, const std::string headerFileName) {
+void usImageIo::write(const usImagePreScan2D<unsigned char>  &preScanImage, const std::string &headerFileName)
+{
 //checking header type
   usImageIo::usHeaderFormatType headerFormat = getHeaderFormat(headerFileName);
   if (headerFormat == FORMAT_XML) {
@@ -362,11 +372,12 @@ void usImageIo::write(const usImagePreScan2D<unsigned char> & preScanImage, cons
 * @param headerFileName The header file name to write, with extension.
 * @param imageExtension2D The image extention name to write (ex : ".png").
 */
-void usImageIo::write(const usImagePreScan2D<unsigned char> & preScanImage, const std::string headerFileName, const std::string imageExtension2D) {
+void usImageIo::write(const usImagePreScan2D<unsigned char> &preScanImage, const std::string &headerFileName, const std::string &imageExtension2D)
+{
   //checking header type
   usImageIo::usHeaderFormatType headerFormat = getHeaderFormat(headerFileName);
   if (headerFormat == FORMAT_XML) {
-    std::string imageFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(imageExtension2D);
+    std::string &imageFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(imageExtension2D);
 #ifdef VISP_HAVE_XML2
     try {
       //writing image
@@ -393,7 +404,7 @@ void usImageIo::write(const usImagePreScan2D<unsigned char> & preScanImage, cons
     if (imageExtension2D != ".raw") {
       throw(vpException(vpException::fatalError, "mhd files goes with .raw image extension"));
     }
-    std::string imageFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(".raw");
+    std::string &imageFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(".raw");
     //filling header
     usMetaHeaderParser::MHDHeader header;
     header.numberOfDimensions = 2;
@@ -430,7 +441,7 @@ void usImageIo::write(const usImagePreScan2D<unsigned char> & preScanImage, cons
 * @param [out] preScanImage The pre-scan image to read.
 * @param [in] headerFileName The header file name to read, with extension.
 */
-void usImageIo::read(usImagePreScan2D<unsigned char> &preScanImage,const std::string headerFileName)
+void usImageIo::read(usImagePreScan2D<unsigned char> &preScanImage,const std::string &headerFileName)
 {
   usImageIo::usHeaderFormatType headerFormat = getHeaderFormat(headerFileName);
   if (headerFormat == FORMAT_XML) {
@@ -489,7 +500,8 @@ void usImageIo::read(usImagePreScan2D<unsigned char> &preScanImage,const std::st
 * @param preScanImage The pre-scan image to write.
 * @param headerFileName The image file name to write.
 */
-void usImageIo::write(const usImagePreScan3D<unsigned char> &preScanImage, const std::string headerFileName) {
+void usImageIo::write(const usImagePreScan3D<unsigned char> &preScanImage, const std::string &headerFileName)
+{
   //checking header type
   usImageIo::usHeaderFormatType headerFormat = getHeaderFormat(headerFileName);
   if (headerFormat == FORMAT_XML) {
@@ -506,7 +518,8 @@ void usImageIo::write(const usImagePreScan3D<unsigned char> &preScanImage, const
 * @param headerFileName The image file name to write.
 * @param imageExtension2D The 2D image extension.
 */
-void usImageIo::write(const usImagePreScan3D<unsigned char> &preScanImage, const std::string headerFileName, const std::string imageExtension2D) {
+void usImageIo::write(const usImagePreScan3D<unsigned char> &preScanImage, const std::string &headerFileName, const std::string &imageExtension2D)
+{
   //checking header type
   usImageIo::usHeaderFormatType headerFormat = getHeaderFormat(headerFileName);
   if (headerFormat == FORMAT_XML) {
@@ -521,7 +534,7 @@ void usImageIo::write(const usImagePreScan3D<unsigned char> &preScanImage, const
     if (imageExtension2D != ".raw") {
       throw(vpException(vpException::fatalError, "mhd files goes with .raw image extension"));
     }
-    std::string imageFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(".raw");
+    std::string &imageFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(".raw");
     //filling header
     usMetaHeaderParser::MHDHeader header;
     header.numberOfDimensions = 3;
@@ -563,7 +576,8 @@ void usImageIo::write(const usImagePreScan3D<unsigned char> &preScanImage, const
 * @param [out] preScanImage The pre-scan image to read.
 * @param [in] headerFileName The image file name to read, with .xml extension.
 */
-void usImageIo::read(usImagePreScan3D<unsigned char> &preScanImage,const std::string headerFileName) {
+void usImageIo::read(usImagePreScan3D<unsigned char> &preScanImage,const std::string &headerFileName)
+{
   usImageIo::usHeaderFormatType headerFormat = getHeaderFormat(headerFileName);
   if (headerFormat == FORMAT_XML) {
 #ifdef VISP_HAVE_XML2
@@ -614,10 +628,10 @@ void usImageIo::read(usImagePreScan3D<unsigned char> &preScanImage,const std::st
 * @param headerFileName The image file name to write.
 * @param imageExtension2D The 2D image extension.
 */
-void usImageIo::write(const usImagePreScan2D<double> & preScan2DImage,
-                      const std::string headerFileName, const std::string imageExtension2D)
+void usImageIo::write(const usImagePreScan2D<double> &preScan2DImage,
+                      const std::string &headerFileName, const std::string &imageExtension2D)
 {
-  // TODO: to implemented
+  // TODO: to implement
   (void) preScan2DImage;
   (void) headerFileName;
   (void) imageExtension2D;
@@ -628,9 +642,10 @@ void usImageIo::write(const usImagePreScan2D<double> & preScan2DImage,
 * @param [out] preScan2D The pre-scan image to read.
 * @param [in] headerFileName The image file name to read.
 */
-void usImageIo::read(usImagePreScan2D<double> &preScan2D,std::string headerFileName)
+void usImageIo::read(usImagePreScan2D<double> &preScan2D, const std::string &headerFileName)
 {
-  // TODO: to implemented
+  // TODO: to implement
+  (void) preScan2D;
   (void) headerFileName;
 }
 
@@ -640,10 +655,10 @@ void usImageIo::read(usImagePreScan2D<double> &preScan2D,std::string headerFileN
 * @param headerFileName The image file name to write.
 * @param imageExtension2D The 2D image extension.
 */
-void usImageIo::write(const usImagePreScan3D<double> &preScan3DImage, const std::string headerFileName,
-                      const std::string imageExtension2D)
+void usImageIo::write(const usImagePreScan3D<double> &preScan3DImage, const std::string &headerFileName,
+                      const std::string &imageExtension2D)
 {
-  // TODO: to implemented
+  // TODO: to implement
   (void) preScan3DImage;
   (void) headerFileName;
   (void) imageExtension2D;
@@ -654,9 +669,9 @@ void usImageIo::write(const usImagePreScan3D<double> &preScan3DImage, const std:
 * @param [out] preScan3DImage The pre-scan image to read.
 * @param [in] headerFileName The image file name to read.
 */
-void usImageIo::read(usImagePreScan3D<double> &preScan3DImage,std::string headerFileName)
+void usImageIo::read(usImagePreScan3D<double> &preScan3DImage, const std::string &headerFileName)
 {
-  // TODO: to implemented
+  // TODO: to implement
   (void) preScan3DImage;
   (void) headerFileName;
 }
@@ -666,7 +681,7 @@ void usImageIo::read(usImagePreScan3D<double> &preScan3DImage,std::string header
 * @param postScanImage Image to write.
 * @param headerFileName The header file name with the desired extension.
 */
-void usImageIo::write(const usImagePostScan2D<unsigned char> &postScanImage, const std::string headerFileName)
+void usImageIo::write(const usImagePostScan2D<unsigned char> &postScanImage, const std::string &headerFileName)
 {
   //checking header type
   usImageIo::usHeaderFormatType headerFormat = getHeaderFormat(headerFileName);
@@ -684,13 +699,13 @@ void usImageIo::write(const usImagePostScan2D<unsigned char> &postScanImage, con
 * @param headerFileName The header file name with the desired extension.
 * @param imageExtension2D The 2D image extension.
 */
-void usImageIo::write(const usImagePostScan2D<unsigned char> &postScanImage, const std::string headerFileName,
-                      const std::string imageExtension2D)
+void usImageIo::write(const usImagePostScan2D<unsigned char> &postScanImage, const std::string &headerFileName,
+                      const std::string &imageExtension2D)
 {
   usImageIo::usHeaderFormatType headerFormat = getHeaderFormat(headerFileName);
   if (headerFormat == FORMAT_XML) {
 #ifdef VISP_HAVE_XML2
-    std::string imageFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(imageExtension2D);
+    std::string &imageFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(imageExtension2D);
     try {
       //writing image
       vpImageIo::writePNG(postScanImage, imageFileName);
@@ -716,7 +731,7 @@ void usImageIo::write(const usImagePostScan2D<unsigned char> &postScanImage, con
       throw(vpException(vpException::fatalError, "mhd files goes with .raw image extension"));
     }
     //mhd writing
-    std::string imageFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(".raw");
+    std::string &imageFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(".raw");
     //filling header
     usMetaHeaderParser::MHDHeader header;
     header.numberOfDimensions = 2;
@@ -753,7 +768,7 @@ void usImageIo::write(const usImagePostScan2D<unsigned char> &postScanImage, con
 * @param [out] postScanImage The post-scan image to read.
 * @param [in] headerFileName The header file name with.
 */
-void usImageIo::read(usImagePostScan2D<unsigned char> &postScanImage,const std::string headerFileName)
+void usImageIo::read(usImagePostScan2D<unsigned char> &postScanImage,const std::string &headerFileName)
 {
   usImageIo::usHeaderFormatType headerFormat = getHeaderFormat(headerFileName);
   if (headerFormat == FORMAT_XML) {
@@ -815,7 +830,7 @@ void usImageIo::read(usImagePostScan2D<unsigned char> &postScanImage,const std::
 * @param postScanImage Image to write.
 * @param headerFileName The header file name.
 */
-void usImageIo::write(const usImagePostScan3D<unsigned char> &postScanImage, const std::string headerFileName)
+void usImageIo::write(const usImagePostScan3D<unsigned char> &postScanImage, const std::string &headerFileName)
 {
   //checking header type
   usImageIo::usHeaderFormatType headerFormat = getHeaderFormat(headerFileName);
@@ -833,8 +848,8 @@ void usImageIo::write(const usImagePostScan3D<unsigned char> &postScanImage, con
 * @param headerFileName The header file name.
 * @param imageExtension2D The 2D image extension.
 */
-void usImageIo::write(const usImagePostScan3D<unsigned char> &postScanImage, const std::string headerFileName,
-                      const std::string imageExtension2D)
+void usImageIo::write(const usImagePostScan3D<unsigned char> &postScanImage, const std::string &headerFileName,
+                      const std::string &imageExtension2D)
 {
   usImageIo::usHeaderFormatType headerFormat = getHeaderFormat(headerFileName);
   if (headerFormat == FORMAT_XML) {
@@ -848,7 +863,7 @@ void usImageIo::write(const usImagePostScan3D<unsigned char> &postScanImage, con
     if (imageExtension2D != ".raw") {
       throw(vpException(vpException::fatalError, "mhd files goes with .raw image extension"));
     }
-    std::string imageFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(".raw");
+    std::string &imageFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(".raw");
     //filling header
     usMetaHeaderParser::MHDHeader header;
     header.numberOfDimensions = 3;
@@ -890,7 +905,7 @@ void usImageIo::write(const usImagePostScan3D<unsigned char> &postScanImage, con
 * @param [out] postScanImage The post-scan image to read.
 * @param [in] headerFileName The mhd file name with .mhd extenstion.
 */
-void usImageIo::read(usImagePostScan3D<unsigned char> &postScanImage,std::string headerFileName)
+void usImageIo::read(usImagePostScan3D<unsigned char> &postScanImage, const std::string &headerFileName)
 {
   usImageIo::usHeaderFormatType headerFormat = getHeaderFormat(headerFileName);
   if (headerFormat == FORMAT_XML) {

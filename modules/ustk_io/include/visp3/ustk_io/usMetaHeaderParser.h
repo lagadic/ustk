@@ -109,36 +109,36 @@ public:
   virtual ~usMetaHeaderParser();
 
   // Data accessors.
-  double getAxialResolution() const { return m_axialResolution; }
-  double getHeightResolution() const { return m_heightResolution; }
-  usTransducerSettings getTransducerSettings() const {return m_transducerSettings;}
-  usMotorSettings getMotorSettings() const {return m_motorSettings;}
-  ImageType getImageType() const { return header.imageType; }
-  std::string getRawFileName() const {return header.rawFileName;}
-  double getWidthResolution() const { return m_widthResolution; }
-  ElementType getElementType() const { return header.elementType; }
   unsigned int getANumber() const { return header.dim[0]; }
+  double getAxialResolution() const { return m_axialResolution; }
+  ElementType getElementType() const { return header.elementType; }
+  double getHeightResolution() const { return m_heightResolution; }
+  ImageType getImageType() const { return header.imageType; }
   unsigned int getLineNumber() const { return header.dim[1]; }
-  unsigned int getFrameNumber() const { return header.dim[2]; }
   MHDHeader getMHDHeader() const { return header; }
+  usMotorSettings getMotorSettings() const {return m_motorSettings;}
+  std::string getRawFileName() const {return header.rawFileName;}
+  usTransducerSettings getTransducerSettings() const {return m_transducerSettings;}
+  double getWidthResolution() const { return m_widthResolution; }
+  unsigned int getFrameNumber() const { return header.dim[2]; }
 
   //comparison
   bool operator ==(usMetaHeaderParser const& other);
 
   void parse();
-  //Read/write operations
+
   void read(const std::string& filename);
   void readMHDHeader(const std::string fileName);
 
-  //Data setters
-  void setTransducerSettings(const usTransducerSettings transducerSettings);
-  void setMotorSettings(const usMotorSettings motorSettings);
-  void setImageFileName(const std::string imageFileName);
+  //Setters
   void setAxialResolution(const double axialresolution);
   void setHeightResolution(const double heightResolution);
-  void setWidthResolution(const double widthResolution);
-  void setRawFileName(const std::string rawFileName);
+  void setImageFileName(const std::string imageFileName);
   void setMHDHeader(MHDHeader header);
+  void setMotorSettings(const usMotorSettings motorSettings);
+  void setRawFileName(const std::string rawFileName);
+  void setTransducerSettings(const usTransducerSettings transducerSettings);
+  void setWidthResolution(const double widthResolution);
 
 private :
   usTransducerSettings m_transducerSettings;

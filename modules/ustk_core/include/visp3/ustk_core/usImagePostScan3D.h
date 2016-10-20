@@ -71,7 +71,9 @@
       bool isMotorRotating = true;
       double heightResolution = 0.004;
       double widthResolution = 0.007;
-      usMotorSettings   imageSettings(probeRadius, scanLinePitch, isTransducerConvex, motorRadius, framePitch, isMotorRotating, heightResolution, widthResolution);
+      usMotorSettings imageSettings(probeRadius, scanLinePitch, isTransducerConvex,
+                                    motorRadius, framePitch, isMotorRotating,
+                                    heightResolution, widthResolution);
       usImage3D<unsigned char> I(dimX, dimY, dimZ);
       usImagePostScan3D<unsigned char> postScan3d;
       postScan3d.setData(I);
@@ -80,8 +82,8 @@
   \endcode
 
 */
-template<class T>
-class usImagePostScan3D : public usImage3D<T>, public usImagePostScanSettings,public usMotorSettings {
+template<class Type>
+class usImagePostScan3D : public usImage3D<Type>, public usImagePostScanSettings,public usMotorSettings {
 public:
   usImagePostScan3D();
   usImagePostScan3D(unsigned int dimX, unsigned int dimY, unsigned int dimZ,
@@ -90,22 +92,23 @@ public:
                     double heightResolution, double widthResolution);
 
   usImagePostScan3D(const usImagePostScan3D &other);
-  usImagePostScan3D(const usImage3D<T> &otherImage, const usImagePostScanSettings &postScanSettings, const usMotorSettings &motorSettings);
+  usImagePostScan3D(const usImage3D<Type> &otherImage, const usImagePostScanSettings &postScanSettings,
+                    const usMotorSettings &motorSettings);
   ~usImagePostScan3D();
 
-  usImagePostScan3D<T> & operator =(const usImagePostScan3D<T> &other);
+  usImagePostScan3D<Type> & operator =(const usImagePostScan3D<Type> &other);
 
-  bool operator ==(const usImagePostScan3D<T> &other);
+  bool operator ==(const usImagePostScan3D<Type> &other);
 
-  void setData(const usImage3D<T> &image3D);
+  void setData(const usImage3D<Type> &image3D);
 };
 
 
 /**
 * Basic constructor, all parameters set to default values
 */
-template<class T>
-usImagePostScan3D<T>::usImagePostScan3D() : usImage3D<T>(), usImagePostScanSettings(), usMotorSettings()
+template<class Type>
+usImagePostScan3D<Type>::usImagePostScan3D() : usImage3D<Type>(), usImagePostScanSettings(), usMotorSettings()
 {
 
 }
@@ -125,13 +128,13 @@ usImagePostScan3D<T>::usImagePostScan3D() : usImage3D<T>(), usImagePostScanSetti
 * @param heightResolution Image height resolution.
 * @param widthResolution Image width resolution.
 */
-template<class T>
-usImagePostScan3D<T>::usImagePostScan3D(unsigned int dimX, unsigned int dimY, unsigned int dimZ,
+template<class Type>
+usImagePostScan3D<Type>::usImagePostScan3D(unsigned int dimX, unsigned int dimY, unsigned int dimZ,
                                         double probeRadius, double motorRadius, double scanLinePitch,
                                         double framePitch, bool isTransducerConvex,
                                         usMotorSettings::usMotorType motorType,
                                         double heightResolution, double widthResolution)
-  : usImage3D<T>(dimX, dimY, dimZ),
+  : usImage3D<Type>(dimX, dimY, dimZ),
     usImagePostScanSettings(probeRadius, scanLinePitch, isTransducerConvex, heightResolution,widthResolution),
     usMotorSettings( motorRadius, framePitch, motorType)
 {
@@ -142,9 +145,9 @@ usImagePostScan3D<T>::usImagePostScan3D(unsigned int dimX, unsigned int dimY, un
 * Copy constructor from other usImagePostScan3D
 * @param other usImagePostScan3D to copy
 */
-template<class T>
-usImagePostScan3D<T>::usImagePostScan3D(const usImagePostScan3D &other)
-  : usImage3D<T>(other), usImagePostScanSettings(other), usMotorSettings(other)
+template<class Type>
+usImagePostScan3D<Type>::usImagePostScan3D(const usImagePostScan3D &other)
+  : usImage3D<Type>(other), usImagePostScanSettings(other), usMotorSettings(other)
 {
 
 }
@@ -155,9 +158,10 @@ usImagePostScan3D<T>::usImagePostScan3D(const usImagePostScan3D &other)
 * @param postScanSettings usImagePostScanSettings to copy
 * @param motorSettings usMotorSettings to copy
 */
-template<class T>
-usImagePostScan3D<T>::usImagePostScan3D(const usImage3D<T> &otherImage, const usImagePostScanSettings &postScanSettings, const usMotorSettings &motorSettings)
-  : usImage3D<T>(otherImage), usImagePostScanSettings(postScanSettings), usMotorSettings(motorSettings)
+template<class Type>
+usImagePostScan3D<Type>::usImagePostScan3D(const usImage3D<Type> &otherImage,
+ const usImagePostScanSettings &postScanSettings, const usMotorSettings &motorSettings)
+: usImage3D<Type>(otherImage), usImagePostScanSettings(postScanSettings), usMotorSettings(motorSettings)
 {
 
 }
@@ -165,17 +169,17 @@ usImagePostScan3D<T>::usImagePostScan3D(const usImage3D<T> &otherImage, const us
 /**
 * Destructor.
 */
-template<class T>
-usImagePostScan3D<T>::~usImagePostScan3D() {}
+template<class Type>
+usImagePostScan3D<Type>::~usImagePostScan3D() {}
 
 /**
 * Assignement operator.
 */
-template<class T>
-usImagePostScan3D<T> & usImagePostScan3D<T>::operator =(const usImagePostScan3D<T> &other)
+template<class Type>
+usImagePostScan3D<Type> & usImagePostScan3D<Type>::operator =(const usImagePostScan3D<Type> &other)
 {
   //from usImage3D
-  usImage3D<T>::operator =(other);
+  usImage3D<Type>::operator =(other);
 
   //from usSettings3D
   usMotorSettings::operator =(other);
@@ -186,10 +190,10 @@ usImagePostScan3D<T> & usImagePostScan3D<T>::operator =(const usImagePostScan3D<
 /**
 * Comparaison operator.
 */
-template<class T>
-bool usImagePostScan3D<T>::operator == (usImagePostScan3D<T> const& other)
+template<class Type>
+bool usImagePostScan3D<Type>::operator == (usImagePostScan3D<Type> const& other)
 {
-  return usImage3D<T>::operator ==(other) &&
+  return usImage3D<Type>::operator ==(other) &&
         usImagePostScanSettings::operator==(other) &&
          usMotorSettings::operator ==(other);
 }
@@ -197,9 +201,9 @@ bool usImagePostScan3D<T>::operator == (usImagePostScan3D<T> const& other)
 /**
 * Operator to print image informations on a stream.
 */
-template<class T> std::ostream& operator<<(std::ostream& out, const usImagePostScan3D<T> &other)
+template<class Type> std::ostream& operator<<(std::ostream& out, const usImagePostScan3D<Type> &other)
 {
-  return out << static_cast<const usImage3D<T> &>(other) <<
+  return out << static_cast<const usImage3D<Type> &>(other) <<
     static_cast<const usImagePostScanSettings &>(other) <<
     static_cast<const usMotorSettings &>(other);
 }
@@ -208,9 +212,9 @@ template<class T> std::ostream& operator<<(std::ostream& out, const usImagePostS
 * Setter for image data.
 * @param image3D Image you want to set.
 */
-template<class T>
-void usImagePostScan3D<T>::setData(const usImage3D<T> &image3D)
+template<class Type>
+void usImagePostScan3D<Type>::setData(const usImage3D<Type> &image3D)
 {
-  usImage3D<T>::operator =(image3D);
+  usImage3D<Type>::operator =(image3D);
 }
 #endif // US_IMAGE_POSTSCAN_3D_H

@@ -74,33 +74,33 @@
     }
   \endcode
  */
-template<class T>
-class usImagePostScan2D : public vpImage<T>, public usImagePostScanSettings {
+template<class Type>
+class usImagePostScan2D : public vpImage<Type>, public usImagePostScanSettings {
 public:
   usImagePostScan2D();
-  usImagePostScan2D(unsigned int width, unsigned int height, double probeRadius=0.0, double scanLinePitch=0.0, bool isTransducerConvex=false, double height_resolution=0.0, double width_resolution=0.0);
-  usImagePostScan2D(const usImagePostScan2D<T> &other);
-  usImagePostScan2D(const vpImage<T> &other);
+  usImagePostScan2D(unsigned int width, unsigned int height, double probeRadius=0.0, double scanLinePitch=0.0,
+   bool isTransducerConvex=false, double height_resolution=0.0, double width_resolution=0.0);
+  usImagePostScan2D(const usImagePostScan2D<Type> &other);
+  usImagePostScan2D(const vpImage<Type> &other);
   usImagePostScan2D(const usImagePostScanSettings &other);
-  usImagePostScan2D(const vpImage<T> &otherImage, const usImagePostScanSettings &otherSettings);
+  usImagePostScan2D(const vpImage<Type> &otherImage, const usImagePostScanSettings &otherSettings);
   ~usImagePostScan2D();
-
-  usImagePostScan2D<T> & operator =(const usImagePostScan2D<T> &other);
-  friend VISP_EXPORT std::ostream& operator<<(std::ostream& out, const usTransducerSettings &other);
-
-  bool operator ==(const usImagePostScan2D<T> &other);
 
   unsigned int getDimX() const;
   unsigned int getDimY() const;
 
-  void setData(const vpImage<T> &image);
+  usImagePostScan2D<Type> & operator =(const usImagePostScan2D<Type> &other);
+  friend VISP_EXPORT std::ostream& operator<<(std::ostream& out, const usTransducerSettings &other);
+  bool operator ==(const usImagePostScan2D<Type> &other);
+
+  void setData(const vpImage<Type> &image);
 };
 
 /**
 * Basic constructor, all parameters set to default values
 */
-template<class T>
-usImagePostScan2D<T>::usImagePostScan2D() : vpImage<T>(), usImagePostScanSettings()
+template<class Type>
+usImagePostScan2D<Type>::usImagePostScan2D() : vpImage<Type>(), usImagePostScanSettings()
 {
 
 }
@@ -116,9 +116,13 @@ usImagePostScan2D<T>::usImagePostScan2D() : vpImage<T>(), usImagePostScanSetting
 * @param height_resolution Height resolution of the image.
 * @param width_resolution Width resolution of the image.
 */
-template<class T>
-usImagePostScan2D<T>::usImagePostScan2D(unsigned int width, unsigned int height, double probeRadius, double scanLinePitch, bool isTransducerConvex, double height_resolution, double width_resolution)
-  : vpImage<T>(width, height,0), usImagePostScanSettings(probeRadius, scanLinePitch, isTransducerConvex, height_resolution, width_resolution)
+template<class Type>
+usImagePostScan2D<Type>::usImagePostScan2D(unsigned int width, unsigned int height,
+double probeRadius, double scanLinePitch, bool isTransducerConvex,
+double height_resolution, double width_resolution)
+  : vpImage<Type>(width, height,0),
+  usImagePostScanSettings(probeRadius, scanLinePitch, isTransducerConvex,
+  height_resolution, width_resolution)
 {
 
 }
@@ -127,8 +131,9 @@ usImagePostScan2D<T>::usImagePostScan2D(unsigned int width, unsigned int height,
 * Copy constructor from other usImagePostScan2D
 * @param other usImagePostScan2D to copy
 */
-template<class T>
-usImagePostScan2D<T>::usImagePostScan2D(const usImagePostScan2D<T> &other) : vpImage<T>(other), usImagePostScanSettings(other)
+template<class Type>
+usImagePostScan2D<Type>::usImagePostScan2D(const usImagePostScan2D<Type> &other)
+: vpImage<Type>(other), usImagePostScanSettings(other)
 {
 
 }
@@ -138,8 +143,8 @@ usImagePostScan2D<T>::usImagePostScan2D(const usImagePostScan2D<T> &other) : vpI
 * Constructor from vpImage
 * @param other vpImage<unsigned char> to copy
 */
-template<class T>
-usImagePostScan2D<T>::usImagePostScan2D(const vpImage<T> &other) : vpImage<T>(other)
+template<class Type>
+usImagePostScan2D<Type>::usImagePostScan2D(const vpImage<Type> &other) : vpImage<Type>(other)
 {
 
 }
@@ -148,8 +153,8 @@ usImagePostScan2D<T>::usImagePostScan2D(const vpImage<T> &other) : vpImage<T>(ot
 * Constructor from usImagePostScanSettings.
 * @param other usImagePostScanSettings to copy
 */
-template<class T>
-usImagePostScan2D<T>::usImagePostScan2D(const usImagePostScanSettings &other) : usImagePostScanSettings(other)
+template<class Type>
+usImagePostScan2D<Type>::usImagePostScan2D(const usImagePostScanSettings &other) : usImagePostScanSettings(other)
 {
 
 }
@@ -159,8 +164,9 @@ usImagePostScan2D<T>::usImagePostScan2D(const usImagePostScanSettings &other) : 
 * @param otherImage vpImage<unsigned char> to copy
 * @param otherSettings usImagePostScanSettings to copy
 */
-template<class T>
-usImagePostScan2D<T>::usImagePostScan2D(const vpImage<T> &otherImage, const usImagePostScanSettings &otherSettings) : vpImage<T>(otherImage), usImagePostScanSettings(otherSettings)
+template<class Type>
+usImagePostScan2D<Type>::usImagePostScan2D(const vpImage<Type> &otherImage, const usImagePostScanSettings &otherSettings)
+: vpImage<Type>(otherImage), usImagePostScanSettings(otherSettings)
 {
 
 }
@@ -168,17 +174,17 @@ usImagePostScan2D<T>::usImagePostScan2D(const vpImage<T> &otherImage, const usIm
 /**
 * Destructor.
 */
-template<class T>
-usImagePostScan2D<T>::~usImagePostScan2D() {}
+template<class Type>
+usImagePostScan2D<Type>::~usImagePostScan2D() {}
 
 /**
 * Assignement operator.
 */
-template<class T>
-usImagePostScan2D<T> & usImagePostScan2D<T>::operator =(const usImagePostScan2D<T> &other)
+template<class Type>
+usImagePostScan2D<Type> & usImagePostScan2D<Type>::operator =(const usImagePostScan2D<Type> &other)
 {
   //from vpImage
-  vpImage<T>::operator=(other);
+  vpImage<Type>::operator=(other);
 
   //from usImagePostScanSettings
   usImagePostScanSettings::operator=(other);
@@ -189,18 +195,18 @@ usImagePostScan2D<T> & usImagePostScan2D<T>::operator =(const usImagePostScan2D<
 /**
 * Comparaison operator.
 */
-template<class T>
-bool usImagePostScan2D<T>::operator ==(const usImagePostScan2D<T> &other)
+template<class Type>
+bool usImagePostScan2D<Type>::operator ==(const usImagePostScan2D<Type> &other)
 {
-  return(vpImage<T>::operator== (other) &&
+  return(vpImage<Type>::operator== (other) &&
          usImagePostScanSettings::operator ==(other));
 }
 
 /**
 * Operator to print image informations on a stream.
 */
-template<class T>
-std::ostream& operator<<(std::ostream& out, const usImagePostScan2D<T> &other)
+template<class Type>
+std::ostream& operator<<(std::ostream& out, const usImagePostScan2D<Type> &other)
 {
   return out << static_cast<const usImagePostScanSettings &>(other) <<
   "image width " << other.getWidth() << std::endl <<
@@ -210,26 +216,26 @@ std::ostream& operator<<(std::ostream& out, const usImagePostScan2D<T> &other)
 /**
 * Returns the size of the image along the x axis (in pixels).
 */
-template<class T>
-unsigned int usImagePostScan2D<T>::getDimX() const {
-  return vpImage<T>::getWidth();
+template<class Type>
+unsigned int usImagePostScan2D<Type>::getDimX() const {
+  return vpImage<Type>::getWidth();
 }
 
 /**
 * Returns the size of the image along the y axis (in pixels).
 */
-template<class T>
-unsigned int usImagePostScan2D<T>::getDimY() const {
-  return vpImage<T>::getHeight();
+template<class Type>
+unsigned int usImagePostScan2D<Type>::getDimY() const {
+  return vpImage<Type>::getHeight();
 }
 
 /**
 * Setter for image.
 * @param image Settings you want to copy.
 */
-template<class T>
-void usImagePostScan2D<T>::setData(const vpImage<T> &image)
+template<class Type>
+void usImagePostScan2D<Type>::setData(const vpImage<Type> &image)
 {
-  vpImage<T>::operator=(image);
+  vpImage<Type>::operator=(image);
 }
 #endif // US_IMAGE_POSTSCAN_2D_H

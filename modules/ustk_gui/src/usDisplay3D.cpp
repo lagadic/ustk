@@ -31,11 +31,17 @@
 
 #include <visp3/ustk_gui/usDisplay3D.h>
 
+/**
+* Default constructor.
+*/
 usDisplay3D::usDisplay3D()
 {
 
 }
 
+/**
+* Destructor.
+*/
 usDisplay3D::~usDisplay3D()
 {
 

@@ -35,31 +35,47 @@
  /**
  * Default constructor, all parameters set de default values.
  */
-usImagePostScanSettings::usImagePostScanSettings() : usTransducerSettings(), m_widthResolution(0.0), m_heightResolution(0.0)
+usImagePostScanSettings::usImagePostScanSettings()
+: usTransducerSettings(), m_widthResolution(0.0), m_heightResolution(0.0)
 {
 
 }
 
 /**
 * Copy constructor.
+* @param other usImagePostScanSettings to copy.
 */
-usImagePostScanSettings::usImagePostScanSettings(const usImagePostScanSettings &other) : usTransducerSettings(other), m_widthResolution(other.getHeightResolution()), m_heightResolution(other.getWidthResolution())
+usImagePostScanSettings::usImagePostScanSettings(const usImagePostScanSettings &other)
+: usTransducerSettings(other), m_widthResolution(other.getHeightResolution()), m_heightResolution(other.getWidthResolution())
 {
 
 }
 
 /**
 * Full parameters constructor, all parameters settables.
+* @param probeRadius Radius of the probe used to acquire the image.
+* @param scanLinePitch Pitch between 2 scanlines (in radians if isTransducerConvex = true, in meters otherwise).
+* @param isTransducerConvex True if the transducer is convex, false if it is linear.
+* @param heightResolution Post-scan image height resolution in meters (distance between two pixels).
+* @param widthResolution Post-scan image width resolution in meters (distance between two pixels).
 */
-usImagePostScanSettings::usImagePostScanSettings(double probeRadius, double scanLinePitch, bool isConvex, double height_resolution, double width_resolution) : usTransducerSettings(probeRadius, scanLinePitch, isConvex), m_widthResolution(width_resolution), m_heightResolution(height_resolution)
+usImagePostScanSettings::usImagePostScanSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex,
+ double heightResolution, double widthResolution)
+: usTransducerSettings(probeRadius, scanLinePitch, isTransducerConvex),
+  m_widthResolution(widthResolution), m_heightResolution(heightResolution)
 {
 
 }
 
 /**
 * Full parameters constructor, all parameters settables.
+* @param basicSettings Transducer settings.
+* @param heightResolution Post-scan image height resolution in meters (distance between two pixels).
+* @param widthResolution Post-scan image width resolution in meters (distance between two pixels).
 */
-usImagePostScanSettings::usImagePostScanSettings(usTransducerSettings basicSettings, double height_resolution, double width_resolution) : usTransducerSettings(basicSettings), m_widthResolution(width_resolution), m_heightResolution(height_resolution)
+usImagePostScanSettings::usImagePostScanSettings(usTransducerSettings basicSettings,
+                                                 double heightResolution, double widthResolution)
+: usTransducerSettings(basicSettings), m_widthResolution(widthResolution), m_heightResolution(heightResolution)
 {
 
 }
@@ -67,7 +83,10 @@ usImagePostScanSettings::usImagePostScanSettings(usTransducerSettings basicSetti
 /**
 * Destructor.
 */
-usImagePostScanSettings::~usImagePostScanSettings() {}
+usImagePostScanSettings::~usImagePostScanSettings()
+{
+
+}
 
 /**
 * Assignement operator.
@@ -95,6 +114,8 @@ bool usImagePostScanSettings::operator==(const usImagePostScanSettings& other)
 
 /**
 * Operator to print image informations on a stream.
+* @param out ostream to write in.
+* @param other usImagePostScanSettings with informations to print.
 */
 VISP_EXPORT std::ostream& operator<<(std::ostream& out, const usImagePostScanSettings &other)
 {
@@ -139,6 +160,7 @@ double usImagePostScanSettings::getHeightResolution() const
 
 /**
 * Height resolution getter.
+* @param postScanSettings Post-scan settings to set.
 */
 void usImagePostScanSettings::setImageSettings(const usImagePostScanSettings& postScanSettings)
 {
