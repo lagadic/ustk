@@ -179,7 +179,8 @@ void usSequenceReader<ImageType>::setLastFrameIndex(long lastIndex)
 }
 
 /**
-* Sequence opening for generic image type : not implemented.
+* Sequence opening.
+* @param image First image of the sequence to read.
 */
 template<class ImageType>
 void usSequenceReader<ImageType>::open(ImageType &image)
@@ -187,10 +188,6 @@ void usSequenceReader<ImageType>::open(ImageType &image)
   throw(vpException(vpException::notImplementedError));
 }
 
-/**
-* Sequence opening for usImageRF2D type.
-* @param image First image of the sequence to read.
-*/
 template<>
 void usSequenceReader<usImageRF2D<unsigned char> >::open(usImageRF2D<unsigned char> &image)
 {
@@ -223,10 +220,6 @@ void usSequenceReader<usImageRF2D<unsigned char> >::open(usImageRF2D<unsigned ch
   is_open = true;
 }
 
-/**
-* Sequence opening for usImagePreScan2D type.
-* @param image First image of the sequence to read.
-*/
 template<>
 void usSequenceReader<usImagePreScan2D<unsigned char> >::open(usImagePreScan2D<unsigned char> &image)
 {
@@ -260,10 +253,6 @@ void usSequenceReader<usImagePreScan2D<unsigned char> >::open(usImagePreScan2D<u
   is_open = true;
 }
 
-/**
-* Sequence opening for usImagePreScan2D type.
-* @param image First image of the sequence to read.
-*/
 template<>
 void usSequenceReader<usImagePostScan2D<unsigned char> >::open(usImagePostScan2D<unsigned char> &image)
 {

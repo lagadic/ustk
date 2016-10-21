@@ -41,8 +41,8 @@
 
 /**
 * Reading method for 3D images.
-* @param image3D 3D-image to fill.
-* @param rawFilename File name of the image to read (with .raw extension).
+* @param[out] image3D 3D-image to fill.
+* @param[in] rawFilename File name of the image to read (with .raw extension).
 */
 void usRawFileParser::read(usImage3D<unsigned char> &image3D, const std::string &rawFilename)
 {
@@ -73,8 +73,8 @@ void usRawFileParser::write(const usImage3D<unsigned char> &image3D, const std::
 
 /**
 * Reading method for 2D images.
-* @param image2D 2D-image to fill.
-* @param rawFilename File name of the image to read (with .raw extension).
+* @param[out] image2D 2D-image to fill.
+* @param[in] rawFilename File name of the image to read (with .raw extension).
 */
 void usRawFileParser::read(vpImage<unsigned char> &image2D, const std::string &rawFilename)
 {

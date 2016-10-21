@@ -220,7 +220,8 @@ void usSequenceWriter<ImageType>::open(ImageType &image)
 }
 
 /**
-* Sequence closing for generic image type. NOT IMPLEMENTED !
+* Sequence closing : writes sequence settings in the header.
+* @warning Implemented only for usImageRF2D < unsigned char >, usImagePreScan2D < unsigned char > and usImagePostScan2D < unsigned char >
 */
 template<class ImageType>
 void usSequenceWriter<ImageType>::close()
@@ -228,9 +229,6 @@ void usSequenceWriter<ImageType>::close()
   throw(vpException(vpException::notImplementedError));
 }
 
-/**
-* Sequence closing for usImageRF2D. Writes the header.
-*/
 template<>
 void usSequenceWriter< usImageRF2D < unsigned char > >::close()
 {
@@ -248,9 +246,6 @@ void usSequenceWriter< usImageRF2D < unsigned char > >::close()
   xmlParser.save(m_sequenceFileName);
 }
 
-/**
-* Sequence closing for usImagePreScan2D. Writes the header.
-*/
 template<>
 void usSequenceWriter < usImagePreScan2D < unsigned char > >::close()
 {
@@ -268,9 +263,6 @@ void usSequenceWriter < usImagePreScan2D < unsigned char > >::close()
   xmlParser.save(m_sequenceFileName);
 }
 
-/**
-* Sequence closing for usImagePostScan2D. Writes the header.
-*/
 template<>
 void usSequenceWriter<usImagePostScan2D<unsigned char> >::close()
 {

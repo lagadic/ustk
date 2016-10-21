@@ -60,7 +60,7 @@ usTransducerSettings::usTransducerSettings(double probeRadius, double scanLinePi
 
 /**
 * Copy constructor.
-* @param[in] other Settings to copy.
+* @param other Settings to copy.
 */
 usTransducerSettings::usTransducerSettings(const usTransducerSettings &other)
 {
@@ -143,7 +143,7 @@ double usTransducerSettings::getScanLinePitch() const { return m_scanLinePitch; 
 
 /**
 * Set the probe type.
-* @param[in] isTransducerConvex True if the probe is convex, false if the probe is linear.
+* @param isTransducerConvex True if the probe is convex, false if the probe is linear.
 * Sets the probe radius to 0 in case of a linear probe.
 */
 void usTransducerSettings::setTransducerConvexity(const bool isTransducerConvex) {
@@ -162,7 +162,7 @@ bool usTransducerSettings::isTransducerConvex() const { return m_isTransducerCon
 /*!
  * Assignment operator.
  *
- * @param other settings you want to assign.
+ * @param other Settings you want to assign.
  *
  * \sa operator=()
  */

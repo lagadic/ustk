@@ -57,7 +57,7 @@
  * This class represents motor settings for 3D ultrasound images which are:
  * - the common settings corresponding to the motor used to procude the third dimension.
  *   These settings are:
- *   - the type of motor used to move the transducer: convex or linear
+ *   - the type of motor used to move the transducer: linear, tilting (small rotation) or rotationnal (360&deg; rotation).
  *   - the motor radius (value set to zero for a linear motor)
  *   - the frame pitch that corresponds to the angle (in radians) between
  *     to successive data acquisitions when the motor is convex, or to the distance (in meters)
@@ -67,11 +67,11 @@
  */
 class VISP_EXPORT usMotorSettings {
 public:
-  //enum for motor rotation type
+  /*! Enumerator for motor type*/
   typedef enum {
-    LinearMotor = 0,
-    TiltingMotor,
-    RotationalMotor
+    LinearMotor = 0,/*!< Case of a linear motor. */
+    TiltingMotor,/*!< Case of a tilting motor (small rotation). */
+    RotationalMotor/*!< Case of a roatational motor (360&deg; rotation). */
   } usMotorType;
 
   usMotorSettings();
