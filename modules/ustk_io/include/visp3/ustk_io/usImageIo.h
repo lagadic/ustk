@@ -89,15 +89,20 @@ public:
   //@{
   static void read(usImagePreScan2D<unsigned char> &preScanImage,const std::string &headerFileName);
   static void read(usImagePreScan3D<unsigned char> &preScanImage3D, const std::string &headerFileName);
+
+  //Doubles types writing not implemented
   static void read(usImagePreScan2D<double> &preScanImage,const std::string &headerFileName);
   static void read(usImagePreScan3D<double> &preScanImage3D,const std::string &headerFileName);
 
   static void write(const usImagePreScan2D<unsigned char> &preScanImage, const std::string &headerFileName,
                     const std::string &imageExtension2D);
   static void write(const usImagePreScan2D<unsigned char> &preScanImage, const std::string &headerFileName);
+
   static void write(const usImagePreScan3D<unsigned char> &preScanImage3D, const std::string &headerFileName,
                     const std::string &imageExtension2D);
   static void write(const usImagePreScan3D<unsigned char> &preScanImage3D, const std::string &headerFileName);
+
+  //Doubles types writing not implemented
   static void write(const usImagePreScan2D<double> &preScanImage, const std::string &headerFileName,
                     const std::string &imageExtension2D);
   static void write(const usImagePreScan2D<double> &preScanImage, const std::string &headerFileName);

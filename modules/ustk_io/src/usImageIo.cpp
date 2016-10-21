@@ -78,10 +78,10 @@ void usImageIo::write(const usImageRF2D<unsigned char> &imageRf2D, const std::st
   //checking header type
   usImageIo::usHeaderFormatType headerFormat = getHeaderFormat(headerFileName);
   if (headerFormat == FORMAT_XML) {
-    write(imageRf2D, headerFileName, ".png");
+    write(imageRf2D, headerFileName, std::string(".png"));
   }
   else if (headerFormat == FORMAT_MHD) {
-    write(imageRf2D, headerFileName, ".raw");
+    write(imageRf2D, headerFileName, std::string(".raw"));
   }
 }
 
@@ -228,10 +228,10 @@ void usImageIo::write(const usImageRF3D<unsigned char> &imageRf3D, const std::st
   //checking header type
   usImageIo::usHeaderFormatType headerFormat = getHeaderFormat(headerFileName);
   if (headerFormat == FORMAT_XML) {
-    write(imageRf3D, headerFileName, ".png");
+    write(imageRf3D, headerFileName, std::string(".png"));
   }
   else if (headerFormat == FORMAT_MHD) {
-    write(imageRf3D, headerFileName, ".raw");
+    write(imageRf3D, headerFileName, std::string(".raw"));
   }
 }
 
@@ -353,13 +353,14 @@ void usImageIo::read(usImageRF3D<unsigned char> &imageRf3, const std::string &he
 */
 void usImageIo::write(const usImagePreScan2D<unsigned char>  &preScanImage, const std::string &headerFileName)
 {
+    std::cout << "usImageIo::write prescan 2d" << std::endl;
 //checking header type
   usImageIo::usHeaderFormatType headerFormat = getHeaderFormat(headerFileName);
   if (headerFormat == FORMAT_XML) {
-    write(preScanImage,headerFileName,".png");
+    write(preScanImage,headerFileName,std::string(".png"));
   }
   else if (headerFormat == FORMAT_MHD) {
-    write(preScanImage,headerFileName,".raw");
+    write(preScanImage,headerFileName,std::string(".raw"));
   }
   else {
     throw(vpException(vpException::fatalError, "Unknown extension."));
@@ -377,7 +378,7 @@ void usImageIo::write(const usImagePreScan2D<unsigned char> &preScanImage, const
   //checking header type
   usImageIo::usHeaderFormatType headerFormat = getHeaderFormat(headerFileName);
   if (headerFormat == FORMAT_XML) {
-    std::string &imageFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(imageExtension2D);
+    std::string imageFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(imageExtension2D);
 #ifdef VISP_HAVE_XML2
     try {
       //writing image
@@ -404,7 +405,7 @@ void usImageIo::write(const usImagePreScan2D<unsigned char> &preScanImage, const
     if (imageExtension2D != ".raw") {
       throw(vpException(vpException::fatalError, "mhd files goes with .raw image extension"));
     }
-    std::string &imageFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(".raw");
+    std::string imageFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(".raw");
     //filling header
     usMetaHeaderParser::MHDHeader header;
     header.numberOfDimensions = 2;
@@ -505,10 +506,10 @@ void usImageIo::write(const usImagePreScan3D<unsigned char> &preScanImage, const
   //checking header type
   usImageIo::usHeaderFormatType headerFormat = getHeaderFormat(headerFileName);
   if (headerFormat == FORMAT_XML) {
-    write(preScanImage, headerFileName, ".png");
+    write(preScanImage, headerFileName, std::string(".png"));
   }
   else if (headerFormat == FORMAT_MHD) {
-    write(preScanImage, headerFileName, ".raw");
+    write(preScanImage, headerFileName, std::string(".raw"));
   }
 }
 
@@ -686,10 +687,10 @@ void usImageIo::write(const usImagePostScan2D<unsigned char> &postScanImage, con
   //checking header type
   usImageIo::usHeaderFormatType headerFormat = getHeaderFormat(headerFileName);
   if (headerFormat == FORMAT_XML) {
-    write(postScanImage, headerFileName, ".png");
+    write(postScanImage, headerFileName, std::string(".png"));
   }
   else if(headerFormat == FORMAT_MHD){
-    write(postScanImage, headerFileName, ".raw");
+    write(postScanImage, headerFileName, std::string(".raw"));
   }
 }
 
@@ -835,10 +836,10 @@ void usImageIo::write(const usImagePostScan3D<unsigned char> &postScanImage, con
   //checking header type
   usImageIo::usHeaderFormatType headerFormat = getHeaderFormat(headerFileName);
   if (headerFormat == FORMAT_XML) {
-    write(postScanImage, headerFileName, ".png");
+    write(postScanImage, headerFileName, std::string(".png"));
   }
   else if (headerFormat == FORMAT_MHD) {
-    write(postScanImage, headerFileName, ".raw");
+    write(postScanImage, headerFileName, std::string(".raw"));
   }
 }
 
