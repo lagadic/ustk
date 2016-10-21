@@ -51,7 +51,7 @@ usMotorSettings::usMotorSettings() : m_motorRadius(0.0), m_framePitch(0.0), m_mo
 /**
 * Full Constructor, all settings availables
 * @param motorRadius Distance between the rotation center of the probe motor and the first pixel arc acquired, in meters (m).
-* @param framePitch Radius between 2 successives acquisiton planes in the probe, in radians (rad).
+* @param framePitch Pitch between two sucessive frames . In meters if motorType is linear, in radians (rad) otherwise.
 * @param motorType Motor type of the probe used.
 */
 usMotorSettings::usMotorSettings(double motorRadius, double framePitch, usMotorType motorType)
@@ -134,8 +134,8 @@ void usMotorSettings::setFramePitch(double framePitch)
 }
 
 /**
-* Get the frame angle (rad).
-* @return m_lineAngle Frame angle of the probe in radians.
+* Get the frame pitch (radians or meters).
+* @return framePitch Frame pitch between two sucessive frames. In meters if motorType is linear, in radians otherwise.
 */
 double usMotorSettings::getFramePitch() const
 {
