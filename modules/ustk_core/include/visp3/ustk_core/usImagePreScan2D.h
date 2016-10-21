@@ -55,18 +55,20 @@
     int main()
     {
       // Update settings
-      unsigned int BModeSampleNumber = 200;
       unsigned int lineNumber = 200;
+      unsigned int BModeSampleNumber = 200;
       double probeRadius = 0.06;
       double scanLinePitch = 0.04;
-      bool isTransducerConvex = true;
+      bool isProbeConvex = true;
       double axialResolution = 0.005;
-      usImagePreScanSettings imageSettings(probeRadius, scanLinePitch, isTransducerConvex, axialResolution);
-      vpImage<unsigned char> I(BModeSampleNumber, lineNumber);
+      usImagePreScanSettings imageSettings(probeRadius, scanLinePitch, isProbeConvex, axialResolution);
+      vpImage<unsigned char> I(BModeSampleNumber,lineNumber);
       usImagePreScan2D<unsigned char> preScan2d;
       preScan2d.setData(I);
       preScan2d.setImageSettings(imageSettings);
     }
+
+
   \endcode
 
  This class represents a 2D ultrasound pre-scan frame.

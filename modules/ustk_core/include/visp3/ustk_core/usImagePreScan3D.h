@@ -65,16 +65,18 @@
       unsigned int frameNumber = 10;
       double probeRadius = 0.008;
       double scanLinePitch = 0.004;
-      bool isTransducerConvex = true;
+      bool isProbeConvex = true;
       double motorRadius = 0.0008;
       double framePitch = 0.05;
-      bool isMotorRotating = true;
+      usMotorSettings::usMotorType motorType = usMotorSettings::LinearMotor;
       double axialResolution = 0.004;
-      usImagePreScanSettings   imageSettings(probeRadius, scanLinePitch, isTransducerConvex, motorRadius, framePitch, isMotorRotating, axialResolution);
+      usImagePreScanSettings   imageSettings(probeRadius, scanLinePitch, isProbeConvex, axialResolution);
+      usMotorSettings motorSettings(motorRadius,framePitch,motorType);
       usImage3D<unsigned char> I(BModeSampleNumber, lineNumber, frameNumber);
       usImagePreScan3D<unsigned char> preScan3d;
       preScan3d.setData(I);
       preScan3d.setImageSettings(imageSettings);
+      preScan3d.setMotorSettings(motorSettings);
     }
   \endcode
 */

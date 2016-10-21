@@ -68,16 +68,16 @@
       bool isTransducerConvex = true;
       double motorRadius = 0.07;
       double framePitch = 0.05;
-      bool isMotorRotating = true;
+      usMotorSettings::usMotorType motorType = usMotorSettings::LinearMotor;
       double heightResolution = 0.004;
       double widthResolution = 0.007;
-      usMotorSettings imageSettings(probeRadius, scanLinePitch, isTransducerConvex,
-                                    motorRadius, framePitch, isMotorRotating,
-                                    heightResolution, widthResolution);
+      usImagePostScanSettings   imageSettings(probeRadius, scanLinePitch, isTransducerConvex, heightResolution, widthResolution);
+      usMotorSettings motorSettings(motorRadius,framePitch,motorType);
       usImage3D<unsigned char> I(dimX, dimY, dimZ);
       usImagePostScan3D<unsigned char> postScan3d;
       postScan3d.setData(I);
       postScan3d.setImageSettings(imageSettings);
+      postScan3d.setMotorSettings(motorSettings);
     }
   \endcode
 
