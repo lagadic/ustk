@@ -65,7 +65,7 @@ class usSequenceWriter
 public:
 
   usSequenceWriter();
-  ~usSequenceWriter();
+  virtual ~usSequenceWriter();
 
   void close();
 

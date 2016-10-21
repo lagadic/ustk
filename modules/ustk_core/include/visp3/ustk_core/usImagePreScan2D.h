@@ -90,7 +90,7 @@ public:
   usImagePreScan2D(const vpImage<Type> &other, const usImagePreScanSettings &otherSettings);
 
   //destructor
-  ~usImagePreScan2D();
+  virtual ~usImagePreScan2D();
 
   //No setters for BModeSampleNumber and lineNumber because vpImage doesn't have setters for height and width.
   //Those parameters have to be passed in the constructor.

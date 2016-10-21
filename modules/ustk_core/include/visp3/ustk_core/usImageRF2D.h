@@ -83,7 +83,7 @@ public:
               double probeRadius=0, double scanLinePitch=0, bool isTransducerConvex=true,
               double axialResolution=0);
   usImageRF2D(const usImageRF2D &other);
-  ~usImageRF2D();
+  virtual ~usImageRF2D();
 
   unsigned int getRFSampleNumber() const;
   unsigned int getLineNumber() const;
@@ -96,8 +96,7 @@ public:
 
 
 /**
-* unsigned char
-* Constructor.
+* Default constructor.
 */
 template<class Type>
 usImageRF2D<Type>::usImageRF2D() : vpImage<Type>(), usImagePreScanSettings()

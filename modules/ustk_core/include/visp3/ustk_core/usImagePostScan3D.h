@@ -94,7 +94,7 @@ public:
   usImagePostScan3D(const usImagePostScan3D &other);
   usImagePostScan3D(const usImage3D<Type> &otherImage, const usImagePostScanSettings &postScanSettings,
                     const usMotorSettings &motorSettings);
-  ~usImagePostScan3D();
+  virtual ~usImagePostScan3D();
 
   usImagePostScan3D<Type> & operator =(const usImagePostScan3D<Type> &other);
 

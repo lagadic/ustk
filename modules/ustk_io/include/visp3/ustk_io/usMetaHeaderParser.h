@@ -109,18 +109,15 @@ public:
   virtual ~usMetaHeaderParser();
 
   // Data accessors.
-  unsigned int getANumber() const { return header.dim[0]; }
   double getAxialResolution() const { return m_axialResolution; }
   ElementType getElementType() const { return header.elementType; }
   double getHeightResolution() const { return m_heightResolution; }
   ImageType getImageType() const { return header.imageType; }
-  unsigned int getLineNumber() const { return header.dim[1]; }
   MHDHeader getMHDHeader() const { return header; }
   usMotorSettings getMotorSettings() const {return m_motorSettings;}
   std::string getRawFileName() const {return header.rawFileName;}
   usTransducerSettings getTransducerSettings() const {return m_transducerSettings;}
   double getWidthResolution() const { return m_widthResolution; }
-  unsigned int getFrameNumber() const { return header.dim[2]; }
 
   //comparison
   bool operator ==(usMetaHeaderParser const& other);

@@ -91,7 +91,7 @@ public:
   usImageRF3D(usImage3D<Type> image3D);
   usImageRF3D(usImagePreScanSettings imageSettings);
   usImageRF3D(const usImageRF3D<Type> &other);
-  ~usImageRF3D();
+  virtual ~usImageRF3D();
 
   unsigned int getRFSampleNumber() const ;
   unsigned int getLineNumber() const ;

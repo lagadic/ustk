@@ -92,7 +92,7 @@ public:
 
   usSequenceReader();
 
-  ~usSequenceReader();
+  virtual ~usSequenceReader();
 
   //get images in grabber style
   void acquire(ImageType &image);

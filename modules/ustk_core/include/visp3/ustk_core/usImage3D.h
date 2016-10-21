@@ -93,7 +93,7 @@ public:
   /**
   * Destructor.
   */
-  ~usImage3D();
+  virtual ~usImage3D();
 
   /** @name Inherited functionalities from usImage3D */
   //@{
@@ -112,37 +112,37 @@ public:
 
   /**
   * Get the volume width.
-  * @return The volume width.
+  * @return The volume width, in number of voxels.
   */
   unsigned int getDimX() const { return m_dimX; }
 
   /**
   * Get the volume height.
-  * @return The volume height.
+  * @return The volume height, in number of voxels.
   */
   unsigned int getDimY() const { return m_dimY; }
 
   /**
   * Get the volume size along the z-axis.
-  * @return The z-axis size in voxels.
+  * @return The z-axis size in voxels, in number of voxels.
   */
   unsigned int getDimZ() const { return m_dimZ; }
 
   /**
   * Get the element spacing along the x-axis.
-  * @return The element spacing along the x-axis.
+  * @return The element spacing along the x-axis, in meters.
   */
   float getElementSpacingX() const { return m_elementSpacingX; }
 
   /**
   * Get the element spacing along the y-axis.
-  * @return The element spacing along the y-axis.
+  * @return The element spacing along the y-axis, in meters.
   */
   float getElementSpacingY() const { return m_elementSpacingY; }
 
   /**
   * Get the element spacing along the z-axis.
-  * @return The element spacing along the z-axis.
+  * @return The element spacing along the z-axis, in meters.
   */
   float getElementSpacingZ() const { return m_elementSpacingZ; }
 
@@ -153,21 +153,21 @@ public:
   unsigned int getSize() const { return m_size; }
 
   /**
-  * initiation of the image.
-  * @param dimX Volume width.
-  * @param dimY Volume height.
-  * @param dimZ Volume size in the third dimension (orthogonal to ultrasound 2D frames).
+  * Initiation of the image.
+  * @param dimX Volume width (number of voxels).
+  * @param dimY Volume height (number of voxels).
+  * @param dimZ Volume size (number of voxels) in the third dimension (orthogonal to ultrasound 2D frames).
   */
   void init(unsigned int dimX, unsigned int dimY, unsigned int dimZ);
 
   /**
-  * initiation of the image.
+  * Initiation of the image.
   * @param dimX Volume width.
   * @param dimY Volume height.
   * @param dimZ Volume size in the third dimension (orthogonal to ultrasound 2D frames).
-  * @param spacingX Element spacing in x axis.
-  * @param spacingY Element spacing in x axis.
-  * @param spacingZ Element spacing in x axis.
+  * @param spacingX Element spacing in x axis, in meters.
+  * @param spacingY Element spacing in x axis, in meters.
+  * @param spacingZ Element spacing in x axis, in meters.
   */
   void init(unsigned int dimX, unsigned int dimY, unsigned int dimZ, float spacingX, float spacingY, float spacingZ);
 
@@ -257,19 +257,19 @@ public:
 
   /**
   * Set the element spacing along the x-axis.
-  * @param elementSpacingX The element spacing along the x-axis.
+  * @param elementSpacingX The element spacing along the x-axis, in meters.
   */
   void setElementSpacingX(float elementSpacingX) { m_elementSpacingX = elementSpacingX; }
 
   /**
   * Set the element spacing along the y-axis.
-  * @param elementSpacingY The element spacing along the y-axis.
+  * @param elementSpacingY The element spacing along the y-axis, in meters.
   */
   void setElementSpacingY(float elementSpacingY) { m_elementSpacingY = elementSpacingY; }
 
   /**
   * Set the element spacing along the z-axis.
-  * @param elementSpacingZ The element spacing along the z-axis.
+  * @param elementSpacingZ The element spacing along the z-axis, in meters.
   */
   void setElementSpacingZ(float elementSpacingZ) { m_elementSpacingZ = elementSpacingZ; }
 

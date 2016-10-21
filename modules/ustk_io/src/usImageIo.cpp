@@ -208,7 +208,7 @@ void usImageIo::read(usImageRF2D<unsigned char> &imageRf2D, const std::string &h
     imageRf2D.setImageSettings(settings);
 
     //resizing image in memory
-    imageRf2D.resize(mhdParser.getANumber(), mhdParser.getLineNumber());
+    imageRf2D.resize(mhdHeader.dim[0], mhdHeader.dim[1]);
 
     //data parsing
     usRawFileParser rawParser;
@@ -320,10 +320,11 @@ void usImageIo::read(usImageRF3D<unsigned char> &imageRf3, const std::string &he
     if (mhdParser.getElementType() != usMetaHeaderParser::MET_UCHAR) {
       throw(vpException(vpException::badValue, "Reading a non unsigned char image!"));
     }
-    //resizing image in memory
-    imageRf3.resize(mhdParser.getANumber(), mhdParser.getLineNumber(), mhdParser.getFrameNumber());
 
     usMetaHeaderParser::MHDHeader mhdHeader = mhdParser.getMHDHeader();
+
+    //resizing image in memory
+    imageRf3.resize(mhdHeader.dim[0], mhdHeader.dim[1],mhdHeader.dim[2]);
 
     usImagePreScanSettings settings;
     settings.setProbeRadius(mhdHeader.probeRadius);
@@ -476,10 +477,11 @@ void usImageIo::read(usImagePreScan2D<unsigned char> &preScanImage,const std::st
     if (mhdParser.getElementType() != usMetaHeaderParser::MET_UCHAR) {
       throw(vpException(vpException::badValue, "Reading a non unsigned char image!"));
     }
-    //resizing image in memory
-    preScanImage.resize(mhdParser.getANumber(), mhdParser.getLineNumber());
 
     usMetaHeaderParser::MHDHeader mhdHeader = mhdParser.getMHDHeader();
+
+    //resizing image in memory
+    preScanImage.resize(mhdHeader.dim[0], mhdHeader.dim[1],mhdHeader.dim[2]);
 
     usImagePreScanSettings settings;
     settings.setProbeRadius(mhdHeader.probeRadius);
@@ -597,10 +599,11 @@ void usImageIo::read(usImagePreScan3D<unsigned char> &preScanImage,const std::st
     if (mhdParser.getElementType() != usMetaHeaderParser::MET_UCHAR) {
       throw(vpException(vpException::badValue, "Reading a non unsigned char image!"));
     }
-    //resizing image in memory
-    preScanImage.resize(mhdParser.getANumber(), mhdParser.getLineNumber(), mhdParser.getFrameNumber());
 
     usMetaHeaderParser::MHDHeader mhdHeader = mhdParser.getMHDHeader();
+
+    //resizing image in memory
+    preScanImage.resize(mhdHeader.dim[0], mhdHeader.dim[1],mhdHeader.dim[2]);
 
     usImagePreScanSettings settings;
     settings.setProbeRadius(mhdHeader.probeRadius);
@@ -805,10 +808,11 @@ void usImageIo::read(usImagePostScan2D<unsigned char> &postScanImage,const std::
     if (mhdParser.getElementType() != usMetaHeaderParser::MET_UCHAR) {
       throw(vpException(vpException::badValue, "Reading a non unsigned char image!"));
     }
-    //resizing image in memory
-    postScanImage.resize(mhdParser.getANumber(), mhdParser.getFrameNumber());
 
     usMetaHeaderParser::MHDHeader mhdHeader = mhdParser.getMHDHeader();
+
+    //resizing image in memory
+    postScanImage.resize(mhdHeader.dim[0], mhdHeader.dim[1]);
 
     usImagePostScanSettings settings;
     settings.setProbeRadius(mhdHeader.probeRadius);
@@ -926,10 +930,11 @@ void usImageIo::read(usImagePostScan3D<unsigned char> &postScanImage, const std:
     if (mhdParser.getElementType() != usMetaHeaderParser::MET_UCHAR) {
       throw(vpException(vpException::badValue,"Reading a non unsigned char image!"));
     }
-    //resizing image in memory
-    postScanImage.resize(mhdParser.getANumber(),mhdParser.getLineNumber(),mhdParser.getFrameNumber());
 
     usMetaHeaderParser::MHDHeader mhdHeader = mhdParser.getMHDHeader();
+
+    //resizing image in memory
+    postScanImage.resize(mhdHeader.dim[0], mhdHeader.dim[1],mhdHeader.dim[2]);
 
     usImagePostScanSettings settings;
     settings.setProbeRadius(mhdHeader.probeRadius);

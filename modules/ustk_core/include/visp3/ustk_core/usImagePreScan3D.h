@@ -96,7 +96,7 @@ public:
   //copy constructor from usImage3D and usImagePreScanSettings
   usImagePreScan3D(const usImage3D<Type> &other, const usImagePreScanSettings &otherSettings, const usMotorSettings &motorSettings);
   //destructor
-  ~usImagePreScan3D();
+  virtual ~usImagePreScan3D();
 
   unsigned int getBModeSampleNumber() const;
   unsigned int getFrameNumber() const;

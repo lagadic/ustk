@@ -56,7 +56,7 @@ class VISP_EXPORT usDisplay2D
 {
 public:
   usDisplay2D();
-  ~usDisplay2D();
+  virtual ~usDisplay2D();
 };
 
 #endif //US_DISPLAY_2D_H

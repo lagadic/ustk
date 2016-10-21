@@ -84,7 +84,7 @@ public:
   usImagePostScan2D(const vpImage<Type> &other);
   usImagePostScan2D(const usImagePostScanSettings &other);
   usImagePostScan2D(const vpImage<Type> &otherImage, const usImagePostScanSettings &otherSettings);
-  ~usImagePostScan2D();
+  virtual ~usImagePostScan2D();
 
   unsigned int getDimX() const;
   unsigned int getDimY() const;

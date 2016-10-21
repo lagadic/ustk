@@ -51,9 +51,9 @@ usTransducerSettings::usTransducerSettings()
 
 /**
 * Full constructor with all the settings availables:
-* @param[in] probeRadius Distance between the center point of the probe and the first pixel arc acquired. Value in meters (m).
-* @param[in] scanLinePitch radius or distance between 2 successives acquisiton lines in the probe : in radians (rad) if the prove is convex, or in meters (m) if the probe is linear.
-* @param[in] isTransducerConvex Boolean to specify if the probe is convex or linear.
+* @param probeRadius Distance between the center point of the probe and the first pixel arc acquired. Value in meters (m).
+* @param scanLinePitch radius or distance between 2 successives acquisiton lines in the probe : in radians (rad) if the prove is convex, or in meters (m) if the probe is linear.
+* @param isTransducerConvex Boolean to specify if the probe is convex or linear.
 */
 usTransducerSettings::usTransducerSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex)
   : m_probeRadius(probeRadius), m_scanLinePitch(scanLinePitch), m_isTransducerConvex(isTransducerConvex) {}
@@ -98,7 +98,7 @@ bool usTransducerSettings::operator==(usTransducerSettings const& other)
 
 /**
 * Print transducer informations in a ostream.
-* @return True if the settings are the same, false otherwise.
+* Usage example : "std::cout << myTransducerSettings << std::endl;"
 */
 VISP_EXPORT std::ostream& operator<<(std::ostream& out, const usTransducerSettings &other)
 {

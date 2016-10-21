@@ -116,7 +116,7 @@ void usMotorSettings::setMotorRadius(double motorRadius)
 }
 
 /**
-* Get the probe radius (m).
+* Get the motor radius (m).
 * @return motorRadius Motor radius in meters.
 */
 double usMotorSettings::getMotorRadius() const

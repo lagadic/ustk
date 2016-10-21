@@ -56,7 +56,7 @@ class VISP_EXPORT usDisplay3D
 {
 public:
   usDisplay3D();
-  ~usDisplay3D();
+  virtual ~usDisplay3D();
 };
 
 #endif //US_DISPLAY_3D_H
