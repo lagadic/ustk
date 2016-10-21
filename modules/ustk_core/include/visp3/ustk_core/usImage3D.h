@@ -84,9 +84,9 @@ public:
   usImage3D(unsigned int dimX, unsigned int dimY, unsigned int dimZ, float spacingX, float spacingY, float spacingZ);
 
   /**
-  * Copy constructor. By default doesn't perform a deep copy.
+  * Copy constructor. By default performs a deep copy.
   * @param image other 3D-image to copy
-  * @param copy boolean to select if deep copy is performed or not (not a deep copy by default)
+  * @param copy boolean to select if deep copy is performed or not (deep copy by default)
   */
   usImage3D(const usImage3D<Type> &image, const bool copy = true);
 
@@ -186,7 +186,7 @@ public:
 
   /**
   * Comparison operator.
-  * @param other The 3d image to compare. Comparing only parameters, not all volume voxel by voxel.
+  * @param other The 3d image to compare. Comparing image parameters (size and spacing), and all volume voxel by voxel.
   */
   bool operator==(const usImage3D<Type> &other);
 

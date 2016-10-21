@@ -32,7 +32,7 @@
 /**
  * @file usImageIo.h
  * @brief Input/output operations between ultrasound data and image files and their associated header
- * (containing usTransdycerSettings, usMotorSettings, and pre-scan or post-scan info).
+ * (containing usTransducerSettings, usMotorSettings, and pre-scan or post-scan info).
  */
 
 #ifndef US_IMAGE_IO_H

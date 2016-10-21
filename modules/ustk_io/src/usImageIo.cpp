@@ -499,7 +499,7 @@ void usImageIo::read(usImagePreScan2D<unsigned char> &preScanImage,const std::st
 /**
 * Write 3D unsigned char pre-scan ultrasound image.
 * @param preScanImage The pre-scan image to write.
-* @param headerFileName The image file name to write.
+* @param headerFileName The header file name to write.
 */
 void usImageIo::write(const usImagePreScan3D<unsigned char> &preScanImage, const std::string &headerFileName)
 {
@@ -516,7 +516,7 @@ void usImageIo::write(const usImagePreScan3D<unsigned char> &preScanImage, const
 /**
 * Write 3D unsigned char pre-scan ultrasound image.
 * @param preScanImage The pre-scan image to write.
-* @param headerFileName The image file name to write.
+* @param headerFileName The header file name to write.
 * @param imageExtension2D The 2D image extension.
 */
 void usImageIo::write(const usImagePreScan3D<unsigned char> &preScanImage, const std::string &headerFileName, const std::string &imageExtension2D)
@@ -575,7 +575,7 @@ void usImageIo::write(const usImagePreScan3D<unsigned char> &preScanImage, const
 /**
 * Read 3D unsigned char pre-scan ultrasound image.
 * @param [out] preScanImage The pre-scan image to read.
-* @param [in] headerFileName The image file name to read, with .xml extension.
+* @param [in] headerFileName The header file name to read, with header extension.
 */
 void usImageIo::read(usImagePreScan3D<unsigned char> &preScanImage,const std::string &headerFileName)
 {
@@ -626,7 +626,7 @@ void usImageIo::read(usImagePreScan3D<unsigned char> &preScanImage,const std::st
 /**
 * Write 2D double pre-scan ultrasound image.
 * @param preScan2DImage The pre-scan image to write.
-* @param headerFileName The image file name to write.
+* @param headerFileName The header file name to write.
 * @param imageExtension2D The 2D image extension.
 */
 void usImageIo::write(const usImagePreScan2D<double> &preScan2DImage,
@@ -641,7 +641,7 @@ void usImageIo::write(const usImagePreScan2D<double> &preScan2DImage,
 /**
 * Read 2D double pre-scan ultrasound image.
 * @param [out] preScan2D The pre-scan image to read.
-* @param [in] headerFileName The image file name to read.
+* @param [in] headerFileName The header file name to read.
 */
 void usImageIo::read(usImagePreScan2D<double> &preScan2D, const std::string &headerFileName)
 {
@@ -653,7 +653,7 @@ void usImageIo::read(usImagePreScan2D<double> &preScan2D, const std::string &hea
 /**
 * Write 3D double pre-scan ultrasound image.
 * @param preScan3DImage The pre-scan image to write.
-* @param headerFileName The image file name to write.
+* @param headerFileName The header file name to write.
 * @param imageExtension2D The 2D image extension.
 */
 void usImageIo::write(const usImagePreScan3D<double> &preScan3DImage, const std::string &headerFileName,
@@ -668,7 +668,7 @@ void usImageIo::write(const usImagePreScan3D<double> &preScan3DImage, const std:
 /**
 * Read 3D double pre-scan ultrasound image.
 * @param [out] preScan3DImage The pre-scan image to read.
-* @param [in] headerFileName The image file name to read.
+* @param [in] headerFileName The header file name to read.
 */
 void usImageIo::read(usImagePreScan3D<double> &preScan3DImage, const std::string &headerFileName)
 {
@@ -767,7 +767,7 @@ void usImageIo::write(const usImagePostScan2D<unsigned char> &postScanImage, con
 /**
 * Read 2D post-scan ultrasound image.
 * @param [out] postScanImage The post-scan image to read.
-* @param [in] headerFileName The header file name with.
+* @param [in] headerFileName The header file name.
 */
 void usImageIo::read(usImagePostScan2D<unsigned char> &postScanImage,const std::string &headerFileName)
 {
@@ -904,7 +904,7 @@ void usImageIo::write(const usImagePostScan3D<unsigned char> &postScanImage, con
 /**
 * Read 3D post-scan ultrasound image
 * @param [out] postScanImage The post-scan image to read.
-* @param [in] headerFileName The mhd file name with .mhd extenstion.
+* @param [in] headerFileName The header file name with extenstion.
 */
 void usImageIo::read(usImagePostScan3D<unsigned char> &postScanImage, const std::string &headerFileName)
 {

@@ -71,6 +71,9 @@ public:
   usImagePostScanSettings(const usTransducerSettings basicSettings, double height_resolution, double width_resolution);
   virtual ~usImagePostScanSettings();
 
+  /** @name Inherited functionalities from usImagePostScanSettings */
+  //@{
+
   double getHeightResolution() const;
   double getWidthResolution() const;
   usImagePostScanSettings getImageSettings() const;
@@ -82,6 +85,8 @@ public:
   void setHeightResolution(const double heightResolution);
   void setWidthResolution(const double widthResolution);
   void setImageSettings(const usImagePostScanSettings& postScanSettings);
+
+  //@}
 
 private:
   //Settings from the probe

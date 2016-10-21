@@ -71,6 +71,9 @@ public:
   usImagePreScanSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex, double axial_resolution);
   virtual ~usImagePreScanSettings();
 
+  /** @name Inherited functionalities from usImagePreScanSettings */
+  //@{
+
   double getAxialResolution() const;
 
   usImagePreScanSettings& operator=(const usImagePreScanSettings& other);
@@ -78,6 +81,8 @@ public:
 
   void setAxialResolution(const double axialResolution);
   void setImageSettings(const usImagePreScanSettings& preScanSettings);
+
+  //@}
 
 private:
   //Settings from the probe
