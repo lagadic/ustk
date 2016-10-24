@@ -81,7 +81,7 @@ public:
   * @param spacingY distancee (in meters) between two voxels on Y-axis
   * @param spacingZ distancee (in meters) between two voxels on Z-axis
   */
-  usImage3D(unsigned int dimX, unsigned int dimY, unsigned int dimZ, float spacingX, float spacingY, float spacingZ);
+  usImage3D(unsigned int dimX, unsigned int dimY, unsigned int dimZ, double spacingX, double spacingY, double spacingZ);
 
   /**
   * Copy constructor. By default performs a deep copy.
@@ -132,19 +132,19 @@ public:
   * Get the element spacing along the x-axis.
   * @return The element spacing along the x-axis, in meters.
   */
-  float getElementSpacingX() const { return m_elementSpacingX; }
+  double getElementSpacingX() const { return m_elementSpacingX; }
 
   /**
   * Get the element spacing along the y-axis.
   * @return The element spacing along the y-axis, in meters.
   */
-  float getElementSpacingY() const { return m_elementSpacingY; }
+  double getElementSpacingY() const { return m_elementSpacingY; }
 
   /**
   * Get the element spacing along the z-axis.
   * @return The element spacing along the z-axis, in meters.
   */
-  float getElementSpacingZ() const { return m_elementSpacingZ; }
+  double getElementSpacingZ() const { return m_elementSpacingZ; }
 
   /**
   * Get the volume size.
@@ -169,7 +169,7 @@ public:
   * @param spacingY Element spacing in x axis, in meters.
   * @param spacingZ Element spacing in x axis, in meters.
   */
-  void init(unsigned int dimX, unsigned int dimY, unsigned int dimZ, float spacingX, float spacingY, float spacingZ);
+  void init(unsigned int dimX, unsigned int dimY, unsigned int dimZ, double spacingX, double spacingY, double spacingZ);
 
   /**
   * Initialize the data container with the specified value.
@@ -259,19 +259,19 @@ public:
   * Set the element spacing along the x-axis.
   * @param elementSpacingX The element spacing along the x-axis, in meters.
   */
-  void setElementSpacingX(float elementSpacingX) { m_elementSpacingX = elementSpacingX; }
+  void setElementSpacingX(double elementSpacingX) { m_elementSpacingX = elementSpacingX; }
 
   /**
   * Set the element spacing along the y-axis.
   * @param elementSpacingY The element spacing along the y-axis, in meters.
   */
-  void setElementSpacingY(float elementSpacingY) { m_elementSpacingY = elementSpacingY; }
+  void setElementSpacingY(double elementSpacingY) { m_elementSpacingY = elementSpacingY; }
 
   /**
   * Set the element spacing along the z-axis.
   * @param elementSpacingZ The element spacing along the z-axis, in meters.
   */
-  void setElementSpacingZ(float elementSpacingZ) { m_elementSpacingZ = elementSpacingZ; }
+  void setElementSpacingZ(double elementSpacingZ) { m_elementSpacingZ = elementSpacingZ; }
 
   //@}
 
@@ -281,9 +281,9 @@ private:
   unsigned int m_dimX; /**< Volume width in pixels (number of pixels on the x-axis)*/
   unsigned int m_dimY; /**< Volume height in pixels (number of pixels on the y-axis)*/
   unsigned int m_dimZ; /**< Volume size in 3d dimension (number of pixels on the z-axis)*/
-  float m_elementSpacingX; /**< Element spacing along the x-axis, in meters */
-  float m_elementSpacingY; /**< Element spacing along the y-axis, in meters */
-  float m_elementSpacingZ; /**< Element spacing along the z-axis, in meters */
+  double m_elementSpacingX; /**< Element spacing along the x-axis, in meters */
+  double m_elementSpacingY; /**< Element spacing along the y-axis, in meters */
+  double m_elementSpacingZ; /**< Element spacing along the z-axis, in meters */
   unsigned int m_size; /**< Volume size : number of voxels in the whole volume*/
 
   Type* bitmap; /**< Data container */
@@ -363,7 +363,7 @@ inline void usImage3D<Type>::init(unsigned int dimX, unsigned int dimY, unsigned
 
 template<class Type>
 void
-usImage3D<Type>::init(unsigned int dimX, unsigned int dimY, unsigned int dimZ, float spacingX, float spacingY, float spacingZ)
+usImage3D<Type>::init(unsigned int dimX, unsigned int dimY, unsigned int dimZ, double spacingX, double spacingY, double spacingZ)
 {
   init(dimX, dimY, dimZ);
   m_elementSpacingX = spacingX;
@@ -390,7 +390,7 @@ usImage3D<Type>::usImage3D(unsigned int dimX, unsigned int dimY, unsigned int di
 
 template<class Type>
 usImage3D<Type>::usImage3D(unsigned int dimX, unsigned int dimY, unsigned int dimZ,
-                           float elementSpacingX, float elementSpacingY, float elementSpacingZ)
+                           double elementSpacingX, double elementSpacingY, double elementSpacingZ)
                            : m_dimX(dimX), m_dimY(dimY), m_dimZ(dimZ), m_size(dimX * dimY * dimZ),
                              m_elementSpacingX(elementSpacingX), m_elementSpacingY(elementSpacingY),
                              m_elementSpacingZ(elementSpacingZ), bitmap(NULL), planesIndex(NULL)

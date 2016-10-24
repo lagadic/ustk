@@ -904,8 +904,8 @@ void usImageIo::write(const usImagePostScan3D<unsigned char> &postScanImage, con
     //writing in file
     usMetaHeaderParser mhdParser;
     mhdParser.setMHDHeader(header);
-    mhdParser.setHeightResolution(postScanImage.getHeightResolution());
-    mhdParser.setWidthResolution(postScanImage.getWidthResolution());
+    mhdParser.setHeightResolution(postScanImage.getElementSpacingX());
+    mhdParser.setWidthResolution(postScanImage.getElementSpacingY());
     mhdParser.parse();
 
     //filling raw
@@ -947,18 +947,14 @@ void usImageIo::read(usImagePostScan3D<unsigned char> &postScanImage, const std:
     //resizing image in memory
     postScanImage.resize(mhdHeader.dim[0], mhdHeader.dim[1],mhdHeader.dim[2]);
 
-    usImagePostScanSettings settings;
-    settings.setProbeRadius(mhdHeader.probeRadius);
-    settings.setScanLinePitch(mhdHeader.scanLinePitch);
-    settings.setTransducerConvexity(mhdHeader.isTransducerConvex);
-    settings.setWidthResolution(mhdParser.getWidthResolution());
-    settings.setHeightResolution(mhdParser.getHeightResolution());
-    postScanImage.setImageSettings(settings);
-    usMotorSettings motorSettings;
-    motorSettings.setMotorRadius(mhdHeader.motorRadius);
-    motorSettings.setFramePitch(mhdHeader.framePitch);
-    motorSettings.setMotorType(mhdHeader.motorType);
-    postScanImage.setMotorSettings(motorSettings);
+    postScanImage.setProbeRadius(mhdHeader.probeRadius);
+    postScanImage.setScanLinePitch(mhdHeader.scanLinePitch);
+    postScanImage.setTransducerConvexity(mhdHeader.isTransducerConvex);
+    postScanImage.setElementSpacingX(mhdParser.getWidthResolution());
+    postScanImage.setElementSpacingY(mhdParser.getHeightResolution());
+    postScanImage.setMotorRadius(mhdHeader.motorRadius);
+    postScanImage.setFramePitch(mhdHeader.framePitch);
+    postScanImage.setMotorType(mhdHeader.motorType);
       
     //data parsing
     usRawFileParser rawParser;

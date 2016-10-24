@@ -197,8 +197,9 @@ int main(int argc, const char** argv)
     postscan3DReference.setFramePitch(0.258);
     postscan3DReference.setMotorRadius(0.025);
     postscan3DReference.setMotorType(usMotorSettings::TiltingMotor);
-    postscan3DReference.setWidthResolution(0.0058);
-    postscan3DReference.setHeightResolution(0.0058);
+    postscan3DReference.setElementSpacingX(0.0058);
+    postscan3DReference.setElementSpacingY(0.0058);
+    postscan3DReference.setElementSpacingZ(0.0058);
 
     std::cout << "Written in " << filename << std::endl ;
     std::cout << postscan3DReference;

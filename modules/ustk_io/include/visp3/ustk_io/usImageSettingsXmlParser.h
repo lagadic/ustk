@@ -43,7 +43,6 @@
 
 #include <iostream>
 #include <visp3/ustk_core/usTransducerSettings.h>
-#include <visp3/ustk_core/usImagePostScanSettings.h>
 #include <visp3/ustk_core/usImagePreScan2D.h>
 #include <visp3/ustk_core/usImagePostScan2D.h>
 #include <visp3/ustk_core/usMotorSettings.h>

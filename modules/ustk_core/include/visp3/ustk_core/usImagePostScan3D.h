@@ -42,7 +42,6 @@
 #include <visp3/ustk_core/usImage3D.h>
 
 #include <visp3/ustk_core/usMotorSettings.h>
-#include <visp3/ustk_core/usImagePostScanSettings.h>
 
 /**
  @class usImagePostScan3D
@@ -83,16 +82,16 @@
 
 */
 template<class Type>
-class usImagePostScan3D : public usImage3D<Type>, public usImagePostScanSettings,public usMotorSettings {
+class usImagePostScan3D : public usImage3D<Type>, public usTransducerSettings ,public usMotorSettings {
 public:
   usImagePostScan3D();
   usImagePostScan3D(unsigned int dimX, unsigned int dimY, unsigned int dimZ,
                     double probeRadius, double motorRadius, double scanLinePitch,
                     double framePitch, bool isTransducerConvex, const usMotorSettings::usMotorType &motorType,
-                    double heightResolution, double widthResolution);
+                    double spacingX, double spacingY, double spacingZ);
 
   usImagePostScan3D(const usImagePostScan3D &other);
-  usImagePostScan3D(const usImage3D<Type> &otherImage, const usImagePostScanSettings &postScanSettings,
+  usImagePostScan3D(const usImage3D<Type> &otherImage, const usTransducerSettings &imageSettings,
                     const usMotorSettings &motorSettings);
   virtual ~usImagePostScan3D();
 
@@ -101,6 +100,7 @@ public:
   bool operator ==(const usImagePostScan3D<Type> &other);
 
   void setData(const usImage3D<Type> &image3D);
+
 };
 
 
@@ -108,7 +108,7 @@ public:
 * Basic constructor, all parameters set to default values
 */
 template<class Type>
-usImagePostScan3D<Type>::usImagePostScan3D() : usImage3D<Type>(), usImagePostScanSettings(), usMotorSettings()
+usImagePostScan3D<Type>::usImagePostScan3D() : usImage3D<Type>(), usTransducerSettings(), usMotorSettings()
 {
 
 }
@@ -125,18 +125,19 @@ usImagePostScan3D<Type>::usImagePostScan3D() : usImage3D<Type>(), usImagePostSca
 * @param isTransducerConvex Boolean to specify if the image is acquired by a convex probe transducer (true) or by a linear probe transducer (false).
 * @param motorType usMotorType to specify if the image is acquired by a linear motor (LinearMotor),
 * by a small angle rotation motor (TiltingMotor), or by a 360&deg; roatation motor (RotationalMotor).
-* @param heightResolution Image height resolution.
-* @param widthResolution Image width resolution.
+* @param spacingX Resolution in x axis (in meters).
+* @param spacingY Resolution in y axis (in meters).
+* @param spacingZ Resolution in z axis (in meters).
 */
 template<class Type>
 usImagePostScan3D<Type>::usImagePostScan3D(unsigned int dimX, unsigned int dimY, unsigned int dimZ,
                                         double probeRadius, double motorRadius, double scanLinePitch,
                                         double framePitch, bool isTransducerConvex,
                                         const usMotorSettings::usMotorType &motorType,
-                                        double heightResolution, double widthResolution)
-  : usImage3D<Type>(dimX, dimY, dimZ),
-    usImagePostScanSettings(probeRadius, scanLinePitch, isTransducerConvex, heightResolution,widthResolution),
-    usMotorSettings( motorRadius, framePitch, motorType)
+                                        double spacingX, double spacingY, double spacingZ)
+  : usImage3D<Type>(dimX, dimY, dimZ, spacingX, spacingY, spacingZ),
+    usTransducerSettings(probeRadius, scanLinePitch, isTransducerConvex),
+    usMotorSettings( motorRadius, framePitch, motorType),
 {
 
 }
@@ -147,7 +148,7 @@ usImagePostScan3D<Type>::usImagePostScan3D(unsigned int dimX, unsigned int dimY,
 */
 template<class Type>
 usImagePostScan3D<Type>::usImagePostScan3D(const usImagePostScan3D &other)
-  : usImage3D<Type>(other), usImagePostScanSettings(other), usMotorSettings(other)
+  : usImage3D<Type>(other), usTransducerSettings(other), usMotorSettings(other)
 {
 
 }
@@ -155,13 +156,13 @@ usImagePostScan3D<Type>::usImagePostScan3D(const usImagePostScan3D &other)
 /**
 * Constructor from usImage3D and usMotorSettings.
 * @param otherImage usImage3D<unsigned char> to copy
-* @param postScanSettings usImagePostScanSettings to copy
+* @param transducerSettings usTransducerSettings to copy
 * @param motorSettings usMotorSettings to copy
 */
 template<class Type>
-usImagePostScan3D<Type>::usImagePostScan3D(const usImage3D<Type> &otherImage,
- const usImagePostScanSettings &postScanSettings, const usMotorSettings &motorSettings)
-: usImage3D<Type>(otherImage), usImagePostScanSettings(postScanSettings), usMotorSettings(motorSettings)
+usImagePostScan3D<Type>::usImagePostScan3D(const usImage3D<Type> &otherImage, const usTransducerSettings &transducerSettings,
+  const usMotorSettings &motorSettings)
+: usImage3D<Type>(otherImage), usTransducerSettings(transducerSettings), usMotorSettings(motorSettings)
 {
 
 }
@@ -194,7 +195,7 @@ template<class Type>
 bool usImagePostScan3D<Type>::operator == (usImagePostScan3D<Type> const& other)
 {
   return usImage3D<Type>::operator ==(other) &&
-        usImagePostScanSettings::operator==(other) &&
+    usTransducerSettings::operator==(other) &&
          usMotorSettings::operator ==(other);
 }
 
@@ -204,7 +205,7 @@ bool usImagePostScan3D<Type>::operator == (usImagePostScan3D<Type> const& other)
 template<class Type> std::ostream& operator<<(std::ostream& out, const usImagePostScan3D<Type> &other)
 {
   return out << static_cast<const usImage3D<Type> &>(other) <<
-    static_cast<const usImagePostScanSettings &>(other) <<
+    static_cast<const usTransducerSettings &>(other) <<
     static_cast<const usMotorSettings &>(other);
 }
 
