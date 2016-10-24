@@ -63,10 +63,10 @@
       unsigned int dimY = 200;
       double probeRadius = 0.045;
       double scanLinePitch = 0.0012;
-      bool isProbeConvex = true;
+      bool isTransducerConvex = true;
       double heightResolution = 0.002;
       double widthResolution = 0.004;
-      usImagePostScanSettings imageSettings(probeRadius, scanLinePitch, isProbeConvex, heightResolution, widthResolution);
+      usImagePostScanSettings imageSettings(probeRadius, scanLinePitch, isTransducerConvex, heightResolution, widthResolution);
       vpImage<unsigned char> I(dimY,dimX);
       usImagePostScan2D<unsigned char> postScan2d;
       postScan2d.setData(I);
@@ -109,7 +109,7 @@ usImagePostScan2D<Type>::usImagePostScan2D() : vpImage<Type>(), usImagePostScanS
 /**
 * Full constructor, all parameters settables.
 * @param width number of pixels along x axis.
-* @param height number of lines.
+* @param height number of pixels along y axis.
 * @param probeRadius radius of the ultrasound probe used to acquire the RF image.
 * @param scanLinePitch Angle (radians) or distance (meters) between 2 lines of the ultrasound probe
 * used to acquire the RF image. Angle if \e isTransducerConvex is true, distance otherwise.

@@ -55,20 +55,18 @@
     int main()
     {
       // Update settings
-      unsigned int lineNumber = 200;
+      unsigned int scanLineNumber = 200;
       unsigned int BModeSampleNumber = 200;
       double probeRadius = 0.06;
       double scanLinePitch = 0.04;
-      bool isProbeConvex = true;
+      bool isTransducerConvex = true;
       double axialResolution = 0.005;
-      usImagePreScanSettings imageSettings(probeRadius, scanLinePitch, isProbeConvex, axialResolution);
-      vpImage<unsigned char> I(BModeSampleNumber,lineNumber);
+      usImagePreScanSettings imageSettings(probeRadius, scanLinePitch, isTransducerConvex, axialResolution);
+      vpImage<unsigned char> I(BModeSampleNumber, scanLineNumber);
       usImagePreScan2D<unsigned char> preScan2d;
       preScan2d.setData(I);
       preScan2d.setImageSettings(imageSettings);
     }
-
-
   \endcode
 
  This class represents a 2D ultrasound pre-scan frame.
@@ -79,7 +77,7 @@ public:
   //default constructors
   usImagePreScan2D();
   //All parameters initialisation constructors
-  usImagePreScan2D(unsigned int BModeSampleNumber, unsigned int lineNumber,
+  usImagePreScan2D(unsigned int BModeSampleNumber, unsigned int scanLineNumber,
                   double probeRadius=0.0, double scanLinePitch=0.0, bool isTransducerConvex=false,
                   double axial_resolution=0.0);
   //usImagePreScan2D copy constructor
@@ -94,10 +92,10 @@ public:
   //destructor
   virtual ~usImagePreScan2D();
 
-  //No setters for BModeSampleNumber and lineNumber because vpImage doesn't have setters for height and width.
+  //No setters for BModeSampleNumber and scanLineNumber because vpImage doesn't have setters for height and width.
   //Those parameters have to be passed in the constructor.
   unsigned int getBModeSampleNumber() const;
-  unsigned int getLineNumber() const;
+  unsigned int getScanLineNumber() const;
 
   //assignement
   usImagePreScan2D<Type>& operator=(const usImagePreScan2D<Type> &other);
@@ -121,7 +119,7 @@ usImagePreScan2D<Type>::usImagePreScan2D() : vpImage<Type>(), usImagePreScanSett
 /**
 * Initializing constructor for image size and probe settings.
 * @param BModeSampleNumber number of B-mode samples in a line.
-* @param lineNumber number of lines.
+* @param scanLineNumber number of scan lines.
 * @param probeRadius radius of the ultrasound probe used to acquire the RF image.
 * @param scanLinePitch Angle (radians) or distance (meters) between 2 lines of the ultrasound probe used
 * to acquire the RF image. Angle if \e isTransducerConvex is true, distance otherwise.
@@ -129,9 +127,9 @@ usImagePreScan2D<Type>::usImagePreScan2D() : vpImage<Type>(), usImagePreScanSett
 * @param axial_resolution Image axial resolution.
 */
 template<class Type>
-usImagePreScan2D<Type>::usImagePreScan2D(unsigned int BModeSampleNumber, unsigned int lineNumber,
+usImagePreScan2D<Type>::usImagePreScan2D(unsigned int BModeSampleNumber, unsigned int scanLineNumber,
  double probeRadius, double scanLinePitch, bool isTransducerConvex, double axial_resolution) :
-  vpImage<Type>(BModeSampleNumber, lineNumber),
+  vpImage<Type>(BModeSampleNumber, scanLineNumber),
   usImagePreScanSettings(probeRadius, scanLinePitch, isTransducerConvex, axial_resolution)
 {
 
@@ -217,7 +215,7 @@ std::ostream& operator<<(std::ostream& out, const usImagePreScan2D<Type> &other)
 {
   return out << static_cast<const usImagePreScanSettings &>(other) << 
     "number of B-mode samples in a scanline : " << other.getBModeSampleNumber() << std::endl <<
-    "number of scanlines : " << other.getLineNumber() << std::endl;
+    "number of scanlines : " << other.getScanLineNumber() << std::endl;
 }
 
 /**
@@ -229,10 +227,10 @@ unsigned int usImagePreScan2D<Type>::getBModeSampleNumber() const { return vpIma
 
 /**
 * Get the number of lines.
-* @return lineNumber number of lines.
+* @return scanLineNumber number of lines.
 */
 template<class Type>
-unsigned int usImagePreScan2D<Type>::getLineNumber() const { return vpImage<Type>::getWidth(); }
+unsigned int usImagePreScan2D<Type>::getScanLineNumber() const { return vpImage<Type>::getWidth(); }
 
 /**
 * Setter for the image data.

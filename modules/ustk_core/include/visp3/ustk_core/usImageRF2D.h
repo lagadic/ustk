@@ -60,19 +60,18 @@
     int main()
     {
       // Update settings
-      unsigned int lineNumber = 200;
+      unsigned int scanLineNumber = 200;
       unsigned int RFSampleNumber = 200;
       double probeRadius = 0.007;
       double scanLinePitch = 0.0006;
-      bool isProbeConvex = true;
+      bool isTransducerConvex = true;
       double axialResolution = 0.002;
-      usImagePreScanSettings imageSettings(probeRadius, scanLinePitch, isProbeConvex, axialResolution);
-      vpImage<unsigned char> I(RFSampleNumber, lineNumber);
+      usImagePreScanSettings imageSettings(probeRadius, scanLinePitch, isTransducerConvex, axialResolution);
+      vpImage<unsigned char> I(RFSampleNumber, scanLineNumber);
       usImageRF2D<unsigned char> rf2d;
       rf2d.setData(I);
       rf2d.setImageSettings(imageSettings);
     }
-
   \endcode
  */
 template<class Type>
@@ -80,14 +79,14 @@ class usImageRF2D : public vpImage<Type>, public usImagePreScanSettings {
 public:
   
   usImageRF2D();
-  usImageRF2D(unsigned int RFSampleNumber, unsigned int lineNumber,
+  usImageRF2D(unsigned int RFSampleNumber, unsigned int scanLineNumber,
               double probeRadius=0, double scanLinePitch=0, bool isTransducerConvex=true,
               double axialResolution=0);
   usImageRF2D(const usImageRF2D &other);
   virtual ~usImageRF2D();
 
   unsigned int getRFSampleNumber() const;
-  unsigned int getLineNumber() const;
+  unsigned int getScanLineNumber() const;
 
   usImageRF2D<Type>& operator=(const usImageRF2D<Type> &other);
   bool operator==(const usImageRF2D<Type> &other);
@@ -108,7 +107,7 @@ usImageRF2D<Type>::usImageRF2D() : vpImage<Type>(), usImagePreScanSettings()
 /**
 * Initializing constructor.
 * @param RFSampleNumber number of RF-samples in a scanline.
-* @param lineNumber number of lines.
+* @param scanLineNumber number of scanlines.
 * @param probeRadius radius of the ultrasound probe used to acquire the RF image.
 * @param scanLinePitch Angle (radians) or distance (meters) between 2 lines of the ultrasound probe used
 * to acquire the RF image. Angle if isTransducerConvex is true, distance otherwise.
@@ -116,9 +115,9 @@ usImageRF2D<Type>::usImageRF2D() : vpImage<Type>(), usImagePreScanSettings()
 * @param axialResolution The distance (in meters) between 2 successive pixels acquired along a scanline.
 */
 template<class Type>
-usImageRF2D<Type>::usImageRF2D(unsigned int RFSampleNumber, unsigned int lineNumber,
+usImageRF2D<Type>::usImageRF2D(unsigned int RFSampleNumber, unsigned int scanLineNumber,
  double probeRadius, double scanLinePitch, bool isTransducerConvex, double axialResolution)
-: vpImage<Type>(RFSampleNumber, lineNumber),
+: vpImage<Type>(RFSampleNumber, scanLineNumber),
   usImagePreScanSettings(probeRadius, scanLinePitch, isTransducerConvex, axialResolution)
 {
 
@@ -177,22 +176,22 @@ std::ostream& operator<<(std::ostream& out, const usImageRF2D<Type> &other)
 {
   return out << static_cast<const usImagePreScanSettings &>(other) <<
     "number of A-samples in a scanline : " << other.getRFSampleNumber() << std::endl <<
-    "number of scanlines : " << other.getLineNumber() << std::endl;
+    "number of scanlines : " << other.getScanLineNumber() << std::endl;
 }
 
 /**
-* Get the number of A-samples in a line.
-* @return a_number of A-samples in a line.
+* Get the number of RF-samples in a line.
+* @return a_number of RF-samples in a line.
 */
 template<class Type>
 unsigned int usImageRF2D<Type>::getRFSampleNumber() const { return vpImage<Type>::getHeight(); }
 
 /**
-* Get the number of lines.
-* @return line_number number of lines.
+* Get the number of scanlines.
+* @return Number of scanlines.
 */
 template<class Type>
-unsigned int usImageRF2D<Type>::getLineNumber() const { return vpImage<Type>::getWidth(); }
+unsigned int usImageRF2D<Type>::getScanLineNumber() const { return vpImage<Type>::getWidth(); }
 
 /**
 * Setter for the image data.

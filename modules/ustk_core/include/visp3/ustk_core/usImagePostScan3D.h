@@ -115,9 +115,9 @@ usImagePostScan3D<Type>::usImagePostScan3D() : usImage3D<Type>(), usImagePostSca
 
 /**
 * Complete constructor, all parameters availables.
-* @param dimX A-samples in a line (corresponds to image height in px).
-* @param dimY Number of lines (corresponds to image width in px).
-* @param dimZ Number of Frames.
+* @param dimX Number of voxels along x axis.
+* @param dimY Number of voxels along y axis.
+* @param dimZ Number of voxales along z axis.
 * @param probeRadius radius of the ultrasound probe used to acquire the RF image.
 * @param motorRadius radius of the ultrasound probe motor used to acquire the RF image.
 * @param scanLinePitch angle(rad) / distance(m) between 2 lines of the ultrasound probe used to acquire the RF image.
