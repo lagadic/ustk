@@ -117,9 +117,6 @@ public:
   void setFirstFrameIndex(long firstIndex);
   void setLastFrameIndex(long lastIndex);
   void setSequenceFileName(const std::string &sequenceFileName);
-
-
-
 };
 
 /****************************************************************************
@@ -206,7 +203,7 @@ void usSequenceReader<usImageRF2D<unsigned char> >::open(usImageRF2D<unsigned ch
   m_frame.setImageSettings(xmlParser.getImagePreScanSettings());
 
   //Reading image
-  char buffer[50];
+  char buffer[FILENAME_MAX];
   sprintf(buffer, m_genericImageFileName.c_str(),m_firstFrame);
   std::string parentName = vpIoTools::getParent(m_sequenceFileName);
   if(!parentName.empty()) {
@@ -239,7 +236,7 @@ void usSequenceReader<usImagePreScan2D<unsigned char> >::open(usImagePreScan2D<u
   m_frame.setImageSettings(xmlParser.getImagePreScanSettings());
 
   //Reading image
-  char buffer[50];
+  char buffer[FILENAME_MAX];
   sprintf(buffer, m_genericImageFileName.c_str(), m_firstFrame);
   std::string parentName = vpIoTools::getParent(m_sequenceFileName);
   if(!parentName.empty()) {
@@ -272,7 +269,7 @@ void usSequenceReader<usImagePostScan2D<unsigned char> >::open(usImagePostScan2D
   m_frame.setImageSettings(xmlParser.getImagePostScanSettings());
 
   //Reading image
-  char buffer[50];
+  char buffer[FILENAME_MAX];
   sprintf(buffer, m_genericImageFileName.c_str(), m_firstFrame);
   std::string parentName = vpIoTools::getParent(m_sequenceFileName);
   if(!parentName.empty()) {
@@ -299,7 +296,7 @@ void usSequenceReader<ImageType>::acquire(ImageType &image)
   }
 
   //Reading image
-  char buffer[50];
+  char buffer[FILENAME_MAX];
   sprintf(buffer, m_genericImageFileName.c_str(), m_frameCount);
   std::string parentName = vpIoTools::getParent(m_sequenceFileName);
   if(!parentName.empty()) {
@@ -330,7 +327,7 @@ void usSequenceReader<ImageType>::getFrame(ImageType &image, int index)
   }
 
   //Reading image
-  char buffer[50];
+  char buffer[FILENAME_MAX];
   sprintf(buffer, m_genericImageFileName.c_str(), m_firstFrame);
   std::string imageFileName = buffer;
 

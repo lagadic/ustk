@@ -87,15 +87,16 @@ public:
 
   usMotorSettings& operator=(const usMotorSettings& other);
   bool operator==(const usMotorSettings& other);
-  friend VISP_EXPORT std::ostream& operator<<(std::ostream& out, const usMotorSettings& other);
 
   // Settings from the 3D probe
   void setFramePitch(double framePitch);
   void setMotorRadius(double motorRadius);
   void setMotorSettings(const usMotorSettings &other);
-  void setMotorType(usMotorType m_motorType);
+  void setMotorType(const usMotorType &m_motorType);
 
   //@}
+
+  friend VISP_EXPORT std::ostream& operator<<(std::ostream& out, const usMotorSettings& other);
 
 private:
   //Settings from the 3D probe

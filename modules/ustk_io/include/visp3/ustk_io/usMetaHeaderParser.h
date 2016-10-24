@@ -132,9 +132,9 @@ public:
   void setHeightResolution(const double heightResolution);
   void setImageFileName(const std::string &imageFileName);
   void setMHDHeader(MHDHeader header);
-  void setMotorSettings(const usMotorSettings motorSettings);
+  void setMotorSettings(const usMotorSettings &motorSettings);
   void setRawFileName(const std::string &rawFileName);
-  void setTransducerSettings(const usTransducerSettings transducerSettings);
+  void setTransducerSettings(const usTransducerSettings &transducerSettings);
   void setWidthResolution(const double widthResolution);
 
 private :

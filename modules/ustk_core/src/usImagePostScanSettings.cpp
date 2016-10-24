@@ -73,7 +73,7 @@ usImagePostScanSettings::usImagePostScanSettings(double probeRadius, double scan
 * @param heightResolution Post-scan image height resolution in meters (distance between two pixels).
 * @param widthResolution Post-scan image width resolution in meters (distance between two pixels).
 */
-usImagePostScanSettings::usImagePostScanSettings(usTransducerSettings basicSettings,
+usImagePostScanSettings::usImagePostScanSettings(const usTransducerSettings &basicSettings,
                                                  double heightResolution, double widthResolution)
 : usTransducerSettings(basicSettings), m_widthResolution(widthResolution), m_heightResolution(heightResolution)
 {

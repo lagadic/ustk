@@ -68,7 +68,7 @@ public:
   usImagePostScanSettings();
   usImagePostScanSettings(const usImagePostScanSettings &other);
   usImagePostScanSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex, double height_resolution, double width_resolution);
-  usImagePostScanSettings(const usTransducerSettings basicSettings, double height_resolution, double width_resolution);
+  usImagePostScanSettings(const usTransducerSettings &basicSettings, double height_resolution, double width_resolution);
   virtual ~usImagePostScanSettings();
 
   /** @name Inherited functionalities from usImagePostScanSettings */
@@ -79,7 +79,6 @@ public:
   usImagePostScanSettings getImageSettings() const;
 
   usImagePostScanSettings& operator=(const usImagePostScanSettings& other);
-  friend VISP_EXPORT std::ostream& operator<<(std::ostream& out, const usTransducerSettings &other);
   bool operator==(const usImagePostScanSettings& other);
 
   void setHeightResolution(const double heightResolution);
@@ -87,6 +86,8 @@ public:
   void setImageSettings(const usImagePostScanSettings& postScanSettings);
 
   //@}
+
+  friend VISP_EXPORT std::ostream& operator<<(std::ostream& out, const usTransducerSettings &other);
 
 private:
   //Settings from the probe

@@ -88,7 +88,7 @@ public:
   //All parameters initialisation constructors
   usImagePreScan3D(unsigned int BModeSampleNumber, unsigned int lineNumber, unsigned int frameNumber,
                    double probeRadius=0.0, double motorRadius=0.0, double scanLinePitch=0.0, double framePitch=0.0,
-                   bool isImageConvex=false, usMotorType motorType=usMotorSettings::LinearMotor, double axialResolution=0.0);
+                   bool isImageConvex=false, const usMotorType &motorType=usMotorSettings::LinearMotor, double axialResolution=0.0);
   //usImagePreScan3D copy constructor
   usImagePreScan3D(const usImagePreScan3D &other);
   //usImage3D copy constructor
@@ -139,9 +139,10 @@ usImagePreScan3D<Type>::usImagePreScan3D() : usImage3D<Type>(), usImagePreScanSe
 */
 template<class Type>
 usImagePreScan3D<Type>::usImagePreScan3D(unsigned int BModeSampleNumber, unsigned int lineNumber,
-                                      unsigned int frameNumber, double probeRadius, double motorRadius,
-                                      double scanLinePitch, double framePitch,
-                                      bool isTransducerConvex, usMotorSettings::usMotorType motorType, double axialResolution)
+                                         unsigned int frameNumber, double probeRadius, double motorRadius,
+                                         double scanLinePitch, double framePitch,
+                                         bool isTransducerConvex, const usMotorSettings::usMotorType &motorType,
+                                         double axialResolution)
   : usImage3D<Type>(BModeSampleNumber, lineNumber, frameNumber),
     usImagePreScanSettings(probeRadius, scanLinePitch, isTransducerConvex, axialResolution),
     usMotorSettings(motorRadius, framePitch, motorType)

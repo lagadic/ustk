@@ -485,7 +485,7 @@ void usMetaHeaderParser::read(const std::string& filename)
 * Transducer settings setter.
 * @param transducerSettings usTransducerSettings to set.
 */
-void usMetaHeaderParser::setTransducerSettings(const usTransducerSettings transducerSettings)
+void usMetaHeaderParser::setTransducerSettings(const usTransducerSettings &transducerSettings)
 {
   m_transducerSettings = transducerSettings;
 }
@@ -494,7 +494,7 @@ void usMetaHeaderParser::setTransducerSettings(const usTransducerSettings transd
 * Motor settings setter (for 3D images).
 * @param motorSettings usMotorSettings to set.
 */
-void usMetaHeaderParser::setMotorSettings(const usMotorSettings motorSettings)
+void usMetaHeaderParser::setMotorSettings(const usMotorSettings &motorSettings)
 {
   m_motorSettings = motorSettings;
 }

@@ -210,7 +210,7 @@ void usSequenceWriter<ImageType>::open(ImageType &image)
   m_frame = image;
 
   //Reading image
-  char buffer[50];
+  char buffer[FILENAME_MAX];
   sprintf(buffer, m_genericImageFileName.c_str(),m_frameCount);
   std::string imageFileName = vpIoTools::getParent(m_sequenceFileName) + vpIoTools::path("/") + buffer;
   vpImageIo::write(image, imageFileName);
@@ -293,7 +293,7 @@ void usSequenceWriter<ImageType>::saveImage(ImageType &image)
   }
 
   //Writing image
-  char buffer[50];
+  char buffer[FILENAME_MAX];
   sprintf(buffer, m_genericImageFileName.c_str(),m_frameCount);
   std::string imageFileName = vpIoTools::getParent(m_sequenceFileName) + vpIoTools::path("/") + buffer;
 

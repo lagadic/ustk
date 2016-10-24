@@ -146,10 +146,10 @@ double usMotorSettings::getFramePitch() const
 * Set the motor type : convex or linear (from probe type used to acquire the image).
 * @param motorType Motor type to specify the motor type : LinearMotor, TiltingMotor (for a rotative motor), RotationalMotor (for a 360&deg; rotative motor).
 */
-void usMotorSettings::setMotorType(usMotorType motorType)
+void usMotorSettings::setMotorType(const usMotorType &motorType)
 {
   m_motorType = motorType;
-  if (motorType== LinearMotor) {
+  if (motorType == LinearMotor) {
     setMotorRadius(0.0);
   }
 }

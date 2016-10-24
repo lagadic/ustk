@@ -88,7 +88,7 @@ public:
   usImagePostScan3D();
   usImagePostScan3D(unsigned int dimX, unsigned int dimY, unsigned int dimZ,
                     double probeRadius, double motorRadius, double scanLinePitch,
-                    double framePitch, bool isTransducerConvex, usMotorSettings::usMotorType motorType,
+                    double framePitch, bool isTransducerConvex, const usMotorSettings::usMotorType &motorType,
                     double heightResolution, double widthResolution);
 
   usImagePostScan3D(const usImagePostScan3D &other);
@@ -132,7 +132,7 @@ template<class Type>
 usImagePostScan3D<Type>::usImagePostScan3D(unsigned int dimX, unsigned int dimY, unsigned int dimZ,
                                         double probeRadius, double motorRadius, double scanLinePitch,
                                         double framePitch, bool isTransducerConvex,
-                                        usMotorSettings::usMotorType motorType,
+                                        const usMotorSettings::usMotorType &motorType,
                                         double heightResolution, double widthResolution)
   : usImage3D<Type>(dimX, dimY, dimZ),
     usImagePostScanSettings(probeRadius, scanLinePitch, isTransducerConvex, heightResolution,widthResolution),

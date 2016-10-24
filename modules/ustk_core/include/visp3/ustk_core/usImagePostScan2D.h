@@ -90,10 +90,11 @@ public:
   unsigned int getDimY() const;
 
   usImagePostScan2D<Type> & operator =(const usImagePostScan2D<Type> &other);
-  friend VISP_EXPORT std::ostream& operator<<(std::ostream& out, const usTransducerSettings &other);
   bool operator ==(const usImagePostScan2D<Type> &other);
 
   void setData(const vpImage<Type> &image);
+
+  friend VISP_EXPORT std::ostream& operator<<(std::ostream& out, const usTransducerSettings &other);
 };
 
 /**

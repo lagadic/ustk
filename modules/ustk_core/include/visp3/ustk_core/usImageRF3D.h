@@ -89,10 +89,10 @@ public:
   usImageRF3D();
   usImageRF3D(unsigned int RFSampleNumber, unsigned int lineNumber, unsigned int frameNumber,
               double probeRadius=0.0, double motorRadius=0.0, double scanLinePitch=0.0, double framePitch=0.0,
-              bool isImageConvex = false, usMotorType motorType = usMotorSettings::LinearMotor, double axial_resolution = 0.0);
-  usImageRF3D(usImage3D<Type> image3D, usImagePreScanSettings imageSettings, usMotorSettings motorSettings);
-  usImageRF3D(usImage3D<Type> image3D);
-  usImageRF3D(usImagePreScanSettings imageSettings);
+              bool isImageConvex = false, const usMotorType &motorType = usMotorSettings::LinearMotor, double axial_resolution = 0.0);
+  usImageRF3D(const usImage3D<Type> &image3D, const usImagePreScanSettings &imageSettings, usMotorSettings motorSettings);
+  usImageRF3D(const usImage3D<Type> &image3D);
+  usImageRF3D(const usImagePreScanSettings &imageSettings);
   usImageRF3D(const usImageRF3D<Type> &other);
   virtual ~usImageRF3D();
 
@@ -110,7 +110,8 @@ public:
 * Basic constructor.
 */
 template<class Type>
-usImageRF3D<Type>::usImageRF3D() : usImage3D<Type>(), usImagePreScanSettings(), usMotorSettings()
+usImageRF3D<Type>::usImageRF3D()
+  : usImage3D<Type>(), usImagePreScanSettings(), usMotorSettings()
 {
 
 }
@@ -131,8 +132,8 @@ usImageRF3D<Type>::usImageRF3D() : usImage3D<Type>(), usImagePreScanSettings(), 
 */
 template<class Type>
 usImageRF3D<Type>::usImageRF3D(unsigned int RFSampleNumber, unsigned int lineNumber, unsigned int frameNumber,
-                            double probeRadius, double motorRadius, double scanLinePitch, double framePitch,
-                            bool isTransducerConvex, usMotorSettings::usMotorType motorType, double axial_resolution)
+                               double probeRadius, double motorRadius, double scanLinePitch, double framePitch,
+                               bool isTransducerConvex, const usMotorSettings::usMotorType &motorType, double axial_resolution)
   : usImage3D<Type>(RFSampleNumber, lineNumber, frameNumber),
     usImagePreScanSettings(probeRadius, scanLinePitch, isTransducerConvex, axial_resolution),
     usMotorSettings(motorRadius, framePitch, motorType)
@@ -147,7 +148,9 @@ usImageRF3D<Type>::usImageRF3D(unsigned int RFSampleNumber, unsigned int lineNum
 * @param motorSettings usMotorSettings to copy.
 */
 template<class Type>
-usImageRF3D<Type>::usImageRF3D(usImage3D<Type> image3D, usImagePreScanSettings imageSettings, usMotorSettings motorSettings)
+usImageRF3D<Type>::usImageRF3D(const usImage3D<Type> &image3D,
+                               const usImagePreScanSettings &imageSettings,
+                               const usMotorSettings &motorSettings)
   : usImage3D<Type>(image3D), usImagePreScanSettings(imageSettings), usMotorSettings(motorSettings)
 {
 
@@ -158,7 +161,8 @@ usImageRF3D<Type>::usImageRF3D(usImage3D<Type> image3D, usImagePreScanSettings i
 * @param image3D usImage3D to copy
 */
 template<class Type>
-usImageRF3D<Type>::usImageRF3D(usImage3D<Type> image3D) : usImage3D<Type>(image3D)
+usImageRF3D<Type>::usImageRF3D(const usImage3D<Type> &image3D)
+  : usImage3D<Type>(image3D)
 {
 
 }
@@ -168,7 +172,8 @@ usImageRF3D<Type>::usImageRF3D(usImage3D<Type> image3D) : usImage3D<Type>(image3
 * @param imageSettings usImagePreScanSettings to copy
 */
 template<class Type>
-usImageRF3D<Type>::usImageRF3D(usImagePreScanSettings imageSettings) : usImagePreScanSettings(imageSettings)
+usImageRF3D<Type>::usImageRF3D(const usImagePreScanSettings &imageSettings)
+  : usImagePreScanSettings(imageSettings)
 {
 
 }
