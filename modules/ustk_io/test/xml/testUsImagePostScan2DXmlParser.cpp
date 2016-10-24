@@ -202,7 +202,7 @@ int main(int argc, const char** argv)
     usImageIo::write(postscan2DReference,filename);
 
     std::cout << "Written in " << filename << std::endl;
-    std::cout << postscan2DReference;
+    //std::cout << postscan2DReference;
     std::cout << "height resolution : " << postscan2DReference.getHeightResolution() << std::endl;
     std::cout << "width resolution : " << postscan2DReference.getWidthResolution() << std::endl;
 
@@ -212,7 +212,7 @@ int main(int argc, const char** argv)
 
 
     std::cout << "Read from " << filename << std::endl ;
-    std::cout << postscan2D;
+    //std::cout << postscan2D;
     std::cout << "height resolution : " << postscan2D.getHeightResolution() << std::endl;
     std::cout << "width resolution : " << postscan2D.getWidthResolution() << std::endl;
 

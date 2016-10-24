@@ -101,37 +101,46 @@ public:
 
 
   //getters
+  double getAxialResolution() const { return m_axialResolution; }
   std::string getImageFileName() const {return m_imageFileName;}
-  usImagePostScanSettings getImagePostScanSettings() const {return m_postScanSettings;}
-  usImagePreScanSettings getImagePreScanSettings() const { return m_preScanSettings; }
+  double getHeightResolution() const {return m_heightResolution;}
   usImageType getImageType() const { return m_image_type; }
   usMotorSettings getMotorSettings() const { return m_motorSettings; }
   double getSequenceFrameRate() const {return m_sequence_frame_rate;}
   int getSequenceStartNumber() const {return m_sequence_start;}
   int getSequenceStopNumber() const {return m_sequence_stop;}
+  double getWidthResolution() const { return m_widthResolution; }
+  usTransducerSettings getTransducerSettings() const { return m_transducerSettings; }
 
   bool isImage3D() const { return m_is_3D; }
   bool isSequence() const {return m_is_sequence;}
-
-  bool operator ==(usImageSettingsXmlParser const& other);
   
   //Data setters
   void setImageFileName(const std::string &imageFileName);
-  void setImagePreScanSettings(const usImagePreScanSettings imagePrescanSettings);
-  void setImagePostScanSettings(const usImagePostScanSettings& imagePostScanSettings);
   void setImageSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex, double axialResolution, usImageType image_type);
   void setImageSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex, double widthResolution, double heightResolution);
-  void setImageType(usImageType image_type) { m_image_type = image_type; }
+  void setImageType(usImageType image_type) { m_image_type = image_type;}
   void setMotorSettings(const usMotorSettings &motorSettings);
   void setSequenceFrameRate(double sequenceFrameRate) {m_sequence_frame_rate=sequenceFrameRate; m_is_sequence=true;}
   void setSequenceStartNumber(int sequenceStartNumber) {m_sequence_start = sequenceStartNumber; m_is_sequence=true;}
   void setSequenceStopNumber(int sequenceStopNumber) {m_sequence_stop = sequenceStopNumber; m_is_sequence=true;}
   void setSequenceType(bool isSequence) {m_is_sequence = isSequence;}
+  void setTransducerSettings(const usTransducerSettings transducerSettings);
 
 private:
-  usImagePostScanSettings m_postScanSettings;
-  usImagePreScanSettings m_preScanSettings;
+  //basic 
+  usTransducerSettings m_transducerSettings;
+
+  //for post scan images
+  double m_widthResolution;
+  double m_heightResolution;
+
+  //for rf / pre-scan
+  double m_axialResolution;
+
+  //for 3D
   usMotorSettings m_motorSettings;
+
   std::string m_imageFileName;
 
   //to manage different resolution types

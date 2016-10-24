@@ -41,7 +41,7 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 
-#include <visp3/ustk_core/usImagePostScanSettings.h>
+#include <visp3/ustk_core/usTransducerSettings.h>
 
 /**
  @class usImagePostScan2D
@@ -75,33 +75,38 @@
   \endcode
  */
 template<class Type>
-class usImagePostScan2D : public vpImage<Type>, public usImagePostScanSettings {
+class usImagePostScan2D : public vpImage<Type>, public usTransducerSettings {
 public:
   usImagePostScan2D();
   usImagePostScan2D(unsigned int width, unsigned int height, double probeRadius=0.0, double scanLinePitch=0.0,
-   bool isTransducerConvex=false, double height_resolution=0.0, double width_resolution=0.0);
+   bool isTransducerConvex=false, double widthResolution = 0.0, double heightResolution=0.0);
   usImagePostScan2D(const usImagePostScan2D<Type> &other);
-  usImagePostScan2D(const vpImage<Type> &other);
-  usImagePostScan2D(const usImagePostScanSettings &other);
-  usImagePostScan2D(const vpImage<Type> &otherImage, const usImagePostScanSettings &otherSettings);
+  usImagePostScan2D(const vpImage<Type> &otherImage, usTransducerSettings otherSettings, double widthResolution = 0.0, double heightResolution = 0.0);
   virtual ~usImagePostScan2D();
 
-  unsigned int getDimX() const;
-  unsigned int getDimY() const;
+  double getHeightResolution() const;
+  double getWidthResolution() const;
 
   usImagePostScan2D<Type> & operator =(const usImagePostScan2D<Type> &other);
   bool operator ==(const usImagePostScan2D<Type> &other);
 
   void setData(const vpImage<Type> &image);
+  void setHeightResolution(double heightResolution);
+  void setImageSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex, double widthResolution, double heightResolution);
+  void setWidthResolution(double widthResolution);
 
-  friend VISP_EXPORT std::ostream& operator<<(std::ostream& out, const usTransducerSettings &other);
+  friend VISP_EXPORT std::ostream& operator<<(std::ostream& out, const usImagePostScan2D &other);
+
+private:
+  double m_widthResolution;
+  double m_heightResolution;
 };
 
 /**
 * Basic constructor, all parameters set to default values
 */
 template<class Type>
-usImagePostScan2D<Type>::usImagePostScan2D() : vpImage<Type>(), usImagePostScanSettings()
+usImagePostScan2D<Type>::usImagePostScan2D() : vpImage<Type>(), usTransducerSettings(), m_widthResolution(0.0), m_heightResolution(0.0) 
 {
 
 }
@@ -114,16 +119,16 @@ usImagePostScan2D<Type>::usImagePostScan2D() : vpImage<Type>(), usImagePostScanS
 * @param scanLinePitch Angle (radians) or distance (meters) between 2 lines of the ultrasound probe
 * used to acquire the RF image. Angle if \e isTransducerConvex is true, distance otherwise.
 * @param isTransducerConvex Boolean to specify if the probe transducer is convex (true) or linear (false).
-* @param height_resolution Height resolution of the image.
-* @param width_resolution Width resolution of the image.
+* @param heightResolution Height resolution of the image.
+* @param widthResolution Width resolution of the image.
 */
 template<class Type>
 usImagePostScan2D<Type>::usImagePostScan2D(unsigned int width, unsigned int height,
-double probeRadius, double scanLinePitch, bool isTransducerConvex,
-double height_resolution, double width_resolution)
-  : vpImage<Type>(width, height,0),
-  usImagePostScanSettings(probeRadius, scanLinePitch, isTransducerConvex,
-  height_resolution, width_resolution)
+double probeRadius, double scanLinePitch, bool isTransducerConvex, 
+double widthResolution, double heightResolution)
+  : vpImage<Type>(width, height,(Type)0),
+  usTransducerSettings(probeRadius, scanLinePitch, isTransducerConvex),
+  m_widthResolution(widthResolution), m_heightResolution(heightResolution)
 {
 
 }
@@ -134,40 +139,23 @@ double height_resolution, double width_resolution)
 */
 template<class Type>
 usImagePostScan2D<Type>::usImagePostScan2D(const usImagePostScan2D<Type> &other)
-: vpImage<Type>(other), usImagePostScanSettings(other)
-{
-
-}
-
-
-/**
-* Constructor from vpImage
-* @param other vpImage<unsigned char> to copy
-*/
-template<class Type>
-usImagePostScan2D<Type>::usImagePostScan2D(const vpImage<Type> &other) : vpImage<Type>(other)
+: vpImage<Type>(other), usTransducerSettings(other), 
+  m_widthResolution(other.getWidthResolution()), m_heightResolution(other.getHeightResolution())
 {
 
 }
 
 /**
-* Constructor from usImagePostScanSettings.
-* @param other usImagePostScanSettings to copy
-*/
-template<class Type>
-usImagePostScan2D<Type>::usImagePostScan2D(const usImagePostScanSettings &other) : usImagePostScanSettings(other)
-{
-
-}
-
-/**
-* Constructor from vpImage and usImagePostScanSettings.
+* Constructor from vpImage and usTransducerSettings.
 * @param otherImage vpImage<unsigned char> to copy
-* @param otherSettings usImagePostScanSettings to copy
+* @param otherSettings usTransducerSettings to copy
+* @param heightResolution Height (in meters) of a pixel.
+* @param widthResolution Width (in meters) of a pixel.
 */
 template<class Type>
-usImagePostScan2D<Type>::usImagePostScan2D(const vpImage<Type> &otherImage, const usImagePostScanSettings &otherSettings)
-: vpImage<Type>(otherImage), usImagePostScanSettings(otherSettings)
+usImagePostScan2D<Type>::usImagePostScan2D(const vpImage<Type> &otherImage, usTransducerSettings otherSettings, 
+                                           double widthResolution = 0.0, double heightResolution = 0.0)
+: vpImage<Type>(otherImage), usTransducerSettings(otherSettings), m_widthResolution(widthResolution), m_heightResolution(heightResolution)
 {
 
 }
@@ -187,8 +175,8 @@ usImagePostScan2D<Type> & usImagePostScan2D<Type>::operator =(const usImagePostS
   //from vpImage
   vpImage<Type>::operator=(other);
 
-  //from usImagePostScanSettings
-  usImagePostScanSettings::operator=(other);
+  //from usTransducerSettings
+  usTransducerSettings::operator=(other);
 
   return *this;
 }
@@ -200,7 +188,7 @@ template<class Type>
 bool usImagePostScan2D<Type>::operator ==(const usImagePostScan2D<Type> &other)
 {
   return(vpImage<Type>::operator== (other) &&
-         usImagePostScanSettings::operator ==(other));
+      usTransducerSettings::operator ==(other));
 }
 
 /**
@@ -209,25 +197,9 @@ bool usImagePostScan2D<Type>::operator ==(const usImagePostScan2D<Type> &other)
 template<class Type>
 std::ostream& operator<<(std::ostream& out, const usImagePostScan2D<Type> &other)
 {
-  return out << static_cast<const usImagePostScanSettings &>(other) <<
+  return out << static_cast<const usTransducerSettings &>(other) <<
   "image width " << other.getWidth() << std::endl <<
   "image height : " << other.getHeight() << std::endl;
-}
-
-/**
-* Returns the size of the image along the x axis (in pixels).
-*/
-template<class Type>
-unsigned int usImagePostScan2D<Type>::getDimX() const {
-  return vpImage<Type>::getWidth();
-}
-
-/**
-* Returns the size of the image along the y axis (in pixels).
-*/
-template<class Type>
-unsigned int usImagePostScan2D<Type>::getDimY() const {
-  return vpImage<Type>::getHeight();
 }
 
 /**
@@ -239,4 +211,59 @@ void usImagePostScan2D<Type>::setData(const vpImage<Type> &image)
 {
   vpImage<Type>::operator=(image);
 }
+
+/**
+* Getter for height resolution.
+* @return Height of a pixel (in meters).
+*/
+template<class Type>
+double usImagePostScan2D<Type>::getHeightResolution() const
+{
+  return m_heightResolution;
+}
+
+/**
+* Getter for width resolution.
+* @return Width of a pixel (in meters).
+*/
+template<class Type>
+double usImagePostScan2D<Type>::getWidthResolution() const
+{
+  return m_widthResolution;
+}
+
+/**
+* Setter for height resolution.
+* @param heightResolution Height of a pixel (in meters).
+*/
+template<class Type>
+void usImagePostScan2D<Type>::setHeightResolution(double heightResolution)
+{
+  m_heightResolution = heightResolution;
+}
+
+/**
+* Setter for width resolution.
+* @param widthResolution Width of a pixel (in meters).
+*/
+template<class Type>
+void usImagePostScan2D<Type>::setWidthResolution(double widthResolution)
+{
+  m_widthResolution = widthResolution;
+}
+
+/**
+* Setter for all 2D post-scan settings.
+* @param widthResolution Width of a pixel (in meters).
+*/
+template<class Type>
+void usImagePostScan2D<Type>::setImageSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex, double widthResolution, double heightResolution)
+{
+  setTransducerConvexity(isTransducerConvex);
+  setProbeRadius(probeRadius);
+  setScanLinePitch(scanLinePitch);
+  m_widthResolution = widthResolution;
+  m_heightResolution = heightResolution;
+}
+
 #endif // US_IMAGE_POSTSCAN_2D_H

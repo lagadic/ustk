@@ -41,7 +41,7 @@
  * Default constructor.
  */
 usImageSettingsXmlParser::usImageSettingsXmlParser()
-  : m_postScanSettings(usImagePostScanSettings()), m_preScanSettings(usImagePreScanSettings()),
+  : m_transducerSettings(usTransducerSettings()),
     m_motorSettings(usMotorSettings()), m_imageFileName(std::string("")),
     m_image_type(usImageSettingsXmlParser::IMAGE_TYPE_UNKNOWN), m_is_3D(false)
 {
@@ -63,30 +63,19 @@ usImageSettingsXmlParser::usImageSettingsXmlParser()
 }
 
 /**
-* Copy constructor.
-* @param twinParser usImageSettingsXmlParser to copy.
-*/
-usImageSettingsXmlParser::usImageSettingsXmlParser(usImageSettingsXmlParser& twinParser)
-  : vpXmlParser(twinParser), m_postScanSettings(twinParser.getImagePostScanSettings()),
-    m_preScanSettings(twinParser.getImagePreScanSettings()), m_motorSettings(),
-    m_imageFileName(twinParser.getImageFileName()),
-    m_image_type(twinParser.getImageType()), m_is_3D(twinParser.isImage3D())
-{
-
-}
-
-/**
 * Assignement operator.
 * @param twinparser usImageSettingsXmlParser to assign.
 */
 usImageSettingsXmlParser& usImageSettingsXmlParser::operator =(const usImageSettingsXmlParser& twinparser)
 {
-  m_postScanSettings = twinparser.getImagePostScanSettings();
-  m_preScanSettings = twinparser.getImagePreScanSettings();
+  m_transducerSettings = twinparser.getTransducerSettings();
   m_imageFileName = twinparser.getImageFileName();
   m_motorSettings = twinparser.getMotorSettings();
   m_image_type = twinparser.getImageType();
   m_is_3D = twinparser.isImage3D();
+  m_widthResolution = twinparser.getWidthResolution();
+  m_heightResolution = twinparser.getHeightResolution();
+  m_axialResolution = twinparser.getAxialResolution();
 
   return *this;
 }
@@ -97,20 +86,6 @@ usImageSettingsXmlParser& usImageSettingsXmlParser::operator =(const usImageSett
 usImageSettingsXmlParser::~usImageSettingsXmlParser()
 {
   
-}
-
-/**
-* Comparaison operator.
-* @param other usImageSettingsXmlParser to compare with.
-*/
-bool usImageSettingsXmlParser::operator ==(usImageSettingsXmlParser const& other)
-{
-  return (this->getImagePostScanSettings() == other.getImagePostScanSettings() &&
-    this->getImagePreScanSettings() == other.getImagePreScanSettings() &&
-    this->getImageFileName() == other.getImageFileName() &&
-    this->getMotorSettings() == other.getMotorSettings() &&
-    this->isImage3D() == other.isImage3D() &&
-    this->getImageType() == other.getImageType());
 }
 
 /**
@@ -144,7 +119,7 @@ usImageSettingsXmlParser::readMainClass (xmlDocPtr doc, xmlNodePtr node)
           value = "";
         case CODE_XML_AXIAL_RESOLUTION:
           if (this->m_image_type == IMAGE_TYPE_PRESCAN || this->m_image_type == IMAGE_TYPE_RF) {
-            this->m_preScanSettings.setAxialResolution(xmlReadDoubleChild(doc, dataNode));
+            this->m_axialResolution =  xmlReadDoubleChild(doc, dataNode);
           }
           else 
             throw(vpException(vpException::fatalError, std::string("Trying to assign an axial resolution to a post-scan image !")));
@@ -154,25 +129,25 @@ usImageSettingsXmlParser::readMainClass (xmlDocPtr doc, xmlNodePtr node)
             throw(vpException(vpException::fatalError, std::string("Trying to assign an height resolution to a pre-scan image !")));
           }
           else 
-            this->m_postScanSettings.setHeightResolution(xmlReadDoubleChild(doc, dataNode));
+            this->m_heightResolution = xmlReadDoubleChild(doc, dataNode);
           break;
         case CODE_XML_WIDTH_RESOLUTION :
           if (this->m_image_type == IMAGE_TYPE_RF || this->m_image_type == IMAGE_TYPE_PRESCAN) {
             throw(vpException(vpException::fatalError, std::string("Trying to assign an width resolution to a pre-scan image !")));
           } else
-            this->m_postScanSettings.setWidthResolution(xmlReadDoubleChild(doc, dataNode));
+            this->m_widthResolution = xmlReadDoubleChild(doc, dataNode);
           break;
         case CODE_XML_SCANLINE_PITCH:
-          this->m_postScanSettings.setScanLinePitch(xmlReadDoubleChild(doc, dataNode));
-          this->m_preScanSettings.setScanLinePitch(xmlReadDoubleChild(doc, dataNode));
+          this->m_transducerSettings.setScanLinePitch(xmlReadDoubleChild(doc, dataNode));
+          this->m_transducerSettings.setScanLinePitch(xmlReadDoubleChild(doc, dataNode));
           break;
         case CODE_XML_PROBE_RADIUS:
-          this->m_postScanSettings.setProbeRadius(xmlReadDoubleChild(doc, dataNode));
-          this->m_preScanSettings.setProbeRadius(xmlReadDoubleChild(doc, dataNode));
+          this->m_transducerSettings.setProbeRadius(xmlReadDoubleChild(doc, dataNode));
+          this->m_transducerSettings.setProbeRadius(xmlReadDoubleChild(doc, dataNode));
           break;
         case CODE_XML_IS_PROBE_CONVEX:
-          this->m_postScanSettings.setTransducerConvexity(xmlReadBoolChild(doc, dataNode));
-          this->m_preScanSettings.setTransducerConvexity(xmlReadBoolChild(doc, dataNode));
+          this->m_transducerSettings.setTransducerConvexity(xmlReadBoolChild(doc, dataNode));
+          this->m_transducerSettings.setTransducerConvexity(xmlReadBoolChild(doc, dataNode));
           break;
         case CODE_XML_FRAME_PITCH:
           this->m_motorSettings.setFramePitch(xmlReadDoubleChild(doc, dataNode));
@@ -234,25 +209,25 @@ usImageSettingsXmlParser::writeMainClass(xmlNodePtr node)
   xmlWriteStringChild(node, "image_file_name", imageFileName);
   if (this->m_image_type == IMAGE_TYPE_RF) {
     xmlWriteStringChild(node, "image_type", std::string("rf"));
-    xmlWriteDoubleChild(node, "scanline_pitch", m_preScanSettings.getScanLinePitch());
-    xmlWriteDoubleChild(node, "probe_radius", m_preScanSettings.getProbeRadius());
-    xmlWriteBoolChild(node, "is_probe_convex", m_preScanSettings.isTransducerConvex());
-    xmlWriteDoubleChild(node, "axial_resolution", m_preScanSettings.getAxialResolution());
+    xmlWriteDoubleChild(node, "scanline_pitch", m_transducerSettings.getScanLinePitch());
+    xmlWriteDoubleChild(node, "probe_radius", m_transducerSettings.getProbeRadius());
+    xmlWriteBoolChild(node, "is_probe_convex", m_transducerSettings.isTransducerConvex());
+    xmlWriteDoubleChild(node, "axial_resolution", m_axialResolution);
   }
   if (this->m_image_type == IMAGE_TYPE_PRESCAN) {
     xmlWriteStringChild(node, "image_type", std::string("prescan"));
-    xmlWriteDoubleChild(node, "scanline_pitch", m_preScanSettings.getScanLinePitch());
-    xmlWriteDoubleChild(node, "probe_radius", m_preScanSettings.getProbeRadius());
-    xmlWriteBoolChild(node, "is_probe_convex", m_preScanSettings.isTransducerConvex());
-    xmlWriteDoubleChild(node, "axial_resolution", m_preScanSettings.getAxialResolution());
+    xmlWriteDoubleChild(node, "scanline_pitch", m_transducerSettings.getScanLinePitch());
+    xmlWriteDoubleChild(node, "probe_radius", m_transducerSettings.getProbeRadius());
+    xmlWriteBoolChild(node, "is_probe_convex", m_transducerSettings.isTransducerConvex());
+    xmlWriteDoubleChild(node, "axial_resolution", m_axialResolution);
   }
   else if (this->m_image_type == IMAGE_TYPE_POSTSCAN) {
     xmlWriteStringChild(node, "image_type", std::string("postscan"));
-    xmlWriteDoubleChild(node, "scanline_pitch", m_postScanSettings.getScanLinePitch());
-    xmlWriteDoubleChild(node, "probe_radius", m_postScanSettings.getProbeRadius());
-    xmlWriteBoolChild(node, "is_probe_convex", m_postScanSettings.isTransducerConvex());
-    xmlWriteDoubleChild(node, "width_resolution", m_postScanSettings.getWidthResolution());
-    xmlWriteDoubleChild(node, "height_resolution", m_postScanSettings.getHeightResolution());
+    xmlWriteDoubleChild(node, "scanline_pitch", m_transducerSettings.getScanLinePitch());
+    xmlWriteDoubleChild(node, "probe_radius", m_transducerSettings.getProbeRadius());
+    xmlWriteBoolChild(node, "is_probe_convex", m_transducerSettings.isTransducerConvex());
+    xmlWriteDoubleChild(node, "width_resolution", m_widthResolution);
+    xmlWriteDoubleChild(node, "height_resolution", m_heightResolution);
   }
   if (m_is_3D) {
     xmlWriteDoubleChild(node, "frame_pitch", m_motorSettings.getFramePitch());
@@ -277,24 +252,6 @@ usImageSettingsXmlParser::writeMainClass(xmlNodePtr node)
 }
 
 /**
-* Setter for pre-scan settings.
-* @param imagePrescanSettings : settings to write in the xml file.
-*/
-void usImageSettingsXmlParser::setImagePreScanSettings(const usImagePreScanSettings imagePrescanSettings)
-{
-  m_preScanSettings = imagePrescanSettings;
-}
-
-/**
-* Setter for post-scan settings.
-* @param imagePostScanSettings : settings to write in the xml file.
-*/
-void usImageSettingsXmlParser::setImagePostScanSettings(const usImagePostScanSettings& imagePostScanSettings)
-{
-  m_postScanSettings = imagePostScanSettings;
-}
-
-/**
 * Setter for pre-scan settings. Each transducer setting available.
 * @param probeRadius : the probe rabius.
 * @param scanLinePitch : the scanline pitch.
@@ -307,10 +264,10 @@ void usImageSettingsXmlParser::setImageSettings(double probeRadius, double scanL
 {
   if (image_type == usImageSettingsXmlParser::IMAGE_TYPE_PRESCAN || image_type == usImageSettingsXmlParser::IMAGE_TYPE_RF)
   {
-    m_preScanSettings.setTransducerConvexity(isTransducerConvex);
-    m_preScanSettings.setProbeRadius(probeRadius);
-    m_preScanSettings.setScanLinePitch(scanLinePitch);
-    m_preScanSettings.setAxialResolution(axialResolution);
+    m_transducerSettings.setTransducerConvexity(isTransducerConvex);
+    m_transducerSettings.setProbeRadius(probeRadius);
+    m_transducerSettings.setScanLinePitch(scanLinePitch);
+    m_axialResolution = axialResolution;
     m_image_type = image_type;
   }
   else {
@@ -329,11 +286,11 @@ void usImageSettingsXmlParser::setImageSettings(double probeRadius, double scanL
 void usImageSettingsXmlParser::setImageSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex,
                                                 double widthResolution, double heightResolution)
 {
-  m_postScanSettings.setTransducerConvexity(isTransducerConvex);
-  m_postScanSettings.setProbeRadius(probeRadius);
-  m_postScanSettings.setScanLinePitch(scanLinePitch);
-  m_postScanSettings.setHeightResolution(widthResolution);
-  m_postScanSettings.setWidthResolution(heightResolution);
+  m_transducerSettings.setTransducerConvexity(isTransducerConvex);
+  m_transducerSettings.setProbeRadius(probeRadius);
+  m_transducerSettings.setScanLinePitch(scanLinePitch);
+  m_heightResolution = widthResolution;
+  m_widthResolution = heightResolution;
   m_image_type = usImageSettingsXmlParser::IMAGE_TYPE_POSTSCAN;
 }
 

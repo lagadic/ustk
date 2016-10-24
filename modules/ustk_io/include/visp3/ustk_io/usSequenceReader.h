@@ -200,7 +200,10 @@ void usSequenceReader<usImageRF2D<unsigned char> >::open(usImageRF2D<unsigned ch
   m_genericImageFileName = xmlParser.getImageFileName();
 
   //saving the settings for all the rf sequence
-  m_frame.setImageSettings(xmlParser.getImagePreScanSettings());
+  m_frame.setImageSettings(usImagePreScanSettings(xmlParser.getTransducerSettings().getProbeRadius(),
+    xmlParser.getTransducerSettings().getScanLinePitch(),
+    xmlParser.getTransducerSettings().isTransducerConvex(),
+    xmlParser.getAxialResolution()));
 
   //Reading image
   char buffer[FILENAME_MAX];
@@ -233,7 +236,10 @@ void usSequenceReader<usImagePreScan2D<unsigned char> >::open(usImagePreScan2D<u
   m_genericImageFileName = xmlParser.getImageFileName();
 
   //saving the settings for all the pre-scan sequence
-  m_frame.setImageSettings(xmlParser.getImagePreScanSettings());
+  m_frame.setImageSettings(usImagePreScanSettings(xmlParser.getTransducerSettings().getProbeRadius(),
+    xmlParser.getTransducerSettings().getScanLinePitch(),
+    xmlParser.getTransducerSettings().isTransducerConvex(),
+    xmlParser.getAxialResolution()));
 
   //Reading image
   char buffer[FILENAME_MAX];
@@ -266,7 +272,11 @@ void usSequenceReader<usImagePostScan2D<unsigned char> >::open(usImagePostScan2D
   m_genericImageFileName = xmlParser.getImageFileName();
 
   //saving the settings for all the post scan sequence
-  m_frame.setImageSettings(xmlParser.getImagePostScanSettings());
+  m_frame.setImageSettings(xmlParser.getTransducerSettings().getProbeRadius(),
+    xmlParser.getTransducerSettings().getScanLinePitch(),
+    xmlParser.getTransducerSettings().isTransducerConvex(),
+    xmlParser.getWidthResolution(),
+    xmlParser.getHeightResolution());
 
   //Reading image
   char buffer[FILENAME_MAX];
@@ -277,7 +287,11 @@ void usSequenceReader<usImagePostScan2D<unsigned char> >::open(usImagePostScan2D
   }
   std::string imageFileName =  parentName + buffer;
   vpImageIo::read(image,imageFileName);
-  image.setImageSettings(m_frame);
+  image.setImageSettings(m_frame.getProbeRadius(),
+    m_frame.getScanLinePitch(),
+    m_frame.isTransducerConvex(),
+    m_frame.getWidthResolution(),
+    m_frame.getHeightResolution());
 
   m_frameCount = m_firstFrame + 1;
   is_open = true;

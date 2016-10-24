@@ -195,7 +195,7 @@ int main(int argc, const char** argv)
     usImagePostScan2DReference.setHeightResolution(0.0058);
 
     std::cout << "Written in " << filename << std::endl ;
-    std::cout << usImagePostScan2DReference;
+    //std::cout << usImagePostScan2DReference;
 
     //write image
     usImageIo::write(usImagePostScan2DReference,filename);
@@ -206,7 +206,7 @@ int main(int argc, const char** argv)
     usImageIo::read(postscan2D,filename);
 
     std::cout << "Read from " << filename << std::endl ;
-    std::cout << postscan2D;
+    //std::cout << postscan2D;
 
     if(postscan2D == usImagePostScan2DReference) {
       std::cout << "Test passed !" << std::endl;

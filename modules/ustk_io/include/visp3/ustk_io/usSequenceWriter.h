@@ -237,8 +237,11 @@ void usSequenceWriter< usImageRF2D < unsigned char > >::close()
 
   //saving settings
   usImageSettingsXmlParser xmlParser;
-  xmlParser.setImagePreScanSettings(m_frame);
-  xmlParser.setImageType(usImageSettingsXmlParser::IMAGE_TYPE_RF);
+  xmlParser.setImageSettings(m_frame.getProbeRadius(),
+    m_frame.getScanLinePitch(),
+    m_frame.isTransducerConvex(),
+    m_frame.getAxialResolution(),
+    usImageSettingsXmlParser::IMAGE_TYPE_RF);
   xmlParser.setSequenceFrameRate(m_frameRate);
   xmlParser.setSequenceStartNumber(m_firstFrame);
   xmlParser.setSequenceStopNumber(m_frameCount-1);
@@ -254,7 +257,11 @@ void usSequenceWriter < usImagePreScan2D < unsigned char > >::close()
 
   //saving settings
   usImageSettingsXmlParser xmlParser;
-  xmlParser.setImagePreScanSettings(m_frame);
+  xmlParser.setImageSettings(m_frame.getProbeRadius(),
+    m_frame.getScanLinePitch(),
+    m_frame.isTransducerConvex(),
+    m_frame.getAxialResolution(),
+    usImageSettingsXmlParser::IMAGE_TYPE_PRESCAN);
   xmlParser.setImageType(usImageSettingsXmlParser::IMAGE_TYPE_PRESCAN);
   xmlParser.setSequenceFrameRate(m_frameRate);
   xmlParser.setSequenceStartNumber(m_firstFrame);
@@ -271,7 +278,12 @@ void usSequenceWriter<usImagePostScan2D<unsigned char> >::close()
 
   //saving settings
   usImageSettingsXmlParser xmlParser;
-  xmlParser.setImagePostScanSettings(m_frame);
+  xmlParser.setImageSettings(m_frame.getProbeRadius(),
+    m_frame.getScanLinePitch(),
+    m_frame.isTransducerConvex(),
+    m_frame.getWidthResolution(),
+    m_frame.getHeightResolution());
+
   xmlParser.setImageType(usImageSettingsXmlParser::IMAGE_TYPE_POSTSCAN);
   xmlParser.setSequenceFrameRate(m_frameRate);
   xmlParser.setSequenceStartNumber(m_firstFrame);

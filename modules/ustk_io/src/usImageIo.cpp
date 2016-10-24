@@ -105,7 +105,11 @@ void usImageIo::write(const usImageRF2D<unsigned char> &imageRf2D, const std::st
       //writing xml
       usImageSettingsXmlParser xmlSettings;
       xmlSettings.setImageType(usImageSettingsXmlParser::IMAGE_TYPE_RF);
-      xmlSettings.setImagePreScanSettings(imageRf2D);
+      xmlSettings.setImageSettings(imageRf2D.getProbeRadius(),
+        imageRf2D.getScanLinePitch(),
+        imageRf2D.isTransducerConvex(),
+        imageRf2D.getAxialResolution(),
+        usImageSettingsXmlParser::IMAGE_TYPE_RF);
       //just writing the image file name without parents directories (header and image are in the same directory).
       imageFileName = vpIoTools::getName(imageFileName);
       xmlSettings.setImageFileName(imageFileName);
@@ -180,9 +184,9 @@ void usImageIo::read(usImageRF2D<unsigned char> &imageRf2D, const std::string &h
     std::string fullImageFileName = vpIoTools::getParent(headerFileName) + vpIoTools::path("/") + xmlSettings.getImageFileName();
     vpImageIo::read(imageRf2D, fullImageFileName);
 
-    imageRf2D.setImageSettings(usImagePreScanSettings(xmlSettings.getImagePreScanSettings().getProbeRadius(),
-      xmlSettings.getImagePreScanSettings().getScanLinePitch(), xmlSettings.getImagePreScanSettings().isTransducerConvex(),
-      xmlSettings.getImagePreScanSettings().getAxialResolution()));
+    imageRf2D.setImageSettings(usImagePreScanSettings(xmlSettings.getTransducerSettings().getProbeRadius(),
+      xmlSettings.getTransducerSettings().getScanLinePitch(), xmlSettings.getTransducerSettings().isTransducerConvex(),
+      xmlSettings.getAxialResolution()));
 #else
     throw(vpException(vpException::fatalEtrror, "Requires xml2 library"));
 #endif //VISP_HAVE_XML2
@@ -387,7 +391,11 @@ void usImageIo::write(const usImagePreScan2D<unsigned char> &preScanImage, const
       //writing xml
       usImageSettingsXmlParser xmlSettings;
       xmlSettings.setImageType(usImageSettingsXmlParser::IMAGE_TYPE_PRESCAN);
-      xmlSettings.setImagePreScanSettings(preScanImage);
+      xmlSettings.setImageSettings(preScanImage.getProbeRadius(),
+        preScanImage.getScanLinePitch(),
+        preScanImage.isTransducerConvex(),
+        preScanImage.getAxialResolution(),
+        usImageSettingsXmlParser::IMAGE_TYPE_PRESCAN);
       //just writing the image file name without parents directories (header and image are in the same directory).
       imageFileName = vpIoTools::getName(imageFileName);
       xmlSettings.setImageFileName(imageFileName);
@@ -460,9 +468,9 @@ void usImageIo::read(usImagePreScan2D<unsigned char> &preScanImage,const std::st
     std::string fullImageFileName = vpIoTools::getParent(headerFileName) + vpIoTools::path("/") + xmlSettings.getImageFileName();
     vpImageIo::read(preScanImage, fullImageFileName);
 
-    preScanImage.setImageSettings(usImagePreScanSettings(xmlSettings.getImagePreScanSettings().getProbeRadius(),
-      xmlSettings.getImagePreScanSettings().getScanLinePitch(), xmlSettings.getImagePreScanSettings().isTransducerConvex(),
-       xmlSettings.getImagePreScanSettings().getAxialResolution()));
+    preScanImage.setImageSettings(usImagePreScanSettings(xmlSettings.getTransducerSettings().getProbeRadius(),
+      xmlSettings.getTransducerSettings().getScanLinePitch(), xmlSettings.getTransducerSettings().isTransducerConvex(),
+       xmlSettings.getAxialResolution()));
 #else
     throw(vpException(vpException::fatalEtrror, "Requires xml2 library"));
 #endif //VISP_HAVE_XML2
@@ -715,7 +723,12 @@ void usImageIo::write(const usImagePostScan2D<unsigned char> &postScanImage, con
       vpImageIo::writePNG(postScanImage, imageFileName);
       //writing xml file using xml parser
       usImageSettingsXmlParser xmlSettings;
-      xmlSettings.setImagePostScanSettings(postScanImage);
+      xmlSettings.setImageSettings(postScanImage.getProbeRadius(),
+        postScanImage.getScanLinePitch(),
+        postScanImage.isTransducerConvex(),
+        postScanImage.getWidthResolution(),
+        postScanImage.getHeightResolution());
+
       xmlSettings.setImageType(usImageSettingsXmlParser::IMAGE_TYPE_POSTSCAN);
       //just writing the image file name without parents directories (header and image are in the same directory).
       imageFileName = vpIoTools::getName(imageFileName);
@@ -743,8 +756,8 @@ void usImageIo::write(const usImagePostScan2D<unsigned char> &postScanImage, con
     header.imageType = usMetaHeaderParser::POSTSCAN_2D;
     header.elementSpacing[0] = 1;
     header.elementSpacing[1] = 1;
-    header.dim[0] = postScanImage.getDimX();
-    header.dim[1] = postScanImage.getDimY();
+    header.dim[0] = postScanImage.getWidth();
+    header.dim[1] = postScanImage.getHeight();
     header.msb = false;
     header.MHDFileName = headerFileName;
     //remove full path for image file name (located in the same directory as the mhd
@@ -789,10 +802,10 @@ void usImageIo::read(usImagePostScan2D<unsigned char> &postScanImage,const std::
     std::string fullImageFileName = vpIoTools::getParent(headerFileName) + vpIoTools::path("/") + xmlSettings.getImageFileName();
     vpImageIo::read(postScanImage, fullImageFileName);
 
-    postScanImage.setImageSettings(usImagePostScanSettings(xmlSettings.getImagePostScanSettings().getProbeRadius(), 
-      xmlSettings.getImagePostScanSettings().getScanLinePitch(),
-      xmlSettings.getImagePostScanSettings().isTransducerConvex(),
-      xmlSettings.getImagePostScanSettings().getHeightResolution(), xmlSettings.getImagePostScanSettings().getWidthResolution()));
+    postScanImage.setImageSettings(xmlSettings.getTransducerSettings().getProbeRadius(), 
+      xmlSettings.getTransducerSettings().getScanLinePitch(),
+      xmlSettings.getTransducerSettings().isTransducerConvex(),
+      xmlSettings.getHeightResolution(), xmlSettings.getWidthResolution());
 #else
     throw(vpException(vpException::fatalError, "Requires xml2 library"));
 #endif
@@ -814,13 +827,11 @@ void usImageIo::read(usImagePostScan2D<unsigned char> &postScanImage,const std::
     //resizing image in memory
     postScanImage.resize(mhdHeader.dim[0], mhdHeader.dim[1]);
 
-    usImagePostScanSettings settings;
-    settings.setProbeRadius(mhdHeader.probeRadius);
-    settings.setScanLinePitch(mhdHeader.scanLinePitch);
-    settings.setTransducerConvexity(mhdHeader.isTransducerConvex);
-    settings.setHeightResolution(mhdParser.getHeightResolution());
-    settings.setWidthResolution(mhdParser.getWidthResolution());
-    postScanImage.setImageSettings(settings);
+    postScanImage.setProbeRadius(mhdHeader.probeRadius);
+    postScanImage.setScanLinePitch(mhdHeader.scanLinePitch);
+    postScanImage.setTransducerConvexity(mhdHeader.isTransducerConvex);
+    postScanImage.setHeightResolution(mhdParser.getHeightResolution());
+    postScanImage.setWidthResolution(mhdParser.getWidthResolution());
     postScanImage.resize(mhdHeader.dim[0], mhdHeader.dim[1]);
     //data parsing
     usRawFileParser rawParser;

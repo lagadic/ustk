@@ -79,7 +79,7 @@ public:
   //All parameters initialisation constructors
   usImagePreScan2D(unsigned int BModeSampleNumber, unsigned int scanLineNumber,
                   double probeRadius=0.0, double scanLinePitch=0.0, bool isTransducerConvex=false,
-                  double axial_resolution=0.0);
+                  double axialResolution =0.0);
   //usImagePreScan2D copy constructor
   usImagePreScan2D(const usImagePreScan2D &other);
   //vpImage copy constructors
@@ -124,13 +124,13 @@ usImagePreScan2D<Type>::usImagePreScan2D() : vpImage<Type>(), usImagePreScanSett
 * @param scanLinePitch Angle (radians) or distance (meters) between 2 lines of the ultrasound probe used
 * to acquire the RF image. Angle if \e isTransducerConvex is true, distance otherwise.
 * @param isTransducerConvex Boolean to specify if the probe transducer is convex (true) or linear (false).
-* @param axial_resolution Image axial resolution.
+* @param axialResolution Image axial resolution.
 */
 template<class Type>
 usImagePreScan2D<Type>::usImagePreScan2D(unsigned int BModeSampleNumber, unsigned int scanLineNumber,
- double probeRadius, double scanLinePitch, bool isTransducerConvex, double axial_resolution) :
+ double probeRadius, double scanLinePitch, bool isTransducerConvex, double axialResolution) :
   vpImage<Type>(BModeSampleNumber, scanLineNumber),
-  usImagePreScanSettings(probeRadius, scanLinePitch, isTransducerConvex, axial_resolution)
+  usImagePreScanSettings(probeRadius, scanLinePitch, isTransducerConvex, axialResolution)
 {
 
 }

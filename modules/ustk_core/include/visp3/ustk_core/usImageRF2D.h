@@ -181,7 +181,7 @@ std::ostream& operator<<(std::ostream& out, const usImageRF2D<Type> &other)
 
 /**
 * Get the number of RF-samples in a line.
-* @return a_number of RF-samples in a line.
+* @return Number of RF-samples in a line.
 */
 template<class Type>
 unsigned int usImageRF2D<Type>::getRFSampleNumber() const { return vpImage<Type>::getHeight(); }
