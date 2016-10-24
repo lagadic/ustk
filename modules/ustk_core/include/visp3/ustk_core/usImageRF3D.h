@@ -90,7 +90,7 @@ public:
   usImageRF3D(unsigned int RFSampleNumber, unsigned int lineNumber, unsigned int frameNumber,
               double probeRadius=0.0, double motorRadius=0.0, double scanLinePitch=0.0, double framePitch=0.0,
               bool isImageConvex = false, const usMotorType &motorType = usMotorSettings::LinearMotor, double axial_resolution = 0.0);
-  usImageRF3D(const usImage3D<Type> &image3D, const usImagePreScanSettings &imageSettings, usMotorSettings motorSettings);
+  usImageRF3D(const usImage3D<Type> &image3D, const usImagePreScanSettings &imageSettings, const usMotorSettings &motorSettings);
   usImageRF3D(const usImage3D<Type> &image3D);
   usImageRF3D(const usImagePreScanSettings &imageSettings);
   usImageRF3D(const usImageRF3D<Type> &other);
