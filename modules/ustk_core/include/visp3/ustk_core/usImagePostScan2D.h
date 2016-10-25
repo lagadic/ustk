@@ -154,7 +154,7 @@ usImagePostScan2D<Type>::usImagePostScan2D(const usImagePostScan2D<Type> &other)
 */
 template<class Type>
 usImagePostScan2D<Type>::usImagePostScan2D(const vpImage<Type> &otherImage, usTransducerSettings otherSettings, 
-                                           double widthResolution = 0.0, double heightResolution = 0.0)
+                                           double widthResolution, double heightResolution)
 : vpImage<Type>(otherImage), usTransducerSettings(otherSettings), m_widthResolution(widthResolution), m_heightResolution(heightResolution)
 {
 

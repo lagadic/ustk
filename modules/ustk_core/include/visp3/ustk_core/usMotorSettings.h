@@ -75,7 +75,7 @@ public:
   } usMotorType;
 
   usMotorSettings();
-  usMotorSettings(double motorRadius, double framePitch, usMotorType m_motorType);
+  usMotorSettings(double motorRadius, double framePitch, const usMotorType &motorType);
   usMotorSettings(const usMotorSettings &other);
   virtual ~usMotorSettings();
 
@@ -92,7 +92,7 @@ public:
   void setFramePitch(double framePitch);
   void setMotorRadius(double motorRadius);
   void setMotorSettings(const usMotorSettings &other);
-  void setMotorType(const usMotorType &m_motorType);
+  void setMotorType(const usMotorType &motorType);
 
   //@}
 

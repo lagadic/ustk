@@ -137,7 +137,7 @@ usImagePostScan3D<Type>::usImagePostScan3D(unsigned int dimX, unsigned int dimY,
                                         double spacingX, double spacingY, double spacingZ)
   : usImage3D<Type>(dimX, dimY, dimZ, spacingX, spacingY, spacingZ),
     usTransducerSettings(probeRadius, scanLinePitch, isTransducerConvex),
-    usMotorSettings( motorRadius, framePitch, motorType),
+    usMotorSettings( motorRadius, framePitch, motorType)
 {
 
 }

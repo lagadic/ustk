@@ -182,6 +182,7 @@ void usSequenceReader<ImageType>::setLastFrameIndex(long lastIndex)
 template<class ImageType>
 void usSequenceReader<ImageType>::open(ImageType &image)
 {
+  (void) image;
   throw(vpException(vpException::notImplementedError));
 }
 

@@ -46,7 +46,9 @@
 /**
 * Basic Constructor, all settings set to default.
 */
-usMotorSettings::usMotorSettings() : m_motorRadius(0.0), m_framePitch(0.0), m_motorType(LinearMotor) {}
+usMotorSettings::usMotorSettings()
+  : m_motorRadius(0.0), m_framePitch(0.0), m_motorType(LinearMotor)
+{}
 
 /**
 * Full Constructor, all settings availables
@@ -54,8 +56,9 @@ usMotorSettings::usMotorSettings() : m_motorRadius(0.0), m_framePitch(0.0), m_mo
 * @param framePitch Pitch between two sucessive frames . In meters if motorType is linear, in radians (rad) otherwise.
 * @param motorType Motor type of the probe used.
 */
-usMotorSettings::usMotorSettings(double motorRadius, double framePitch, usMotorType motorType)
-: m_motorRadius(motorRadius), m_framePitch(framePitch), m_motorType(motorType)
+usMotorSettings::usMotorSettings(double motorRadius, double framePitch,
+                                 const usMotorType &motorType)
+  : m_motorRadius(motorRadius), m_framePitch(framePitch), m_motorType(motorType)
 {
 
 }
@@ -64,8 +67,9 @@ usMotorSettings::usMotorSettings(double motorRadius, double framePitch, usMotorT
 * Copy Constructor, all settings availables
 * @param other usMotorSettings you want to copy.
 */
-usMotorSettings::usMotorSettings(const usMotorSettings &other) : m_motorRadius(other.getMotorRadius()),
- m_framePitch(other.getFramePitch()), m_motorType(other.getMotorType())
+usMotorSettings::usMotorSettings(const usMotorSettings &other)
+  : m_motorRadius(other.getMotorRadius()),
+    m_framePitch(other.getFramePitch()), m_motorType(other.getMotorType())
  {
 
  }
