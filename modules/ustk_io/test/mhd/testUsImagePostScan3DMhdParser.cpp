@@ -193,8 +193,10 @@ int main(int argc, const char** argv)
     postscan3DReference.setElementSpacingZ(1);
     postscan3DReference.setScanLinePitch(0.0145);
     postscan3DReference.setProbeRadius(0.554);
+    postscan3DReference.setScanLineNumber(211);
     postscan3DReference.setTransducerConvexity(true);
     postscan3DReference.setFramePitch(0.258);
+    postscan3DReference.setFrameNumber(258);
     postscan3DReference.setMotorRadius(0.025);
     postscan3DReference.setMotorType(usMotorSettings::TiltingMotor);
     postscan3DReference.setElementSpacingX(0.0058);

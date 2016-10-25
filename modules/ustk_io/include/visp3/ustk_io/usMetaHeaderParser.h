@@ -100,6 +100,8 @@ public:
     double scanLinePitch;
     double motorRadius;
     double framePitch;
+    unsigned int scanLineNumber; // for post-scan
+    unsigned int frameNumber; // for post-scan
   };
 
   //Constructor

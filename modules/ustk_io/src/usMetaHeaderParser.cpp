@@ -207,6 +207,11 @@ void  usMetaHeaderParser::readMHDHeader(const std::string &fileName)
       file >> this->header.scanLinePitch;
       std::getline(file, keyval, '\n');
     }
+    else if (keyword == "ScanLineNumber")
+    {
+      file >> this->header.scanLineNumber;
+      std::getline(file, keyval, '\n');
+    }
     else if (keyword == "ProbeRadius")
     {
       file >> this->header.probeRadius;
@@ -224,6 +229,11 @@ void  usMetaHeaderParser::readMHDHeader(const std::string &fileName)
     else if (keyword == "FramePitch")
     {
       file >> this->header.framePitch;
+      std::getline(file, keyval, '\n');
+    }
+    else if (keyword == "FrameNumber")
+    {
+      file >> this->header.frameNumber;
       std::getline(file, keyval, '\n');
     }
     else if (keyword == "MotorRadius")
@@ -424,6 +434,7 @@ void usMetaHeaderParser::parse()
       MHDfile << "ScanLinePitch = " << header.scanLinePitch << "\n";
       MHDfile << "HeightResolution = " << this->m_heightResolution << "\n";
       MHDfile << "WidthResolution = " << this->m_widthResolution << "\n";
+      MHDfile << "ScanLineNumber = " << header.scanLineNumber << "\n";
     }
     else if (header.imageType == POSTSCAN_3D) {
       MHDfile << "Comment = Availables ultrasound image types are RF_2D, RF_3D, PRESCAN_2D, PRESCAN_3D, POSTSCAN_2D and POSTSCAN_3D.\n";
@@ -450,6 +461,8 @@ void usMetaHeaderParser::parse()
       MHDfile << "FramePitch = " << header.framePitch << "\n";
       MHDfile << "HeightResolution = " << this->m_heightResolution << "\n";
       MHDfile << "WidthResolution = " << this->m_widthResolution << "\n";
+      MHDfile << "ScanLineNumber = " << header.scanLineNumber << "\n";
+      MHDfile << "FrameNumber = " << header.frameNumber << "\n";
     }
     else
       MHDfile << "UltrasoundImageType = " << "MET_UNKNOWN" << "\n";

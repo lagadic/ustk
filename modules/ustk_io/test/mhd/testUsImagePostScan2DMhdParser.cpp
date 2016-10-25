@@ -189,13 +189,14 @@ int main(int argc, const char** argv)
     usImagePostScan2D<unsigned char> usImagePostScan2DReference;
     usImagePostScan2DReference.resize(186,233);
     usImagePostScan2DReference.setScanLinePitch(0.0145);
+    usImagePostScan2DReference.setScanLineNumber(45);
     usImagePostScan2DReference.setProbeRadius(0.554);
     usImagePostScan2DReference.setTransducerConvexity(true);
     usImagePostScan2DReference.setWidthResolution(0.0058);
     usImagePostScan2DReference.setHeightResolution(0.0058);
 
     std::cout << "Written in " << filename << std::endl ;
-    //std::cout << usImagePostScan2DReference;
+    std::cout << usImagePostScan2DReference;
 
     //write image
     usImageIo::write(usImagePostScan2DReference,filename);
@@ -206,7 +207,7 @@ int main(int argc, const char** argv)
     usImageIo::read(postscan2D,filename);
 
     std::cout << "Read from " << filename << std::endl ;
-    //std::cout << postscan2D;
+    std::cout << postscan2D;
 
     if(postscan2D == usImagePostScan2DReference) {
       std::cout << "Test passed !" << std::endl;

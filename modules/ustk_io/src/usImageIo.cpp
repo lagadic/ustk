@@ -769,6 +769,7 @@ void usImageIo::write(const usImagePostScan2D<unsigned char> &postScanImage, con
     header.isTransducerConvex = postScanImage.isTransducerConvex();
     header.probeRadius = postScanImage.getProbeRadius();
     header.scanLinePitch = postScanImage.getScanLinePitch();
+    header.scanLineNumber = postScanImage.getScanLineNumber();
     //writing in file
     usMetaHeaderParser mhdParser;
     mhdParser.setMHDHeader(header);
@@ -835,10 +836,11 @@ void usImageIo::read(usImagePostScan2D<unsigned char> &postScanImage,const std::
 
     postScanImage.setProbeRadius(mhdHeader.probeRadius);
     postScanImage.setScanLinePitch(mhdHeader.scanLinePitch);
+    postScanImage.setScanLineNumber(mhdHeader.scanLineNumber);
     postScanImage.setTransducerConvexity(mhdHeader.isTransducerConvex);
     postScanImage.setHeightResolution(mhdParser.getHeightResolution());
     postScanImage.setWidthResolution(mhdParser.getWidthResolution());
-    postScanImage.resize(mhdHeader.dim[0], mhdHeader.dim[1]);
+    postScanImage.resize(mhdHeader.dim[1], mhdHeader.dim[0]);
     //data parsing
     usRawFileParser rawParser;
     rawParser.read(postScanImage, mhdParser.getRawFileName());
@@ -907,6 +909,8 @@ void usImageIo::write(const usImagePostScan3D<unsigned char> &postScanImage, con
     header.scanLinePitch = postScanImage.getScanLinePitch();
     header.motorRadius = postScanImage.getMotorRadius();
     header.framePitch = postScanImage.getFramePitch();
+    header.frameNumber = postScanImage.getFrameNumber();
+    header.scanLineNumber = postScanImage.getScanLineNumber();
     //writing in file
     usMetaHeaderParser mhdParser;
     mhdParser.setMHDHeader(header);
@@ -956,10 +960,12 @@ void usImageIo::read(usImagePostScan3D<unsigned char> &postScanImage, const std:
     postScanImage.setProbeRadius(mhdHeader.probeRadius);
     postScanImage.setScanLinePitch(mhdHeader.scanLinePitch);
     postScanImage.setTransducerConvexity(mhdHeader.isTransducerConvex);
+    postScanImage.setScanLineNumber(mhdHeader.scanLineNumber);
     postScanImage.setElementSpacingX(mhdParser.getWidthResolution());
     postScanImage.setElementSpacingY(mhdParser.getHeightResolution());
     postScanImage.setMotorRadius(mhdHeader.motorRadius);
     postScanImage.setFramePitch(mhdHeader.framePitch);
+    postScanImage.setFrameNumber(mhdHeader.frameNumber);
     postScanImage.setMotorType(mhdHeader.motorType);
       
     //data parsing
