@@ -201,6 +201,8 @@ int main(int argc, const char** argv)
     usImageRF3D<unsigned char> rf3D;
     filename = dirname + vpIoTools::path("/") + "rf3d.mhd";
     usImageIo::read(rf3D,filename);
+    std::cout << "LN : " << rf3D.getScanLineNumber()<<std::endl;
+    std::cout << "FN : " << rf3D.getFrameNumber()<<std::endl;
 
     std::cout << "Read from " << filename << std::endl ;
     std::cout << rf3D;

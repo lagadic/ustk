@@ -335,6 +335,7 @@ void usImageIo::read(usImageRF3D<unsigned char> &imageRf3, const std::string &he
     settings.setProbeRadius(mhdHeader.probeRadius);
     settings.setScanLinePitch(mhdHeader.scanLinePitch);
     settings.setTransducerConvexity(mhdHeader.isTransducerConvex);
+    settings.setScanLineNumber(mhdHeader.dim[0]);
     settings.setAxialResolution(mhdParser.getAxialResolution());
     imageRf3.setImageSettings(settings);
 
@@ -342,6 +343,7 @@ void usImageIo::read(usImageRF3D<unsigned char> &imageRf3, const std::string &he
     motorSettings.setMotorRadius(mhdHeader.motorRadius);
     motorSettings.setFramePitch(mhdHeader.framePitch);
     motorSettings.setMotorType(mhdHeader.motorType);
+    motorSettings.setFrameNumber(mhdHeader.dim[2]);
     imageRf3.setMotorSettings(motorSettings);
 
     //data parsing
@@ -616,6 +618,7 @@ void usImageIo::read(usImagePreScan3D<unsigned char> &preScanImage,const std::st
     settings.setProbeRadius(mhdHeader.probeRadius);
     settings.setScanLinePitch(mhdHeader.scanLinePitch);
     settings.setTransducerConvexity(mhdHeader.isTransducerConvex);
+    settings.setScanLineNumber(mhdHeader.dim[0]);
     settings.setAxialResolution(mhdParser.getAxialResolution());
     preScanImage.setImageSettings(settings);
 
@@ -623,6 +626,7 @@ void usImageIo::read(usImagePreScan3D<unsigned char> &preScanImage,const std::st
     motorSettings.setMotorRadius(mhdHeader.motorRadius);
     motorSettings.setFramePitch(mhdHeader.framePitch);
     motorSettings.setMotorType(mhdHeader.motorType);
+    motorSettings.setFrameNumber(mhdHeader.dim[2]);
     preScanImage.setMotorSettings(motorSettings);
 
     //data parsing
