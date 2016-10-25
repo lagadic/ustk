@@ -70,7 +70,7 @@ Write and read data in a xml file.\n\
 SYNOPSIS\n\
   %s [-o <output image path>] [-h]\n", name);
 
-      fprintf(stdout, "\n\
+  fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
   -o <output data path>                                %s\n\
     Set data output path.\n\
@@ -186,7 +186,7 @@ int main(int argc, const char** argv)
       }
     }
 
-    filename = opath + vpIoTools::path("/") + "postscan2D.xml";
+    filename = dirname + vpIoTools::path("/") + "postscan2D.xml";
 
     //Init values in reference parser (same values in file read in test)
     usImagePostScan2D<unsigned char> postscan2DReference;
@@ -208,7 +208,7 @@ int main(int argc, const char** argv)
 
     //read the image we just wrote
     usImagePostScan2D<unsigned char> postscan2D;
-    usImageIo::read(postscan2D,filename);
+    usImageIo::read(postscan2D, filename);
 
 
     std::cout << "Read from " << filename << std::endl ;
@@ -221,14 +221,13 @@ int main(int argc, const char** argv)
       return 0;
     }
 
-
     // Clean up memory allocated by the xml library
     vpXmlParser::cleanup();
     std::cout << "Test failed !" << std::endl;
     return 1;
   }
-  catch(vpException &e) {
-    std::cout << "Catch an exception: " << e << std::endl;
+  catch(const vpException &e) {
+    std::cout << "Catch an exception: " << e.getMessage() << std::endl;
     return 1;
   }
 }

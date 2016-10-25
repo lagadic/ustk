@@ -218,8 +218,8 @@ int main(int argc, const char** argv)
     std::cout << "Test failed !" << std::endl;
     return 1;
   }
-  catch(vpException &e) {
-    std::cout << "Catch an exception: " << e << std::endl;
+  catch(const vpException &e) {
+    std::cout << "Catch an exception: " << e.getMessage() << std::endl;
     return 1;
   }
 }

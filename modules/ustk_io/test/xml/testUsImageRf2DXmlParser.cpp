@@ -70,7 +70,7 @@ Write and read data in a xml file.\n\
 SYNOPSIS\n\
   %s [-o <output image path>] [-h]\n", name);
 
-      fprintf(stdout, "\n\
+  fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
   -o <output data path>                                %s\n\
     Set data output path.\n\
@@ -141,7 +141,6 @@ int main(int argc, const char** argv)
     std::string filename;
     std::string username;
 
-
     std::cout <<  "-------------------------------------------------------" << std::endl ;
     std::cout <<  "  testUsImageRf2DXmlParser.cpp" <<std::endl << std::endl ;
     std::cout <<  "  writing and reading ultrasound data using a the US xml parser" << std::endl ;
@@ -186,7 +185,7 @@ int main(int argc, const char** argv)
       }
     }
 
-    filename = opath + vpIoTools::path("/") + "rf2D.xml";
+    filename = dirname + vpIoTools::path("/") + "rf2D.xml";
 
     //Init values in reference parser (same values in file read in test)
     usImageRF2D<unsigned char> rf2DReference;
@@ -205,7 +204,7 @@ int main(int argc, const char** argv)
 
     //read the image we just wrote
     usImageRF2D<unsigned char> rf2D;
-    filename = opath + vpIoTools::path("/") + "rf2D.xml";
+    filename = dirname + vpIoTools::path("/") + "rf2D.xml";
     usImageIo::read(rf2D,filename);
 
 
@@ -223,8 +222,8 @@ int main(int argc, const char** argv)
     std::cout << "Test failed !" << std::endl;
     return 1;
   }
-  catch(vpException &e) {
-    std::cout << "Catch an exception: " << e << std::endl;
+  catch(const vpException &e) {
+    std::cout << "Catch an exception: " << e.getMessage() << std::endl;
     return 1;
   }
 }

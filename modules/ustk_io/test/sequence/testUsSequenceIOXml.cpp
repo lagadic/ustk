@@ -46,26 +46,26 @@ Print the program options.
 void usage(const char *name, const char *badparam, const std::string& opath, const std::string& user)
 {
   fprintf(stdout, "\n\
-          Write and read ultrasound sequences in 2d image files, and the associated xml settings file.\n\
-          \n\
-          SYNOPSIS\n\
-          %s [-o <output image path>] [-h]\n", name);
+Write and read ultrasound sequences in 2d image files, and the associated xml settings file.\n\
+\n\
+SYNOPSIS\n\
+  %s [-o <output image path>] [-h]\n", name);
 
-      fprintf(stdout, "\n\
-              OPTIONS:                                               Default\n\
-              -o <output data path>                               %s\n\
-              Set data output path.\n\
-              From this directory, creates the \"%s\"\n\
-              subdirectory depending on the username, where \n\
-              sequenceRF2D.xml file is written.\n\
+  fprintf(stdout, "\n\
+OPTIONS:                                               Default\n\
+  -o <output data path>                               %s\n\
+     Set data output path.\n\
+     From this directory, creates the \"%s\"\n\
+     subdirectory depending on the username, where \n\
+     sequenceRF2D.xml file is written.\n\
               \n\
-              -h\n\
-              Print the help.\n\n", opath.c_str(), user.c_str());
+  -h\n\
+     Print the help.\n\n", opath.c_str(), user.c_str());
 
-              if (badparam) {
-                fprintf(stderr, "ERROR: \n" );
-                fprintf(stderr, "\nBad parameter [%s]\n", badparam);
-              }
+  if (badparam) {
+    fprintf(stderr, "ERROR: \n" );
+    fprintf(stderr, "\nBad parameter [%s]\n", badparam);
+  }
 }
 
 /*!
@@ -122,7 +122,6 @@ int main(int argc, const char** argv)
     std::string filename;
     std::string username;
 
-
     std::cout <<  "-------------------------------------------------------" << std::endl ;
     std::cout <<  "  testUSSequenceIOXml.cpp" <<std::endl << std::endl ;
     std::cout <<  "  writing and reading ultrasound sequences using usSequenceReader and usSequenceWriter" << std::endl ;
@@ -167,7 +166,7 @@ int main(int argc, const char** argv)
       }
     }
 
-    filename = opath + vpIoTools::path("/") + "sequenceRF2D.xml";
+    filename = dirname + vpIoTools::path("/") + "sequenceRF2D.xml";
 
     //Init values in reference image
     usImageRF2D<unsigned char> rf2DReference;
@@ -240,14 +239,13 @@ int main(int argc, const char** argv)
       }
     }
 
-
     // Clean up memory allocated by the xml library
     vpXmlParser::cleanup();
     std::cout << "Test exit code : " << (int)!testPassed << std::endl;
     return !testPassed;
   }
-  catch(vpException &e) {
-    std::cout << "Catch an exception: " << e << std::endl;
+  catch(const vpException &e) {
+    std::cout << "Catch an exception: " << e.getMessage() << std::endl;
     return 1;
   }
 }

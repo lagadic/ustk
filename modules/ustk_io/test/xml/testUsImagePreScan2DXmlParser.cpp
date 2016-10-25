@@ -65,26 +65,26 @@ Print the program options.
 void usage(const char *name, const char *badparam, const std::string& opath, const std::string& user)
 {
   fprintf(stdout, "\n\
-          Write and read data in a xml file.\n\
-          \n\
-          SYNOPSIS\n\
-          %s [-o <output image path>] [-h]\n", name);
+Write and read data in a xml file.\n\
+\n\
+SYNOPSIS\n\
+  %s [-o <output image path>] [-h]\n", name);
 
-      fprintf(stdout, "\n\
-              OPTIONS:                                               Default\n\
-              -o <output data path>                               %s\n\
-              Set data output path.\n\
-              From this directory, creates the \"%s\"\n\
-              subdirectory depending on the username, where \n\
-              prescan2D.xml file is written.\n\
-              \n\
-              -h\n\
-              Print the help.\n\n", opath.c_str(), user.c_str());
+  fprintf(stdout, "\n\
+OPTIONS:                                               Default\n\
+  -o <output data path>                               %s\n\
+     Set data output path.\n\
+     From this directory, creates the \"%s\"\n\
+     subdirectory depending on the username, where \n\
+     prescan2D.xml file is written.\n\
+\n\
+  -h\n\
+     Print the help.\n\n", opath.c_str(), user.c_str());
 
-              if (badparam) {
-                fprintf(stderr, "ERROR: \n" );
-                fprintf(stderr, "\nBad parameter [%s]\n", badparam);
-              }
+  if (badparam) {
+    fprintf(stderr, "ERROR: \n" );
+    fprintf(stderr, "\nBad parameter [%s]\n", badparam);
+  }
 }
 
 /*!
@@ -141,7 +141,6 @@ int main(int argc, const char** argv)
     std::string filename;
     std::string username;
 
-
     std::cout <<  "-------------------------------------------------------" << std::endl ;
     std::cout <<  "  testUSXmlParser.cpp" <<std::endl << std::endl ;
     std::cout <<  "  writing and reading ultrasound data using a the US xml parser" << std::endl ;
@@ -186,7 +185,7 @@ int main(int argc, const char** argv)
       }
     }
 
-    filename = opath + vpIoTools::path("/") + "prescan2D.xml";
+    filename = dirname + vpIoTools::path("/") + "prescan2D.xml";
 
     //Init values in reference parser (same values in file read in test)
     usImagePreScan2D<unsigned char> prescan2DReference;
@@ -205,7 +204,7 @@ int main(int argc, const char** argv)
 
     //read the image we just wrote
     usImagePreScan2D<unsigned char> prescan2D;
-    filename = opath + vpIoTools::path("/") + "prescan2D.xml";
+    filename = dirname + vpIoTools::path("/") + "prescan2D.xml";
     usImageIo::read(prescan2D,filename);
 
 
@@ -223,8 +222,8 @@ int main(int argc, const char** argv)
     std::cout << "Test failed !" << std::endl;
     return 1;
   }
-  catch(vpException &e) {
-    std::cout << "Catch an exception: " << e << std::endl;
+  catch(const vpException &e) {
+    std::cout << "Catch an exception: " << e.getMessage() << std::endl;
     return 1;
   }
 }
