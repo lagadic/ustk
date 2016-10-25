@@ -281,6 +281,7 @@ void usSequenceWriter<usImagePostScan2D<unsigned char> >::close()
   xmlParser.setImageSettings(m_frame.getProbeRadius(),
     m_frame.getScanLinePitch(),
     m_frame.isTransducerConvex(),
+    m_frame.getScanLineNumber(),
     m_frame.getWidthResolution(),
     m_frame.getHeightResolution());
 

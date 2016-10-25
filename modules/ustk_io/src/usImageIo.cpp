@@ -726,6 +726,7 @@ void usImageIo::write(const usImagePostScan2D<unsigned char> &postScanImage, con
       xmlSettings.setImageSettings(postScanImage.getProbeRadius(),
         postScanImage.getScanLinePitch(),
         postScanImage.isTransducerConvex(),
+        postScanImage.getScanLineNumber(),
         postScanImage.getWidthResolution(),
         postScanImage.getHeightResolution());
 
@@ -802,9 +803,10 @@ void usImageIo::read(usImagePostScan2D<unsigned char> &postScanImage,const std::
     std::string fullImageFileName = vpIoTools::getParent(headerFileName) + vpIoTools::path("/") + xmlSettings.getImageFileName();
     vpImageIo::read(postScanImage, fullImageFileName);
 
-    postScanImage.setImageSettings(xmlSettings.getTransducerSettings().getProbeRadius(), 
+    postScanImage.setImageSettings(xmlSettings.getTransducerSettings().getProbeRadius(),
       xmlSettings.getTransducerSettings().getScanLinePitch(),
       xmlSettings.getTransducerSettings().isTransducerConvex(),
+      xmlSettings.getScanLineNumber(),
       xmlSettings.getHeightResolution(), xmlSettings.getWidthResolution());
 #else
     throw(vpException(vpException::fatalError, "Requires xml2 library"));

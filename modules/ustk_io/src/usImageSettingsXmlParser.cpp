@@ -41,9 +41,10 @@
  * Default constructor.
  */
 usImageSettingsXmlParser::usImageSettingsXmlParser()
-  : m_transducerSettings(usTransducerSettings()),
+  : m_transducerSettings(usTransducerSettings()),m_scanLineNumber(0),
+    m_spacingX(0.0), m_spacingY(0.0), m_spacingZ(0.0), m_frameNumber(0),
     m_motorSettings(usMotorSettings()), m_imageFileName(std::string("")),
-    m_image_type(usImageSettingsXmlParser::IMAGE_TYPE_UNKNOWN), m_is_3D(false)
+    m_image_type(usImageSettingsXmlParser::IMAGE_TYPE_UNKNOWN), m_is_3D(false), m_is_sequence(false)
 {
   nodeMap["settings"] = CODE_XML_SETTINGS;
   nodeMap["image_type"] = CODE_XML_IMAGE_TYPE;
@@ -56,6 +57,11 @@ usImageSettingsXmlParser::usImageSettingsXmlParser()
   nodeMap["axial_resolution"] = CODE_XML_AXIAL_RESOLUTION;
   nodeMap["height_resolution"] = CODE_XML_HEIGHT_RESOLUTION;
   nodeMap["width_resolution"] = CODE_XML_WIDTH_RESOLUTION;
+  nodeMap["scanline_number"] = CODE_XML_SCANLINE_NUMBER;
+  nodeMap["frame_number"] = CODE_XML_FRAME_NUMBER;
+  nodeMap["spacing_x"] = CODE_XML_SPACING_X;
+  nodeMap["spacing_y"] = CODE_XML_SPACING_Y;
+  nodeMap["spacing_z"] = CODE_XML_SPACING_Z;
   nodeMap["image_file_name"] = CODE_XML_ASSOCIATED_IMAGE_FILE_NAME;
   nodeMap["sequence_frame_rate"] = CODE_XML_SEQUENCE_FRAME_RATE;
   nodeMap["sequence_start_number"] = CODE_XML_SEQUENCE_FIRST_IMAGE_NUMBER;
@@ -76,6 +82,12 @@ usImageSettingsXmlParser& usImageSettingsXmlParser::operator =(const usImageSett
   m_widthResolution = twinparser.getWidthResolution();
   m_heightResolution = twinparser.getHeightResolution();
   m_axialResolution = twinparser.getAxialResolution();
+  m_scanLineNumber = twinparser.getScanLineNumber();
+  m_frameNumber = twinparser.getFrameNumber();
+  m_spacingX = twinparser.getSpacingX();
+  m_spacingY = twinparser.getSpacingY();
+  m_spacingZ = twinparser.getSpacingZ();
+  m_scanLineNumber = twinparser.getScanLineNumber();
 
   return *this;
 }
@@ -128,14 +140,57 @@ usImageSettingsXmlParser::readMainClass (xmlDocPtr doc, xmlNodePtr node)
           if (this->m_image_type == IMAGE_TYPE_RF || this->m_image_type == IMAGE_TYPE_PRESCAN) {
             throw(vpException(vpException::fatalError, std::string("Trying to assign an height resolution to a pre-scan image !")));
           }
+          else if(this->m_is_3D) {
+            throw(vpException(vpException::fatalError, std::string("Trying to assign an height resolution to a 3D image ! Use spacing_y instead.")));
+          }
           else 
             this->m_heightResolution = xmlReadDoubleChild(doc, dataNode);
           break;
         case CODE_XML_WIDTH_RESOLUTION :
           if (this->m_image_type == IMAGE_TYPE_RF || this->m_image_type == IMAGE_TYPE_PRESCAN) {
             throw(vpException(vpException::fatalError, std::string("Trying to assign an width resolution to a pre-scan image !")));
-          } else
+          }
+          else if(this->m_is_3D) {
+            throw(vpException(vpException::fatalError, std::string("Trying to assign an height resolution to a 3D image ! Use spacing_x instead.")));
+          }
+          else
             this->m_widthResolution = xmlReadDoubleChild(doc, dataNode);
+          break;
+        case CODE_XML_SPACING_X :
+          if (this->m_image_type == IMAGE_TYPE_RF || this->m_image_type == IMAGE_TYPE_PRESCAN) {
+            throw(vpException(vpException::fatalError, std::string("Trying to assign a spacing to a pre-scan image !")));
+          }
+          else if(!this->m_is_3D) {
+            throw(vpException(vpException::fatalError, std::string("Trying to assign a spacing to a 2D image ! Use height/width resolutions instead.")));
+          }
+          else
+            this->m_widthResolution = xmlReadDoubleChild(doc, dataNode);
+          break;
+               case CODE_XML_SPACING_Y :
+          if (this->m_image_type == IMAGE_TYPE_RF || this->m_image_type == IMAGE_TYPE_PRESCAN) {
+            throw(vpException(vpException::fatalError, std::string("Trying to assign a spacing to a pre-scan image !")));
+          }
+          else if(!this->m_is_3D) {
+            throw(vpException(vpException::fatalError, std::string("Trying to assign an spacing to a 2D image ! Use height/width resolutions instead.")));
+          }
+          else
+            this->m_widthResolution = xmlReadDoubleChild(doc, dataNode);
+          break;
+                case CODE_XML_SPACING_Z :
+          if (this->m_image_type == IMAGE_TYPE_RF || this->m_image_type == IMAGE_TYPE_PRESCAN) {
+            throw(vpException(vpException::fatalError, std::string("Trying to assign a spacing to a pre-scan image !")));
+          }
+          else if(!this->m_is_3D) {
+            throw(vpException(vpException::fatalError, std::string("Trying to assign an spacing to a 2D image ! Use height/width resolutions instead.")));
+          }
+          else
+            this->m_widthResolution = xmlReadDoubleChild(doc, dataNode);
+          break;
+        case CODE_XML_SCANLINE_NUMBER :
+          if (this->m_image_type == IMAGE_TYPE_RF || this->m_image_type == IMAGE_TYPE_PRESCAN) {
+            throw(vpException(vpException::fatalError, std::string("Trying to assign a scanline number to a pre-scan image (for pre-scan images scanline number is the image width) !")));
+          } else
+            this->m_scanLineNumber = xmlReadIntChild(doc, dataNode);
           break;
         case CODE_XML_SCANLINE_PITCH:
           this->m_transducerSettings.setScanLinePitch(xmlReadDoubleChild(doc, dataNode));
@@ -173,10 +228,6 @@ usImageSettingsXmlParser::readMainClass (xmlDocPtr doc, xmlNodePtr node)
         case CODE_XML_ASSOCIATED_IMAGE_FILE_NAME:
           this->m_imageFileName = xmlReadStringChild(doc, dataNode);
           break;
-        /*case CODE_XML_SEQUENCE_NAME:
-          this->m_sequence_name = xmlReadStringChild(doc, dataNode);
-          this->m_is_sequence = true;
-          break;*/
         case CODE_XML_SEQUENCE_FRAME_RATE:
           this->m_sequence_frame_rate = xmlReadDoubleChild(doc, dataNode);
           this->m_is_sequence = true;
@@ -226,8 +277,17 @@ usImageSettingsXmlParser::writeMainClass(xmlNodePtr node)
     xmlWriteDoubleChild(node, "scanline_pitch", m_transducerSettings.getScanLinePitch());
     xmlWriteDoubleChild(node, "probe_radius", m_transducerSettings.getProbeRadius());
     xmlWriteBoolChild(node, "is_probe_convex", m_transducerSettings.isTransducerConvex());
-    xmlWriteDoubleChild(node, "width_resolution", m_widthResolution);
-    xmlWriteDoubleChild(node, "height_resolution", m_heightResolution);
+    xmlWriteIntChild(node, "scanline_number", m_scanLineNumber);
+    if(m_is_3D) {
+      xmlWriteIntChild(node, "frame_number", m_frameNumber);
+      xmlWriteDoubleChild(node, "spacing_x", m_spacingX);
+      xmlWriteDoubleChild(node, "spacing_y", m_spacingY);
+      xmlWriteDoubleChild(node, "spacing_z", m_spacingZ);
+    }
+    else {
+      xmlWriteDoubleChild(node, "height_resolution", m_heightResolution);
+      xmlWriteDoubleChild(node, "width_resolution", m_widthResolution);
+    }
   }
   if (m_is_3D) {
     xmlWriteDoubleChild(node, "frame_pitch", m_motorSettings.getFramePitch());
@@ -280,15 +340,17 @@ void usImageSettingsXmlParser::setImageSettings(double probeRadius, double scanL
 * @param probeRadius : the probe rabius.
 * @param scanLinePitch : the scanline pitch.
 * @param isTransducerConvex : the transducer type (true if convex transducer, false if linear).
+* @param scanLineNumber : the number of scanLines of the probe used.
 * @param widthResolution : the image width resolution.
 * @param heightResolution : the image height resolution.
 */
-void usImageSettingsXmlParser::setImageSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex,
+void usImageSettingsXmlParser::setImageSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex, unsigned int scanLineNumber,
                                                 double widthResolution, double heightResolution)
 {
   m_transducerSettings.setTransducerConvexity(isTransducerConvex);
   m_transducerSettings.setProbeRadius(probeRadius);
   m_transducerSettings.setScanLinePitch(scanLinePitch);
+  m_scanLineNumber = scanLineNumber;
   m_heightResolution = widthResolution;
   m_widthResolution = heightResolution;
   m_image_type = usImageSettingsXmlParser::IMAGE_TYPE_POSTSCAN;

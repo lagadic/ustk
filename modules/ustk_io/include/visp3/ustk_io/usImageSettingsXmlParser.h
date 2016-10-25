@@ -78,6 +78,12 @@ public:
     CODE_XML_AXIAL_RESOLUTION,
     CODE_XML_HEIGHT_RESOLUTION,
     CODE_XML_WIDTH_RESOLUTION,
+    CODE_XML_SCANLINE_NUMBER,
+    CODE_XML_FRAME_NUMBER,
+    CODE_XML_SPACING_X,
+    CODE_XML_SPACING_Y,
+    CODE_XML_SPACING_Z,
+
     CODE_XML_ASSOCIATED_IMAGE_FILE_NAME,
     CODE_XML_SEQUENCE_FRAME_RATE,
     CODE_XML_SEQUENCE_FIRST_IMAGE_NUMBER,
@@ -101,13 +107,18 @@ public:
 
   //getters
   double getAxialResolution() const { return m_axialResolution; }
+  double getFrameNumber() const { return m_frameNumber; }
   std::string getImageFileName() const {return m_imageFileName;}
   double getHeightResolution() const {return m_heightResolution;}
   usImageType getImageType() const { return m_image_type; }
   usMotorSettings getMotorSettings() const { return m_motorSettings; }
+  unsigned int getScanLineNumber() const {return m_scanLineNumber;}
   double getSequenceFrameRate() const {return m_sequence_frame_rate;}
   int getSequenceStartNumber() const {return m_sequence_start;}
   int getSequenceStopNumber() const {return m_sequence_stop;}
+  int getSpacingX() const {return m_spacingX;}
+  int getSpacingY() const {return m_spacingY;}
+  int getSpacingZ() const {return m_spacingZ;}
   double getWidthResolution() const { return m_widthResolution; }
   usTransducerSettings getTransducerSettings() const { return m_transducerSettings; }
 
@@ -115,24 +126,37 @@ public:
   bool isSequence() const {return m_is_sequence;}
   
   //Data setters
+  void setFrameNumber(unsigned int frameNumber) {m_frameNumber = frameNumber;}
   void setImageFileName(const std::string &imageFileName);
   void setImageSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex, double axialResolution, usImageType image_type);
-  void setImageSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex, double widthResolution, double heightResolution);
+  void setImageSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex, unsigned int scanLineNumber,
+                        double widthResolution, double heightResolution);
   void setImageType(usImageType image_type) { m_image_type = image_type;}
   void setMotorSettings(const usMotorSettings &motorSettings);
+  void setScanLineNumber(unsigned int scanLineNumber) {m_scanLineNumber = scanLineNumber;}
   void setSequenceFrameRate(double sequenceFrameRate) {m_sequence_frame_rate=sequenceFrameRate; m_is_sequence=true;}
   void setSequenceStartNumber(int sequenceStartNumber) {m_sequence_start = sequenceStartNumber; m_is_sequence=true;}
   void setSequenceStopNumber(int sequenceStopNumber) {m_sequence_stop = sequenceStopNumber; m_is_sequence=true;}
   void setSequenceType(bool isSequence) {m_is_sequence = isSequence;}
+  void setSpacing(double spacingX, double spacingY, double spacingZ) {m_spacingX=spacingX;
+                                                                      m_spacingY=spacingY;
+                                                                      m_spacingZ=spacingZ;}
   void setTransducerSettings(const usTransducerSettings transducerSettings);
 
 private:
   //basic 
   usTransducerSettings m_transducerSettings;
 
-  //for post scan images
+  //for 2D post scan images
   double m_widthResolution;
   double m_heightResolution;
+  unsigned int m_scanLineNumber; //for 3D too
+
+  //for 3D post scan images
+  double m_spacingX;
+  double m_spacingY;
+  double m_spacingZ;
+  unsigned int m_frameNumber;
 
   //for rf / pre-scan
   double m_axialResolution;

@@ -276,6 +276,7 @@ void usSequenceReader<usImagePostScan2D<unsigned char> >::open(usImagePostScan2D
   m_frame.setImageSettings(xmlParser.getTransducerSettings().getProbeRadius(),
     xmlParser.getTransducerSettings().getScanLinePitch(),
     xmlParser.getTransducerSettings().isTransducerConvex(),
+    xmlParser.getScanLineNumber(),
     xmlParser.getWidthResolution(),
     xmlParser.getHeightResolution());
 
@@ -291,6 +292,7 @@ void usSequenceReader<usImagePostScan2D<unsigned char> >::open(usImagePostScan2D
   image.setImageSettings(m_frame.getProbeRadius(),
     m_frame.getScanLinePitch(),
     m_frame.isTransducerConvex(),
+    m_frame.getScanLineNumber(),
     m_frame.getWidthResolution(),
     m_frame.getHeightResolution());
 

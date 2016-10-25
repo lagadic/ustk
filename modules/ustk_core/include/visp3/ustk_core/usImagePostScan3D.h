@@ -88,19 +88,29 @@ public:
   usImagePostScan3D(unsigned int dimX, unsigned int dimY, unsigned int dimZ,
                     double probeRadius, double motorRadius, double scanLinePitch,
                     double framePitch, bool isTransducerConvex, const usMotorSettings::usMotorType &motorType,
-                    double spacingX, double spacingY, double spacingZ);
+                    double spacingX, double spacingY, double spacingZ,
+                    unsigned int scanLineNumber, unsigned int frameNumber);
 
   usImagePostScan3D(const usImagePostScan3D &other);
   usImagePostScan3D(const usImage3D<Type> &otherImage, const usTransducerSettings &imageSettings,
                     const usMotorSettings &motorSettings);
   virtual ~usImagePostScan3D();
 
+  unsigned int getFrameNumber();
+  unsigned int getScanLineNumber();
+
   usImagePostScan3D<Type> & operator =(const usImagePostScan3D<Type> &other);
 
   bool operator ==(const usImagePostScan3D<Type> &other);
 
+  void setFrameNumber(unsigned int frameNumber);
+  void setImageSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex, double spacingX, double spacingY, double spacingZ);
   void setData(const usImage3D<Type> &image3D);
+  void setScanLineNumber(unsigned int scanlineNumber);
 
+private:
+  unsigned int m_scanLineNumber;
+  unsigned int m_frameNumber;
 };
 
 
@@ -134,12 +144,14 @@ usImagePostScan3D<Type>::usImagePostScan3D(unsigned int dimX, unsigned int dimY,
                                         double probeRadius, double motorRadius, double scanLinePitch,
                                         double framePitch, bool isTransducerConvex,
                                         const usMotorSettings::usMotorType &motorType,
-                                        double spacingX, double spacingY, double spacingZ)
+                                        double spacingX, double spacingY, double spacingZ,
+                                        unsigned int scanLineNumber, unsigned int frameNumber)
   : usImage3D<Type>(dimX, dimY, dimZ, spacingX, spacingY, spacingZ),
     usTransducerSettings(probeRadius, scanLinePitch, isTransducerConvex),
     usMotorSettings( motorRadius, framePitch, motorType)
 {
-
+  m_scanLineNumber = scanLineNumber;
+  m_frameNumber = frameNumber;
 }
 
 /**
@@ -217,5 +229,65 @@ template<class Type>
 void usImagePostScan3D<Type>::setData(const usImage3D<Type> &image3D)
 {
   usImage3D<Type>::operator =(image3D);
+}
+
+/**
+* Setter for image settings.
+* @param probeRadius Radius of the probe used.
+* @param scanLinePitch Radius of the probe used.
+* @param isTransducerConvex Boolean to set the transducer convexity (true if convex).
+* @param spacingX Size (in meters) of a voxel along x axis.
+* @param spacingY Size (in meters) of a voxel along y axis.
+* @param spacingZ Size (in meters) of a voxel along z axis.
+*/
+template<class Type>
+void usImagePostScan3D<Type>::setImageSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex, double spacingX, double spacingY, double spacingZ)
+{
+  setProbeRadius(probeRadius);
+  setScanLinePitch(scanLinePitch);
+  setTransducerConvexity(isTransducerConvex);
+  usImage3D<Type>::setElementSpacingX(spacingX);
+  usImage3D<Type>::setElementSpacingY(spacingY);
+  usImage3D<Type>::setElementSpacingZ(spacingZ);
+}
+
+/**
+* Getter for frame number.
+* @return The number of frames used for acquisition.
+*/
+template<class Type>
+unsigned int  usImagePostScan3D<Type>::getFrameNumber()
+{
+  return m_frameNumber;
+}
+
+/**
+* Getter for scanline number.
+* @return The number of scanlines used for acquisition.
+*/
+template<class Type>
+unsigned int  usImagePostScan3D<Type>::getScanLineNumber()
+{
+  return m_scanLineNumber;
+}
+
+/**
+* Setter for frame number.
+* @param frameNumber The number of frames used for acquisition.
+*/
+template<class Type>
+void usImagePostScan3D<Type>::setFrameNumber(unsigned int frameNumber)
+{
+  m_frameNumber = frameNumber;
+}
+
+/**
+* Setter for scanline number.
+* @param scanlineNumber The number of scanlines used for acquisition.
+*/
+template<class Type>
+void usImagePostScan3D<Type>::setScanLineNumber(unsigned int scanlineNumber)
+{
+  m_scanLineNumber = scanlineNumber;
 }
 #endif // US_IMAGE_POSTSCAN_3D_H
