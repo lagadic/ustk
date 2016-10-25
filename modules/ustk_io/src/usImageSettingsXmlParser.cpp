@@ -41,8 +41,8 @@
  * Default constructor.
  */
 usImageSettingsXmlParser::usImageSettingsXmlParser()
-  : m_transducerSettings(usTransducerSettings()),m_scanLineNumber(0),
-    m_spacingX(0.0), m_spacingY(0.0), m_spacingZ(0.0), m_frameNumber(0),
+  : m_transducerSettings(usTransducerSettings()),
+    m_spacingX(0.0), m_spacingY(0.0), m_spacingZ(0.0),
     m_motorSettings(usMotorSettings()), m_imageFileName(std::string("")),
     m_image_type(usImageSettingsXmlParser::IMAGE_TYPE_UNKNOWN), m_is_3D(false), m_is_sequence(false)
 {
@@ -82,12 +82,9 @@ usImageSettingsXmlParser& usImageSettingsXmlParser::operator =(const usImageSett
   m_widthResolution = twinparser.getWidthResolution();
   m_heightResolution = twinparser.getHeightResolution();
   m_axialResolution = twinparser.getAxialResolution();
-  m_scanLineNumber = twinparser.getScanLineNumber();
-  m_frameNumber = twinparser.getFrameNumber();
   m_spacingX = twinparser.getSpacingX();
   m_spacingY = twinparser.getSpacingY();
   m_spacingZ = twinparser.getSpacingZ();
-  m_scanLineNumber = twinparser.getScanLineNumber();
 
   return *this;
 }
@@ -190,7 +187,7 @@ usImageSettingsXmlParser::readMainClass (xmlDocPtr doc, xmlNodePtr node)
           if (this->m_image_type == IMAGE_TYPE_RF || this->m_image_type == IMAGE_TYPE_PRESCAN) {
             throw(vpException(vpException::fatalError, std::string("Trying to assign a scanline number to a pre-scan image (for pre-scan images scanline number is the image width) !")));
           } else
-            this->m_scanLineNumber = xmlReadIntChild(doc, dataNode);
+            this->m_transducerSettings.setScanLineNumber(xmlReadIntChild(doc, dataNode));
           break;
         case CODE_XML_SCANLINE_PITCH:
           this->m_transducerSettings.setScanLinePitch(xmlReadDoubleChild(doc, dataNode));
@@ -277,9 +274,9 @@ usImageSettingsXmlParser::writeMainClass(xmlNodePtr node)
     xmlWriteDoubleChild(node, "scanline_pitch", m_transducerSettings.getScanLinePitch());
     xmlWriteDoubleChild(node, "probe_radius", m_transducerSettings.getProbeRadius());
     xmlWriteBoolChild(node, "is_probe_convex", m_transducerSettings.isTransducerConvex());
-    xmlWriteIntChild(node, "scanline_number", m_scanLineNumber);
+    xmlWriteIntChild(node, "scanline_number", m_transducerSettings.getScanLineNumber());
     if(m_is_3D) {
-      xmlWriteIntChild(node, "frame_number", m_frameNumber);
+      xmlWriteIntChild(node, "frame_number", m_motorSettings.getFrameNumber());
       xmlWriteDoubleChild(node, "spacing_x", m_spacingX);
       xmlWriteDoubleChild(node, "spacing_y", m_spacingY);
       xmlWriteDoubleChild(node, "spacing_z", m_spacingZ);
@@ -350,7 +347,7 @@ void usImageSettingsXmlParser::setImageSettings(double probeRadius, double scanL
   m_transducerSettings.setTransducerConvexity(isTransducerConvex);
   m_transducerSettings.setProbeRadius(probeRadius);
   m_transducerSettings.setScanLinePitch(scanLinePitch);
-  m_scanLineNumber = scanLineNumber;
+  m_transducerSettings.setScanLineNumber(scanLineNumber);
   m_heightResolution = widthResolution;
   m_widthResolution = heightResolution;
   m_image_type = usImageSettingsXmlParser::IMAGE_TYPE_POSTSCAN;

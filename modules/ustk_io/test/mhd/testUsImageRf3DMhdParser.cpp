@@ -205,6 +205,7 @@ int main(int argc, const char** argv)
     std::cout << "Read from " << filename << std::endl ;
     std::cout << rf3D;
 
+
     if(rf3D == rf3DReference) {
       std::cout << "Test passed !" << std::endl;
       return 0;

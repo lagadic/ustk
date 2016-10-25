@@ -186,9 +186,9 @@ void usImageIo::read(usImageRF2D<unsigned char> &imageRf2D, const std::string &h
 
     imageRf2D.setProbeRadius(xmlSettings.getTransducerSettings().getProbeRadius());
     imageRf2D.setScanLinePitch(xmlSettings.getTransducerSettings().getScanLinePitch());
-    imageRf2D.setScanLineNumber(xmlSettings.getTransducerSettings().getScanLineNumber());
     imageRf2D.setTransducerConvexity(xmlSettings.getTransducerSettings().isTransducerConvex());
     imageRf2D.setAxialResolution(xmlSettings.getAxialResolution());
+    imageRf2D.setScanLineNumber(imageRf2D.getWidth());
 #else
     throw(vpException(vpException::fatalEtrror, "Requires xml2 library"));
 #endif //VISP_HAVE_XML2
@@ -214,7 +214,7 @@ void usImageIo::read(usImageRF2D<unsigned char> &imageRf2D, const std::string &h
     imageRf2D.setImageSettings(settings);
 
     //resizing image in memory
-    imageRf2D.resize(mhdHeader.dim[0], mhdHeader.dim[1]);
+    imageRf2D.resize(mhdHeader.dim[1], mhdHeader.dim[0]);
 
     //data parsing
     usRawFileParser rawParser;
@@ -274,8 +274,7 @@ void usImageIo::write(const usImageRF3D<unsigned char> &imageRf3D, const std::st
     header.elementSpacing[2] = 1;
     header.dim[0] = imageRf3D.getDimX();
     header.dim[1] = imageRf3D.getDimY();
-    header.dim[1] = imageRf3D.getDimZ();
-    header.dim[2] = 1;
+    header.dim[2] = imageRf3D.getDimZ();
     header.msb = false;
     header.MHDFileName = headerFileName;
     //remove full path for image file name (located in the same directory as the mhd
@@ -467,9 +466,9 @@ void usImageIo::read(usImagePreScan2D<unsigned char> &preScanImage,const std::st
 
     preScanImage.setProbeRadius(xmlSettings.getTransducerSettings().getProbeRadius());
     preScanImage.setScanLinePitch(xmlSettings.getTransducerSettings().getScanLinePitch());
-    preScanImage.setScanLineNumber(xmlSettings.getTransducerSettings().getScanLineNumber());
     preScanImage.setTransducerConvexity(xmlSettings.getTransducerSettings().isTransducerConvex());
     preScanImage.setAxialResolution(xmlSettings.getAxialResolution());
+    preScanImage.setScanLineNumber(preScanImage.getWidth());
 #else
     throw(vpException(vpException::fatalEtrror, "Requires xml2 library"));
 #endif //VISP_HAVE_XML2
@@ -488,7 +487,7 @@ void usImageIo::read(usImagePreScan2D<unsigned char> &preScanImage,const std::st
     usMetaHeaderParser::MHDHeader mhdHeader = mhdParser.getMHDHeader();
 
     //resizing image in memory
-    preScanImage.resize(mhdHeader.dim[0], mhdHeader.dim[1],mhdHeader.dim[2]);
+    preScanImage.resize(mhdHeader.dim[1], mhdHeader.dim[0],0);
 
     usImagePreScanSettings settings;
     settings.setProbeRadius(mhdHeader.probeRadius);
@@ -496,6 +495,7 @@ void usImageIo::read(usImagePreScan2D<unsigned char> &preScanImage,const std::st
     settings.setTransducerConvexity(mhdHeader.isTransducerConvex);
     settings.setAxialResolution(mhdParser.getAxialResolution());
     preScanImage.setImageSettings(settings);
+    preScanImage.setScanLineNumber(preScanImage.getWidth());
 
     //data parsing
     usRawFileParser rawParser;
@@ -827,7 +827,7 @@ void usImageIo::read(usImagePostScan2D<unsigned char> &postScanImage,const std::
     usMetaHeaderParser::MHDHeader mhdHeader = mhdParser.getMHDHeader();
 
     //resizing image in memory
-    postScanImage.resize(mhdHeader.dim[0], mhdHeader.dim[1]);
+    postScanImage.resize(mhdHeader.dim[1], mhdHeader.dim[0]);
 
     postScanImage.setProbeRadius(mhdHeader.probeRadius);
     postScanImage.setScanLinePitch(mhdHeader.scanLinePitch);

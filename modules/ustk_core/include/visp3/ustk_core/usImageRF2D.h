@@ -90,6 +90,10 @@ public:
 
   void setData(const vpImage<Type> &image);
   void setScanLineNumber(unsigned int scanLineNumber);
+
+  //Filtering before calling vpImage::resize() to update scanLineNumber
+  void resize(const unsigned int h, const unsigned int w);
+  void resize(const unsigned int h, const unsigned int w, const Type val);
 };
 
 /**
@@ -197,6 +201,20 @@ void usImageRF2D<Type>::setScanLineNumber(unsigned int scanLineNumber)
 {
   vpImage<Type>::resize(vpImage<Type>::getHeight(), scanLineNumber);
   usTransducerSettings::setScanLineNumber(scanLineNumber);
+}
+
+template<class Type>
+void usImageRF2D<Type>::resize(const unsigned int h, const unsigned int w)
+{
+  usTransducerSettings::setScanLineNumber(w);
+  vpImage<Type>::resize(h, w);
+}
+
+template<class Type>
+void usImageRF2D<Type>::resize(const unsigned int h, const unsigned int w, const Type val)
+{
+  usTransducerSettings::setScanLineNumber(w);
+  vpImage<Type>::resize(h, w, val);
 }
 
 #endif // US_IMAGE_RF_2D_H

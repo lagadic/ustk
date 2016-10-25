@@ -107,12 +107,12 @@ public:
 
   //getters
   double getAxialResolution() const { return m_axialResolution; }
-  double getFrameNumber() const { return m_frameNumber; }
+  double getFrameNumber() const { return m_motorSettings.getFrameNumber(); }
   std::string getImageFileName() const {return m_imageFileName;}
   double getHeightResolution() const {return m_heightResolution;}
   usImageType getImageType() const { return m_image_type; }
   usMotorSettings getMotorSettings() const { return m_motorSettings; }
-  unsigned int getScanLineNumber() const {return m_scanLineNumber;}
+  unsigned int getScanLineNumber() const {return m_transducerSettings.getScanLineNumber();}
   double getSequenceFrameRate() const {return m_sequence_frame_rate;}
   int getSequenceStartNumber() const {return m_sequence_start;}
   int getSequenceStopNumber() const {return m_sequence_stop;}
@@ -126,14 +126,14 @@ public:
   bool isSequence() const {return m_is_sequence;}
   
   //Data setters
-  void setFrameNumber(unsigned int frameNumber) {m_frameNumber = frameNumber;}
+  void setFrameNumber(unsigned int frameNumber) {m_motorSettings.setFrameNumber(frameNumber);}
   void setImageFileName(const std::string &imageFileName);
   void setImageSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex, double axialResolution, usImageType image_type);
   void setImageSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex, unsigned int scanLineNumber,
                         double widthResolution, double heightResolution);
   void setImageType(usImageType image_type) { m_image_type = image_type;}
   void setMotorSettings(const usMotorSettings &motorSettings);
-  void setScanLineNumber(unsigned int scanLineNumber) {m_scanLineNumber = scanLineNumber;}
+  void setScanLineNumber(unsigned int scanLineNumber) {m_transducerSettings.setScanLineNumber(scanLineNumber);}
   void setSequenceFrameRate(double sequenceFrameRate) {m_sequence_frame_rate=sequenceFrameRate; m_is_sequence=true;}
   void setSequenceStartNumber(int sequenceStartNumber) {m_sequence_start = sequenceStartNumber; m_is_sequence=true;}
   void setSequenceStopNumber(int sequenceStopNumber) {m_sequence_stop = sequenceStopNumber; m_is_sequence=true;}
@@ -150,13 +150,11 @@ private:
   //for 2D post scan images
   double m_widthResolution;
   double m_heightResolution;
-  unsigned int m_scanLineNumber; //for 3D too
 
   //for 3D post scan images
   double m_spacingX;
   double m_spacingY;
   double m_spacingZ;
-  unsigned int m_frameNumber;
 
   //for rf / pre-scan
   double m_axialResolution;

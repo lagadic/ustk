@@ -98,6 +98,10 @@ public:
   void setData(const usImage3D<Type> &image);
   void setFrameNumber(unsigned int frameNumber);
   void setScanLineNumber(unsigned int scanLineNumber);
+
+
+  //Filtering before calling vpImage::resize() to update scanLineNumber
+  void resize(unsigned int dimX,unsigned int dimY,unsigned int dimZ);
 };
 
 /**
@@ -228,6 +232,15 @@ void usImageRF3D<Type>::setFrameNumber(unsigned int frameNumber)
 {
   usImage3D<Type>::resize(usImage3D<Type>::getDimX(), usImage3D<Type>::getDimY(), frameNumber);
   usMotorSettings::setFrameNumber(frameNumber);
+}
+
+
+template<class Type>
+void usImageRF3D<Type>::resize(unsigned int dimX,unsigned int dimY,unsigned int dimZ)
+{
+  usMotorSettings::setFrameNumber(dimZ);
+  usTransducerSettings::setScanLineNumber(dimX);
+  usImage3D<Type>::resize(dimX, dimY, dimZ);
 }
 
 #endif // US_IMAGE_RF_3D_H
