@@ -47,16 +47,18 @@
 * Basic constructor, all settings set to default.
 */
 usTransducerSettings::usTransducerSettings()
-  : m_probeRadius(0.0f), m_scanLinePitch(0.0f), m_isTransducerConvex(true) {}
+  : m_probeRadius(0.0f), m_scanLinePitch(0.0f), m_scanLineNumber(0), m_isTransducerConvex(true) {}
 
 /**
 * Full constructor with all the settings availables:
 * @param probeRadius Distance between the center point of the probe and the first pixel arc acquired. Value in meters (m).
 * @param scanLinePitch radius or distance between 2 successives acquisiton lines in the probe : in radians (rad) if the prove is convex, or in meters (m) if the probe is linear.
+* @param scanLineNumber Number of scanlines in the probe used.
 * @param isTransducerConvex Boolean to specify if the probe is convex or linear.
 */
-usTransducerSettings::usTransducerSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex)
-  : m_probeRadius(probeRadius), m_scanLinePitch(scanLinePitch), m_isTransducerConvex(isTransducerConvex) {}
+usTransducerSettings::usTransducerSettings(double probeRadius, double scanLinePitch,
+                                           unsigned int scanLineNumber, bool isTransducerConvex)
+  : m_probeRadius(probeRadius), m_scanLinePitch(scanLinePitch), m_scanLineNumber(scanLineNumber), m_isTransducerConvex(isTransducerConvex) {}
 
 /**
 * Copy constructor.
@@ -80,6 +82,7 @@ usTransducerSettings& usTransducerSettings::operator=(const usTransducerSettings
 {
   m_probeRadius = other.getProbeRadius();
   m_scanLinePitch = other.getScanLinePitch();
+  m_scanLineNumber = other.getScanLineNumber();
   m_isTransducerConvex = other.isTransducerConvex();
 
   return *this;
@@ -93,6 +96,7 @@ bool usTransducerSettings::operator==(usTransducerSettings const& other)
 {
   return ( this->getProbeRadius() == other.getProbeRadius() &&
            this->getScanLinePitch() == other.getScanLinePitch() &&
+           this->getScanLineNumber() == other.getScanLineNumber() &&
            this->isTransducerConvex() == other.isTransducerConvex());
 }
 
@@ -103,8 +107,9 @@ bool usTransducerSettings::operator==(usTransducerSettings const& other)
 VISP_EXPORT std::ostream& operator<<(std::ostream& out, const usTransducerSettings &other)
 {
   return out << "probe radius: " << other.getProbeRadius() << std::endl
-    << "line angle: " << other.getScanLinePitch() << std::endl
-    << "convex probe used: " << other.isTransducerConvex() << std::endl;
+             << "line angle: " << other.getScanLinePitch() << std::endl
+             << "scanline number : " << other.getScanLineNumber() << std::endl
+             << "convex probe used: " << other.isTransducerConvex() << std::endl;
 }
 
 //Image settings getters/setters
@@ -169,4 +174,22 @@ bool usTransducerSettings::isTransducerConvex() const { return m_isTransducerCon
 void usTransducerSettings::setTransducerSettings(const usTransducerSettings& other)
 {
   *this = other;
+}
+
+/**
+* Getter for the scanline number.
+* @return Number of probe scanlines.
+*/
+unsigned int usTransducerSettings::getScanLineNumber() const
+{
+  return m_scanLineNumber;
+}
+
+/**
+* Setter for the scanline number.
+* @param scanLineNumber Number of probe scanlines.
+*/
+void usTransducerSettings::setScanLineNumber(unsigned int scanLineNumber)
+{
+  m_scanLineNumber =  scanLineNumber;
 }

@@ -86,23 +86,18 @@ class usImageRF3D : public usImage3D<Type>, public usImagePreScanSettings, publi
 public:
 
   usImageRF3D();
-  usImageRF3D(unsigned int RFSampleNumber, unsigned int scanLineNumber, unsigned int frameNumber,
-              double probeRadius=0.0, double motorRadius=0.0, double scanLinePitch=0.0, double framePitch=0.0,
-              bool isImageConvex = false, const usMotorType &motorType = usMotorSettings::LinearMotor, double axial_resolution = 0.0);
   usImageRF3D(const usImage3D<Type> &image3D, const usImagePreScanSettings &imageSettings, const usMotorSettings &motorSettings);
-  usImageRF3D(const usImage3D<Type> &image3D);
-  usImageRF3D(const usImagePreScanSettings &imageSettings);
   usImageRF3D(const usImageRF3D<Type> &other);
   virtual ~usImageRF3D();
 
   unsigned int getRFSampleNumber() const ;
-  unsigned int getScanLineNumber() const ;
-  unsigned int getFrameNumber() const ;
 
   usImageRF3D<Type>& operator=(const usImageRF3D<Type> &other);
   bool operator==(const usImageRF3D<Type> &other);
 
   void setData(const usImage3D<Type> &image);
+  void setFrameNumber(unsigned int frameNumber);
+  void setScanLineNumber(unsigned int scanLineNumber);
 };
 
 /**
@@ -117,69 +112,25 @@ usImageRF3D<Type>::usImageRF3D()
 
 /**
 * Full initializing constructor.
-* @param RFSampleNumber number of A-samples in a line.
-* @param scanLineNumber number of scan lines.
-* @param frameNumber number of frames.
-* @param probeRadius Radius of the ultrasound probe used to acquire the RF image.
-* @param motorRadius radius of the ultrasound probe motor used to acquire the RF image.
-* @param scanLinePitch angle(rad) / distance(m) between 2 lines of the ultrasound probe used to acquire the RF image.
-* @param framePitch angle(rad) / distance(m) between 2 lines of the ultrasound probe used to acquire the RF image.
-* @param isTransducerConvex Boolean to specify if the image is acquired by a convex probe(true) or by a linear probe (false).
-* @param motorType usMotorType to specify if the image is acquired by a linear motor (LinearMotor),
-* by a small angle rotation motor (TiltingMotor), or by a 360&deg; roatation motor (RotationalMotor).
-* @param axial_resolution The distance (in meters) between 2 successive pixels acquired along a scanline.
-*/
-template<class Type>
-usImageRF3D<Type>::usImageRF3D(unsigned int RFSampleNumber, unsigned int scanLineNumber, unsigned int frameNumber,
-                               double probeRadius, double motorRadius, double scanLinePitch, double framePitch,
-                               bool isTransducerConvex, const usMotorSettings::usMotorType &motorType, double axial_resolution)
-  : usImage3D<Type>(RFSampleNumber, scanLineNumber, frameNumber),
-    usImagePreScanSettings(probeRadius, scanLinePitch, isTransducerConvex, axial_resolution),
-    usMotorSettings(motorRadius, framePitch, motorType)
-{
-
-}
-
-/**
-* Copy constructor from usImage3D and usImageSettings.
-* @param image3D usImage3D to copy.
-* @param imageSettings usImagePreScanSettings to copy.
-* @param motorSettings usMotorSettings to copy.
+* @param image3D 3D Image to copy.
+* @param preScanSettings Pre-scan settings to copy.
+* @param motorSettings Motor settings to copy.
 */
 template<class Type>
 usImageRF3D<Type>::usImageRF3D(const usImage3D<Type> &image3D,
-                               const usImagePreScanSettings &imageSettings,
+                               const usImagePreScanSettings &preScanSettings,
                                const usMotorSettings &motorSettings)
-  : usImage3D<Type>(image3D), usImagePreScanSettings(imageSettings), usMotorSettings(motorSettings)
+  : usImage3D<Type>(image3D), usImagePreScanSettings(preScanSettings), usMotorSettings(motorSettings)
 {
-
-}
-
-/**
-* Copy constructor from usImage3D and usImageSettings
-* @param image3D usImage3D to copy
-*/
-template<class Type>
-usImageRF3D<Type>::usImageRF3D(const usImage3D<Type> &image3D)
-  : usImage3D<Type>(image3D)
-{
-
-}
-
-/**
-* Copy constructor from usImage3D and usImageSettings
-* @param imageSettings usImagePreScanSettings to copy
-*/
-template<class Type>
-usImageRF3D<Type>::usImageRF3D(const usImagePreScanSettings &imageSettings)
-  : usImagePreScanSettings(imageSettings)
-{
-
+  if (image3D.getDimX() != preScanSettings.getScanLineNumber())
+    throw(vpException(vpException::badValue, "3D RF image X-size differ from transducer scanline number"));
+  if (image3D.getDimZ() != motorSettings.getFrameNumber())
+    throw(vpException(vpException::badValue, "3D RF image Z-size differ from motor frame number"));
 }
 
 /**
 * Copy constructor.
-* @param other usImageRF3D to copy
+* @param other 3D RF Image to copy.
 */
 template<class Type>
 usImageRF3D<Type>::usImageRF3D(const usImageRF3D& other)
@@ -199,6 +150,7 @@ usImageRF3D<Type>::~usImageRF3D()
 
 /**
 * Copy operator.
+* @param other 3D RF image to copy.
 */
 template<class Type>
 usImageRF3D<Type>& usImageRF3D<Type>::operator=(const usImageRF3D<Type> &other)
@@ -208,16 +160,23 @@ usImageRF3D<Type>& usImageRF3D<Type>::operator=(const usImageRF3D<Type> &other)
 
   //from usImageSettings
   usImagePreScanSettings::operator=(other);
+
+  //from usMotorSettings
+  usMotorSettings::operator=(other);
+
+  return *this;
 }
 
 /**
 * Comparaison operator.
+* @param other 3D RF image to compare with.
 */
 template<class Type>
 bool usImageRF3D<Type>::operator==(const usImageRF3D<Type> &other)
 {
   return(usImage3D<Type>::operator== (other) &&
-         usImagePreScanSettings::operator ==(other));
+         usImagePreScanSettings::operator ==(other) &&
+         usMotorSettings::operator ==(other));
 }
 
 /**
@@ -239,29 +198,36 @@ unsigned int usImageRF3D<Type>::getRFSampleNumber() const {
 }
 
 /**
-* Gets the number of scanlines used to acquire the volume.
-*/
-template<class Type>
-unsigned int usImageRF3D<Type>::getScanLineNumber() const {
-  return usImage3D<Type>::getDimX();
-}
-
-/**
-* Prints information in a stream.
-*/
-template<class Type>
-unsigned int usImageRF3D<Type>::getFrameNumber() const {
-  return usImage3D<Type>::getDimZ();
-}
-
-/**
-* Setter for image data.
+* Setter for image data, and for scanline number and frame number.
 * @param image The image to set.
 */
 template<class Type>
 void usImageRF3D<Type>::setData(const usImage3D<Type> &image)
 {
   usImage3D<Type>::operator=(image);
+  setScanLineNumber(image.getDimX());
+  setFrameNumber(image.getDimZ());
+}
+
+/**
+ * Set the scanline number that corresponds also to the 3D image X-dim size.
+ */
+template<class Type>
+void usImageRF3D<Type>::setScanLineNumber(unsigned int scanLineNumber)
+{
+  usImage3D<Type>::resize(scanLineNumber, usImage3D<Type>::getDimY(), usImage3D<Type>::getDimZ());
+  usTransducerSettings::setScanLineNumber(scanLineNumber);
+}
+
+/**
+* Setter for frame number.
+* Setter for frame number that corresponds also to the 3D image Z-dim size.
+*/
+template<class Type>
+void usImageRF3D<Type>::setFrameNumber(unsigned int frameNumber)
+{
+  usImage3D<Type>::resize(usImage3D<Type>::getDimX(), usImage3D<Type>::getDimY(), frameNumber);
+  usMotorSettings::setFrameNumber(frameNumber);
 }
 
 #endif // US_IMAGE_RF_3D_H

@@ -75,12 +75,13 @@ public:
   } usMotorType;
 
   usMotorSettings();
-  usMotorSettings(double motorRadius, double framePitch, const usMotorType &motorType);
+  usMotorSettings(double motorRadius, double framePitch, unsigned int frameNumber, const usMotorType &motorType);
   usMotorSettings(const usMotorSettings &other);
   virtual ~usMotorSettings();
 
   /** @name Inherited functionalities from usMotorSettings */
   //@{
+  unsigned int getFrameNumber() const;
   double getFramePitch() const;
   double getMotorRadius() const;
   usMotorType getMotorType() const;
@@ -89,6 +90,7 @@ public:
   bool operator==(const usMotorSettings& other);
 
   // Settings from the 3D probe
+  void setFrameNumber(unsigned int frameNumber);
   void setFramePitch(double framePitch);
   void setMotorRadius(double motorRadius);
   void setMotorSettings(const usMotorSettings &other);
@@ -102,6 +104,7 @@ private:
   //Settings from the 3D probe
   double m_motorRadius;
   double m_framePitch;
+  unsigned int m_frameNumber;
   usMotorType m_motorType;
 };
 

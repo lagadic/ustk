@@ -63,7 +63,7 @@
 class VISP_EXPORT usTransducerSettings {
 public:
   usTransducerSettings();
-  usTransducerSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex);
+  usTransducerSettings(double probeRadius, double scanLinePitch, unsigned int scanLineNumber, bool isTransducerConvex);
   usTransducerSettings(const usTransducerSettings &other);
 
   virtual ~usTransducerSettings();
@@ -72,6 +72,7 @@ public:
   //@{
 
   double getProbeRadius() const;
+  unsigned int getScanLineNumber() const;
   double getScanLinePitch() const;
 
   bool isTransducerConvex() const;
@@ -80,10 +81,11 @@ public:
   bool operator==(usTransducerSettings const& other);
 
   //Settings form the probe
-  void setTransducerSettings(const usTransducerSettings& other);
   void setTransducerConvexity(const bool isTransducerConvex);
+  void setTransducerSettings(const usTransducerSettings& other);
   void setProbeRadius(const double probeRadius);
-  void setScanLinePitch(const double scanLinePitch);  
+  void setScanLineNumber(unsigned int scanLineNumber);
+  void setScanLinePitch(const double scanLinePitch);
 
   //@}
 
@@ -93,6 +95,7 @@ private:
   //Settings from the probe
   double m_probeRadius;
   double m_scanLinePitch;
+  unsigned int m_scanLineNumber;
   bool m_isTransducerConvex;
 };
 

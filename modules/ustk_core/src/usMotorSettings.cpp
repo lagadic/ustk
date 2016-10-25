@@ -53,12 +53,13 @@ usMotorSettings::usMotorSettings()
 /**
 * Full Constructor, all settings availables
 * @param motorRadius Distance between the rotation center of the probe motor and the first pixel arc acquired, in meters (m).
-* @param framePitch Pitch between two sucessive frames . In meters if motorType is linear, in radians (rad) otherwise.
-* @param motorType Motor type of the probe used.
+* @param framePitch Pitch between two sucessive frames. In meters if motorType is linear, in radians (rad) otherwise.
+* @param frameNumber Number of frame acquired by the probe.
+* @param motorType Probe motor type.
 */
 usMotorSettings::usMotorSettings(double motorRadius, double framePitch,
-                                 const usMotorType &motorType)
-  : m_motorRadius(motorRadius), m_framePitch(framePitch), m_motorType(motorType)
+                                 unsigned int frameNumber, const usMotorType &motorType)
+  : m_motorRadius(motorRadius), m_framePitch(framePitch), m_frameNumber(frameNumber), m_motorType(motorType)
 {
 
 }
@@ -68,8 +69,8 @@ usMotorSettings::usMotorSettings(double motorRadius, double framePitch,
 * @param other usMotorSettings you want to copy.
 */
 usMotorSettings::usMotorSettings(const usMotorSettings &other)
-  : m_motorRadius(other.getMotorRadius()),
-    m_framePitch(other.getFramePitch()), m_motorType(other.getMotorType())
+  : m_motorRadius(other.getMotorRadius()), m_framePitch(other.getFramePitch()),
+    m_frameNumber(other.getFrameNumber()), m_motorType(other.getMotorType())
  {
 
  }
@@ -81,19 +82,26 @@ usMotorSettings::~usMotorSettings() {}
 
 /**
 * Assignment operator.
-* @param other usMotorSettings you want to copy.
+* @param other Motor settings you want to copy.
 */
 usMotorSettings& usMotorSettings::operator=(const usMotorSettings& other)
 {
   m_motorRadius = other.getMotorRadius();
   m_framePitch = other.getFramePitch();
+  m_frameNumber = other.getFrameNumber();
   m_motorType = other.getMotorType();
   return *this;
 }
 
+/**
+ * Compare two motor settings.
+ * @param other Motor settings to compare.
+ * @return true if settings are the same, false otherwise.
+ */
 bool usMotorSettings::operator==(const usMotorSettings& other)
 {
   return (this->getFramePitch() == other.getFramePitch() &&
+          this->getFrameNumber() == other.getFrameNumber() &&
           this->getMotorRadius() == other.getMotorRadius() &&
           this->getMotorType() == other.getMotorType());
 }
@@ -104,8 +112,9 @@ bool usMotorSettings::operator==(const usMotorSettings& other)
 VISP_EXPORT std::ostream& operator<<(std::ostream& out, const usMotorSettings& other)
 {
   return out << "motor radius : " << other.getMotorRadius() << std::endl
-    << "frame angle : " << other.getFramePitch() << std::endl
-    << "motor type : " << other.getMotorType() << std::endl;
+             << "frame angle : " << other.getFramePitch() << std::endl
+             << "frame number : " << other.getFrameNumber() << std::endl
+             << "motor type : " << other.getMotorType() << std::endl;
 }
 
 //probe settings getters/setters
@@ -147,6 +156,15 @@ double usMotorSettings::getFramePitch() const
 }
 
 /**
+* Getter for frame number.
+* @return The number of frames used for 3D acquisition.
+*/
+unsigned int usMotorSettings::getFrameNumber() const
+{
+  return m_frameNumber;
+}
+
+/**
 * Set the motor type : convex or linear (from probe type used to acquire the image).
 * @param motorType Motor type to specify the motor type : LinearMotor, TiltingMotor (for a rotative motor), RotationalMotor (for a 360&deg; rotative motor).
 */
@@ -168,11 +186,19 @@ usMotorSettings::usMotorType usMotorSettings::getMotorType() const
 }
 
 /**
-* Set the motor settings from other usMotorSettings.
-* @return usMotorSettings instance modified.
+* Set the motor settings from other motor settings.
+* @return usMotorSettings Settings to copy.
 */
 void usMotorSettings::setMotorSettings(const usMotorSettings &other)
 {
   *this = other;
 }
 
+/**
+* Setter for frame number.
+* @param frameNumber The number of frames used for 3D acquisition.
+*/
+void usMotorSettings::setFrameNumber(unsigned int frameNumber)
+{
+  m_frameNumber = frameNumber;
+}

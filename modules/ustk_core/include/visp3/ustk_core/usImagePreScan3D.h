@@ -86,23 +86,14 @@ public:
   //default constructors
   usImagePreScan3D();
   //All parameters initialisation constructors
-  usImagePreScan3D(unsigned int BModeSampleNumber, unsigned int scanLineNumber, unsigned int frameNumber,
-                   double probeRadius=0.0, double motorRadius=0.0, double scanLinePitch=0.0, double framePitch=0.0,
-                   bool isImageConvex=false, const usMotorType &motorType=usMotorSettings::LinearMotor, double axialResolution=0.0);
+  usImagePreScan3D(const usImage3D<Type> &image, const usImagePreScanSettings &preScanSettings, const usMotorSettings &motorSettings);
   //usImagePreScan3D copy constructor
   usImagePreScan3D(const usImagePreScan3D &other);
-  //usImage3D copy constructor
-  usImagePreScan3D(const usImage3D<Type> &other);
-  //usImagePreScanSettings copy constructor
-  usImagePreScan3D(const usImagePreScanSettings &other);
-  //copy constructor from usImage3D and usImagePreScanSettings
-  usImagePreScan3D(const usImage3D<Type> &other, const usImagePreScanSettings &otherSettings, const usMotorSettings &motorSettings);
+
   //destructor
   virtual ~usImagePreScan3D();
 
   unsigned int getBModeSampleNumber() const;
-  unsigned int getFrameNumber() const;
-  unsigned int getScanLineNumber() const;
 
   //assignement
   usImagePreScan3D<Type>& operator=(const usImagePreScan3D<Type> &other);
@@ -110,87 +101,45 @@ public:
   bool operator==(const usImagePreScan3D<Type> &other);
 
   void setData(const usImage3D<Type> &image);
-  void setImageSettings(const usImagePreScanSettings &settings);
-  void setMotorSettings(const usMotorSettings &settings);
+  void setFrameNumber(unsigned int frameNumber);
+  void setScanLineNumber(unsigned int scanLineNumber);
 };
 
 /**
 * Basic constructor, all settings set to default.
 */
 template<class Type>
-usImagePreScan3D<Type>::usImagePreScan3D() : usImage3D<Type>(), usImagePreScanSettings()
-{
-
-}
-
-/**
-* Initializing constructor for image size and probe settings. For double image type.
-* @param BModeSampleNumber B-mode samples in a line (in px).
-* @param scanLineNumber Number of scan lines (in px).
-* @param frameNumber Number of Frames.
-* @param probeRadius Radius of the ultrasound probe used to acquire the RF image.
-* @param motorRadius radius of the ultrasound probe motor used to acquire the RF image.
-* @param scanLinePitch angle(rad) / distance(m) between 2 lines of the ultrasound probe used to acquire the RF image.
-* @param framePitch angle(rad) / distance(m) between 2 lines of the ultrasound probe used to acquire the RF image.
-* @param motorType usMotorType to specify if the image is acquired by a linear motor (LinearMotor),
-* by a small angle rotation motor (TiltingMotor), or by a 360&deg; roatation motor (RotationalMotor).
-* @param isTransducerConvex Transducer type : true for convex transducer, false for linear transducer.
-* @param axialResolution Axial resolution of the image.
-*/
-template<class Type>
-usImagePreScan3D<Type>::usImagePreScan3D(unsigned int BModeSampleNumber, unsigned int scanLineNumber,
-                                         unsigned int frameNumber, double probeRadius, double motorRadius,
-                                         double scanLinePitch, double framePitch,
-                                         bool isTransducerConvex, const usMotorSettings::usMotorType &motorType,
-                                         double axialResolution)
-  : usImage3D<Type>(BModeSampleNumber, scanLineNumber, frameNumber),
-    usImagePreScanSettings(probeRadius, scanLinePitch, isTransducerConvex, axialResolution),
-    usMotorSettings(motorRadius, framePitch, motorType)
-{
-
-}
-
-/**
-* Copy constructor. For double image type.
-* @param other usImagePreScan3D image you want to copy.
-*/
-template<class Type>
-usImagePreScan3D<Type>::usImagePreScan3D(const usImagePreScan3D &other)
-  : usImage3D<Type>(other), usImagePreScanSettings(other), usMotorSettings(other)
-{
-
-}
-
-/**
-* Copy constructor. For double image type.
-* @param other usImage3D<double> image you want to copy.
-*/
-template<class Type>
-usImagePreScan3D<Type>::usImagePreScan3D(const usImage3D<Type> &other) : usImage3D<Type>(other)
-{
-
-}
-
-/**
-* Copy constructor.
-* @param other usImagePreScanSettings you want to copy.
-*/
-template<class Type>
-usImagePreScan3D<Type>::usImagePreScan3D(const usImagePreScanSettings &other) : usImagePreScanSettings(other)
+usImagePreScan3D<Type>::usImagePreScan3D()
+  : usImage3D<Type>(), usImagePreScanSettings(), usMotorSettings()
 {
 
 }
 
 /**
 * Copy constructor. For double image type
-* @param other usImage3D you want to copy.
-* @param otherSettings usImagePreScanSettings you want to copy.
-* @param motorSettings usMotorSettings you want to copy.
+* @param image 3D image you want to copy.
+* @param preScanSettings Pre-scan settings you want to copy.
+* @param motorSettings Motor settings you want to copy.
 */
 template<class Type>
-usImagePreScan3D<Type>::usImagePreScan3D(const usImage3D<Type> &other, const usImagePreScanSettings &otherSettings,
-const usMotorSettings &motorSettings)
-: usImage3D<Type>(other), usImagePreScanSettings(otherSettings), usMotorSettings(motorSettings)
+usImagePreScan3D<Type>::usImagePreScan3D(const usImage3D<Type> &image,
+                                         const usImagePreScanSettings &preScanSettings,
+                                         const usMotorSettings &motorSettings)
+  : usImage3D<Type>(image), usImagePreScanSettings(preScanSettings), usMotorSettings(motorSettings)
+{
+  if (image.getDimX() != preScanSettings.getScanLineNumber())
+    throw(vpException(vpException::badValue, "3D pre-scan image X-size differ from transducer scanline number"));
+  if (image.getDimZ() != motorSettings.getFrameNumber())
+    throw(vpException(vpException::badValue, "3D pre-scan image Z-size differ from motor frame number"));
+}
+
+/**
+* Copy constructor. For double image type.
+* @param other 3D pre-scan image you want to copy.
+*/
+template<class Type>
+usImagePreScan3D<Type>::usImagePreScan3D(const usImagePreScan3D &other)
+  : usImage3D<Type>(other), usImagePreScanSettings(other), usMotorSettings(other)
 {
 
 }
@@ -212,6 +161,11 @@ usImagePreScan3D<Type>& usImagePreScan3D<Type>::operator=(const usImagePreScan3D
 
   //from usImageSettings
   usImagePreScanSettings::operator=(other);
+
+  //for motor settings
+  usMotorSettings::operator =(other);
+
+  return *this;
 }
 
 /**
@@ -221,7 +175,8 @@ template<class Type>
 bool usImagePreScan3D<Type>::operator==(const usImagePreScan3D<Type> &other)
 {
   return(usImage3D<Type>::operator== (other) &&
-         usImagePreScanSettings::operator== (other));
+         usImagePreScanSettings::operator== (other) &&
+         usMotorSettings::operator ==(other));
 }
 
 /**
@@ -231,7 +186,8 @@ template<class Type>
 std::ostream& operator<<(std::ostream& out, const usImagePreScan3D<Type> &other)
 {
   return out << static_cast<const usImage3D<Type> &>(other) <<
-    static_cast<const usImagePreScanSettings &>(other);
+                static_cast<const usImagePreScanSettings &>(other) <<
+                static_cast<const usMotorSettings &>(other);
 }
 
 /**
@@ -242,23 +198,6 @@ unsigned int usImagePreScan3D<Type>::getBModeSampleNumber() const {
   return usImage3D<Type>::getDimY();
 }
 
-
-/**
-* Gets the number of scanlines (volume width in px).
-*/
-template<class Type>
-unsigned int usImagePreScan3D<Type>::getScanLineNumber() const {
-  return usImage3D<Type>::getDimX();
-}
-
-/**
-* Gets the number of 2D frames in the volume.
-*/
-template<class Type>
-unsigned int usImagePreScan3D<Type>::getFrameNumber() const {
-  return usImage3D<Type>::getDimZ();
-}
-
 /**
 * Setter for the image data.
 * @param image The image to set.
@@ -267,25 +206,29 @@ template<class Type>
 void usImagePreScan3D<Type>::setData(const usImage3D<Type> &image)
 {
   usImage3D<Type>::operator=(image);
+  setScanLineNumber(image.getDimX());
+  setFrameNumber(image.getDimZ());
 }
 
 /**
-* Setter for the image settings.
-* @param settings The new image settings.
-*/
+ * Set the scanline number that corresponds also to the 3D image X-dim size.
+ */
 template<class Type>
-void usImagePreScan3D<Type>::setImageSettings(const usImagePreScanSettings &settings)
+void usImagePreScan3D<Type>::setScanLineNumber(unsigned int scanLineNumber)
 {
-  usImagePreScanSettings::operator=(settings);
+  usImage3D<Type>::resize(scanLineNumber, usImage3D<Type>::getDimY(), usImage3D<Type>::getDimZ());
+  usTransducerSettings::setScanLineNumber(scanLineNumber);
 }
 
 /**
-* Setter for the motor settings.
-* @param settings The new motor settings.
+* Setter for frame number that corresponds also to the 3D image Z-dim size.
+* @param frameNumber The number of frames used for 3D acquisition.
 */
 template<class Type>
-void usImagePreScan3D<Type>::setMotorSettings(const usMotorSettings &settings)
+void usImagePreScan3D<Type>::setFrameNumber(unsigned int frameNumber)
 {
-  usMotorSettings::operator=(settings);
+  usImage3D<Type>::resize(usImage3D<Type>::getDimX(), usImage3D<Type>::getDimY(), frameNumber);
+  usMotorSettings::setFrameNumber(frameNumber);
 }
+
 #endif // US_IMAGE_PRESCAN_3D_H

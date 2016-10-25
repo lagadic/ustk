@@ -184,9 +184,11 @@ void usImageIo::read(usImageRF2D<unsigned char> &imageRf2D, const std::string &h
     std::string fullImageFileName = vpIoTools::getParent(headerFileName) + vpIoTools::path("/") + xmlSettings.getImageFileName();
     vpImageIo::read(imageRf2D, fullImageFileName);
 
-    imageRf2D.setImageSettings(usImagePreScanSettings(xmlSettings.getTransducerSettings().getProbeRadius(),
-      xmlSettings.getTransducerSettings().getScanLinePitch(), xmlSettings.getTransducerSettings().isTransducerConvex(),
-      xmlSettings.getAxialResolution()));
+    imageRf2D.setProbeRadius(xmlSettings.getTransducerSettings().getProbeRadius());
+    imageRf2D.setScanLinePitch(xmlSettings.getTransducerSettings().getScanLinePitch());
+    imageRf2D.setScanLineNumber(xmlSettings.getTransducerSettings().getScanLineNumber());
+    imageRf2D.setTransducerConvexity(xmlSettings.getTransducerSettings().isTransducerConvex());
+    imageRf2D.setAxialResolution(xmlSettings.getAxialResolution());
 #else
     throw(vpException(vpException::fatalEtrror, "Requires xml2 library"));
 #endif //VISP_HAVE_XML2
@@ -458,19 +460,16 @@ void usImageIo::read(usImagePreScan2D<unsigned char> &preScanImage,const std::st
 #ifdef VISP_HAVE_XML2
     //parsing xml file
     usImageSettingsXmlParser xmlSettings;
-    try {
-      xmlSettings.parse(headerFileName);
-    }
-    catch (std::exception e) {
-      std::cout << "Error parsing pre-scan settings file" << std::endl;
-      throw e;
-    }
+    xmlSettings.parse(headerFileName);
+
     std::string fullImageFileName = vpIoTools::getParent(headerFileName) + vpIoTools::path("/") + xmlSettings.getImageFileName();
     vpImageIo::read(preScanImage, fullImageFileName);
 
-    preScanImage.setImageSettings(usImagePreScanSettings(xmlSettings.getTransducerSettings().getProbeRadius(),
-      xmlSettings.getTransducerSettings().getScanLinePitch(), xmlSettings.getTransducerSettings().isTransducerConvex(),
-       xmlSettings.getAxialResolution()));
+    preScanImage.setProbeRadius(xmlSettings.getTransducerSettings().getProbeRadius());
+    preScanImage.setScanLinePitch(xmlSettings.getTransducerSettings().getScanLinePitch());
+    preScanImage.setScanLineNumber(xmlSettings.getTransducerSettings().getScanLineNumber());
+    preScanImage.setTransducerConvexity(xmlSettings.getTransducerSettings().isTransducerConvex());
+    preScanImage.setAxialResolution(xmlSettings.getAxialResolution());
 #else
     throw(vpException(vpException::fatalEtrror, "Requires xml2 library"));
 #endif //VISP_HAVE_XML2
@@ -803,11 +802,12 @@ void usImageIo::read(usImagePostScan2D<unsigned char> &postScanImage,const std::
     std::string fullImageFileName = vpIoTools::getParent(headerFileName) + vpIoTools::path("/") + xmlSettings.getImageFileName();
     vpImageIo::read(postScanImage, fullImageFileName);
 
-    postScanImage.setImageSettings(xmlSettings.getTransducerSettings().getProbeRadius(),
-      xmlSettings.getTransducerSettings().getScanLinePitch(),
-      xmlSettings.getTransducerSettings().isTransducerConvex(),
-      xmlSettings.getScanLineNumber(),
-      xmlSettings.getHeightResolution(), xmlSettings.getWidthResolution());
+    postScanImage.setProbeRadius(xmlSettings.getTransducerSettings().getProbeRadius());
+    postScanImage.setScanLinePitch(xmlSettings.getTransducerSettings().getScanLinePitch());
+    postScanImage.setScanLineNumber(xmlSettings.getTransducerSettings().getScanLineNumber());
+    postScanImage.setTransducerConvexity(xmlSettings.getTransducerSettings().isTransducerConvex());
+    postScanImage.setWidthResolution(xmlSettings.getWidthResolution());
+    postScanImage.setHeightResolution(xmlSettings.getHeightResolution());
 #else
     throw(vpException(vpException::fatalError, "Requires xml2 library"));
 #endif

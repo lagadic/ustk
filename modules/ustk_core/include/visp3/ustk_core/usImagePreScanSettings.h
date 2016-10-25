@@ -67,8 +67,8 @@
 class VISP_EXPORT usImagePreScanSettings : public usTransducerSettings {
 public:
   usImagePreScanSettings();
+  usImagePreScanSettings(const usTransducerSettings &transducerSettings, double axialResolution);
   usImagePreScanSettings(const usImagePreScanSettings &other);
-  usImagePreScanSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex, double axial_resolution);
   virtual ~usImagePreScanSettings();
 
   /** @name Inherited functionalities from usImagePreScanSettings */

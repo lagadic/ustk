@@ -79,48 +79,40 @@ class usImageRF2D : public vpImage<Type>, public usImagePreScanSettings {
 public:
   
   usImageRF2D();
-  usImageRF2D(unsigned int RFSampleNumber, unsigned int scanLineNumber,
-              double probeRadius=0, double scanLinePitch=0, bool isTransducerConvex=true,
-              double axialResolution=0);
+  usImageRF2D(const vpImage<Type> &image, const usImagePreScanSettings &preScanSettings);
   usImageRF2D(const usImageRF2D &other);
   virtual ~usImageRF2D();
 
   unsigned int getRFSampleNumber() const;
-  unsigned int getScanLineNumber() const;
 
   usImageRF2D<Type>& operator=(const usImageRF2D<Type> &other);
   bool operator==(const usImageRF2D<Type> &other);
 
   void setData(const vpImage<Type> &image);
+  void setScanLineNumber(unsigned int scanLineNumber);
 };
-
 
 /**
 * Default constructor.
 */
 template<class Type>
-usImageRF2D<Type>::usImageRF2D() : vpImage<Type>(), usImagePreScanSettings()
+usImageRF2D<Type>::usImageRF2D()
+  : vpImage<Type>(), usImagePreScanSettings()
 {
 
 }
 
 /**
 * Initializing constructor.
-* @param RFSampleNumber number of RF-samples in a scanline.
-* @param scanLineNumber number of scanlines.
-* @param probeRadius Radius of the ultrasound probe used to acquire the RF image.
-* @param scanLinePitch Angle (radians) or distance (meters) between 2 lines of the ultrasound probe used
-* to acquire the RF image. Angle if isTransducerConvex is true, distance otherwise.
-* @param isTransducerConvex Boolean to specify if the probe transducer is convex (true) or linear (false).
-* @param axialResolution The distance (in meters) between 2 successive pixels acquired along a scanline.
+* @param image RF image.
+* @param preScanSettings Pre-scan image settings.
 */
 template<class Type>
-usImageRF2D<Type>::usImageRF2D(unsigned int RFSampleNumber, unsigned int scanLineNumber,
- double probeRadius, double scanLinePitch, bool isTransducerConvex, double axialResolution)
-: vpImage<Type>(RFSampleNumber, scanLineNumber),
-  usImagePreScanSettings(probeRadius, scanLinePitch, isTransducerConvex, axialResolution)
+usImageRF2D<Type>::usImageRF2D(const vpImage<Type> &image, const usImagePreScanSettings &preScanSettings)
+  : vpImage<Type>(image), usImagePreScanSettings(preScanSettings)
 {
-
+  if (image.getWidth() != preScanSettings.getScanLineNumber())
+    throw(vpException(vpException::badValue, "RF image width differ from transducer scanline number"));
 }
 
 /**
@@ -187,20 +179,24 @@ template<class Type>
 unsigned int usImageRF2D<Type>::getRFSampleNumber() const { return vpImage<Type>::getHeight(); }
 
 /**
-* Get the number of scanlines.
-* @return Number of scanlines.
-*/
-template<class Type>
-unsigned int usImageRF2D<Type>::getScanLineNumber() const { return vpImage<Type>::getWidth(); }
-
-/**
-* Setter for the image data.
+* Setter for the image data and also the scan line number that corresponds to the image width.
 * @param image The image to set.
 */
 template<class Type>
 void usImageRF2D<Type>::setData(const vpImage<Type> &image)
 {
   vpImage<Type>::operator=(image);
+  setScanLineNumber(image.getWidth());
+}
+
+/**
+ * Set the scanline number that corresponds also to the image width.
+ */
+template<class Type>
+void usImageRF2D<Type>::setScanLineNumber(unsigned int scanLineNumber)
+{
+  vpImage<Type>::resize(vpImage<Type>::getHeight(), scanLineNumber);
+  usTransducerSettings::setScanLineNumber(scanLineNumber);
 }
 
 #endif // US_IMAGE_RF_2D_H

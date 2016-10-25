@@ -82,35 +82,19 @@
 
 */
 template<class Type>
-class usImagePostScan3D : public usImage3D<Type>, public usTransducerSettings ,public usMotorSettings {
+class usImagePostScan3D : public usImage3D<Type>, public usTransducerSettings, public usMotorSettings {
 public:
   usImagePostScan3D();
-  usImagePostScan3D(unsigned int dimX, unsigned int dimY, unsigned int dimZ,
-                    double probeRadius, double motorRadius, double scanLinePitch,
-                    double framePitch, bool isTransducerConvex, const usMotorSettings::usMotorType &motorType,
-                    double spacingX, double spacingY, double spacingZ,
-                    unsigned int scanLineNumber, unsigned int frameNumber);
-
-  usImagePostScan3D(const usImagePostScan3D &other);
-  usImagePostScan3D(const usImage3D<Type> &otherImage, const usTransducerSettings &imageSettings,
+  usImagePostScan3D(const usImage3D<Type> &image, const usTransducerSettings &transducerSettings,
                     const usMotorSettings &motorSettings);
+  usImagePostScan3D(const usImagePostScan3D &other);
   virtual ~usImagePostScan3D();
-
-  unsigned int getFrameNumber();
-  unsigned int getScanLineNumber();
 
   usImagePostScan3D<Type> & operator =(const usImagePostScan3D<Type> &other);
 
   bool operator ==(const usImagePostScan3D<Type> &other);
 
-  void setFrameNumber(unsigned int frameNumber);
-  void setImageSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex, double spacingX, double spacingY, double spacingZ);
   void setData(const usImage3D<Type> &image3D);
-  void setScanLineNumber(unsigned int scanlineNumber);
-
-private:
-  unsigned int m_scanLineNumber;
-  unsigned int m_frameNumber;
 };
 
 
@@ -118,45 +102,15 @@ private:
 * Basic constructor, all parameters set to default values
 */
 template<class Type>
-usImagePostScan3D<Type>::usImagePostScan3D() : usImage3D<Type>(), usTransducerSettings(), usMotorSettings()
+usImagePostScan3D<Type>::usImagePostScan3D()
+  : usImage3D<Type>(), usTransducerSettings(), usMotorSettings()
 {
 
 }
 
 /**
-* Complete constructor, all parameters availables.
-* @param dimX Number of voxels along x axis.
-* @param dimY Number of voxels along y axis.
-* @param dimZ Number of voxales along z axis.
-* @param probeRadius Radius of the ultrasound probe used to acquire the RF image.
-* @param motorRadius radius of the ultrasound probe motor used to acquire the RF image.
-* @param scanLinePitch angle(rad) / distance(m) between 2 lines of the ultrasound probe used to acquire the RF image.
-* @param framePitch angle(rad) / distance(m) between 2 lines of the ultrasound probe used to acquire the RF image.
-* @param isTransducerConvex Boolean to specify if the image is acquired by a convex probe transducer (true) or by a linear probe transducer (false).
-* @param motorType usMotorType to specify if the image is acquired by a linear motor (LinearMotor),
-* by a small angle rotation motor (TiltingMotor), or by a 360&deg; roatation motor (RotationalMotor).
-* @param spacingX Resolution in x axis (in meters).
-* @param spacingY Resolution in y axis (in meters).
-* @param spacingZ Resolution in z axis (in meters).
-*/
-template<class Type>
-usImagePostScan3D<Type>::usImagePostScan3D(unsigned int dimX, unsigned int dimY, unsigned int dimZ,
-                                        double probeRadius, double motorRadius, double scanLinePitch,
-                                        double framePitch, bool isTransducerConvex,
-                                        const usMotorSettings::usMotorType &motorType,
-                                        double spacingX, double spacingY, double spacingZ,
-                                        unsigned int scanLineNumber, unsigned int frameNumber)
-  : usImage3D<Type>(dimX, dimY, dimZ, spacingX, spacingY, spacingZ),
-    usTransducerSettings(probeRadius, scanLinePitch, isTransducerConvex),
-    usMotorSettings( motorRadius, framePitch, motorType)
-{
-  m_scanLineNumber = scanLineNumber;
-  m_frameNumber = frameNumber;
-}
-
-/**
-* Copy constructor from other usImagePostScan3D
-* @param other usImagePostScan3D to copy
+* Copy constructor from an other 3D post-scan image.
+* @param other 3D post-scan image to copy.
 */
 template<class Type>
 usImagePostScan3D<Type>::usImagePostScan3D(const usImagePostScan3D &other)
@@ -166,15 +120,16 @@ usImagePostScan3D<Type>::usImagePostScan3D(const usImagePostScan3D &other)
 }
 
 /**
-* Constructor from usImage3D and usMotorSettings.
-* @param otherImage usImage3D<unsigned char> to copy
-* @param transducerSettings usTransducerSettings to copy
-* @param motorSettings usMotorSettings to copy
+* Constructor from 3D image, transducer and motor settings.
+* @param image 3D image to copy.
+* @param transducerSettings Transducer settings to copy.
+* @param motorSettings Motor settings to copy.
 */
 template<class Type>
-usImagePostScan3D<Type>::usImagePostScan3D(const usImage3D<Type> &otherImage, const usTransducerSettings &transducerSettings,
-  const usMotorSettings &motorSettings)
-: usImage3D<Type>(otherImage), usTransducerSettings(transducerSettings), usMotorSettings(motorSettings)
+usImagePostScan3D<Type>::usImagePostScan3D(const usImage3D<Type> &image,
+                                           const usTransducerSettings &transducerSettings,
+                                           const usMotorSettings &motorSettings)
+: usImage3D<Type>(image), usTransducerSettings(transducerSettings), usMotorSettings(motorSettings)
 {
 
 }
@@ -194,7 +149,8 @@ usImagePostScan3D<Type> & usImagePostScan3D<Type>::operator =(const usImagePostS
   //from usImage3D
   usImage3D<Type>::operator =(other);
 
-  //from usSettings3D
+  //from settings
+  usTransducerSettings::operator =(other);
   usMotorSettings::operator =(other);
 
   return *this;
@@ -216,9 +172,9 @@ bool usImagePostScan3D<Type>::operator == (usImagePostScan3D<Type> const& other)
 */
 template<class Type> std::ostream& operator<<(std::ostream& out, const usImagePostScan3D<Type> &other)
 {
-  return out << static_cast<const usImage3D<Type> &>(other) <<
-    static_cast<const usTransducerSettings &>(other) <<
-    static_cast<const usMotorSettings &>(other);
+  return out << static_cast<const usImage3D<Type> &>(other)
+             << static_cast<const usTransducerSettings &>(other)
+             << static_cast<const usMotorSettings &>(other);
 }
 
 /**
@@ -231,63 +187,4 @@ void usImagePostScan3D<Type>::setData(const usImage3D<Type> &image3D)
   usImage3D<Type>::operator =(image3D);
 }
 
-/**
-* Setter for image settings.
-* @param probeRadius Radius of the probe used.
-* @param scanLinePitch Radius of the probe used.
-* @param isTransducerConvex Boolean to set the transducer convexity (true if convex).
-* @param spacingX Size (in meters) of a voxel along x axis.
-* @param spacingY Size (in meters) of a voxel along y axis.
-* @param spacingZ Size (in meters) of a voxel along z axis.
-*/
-template<class Type>
-void usImagePostScan3D<Type>::setImageSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex, double spacingX, double spacingY, double spacingZ)
-{
-  setProbeRadius(probeRadius);
-  setScanLinePitch(scanLinePitch);
-  setTransducerConvexity(isTransducerConvex);
-  usImage3D<Type>::setElementSpacingX(spacingX);
-  usImage3D<Type>::setElementSpacingY(spacingY);
-  usImage3D<Type>::setElementSpacingZ(spacingZ);
-}
-
-/**
-* Getter for frame number.
-* @return The number of frames used for acquisition.
-*/
-template<class Type>
-unsigned int  usImagePostScan3D<Type>::getFrameNumber()
-{
-  return m_frameNumber;
-}
-
-/**
-* Getter for scanline number.
-* @return The number of scanlines used for acquisition.
-*/
-template<class Type>
-unsigned int  usImagePostScan3D<Type>::getScanLineNumber()
-{
-  return m_scanLineNumber;
-}
-
-/**
-* Setter for frame number.
-* @param frameNumber The number of frames used for acquisition.
-*/
-template<class Type>
-void usImagePostScan3D<Type>::setFrameNumber(unsigned int frameNumber)
-{
-  m_frameNumber = frameNumber;
-}
-
-/**
-* Setter for scanline number.
-* @param scanlineNumber The number of scanlines used for acquisition.
-*/
-template<class Type>
-void usImagePostScan3D<Type>::setScanLineNumber(unsigned int scanlineNumber)
-{
-  m_scanLineNumber = scanlineNumber;
-}
 #endif // US_IMAGE_POSTSCAN_3D_H
