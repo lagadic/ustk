@@ -108,7 +108,7 @@ usImageRF2D<Type>::usImageRF2D() : vpImage<Type>(), usImagePreScanSettings()
 * Initializing constructor.
 * @param RFSampleNumber number of RF-samples in a scanline.
 * @param scanLineNumber number of scanlines.
-* @param probeRadius radius of the ultrasound probe used to acquire the RF image.
+* @param probeRadius Radius of the ultrasound probe used to acquire the RF image.
 * @param scanLinePitch Angle (radians) or distance (meters) between 2 lines of the ultrasound probe used
 * to acquire the RF image. Angle if isTransducerConvex is true, distance otherwise.
 * @param isTransducerConvex Boolean to specify if the probe transducer is convex (true) or linear (false).

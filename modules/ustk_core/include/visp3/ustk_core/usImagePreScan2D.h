@@ -120,7 +120,7 @@ usImagePreScan2D<Type>::usImagePreScan2D() : vpImage<Type>(), usImagePreScanSett
 * Initializing constructor for image size and probe settings.
 * @param BModeSampleNumber number of B-mode samples in a line.
 * @param scanLineNumber number of scan lines.
-* @param probeRadius radius of the ultrasound probe used to acquire the RF image.
+* @param probeRadius Radius of the ultrasound probe used to acquire the RF image.
 * @param scanLinePitch Angle (radians) or distance (meters) between 2 lines of the ultrasound probe used
 * to acquire the RF image. Angle if \e isTransducerConvex is true, distance otherwise.
 * @param isTransducerConvex Boolean to specify if the probe transducer is convex (true) or linear (false).

@@ -118,7 +118,7 @@ usImagePostScan3D<Type>::usImagePostScan3D() : usImage3D<Type>(), usTransducerSe
 * @param dimX Number of voxels along x axis.
 * @param dimY Number of voxels along y axis.
 * @param dimZ Number of voxales along z axis.
-* @param probeRadius radius of the ultrasound probe used to acquire the RF image.
+* @param probeRadius Radius of the ultrasound probe used to acquire the RF image.
 * @param motorRadius radius of the ultrasound probe motor used to acquire the RF image.
 * @param scanLinePitch angle(rad) / distance(m) between 2 lines of the ultrasound probe used to acquire the RF image.
 * @param framePitch angle(rad) / distance(m) between 2 lines of the ultrasound probe used to acquire the RF image.

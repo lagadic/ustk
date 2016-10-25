@@ -115,7 +115,7 @@ usImagePostScan2D<Type>::usImagePostScan2D() : vpImage<Type>(), usTransducerSett
 * Full constructor, all parameters settables.
 * @param width number of pixels along x axis.
 * @param height number of pixels along y axis.
-* @param probeRadius radius of the ultrasound probe used to acquire the RF image.
+* @param probeRadius Radius of the ultrasound probe used to acquire the RF image.
 * @param scanLinePitch Angle (radians) or distance (meters) between 2 lines of the ultrasound probe
 * used to acquire the RF image. Angle if \e isTransducerConvex is true, distance otherwise.
 * @param isTransducerConvex Boolean to specify if the probe transducer is convex (true) or linear (false).
@@ -254,10 +254,17 @@ void usImagePostScan2D<Type>::setWidthResolution(double widthResolution)
 
 /**
 * Setter for all 2D post-scan settings.
+* @param probeRadius Radius of the ultrasound probe used to acquire the RF image.
+* @param scanLinePitch Angle (radians) or distance (meters) between 2 lines of the ultrasound probe
+* used to acquire the RF image. Angle if \e isTransducerConvex is true, distance otherwise.
+* @param isTransducerConvex Boolean to specify if the probe transducer is convex (true) or linear (false).
 * @param widthResolution Width of a pixel (in meters).
+* @param heightResolution Height of a pixel (in meters).
 */
 template<class Type>
-void usImagePostScan2D<Type>::setImageSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex, double widthResolution, double heightResolution)
+void usImagePostScan2D<Type>::setImageSettings(double probeRadius, double scanLinePitch,
+                                               bool isTransducerConvex,
+                                               double widthResolution, double heightResolution)
 {
   setTransducerConvexity(isTransducerConvex);
   setProbeRadius(probeRadius);

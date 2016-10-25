@@ -128,7 +128,7 @@ usImagePreScan3D<Type>::usImagePreScan3D() : usImage3D<Type>(), usImagePreScanSe
 * @param BModeSampleNumber B-mode samples in a line (in px).
 * @param scanLineNumber Number of scan lines (in px).
 * @param frameNumber Number of Frames.
-* @param probeRadius radius of the ultrasound probe used to acquire the RF image.
+* @param probeRadius Radius of the ultrasound probe used to acquire the RF image.
 * @param motorRadius radius of the ultrasound probe motor used to acquire the RF image.
 * @param scanLinePitch angle(rad) / distance(m) between 2 lines of the ultrasound probe used to acquire the RF image.
 * @param framePitch angle(rad) / distance(m) between 2 lines of the ultrasound probe used to acquire the RF image.

@@ -86,7 +86,7 @@ class usImageRF3D : public usImage3D<Type>, public usImagePreScanSettings, publi
 public:
 
   usImageRF3D();
-  usImageRF3D(unsigned int RFSampleNumber, unsigned int lineNumber, unsigned int frameNumber,
+  usImageRF3D(unsigned int RFSampleNumber, unsigned int scanLineNumber, unsigned int frameNumber,
               double probeRadius=0.0, double motorRadius=0.0, double scanLinePitch=0.0, double framePitch=0.0,
               bool isImageConvex = false, const usMotorType &motorType = usMotorSettings::LinearMotor, double axial_resolution = 0.0);
   usImageRF3D(const usImage3D<Type> &image3D, const usImagePreScanSettings &imageSettings, const usMotorSettings &motorSettings);
@@ -96,7 +96,7 @@ public:
   virtual ~usImageRF3D();
 
   unsigned int getRFSampleNumber() const ;
-  unsigned int getLineNumber() const ;
+  unsigned int getScanLineNumber() const ;
   unsigned int getFrameNumber() const ;
 
   usImageRF3D<Type>& operator=(const usImageRF3D<Type> &other);
@@ -118,9 +118,9 @@ usImageRF3D<Type>::usImageRF3D()
 /**
 * Full initializing constructor.
 * @param RFSampleNumber number of A-samples in a line.
-* @param lineNumber number of lines.
+* @param scanLineNumber number of scan lines.
 * @param frameNumber number of frames.
-* @param probeRadius radius of the ultrasound probe used to acquire the RF image.
+* @param probeRadius Radius of the ultrasound probe used to acquire the RF image.
 * @param motorRadius radius of the ultrasound probe motor used to acquire the RF image.
 * @param scanLinePitch angle(rad) / distance(m) between 2 lines of the ultrasound probe used to acquire the RF image.
 * @param framePitch angle(rad) / distance(m) between 2 lines of the ultrasound probe used to acquire the RF image.
@@ -130,10 +130,10 @@ usImageRF3D<Type>::usImageRF3D()
 * @param axial_resolution The distance (in meters) between 2 successive pixels acquired along a scanline.
 */
 template<class Type>
-usImageRF3D<Type>::usImageRF3D(unsigned int RFSampleNumber, unsigned int lineNumber, unsigned int frameNumber,
+usImageRF3D<Type>::usImageRF3D(unsigned int RFSampleNumber, unsigned int scanLineNumber, unsigned int frameNumber,
                                double probeRadius, double motorRadius, double scanLinePitch, double framePitch,
                                bool isTransducerConvex, const usMotorSettings::usMotorType &motorType, double axial_resolution)
-  : usImage3D<Type>(RFSampleNumber, lineNumber, frameNumber),
+  : usImage3D<Type>(RFSampleNumber, scanLineNumber, frameNumber),
     usImagePreScanSettings(probeRadius, scanLinePitch, isTransducerConvex, axial_resolution),
     usMotorSettings(motorRadius, framePitch, motorType)
 {
@@ -242,7 +242,7 @@ unsigned int usImageRF3D<Type>::getRFSampleNumber() const {
 * Gets the number of scanlines used to acquire the volume.
 */
 template<class Type>
-unsigned int usImageRF3D<Type>::getLineNumber() const {
+unsigned int usImageRF3D<Type>::getScanLineNumber() const {
   return usImage3D<Type>::getDimX();
 }
 
