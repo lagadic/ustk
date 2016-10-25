@@ -63,26 +63,26 @@ Print the program options.
 void usage(const char *name, const char *badparam, const std::string& opath, const std::string& user)
 {
   fprintf(stdout, "\n\
-          Write and read data in a mhd file.\n\
-          \n\
-          SYNOPSIS\n\
-          %s [-o <output image path>] [-h]\n", name);
+Write and read data in a mhd file.\n\
+\n\
+SYNOPSIS\n\
+  %s [-o <output image path>] [-h]\n", name);
 
-      fprintf(stdout, "\n\
-              OPTIONS:                                               Default\n\
-              -o <output data path>                               %s\n\
-              Set data output path.\n\
-              From this directory, creates the \"%s\"\n\
-              subdirectory depending on the username, where \n\
-              rf3D.mhd file is written.\n\
-              \n\
-              -h\n\
-              Print the help.\n\n", opath.c_str(), user.c_str());
+  fprintf(stdout, "\n\
+OPTIONS:                                               Default\n\
+  -o <output data path>                                %s\n\
+     Set data output path.\n\
+     From this directory, creates the \"%s\"\n\
+     subdirectory depending on the username, where \n\
+     rf3D.mhd file is written.\n\
+\n\
+  -h\n\
+     Print the help.\n\n", opath.c_str(), user.c_str());
 
-              if (badparam) {
-                fprintf(stderr, "ERROR: \n" );
-                fprintf(stderr, "\nBad parameter [%s]\n", badparam);
-              }
+  if (badparam) {
+    fprintf(stderr, "ERROR: \n" );
+    fprintf(stderr, "\nBad parameter [%s]\n", badparam);
+  }
 }
 
 /*!
@@ -182,7 +182,7 @@ int main(int argc, const char** argv)
         exit(-1);
       }
     }
-    filename = opath + vpIoTools::path("/") + "rf3d.mhd";
+    filename = dirname + vpIoTools::path("/") + "rf3d.mhd";
 
     //Init values in reference parser (same values in file read in test)
     usImageRF3D<unsigned char> rf3DReference;
@@ -199,7 +199,7 @@ int main(int argc, const char** argv)
 
     //read the image we just wrote
     usImageRF3D<unsigned char> rf3D;
-    filename = opath + vpIoTools::path("/") + "rf3d.mhd";
+    filename = dirname + vpIoTools::path("/") + "rf3d.mhd";
     usImageIo::read(rf3D,filename);
 
     std::cout << "Read from " << filename << std::endl ;

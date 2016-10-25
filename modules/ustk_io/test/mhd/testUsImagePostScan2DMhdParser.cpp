@@ -64,26 +64,26 @@ Print the program options.
 void usage(const char *name, const char *badparam, const std::string& opath, const std::string& user)
 {
   fprintf(stdout, "\n\
-          Write and read data in a mhd file.\n\
-          \n\
-          SYNOPSIS\n\
-          %s [-o <output image path>] [-h]\n", name);
+Write and read data in a mhd file.\n\
+\n\
+SYNOPSIS\n\
+  %s [-o <output image path>] [-h]\n", name);
 
-      fprintf(stdout, "\n\
-              OPTIONS:                                               Default\n\
-              -o <output data path>                               %s\n\
-              Set data output path.\n\
-              From this directory, creates the \"%s\"\n\
-              subdirectory depending on the username, where \n\
-              postscan2D.mhd file is written.\n\
-              \n\
-              -h\n\
-              Print the help.\n\n", opath.c_str(), user.c_str());
+  fprintf(stdout, "\n\
+OPTIONS:                                               Default\n\
+  -o <output data path>                                %s\n\
+     Set data output path.\n\
+     From this directory, creates the \"%s\"\n\
+     subdirectory depending on the username, where \n\
+     postscan2D.mhd file is written.\n\
+\n\
+  -h\n\
+     Print the help.\n\n", opath.c_str(), user.c_str());
 
-              if (badparam) {
-                fprintf(stderr, "ERROR: \n" );
-                fprintf(stderr, "\nBad parameter [%s]\n", badparam);
-              }
+  if (badparam) {
+    fprintf(stderr, "ERROR: \n" );
+    fprintf(stderr, "\nBad parameter [%s]\n", badparam);
+  }
 }
 
 /*!
@@ -183,7 +183,7 @@ int main(int argc, const char** argv)
         exit(-1);
       }
     }
-    filename = opath + vpIoTools::path("/") + "postscan2d.mhd";
+    filename = dirname + vpIoTools::path("/") + "postscan2d.mhd";
 
     //Init values in reference parser (same values in file read in test)
     usImagePostScan2D<unsigned char> usImagePostScan2DReference;
@@ -202,7 +202,7 @@ int main(int argc, const char** argv)
 
     //read the image we just wrote
     usImagePostScan2D<unsigned char> postscan2D;
-    filename = opath + vpIoTools::path("/") + "postscan2d.mhd";
+    filename = dirname + vpIoTools::path("/") + "postscan2d.mhd";
     usImageIo::read(postscan2D,filename);
 
     std::cout << "Read from " << filename << std::endl ;

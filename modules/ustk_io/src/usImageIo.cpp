@@ -92,7 +92,7 @@ void usImageIo::write(const usImageRF2D<unsigned char> &imageRf2D, const std::st
 * @param imageExtension2D The 2D image extension.
 */
 void usImageIo::write(const usImageRF2D<unsigned char> &imageRf2D, const std::string &headerFileName,
- const std::string &imageExtension2D)
+                      const std::string &imageExtension2D)
 {
   //checking header type
   usImageIo::usHeaderFormatType headerFormat = getHeaderFormat(headerFileName);

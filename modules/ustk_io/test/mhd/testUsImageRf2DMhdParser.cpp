@@ -35,7 +35,6 @@ UltrasoundImageType = RF_2D
 #include <visp3/io/vpParseArgv.h>
 
 #include <visp3/ustk_io/usMetaHeaderParser.h>
-
 #include <visp3/ustk_io/usImageIo.h>
 
 #include <string>
@@ -63,26 +62,26 @@ Print the program options.
 void usage(const char *name, const char *badparam, const std::string& opath, const std::string& user)
 {
   fprintf(stdout, "\n\
-          Write and read data in a mhd file.\n\
-          \n\
-          SYNOPSIS\n\
-          %s [-o <output image path>] [-h]\n", name);
+Write and read data in a mhd file.\n\
+\n\
+SYNOPSIS\n\
+  %s [-o <output image path>] [-h]\n", name);
 
-      fprintf(stdout, "\n\
-              OPTIONS:                                               Default\n\
-              -o <output data path>                               %s\n\
-              Set data output path.\n\
-              From this directory, creates the \"%s\"\n\
-              subdirectory depending on the username, where \n\
-              rf2D.mhd file is written.\n\
-              \n\
-              -h\n\
-              Print the help.\n\n", opath.c_str(), user.c_str());
+  fprintf(stdout, "\n\
+OPTIONS:                                               Default\n\
+  -o <output data path>                                %s\n\
+     Set data output path.\n\
+     From this directory, creates the \"%s\"\n\
+     subdirectory depending on the username, where \n\
+     rf2D.mhd file is written.\n\
+     \n\
+  -h\n\
+     Print the help.\n\n", opath.c_str(), user.c_str());
 
-              if (badparam) {
-                fprintf(stderr, "ERROR: \n" );
-                fprintf(stderr, "\nBad parameter [%s]\n", badparam);
-              }
+  if (badparam) {
+    fprintf(stderr, "ERROR: \n" );
+    fprintf(stderr, "\nBad parameter [%s]\n", badparam);
+  }
 }
 
 /*!
@@ -182,11 +181,11 @@ int main(int argc, const char** argv)
         exit(-1);
       }
     }
-    filename = opath + vpIoTools::path("/") + "rf2d.mhd";
+    filename = dirname + vpIoTools::path("/") + "rf2d.mhd";
 
     //Init values in reference parser (same values in file read in test)
     usImageRF2D<unsigned char> rf2DReference;
-    rf2DReference.resize(186,233);
+    rf2DReference.resize(186, 233, 255);
     rf2DReference.setScanLinePitch(0.0145);
     rf2DReference.setProbeRadius(0.554);
     rf2DReference.setTransducerConvexity(true);
@@ -198,12 +197,12 @@ int main(int argc, const char** argv)
     std::cout << "ref height : " << rf2DReference.getHeight() << std::endl;
     std::cout << "ref width : " << rf2DReference.getWidth() << std::endl;
     //write image
-    usImageIo::write(rf2DReference,filename);
+    usImageIo::write(rf2DReference, filename);
 
     //read the image we just wrote
     usImageRF2D<unsigned char> rf2D;
-    filename = opath + vpIoTools::path("/") + "rf2d.mhd";
-    usImageIo::read(rf2D,filename);
+    filename = dirname + vpIoTools::path("/") + "rf2d.mhd";
+    usImageIo::read(rf2D, filename);
 
     std::cout << "Read from " << filename << std::endl ;
     std::cout << rf2D;
