@@ -44,40 +44,76 @@
 #include <visp3/ustk_core/usMotorSettings.h>
 
 /**
- @class usImagePostScan3D
- @brief This class represents a 3D ultrasound post-scan volume.
- @ingroup module_ustk_core
+  @class usImagePostScan3D
+  @brief 3D post-scan ultrasound image.
+  @ingroup module_ustk_core
 
-  <h3>Example</h3>
-  The following example shows how to build a 3D post-scan ultrasound image from a usImage3D, and from acquisiton settings.
+  This class represents a 3D post-scan ultrasound image. This image is nothing more than an usImage3D that
+  contains 3D post-scan data and additional settings that give information about the acquisition process.
 
+  The settings associated to an usImagePostScan3D image are the:
+  - transducer settings implemented in usTransducerSettings that are:
+    - the transducer radius \f$R_T\f$ in meters (value set to zero for a linear transducer)
+    - the scan line pitch that corresponds to the angle \f$\alpha_{SC}\f$ (in radians) between
+      to successive scan line beams when the transducer is convex, or to the distance \f$d_{SC}\f$
+      (in meters) when the transducer is linear
+    - the number of scan lines \f$n_{SC}\f$
+    - the type of ultrasound transducer used for data acquisition: convex or linear.
+    .
+  - the motor settings implemented in usMotorSettings that are:
+    - the type of motor used to move the transducer: linear, tilting (small rotation) or rotationnal (360&deg; rotation).
+    - the motor radius \f$R_M\f$ (value set to zero for a linear motor)
+    - the frame pitch that corresponds to the angle \f$\alpha_F\f$ (in radians) between
+      to successive frame acquisitions when the motor is convex, or to the distance \f$d_F\f$ (in meters)
+      when the motor is linear.
+    - the frame number \f$n_F\f$ that corresponds to the number of frames acquired by the probe to generate the 3D volume.
+    .
+  .
+
+  The following example shows how to build a 3D post-scan ultrasound image from an usImage3D, and from acquisiton settings.
   \code
+#include <visp3/ustk_core/usImagePostScan3D.h>
 
+int main()
+{
+  // Transducer settings
+  unsigned int BModeSampleNumber = 200;
+  double transducerRadius = 0.045;;
+  double scanLinePitch = 0.01;
+  unsigned int scanLineNumber = 256;
+  bool isTransducerConvex = true;
+  double axialResolution = 0.001;
 
-    #include <visp3/ustk_core/usImagePostScan3D.h>
+  // Motor settings
+  double motorRadius = 0.004;
+  double framePitch = 0.06;
+  unsigned int frameNumber = 10;
+  usMotorSettings::usMotorType motorType = usMotorSettings::LinearMotor;
 
-    int main()
-    {
-      // Update settings
-      unsigned int dimX = 200;
-      unsigned int dimY = 200;
-      unsigned int dimZ = 20;
-      double probeRadius = 0.045;
-      double scanLinePitch = 0.01;
-      bool isTransducerConvex = true;
-      double motorRadius = 0.07;
-      double framePitch = 0.05;
-      usMotorSettings::usMotorType motorType = usMotorSettings::LinearMotor;
-      double heightResolution = 0.004;
-      double widthResolution = 0.007;
-      usImagePostScanSettings   imageSettings(probeRadius, scanLinePitch, isTransducerConvex, heightResolution, widthResolution);
-      usMotorSettings motorSettings(motorRadius,framePitch,motorType);
-      usImage3D<unsigned char> I(dimX, dimY, dimZ);
-      usImagePostScan3D<unsigned char> postScan3d;
-      postScan3d.setData(I);
-      postScan3d.setImageSettings(imageSettings);
-      postScan3d.setMotorSettings(motorSettings);
-    }
+  // Post-scan data settings
+  unsigned int dimX = 200;
+  unsigned int dimY = 200;
+  unsigned int dimZ = 20;
+
+  usTransducerSettings transducerSettings;
+  transducerSettings.setTransducerRadius(transducerRadius);
+  transducerSettings.setScanLinePitch(scanLinePitch);
+  transducerSettings.setScanLineNumber(scanLineNumber);
+  transducerSettings.setTransducerConvexity(isTransducerConvex);
+
+  usMotorSettings motorSettings;
+  motorSettings.setMotorRadius(motorRadius);
+  motorSettings.setFramePitch(framePitch);
+  motorSettings.setFrameNumber(frameNumber);
+  motorSettings.setMotorType(motorType);
+
+  usImage3D<unsigned char> I(dimX, dimY, dimZ);
+
+  usImagePostScan3D<unsigned char> postScan3d;
+  postScan3d.setData(I);
+  postScan3d.setTransducerSettings(transducerSettings);
+  postScan3d.setMotorSettings(motorSettings);
+}
   \endcode
 
 */
@@ -99,7 +135,7 @@ public:
 
 
 /**
-* Basic constructor, all parameters set to default values
+* Basic constructor, all parameters set to default values.
 */
 template<class Type>
 usImagePostScan3D<Type>::usImagePostScan3D()
@@ -120,8 +156,8 @@ usImagePostScan3D<Type>::usImagePostScan3D(const usImagePostScan3D &other)
 }
 
 /**
-* Constructor from 3D image, transducer and motor settings.
-* @param image 3D image to copy.
+* Constructor from 3D image data, transducer and motor settings.
+* @param image 3D data to copy.
 * @param transducerSettings Transducer settings to copy.
 * @param motorSettings Motor settings to copy.
 */
@@ -157,7 +193,7 @@ usImagePostScan3D<Type> & usImagePostScan3D<Type>::operator =(const usImagePostS
 }
 
 /**
-* Comparaison operator.
+* Comparison operator.
 */
 template<class Type>
 bool usImagePostScan3D<Type>::operator == (usImagePostScan3D<Type> const& other)
@@ -168,7 +204,7 @@ bool usImagePostScan3D<Type>::operator == (usImagePostScan3D<Type> const& other)
 }
 
 /**
-* Operator to print image informations on a stream.
+* Operator to print 3D post-scan image information on a stream.
 */
 template<class Type> std::ostream& operator<<(std::ostream& out, const usImagePostScan3D<Type> &other)
 {
@@ -179,7 +215,7 @@ template<class Type> std::ostream& operator<<(std::ostream& out, const usImagePo
 
 /**
 * Setter for image data.
-* @param image3D Image you want to set.
+* @param image3D 3D image data you want to set.
 */
 template<class Type>
 void usImagePostScan3D<Type>::setData(const usImage3D<Type> &image3D)

@@ -193,7 +193,7 @@ int main(int argc, const char** argv)
     postscan2DReference.setHeightResolution(0.0005);
     postscan2DReference.setWidthResolution(0.0005);
     postscan2DReference.setScanLinePitch(0.0045);
-    postscan2DReference.setProbeRadius(0.05478);
+    postscan2DReference.setTransducerRadius(0.05478);
     postscan2DReference.resize(320,128);
     postscan2DReference.setTransducerConvexity(true);
     postscan2DReference(95,200,64);

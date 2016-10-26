@@ -191,7 +191,7 @@ int main(int argc, const char** argv)
     usImagePreScan2D<unsigned char> prescan2DReference;
     prescan2DReference.setAxialResolution(0.0005);
     prescan2DReference.setScanLinePitch(0.0045);
-    prescan2DReference.setProbeRadius(0.05478);
+    prescan2DReference.setTransducerRadius(0.05478);
     prescan2DReference.resize(320,128);
     prescan2DReference.setTransducerConvexity(true);
     prescan2DReference(95,200,64);

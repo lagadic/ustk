@@ -80,7 +80,7 @@ private:
   /** Count the frame number when the class is used as a grabber. Incremented directly after grabbing an image (contains next index) */
   long m_frameCount;
 
-  /** file name of sequence settings file (ex : sequence.xml), images files names are deduced from informations contained in it.*/
+  /** file name of sequence settings file (ex : sequence.xml), images files names are deduced from information contained in it.*/
   std::string m_sequenceFileName;
   std::string m_genericImageFileName;
   bool m_fileNameIsSet;
@@ -201,7 +201,7 @@ void usSequenceReader<usImageRF2D<unsigned char> >::open(usImageRF2D<unsigned ch
   m_genericImageFileName = xmlParser.getImageFileName();
 
   //saving the settings for all the rf sequence
-  m_frame.setProbeRadius(xmlParser.getTransducerSettings().getProbeRadius());
+  m_frame.setTransducerRadius(xmlParser.getTransducerSettings().getTransducerRadius());
   m_frame.setScanLinePitch(xmlParser.getTransducerSettings().getScanLinePitch());
   m_frame.setScanLineNumber(xmlParser.getTransducerSettings().getScanLineNumber());
   m_frame.setTransducerConvexity(xmlParser.getTransducerSettings().isTransducerConvex());
@@ -216,7 +216,7 @@ void usSequenceReader<usImageRF2D<unsigned char> >::open(usImageRF2D<unsigned ch
   }
   std::string imageFileName =  parentName + buffer;
   vpImageIo::read(image,imageFileName);
-  image.setImageSettings(m_frame);
+  image.setImagePreScanSettings(m_frame);
 
   m_frameCount = m_firstFrame + 1;
   is_open = true;
@@ -238,7 +238,7 @@ void usSequenceReader<usImagePreScan2D<unsigned char> >::open(usImagePreScan2D<u
   m_genericImageFileName = xmlParser.getImageFileName();
 
   //saving the settings for all the pre-scan sequence
-  m_frame.setProbeRadius(xmlParser.getTransducerSettings().getProbeRadius());
+  m_frame.setTransducerRadius(xmlParser.getTransducerSettings().getTransducerRadius());
   m_frame.setScanLinePitch(xmlParser.getTransducerSettings().getScanLinePitch());
   m_frame.setScanLineNumber(xmlParser.getTransducerSettings().getScanLineNumber());
   m_frame.setTransducerConvexity(xmlParser.getTransducerSettings().isTransducerConvex());
@@ -253,7 +253,7 @@ void usSequenceReader<usImagePreScan2D<unsigned char> >::open(usImagePreScan2D<u
   }
   std::string imageFileName =  parentName + buffer;
   vpImageIo::read(image,imageFileName);
-  image.setImageSettings(m_frame);
+  image.setImagePreScanSettings(m_frame);
 
   m_frameCount = m_firstFrame + 1;
   is_open = true;
@@ -275,7 +275,7 @@ void usSequenceReader<usImagePostScan2D<unsigned char> >::open(usImagePostScan2D
   m_genericImageFileName = xmlParser.getImageFileName();
 
   //saving the settings for all the post scan sequence
-  m_frame.setProbeRadius(xmlParser.getTransducerSettings().getProbeRadius());
+  m_frame.setTransducerRadius(xmlParser.getTransducerSettings().getTransducerRadius());
   m_frame.setScanLinePitch(xmlParser.getTransducerSettings().getScanLinePitch());
   m_frame.setScanLineNumber(xmlParser.getTransducerSettings().getScanLineNumber());
   m_frame.setTransducerConvexity(xmlParser.getTransducerSettings().isTransducerConvex());
@@ -292,7 +292,7 @@ void usSequenceReader<usImagePostScan2D<unsigned char> >::open(usImagePostScan2D
   std::string imageFileName =  parentName + buffer;
   vpImageIo::read(image,imageFileName);
 
-  image.setProbeRadius(m_frame.getProbeRadius());
+  image.setTransducerRadius(m_frame.getTransducerRadius());
   image.setScanLinePitch(m_frame.getScanLinePitch());
   image.setScanLineNumber(m_frame.getScanLineNumber());
   image.setTransducerConvexity(m_frame.isTransducerConvex());
@@ -325,7 +325,7 @@ void usSequenceReader<ImageType>::acquire(ImageType &image)
   std::string imageFileName =  parentName + buffer;
 
   vpImageIo::read(image,imageFileName);
-  image.setImageSettings(m_frame);
+  image.setImagePreScanSettings(m_frame);
 
   m_frameCount++;
 }

@@ -237,7 +237,7 @@ void usSequenceWriter< usImageRF2D < unsigned char > >::close()
 
   //saving settings
   usImageSettingsXmlParser xmlParser;
-  xmlParser.setImageSettings(m_frame.getProbeRadius(),
+  xmlParser.setImageSettings(m_frame.getTransducerRadius(),
     m_frame.getScanLinePitch(),
     m_frame.isTransducerConvex(),
     m_frame.getAxialResolution(),
@@ -257,7 +257,7 @@ void usSequenceWriter < usImagePreScan2D < unsigned char > >::close()
 
   //saving settings
   usImageSettingsXmlParser xmlParser;
-  xmlParser.setImageSettings(m_frame.getProbeRadius(),
+  xmlParser.setImageSettings(m_frame.getTransducerRadius(),
     m_frame.getScanLinePitch(),
     m_frame.isTransducerConvex(),
     m_frame.getAxialResolution(),
@@ -278,7 +278,7 @@ void usSequenceWriter<usImagePostScan2D<unsigned char> >::close()
 
   //saving settings
   usImageSettingsXmlParser xmlParser;
-  xmlParser.setImageSettings(m_frame.getProbeRadius(),
+  xmlParser.setImageSettings(m_frame.getTransducerRadius(),
     m_frame.getScanLinePitch(),
     m_frame.isTransducerConvex(),
     m_frame.getScanLineNumber(),

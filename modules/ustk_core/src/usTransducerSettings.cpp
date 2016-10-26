@@ -47,18 +47,22 @@
 * Basic constructor, all settings set to default.
 */
 usTransducerSettings::usTransducerSettings()
-  : m_probeRadius(0.0f), m_scanLinePitch(0.0f), m_scanLineNumber(0), m_isTransducerConvex(true) {}
+  : m_transducerRadius(0.0f), m_scanLinePitch(0.0f), m_scanLineNumber(0), m_isTransducerConvex(true) {}
 
 /**
 * Full constructor with all the settings availables:
-* @param probeRadius Distance between the center point of the probe and the first pixel arc acquired. Value in meters (m).
-* @param scanLinePitch radius or distance between 2 successives acquisiton lines in the probe : in radians (rad) if the prove is convex, or in meters (m) if the probe is linear.
-* @param scanLineNumber Number of scanlines in the probe used.
-* @param isTransducerConvex Boolean to specify if the probe is convex or linear.
+* @param transducerRadius Distance between the center point of the transducer and the first pixel arc acquired.
+* Value in meters (m).
+* @param scanLinePitch Radius or distance between 2 successives scan lines acquired by the probe transducer; in radians (rad)
+* if the probe is convex, or in meters (m) if the probe is linear.
+* @param scanLineNumber Number of scan lines acquired by the probe transducer.
+* @param isTransducerConvex Boolean to specify if the probe transducer is convex or linear.
 */
-usTransducerSettings::usTransducerSettings(double probeRadius, double scanLinePitch,
+usTransducerSettings::usTransducerSettings(double transducerRadius, double scanLinePitch,
                                            unsigned int scanLineNumber, bool isTransducerConvex)
-  : m_probeRadius(probeRadius), m_scanLinePitch(scanLinePitch), m_scanLineNumber(scanLineNumber), m_isTransducerConvex(isTransducerConvex) {}
+  : m_transducerRadius(transducerRadius), m_scanLinePitch(scanLinePitch),
+    m_scanLineNumber(scanLineNumber), m_isTransducerConvex(isTransducerConvex)
+{}
 
 /**
 * Copy constructor.
@@ -76,11 +80,11 @@ usTransducerSettings::~usTransducerSettings() {}
 
 /**
 * Assignment operator.
-* @param other settings you want to copy.
+* @param other Settings you want to copy.
 */
 usTransducerSettings& usTransducerSettings::operator=(const usTransducerSettings& other)
 {
-  m_probeRadius = other.getProbeRadius();
+  m_transducerRadius = other.getTransducerRadius();
   m_scanLinePitch = other.getScanLinePitch();
   m_scanLineNumber = other.getScanLineNumber();
   m_isTransducerConvex = other.isTransducerConvex();
@@ -89,78 +93,86 @@ usTransducerSettings& usTransducerSettings::operator=(const usTransducerSettings
 }
 
 /**
-* Compare two image settings.
+* Compare two probe transducer settings.
 * @return True if the settings are the same, false otherwise.
 */
 bool usTransducerSettings::operator==(usTransducerSettings const& other)
 {
-  return ( this->getProbeRadius() == other.getProbeRadius() &&
+  return ( this->getTransducerRadius() == other.getTransducerRadius() &&
            this->getScanLinePitch() == other.getScanLinePitch() &&
            this->getScanLineNumber() == other.getScanLineNumber() &&
            this->isTransducerConvex() == other.isTransducerConvex());
 }
 
-/**
-* Print transducer informations in a ostream.
-* Usage example : "std::cout << myTransducerSettings << std::endl;"
+/*!
+  Print transducer information in a ostream.
+  Usage example:
+  \code
+  usTransducerSettings myTransducerSettings;
+  std::cout << myTransducerSettings << std::endl;
+  \endcode
 */
 VISP_EXPORT std::ostream& operator<<(std::ostream& out, const usTransducerSettings &other)
 {
-  return out << "probe radius: " << other.getProbeRadius() << std::endl
-             << "line angle: " << other.getScanLinePitch() << std::endl
-             << "scanline number : " << other.getScanLineNumber() << std::endl
-             << "convex probe used: " << other.isTransducerConvex() << std::endl;
+  out << "transducer radius: " << other.getTransducerRadius() << std::endl;
+  if (other.isTransducerConvex())
+    out << "scan line pitch angle: " << other.getScanLinePitch() << std::endl;
+  else
+    out << "scan line pitch distance: " << other.getScanLinePitch() << std::endl;
+  out << "scanline number : " << other.getScanLineNumber() << std::endl
+      << "convex probe used: " << other.isTransducerConvex() << std::endl;
+  return out;
 }
 
 //Image settings getters/setters
 
 /**
-* Set the probe radius (m).
-* @param probeRadius Probe radius in meters. The probe radius is set to 0 in case of linear
-* probe type (see isTransducerConvex() and setProbeConvex(bool) for more informations).
+* Set the probe transducer radius (m).
+* @param transducerRadius Probe transducer radius in meters. The probe transducer radius is set to 0 in case of a linear
+* probe. See isTransducerConvex() and setProbeConvex(bool) for more information.
 */
-void usTransducerSettings::setProbeRadius(const double probeRadius) { m_probeRadius = probeRadius; }
+void usTransducerSettings::setTransducerRadius(const double transducerRadius) { m_transducerRadius = transducerRadius; }
 
 /**
-* Get the probe radius (m).
-* @return Probe radius in meters. The probe radius is set to 0 if the probe is linear.
+* Get the probe transducer radius (m).
+* @return Transducer radius in meters. The transducer radius is set to 0 if the probe is linear.
 */
-double usTransducerSettings::getProbeRadius() const { return m_probeRadius; }
+double usTransducerSettings::getTransducerRadius() const { return m_transducerRadius; }
 
 /**
 * Set the scan line pitch.
-* @param scanLinePitch If the probe is convex, this parameters refers to the angle in radians between
-* two successive lines acquired by the probe. If the probe is linear, this parameters refers to the distance
-* in meters between two successive lines acquired by the probe.
+* @param scanLinePitch If the probe transducer is convex, this parameters refers to the angle in radians between
+* two successive scan lines acquired by the transducer. If the probe is linear, this parameters refers to the distance
+* in meters between two successive scan lines acquired by the transducer.
 */
 void usTransducerSettings::setScanLinePitch(const double scanLinePitch) { m_scanLinePitch = scanLinePitch; }
 
 /**
-* Get the scanline pitch (m).
+* Get the scan line pitch (m).
 *
 * @return
-* - When the probe is convex, returns the angle in radians between two successive lines acquired
-* by the probe.
-* - When the probe is linear, returns the distance in meters between two successive lines acquired
-* by the probe.
+* - When the probe transducer is convex, returns the angle in radians between two successive scan lines acquired
+* by the transducer.
+* - When the probe transducer is linear, returns the distance in meters between two successive scan lines acquired
+* by the transducer.
 */
 double usTransducerSettings::getScanLinePitch() const { return m_scanLinePitch; }
 
 /**
-* Set the probe type.
-* @param isTransducerConvex True if the probe is convex, false if the probe is linear.
-* Sets the probe radius to 0 in case of a linear probe.
+* Set the probe transducer type.
+* @param isTransducerConvex True if the transducer is convex, false if the transducer is linear.
+* Sets the probe transducer radius to 0 in case of a linear transducer.
 */
 void usTransducerSettings::setTransducerConvexity(const bool isTransducerConvex) {
   m_isTransducerConvex = isTransducerConvex;
   if (!isTransducerConvex) {
-    m_probeRadius = 0.0;
+    m_transducerRadius = 0.0;
   }
 }
 
 /**
-* Returns the probe type.
-* @return True if the probe is convex, false if the probe is linear.
+* Returns the probe transducer type.
+* @return True if the transducer is convex, false if the transducer is linear.
 */
 bool usTransducerSettings::isTransducerConvex() const { return m_isTransducerConvex; }
 
@@ -177,8 +189,8 @@ void usTransducerSettings::setTransducerSettings(const usTransducerSettings& oth
 }
 
 /**
-* Getter for the scanline number.
-* @return Number of probe scanlines.
+* Getter for the scan line number.
+* @return Number of scan lines acquired by the probe transducer.
 */
 unsigned int usTransducerSettings::getScanLineNumber() const
 {
@@ -186,8 +198,8 @@ unsigned int usTransducerSettings::getScanLineNumber() const
 }
 
 /**
-* Setter for the scanline number.
-* @param scanLineNumber Number of probe scanlines.
+* Setter for the scan line number.
+* @param scanLineNumber Number of scan lines acquired by the probe transducer.
 */
 void usTransducerSettings::setScanLineNumber(unsigned int scanLineNumber)
 {

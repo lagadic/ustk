@@ -44,34 +44,53 @@
 #include <visp3/ustk_core/usImagePreScanSettings.h>
 
 /*!
- @class usImageRF2D
- @brief 2D RF ultrasound image.
- @ingroup module_ustk_core
+  @class usImageRF2D
+  @brief 2D Radio Frequence (RF) ultrasound image.
+  @ingroup module_ustk_core
 
- This class represents a 2D ultrasound RF image. This image is nothing more than a vpImage that
-  contains RF data and additional settings that give information about the acquisition process.
+  This class represents a 2D RF ultrasound image. This image is nothing more than a vpImage that
+  contains 2D RF data and additional settings that give information about the acquisition process done by the transducer.
 
-  <h3>Example</h3>
-  The following example shows how to build a RF2D ultrasound image from a vpImage, and from acquisiton settings.
+  The settings associated to an usImageRF2D image are the one implemented in usImagePreScanSettings.
+  We recall that these settings are:
+  - the transducer settings (see usTransducerSettings) that are:
+    - the transducer radius \f$R_T\f$ in meters (value set to zero for a linear transducer)
+    - the scan line pitch that corresponds to the angle \f$\alpha_{SC}\f$ (in radians) between
+      to successive scan line beams when the transducer is convex, or to the distance \f$d_{SC}\f$
+      (in meters) when the transducer is linear
+    - the number of scan lines \f$n_{SC}\f$
+    - the type of ultrasound transducer used for data acquisition: convex or linear.
+    .
+  - and an additional axial resolution parameter called \f$a_R\f$ that correspond to the distance in meter
+    between 2 RF samples.
+
+  The following figure summarize these settings and shows the structure of an usImageRF2D image:
+  \image html img-usImageRF2D.png
+
+  The following example shows how to build a 2D RF ultrasound image from a vpImage, and from acquisition settings.
 
   \code
-    #include <visp3/ustk_core/usImageRF2D.h>
+#include <visp3/ustk_core/usImageRF2D.h>
 
-    int main()
-    {
-      // Update settings
-      unsigned int scanLineNumber = 200;
-      unsigned int RFSampleNumber = 200;
-      double probeRadius = 0.007;
-      double scanLinePitch = 0.0006;
-      bool isTransducerConvex = true;
-      double axialResolution = 0.002;
-      usImagePreScanSettings imageSettings(probeRadius, scanLinePitch, isTransducerConvex, axialResolution);
-      vpImage<unsigned char> I(RFSampleNumber, scanLineNumber);
-      usImageRF2D<unsigned char> rf2d;
-      rf2d.setData(I);
-      rf2d.setImageSettings(imageSettings);
-    }
+int main()
+{
+  // 2D RF image settings
+  unsigned int RFSampleNumber = 200;
+  double transducerRadius = 0.007;
+  double scanLinePitch = 0.0006;
+  unsigned int scanLineNumber = 256;
+  bool isTransducerConvex = true;
+  double axialResolution = 0.002;
+
+  vpImage<unsigned char> I(RFSampleNumber, scanLineNumber);
+  usImageRF2D<unsigned char> rf2d;
+  rf2d.setTransducerRadius(transducerRadius);
+  rf2d.setScanLinePitch(scanLinePitch);
+  rf2d.setScanLineNumber(scanLineNumber);
+  rf2d.setTransducerConvexity(isTransducerConvex);
+  rf2d.setAxialResolution(axialResolution);
+  rf2d.setData(I);
+}
   \endcode
  */
 template<class Type>
@@ -108,7 +127,7 @@ usImageRF2D<Type>::usImageRF2D()
 
 /**
 * Initializing constructor.
-* @param image RF image.
+* @param image 2D RF image.
 * @param preScanSettings Pre-scan image settings.
 */
 template<class Type>
@@ -121,7 +140,7 @@ usImageRF2D<Type>::usImageRF2D(const vpImage<Type> &image, const usImagePreScanS
 
 /**
 * Copy constructor.
-* @param other usImageRF2D to copy
+* @param other 2D RF image to copy
 */
 template<class Type>
 usImageRF2D<Type>::usImageRF2D(const usImageRF2D& other)
@@ -155,7 +174,7 @@ usImageRF2D<Type>& usImageRF2D<Type>::operator=(const usImageRF2D<Type> &other)
 }
 
 /**
-* Comparaison operator.
+* Comparison operator.
 */
 template<class Type>
 bool usImageRF2D<Type>::operator==(const usImageRF2D<Type> &other)
@@ -165,7 +184,7 @@ bool usImageRF2D<Type>::operator==(const usImageRF2D<Type> &other)
 }
 
 /**
-* Operator to print image informations on a stream.
+* Operator to print 2D RF image information on a stream.
 */
 template<class Type>
 std::ostream& operator<<(std::ostream& out, const usImageRF2D<Type> &other)
@@ -178,14 +197,16 @@ std::ostream& operator<<(std::ostream& out, const usImageRF2D<Type> &other)
 }
 
 /**
-* Get the number of RF-samples in a line.
-* @return Number of RF-samples in a line.
+* Get the number of RF samples in a scan line.
+* @return Number of RF samples in a scan line.
 */
 template<class Type>
 unsigned int usImageRF2D<Type>::getRFSampleNumber() const { return vpImage<Type>::getHeight(); }
 
 /**
-* Setter for the image data and also the scan line number that corresponds to the image width.
+* Setter for the 2D RF image data.
+*
+* Updates also the transducer scan line number that corresponds to the image width.
 * @param image The image to set.
 */
 template<class Type>
@@ -196,7 +217,10 @@ void usImageRF2D<Type>::setData(const vpImage<Type> &image)
 }
 
 /**
- * Set the scanline number that corresponds also to the image width.
+ * Set the transducer scan line number.
+ *
+ * Resize also the image width that is equal to the scan line number.
+ * \param scanLineNumber Number of scan lines acquired by the transducer.
  */
 template<class Type>
 void usImageRF2D<Type>::setScanLineNumber(unsigned int scanLineNumber)
@@ -205,6 +229,13 @@ void usImageRF2D<Type>::setScanLineNumber(unsigned int scanLineNumber)
   usTransducerSettings::setScanLineNumber(scanLineNumber);
 }
 
+/*!
+ * Resize the 2D RF image.
+ *
+ * Updates also the transducer scan line number that corresponds to the image width.
+ * \param h Image height.
+ * \param w Image width.
+ */
 template<class Type>
 void usImageRF2D<Type>::resize(const unsigned int h, const unsigned int w)
 {
@@ -212,6 +243,14 @@ void usImageRF2D<Type>::resize(const unsigned int h, const unsigned int w)
   vpImage<Type>::resize(h, w);
 }
 
+/*!
+ * Resize the 2D RF image and set all the pixel to a given value.
+ *
+ * Updates also the transducer scan line number that corresponds to the image width.
+ * \param h Image height.
+ * \param w Image width.
+ * \param val Value set to each pixel.
+ */
 template<class Type>
 void usImageRF2D<Type>::resize(const unsigned int h, const unsigned int w, const Type val)
 {

@@ -188,7 +188,7 @@ int main(int argc, const char** argv)
     usImageRF3D<unsigned char> rf3DReference;
     rf3DReference.resize(186,233,163);
     rf3DReference.setScanLinePitch(0.0145);
-    rf3DReference.setProbeRadius(0.554);
+    rf3DReference.setTransducerRadius(0.554);
     rf3DReference.setTransducerConvexity(true);
     rf3DReference.setAxialResolution(0.0058);
     std::cout << "Written in " << filename << std::endl ;

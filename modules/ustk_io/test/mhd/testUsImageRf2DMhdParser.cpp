@@ -187,7 +187,7 @@ int main(int argc, const char** argv)
     usImageRF2D<unsigned char> rf2DReference;
     rf2DReference.resize(186, 233,255);
     rf2DReference.setScanLinePitch(0.0145);
-    rf2DReference.setProbeRadius(0.554);
+    rf2DReference.setTransducerRadius(0.554);
     rf2DReference.setTransducerConvexity(true);
     rf2DReference.setAxialResolution(0.0058);
 

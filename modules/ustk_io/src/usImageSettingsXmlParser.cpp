@@ -49,8 +49,8 @@ usImageSettingsXmlParser::usImageSettingsXmlParser()
   nodeMap["settings"] = CODE_XML_SETTINGS;
   nodeMap["image_type"] = CODE_XML_IMAGE_TYPE;
   nodeMap["scanline_pitch"] = CODE_XML_SCANLINE_PITCH;
-  nodeMap["probe_radius"] = CODE_XML_PROBE_RADIUS;
-  nodeMap["is_probe_convex"] = CODE_XML_IS_PROBE_CONVEX;
+  nodeMap["probe_radius"] = CODE_XML_TRANSDUCER_RADIUS;
+  nodeMap["is_probe_convex"] = CODE_XML_IS_TRANSDUCER_CONVEX;
   nodeMap["frame_pitch"] = CODE_XML_FRAME_PITCH;
   nodeMap["motor_radius"] = CODE_XML_MOTOR_RADIUS;
   nodeMap["motor_type"] = CODE_XML_MOTOR_TYPE;
@@ -193,11 +193,11 @@ usImageSettingsXmlParser::readMainClass (xmlDocPtr doc, xmlNodePtr node)
           this->m_transducerSettings.setScanLinePitch(xmlReadDoubleChild(doc, dataNode));
           this->m_transducerSettings.setScanLinePitch(xmlReadDoubleChild(doc, dataNode));
           break;
-        case CODE_XML_PROBE_RADIUS:
-          this->m_transducerSettings.setProbeRadius(xmlReadDoubleChild(doc, dataNode));
-          this->m_transducerSettings.setProbeRadius(xmlReadDoubleChild(doc, dataNode));
+        case CODE_XML_TRANSDUCER_RADIUS:
+          this->m_transducerSettings.setTransducerRadius(xmlReadDoubleChild(doc, dataNode));
+          this->m_transducerSettings.setTransducerRadius(xmlReadDoubleChild(doc, dataNode));
           break;
-        case CODE_XML_IS_PROBE_CONVEX:
+        case CODE_XML_IS_TRANSDUCER_CONVEX:
           this->m_transducerSettings.setTransducerConvexity(xmlReadBoolChild(doc, dataNode));
           this->m_transducerSettings.setTransducerConvexity(xmlReadBoolChild(doc, dataNode));
           break;
@@ -258,21 +258,21 @@ usImageSettingsXmlParser::writeMainClass(xmlNodePtr node)
   if (this->m_image_type == IMAGE_TYPE_RF) {
     xmlWriteStringChild(node, "image_type", std::string("rf"));
     xmlWriteDoubleChild(node, "scanline_pitch", m_transducerSettings.getScanLinePitch());
-    xmlWriteDoubleChild(node, "probe_radius", m_transducerSettings.getProbeRadius());
+    xmlWriteDoubleChild(node, "probe_radius", m_transducerSettings.getTransducerRadius());
     xmlWriteBoolChild(node, "is_probe_convex", m_transducerSettings.isTransducerConvex());
     xmlWriteDoubleChild(node, "axial_resolution", m_axialResolution);
   }
   if (this->m_image_type == IMAGE_TYPE_PRESCAN) {
     xmlWriteStringChild(node, "image_type", std::string("prescan"));
     xmlWriteDoubleChild(node, "scanline_pitch", m_transducerSettings.getScanLinePitch());
-    xmlWriteDoubleChild(node, "probe_radius", m_transducerSettings.getProbeRadius());
+    xmlWriteDoubleChild(node, "probe_radius", m_transducerSettings.getTransducerRadius());
     xmlWriteBoolChild(node, "is_probe_convex", m_transducerSettings.isTransducerConvex());
     xmlWriteDoubleChild(node, "axial_resolution", m_axialResolution);
   }
   else if (this->m_image_type == IMAGE_TYPE_POSTSCAN) {
     xmlWriteStringChild(node, "image_type", std::string("postscan"));
     xmlWriteDoubleChild(node, "scanline_pitch", m_transducerSettings.getScanLinePitch());
-    xmlWriteDoubleChild(node, "probe_radius", m_transducerSettings.getProbeRadius());
+    xmlWriteDoubleChild(node, "probe_radius", m_transducerSettings.getTransducerRadius());
     xmlWriteBoolChild(node, "is_probe_convex", m_transducerSettings.isTransducerConvex());
     xmlWriteIntChild(node, "scanline_number", m_transducerSettings.getScanLineNumber());
     if(m_is_3D) {
@@ -310,19 +310,19 @@ usImageSettingsXmlParser::writeMainClass(xmlNodePtr node)
 
 /**
 * Setter for pre-scan settings. Each transducer setting available.
-* @param probeRadius : the probe rabius.
-* @param scanLinePitch : the scanline pitch.
+* @param transducerRadius : the Transducer rabius.
+* @param scanLinePitch : the scan line pitch.
 * @param isTransducerConvex : the transducer type (true if convex transducer, false if linear).
 * @param axialResolution : the image axial resolution.
 * @param image_type : image type (rf or pre-scan).
 */
-void usImageSettingsXmlParser::setImageSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex,
+void usImageSettingsXmlParser::setImageSettings(double transducerRadius, double scanLinePitch, bool isTransducerConvex,
                                                 double axialResolution, usImageType image_type)
 {
   if (image_type == usImageSettingsXmlParser::IMAGE_TYPE_PRESCAN || image_type == usImageSettingsXmlParser::IMAGE_TYPE_RF)
   {
     m_transducerSettings.setTransducerConvexity(isTransducerConvex);
-    m_transducerSettings.setProbeRadius(probeRadius);
+    m_transducerSettings.setTransducerRadius(transducerRadius);
     m_transducerSettings.setScanLinePitch(scanLinePitch);
     m_axialResolution = axialResolution;
     m_image_type = image_type;
@@ -334,18 +334,18 @@ void usImageSettingsXmlParser::setImageSettings(double probeRadius, double scanL
 
 /**
 * Setter for post-scan settings. Each transducer setting available.
-* @param probeRadius : the probe rabius.
+* @param transducerRadius : the transducer rabius.
 * @param scanLinePitch : the scanline pitch.
 * @param isTransducerConvex : the transducer type (true if convex transducer, false if linear).
 * @param scanLineNumber : the number of scanLines of the probe used.
 * @param widthResolution : the image width resolution.
 * @param heightResolution : the image height resolution.
 */
-void usImageSettingsXmlParser::setImageSettings(double probeRadius, double scanLinePitch, bool isTransducerConvex, unsigned int scanLineNumber,
+void usImageSettingsXmlParser::setImageSettings(double transducerRadius, double scanLinePitch, bool isTransducerConvex, unsigned int scanLineNumber,
                                                 double widthResolution, double heightResolution)
 {
   m_transducerSettings.setTransducerConvexity(isTransducerConvex);
-  m_transducerSettings.setProbeRadius(probeRadius);
+  m_transducerSettings.setTransducerRadius(transducerRadius);
   m_transducerSettings.setScanLinePitch(scanLinePitch);
   m_transducerSettings.setScanLineNumber(scanLineNumber);
   m_heightResolution = widthResolution;

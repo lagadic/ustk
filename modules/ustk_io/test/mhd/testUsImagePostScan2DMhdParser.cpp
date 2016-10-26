@@ -190,7 +190,7 @@ int main(int argc, const char** argv)
     usImagePostScan2DReference.resize(186,233);
     usImagePostScan2DReference.setScanLinePitch(0.0145);
     usImagePostScan2DReference.setScanLineNumber(45);
-    usImagePostScan2DReference.setProbeRadius(0.554);
+    usImagePostScan2DReference.setTransducerRadius(0.554);
     usImagePostScan2DReference.setTransducerConvexity(true);
     usImagePostScan2DReference.setWidthResolution(0.0058);
     usImagePostScan2DReference.setHeightResolution(0.0058);

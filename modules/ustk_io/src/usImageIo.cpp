@@ -105,7 +105,7 @@ void usImageIo::write(const usImageRF2D<unsigned char> &imageRf2D, const std::st
       //writing xml
       usImageSettingsXmlParser xmlSettings;
       xmlSettings.setImageType(usImageSettingsXmlParser::IMAGE_TYPE_RF);
-      xmlSettings.setImageSettings(imageRf2D.getProbeRadius(),
+      xmlSettings.setImageSettings(imageRf2D.getTransducerRadius(),
         imageRf2D.getScanLinePitch(),
         imageRf2D.isTransducerConvex(),
         imageRf2D.getAxialResolution(),
@@ -144,7 +144,7 @@ void usImageIo::write(const usImageRF2D<unsigned char> &imageRf2D, const std::st
     //remove full path for image file name (located in the same directory as the mhd
     header.rawFileName = vpIoTools::getName(imageFileName);
     header.isTransducerConvex = imageRf2D.isTransducerConvex();
-    header.probeRadius = imageRf2D.getProbeRadius();
+    header.transducerRadius = imageRf2D.getTransducerRadius();
     header.scanLinePitch = imageRf2D.getScanLinePitch();
     //writing in file
     usMetaHeaderParser mhdParser;
@@ -183,7 +183,7 @@ void usImageIo::read(usImageRF2D<unsigned char> &imageRf2D, const std::string &h
     std::string fullImageFileName = vpIoTools::getParent(headerFileName) + vpIoTools::path("/") + xmlSettings.getImageFileName();
     vpImageIo::read(imageRf2D, fullImageFileName);
 
-    imageRf2D.setProbeRadius(xmlSettings.getTransducerSettings().getProbeRadius());
+    imageRf2D.setTransducerRadius(xmlSettings.getTransducerSettings().getTransducerRadius());
     imageRf2D.setScanLinePitch(xmlSettings.getTransducerSettings().getScanLinePitch());
     imageRf2D.setTransducerConvexity(xmlSettings.getTransducerSettings().isTransducerConvex());
     imageRf2D.setAxialResolution(xmlSettings.getAxialResolution());
@@ -206,11 +206,11 @@ void usImageIo::read(usImageRF2D<unsigned char> &imageRf2D, const std::string &h
     usMetaHeaderParser::MHDHeader mhdHeader = mhdParser.getMHDHeader();
 
     usImagePreScanSettings settings;
-    settings.setProbeRadius(mhdHeader.probeRadius);
+    settings.setTransducerRadius(mhdHeader.transducerRadius);
     settings.setScanLinePitch(mhdHeader.scanLinePitch);
     settings.setTransducerConvexity(mhdHeader.isTransducerConvex);
     settings.setAxialResolution(mhdParser.getAxialResolution());
-    imageRf2D.setImageSettings(settings);
+    imageRf2D.setImagePreScanSettings(settings);
 
     //resizing image in memory
     imageRf2D.resize(mhdHeader.dim[1], mhdHeader.dim[0]);
@@ -280,7 +280,7 @@ void usImageIo::write(const usImageRF3D<unsigned char> &imageRf3D, const std::st
     //remove full path for image file name (located in the same directory as the mhd
     header.rawFileName = vpIoTools::getName(imageFileName);
     header.isTransducerConvex = imageRf3D.isTransducerConvex();
-    header.probeRadius = imageRf3D.getProbeRadius();
+    header.transducerRadius = imageRf3D.getTransducerRadius();
     header.scanLinePitch = imageRf3D.getScanLinePitch();
     header.motorType = imageRf3D.getMotorType();
     header.motorRadius = imageRf3D.getMotorRadius();
@@ -332,12 +332,12 @@ void usImageIo::read(usImageRF3D<unsigned char> &imageRf3, const std::string &he
     imageRf3.resize(mhdHeader.dim[0], mhdHeader.dim[1],mhdHeader.dim[2]);
 
     usImagePreScanSettings settings;
-    settings.setProbeRadius(mhdHeader.probeRadius);
+    settings.setTransducerRadius(mhdHeader.transducerRadius);
     settings.setScanLinePitch(mhdHeader.scanLinePitch);
     settings.setTransducerConvexity(mhdHeader.isTransducerConvex);
     settings.setScanLineNumber(mhdHeader.dim[0]);
     settings.setAxialResolution(mhdParser.getAxialResolution());
-    imageRf3.setImageSettings(settings);
+    imageRf3.setImagePreScanSettings(settings);
 
     usMotorSettings motorSettings;
     motorSettings.setMotorRadius(mhdHeader.motorRadius);
@@ -394,7 +394,7 @@ void usImageIo::write(const usImagePreScan2D<unsigned char> &preScanImage, const
       //writing xml
       usImageSettingsXmlParser xmlSettings;
       xmlSettings.setImageType(usImageSettingsXmlParser::IMAGE_TYPE_PRESCAN);
-      xmlSettings.setImageSettings(preScanImage.getProbeRadius(),
+      xmlSettings.setImageSettings(preScanImage.getTransducerRadius(),
         preScanImage.getScanLinePitch(),
         preScanImage.isTransducerConvex(),
         preScanImage.getAxialResolution(),
@@ -432,7 +432,7 @@ void usImageIo::write(const usImagePreScan2D<unsigned char> &preScanImage, const
     //remove full path for image file name (located in the same directory as the mhd
     header.rawFileName = vpIoTools::getName(imageFileName);
     header.isTransducerConvex = preScanImage.isTransducerConvex();
-    header.probeRadius = preScanImage.getProbeRadius();
+    header.transducerRadius = preScanImage.getTransducerRadius();
     header.scanLinePitch = preScanImage.getScanLinePitch();
     //writing in file
     usMetaHeaderParser mhdParser;
@@ -466,7 +466,7 @@ void usImageIo::read(usImagePreScan2D<unsigned char> &preScanImage,const std::st
     std::string fullImageFileName = vpIoTools::getParent(headerFileName) + vpIoTools::path("/") + xmlSettings.getImageFileName();
     vpImageIo::read(preScanImage, fullImageFileName);
 
-    preScanImage.setProbeRadius(xmlSettings.getTransducerSettings().getProbeRadius());
+    preScanImage.setTransducerRadius(xmlSettings.getTransducerSettings().getTransducerRadius());
     preScanImage.setScanLinePitch(xmlSettings.getTransducerSettings().getScanLinePitch());
     preScanImage.setTransducerConvexity(xmlSettings.getTransducerSettings().isTransducerConvex());
     preScanImage.setAxialResolution(xmlSettings.getAxialResolution());
@@ -492,11 +492,11 @@ void usImageIo::read(usImagePreScan2D<unsigned char> &preScanImage,const std::st
     preScanImage.resize(mhdHeader.dim[1], mhdHeader.dim[0],0);
 
     usImagePreScanSettings settings;
-    settings.setProbeRadius(mhdHeader.probeRadius);
+    settings.setTransducerRadius(mhdHeader.transducerRadius);
     settings.setScanLinePitch(mhdHeader.scanLinePitch);
     settings.setTransducerConvexity(mhdHeader.isTransducerConvex);
     settings.setAxialResolution(mhdParser.getAxialResolution());
-    preScanImage.setImageSettings(settings);
+    preScanImage.setImagePreScanSettings(settings);
     preScanImage.setScanLineNumber(preScanImage.getWidth());
 
     //data parsing
@@ -564,7 +564,7 @@ void usImageIo::write(const usImagePreScan3D<unsigned char> &preScanImage, const
     //remove full path for image file name (located in the same directory as the mhd
     header.rawFileName = vpIoTools::getName(imageFileName);
     header.isTransducerConvex = preScanImage.isTransducerConvex();
-    header.probeRadius = preScanImage.getProbeRadius();
+    header.transducerRadius = preScanImage.getTransducerRadius();
     header.scanLinePitch = preScanImage.getScanLinePitch();
     header.motorType = preScanImage.getMotorType();
     header.motorRadius = preScanImage.getMotorRadius();
@@ -616,12 +616,12 @@ void usImageIo::read(usImagePreScan3D<unsigned char> &preScanImage,const std::st
     preScanImage.resize(mhdHeader.dim[0], mhdHeader.dim[1],mhdHeader.dim[2]);
 
     usImagePreScanSettings settings;
-    settings.setProbeRadius(mhdHeader.probeRadius);
+    settings.setTransducerRadius(mhdHeader.transducerRadius);
     settings.setScanLinePitch(mhdHeader.scanLinePitch);
     settings.setTransducerConvexity(mhdHeader.isTransducerConvex);
     settings.setScanLineNumber(mhdHeader.dim[0]);
     settings.setAxialResolution(mhdParser.getAxialResolution());
-    preScanImage.setImageSettings(settings);
+    preScanImage.setImagePreScanSettings(settings);
 
     usMotorSettings motorSettings;
     motorSettings.setMotorRadius(mhdHeader.motorRadius);
@@ -728,7 +728,7 @@ void usImageIo::write(const usImagePostScan2D<unsigned char> &postScanImage, con
       vpImageIo::writePNG(postScanImage, imageFileName);
       //writing xml file using xml parser
       usImageSettingsXmlParser xmlSettings;
-      xmlSettings.setImageSettings(postScanImage.getProbeRadius(),
+      xmlSettings.setImageSettings(postScanImage.getTransducerRadius(),
         postScanImage.getScanLinePitch(),
         postScanImage.isTransducerConvex(),
         postScanImage.getScanLineNumber(),
@@ -769,7 +769,7 @@ void usImageIo::write(const usImagePostScan2D<unsigned char> &postScanImage, con
     //remove full path for image file name (located in the same directory as the mhd
     header.rawFileName = vpIoTools::getName(imageFileName);
     header.isTransducerConvex = postScanImage.isTransducerConvex();
-    header.probeRadius = postScanImage.getProbeRadius();
+    header.transducerRadius = postScanImage.getTransducerRadius();
     header.scanLinePitch = postScanImage.getScanLinePitch();
     header.scanLineNumber = postScanImage.getScanLineNumber();
     //writing in file
@@ -809,7 +809,7 @@ void usImageIo::read(usImagePostScan2D<unsigned char> &postScanImage,const std::
     std::string fullImageFileName = vpIoTools::getParent(headerFileName) + vpIoTools::path("/") + xmlSettings.getImageFileName();
     vpImageIo::read(postScanImage, fullImageFileName);
 
-    postScanImage.setProbeRadius(xmlSettings.getTransducerSettings().getProbeRadius());
+    postScanImage.setTransducerRadius(xmlSettings.getTransducerSettings().getTransducerRadius());
     postScanImage.setScanLinePitch(xmlSettings.getTransducerSettings().getScanLinePitch());
     postScanImage.setScanLineNumber(xmlSettings.getTransducerSettings().getScanLineNumber());
     postScanImage.setTransducerConvexity(xmlSettings.getTransducerSettings().isTransducerConvex());
@@ -836,7 +836,7 @@ void usImageIo::read(usImagePostScan2D<unsigned char> &postScanImage,const std::
     //resizing image in memory
     postScanImage.resize(mhdHeader.dim[1], mhdHeader.dim[0]);
 
-    postScanImage.setProbeRadius(mhdHeader.probeRadius);
+    postScanImage.setTransducerRadius(mhdHeader.transducerRadius);
     postScanImage.setScanLinePitch(mhdHeader.scanLinePitch);
     postScanImage.setScanLineNumber(mhdHeader.scanLineNumber);
     postScanImage.setTransducerConvexity(mhdHeader.isTransducerConvex);
@@ -908,7 +908,7 @@ void usImageIo::write(const usImagePostScan3D<unsigned char> &postScanImage, con
     header.rawFileName = vpIoTools::getName(imageFileName);
     header.isTransducerConvex = postScanImage.isTransducerConvex();
     header.motorType = postScanImage.getMotorType();
-    header.probeRadius = postScanImage.getProbeRadius();
+    header.transducerRadius = postScanImage.getTransducerRadius();
     header.scanLinePitch = postScanImage.getScanLinePitch();
     header.motorRadius = postScanImage.getMotorRadius();
     header.framePitch = postScanImage.getFramePitch();
@@ -960,7 +960,7 @@ void usImageIo::read(usImagePostScan3D<unsigned char> &postScanImage, const std:
     //resizing image in memory
     postScanImage.resize(mhdHeader.dim[0], mhdHeader.dim[1],mhdHeader.dim[2]);
 
-    postScanImage.setProbeRadius(mhdHeader.probeRadius);
+    postScanImage.setTransducerRadius(mhdHeader.transducerRadius);
     postScanImage.setScanLinePitch(mhdHeader.scanLinePitch);
     postScanImage.setTransducerConvexity(mhdHeader.isTransducerConvex);
     postScanImage.setScanLineNumber(mhdHeader.scanLineNumber);

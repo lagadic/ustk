@@ -97,7 +97,7 @@ void  usMetaHeaderParser::readMHDHeader(const std::string &fileName)
   this->header.imageType = NOT_SET;
   this->header.isTransducerConvex = false;
   this->header.motorType = usMotorSettings::LinearMotor;
-  this->header.probeRadius = 0.0;
+  this->header.transducerRadius = 0.0;
   this->header.scanLinePitch = 0.0;
   this->header.motorRadius = 0.0;
   this->header.framePitch = 0.0;
@@ -212,9 +212,9 @@ void  usMetaHeaderParser::readMHDHeader(const std::string &fileName)
       file >> this->header.scanLineNumber;
       std::getline(file, keyval, '\n');
     }
-    else if (keyword == "ProbeRadius")
+    else if (keyword == "TransducerRadius")
     {
-      file >> this->header.probeRadius;
+      file >> this->header.transducerRadius;
       std::getline(file, keyval, '\n');
     }
     else if (keyword == "IsTransducerConvex")
@@ -353,7 +353,7 @@ void usMetaHeaderParser::parse()
       MHDfile << "Comment = True if probe transducer is convex, false if linear. \n";
       MHDfile << "IsTransducerConvex = " << header.isTransducerConvex << "\n";
       MHDfile << "Comment = Radius between the scanlines intersection and the first pixel of each line acquired. 0 if linear probe.\n";
-      MHDfile << "ProbeRadius = " << header.probeRadius << "\n";
+      MHDfile << "TransducerRadius = " << header.transducerRadius << "\n";
       MHDfile << "Comment = Distance between 2 scanlines.\n";
       MHDfile << "ScanLinePitch = " << header.scanLinePitch << "\n";
       MHDfile << "Comment = The axial resolution is the distance in meters between two successives A-samples in a scanline.\n";
@@ -365,7 +365,7 @@ void usMetaHeaderParser::parse()
       MHDfile << "Comment = True if probe transducer is convex, false if linear. \n";
       MHDfile << "IsTransducerConvex = " << header.isTransducerConvex << "\n";
       MHDfile << "Comment = Radius between the scanlines intersection and the first pixel of each line acquired. 0 if linear probe.\n";
-      MHDfile << "ProbeRadius = " << header.probeRadius << "\n";
+      MHDfile << "TransducerRadius = " << header.transducerRadius << "\n";
       MHDfile << "Comment = Distance between 2 scanlines.\n";
       MHDfile << "ScanLinePitch = " << header.scanLinePitch << "\n";
       MHDfile << "Comment = Probe motor type : LinearMotor, TiltingMotor (for small roatations), or RotationalMotor (for 360 deg rotation).\n";
@@ -391,7 +391,7 @@ void usMetaHeaderParser::parse()
       MHDfile << "Comment = True if probe transducer is convex, false if linear. \n";
       MHDfile << "IsTransducerConvex = " << header.isTransducerConvex << "\n";
       MHDfile << "Comment = Radius between the scanlines intersection and the first pixel of each line acquired. 0 if linear probe.\n";
-      MHDfile << "ProbeRadius = " << header.probeRadius << "\n";
+      MHDfile << "TransducerRadius = " << header.transducerRadius << "\n";
       MHDfile << "Comment = Distance between 2 scanlines.\n";
       MHDfile << "ScanLinePitch = " << header.scanLinePitch << "\n";
       MHDfile << "Comment = The axial resolution is the distance in meters between two successives A-samples in a scanline.\n";
@@ -403,7 +403,7 @@ void usMetaHeaderParser::parse()
       MHDfile << "Comment = True if probe transducer is convex, false if linear. \n";
       MHDfile << "IsTransducerConvex = " << header.isTransducerConvex << "\n";
       MHDfile << "Comment = Radius between the scanlines intersection and the first pixel of each line acquired. 0 if linear probe.\n";
-      MHDfile << "ProbeRadius = " << header.probeRadius << "\n";
+      MHDfile << "TransducerRadius = " << header.transducerRadius << "\n";
       MHDfile << "Comment = Distance between 2 scanlines.\n";
       MHDfile << "ScanLinePitch = " << header.scanLinePitch << "\n";
       MHDfile << "Comment = Probe motor type : LinearMotor, TiltingMotor (for small roatations), or RotationalMotor (for 360 deg rotation).\n";
@@ -429,7 +429,7 @@ void usMetaHeaderParser::parse()
       MHDfile << "Comment = True if probe transducer is convex, false if linear. \n";
       MHDfile << "IsTransducerConvex = " << header.isTransducerConvex << "\n";
       MHDfile << "Comment = Radius between the scanlines intersection and the first pixel of each line acquired. 0 if linear probe.\n";
-      MHDfile << "ProbeRadius = " << header.probeRadius << "\n";
+      MHDfile << "TransducerRadius = " << header.transducerRadius << "\n";
       MHDfile << "Comment = Distance between 2 scanlines.\n";
       MHDfile << "ScanLinePitch = " << header.scanLinePitch << "\n";
       MHDfile << "HeightResolution = " << this->m_heightResolution << "\n";
@@ -442,7 +442,7 @@ void usMetaHeaderParser::parse()
       MHDfile << "Comment = True if probe transducer is convex, false if linear. \n";
       MHDfile << "IsTransducerConvex = " << header.isTransducerConvex << "\n";
       MHDfile << "Comment = Radius between the scanlines intersection and the first pixel of each line acquired. 0 if linear probe.\n";
-      MHDfile << "ProbeRadius = " << header.probeRadius << "\n";
+      MHDfile << "TransducerRadius = " << header.transducerRadius << "\n";
       MHDfile << "Comment = Distance between 2 scanlines.\n";
       MHDfile << "ScanLinePitch = " << header.scanLinePitch << "\n";
       MHDfile << "Comment = Probe motor type : LinearMotor, TiltingMotor (for small roatations), or RotationalMotor (for 360 deg rotation).\n";
@@ -483,7 +483,7 @@ void usMetaHeaderParser::read(const std::string& filename)
   readMHDHeader(filename);
 
   //basic transducer settings
-  this->m_transducerSettings.setProbeRadius(header.probeRadius);
+  this->m_transducerSettings.setTransducerRadius(header.transducerRadius);
   this->m_transducerSettings.setScanLinePitch(header.scanLinePitch);
   this->m_transducerSettings.setTransducerConvexity(header.isTransducerConvex);
 
@@ -549,7 +549,7 @@ void usMetaHeaderParser::setWidthResolution(const double widthResolution)
 }
 
 /**
-* Mhd header setter (to set all informations contained in the mhd file).
+* Mhd header setter (to set all information contained in the mhd file).
 * @param header MHDHeader to set.
 */
 void usMetaHeaderParser::setMHDHeader(const MHDHeader header)

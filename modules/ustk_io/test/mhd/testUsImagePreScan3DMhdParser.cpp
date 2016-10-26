@@ -192,7 +192,7 @@ int main(int argc, const char** argv)
     prescan3DReference.setElementSpacingY(1);
     prescan3DReference.setElementSpacingZ(1);
     prescan3DReference.setScanLinePitch(0.0145);
-    prescan3DReference.setProbeRadius(0.554);
+    prescan3DReference.setTransducerRadius(0.554);
     prescan3DReference.setTransducerConvexity(true);
     prescan3DReference.setFramePitch(0.258);
     prescan3DReference.setMotorRadius(0.025);

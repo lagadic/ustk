@@ -44,34 +44,54 @@
 #include <visp3/ustk_core/usTransducerSettings.h>
 
 /**
- @class usImagePostScan2D
- @brief 2D post-scan ultrasound image.
- @ingroup module_ustk_core
+  @class usImagePostScan2D
+  @brief 2D post-scan ultrasound image.
+  @ingroup module_ustk_core
 
- This class represents a 2D ultrasound post-scan frame.
+  This class represents a 2D post-scan ultrasound image. This image is nothing more than a vpImage that
+  contains ultrasound 2D post-scan data and additional settings that give information about the
+  acquisition process done by the transducer.
 
-   <h3>Example</h3>
-  The following example shows how to build a 2D post-scan ultrasound image from a vpImage, and from acquisiton settings.
+  The settings associated to an usImagePostScan2D image are the following:
+  - the transducer settings (see usTransducerSettings) that are:
+    - the transducer radius \f$R_T\f$ in meters (value set to zero for a linear transducer)
+    - the scan line pitch that corresponds to the angle \f$\alpha_{SC}\f$ (in radians) between
+      to successive scan line beams when the transducer is convex, or to the distance \f$d_{SC}\f$
+      (in meters) when the transducer is linear
+    - the number of scan lines \f$n_{SC}\f$
+    - the type of ultrasound transducer used for data acquisition: convex or linear.
+    .
+  - and two additional resolution parameter called \f$p_x, p_y\f$ that correspond to the size in meter
+    of a pixel.
+
+  The following figure summarize these settings and shows the structure of an usImagePostScan2D image:
+  \image html img-usImagePostScan2D.png
+
+  The following example shows how to build a 2D post-scan ultrasound image from a vpImage and from acquisition settings.
 
   \code
-    #include <visp3/ustk_core/usImagePostScan2D.h>
+#include <visp3/ustk_core/usImagePostScan2D.h>
 
-    int main()
-    {
-      // Update settings
-      unsigned int dimX = 200;
-      unsigned int dimY = 200;
-      double probeRadius = 0.045;
-      double scanLinePitch = 0.0012;
-      bool isTransducerConvex = true;
-      double heightResolution = 0.002;
-      double widthResolution = 0.004;
-      usImagePostScanSettings imageSettings(probeRadius, scanLinePitch, isTransducerConvex, heightResolution, widthResolution);
-      vpImage<unsigned char> I(dimY,dimX);
-      usImagePostScan2D<unsigned char> postScan2d;
-      postScan2d.setData(I);
-      postScan2d.setImageSettings(imageSettings);
-    }
+int main()
+{
+  // 2D post-scan image settings
+  unsigned int width = 320;
+  unsigned int height = 240;
+  double transducerRadius = 0.045;
+  double scanLinePitch = 0.0012;
+  unsigned int scanLineNumber = 256;
+  bool isTransducerConvex = true;
+  double heightResolution = 0.002;
+  double widthResolution = 0.004;
+
+  vpImage<unsigned char> I(height, width);
+  usImagePostScan2D<unsigned char> postScan2d;
+  postScan2d.setTransducerRadius(transducerRadius);
+  postScan2d.setScanLinePitch(scanLinePitch);
+  postScan2d.setScanLineNumber(scanLineNumber);
+  postScan2d.setTransducerConvexity(isTransducerConvex);
+  postScan2d.setData(I);
+}
   \endcode
  */
 template<class Type>
@@ -99,7 +119,7 @@ private:
 };
 
 /**
-* Basic constructor, all parameters set to default values
+* Basic constructor, all parameters set to default values.
 */
 template<class Type>
 usImagePostScan2D<Type>::usImagePostScan2D()
@@ -109,8 +129,8 @@ usImagePostScan2D<Type>::usImagePostScan2D()
 }
 
 /**
-* Copy constructor from other usImagePostScan2D
-* @param other Post-scan 2D image to copy.
+* Copy constructor from an other 2D post-scan image.
+* @param other 2D post-scan image to copy.
 */
 template<class Type>
 usImagePostScan2D<Type>::usImagePostScan2D(const usImagePostScan2D<Type> &other)
@@ -121,9 +141,9 @@ usImagePostScan2D<Type>::usImagePostScan2D(const usImagePostScan2D<Type> &other)
 }
 
 /**
-* Constructor from vpImage and usTransducerSettings.
-* @param image vpImage<unsigned char> to copy.
-* @param transducerSettings Transducer settings to copy.
+* Constructor from an image and transducer settings.
+* @param image Image containing the 2D post-scan data to copy.
+* @param transducerSettings Transducer settings associated to the data.
 * @param heightResolution Height (in meters) of a pixel.
 * @param widthResolution Width (in meters) of a pixel.
 */
@@ -131,7 +151,8 @@ template<class Type>
 usImagePostScan2D<Type>::usImagePostScan2D(const vpImage<Type> &image,
                                            const usTransducerSettings &transducerSettings,
                                            double widthResolution, double heightResolution)
-: vpImage<Type>(image), usTransducerSettings(transducerSettings), m_widthResolution(widthResolution), m_heightResolution(heightResolution)
+: vpImage<Type>(image), usTransducerSettings(transducerSettings),
+  m_widthResolution(widthResolution), m_heightResolution(heightResolution)
 {
 
 }
@@ -162,7 +183,7 @@ usImagePostScan2D<Type> & usImagePostScan2D<Type>::operator =(const usImagePostS
 }
 
 /**
-* Comparaison operator.
+* Comparison operator.
 */
 template<class Type>
 bool usImagePostScan2D<Type>::operator ==(const usImagePostScan2D<Type> &other)
@@ -174,21 +195,21 @@ bool usImagePostScan2D<Type>::operator ==(const usImagePostScan2D<Type> &other)
 }
 
 /**
-* Operator to print image informations on a stream.
+* Operator to print 2D post-scan image information on a stream.
 */
 template<class Type>
 std::ostream& operator<<(std::ostream& out, const usImagePostScan2D<Type> &other)
 {
-  return out << static_cast<const usTransducerSettings &>(other) <<
-                "image width : " << other.getWidth() << std::endl <<
-                "image height : " << other.getHeight() << std::endl <<
-                "image width resolution : " << other.getWidthResolution() <<
-                "image height resolution : " << other.getHeightResolution() << std::endl;
+  return out << static_cast<const usTransducerSettings &>(other)
+             << "image width : " << other.getWidth() << std::endl
+             << "image height : " << other.getHeight() << std::endl
+             << "image width resolution : " << other.getWidthResolution()
+             << "image height resolution : " << other.getHeightResolution() << std::endl;
 }
 
 /**
-* Setter for image.
-* @param image Settings you want to copy.
+* Setter that updates 2D post-scan image data.
+* @param image Data to set.
 */
 template<class Type>
 void usImagePostScan2D<Type>::setData(const vpImage<Type> &image)
@@ -197,7 +218,7 @@ void usImagePostScan2D<Type>::setData(const vpImage<Type> &image)
 }
 
 /**
-* Getter for height resolution.
+* Getter for pixel height resolution.
 * @return Height of a pixel (in meters).
 */
 template<class Type>
@@ -207,7 +228,7 @@ double usImagePostScan2D<Type>::getHeightResolution() const
 }
 
 /**
-* Getter for width resolution.
+* Getter for pixel width resolution.
 * @return Width of a pixel (in meters).
 */
 template<class Type>
@@ -217,7 +238,7 @@ double usImagePostScan2D<Type>::getWidthResolution() const
 }
 
 /**
-* Setter for height resolution.
+* Setter for pixel height resolution.
 * @param heightResolution Height of a pixel (in meters).
 */
 template<class Type>
@@ -227,7 +248,7 @@ void usImagePostScan2D<Type>::setHeightResolution(double heightResolution)
 }
 
 /**
-* Setter for width resolution.
+* Setter for pixel width resolution.
 * @param widthResolution Width of a pixel (in meters).
 */
 template<class Type>

@@ -53,7 +53,7 @@
 * @brief Representation of a physical image volume.
 * @ingroup module_ustk_core
 *
-* This class is used to represent 3D data with physical information.
+* This class is used to represent 3D ultrasoubd data with physical information.
 */
 template <class Type>
 class usImage3D

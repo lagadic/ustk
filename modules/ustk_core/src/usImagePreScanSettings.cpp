@@ -73,7 +73,7 @@ usImagePreScanSettings::usImagePreScanSettings(const usTransducerSettings &trans
 * Copy constructor.
 * @param preScanSettings Pre-scan settings to copy.
 */
-void usImagePreScanSettings::setImageSettings(const usImagePreScanSettings& preScanSettings)
+void usImagePreScanSettings::setImagePreScanSettings(const usImagePreScanSettings& preScanSettings)
 {
   *this = preScanSettings;
 }
@@ -96,7 +96,7 @@ usImagePreScanSettings& usImagePreScanSettings::operator=(const usImagePreScanSe
 }
 
 /**
-* Comparaison operator.
+* Comparison operator.
 * @param other usImagePreScanSettings to compare with.
 */
 bool usImagePreScanSettings::operator==(const usImagePreScanSettings& other)

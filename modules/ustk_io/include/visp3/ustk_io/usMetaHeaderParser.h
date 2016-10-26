@@ -96,7 +96,7 @@ public:
     ImageType imageType;
     bool isTransducerConvex;
     usMotorSettings::usMotorType motorType;
-    double probeRadius;
+    double transducerRadius;
     double scanLinePitch;
     double motorRadius;
     double framePitch;

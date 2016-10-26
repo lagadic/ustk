@@ -48,22 +48,25 @@
 
 /**
  * @class usTransducerSettings
- * @brief Generic class for 2D ultrasound data common settings associated to the type of probe used during acquisition.
+ * @brief Generic class for 2D ultrasound data common settings associated to the type of probe transducer used during acquisition.
  * @ingroup module_ustk_core
  *
- * This class represents ultrasound image common settings which are:
- * - the type of ultrasound transducer used for data acquisition: convex or linear
- * - the transducer radius \f$R\f$ in meters (value set to zero for a linear transducer)
- * - the scan line pitch that corresponds to the angle \f$\alpha\f$ (in radians) between
- *   to successive scan lines beams when the transducer is convex, or to the distance \f$d\f$
- *   (in meters) when the transducer is linear.
+ * This class represents ultrasound transducer common settings which are:
+ * - the transducer radius \f$R_T\f$ in meters (value set to zero for a linear transducer)
+ * - the scan line pitch that corresponds to the angle \f$\alpha_{SC}\f$ (in radians) between
+ *   to successive scan line beams when the transducer is convex, or to the distance \f$d_{SC}\f$
+ *   (in meters) when the transducer is linear
+ * - the number of scan lines \f$n_{SC}\f$
+ * - the type of ultrasound transducer used for data acquisition: convex or linear.
  *
- * \image html img-usProbeSettings.png
+ * The following figure summerize these transducer settings.
+ *
+ * \image html img-usTransducerSettings.png
  */
 class VISP_EXPORT usTransducerSettings {
 public:
   usTransducerSettings();
-  usTransducerSettings(double probeRadius, double scanLinePitch, unsigned int scanLineNumber, bool isTransducerConvex);
+  usTransducerSettings(double transducerRadius, double scanLinePitch, unsigned int scanLineNumber, bool isTransducerConvex);
   usTransducerSettings(const usTransducerSettings &other);
 
   virtual ~usTransducerSettings();
@@ -71,7 +74,7 @@ public:
   /** @name Inherited functionalities from usTransducerSettings */
   //@{
 
-  double getProbeRadius() const;
+  double getTransducerRadius() const;
   unsigned int getScanLineNumber() const;
   double getScanLinePitch() const;
 
@@ -80,10 +83,10 @@ public:
   usTransducerSettings& operator=(const usTransducerSettings& other);
   bool operator==(usTransducerSettings const& other);
 
-  //Settings form the probe
+  //Settings for the probe transducer
   void setTransducerConvexity(const bool isTransducerConvex);
   void setTransducerSettings(const usTransducerSettings& other);
-  void setProbeRadius(const double probeRadius);
+  void setTransducerRadius(const double transducerRadius);
   void setScanLineNumber(unsigned int scanLineNumber);
   void setScanLinePitch(const double scanLinePitch);
 
@@ -92,8 +95,8 @@ public:
   friend VISP_EXPORT std::ostream& operator<<(std::ostream& out, const usTransducerSettings &other);
 
 private:
-  //Settings from the probe
-  double m_probeRadius;
+  //Settings for the probe transducer
+  double m_transducerRadius;
   double m_scanLinePitch;
   unsigned int m_scanLineNumber;
   bool m_isTransducerConvex;
