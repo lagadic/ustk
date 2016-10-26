@@ -1,2 +1,6 @@
-doc/*
-modules/ustk_examples/*
+*~
+*/CMakeFiles
+CMakeCache.txt
+.DS_Store
+CMakeLists.txt.user*
+

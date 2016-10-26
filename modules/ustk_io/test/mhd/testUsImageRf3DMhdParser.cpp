@@ -7,22 +7,20 @@
 
 
 /*!
-  \example testUSXmlParser.cpp
+  \example testUsImageRf3DMhdParser.cpp
 
-  USTK XML parser example.
+  USTK MHD parser example.
   
   This example contains the declaration of a class used to read and write data
-  in a xml file like:
+  in a mhd file like:
   \code
-<?xml version="1.0"?>
-<config>
-  <image_type>prescan</image_type>
-  <axial_resolution>0.0005</axial_resolution>
-  <scanline_pitch>0.0045</scanline_pitch>
-  <probe_radius>0.0547896</probe_radius>
-  <is_convex>1</is_convex>
-  <image_file_name>prescan2D.png</image_file_name>
-</config>
+NDims = 3
+DimSize = 186 233 163
+ElementType = MET_UCHAR
+ElementSpacing = 1 1 1
+ElementByteOrderMSB = False
+ElementDataFile = rf3d.raw
+UltrasoundImageType = RF_3D
   \endcode
   
 */
@@ -31,12 +29,12 @@
 #include <visp3/core/vpConfig.h>
 
 #include <iostream>
-#if defined(VISP_HAVE_XML2)
 
-#include <visp3/core/vpXmlParser.h>
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/io/vpParseArgv.h>
+
+#include <visp3/ustk_io/usMetaHeaderParser.h>
 
 #include <visp3/ustk_io/usImageIo.h>
 
@@ -65,26 +63,26 @@ Print the program options.
 void usage(const char *name, const char *badparam, const std::string& opath, const std::string& user)
 {
   fprintf(stdout, "\n\
-          Write and read data in a xml file.\n\
-          \n\
-          SYNOPSIS\n\
-          %s [-o <output image path>] [-h]\n", name);
+Write and read data in a mhd file.\n\
+\n\
+SYNOPSIS\n\
+  %s [-o <output image path>] [-h]\n", name);
 
-      fprintf(stdout, "\n\
-              OPTIONS:                                               Default\n\
-              -o <output data path>                               %s\n\
-              Set data output path.\n\
-              From this directory, creates the \"%s\"\n\
-              subdirectory depending on the username, where \n\
-              prescan2D.xml file is written.\n\
-              \n\
-              -h\n\
-              Print the help.\n\n", opath.c_str(), user.c_str());
+  fprintf(stdout, "\n\
+OPTIONS:                                               Default\n\
+  -o <output data path>                                %s\n\
+     Set data output path.\n\
+     From this directory, creates the \"%s\"\n\
+     subdirectory depending on the username, where \n\
+     rf3D.mhd file is written.\n\
+\n\
+  -h\n\
+     Print the help.\n\n", opath.c_str(), user.c_str());
 
-              if (badparam) {
-                fprintf(stderr, "ERROR: \n" );
-                fprintf(stderr, "\nBad parameter [%s]\n", badparam);
-              }
+  if (badparam) {
+    fprintf(stderr, "ERROR: \n" );
+    fprintf(stderr, "\nBad parameter [%s]\n", badparam);
+  }
 }
 
 /*!
@@ -126,8 +124,6 @@ bool getOptions(int argc, const char **argv, std::string &opath, const std::stri
   return true;
 }
 
-
-
 /* -------------------------------------------------------------------------- */
 /*                               MAIN FUNCTION                                */
 /* -------------------------------------------------------------------------- */
@@ -141,10 +137,11 @@ int main(int argc, const char** argv)
     std::string filename;
     std::string username;
 
+    usMetaHeaderParser testReferenceSettings;
 
     std::cout <<  "-------------------------------------------------------" << std::endl ;
-    std::cout <<  "  testUSXmlParser.cpp" <<std::endl << std::endl ;
-    std::cout <<  "  writing and readind ultrasound data using a the US xml parser" << std::endl ;
+    std::cout <<  "  testUsImageRf3DMhdParser.cpp" <<std::endl << std::endl ;
+    std::cout <<  "  writing and reading ultrasound data using a the US mhd parser" << std::endl ;
     std::cout <<  "-------------------------------------------------------" << std::endl ;
     std::cout << std::endl ;
 
@@ -185,67 +182,40 @@ int main(int argc, const char** argv)
         exit(-1);
       }
     }
-
-    filename = opath + vpIoTools::path("/") + "prescan2D.png";
+    filename = dirname + vpIoTools::path("/") + "rf3d.mhd";
 
     //Init values in reference parser (same values in file read in test)
-    usImagePreScan2D<unsigned char> prescan2DReference;
-    prescan2DReference.setAxialResolution(0.0005);
-    prescan2DReference.setScanLinePitch(0.0045);
-    prescan2DReference.setProbeRadius(0.05478);
-    prescan2DReference.resize(320,128);
-    prescan2DReference.setImageConvex(true);
-    prescan2DReference(95,200,64);
-    prescan2DReference(116,80,36);
+    usImageRF3D<unsigned char> rf3DReference;
+    rf3DReference.resize(186, 233, 163);
+    rf3DReference.setScanLinePitch(0.0145);
+    rf3DReference.setTransducerRadius(0.554);
+    rf3DReference.setTransducerConvexity(true);
+    rf3DReference.setAxialResolution(0.0058);
+    std::cout << "Written in " << filename << std::endl ;
+    std::cout << rf3DReference;
 
-    usImageIo::writeXml(prescan2DReference,filename);
-
-    std::cout << "Read from " << filename << std::endl ;
-    std::cout << "Axial resolution : " << prescan2DReference.getAxialResolution() << std::endl;
-    std::cout << "Probe Radius : " << prescan2DReference.getProbeRadius() << std::endl;
-    std::cout << "ScanLine pitch : " << prescan2DReference.getScanLinePitch() << std::endl;
-    std::cout << "Convex probe : " << prescan2DReference.isImageConvex() << std::endl;
-    std::cout << "Height : " << prescan2DReference.getHeight() << std::endl;
-    std::cout << "Width : " << prescan2DReference.getWidth() << std::endl;
-    std::cout << "Axial resolution : " << prescan2DReference.getAxialResolution() << std::endl;
+    //write image
+    usImageIo::write(rf3DReference,filename);
 
     //read the image we just wrote
-    usImagePreScan2D<unsigned char> prescan2D;
-    filename = opath + vpIoTools::path("/") + "prescan2D.xml";
-    usImageIo::readXml(prescan2D,filename);
-
+    usImageRF3D<unsigned char> rf3D;
+    filename = dirname + vpIoTools::path("/") + "rf3d.mhd";
+    usImageIo::read(rf3D,filename);
 
     std::cout << "Read from " << filename << std::endl ;
-    std::cout << "Axial resolution : " << prescan2D.getAxialResolution() << std::endl;
-    std::cout << "Probe Radius : " << prescan2D.getProbeRadius() << std::endl;
-    std::cout << "ScanLine pitch : " << prescan2D.getScanLinePitch() << std::endl;
-    std::cout << "Convex probe : " << prescan2D.isImageConvex() << std::endl;
-    std::cout << "Height : " << prescan2D.getHeight() << std::endl;
-    std::cout << "Width : " << prescan2D.getWidth() << std::endl;
-    std::cout << "Axial resolution : " << prescan2D.getAxialResolution() << std::endl;
+    std::cout << rf3D;
 
-    if(prescan2D==prescan2DReference) {
+
+    if(rf3D == rf3DReference) {
       std::cout << "Test passed !" << std::endl;
       return 0;
     }
 
-
-    // Clean up memory allocated by the xml library
-    vpXmlParser::cleanup();
     std::cout << "Test failed !" << std::endl;
     return 1;
   }
-  catch(vpException &e) {
-    std::cout << "Catch an exception: " << e << std::endl;
+  catch(const vpException &e) {
+    std::cout << "Catch an exception: " << e.getMessage() << std::endl;
     return 1;
   }
 }
-
-#else
-
-int main()
-{
-  std::cout << "Xml parser requires libxml2." << std::endl;
-  return 0;
-}
-#endif

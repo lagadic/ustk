@@ -20,8 +20,8 @@
  * If you have questions regarding the use of this file, please contact the
  * authors at Alexandre.Krupa@inria.fr
  *
- * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ * This file is provided AS IS with NO WARRBModeSampleNumberTY OF BModeSampleNumberY KIND, INCLUDING THE
+ * WARRBModeSampleNumberTY OF DESIGN, MERCHBModeSampleNumberTABILITY BModeSampleNumberD FITNESS FOR A PARTICULAR PURPOSE.
  *
  *
  * Authors:
@@ -31,7 +31,7 @@
 
 /**
  * @file usImagePreScan2D.h
- * @brief 2D prescan ultrasound image.
+ * @brief 2D pre-scan ultrasound image.
  */
 
 #ifndef US_IMAGE_PRESCAN_2D_H
@@ -39,216 +39,225 @@
 
 #include <visp3/core/vpImage.h>
 
-#include <visp3/ustk_core/usImageSettings.h>
+#include <visp3/ustk_core/usImagePreScanSettings.h>
 
 /**
- * @class usImagePreScan2D
- * @brief 2D prescan ultrasound image.
- *
- * This class represents a 2D ultrasound prescan frame.
+  @class usImagePreScan2D
+  @brief 2D pre-scan ultrasound image.
+  @ingroup module_ustk_core
+
+  This class represents a 2D pre-scan ultrasound image. This image is nothing more than a vpImage that
+  contains ultrasound 2D pre-scan data and additional settings that give information about the
+  acquisition process done by the transducer.
+
+  The settings associated to an usImagePreScan2D image are the one implemented in usImagePreScanSettings.
+  We recall that these settings are:
+  - the transducer settings (see usTransducerSettings) that are:
+    - the transducer radius \f$R_T\f$ in meters (value set to zero for a linear transducer)
+    - the scan line pitch that corresponds to the angle \f$\alpha_{SC}\f$ (in radians) between
+      to successive scan line beams when the transducer is convex, or to the distance \f$d_{SC}\f$
+      (in meters) when the transducer is linear
+    - the number of scan lines \f$n_{SC}\f$
+    - the type of ultrasound transducer used for data acquisition: convex or linear.
+    .
+  - and an additional axial resolution parameter called \f$a_R\f$ that correspond to the distance in meter
+    between 2 RF samples.
+
+  The following figure summarize these settings and shows the structure of an usImagePreScan2D image:
+  \image html img-usImagePreScan2D.png
+
+  The following example shows how to build a 2D pre-scan ultrasound image from a vpImage and from acquisition settings.
+
+  \code
+#include <visp3/ustk_core/usImagePreScan2D.h>
+
+int main()
+{
+  // 2D pre-scan image settings
+  unsigned int BModeSampleNumber = 200;
+  double transducerRadius = 0.007;
+  double scanLinePitch = 0.04;
+  unsigned int scanLineNumber = 256;
+  bool isTransducerConvex = true;
+  double axialResolution = 0.005;
+
+  vpImage<unsigned char> I(BModeSampleNumber, scanLineNumber);
+  usImagePreScan2D<unsigned char> preScan2d;
+  preScan2d.setTransducerRadius(transducerRadius);
+  preScan2d.setScanLinePitch(scanLinePitch);
+  preScan2d.setScanLineNumber(scanLineNumber);
+  preScan2d.setTransducerConvexity(isTransducerConvex);
+  preScan2d.setAxialResolution(axialResolution);
+  preScan2d.setData(I);
+}
+  \endcode
+
  */
-template<class T>
-class usImagePreScan2D : public vpImage<T>, public usImageSettings {
+template<class Type>
+class usImagePreScan2D : public vpImage<Type>, public usImagePreScanSettings {
 public:
   //default constructors
   usImagePreScan2D();
-  //image size initialisation constructors
-  usImagePreScan2D(unsigned int AN, unsigned int LN);
   //All parameters initialisation constructors
-  usImagePreScan2D(unsigned int AN, unsigned int LN, double probeRadius, double scanLinePitch, bool isConvex);
+  usImagePreScan2D(const vpImage<Type> &image, const usImagePreScanSettings &preScanSettings);
   //usImagePreScan2D copy constructor
   usImagePreScan2D(const usImagePreScan2D &other);
-  //vpImage copy constructors
-  usImagePreScan2D(const vpImage<T> &other);
-  //vpImage copy constructors
-  usImagePreScan2D(const usImageSettings &other);
-  //copy constructor from vpImage and usImageSettings
-  usImagePreScan2D(const vpImage<T> &other, const usImageSettings &otherSettings);
 
   //destructor
-  ~usImagePreScan2D();
+  virtual ~usImagePreScan2D();
 
-  //copying from vpImage
-  void copyFrom(const vpImage<T> &I);
-
-  double getAxialResolution() const;
-  //No setters for AN and LN because vpImage doesn't have setters for height and width. Those parameters have to be passed in the constructor.
-  unsigned int getAN() const;
-  unsigned int getLN() const;
+  //Those parameters have to be passed in the constructor.
+  unsigned int getBModeSampleNumber() const;
 
   //assignement
-  usImagePreScan2D<T>& operator=(const usImagePreScan2D<T> &other);
+  usImagePreScan2D<Type>& operator=(const usImagePreScan2D<Type> &other);
 
   //comparison
-  bool operator==(const usImagePreScan2D<T> &other);
+  bool operator==(const usImagePreScan2D<Type> &other);
 
-  void setAxialResolution(const double axialResolution);
-  void setData(const vpImage<T> image);
+  void setData(const vpImage<Type> image);
+  void setScanLineNumber(unsigned int scanLineNumber);
 
-private:
-  double m_axialResolution;
+  //Filtering before calling vpImage::resize() to update scanLineNumber
+  void resize(const unsigned int h, const unsigned int w);
+  void resize(const unsigned int h, const unsigned int w, const Type val);
 };
 
 /**
-* Basic constructor, all settings set to default. For double data.
+* Basic constructor, all settings set to default values.
 */
-template<class T>
-usImagePreScan2D<T>::usImagePreScan2D() : vpImage<T>(), usImageSettings()
-{
-
-}
-
-/**
-* Initializing image size constructor. For double image type.
-* @param AN A-samples in a line (corresponds to image height in px).
-* @param LN Number of lines (corresponds to image width in px).
-*/
-template<class T>
-usImagePreScan2D<T>::usImagePreScan2D(unsigned int AN, unsigned int LN) : vpImage<T>(LN, AN), usImageSettings()
-{
-
-}
-
-/**
-* Initializing constructor for image size and probe settings. For double image type.
-* @param AN number of A-samples in a line.
-* @param LN number of lines.
-* @param probeRadius radius of the ultrasound probe used to acquire the RF image.
-* @param scanLinePitch Angle(rad) / Distance(m) between 2 lines of the ultrasound probe used to acquire the RF image. Angle if isConvex is true, distance if it's false.
-* @param isConvex Boolean to specify if the probe used was convex(true) or linear(false).
-*/
-template<class T>
-usImagePreScan2D<T>::usImagePreScan2D(unsigned int AN, unsigned int LN, double probeRadius, double scanLinePitch, bool isConvex) :
-  vpImage<T>(AN, LN), usImageSettings(probeRadius, scanLinePitch, isConvex)
-{
-
-}
-
-/**
-* Copy constructor. For double image type.
-* @param other usImagePreScan2D image you want to copy.
-*/
-template<class T>
-usImagePreScan2D<T>::usImagePreScan2D(const usImagePreScan2D &other) :
-  vpImage<T>(other), usImageSettings(other)
-{
-
-}
-
-/**
-* Copy constructor. For double image type.
-* @param other vpImage<double> image you want to copy.
-*/
-template<class T>
-usImagePreScan2D<T>::usImagePreScan2D(const vpImage<T> &other) : vpImage<T>(other)
+template<class Type>
+usImagePreScan2D<Type>::usImagePreScan2D()
+  : vpImage<Type>(), usImagePreScanSettings()
 {
 
 }
 
 /**
 * Copy constructor.
-* @param other usImageSettings you want to copy.
+* @param other 2D pre-scan image you want to copy.
 */
-template<class T>
-usImagePreScan2D<T>::usImagePreScan2D(const usImageSettings &other) : usImageSettings(other)
+template<class Type>
+usImagePreScan2D<Type>::usImagePreScan2D(const usImagePreScan2D &other) :
+  vpImage<Type>(other), usImagePreScanSettings(other)
 {
 
 }
 
 /**
-* Copy constructor. For double image type.
-* @param other vpImage you want to copy.
-* @param otherSettings usImageSettings you want to copy.
+* Constructor from an image and pre-scan settings.
+* @param image Image you want to set.
+* @param preScanSettings Pre-scan settings you want to set.
 */
-template<class T>
-usImagePreScan2D<T>::usImagePreScan2D(const vpImage<T> &other, const usImageSettings &otherSettings) :
-  vpImage<T>(other), usImageSettings(otherSettings)
+template<class Type>
+usImagePreScan2D<Type>::usImagePreScan2D(const vpImage<Type> &image, const usImagePreScanSettings &preScanSettings) :
+  vpImage<Type>(image), usImagePreScanSettings(preScanSettings)
 {
-
+  if (image.getWidth() != preScanSettings.getScanLineNumber())
+    throw(vpException(vpException::badValue, "Pre-scan image width differ from transducer scanline number"));
 }
 
 /**
 * Destructor.
 */
-template<class T>
-usImagePreScan2D<T>::~usImagePreScan2D() {}
+template<class Type>
+usImagePreScan2D<Type>::~usImagePreScan2D() {}
 
 /**
 * Copy operator.
 */
-template<class T>
-usImagePreScan2D<T>& usImagePreScan2D<T>::operator=(const usImagePreScan2D<T> &other)
+template<class Type>
+usImagePreScan2D<Type>& usImagePreScan2D<Type>::operator=(const usImagePreScan2D<Type> &other)
 {
   //from vpImage
-  vpImage<T>::operator=(other);
+  vpImage<Type>::operator=(other);
 
-  //from usImageSettings
-  usImageSettings::operator=(other);
+  //from usImagePreScanSettings
+  usImagePreScanSettings::operator=(other);
 
-  //from this class
-  m_axialResolution = other.getAxialResolution();
+  return *this;
 }
 
 /**
-* Comparaison operator.
+* Comparison operator.
 */
-template<class T>
-bool usImagePreScan2D<T>::operator==(const usImagePreScan2D<T> &other)
+template<class Type>
+bool usImagePreScan2D<Type>::operator==(const usImagePreScan2D<Type> &other)
 {
-  return(vpImage<T>::operator== (other) &&
-         usImageSettings::operator ==(other) &&
-         m_axialResolution == other.getAxialResolution());
+  return(vpImage<Type>::operator== (other) && usImagePreScanSettings::operator ==(other));
 }
 
 /**
-* Copy from vpImage. From double image type.
-* @param I vpImage<double> to copy.
+* Operator to print 2D pre-scan image information on a stream.
 */
-template<class T>
-void usImagePreScan2D<T>::copyFrom(const vpImage<T> &I)
+template<class Type>
+std::ostream& operator<<(std::ostream& out, const usImagePreScan2D<Type> &other)
 {
-  resize(I.getHeight(), I.getWidth());
-  memcpy(this->bitmap, I.bitmap, I.getSize() * sizeof(T));
+  return out << static_cast<const usImagePreScanSettings &>(other)
+             << "number of B-mode samples in a scan line : "
+             << other.getBModeSampleNumber() << std::endl
+             << "number of scan lines : "
+             << other.getScanLineNumber() << std::endl;
 }
 
 /**
-* Get the number of A-samples in a line.
-* @return AN number of A-samples in a line.
+* Get the number of A-samples of B-Mode samples in a scan line.
+* @return BModeSampleNumber Number of A-samples in a scan line.
 */
-template<class T>
-unsigned int usImagePreScan2D<T>::getAN() const { return vpImage<T>::getHeight(); }
-
-/**
-* Get the number of lines.
-* @return LN number of lines.
-*/
-template<class T>
-unsigned int usImagePreScan2D<T>::getLN() const { return vpImage<T>::getWidth(); }
-
-/**
-* Getter for the axial resolution
-* @return The axial resolution : distance(in meters) between 2 successive pixels acquired along a scanLine.
-*/
-template<class T>
-double usImagePreScan2D<T>::getAxialResolution() const { return m_axialResolution; }
-
-/**
-* Setter for the axial resolution
-* @param axialResolution The axial resolution : distance(in meters) between 2 successive pixels acquired along a scanLine.
-*/
-template<class T>
-void usImagePreScan2D<T>::setAxialResolution(const double axialResolution)
-{
-  m_axialResolution = axialResolution;
-}
+template<class Type>
+unsigned int usImagePreScan2D<Type>::getBModeSampleNumber() const { return vpImage<Type>::getHeight(); }
 
 /**
 * Setter for the image data.
 * @param image The image to set.
 */
-template<class T>
-void usImagePreScan2D<T>::setData(const vpImage<T> image)
+template<class Type>
+void usImagePreScan2D<Type>::setData(const vpImage<Type> image)
 {
-  vpImage<T>::operator=(image);
+  vpImage<Type>::operator=(image);
+  setScanLineNumber(image.getWidth());
 }
+
+/**
+ * Set the transducer scan line number.
+ *
+ * Resize also the image width that is equal to the scan line number.
+ * \param scanLineNumber Number of scan lines acquired by the transducer.
+ */
+template<class Type>
+void usImagePreScan2D<Type>::setScanLineNumber(unsigned int scanLineNumber)
+{
+  vpImage<Type>::resize(vpImage<Type>::getHeight(), scanLineNumber);
+  usTransducerSettings::setScanLineNumber(scanLineNumber);
+}
+
+/*!
+ * Resize the 2D pre-scan image.
+ *
+ * Updates also the transducer scan line number that corresponds to the image width.
+ * \param h Image height.
+ * \param w Image width.
+ */
+template<class Type>
+void usImagePreScan2D<Type>::resize(const unsigned int h, const unsigned int w)
+{
+  usTransducerSettings::setScanLineNumber(w);
+  vpImage<Type>::resize(h, w);
+}
+
+/*!
+ * Resize the 2D pre-scan image and set all the pixel to a given value.
+ *
+ * Updates also the transducer scan line number that corresponds to the image width.
+ * \param h Image height.
+ * \param w Image width.
+ * \param val Value set to each pixel.
+ */
+template<class Type>
+void usImagePreScan2D<Type>::resize(const unsigned int h, const unsigned int w, const Type val)
+{
+  usTransducerSettings::setScanLineNumber(w);
+  vpImage<Type>::resize(h, w, val);
+}
+
 #endif // US_IMAGE_PRESCAN_2D_H

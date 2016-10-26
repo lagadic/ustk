@@ -30,45 +30,22 @@
 *****************************************************************************/
 
 /**
-* @file usRawFileParser.h
-* @brief Input/output operations between ultrasound images and the assiciated raw files.
+* @file usMeterPixelConversion.cpp
+* @brief Conversion between a position in meters in the space and the equivalent pixel position in the ultrasound image.
 */
 
-#ifndef US_RAW_FILE_PARSER_H
-#define US_RAW_FILE_PARSER_H
+#include <visp3/ustk_core/usMeterPixelConversion.h>
 
-#include<string>
-#include<map>
-#include <cstdlib>
-#include <string>
-#include <ios>
-#include <iostream>
-#include <fstream>
-#include <sstream>
+void usMeterPixelConversion::convert(const usImagePostScan2D<unsigned char> &image,
+                                     const double &x, const double &y,
+                                     double &u,  double &v)
+{
 
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpImage.h>
-#include <visp3/ustk_core/usImage3D.h>
+}
 
-/**
- * @class usRawFileParser
- * @brief Raw data parser.
- * @ingroup module_ustk_io
- */
-class VISP_EXPORT usRawFileParser {
+void usMeterPixelConversion::convert(const usImagePostScan2D<unsigned char> &image,
+                                     const double &x, const double &y, const double &z,
+                                     double &u,  double &v, double &w)
+{
 
-public:
-
-  /** @name 2D io */
-  //@{
-  void read(vpImage<unsigned char> &image2D, const std::string &mhdFileName);
-  void write(const vpImage<unsigned char> &image2D, const std::string &rawFileName);
-  //@}
-
-  /** @name 3D io */
-  //@{
-  void read(usImage3D<unsigned char> &image3D, const std::string &mhdFileName);
-  void write(const usImage3D<unsigned char> &image3D, const std::string &rawFileName);
-  //@}
-};
-#endif //US_RAW_FILE_PARSER_H
+}

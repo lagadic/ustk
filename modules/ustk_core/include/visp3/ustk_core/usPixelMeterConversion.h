@@ -30,45 +30,35 @@
 *****************************************************************************/
 
 /**
-* @file usRawFileParser.h
-* @brief Input/output operations between ultrasound images and the assiciated raw files.
+* @file usPixelMeterConversion.h
+* @brief Conversion between a pixel position in the ultrasound image and the real position in meters.
 */
 
-#ifndef US_RAW_FILE_PARSER_H
-#define US_RAW_FILE_PARSER_H
+#ifndef US_PIXEL_METER_CONVERSION_H
+#define US_PIXEL_METER_CONVERSION_H
 
-#include<string>
-#include<map>
-#include <cstdlib>
-#include <string>
-#include <ios>
-#include <iostream>
-#include <fstream>
-#include <sstream>
+#include <algorithm>
 
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpImage.h>
-#include <visp3/ustk_core/usImage3D.h>
+#include <visp3/core/vpDebug.h>
+#include <visp3/core/vpException.h>
+
+#include <visp3/ustk_core/usImagePostScan2D.h>
+#include <visp3/ustk_core/usImagePostScan3D.h>
 
 /**
- * @class usRawFileParser
- * @brief Raw data parser.
- * @ingroup module_ustk_io
- */
-class VISP_EXPORT usRawFileParser {
-
+* @class usPixelMeterConversion
+* @brief Conversion between a pixel position in the ultrasound image and the real position in meters.
+* @ingroup module_ustk_core
+*/
+class VISP_EXPORT usPixelMeterConversion
+{
 public:
+  //Only post-scan images can manage this kind of conversion
+  static void convert(const usImagePostScan2D<unsigned char> &image, const double &u, const double &v,
+                                                                    double &x,  double &y);
 
-  /** @name 2D io */
-  //@{
-  void read(vpImage<unsigned char> &image2D, const std::string &mhdFileName);
-  void write(const vpImage<unsigned char> &image2D, const std::string &rawFileName);
-  //@}
-
-  /** @name 3D io */
-  //@{
-  void read(usImage3D<unsigned char> &image3D, const std::string &mhdFileName);
-  void write(const usImage3D<unsigned char> &image3D, const std::string &rawFileName);
-  //@}
+  static void convert(const usImagePostScan3D<unsigned char> &image, const double &u, const double &v, const double &w,
+                                                                    double &x,  double &y, double &z);
 };
-#endif //US_RAW_FILE_PARSER_H
+
+#endif //US_PIXEL_METER_CONVERSION_H

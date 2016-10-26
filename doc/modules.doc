@@ -1,0 +1,31 @@
+/*******************************************
+ * Module ustk
+ *******************************************/
+/*!
+  \defgroup module_ustk ustk: Ultrasound tool kit
+  Ultrasound tool kit content.
+*/
+/*******************************************
+ * Module ustk_core
+ *******************************************/
+/*!
+  \ingroup module_ustk
+  \defgroup module_ustk_core ustk_core: UsTK core module
+  Ultrasound tool kit core module content.
+*/
+/*******************************************
+ * Module ustk_io
+ *******************************************/
+/*!
+  \ingroup module_ustk
+  \defgroup module_ustk_io ustk_io: UsTK I/O module
+  Ultrasound tool kit I/O module content.
+*/
+/*******************************************
+ * Module ustk_gui
+ *******************************************/
+/*!
+  \ingroup module_ustk
+  \defgroup module_ustk_gui ustk_gui: UsTK graphical user interface module
+  Ultrasound tool kit graphical user interface module content. It allows to display ultrasound images.
+*/

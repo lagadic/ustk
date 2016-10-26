@@ -7,20 +7,22 @@
 
 
 /*!
-  \example testUSMhdParser.cpp
+  \example testUsImageRf2DXmlParser.cpp
 
-  USTK MHD parser example.
+  USTK XML parser example.
   
   This example contains the declaration of a class used to read and write data
-  in a mhd file like:
+  in a xml file like:
   \code
-NDims = 3
-DimSize = 186 233 163
-ElementType = MET_UCHAR
-ElementSpacing = 1 1 1
-ElementByteOrderMSB = False
-ElementDataFile = postscan3d.raw
-UltrasoundImageType = POSTSCAN_3D
+<?xml version="1.0"?>
+<config>
+  <image_type>rf</image_type>
+  <axial_resolution>0.0005</axial_resolution>
+  <scanline_pitch>0.0045</scanline_pitch>
+  <probe_radius>0.0547896</probe_radius>
+  <is_convex>1</is_convex>
+  <image_file_name>rf2D.png</image_file_name>
+</config>
   \endcode
   
 */
@@ -29,13 +31,12 @@ UltrasoundImageType = POSTSCAN_3D
 #include <visp3/core/vpConfig.h>
 
 #include <iostream>
+#if defined(VISP_HAVE_XML2)
 
 #include <visp3/core/vpXmlParser.h>
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/io/vpParseArgv.h>
-
-#include <visp3/ustk_io/usMetaHeaderParser.h>
 
 #include <visp3/ustk_io/usImageIo.h>
 
@@ -64,26 +65,26 @@ Print the program options.
 void usage(const char *name, const char *badparam, const std::string& opath, const std::string& user)
 {
   fprintf(stdout, "\n\
-          Write and read data in a xml file.\n\
-          \n\
-          SYNOPSIS\n\
-          %s [-o <output image path>] [-h]\n", name);
+Write and read data in a xml file.\n\
+\n\
+SYNOPSIS\n\
+  %s [-o <output image path>] [-h]\n", name);
 
-      fprintf(stdout, "\n\
-              OPTIONS:                                               Default\n\
-              -o <output data path>                               %s\n\
-              Set data output path.\n\
-              From this directory, creates the \"%s\"\n\
-              subdirectory depending on the username, where \n\
-              prescan2D.xml file is written.\n\
-              \n\
-              -h\n\
-              Print the help.\n\n", opath.c_str(), user.c_str());
+  fprintf(stdout, "\n\
+OPTIONS:                                               Default\n\
+  -o <output data path>                                %s\n\
+    Set data output path.\n\
+    From this directory, creates the \"%s\"\n\
+    subdirectory depending on the username, where \n\
+    rf2D.xml file is written.\n\
+\n\
+  -h\n\
+    Print the help.\n\n", opath.c_str(), user.c_str());
 
-              if (badparam) {
-                fprintf(stderr, "ERROR: \n" );
-                fprintf(stderr, "\nBad parameter [%s]\n", badparam);
-              }
+  if (badparam) {
+    fprintf(stderr, "ERROR: \n" );
+    fprintf(stderr, "\nBad parameter [%s]\n", badparam);
+  }
 }
 
 /*!
@@ -140,11 +141,9 @@ int main(int argc, const char** argv)
     std::string filename;
     std::string username;
 
-    usMetaHeaderParser testReferenceSettings;
-
     std::cout <<  "-------------------------------------------------------" << std::endl ;
-    std::cout <<  "  testUSMhdParser.cpp" <<std::endl << std::endl ;
-    std::cout <<  "  writing and reading ultrasound data using a the US mhd parser" << std::endl ;
+    std::cout <<  "  testUsImageRf2DXmlParser.cpp" <<std::endl << std::endl ;
+    std::cout <<  "  writing and reading ultrasound data using a the US xml parser" << std::endl ;
     std::cout <<  "-------------------------------------------------------" << std::endl ;
     std::cout << std::endl ;
 
@@ -185,71 +184,55 @@ int main(int argc, const char** argv)
         exit(-1);
       }
     }
-    filename = opath + vpIoTools::path("/") + "postscan3d";
+
+    filename = dirname + vpIoTools::path("/") + "rf2D.xml";
 
     //Init values in reference parser (same values in file read in test)
-    usImagePostScan3D<unsigned char> postscan3DReference;
-    postscan3DReference.resize(186,233,163);
-    postscan3DReference.setElementSpacingX(1);
-    postscan3DReference.setElementSpacingY(1);
-    postscan3DReference.setElementSpacingZ(1);
-    postscan3DReference.setScanLinePitch(0.0145);
-    postscan3DReference.setProbeRadius(0.554);
-    postscan3DReference.setImageConvex(true);
-    postscan3DReference.setFramePitch(0.258);
-    postscan3DReference.setMotorRadius(0.025);
-    postscan3DReference.setMotorConvex(true);
-    postscan3DReference.setWidthResolution(0.0058);
-    postscan3DReference.setHeightResolution(0.0058);
+    vpImage<unsigned char> data(320,128, 128); // Set pixel intensity to 128
 
-    std::cout << "Read from " << filename << std::endl ;
-    std::cout << "Dim X : " << postscan3DReference.getDimX() << std::endl;
-    std::cout << "Dim Y : " << postscan3DReference.getDimY() << std::endl;
-    std::cout << "Dim Z: " << postscan3DReference.getDimZ() << std::endl;
-    std::cout << "Spacing X: " << postscan3DReference.getElementSpacingX() << std::endl;
-    std::cout << "Spacing Y: " << postscan3DReference.getElementSpacingY() << std::endl;
-    std::cout << "Spacing Z: " << postscan3DReference.getElementSpacingZ() << std::endl;
-    std::cout << "Scanline pitch : " << postscan3DReference.getScanLinePitch() << std::endl;
-    std::cout << "Probe Radius : " << postscan3DReference.getProbeRadius() << std::endl;
-    std::cout << "Frame pitch : " << postscan3DReference.getFramePitch() << std::endl;
-    std::cout << "Motor Radius : " << postscan3DReference.getMotorRadius() << std::endl;
-    std::cout << "Width resolution : " << postscan3DReference.getWidthResolution() << std::endl;
-    std::cout << "Height resolution : " << postscan3DReference.getHeightResolution() << std::endl;
+    usImageRF2D<unsigned char> rf2DReference;
+    rf2DReference.setData(data);
+    rf2DReference.setAxialResolution(0.0005);
+    rf2DReference.setScanLinePitch(0.0045);
+    rf2DReference.setTransducerRadius(0.05478);
+    rf2DReference.setTransducerConvexity(true);
 
-    //write image
-    usImageIo::write(postscan3DReference,filename);
+    usImageIo::write(rf2DReference,filename);
+
+    std::cout << "Written in " << filename << std::endl;
+    std::cout << rf2DReference;
 
     //read the image we just wrote
-    usImagePostScan3D<unsigned char> postscan3D;
-    filename = opath + vpIoTools::path("/") + "postscan3d.mhd";
-    usImageIo::read(postscan3D,filename);
+    usImageRF2D<unsigned char> rf2D;
+    filename = dirname + vpIoTools::path("/") + "rf2D.xml";
+    usImageIo::read(rf2D,filename);
+
 
     std::cout << "Read from " << filename << std::endl ;
-    std::cout << "Dim X : " << postscan3D.getDimX() << std::endl;
-    std::cout << "Dim Y : " << postscan3D.getDimY() << std::endl;
-    std::cout << "Dim Z: " << postscan3D.getDimZ() << std::endl;
-    std::cout << "Spacing X: " << postscan3D.getElementSpacingX() << std::endl;
-    std::cout << "Spacing Y: " << postscan3D.getElementSpacingY() << std::endl;
-    std::cout << "Spacing Z: " << postscan3D.getElementSpacingZ() << std::endl;
-    std::cout << "Scanline pitch : " << postscan3D.getScanLinePitch() << std::endl;
-    std::cout << "Probe Radius : " << postscan3D.getProbeRadius() << std::endl;
-    std::cout << "Frame pitch : " << postscan3D.getFramePitch() << std::endl;
-    std::cout << "Motor Radius : " << postscan3D.getMotorRadius() << std::endl;
-    std::cout << "Width resolution : " << postscan3D.getWidthResolution() << std::endl;
-    std::cout << "Height resolution : " << postscan3D.getHeightResolution() << std::endl;
+    std::cout << rf2D;
 
-    if(postscan3D==postscan3DReference) {
+    if(rf2D == rf2DReference) {
       std::cout << "Test passed !" << std::endl;
       return 0;
     }
+
 
     // Clean up memory allocated by the xml library
     vpXmlParser::cleanup();
     std::cout << "Test failed !" << std::endl;
     return 1;
   }
-  catch(vpException &e) {
-    std::cout << "Catch an exception: " << e << std::endl;
+  catch(const vpException &e) {
+    std::cout << "Catch an exception: " << e.getMessage() << std::endl;
     return 1;
   }
 }
+
+#else
+
+int main()
+{
+  std::cout << "Xml parser requires libxml2." << std::endl;
+  return 0;
+}
+#endif
