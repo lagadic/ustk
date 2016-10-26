@@ -201,7 +201,7 @@ int main(int argc, const char** argv)
     postscan3DReference.setMotorType(usMotorSettings::TiltingMotor);
     postscan3DReference.setElementSpacingX(0.0058);
     postscan3DReference.setElementSpacingY(0.0058);
-    postscan3DReference.setElementSpacingZ(0.0058);
+    postscan3DReference.setElementSpacingZ(0.01058);
 
     std::cout << "Written in " << filename << std::endl ;
     std::cout << postscan3DReference;

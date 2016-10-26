@@ -188,9 +188,6 @@ int main(int argc, const char** argv)
     //Init values in reference parser (same values in file read in test)
     usImagePreScan3D<unsigned char> prescan3DReference;
     prescan3DReference.resize(186,233,163);
-    prescan3DReference.setElementSpacingX(1);
-    prescan3DReference.setElementSpacingY(1);
-    prescan3DReference.setElementSpacingZ(1);
     prescan3DReference.setScanLinePitch(0.0145);
     prescan3DReference.setTransducerRadius(0.554);
     prescan3DReference.setTransducerConvexity(true);

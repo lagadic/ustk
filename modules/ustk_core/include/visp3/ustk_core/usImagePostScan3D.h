@@ -122,15 +122,30 @@ class usImagePostScan3D : public usImage3D<Type>, public usTransducerSettings, p
 public:
   usImagePostScan3D();
   usImagePostScan3D(const usImage3D<Type> &image, const usTransducerSettings &transducerSettings,
-                    const usMotorSettings &motorSettings);
+                    const usMotorSettings &motorSettings,
+                    double spacingX, double spacingY, double spacingZ);
   usImagePostScan3D(const usImagePostScan3D &other);
   virtual ~usImagePostScan3D();
+
+  double getElementSpacingX() const;
+  double getElementSpacingY() const;
+  double getElementSpacingZ() const;
 
   usImagePostScan3D<Type> & operator =(const usImagePostScan3D<Type> &other);
 
   bool operator ==(const usImagePostScan3D<Type> &other);
 
   void setData(const usImage3D<Type> &image3D);
+
+  void setElementSpacingX(double elementSpacingX);
+  void setElementSpacingY(double elementSpacingY);
+  void setElementSpacingZ(double elementSpacingZ);
+
+
+private:
+  double m_elementSpacingX; /**< Element spacing along the x-axis, in meters */
+  double m_elementSpacingY; /**< Element spacing along the y-axis, in meters */
+  double m_elementSpacingZ; /**< Element spacing along the z-axis, in meters */
 };
 
 
@@ -160,12 +175,17 @@ usImagePostScan3D<Type>::usImagePostScan3D(const usImagePostScan3D &other)
 * @param image 3D data to copy.
 * @param transducerSettings Transducer settings to copy.
 * @param motorSettings Motor settings to copy.
+* @param spacingX distancee (in meters) between two voxels on X-axis
+* @param spacingY distancee (in meters) between two voxels on Y-axis
+* @param spacingZ distancee (in meters) between two voxels on Z-axis
 */
 template<class Type>
 usImagePostScan3D<Type>::usImagePostScan3D(const usImage3D<Type> &image,
                                            const usTransducerSettings &transducerSettings,
-                                           const usMotorSettings &motorSettings)
-: usImage3D<Type>(image), usTransducerSettings(transducerSettings), usMotorSettings(motorSettings)
+                                           const usMotorSettings &motorSettings,
+                                           double spacingX, double spacingY, double spacingZ)
+: usImage3D<Type>(image), usTransducerSettings(transducerSettings), usMotorSettings(motorSettings),
+  m_elementSpacingX (spacingX), m_elementSpacingY(spacingY), m_elementSpacingZ(spacingZ)
 {
 
 }
@@ -189,6 +209,11 @@ usImagePostScan3D<Type> & usImagePostScan3D<Type>::operator =(const usImagePostS
   usTransducerSettings::operator =(other);
   usMotorSettings::operator =(other);
 
+  //from this class
+  m_elementSpacingX = other.getElementSpacingX();
+  m_elementSpacingY = other.getElementSpacingY();
+  m_elementSpacingZ = other.getElementSpacingZ();
+
   return *this;
 }
 
@@ -199,8 +224,11 @@ template<class Type>
 bool usImagePostScan3D<Type>::operator == (usImagePostScan3D<Type> const& other)
 {
   return usImage3D<Type>::operator ==(other) &&
-    usTransducerSettings::operator==(other) &&
-         usMotorSettings::operator ==(other);
+         usTransducerSettings::operator==(other) &&
+         usMotorSettings::operator ==(other) &&
+         m_elementSpacingX == other.getElementSpacingX() &&
+         m_elementSpacingY == other.getElementSpacingY() &&
+         m_elementSpacingZ == other.getElementSpacingZ();
 }
 
 /**
@@ -210,7 +238,10 @@ template<class Type> std::ostream& operator<<(std::ostream& out, const usImagePo
 {
   return out << static_cast<const usImage3D<Type> &>(other)
              << static_cast<const usTransducerSettings &>(other)
-             << static_cast<const usMotorSettings &>(other);
+             << static_cast<const usMotorSettings &>(other)
+             << "spacingX = " << other.getElementSpacingX() << std::endl
+             << "spacingY = " << other.getElementSpacingY() << std::endl
+             << "spacingZ = " << other.getElementSpacingZ() << std::endl;
 }
 
 /**
@@ -221,6 +252,66 @@ template<class Type>
 void usImagePostScan3D<Type>::setData(const usImage3D<Type> &image3D)
 {
   usImage3D<Type>::operator =(image3D);
+}
+
+/**
+* Get the element spacing along the x-axis.
+* @return The element spacing along the x-axis, in meters.
+*/
+template<class Type>
+double usImagePostScan3D<Type>::getElementSpacingX() const
+{
+  return m_elementSpacingX;
+}
+
+/**
+* Get the element spacing along the y-axis.
+* @return The element spacing along the y-axis, in meters.
+*/
+template<class Type>
+double usImagePostScan3D<Type>::getElementSpacingY() const
+{
+  return m_elementSpacingY;
+}
+
+/**
+* Get the element spacing along the z-axis.
+* @return The element spacing along the z-axis, in meters.
+*/
+template<class Type>
+double usImagePostScan3D<Type>::getElementSpacingZ() const
+{
+  return m_elementSpacingZ;
+}
+
+/**
+* Set the element spacing along the x-axis.
+* @param elementSpacingX The element spacing along the x-axis, in meters.
+*/
+template<class Type>
+void usImagePostScan3D<Type>::setElementSpacingX(double elementSpacingX)
+{
+  m_elementSpacingX = elementSpacingX;
+}
+
+/**
+* Set the element spacing along the y-axis.
+* @param elementSpacingY The element spacing along the y-axis, in meters.
+*/
+template<class Type>
+void usImagePostScan3D<Type>::setElementSpacingY(double elementSpacingY)
+{
+  m_elementSpacingY = elementSpacingY;
+}
+
+/**
+* Set the element spacing along the z-axis.
+* @param elementSpacingZ The element spacing along the z-axis, in meters.
+*/
+template<class Type>
+void usImagePostScan3D<Type>::setElementSpacingZ(double elementSpacingZ)
+{
+  m_elementSpacingZ = elementSpacingZ;
 }
 
 #endif // US_IMAGE_POSTSCAN_3D_H

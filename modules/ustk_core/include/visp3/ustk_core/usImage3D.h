@@ -34,7 +34,7 @@
 * @file usImage3D.h
 * @brief 3D image handling.
 *
-* This class is used to represent 3D data with physical information such as element spacing.
+* This class is used to represent 3D data.
 */
 
 #ifndef US_IMAGE_3D_H
@@ -65,23 +65,12 @@ public:
   usImage3D();
 
   /**
-  * Constructor. Set the dimensions and element spacing of the volume.
+  * Constructor. Set the dimensions of the volume.
   * @param dimX Volume width.
   * @param dimY Volume height.
   * @param dimZ Volume size in the third dimension (orthogonal to ultrasound 2D frames).
   */
   usImage3D(unsigned int dimX, unsigned int dimY, unsigned int dimZ);
-
-  /**
-  * Constructor. Set the dimensions and element spacing of the volume.
-  * @param dimX Volume width.
-  * @param dimY Volume height.
-  * @param dimZ Volume size in the third dimension (orthogonal to ultrasound 2D frames).
-  * @param spacingX distancee (in meters) between two voxels on X-axis
-  * @param spacingY distancee (in meters) between two voxels on Y-axis
-  * @param spacingZ distancee (in meters) between two voxels on Z-axis
-  */
-  usImage3D(unsigned int dimX, unsigned int dimY, unsigned int dimZ, double spacingX, double spacingY, double spacingZ);
 
   /**
   * Copy constructor. By default performs a deep copy.
@@ -129,24 +118,6 @@ public:
   unsigned int getDimZ() const { return m_dimZ; }
 
   /**
-  * Get the element spacing along the x-axis.
-  * @return The element spacing along the x-axis, in meters.
-  */
-  double getElementSpacingX() const { return m_elementSpacingX; }
-
-  /**
-  * Get the element spacing along the y-axis.
-  * @return The element spacing along the y-axis, in meters.
-  */
-  double getElementSpacingY() const { return m_elementSpacingY; }
-
-  /**
-  * Get the element spacing along the z-axis.
-  * @return The element spacing along the z-axis, in meters.
-  */
-  double getElementSpacingZ() const { return m_elementSpacingZ; }
-
-  /**
   * Get the volume size.
   * @return The number of voxels in the volume.
   */
@@ -159,17 +130,6 @@ public:
   * @param dimZ Volume size (number of voxels) in the third dimension (orthogonal to ultrasound 2D frames).
   */
   void init(unsigned int dimX, unsigned int dimY, unsigned int dimZ);
-
-  /**
-  * Initiation of the image.
-  * @param dimX Volume width.
-  * @param dimY Volume height.
-  * @param dimZ Volume size in the third dimension (orthogonal to ultrasound 2D frames).
-  * @param spacingX Element spacing in x axis, in meters.
-  * @param spacingY Element spacing in x axis, in meters.
-  * @param spacingZ Element spacing in x axis, in meters.
-  */
-  void init(unsigned int dimX, unsigned int dimY, unsigned int dimZ, double spacingX, double spacingY, double spacingZ);
 
   /**
   * Initialize the data container with the specified value.
@@ -186,7 +146,7 @@ public:
 
   /**
   * Comparison operator.
-  * @param other The 3d image to compare. Comparing image parameters (size and spacing), and all volume voxel by voxel.
+  * @param other The 3d image to compare. Comparing image parameters, and all volume voxel by voxel.
   */
   bool operator==(const usImage3D<Type> &other);
 
@@ -255,24 +215,6 @@ public:
   */
   void setData(Type* data, int numberOfVoxels);
 
-  /**
-  * Set the element spacing along the x-axis.
-  * @param elementSpacingX The element spacing along the x-axis, in meters.
-  */
-  void setElementSpacingX(double elementSpacingX) { m_elementSpacingX = elementSpacingX; }
-
-  /**
-  * Set the element spacing along the y-axis.
-  * @param elementSpacingY The element spacing along the y-axis, in meters.
-  */
-  void setElementSpacingY(double elementSpacingY) { m_elementSpacingY = elementSpacingY; }
-
-  /**
-  * Set the element spacing along the z-axis.
-  * @param elementSpacingZ The element spacing along the z-axis, in meters.
-  */
-  void setElementSpacingZ(double elementSpacingZ) { m_elementSpacingZ = elementSpacingZ; }
-
   //@}
 
 protected:
@@ -281,9 +223,6 @@ private:
   unsigned int m_dimX; /**< Volume width in pixels (number of pixels on the x-axis)*/
   unsigned int m_dimY; /**< Volume height in pixels (number of pixels on the y-axis)*/
   unsigned int m_dimZ; /**< Volume size in 3d dimension (number of pixels on the z-axis)*/
-  double m_elementSpacingX; /**< Element spacing along the x-axis, in meters */
-  double m_elementSpacingY; /**< Element spacing along the y-axis, in meters */
-  double m_elementSpacingZ; /**< Element spacing along the z-axis, in meters */
   unsigned int m_size; /**< Volume size : number of voxels in the whole volume*/
 
   Type* bitmap; /**< Data container */
@@ -361,19 +300,9 @@ inline void usImage3D<Type>::init(unsigned int dimX, unsigned int dimY, unsigned
     planesIndex[i] = bitmap + i*m_dimX*m_dimY ;
 }
 
-template<class Type>
-void
-usImage3D<Type>::init(unsigned int dimX, unsigned int dimY, unsigned int dimZ, double spacingX, double spacingY, double spacingZ)
-{
-  init(dimX, dimY, dimZ);
-  m_elementSpacingX = spacingX;
-  m_elementSpacingY = spacingY;
-  m_elementSpacingZ = spacingZ;
-}
 
 template<class Type>
 usImage3D<Type>::usImage3D() : m_dimX(0), m_dimY(0), m_dimZ(0),
-m_elementSpacingX(1.0f), m_elementSpacingY(1.0f), m_elementSpacingZ(1.0f),
   m_size(0),bitmap(NULL), planesIndex(NULL)
 {
 
@@ -382,18 +311,7 @@ m_elementSpacingX(1.0f), m_elementSpacingY(1.0f), m_elementSpacingZ(1.0f),
 template<class Type>
 usImage3D<Type>::usImage3D(unsigned int dimX, unsigned int dimY, unsigned int dimZ)
 : m_dimX(dimX), m_dimY(dimY), m_dimZ(dimZ), m_size(dimX * dimY * dimZ),
-  m_elementSpacingX(1.0f), m_elementSpacingY(1.0f), m_elementSpacingZ(1.0f),
   bitmap(NULL), planesIndex(NULL)
-{
-  init(dimX, dimY, dimZ);
-}
-
-template<class Type>
-usImage3D<Type>::usImage3D(unsigned int dimX, unsigned int dimY, unsigned int dimZ,
-                           double elementSpacingX, double elementSpacingY, double elementSpacingZ)
-                           : m_dimX(dimX), m_dimY(dimY), m_dimZ(dimZ), m_size(dimX * dimY * dimZ),
-                             m_elementSpacingX(elementSpacingX), m_elementSpacingY(elementSpacingY),
-                             m_elementSpacingZ(elementSpacingZ), bitmap(NULL), planesIndex(NULL)
 {
   init(dimX, dimY, dimZ);
 }
@@ -404,9 +322,6 @@ usImage3D<Type>::usImage3D(const usImage3D<Type> &volume, const bool copy)
   init(volume.getDimX(),volume.getDimY(),volume.getDimZ());
 
   m_size = m_dimX * m_dimY * m_dimZ;
-  m_elementSpacingX = volume.getElementSpacingX();
-  m_elementSpacingY = volume.getElementSpacingY();
-  m_elementSpacingZ = volume.getElementSpacingZ();
 
   //deep copy
   if(copy)
@@ -443,9 +358,6 @@ usImage3D<Type> &usImage3D<Type>::operator=(const usImage3D<Type> &other)
     bitmap = new Type[m_size];
   }
 
-  m_elementSpacingX = other.m_elementSpacingX;
-  m_elementSpacingY = other.m_elementSpacingY;
-  m_elementSpacingZ = other.m_elementSpacingZ;
   memcpy(bitmap, other.bitmap, m_size * sizeof(Type));
   return *this;
 }
@@ -455,10 +367,7 @@ bool usImage3D<Type>::operator==(const usImage3D<Type> &other)
 {
   bool settingsOk = this->getDimX() == other.getDimX() &&
       this->getDimY() == other.getDimY() &&
-      this->getDimZ() == other.getDimZ() &&
-      this->getElementSpacingX() == other.getElementSpacingX() &&
-      this->getElementSpacingY() == other.getElementSpacingY() &&
-      this->getElementSpacingZ() == other.getElementSpacingZ();
+      this->getDimZ() == other.getDimZ();
 
   if(settingsOk) {
     for (unsigned int i=0 ; i < m_size ; i++) {

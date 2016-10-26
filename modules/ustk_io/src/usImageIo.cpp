@@ -964,8 +964,9 @@ void usImageIo::read(usImagePostScan3D<unsigned char> &postScanImage, const std:
     postScanImage.setScanLinePitch(mhdHeader.scanLinePitch);
     postScanImage.setTransducerConvexity(mhdHeader.isTransducerConvex);
     postScanImage.setScanLineNumber(mhdHeader.scanLineNumber);
-    postScanImage.setElementSpacingX(mhdParser.getWidthResolution());
-    postScanImage.setElementSpacingY(mhdParser.getHeightResolution());
+    postScanImage.setElementSpacingX(mhdHeader.elementSpacing[0]);
+    postScanImage.setElementSpacingY(mhdHeader.elementSpacing[1]);
+    postScanImage.setElementSpacingZ(mhdHeader.elementSpacing[2]);
     postScanImage.setMotorRadius(mhdHeader.motorRadius);
     postScanImage.setFramePitch(mhdHeader.framePitch);
     postScanImage.setFrameNumber(mhdHeader.frameNumber);
