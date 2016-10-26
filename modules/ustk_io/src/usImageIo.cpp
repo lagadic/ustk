@@ -172,7 +172,6 @@ void usImageIo::read(usImageRF2D<unsigned char> &imageRf2D, const std::string &h
   if (headerFormat == FORMAT_XML) {
 #ifdef VISP_HAVE_XML2
     //parsing xml file
-    std::cout << headerFileName << std::endl;
     usImageSettingsXmlParser xmlSettings;
     try {
       xmlSettings.parse(headerFileName);
@@ -218,7 +217,8 @@ void usImageIo::read(usImageRF2D<unsigned char> &imageRf2D, const std::string &h
 
     //data parsing
     usRawFileParser rawParser;
-    rawParser.read(imageRf2D, mhdParser.getRawFileName());
+    std::string fullImageFileName = vpIoTools::getParent(headerFileName) + vpIoTools::path("/") + mhdParser.getRawFileName();
+    rawParser.read(imageRf2D, fullImageFileName);
   }
   else
     throw(vpException(vpException::fatalError, "Unknown header format."));
@@ -348,7 +348,8 @@ void usImageIo::read(usImageRF3D<unsigned char> &imageRf3, const std::string &he
 
     //data parsing
     usRawFileParser rawParser;
-    rawParser.read(imageRf3, mhdParser.getRawFileName());
+    std::string fullImageFileName = vpIoTools::getParent(headerFileName) + vpIoTools::path("/") + mhdParser.getRawFileName();
+    rawParser.read(imageRf3, fullImageFileName);
   }
   else
     throw(vpException(vpException::fatalError, "Unknown header format."));
@@ -361,8 +362,7 @@ void usImageIo::read(usImageRF3D<unsigned char> &imageRf3, const std::string &he
 */
 void usImageIo::write(const usImagePreScan2D<unsigned char>  &preScanImage, const std::string &headerFileName)
 {
-    std::cout << "usImageIo::write prescan 2d" << std::endl;
-//checking header type
+  //checking header type
   usImageIo::usHeaderFormatType headerFormat = getHeaderFormat(headerFileName);
   if (headerFormat == FORMAT_XML) {
     write(preScanImage,headerFileName,std::string(".png"));
@@ -501,7 +501,8 @@ void usImageIo::read(usImagePreScan2D<unsigned char> &preScanImage,const std::st
 
     //data parsing
     usRawFileParser rawParser;
-    rawParser.read(preScanImage, mhdParser.getRawFileName());
+    std::string fullImageFileName = vpIoTools::getParent(headerFileName) + vpIoTools::path("/") + mhdParser.getRawFileName();
+    rawParser.read(preScanImage, fullImageFileName);
   }
   else
     throw(vpException(vpException::fatalError, "Unknown header format."));
@@ -630,8 +631,9 @@ void usImageIo::read(usImagePreScan3D<unsigned char> &preScanImage,const std::st
     preScanImage.setMotorSettings(motorSettings);
 
     //data parsing
-    usRawFileParser rawParser;
-    rawParser.read(preScanImage, mhdParser.getRawFileName());
+    usRawFileParser rawParser;    
+    std::string fullImageFileName = vpIoTools::getParent(headerFileName) + vpIoTools::path("/") + mhdParser.getRawFileName();
+    rawParser.read(preScanImage, fullImageFileName);
   }
   else
     throw(vpException(vpException::fatalError, "Unknown header format."));
@@ -843,7 +845,8 @@ void usImageIo::read(usImagePostScan2D<unsigned char> &postScanImage,const std::
     postScanImage.resize(mhdHeader.dim[1], mhdHeader.dim[0]);
     //data parsing
     usRawFileParser rawParser;
-    rawParser.read(postScanImage, mhdParser.getRawFileName());
+    std::string fullImageFileName = vpIoTools::getParent(headerFileName) + vpIoTools::path("/") + mhdParser.getRawFileName();
+    rawParser.read(postScanImage, fullImageFileName);
   }
   else
     throw(vpException(vpException::fatalError, "Unknown header format."));
@@ -970,7 +973,8 @@ void usImageIo::read(usImagePostScan3D<unsigned char> &postScanImage, const std:
       
     //data parsing
     usRawFileParser rawParser;
-    rawParser.read(postScanImage,mhdParser.getRawFileName());
+    std::string fullImageFileName = vpIoTools::getParent(headerFileName) + vpIoTools::path("/") + mhdParser.getRawFileName();
+    rawParser.read(postScanImage,fullImageFileName);
   }
   else
     throw(vpException(vpException::fatalError, "Unknown header format."));
