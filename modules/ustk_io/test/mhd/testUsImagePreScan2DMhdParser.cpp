@@ -41,6 +41,8 @@ UltrasoundImageType = PRESCAN_2D
 
 #include <string>
 
+#include <visp3/io/vpImageIo.h>
+
 /* -------------------------------------------------------------------------- */
 /*                         COMMAND LINE OPTIONS                               */
 /* -------------------------------------------------------------------------- */
@@ -184,8 +186,9 @@ int main(int argc, const char** argv)
     filename = dirname + vpIoTools::path("/") + "prescan2d.mhd";
 
     //Init values in reference parser (same values in file read in test)
+    vpImage<unsigned char> data(186, 233, 128); // Set pixel intensity to 128
     usImagePreScan2D<unsigned char> prescan2DReference;
-    prescan2DReference.resize(186,233);
+    prescan2DReference.setData(data);
     prescan2DReference.setScanLinePitch(0.0145);
     prescan2DReference.setTransducerRadius(0.554);
     prescan2DReference.setTransducerConvexity(true);

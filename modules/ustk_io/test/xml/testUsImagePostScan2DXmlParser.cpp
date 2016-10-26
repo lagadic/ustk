@@ -189,15 +189,14 @@ int main(int argc, const char** argv)
     filename = dirname + vpIoTools::path("/") + "postscan2D.xml";
 
     //Init values in reference parser (same values in file read in test)
+    vpImage<unsigned char> data(320, 128, 128); // Set pixel intensity to 128
     usImagePostScan2D<unsigned char> postscan2DReference;
+    postscan2DReference.setData(data);
     postscan2DReference.setHeightResolution(0.0005);
     postscan2DReference.setWidthResolution(0.0005);
     postscan2DReference.setScanLinePitch(0.0045);
     postscan2DReference.setTransducerRadius(0.05478);
-    postscan2DReference.resize(320,128);
     postscan2DReference.setTransducerConvexity(true);
-    postscan2DReference(95,200,64);
-    postscan2DReference(116,80,36);
 
     usImageIo::write(postscan2DReference,filename);
 

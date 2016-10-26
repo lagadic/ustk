@@ -184,8 +184,9 @@ int main(int argc, const char** argv)
     filename = dirname + vpIoTools::path("/") + "rf2d.mhd";
 
     //Init values in reference parser (same values in file read in test)
+    vpImage<unsigned char> data(186, 233, 128); // Set pixel intensity to 128
     usImageRF2D<unsigned char> rf2DReference;
-    rf2DReference.resize(186, 233,255);
+    rf2DReference.setData(data);
     rf2DReference.setScanLinePitch(0.0145);
     rf2DReference.setTransducerRadius(0.554);
     rf2DReference.setTransducerConvexity(true);

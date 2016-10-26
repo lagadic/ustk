@@ -188,14 +188,14 @@ int main(int argc, const char** argv)
     filename = dirname + vpIoTools::path("/") + "rf2D.xml";
 
     //Init values in reference parser (same values in file read in test)
+    vpImage<unsigned char> data(320,128, 128); // Set pixel intensity to 128
+
     usImageRF2D<unsigned char> rf2DReference;
+    rf2DReference.setData(data);
     rf2DReference.setAxialResolution(0.0005);
     rf2DReference.setScanLinePitch(0.0045);
     rf2DReference.setTransducerRadius(0.05478);
-    rf2DReference.resize(320,128);
     rf2DReference.setTransducerConvexity(true);
-    rf2DReference(95,200,64);
-    rf2DReference(116,80,36);
 
     usImageIo::write(rf2DReference,filename);
 

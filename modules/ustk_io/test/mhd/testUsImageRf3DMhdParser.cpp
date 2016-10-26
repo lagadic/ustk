@@ -186,7 +186,7 @@ int main(int argc, const char** argv)
 
     //Init values in reference parser (same values in file read in test)
     usImageRF3D<unsigned char> rf3DReference;
-    rf3DReference.resize(186,233,163);
+    rf3DReference.resize(186, 233, 163);
     rf3DReference.setScanLinePitch(0.0145);
     rf3DReference.setTransducerRadius(0.554);
     rf3DReference.setTransducerConvexity(true);

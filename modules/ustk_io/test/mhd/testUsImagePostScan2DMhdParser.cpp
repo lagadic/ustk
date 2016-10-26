@@ -186,8 +186,9 @@ int main(int argc, const char** argv)
     filename = dirname + vpIoTools::path("/") + "postscan2d.mhd";
 
     //Init values in reference parser (same values in file read in test)
+    vpImage<unsigned char> data(186, 233, 128); // Set pixel intensity to 128
     usImagePostScan2D<unsigned char> usImagePostScan2DReference;
-    usImagePostScan2DReference.resize(186,233);
+    usImagePostScan2DReference.setData(data);
     usImagePostScan2DReference.setScanLinePitch(0.0145);
     usImagePostScan2DReference.setScanLineNumber(45);
     usImagePostScan2DReference.setTransducerRadius(0.554);

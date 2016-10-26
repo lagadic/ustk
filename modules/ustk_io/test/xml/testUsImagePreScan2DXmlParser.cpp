@@ -188,14 +188,13 @@ int main(int argc, const char** argv)
     filename = dirname + vpIoTools::path("/") + "prescan2D.xml";
 
     //Init values in reference parser (same values in file read in test)
+    vpImage<unsigned char> data(320, 128, 128); // Set pixel intensity to 128
     usImagePreScan2D<unsigned char> prescan2DReference;
+    prescan2DReference.setData(data);
     prescan2DReference.setAxialResolution(0.0005);
     prescan2DReference.setScanLinePitch(0.0045);
     prescan2DReference.setTransducerRadius(0.05478);
-    prescan2DReference.resize(320,128);
     prescan2DReference.setTransducerConvexity(true);
-    prescan2DReference(95,200,64);
-    prescan2DReference(116,80,36);
 
     usImageIo::write(prescan2DReference,filename);
 
