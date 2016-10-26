@@ -137,8 +137,8 @@ void usImageIo::write(const usImageRF2D<unsigned char> &imageRf2D, const std::st
     header.imageType = usMetaHeaderParser::RF_2D;
     header.elementSpacing[0] = 1;
     header.elementSpacing[1] = 1;
-    header.dim[0] = imageRf2D.getRFSampleNumber();
-    header.dim[1] = imageRf2D.getScanLineNumber();
+    header.dim[0] = imageRf2D.getScanLineNumber();
+    header.dim[1] = imageRf2D.getRFSampleNumber();
     header.msb = false;
     header.MHDFileName = headerFileName;
     //remove full path for image file name (located in the same directory as the mhd

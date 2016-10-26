@@ -185,7 +185,7 @@ int main(int argc, const char** argv)
 
     //Init values in reference parser (same values in file read in test)
     usImageRF2D<unsigned char> rf2DReference;
-    rf2DReference.resize(186, 233, 255);
+    rf2DReference.resize(186, 233,255);
     rf2DReference.setScanLinePitch(0.0145);
     rf2DReference.setProbeRadius(0.554);
     rf2DReference.setTransducerConvexity(true);
@@ -194,8 +194,6 @@ int main(int argc, const char** argv)
     std::cout << "Written in " << filename << std::endl ;
     std::cout << rf2DReference;
 
-    std::cout << "ref height : " << rf2DReference.getHeight() << std::endl;
-    std::cout << "ref width : " << rf2DReference.getWidth() << std::endl;
     //write image
     usImageIo::write(rf2DReference, filename);
 
@@ -206,9 +204,6 @@ int main(int argc, const char** argv)
 
     std::cout << "Read from " << filename << std::endl ;
     std::cout << rf2D;
-
-    std::cout << "read height : " << rf2DReference.getHeight() << std::endl;
-    std::cout << "read width : " << rf2DReference.getWidth() << std::endl;
 
     if(rf2D == rf2DReference) {
       std::cout << "Test passed !" << std::endl;

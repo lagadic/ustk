@@ -190,7 +190,8 @@ template<class Type>
 std::ostream& operator<<(std::ostream& out, const usImageRF3D<Type> &other)
 {
   return out << static_cast<const usImage3D<Type> &>(other) <<
-    static_cast<const usImagePreScanSettings &>(other);
+                static_cast<const usImagePreScanSettings &>(other) <<
+                static_cast<const usMotorSettings &>(other);
 }
 
 /**

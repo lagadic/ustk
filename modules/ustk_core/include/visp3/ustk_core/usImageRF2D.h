@@ -171,6 +171,8 @@ template<class Type>
 std::ostream& operator<<(std::ostream& out, const usImageRF2D<Type> &other)
 {
   return out << static_cast<const usImagePreScanSettings &>(other) <<
+    "image height : " << other.getHeight() << std::endl <<
+    "image width : " << other.getWidth() << std::endl <<
     "number of A-samples in a scanline : " << other.getRFSampleNumber() << std::endl <<
     "number of scanlines : " << other.getScanLineNumber() << std::endl;
 }
