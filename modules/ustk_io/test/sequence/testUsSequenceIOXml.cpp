@@ -170,13 +170,15 @@ int main(int argc, const char** argv)
 
     //Init values in reference image
     usImageRF2D<unsigned char> rf2DReference;
+    //init image
+    vpImage<unsigned char> image;
+    image.resize(320,128,123);
+    //init settings
     rf2DReference.setAxialResolution(0.0005);
     rf2DReference.setScanLinePitch(0.0045);
     rf2DReference.setTransducerRadius(0.05478);
-    rf2DReference.resize(320,128);
     rf2DReference.setTransducerConvexity(true);
-    rf2DReference(95,200,64);
-    rf2DReference(116,80,36);
+    rf2DReference.setData(image);
 
     std::vector<usImageRF2D<unsigned char> > ImageBufferRef;
     for(int i=0;i<4;i++) {
@@ -215,7 +217,6 @@ int main(int argc, const char** argv)
       ImageBuffer.push_back(rf2D);
       i++;
     }
-    std::cout << "read i : " << i <<std::endl;
 
     std::cout << "Read from " << filename << std::endl ;
     std::cout << ImageBuffer.at(0);

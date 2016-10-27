@@ -247,6 +247,7 @@ void usSequenceWriter< usImageRF2D < unsigned char > >::close()
   xmlParser.setSequenceStopNumber(m_frameCount-1);
   xmlParser.setImageFileName(m_genericImageFileName);
   xmlParser.save(m_sequenceFileName);
+  vpXmlParser::cleanup();
 }
 
 template<>
@@ -268,6 +269,7 @@ void usSequenceWriter < usImagePreScan2D < unsigned char > >::close()
   xmlParser.setSequenceStopNumber(m_frameCount-1);
   xmlParser.setImageFileName(m_genericImageFileName);
   xmlParser.save(m_sequenceFileName);
+  vpXmlParser::cleanup();
 }
 
 template<>
@@ -291,6 +293,7 @@ void usSequenceWriter<usImagePostScan2D<unsigned char> >::close()
   xmlParser.setSequenceStopNumber(m_frameCount-1);
   xmlParser.setImageFileName(m_genericImageFileName);
   xmlParser.save(m_sequenceFileName);
+  vpXmlParser::cleanup();
 }
 
 /**

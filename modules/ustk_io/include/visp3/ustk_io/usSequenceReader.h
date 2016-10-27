@@ -128,7 +128,8 @@ public:
 */
 template<class ImageType>
 usSequenceReader<ImageType>::usSequenceReader() : m_frame(), m_frameRate(0.0), m_firstFrame(0), m_firstFrameIsSet(false),
- m_lastFrame(0), m_lastFrameIsSet(false), m_frameCount(0), m_sequenceFileName(""),m_genericImageFileName(""), m_fileNameIsSet(false)
+ m_lastFrame(0), m_lastFrameIsSet(false), m_frameCount(0), m_sequenceFileName(""),m_genericImageFileName(""), m_fileNameIsSet(false),
+is_open(false)
 {
 
 }
