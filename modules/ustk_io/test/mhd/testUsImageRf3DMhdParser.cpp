@@ -193,7 +193,7 @@ int main(int argc, const char** argv)
     rf3DReference.setTransducerConvexity(true);
     rf3DReference.setAxialResolution(0.0058);
     //image initialisation
-    rf3DReference.initData(255,rf3DReference.getSize());
+    rf3DReference.initData(255);
 
     //printing settings
     std::cout << "Written in " << filename << std::endl ;

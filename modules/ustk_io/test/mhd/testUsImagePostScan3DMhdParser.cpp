@@ -204,7 +204,7 @@ int main(int argc, const char** argv)
     postscan3DReference.setElementSpacingY(0.0058);
     postscan3DReference.setElementSpacingZ(0.01058);
     //image initialisation
-    postscan3DReference.initData(255,postscan3DReference.getSize());
+    postscan3DReference.initData(255);
 
     std::cout << "Written in " << filename << std::endl ;
     std::cout << postscan3DReference;

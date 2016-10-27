@@ -197,7 +197,7 @@ int main(int argc, const char** argv)
     prescan3DReference.setMotorType(usMotorSettings::TiltingMotor);
     prescan3DReference.setAxialResolution(0.0058);
     //image initialisation
-    prescan3DReference.initData(255,prescan3DReference.getSize());
+    prescan3DReference.initData(255);
 
     std::cout << "Written in " << filename << std::endl ;
     std::cout << prescan3DReference;
