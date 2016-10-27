@@ -123,13 +123,14 @@ public:
   usImagePostScan3D();
   usImagePostScan3D(const usImage3D<Type> &image, const usTransducerSettings &transducerSettings,
                     const usMotorSettings &motorSettings,
-                    double spacingX, double spacingY, double spacingZ);
+                    double spacingX, double spacingY, double spacingZ, double scanLineDepth);
   usImagePostScan3D(const usImagePostScan3D &other);
   virtual ~usImagePostScan3D();
 
   double getElementSpacingX() const;
   double getElementSpacingY() const;
   double getElementSpacingZ() const;
+  double getScanLineDepth() const;
 
   usImagePostScan3D<Type> & operator =(const usImagePostScan3D<Type> &other);
 
@@ -140,12 +141,15 @@ public:
   void setElementSpacingX(double elementSpacingX);
   void setElementSpacingY(double elementSpacingY);
   void setElementSpacingZ(double elementSpacingZ);
+  void setScanLineDepth(double scanLineDepth);
 
 
 private:
   double m_elementSpacingX; /**< Element spacing along the x-axis, in meters */
   double m_elementSpacingY; /**< Element spacing along the y-axis, in meters */
   double m_elementSpacingZ; /**< Element spacing along the z-axis, in meters */
+
+  double m_scanLineDepth; /**< Distance between first and last pixel of a scanline, in meters */
 };
 
 
@@ -154,7 +158,8 @@ private:
 */
 template<class Type>
 usImagePostScan3D<Type>::usImagePostScan3D()
-  : usImage3D<Type>(), usTransducerSettings(), usMotorSettings()
+  : usImage3D<Type>(), usTransducerSettings(), usMotorSettings(),
+    m_elementSpacingX(1.0), m_elementSpacingY(1.0), m_elementSpacingZ(1.0), m_scanLineDepth(0.0)
 {
 
 }
@@ -165,7 +170,9 @@ usImagePostScan3D<Type>::usImagePostScan3D()
 */
 template<class Type>
 usImagePostScan3D<Type>::usImagePostScan3D(const usImagePostScan3D &other)
-  : usImage3D<Type>(other), usTransducerSettings(other), usMotorSettings(other)
+  : usImage3D<Type>(other), usTransducerSettings(other), usMotorSettings(other),
+    m_elementSpacingX(other.getElementSpacingX()), m_elementSpacingY(other.getElementSpacingY()),
+    m_elementSpacingZ(other.getElementSpacingZ()), m_scanLineDepth(other.getScanLineDepth())
 {
 
 }
@@ -178,14 +185,17 @@ usImagePostScan3D<Type>::usImagePostScan3D(const usImagePostScan3D &other)
 * @param spacingX distancee (in meters) between two voxels on X-axis
 * @param spacingY distancee (in meters) between two voxels on Y-axis
 * @param spacingZ distancee (in meters) between two voxels on Z-axis
+* @param scanLineDepth distancee (in meters) between first and last voxel of a scanline.
 */
 template<class Type>
 usImagePostScan3D<Type>::usImagePostScan3D(const usImage3D<Type> &image,
                                            const usTransducerSettings &transducerSettings,
                                            const usMotorSettings &motorSettings,
-                                           double spacingX, double spacingY, double spacingZ)
+                                           double spacingX, double spacingY, double spacingZ,
+                                           double scanLineDepth)
 : usImage3D<Type>(image), usTransducerSettings(transducerSettings), usMotorSettings(motorSettings),
-  m_elementSpacingX (spacingX), m_elementSpacingY(spacingY), m_elementSpacingZ(spacingZ)
+  m_elementSpacingX (spacingX), m_elementSpacingY(spacingY), m_elementSpacingZ(spacingZ),
+  m_scanLineDepth(scanLineDepth)
 {
 
 }
@@ -213,6 +223,7 @@ usImagePostScan3D<Type> & usImagePostScan3D<Type>::operator =(const usImagePostS
   m_elementSpacingX = other.getElementSpacingX();
   m_elementSpacingY = other.getElementSpacingY();
   m_elementSpacingZ = other.getElementSpacingZ();
+  m_scanLineDepth = other.getScanLineDepth();
 
   return *this;
 }
@@ -228,7 +239,8 @@ bool usImagePostScan3D<Type>::operator == (usImagePostScan3D<Type> const& other)
          usMotorSettings::operator ==(other) &&
          m_elementSpacingX == other.getElementSpacingX() &&
          m_elementSpacingY == other.getElementSpacingY() &&
-         m_elementSpacingZ == other.getElementSpacingZ();
+         m_elementSpacingZ == other.getElementSpacingZ() &&
+         m_scanLineDepth == other.getScanLineDepth();
 }
 
 /**
@@ -241,7 +253,8 @@ template<class Type> std::ostream& operator<<(std::ostream& out, const usImagePo
              << static_cast<const usMotorSettings &>(other)
              << "spacingX = " << other.getElementSpacingX() << std::endl
              << "spacingY = " << other.getElementSpacingY() << std::endl
-             << "spacingZ = " << other.getElementSpacingZ() << std::endl;
+             << "spacingZ = " << other.getElementSpacingZ() << std::endl
+             << "scanline depth = " << other.getScanLineDepth() << std::endl;
 }
 
 /**
@@ -284,6 +297,17 @@ double usImagePostScan3D<Type>::getElementSpacingZ() const
   return m_elementSpacingZ;
 }
 
+
+/**
+* Get the scanline depth in meters.
+* @return The scanline depth, in meters.
+*/
+template<class Type>
+double usImagePostScan3D<Type>::getScanLineDepth() const
+{
+  return m_scanLineDepth;
+}
+
 /**
 * Set the element spacing along the x-axis.
 * @param elementSpacingX The element spacing along the x-axis, in meters.
@@ -312,6 +336,16 @@ template<class Type>
 void usImagePostScan3D<Type>::setElementSpacingZ(double elementSpacingZ)
 {
   m_elementSpacingZ = elementSpacingZ;
+}
+
+/**
+* Set the scanline depth (distance between first and last pixel of a scanline).
+* @param scanLineDepth The scanline depth, in meters.
+*/
+template<class Type>
+void usImagePostScan3D<Type>::setScanLineDepth(double scanLineDepth)
+{
+  m_scanLineDepth = scanLineDepth;
 }
 
 #endif // US_IMAGE_POSTSCAN_3D_H
