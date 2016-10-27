@@ -22,6 +22,7 @@
 
 #include <string>
 #include <vector>
+#include <time.h>
 
 /* -------------------------------------------------------------------------- */
 /*                         COMMAND LINE OPTIONS                               */
@@ -207,9 +208,6 @@ int main(int argc, const char** argv)
     std::vector<usImageRF2D<unsigned char> > ImageBuffer;
 
     reader.setSequenceFileName(filename);
-    usImageRF2D<unsigned char> first;
-    //reader.open(first);
-    //ImageBuffer.push_back(first);
     i = 0;
     while(!reader.end()) {
       usImageRF2D<unsigned char> rf2D;
@@ -239,6 +237,33 @@ int main(int argc, const char** argv)
         std::cout << "images not equal at index : " << i << std::endl;
       }
     }
+
+    //-----------------Testing loop cycling-----------------
+
+    //read the image we just wrote
+    usSequenceReader<usImageRF2D<unsigned char> > readerCycling;
+
+    //std::vector<usImageRF2D<unsigned char> > ImageBufferCycling;
+
+    //ref timer
+    time_t refTimer;
+    time(&refTimer);
+
+    readerCycling.setSequenceFileName(filename);
+    readerCycling.setLoopCycling(true);
+    i = 0;
+    while(!readerCycling.end()) {
+      time_t testTimer;
+      time(&testTimer);
+      double seconds = difftime(testTimer,refTimer);
+      if(seconds>1) //after 1 second we stop the cycle
+        readerCycling.setLoopCycling(false);
+      usImageRF2D<unsigned char> rf2D;
+      readerCycling.acquire(rf2D);
+      i++;
+    }
+
+    //------------------------------------------------------
 
     // Clean up memory allocated by the xml library
     vpXmlParser::cleanup();
