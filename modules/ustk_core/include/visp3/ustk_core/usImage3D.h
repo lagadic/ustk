@@ -161,7 +161,7 @@ public:
 
   //! operator[] allows operation like I[i] = x.
   Type& operator[]( const unsigned int i)   { if(i<m_size) {return bitmap[i];} throw(vpException::badValue);}
-  Type& operator[]( const int i) { if(i<m_size) {return bitmap[i];} throw(vpException::badValue);}
+  Type& operator[]( const int i) { if((unsigned int)i<m_size) {return bitmap[i];} throw(vpException::badValue);}
 
   //! operator[] allows operation like x = I[i]
   const  Type& operator[](unsigned int i) const { if(i<m_size) {return bitmap[i];} throw(vpException::badValue);}
