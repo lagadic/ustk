@@ -30,19 +30,34 @@
  *****************************************************************************/
 
 #include <visp3/ustk_gui/usDisplay2D.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
 
 /**
 * Default constructor.
 */
-usDisplay2D::usDisplay2D()
+template<class Type>
+usDisplay2D<Type>::usDisplay2D() : m_display(new vpDisplayOpenCV()), m_backgroundImage(vpImage<unsigned char>(100,100,0)), m_usImage(Type())
 {
-
+  m_display->init(m_backgroundImage);
+  //vpDisplay::setWindowPosition(I, 400, 100);
+  //vpDisplay::setTitle(I, "Ultrasound image");
 }
 
 /**
 * Destructor.
 */
-usDisplay2D::~usDisplay2D()
+template<class Type>
+usDisplay2D<Type>::~usDisplay2D()
 {
-
+  delete m_display;
 }
+
+/**
+* Image setter.
+*/
+template<class Type>
+void usDisplay2D<Type>::setImage(usImagePostScan2D<unsigned char> imageToDisplay)
+{
+  //vpDisplay::display();
+}
+

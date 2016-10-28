@@ -39,24 +39,35 @@
 
 #include <string>
 
+#include <visp3/core/vpDisplay.h>
+
 #include <visp3/ustk_core/usImageRF2D.h>
-#include <visp3/ustk_core/usImageRF3D.h>
 #include <visp3/ustk_core/usImagePreScan2D.h>
-#include <visp3/ustk_core/usImagePreScan3D.h>
 #include <visp3/ustk_core/usImagePostScan2D.h>
-#include <visp3/ustk_core/usImagePostScan3D.h>
+
+#include <visp3/ustk_core/usPixelMeterConversion.h>
+#include <visp3/ustk_core/usPixelMeterConversion.h>
 
 
 /**
  * @class usDisplay2D
- * @brief Class to display a ultrasound image at screen, and interact with it.
+ * @brief Class to display a 2d ultrasound image at screen
  * @ingroup module_ustk_gui
  */
-class VISP_EXPORT usDisplay2D
+template<class Type>
+class usDisplay2D
 {
 public:
   usDisplay2D();
   virtual ~usDisplay2D();
+
+  void setImage(usImagePostScan2D<unsigned char> imageToDisplay);
+
+
+private:
+  vpDisplay * m_display;
+  vpImage<unsigned char> m_backgroundImage;
+  Type* m_usImage;
 };
 
 #endif //US_DISPLAY_2D_H

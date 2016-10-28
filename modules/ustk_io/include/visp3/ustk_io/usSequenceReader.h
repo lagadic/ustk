@@ -116,20 +116,20 @@ public:
     if(m_enableLoopCycling) {
       if(loopIncrement == 1) {
         if(m_frameCount > m_lastFrame ) {
-          m_frameCount --;
+          m_frameCount -= 2;
           loopIncrement = -1;
           return false;
         }
       }
       else if(loopIncrement == -1) {
         if(m_frameCount < m_firstFrame ) {
-          m_frameCount ++;
+          m_frameCount += 2;
           loopIncrement = 1;
           return false;
         }
       }
     }
-    else if (m_frameCount > m_lastFrame )
+    else if (m_frameCount > m_lastFrame || m_frameCount < m_firstFrame )
       return true;
     return false;
   }
@@ -352,9 +352,10 @@ void usSequenceReader<ImageType>::acquire(ImageType &image)
   std::string imageFileName =  parentName + buffer;
 
   vpImageIo::read(image,imageFileName);
-  image.setImagePreScanSettings(m_frame);
+  image.setTransducerSettings(m_frame);
   image.setScanLineNumber(image.getWidth());
 
+  std::cout << "read image : " << m_frameCount << std::endl;
   m_frameCount+=loopIncrement;
 }
 

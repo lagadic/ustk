@@ -253,13 +253,13 @@ int main(int argc, const char** argv)
     readerCycling.setLoopCycling(true);
     i = 0;
     while(!readerCycling.end()) {
+      usImageRF2D<unsigned char> rf2D;
+      readerCycling.acquire(rf2D);
       time_t testTimer;
       time(&testTimer);
       double seconds = difftime(testTimer,refTimer);
       if(seconds>1) //after 1 second we stop the cycle
         readerCycling.setLoopCycling(false);
-      usImageRF2D<unsigned char> rf2D;
-      readerCycling.acquire(rf2D);
       i++;
     }
 
