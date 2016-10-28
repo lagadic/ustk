@@ -124,7 +124,9 @@ usDisplay2D<Type>::~usDisplay2D()
 template<class Type>
 void usDisplay2D<Type>::setImage(usImagePostScan2D<unsigned char> imageToDisplay)
 {
-  *m_usImage = imageToDisplay;
+
+  m_usImage = new usImagePostScan2D<unsigned char> (imageToDisplay);
+
   //get center point
   double U0, V0;
   usMeterPixelConversion::convert(imageToDisplay,0,0,U0,V0);
@@ -150,7 +152,7 @@ void usDisplay2D<Type>::display()
 
   vpDisplay::display(m_backgroundImage);
 
-  //display arrow of 1cm
+  //display arrow of 10cm
   vpImagePoint endXArrow = vpImagePoint(m_centerPointInBackground.get_v(),m_centerPointInBackground.get_u() + m_usImage->getWidthResolution()*100);
   vpImagePoint endYArrow = vpImagePoint(m_centerPointInBackground.get_v() + m_usImage->getHeightResolution()*100,m_centerPointInBackground.get_u());
   vpDisplay::displayArrow 	(m_backgroundImage,m_centerPointInBackground, endXArrow, vpColor::red); //x in red
