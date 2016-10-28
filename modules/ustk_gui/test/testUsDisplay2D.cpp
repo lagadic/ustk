@@ -28,7 +28,7 @@ int main(int argc, const char** argv)
     std::cout << "usage : ./tesUsDisplay2D /path/to/usImagePostscan2d" << std::endl;
     if (argc != 2) {
       std::cout << "wrong number of arguments" << std::endl;
-      return 1;
+      return 0;
     }
 
     usImagePostScan2D<unsigned char> postscan2D;

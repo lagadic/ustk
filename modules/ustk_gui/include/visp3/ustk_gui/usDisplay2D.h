@@ -153,8 +153,8 @@ void usDisplay2D<Type>::display()
   vpDisplay::display(m_backgroundImage);
 
   //display arrow of 10cm
-  vpImagePoint endXArrow = vpImagePoint(m_centerPointInBackground.get_v(),m_centerPointInBackground.get_u() + m_usImage->getWidthResolution()*100);
-  vpImagePoint endYArrow = vpImagePoint(m_centerPointInBackground.get_v() + m_usImage->getHeightResolution()*100,m_centerPointInBackground.get_u());
+  vpImagePoint endXArrow = vpImagePoint(m_centerPointInBackground.get_v(),m_centerPointInBackground.get_u() + 1/(m_usImage->getWidthResolution()*100));
+  vpImagePoint endYArrow = vpImagePoint(m_centerPointInBackground.get_v() + 1/(m_usImage->getHeightResolution()*100),m_centerPointInBackground.get_u());
   vpDisplay::displayArrow 	(m_backgroundImage,m_centerPointInBackground, endXArrow, vpColor::red); //x in red
   vpDisplay::displayArrow 	(m_backgroundImage,m_centerPointInBackground, endYArrow, vpColor::green); //y in green
 }
