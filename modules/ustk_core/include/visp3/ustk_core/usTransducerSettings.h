@@ -40,6 +40,7 @@
 
 //std includes
 #include <iostream>
+#include <string>
 
 //visp includes
 #include <visp3/core/vpConfig.h>
@@ -74,9 +75,10 @@ public:
   /** @name Inherited functionalities from usTransducerSettings */
   //@{
 
-  double getTransducerRadius() const;
+  std::string getProbeName() const;
   unsigned int getScanLineNumber() const;
   double getScanLinePitch() const;
+  double getTransducerRadius() const;
 
   bool isTransducerConvex() const;
 
@@ -84,11 +86,12 @@ public:
   bool operator==(usTransducerSettings const& other);
 
   //Settings for the probe transducer
+  void setProbeName(std::string probeName);
+  void setScanLineNumber(unsigned int scanLineNumber);
+  void setScanLinePitch(const double scanLinePitch);
   void setTransducerConvexity(const bool isTransducerConvex);
   void setTransducerSettings(const usTransducerSettings& other);
   void setTransducerRadius(const double transducerRadius);
-  void setScanLineNumber(unsigned int scanLineNumber);
-  void setScanLinePitch(const double scanLinePitch);
 
   //@}
 
@@ -100,6 +103,7 @@ private:
   double m_scanLinePitch;
   unsigned int m_scanLineNumber;
   bool m_isTransducerConvex;
+  std::string m_probeName;
 };
 
 #endif // US_TRANSDUCER_SETTINGS_H

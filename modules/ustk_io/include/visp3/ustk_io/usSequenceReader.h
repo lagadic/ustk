@@ -139,6 +139,7 @@ public:
 
   //attributes getters/setters
   double getFrameRate() const {return m_frameRate;}
+  long getImageNumber() const {return m_frameCount;}
 
   void setFirstFrameIndex(long firstIndex);
   void setLastFrameIndex(long lastIndex);

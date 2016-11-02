@@ -205,3 +205,21 @@ void usTransducerSettings::setScanLineNumber(unsigned int scanLineNumber)
 {
   m_scanLineNumber =  scanLineNumber;
 }
+
+/**
+* Getter for the probe name.
+* @return Name of the probe.
+*/
+std::string usTransducerSettings::getProbeName() const
+{
+  return m_probeName;
+}
+
+/**
+* Setter for the probe name.
+* @param probeName Name of the probe.
+*/
+void usTransducerSettings::setProbeName(std::string probeName)
+{
+  m_probeName = probeName;
+}
