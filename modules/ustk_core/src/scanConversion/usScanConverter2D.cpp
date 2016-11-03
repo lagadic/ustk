@@ -35,7 +35,7 @@
 usScanConverter2D::usScanConverter2D() {}
 
 usScanConverter2D::~usScanConverter2D() {}
-
+/*
 bool
 usScanConverter2D::isCurved() const
 {
@@ -95,7 +95,7 @@ usScanConverter2D::getYMax() const
 {
   return m_y_max;
 }
-
+*/
 void
 usScanConverter2D::init(unsigned int AN, unsigned int LN, double speedOfSound, double resolution,
 		double radius, int inputHeight, double pitch, int nElements)
@@ -153,12 +153,12 @@ usScanConverter2D::init(unsigned int AN, unsigned int LN, double speedOfSound, d
   if (m_curved)
     m_radius = radius;
   m_APitch = m_speedOfSound / (2.0 * samplingFrequency);
-  m_LPitch = (pitch * nElements) / LN;
+  m_LPitch = (pitch * nElements) / (LN-1);
   m_resolution = resolution;
 
   double r_min = m_radius;
   double r_max = (m_radius + m_APitch * AN);
-  double t_min = - (LN * m_LPitch) / (2.0 * m_radius);
+  double t_min = - ((LN-1) * m_LPitch) / (2.0 * m_radius);
   double t_max = - t_min;
   m_x_min = r_min * cos(t_min);
   m_x_max = r_max;
@@ -177,7 +177,7 @@ usScanConverter2D::init(unsigned int AN, unsigned int LN, double speedOfSound, d
       x = m_x_min + i * resolution;
       y = m_y_min + j * resolution;
       m_rMap[i][j] = (sqrt(x * x + y * y) - m_radius) / m_APitch;
-      m_tMap[i][j] = atan2(y, x) * m_radius / m_LPitch + LN / 2.0;
+      m_tMap[i][j] = atan2(y, x) * m_radius / m_LPitch + (LN-1) / 2.0;
     }
   }
   //saving settings in postScanImage

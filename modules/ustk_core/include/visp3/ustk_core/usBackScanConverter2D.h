@@ -62,42 +62,22 @@ class VISP_EXPORT usBackScanConverter2D
   /**
    * Initialize the scan-converter.
    */
-  /*void init(unsigned int AN, unsigned int LN, double resolution, double radius, double depth,
-      double fov);*/
-
-  void init(usImagePostScan2D<unsigned char> imageToConvert, double depth, unsigned int AN, double resolution);
+  void init(const usImagePostScan2D<unsigned char> imageToConvert, double depth, unsigned int AN, double resolution);
 
   /**
    * Run the scan-converter.
    */
   void run(usImagePreScan2D<unsigned char> &imageConverted);
 
-  double interpolateLinear(const vpImage<unsigned char>& I, double x, double y);
-/*
-  void convertPolarCoordinate2CartesianIndex(double &i, double &j, double r, double t) const;
-  void convertPolarIndex2CartesianIndex(double &i, double &j, double u, double v) const;
-  void convertPolarIndex2CartesianCoordinate(double &x, double &y, double u, double v) const;
-  void convertPolarIndex2PolarCoordinate(double &r, double &t, double u, double v) const;*/
 
  private:
   usImagePostScan2D<unsigned char> m_postScanImage;
   usImagePreScan2D<unsigned char> m_preScanImage;
 
-/*
-  bool m_curved;
-  unsigned int m_AN;
-  unsigned int m_LN;
-  double m_APitch;
-  double m_LPitch;
-  double m_radius;
-  double m_resolution;
-  double m_speedOfSound;
-  double m_x_min;
-  double m_x_max;
-  double m_y_min;
-  double m_y_max;*/
   vpMatrix m_iMap;
   vpMatrix m_jMap;
+
+  double interpolateLinear(const vpImage<unsigned char>& I, double x, double y);
 
 };
 

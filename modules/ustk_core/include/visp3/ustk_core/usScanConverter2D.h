@@ -59,36 +59,6 @@ class VISP_EXPORT usScanConverter2D
   /// Destructor
   ~usScanConverter2D();
 
-  /// Check whether the probe is curved.
-  bool isCurved() const;
-
-  /// Get the probe radius (in meters).
-  double getRadius() const;
-
-  /// Get the imaging depth (in meters).
-  double getDepth() const;
-
-  /// Get the spacing between two samples along an A-line (in meters).
-  double getAPitch() const;
-
-  /// Get the spacing between two transducer elements (in meters).
-  double getLPitch() const;
-
-  /// Get the postscan resolution (in meters per pixel).
-  double getResolution() const;
-
-  /// Get the minimum x-coordinate in the image.
-  double getXMin() const;
-
-  /// Get the minimum y-coordinate in the image
-  double getYMin() const;
-
-  /// Get the maximum x-coordinate in the image.
-  double getXMax() const;
-
-  /// Get the maximum y-coordinate in the image
-  double getYMax() const;
-
   /**
    * Initialize the scan-converter.
    */
@@ -96,18 +66,13 @@ class VISP_EXPORT usScanConverter2D
 		double radius, int inputHeight, double pitch, int nElements);
 
   void init(unsigned int AN, unsigned int LN, double speedOfSound, double resolution,
-		double radius, double samplingFrequency, double pitch, int nElements);
+    double radius, double samplingFrequency, double pitch, int nElements);
 
   /**
    * Run the scan-converter.
    */
   void run(usImagePostScan2D<unsigned char> &Dst, const usImagePreScan2D<unsigned char> &Src);
   double interpolateLinear(const vpImage<unsigned char>& I, double x, double y);
-
-
-  vpImage<unsigned char> getMask() const;
-
-  bool isInFOV(double i, double j) const;
 
  private:
   usImagePostScan2D<unsigned char> m_postScanImage;

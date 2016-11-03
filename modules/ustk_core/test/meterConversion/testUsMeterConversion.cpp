@@ -60,11 +60,11 @@ int main(int argc, const char** argv)
     usImagePostScan2D<unsigned char> usImagePostScan2DReference;
     usImagePostScan2DReference.setData(data);
     usImagePostScan2DReference.setScanLinePitch(0.0145);
-    usImagePostScan2DReference.setScanLineNumber(45);
-    usImagePostScan2DReference.setTransducerRadius(0.554);
+    usImagePostScan2DReference.setScanLineNumber(128);
+    usImagePostScan2DReference.setTransducerRadius(0.0554);
     usImagePostScan2DReference.setTransducerConvexity(true);
-    usImagePostScan2DReference.setWidthResolution(0.0058);
-    usImagePostScan2DReference.setHeightResolution(0.0058);
+    usImagePostScan2DReference.setWidthResolution(0.00158);
+    usImagePostScan2DReference.setHeightResolution(0.0018);
 
     std::cout << "before conversion, u = " << std::scientific << UBase << ", and v = " << std::scientific << VBase << std::endl;
 

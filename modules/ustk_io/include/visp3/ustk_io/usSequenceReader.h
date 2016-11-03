@@ -356,7 +356,6 @@ void usSequenceReader<ImageType>::acquire(ImageType &image)
   image.setTransducerSettings(m_frame);
   image.setScanLineNumber(image.getWidth());
 
-  std::cout << "read image : " << m_frameCount << std::endl;
   m_frameCount+=loopIncrement;
 }
 
