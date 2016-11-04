@@ -90,6 +90,13 @@ void usScanConverter2D::init(unsigned int AN, unsigned int LN, double speedOfSou
       m_tMap[i][j] = atan2(y, x) * m_radius / m_LPitch + LN / 2.0;
     }
   }
+  //saving settings in postScanImage
+  m_postScanImage.setHeightResolution(m_resolution);
+  m_postScanImage.setWidthResolution(m_resolution);
+  m_postScanImage.setScanLineNumber(m_LN);
+  m_postScanImage.setTransducerConvexity(true);
+  m_postScanImage.setScanLinePitch(m_LPitch/m_radius);
+  m_postScanImage.setTransducerRadius(m_radius);
 }
 
 /**
@@ -156,6 +163,7 @@ void usScanConverter2D::init(unsigned int AN, unsigned int LN, double speedOfSou
 */
 void usScanConverter2D::run(usImagePostScan2D<unsigned char> &postScanImage, const usImagePreScan2D<unsigned char> &preScanImage)
 {
+  //saving image settings
   postScanImage = m_postScanImage;
   postScanImage.resize(m_height, m_width);
   for (unsigned int i = 0; i < m_height; ++i)
