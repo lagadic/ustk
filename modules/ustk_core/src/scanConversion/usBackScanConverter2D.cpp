@@ -53,7 +53,7 @@ void usBackScanConverter2D::init(const usImagePostScan2D<unsigned char> imageToC
   if(imageToConvert.isTransducerConvex()) {
     double fov = (m_postScanImage.getScanLineNumber() - 1) * m_postScanImage.getScanLinePitch();
     double APitch = depth / AN;
-    double LPitch = fov * m_postScanImage.getTransducerRadius() / m_postScanImage.getScanLineNumber();
+    double LPitch = fov * m_postScanImage.getTransducerRadius() / (m_postScanImage.getScanLineNumber()-1);
 
     double r_min = imageToConvert.getTransducerRadius();
     double r_max = (imageToConvert.getTransducerRadius() + APitch * AN);
@@ -63,6 +63,15 @@ void usBackScanConverter2D::init(const usImagePostScan2D<unsigned char> imageToC
     double x_max = r_max;
     double y_min = r_max * sin(t_min);
     double y_max = r_max * sin(t_max);
+
+    std::cout << "r_min " << r_min << std::endl;
+    std::cout << "r_max " << r_max << std::endl;
+    std::cout << "t_min " <<  t_min<< std::endl;
+    std::cout << "t_max " << t_max << std::endl;
+    std::cout << "x_min" << x_min << std::endl;
+    std::cout << "x_max " << x_max << std::endl;
+    std::cout << "y_min " << y_min << std::endl;
+    std::cout << "y_max " << y_max << std::endl;
 
     m_iMap.resize(AN, m_postScanImage.getScanLineNumber());
     m_jMap.resize(AN, m_postScanImage.getScanLineNumber());
@@ -80,12 +89,14 @@ void usBackScanConverter2D::init(const usImagePostScan2D<unsigned char> imageToC
     m_preScanImage.resize(AN,m_postScanImage.getScanLineNumber());
     //saving settings
     m_preScanImage.setAxialResolution(APitch);
-    m_preScanImage.setScanLinePitch(LPitch);
+    m_preScanImage.setScanLinePitch(m_postScanImage.getScanLinePitch());
     m_preScanImage.setTransducerConvexity(true);
     m_preScanImage.setTransducerRadius(m_postScanImage.getTransducerRadius());
 
     std::cout << "backScan conversion parameters :" << std::endl;
     std::cout << "AN : " << AN << std::endl;
+    std::cout << "LN : " << m_postScanImage.getScanLineNumber() << std::endl;
+    std::cout << "line pitch : " << m_postScanImage.getScanLinePitch() << std::endl;
     std::cout << "LN : " << m_postScanImage.getScanLineNumber() << std::endl;
     std::cout << "radius : " << m_postScanImage.getTransducerRadius() << std::endl;
     std::cout << "APitch : " << APitch << std::endl;

@@ -132,6 +132,16 @@ void usScanConverter2D::init(unsigned int AN, unsigned int LN, double speedOfSou
   m_y_min = r_max * sin(t_min);
   m_y_max = r_max * sin(t_max);
 
+
+  std::cout << "r_min " << r_min << std::endl;
+  std::cout << "r_max " << r_max << std::endl;
+  std::cout << "t_min " <<  t_min<< std::endl;
+  std::cout << "t_max " << t_max << std::endl;
+  std::cout << "x_min" << m_x_min << std::endl;
+  std::cout << "x_max " << m_x_max << std::endl;
+  std::cout << "y_min " << m_y_min << std::endl;
+  std::cout << "y_max " << m_y_max << std::endl;
+
   m_height = vpMath::round((m_x_max - m_x_min) / resolution);
   m_width = vpMath::round((m_y_max - m_y_min) / resolution);
 
@@ -152,8 +162,21 @@ void usScanConverter2D::init(unsigned int AN, unsigned int LN, double speedOfSou
   m_postScanImage.setWidthResolution(m_resolution);
   m_postScanImage.setScanLineNumber(m_LN);
   m_postScanImage.setTransducerConvexity(true);
-  m_postScanImage.setScanLinePitch(m_LPitch/m_radius);
+  //m_postScanImage.setScanLinePitch(m_LPitch/m_radius);
+  m_postScanImage.setScanLinePitch(0.00783337); // setting for sonosite, to improve (line above is not correct)
   m_postScanImage.setTransducerRadius(m_radius);
+
+
+  std::cout << "Scan conversion parameters :" << std::endl;
+  std::cout << "AN : " << AN << std::endl;
+  std::cout << "LN : " << m_postScanImage.getScanLineNumber() << std::endl;
+  std::cout << "line pitch : " << m_postScanImage.getScanLinePitch() << std::endl;
+  std::cout << "LN : " << m_postScanImage.getScanLineNumber() << std::endl;
+  std::cout << "radius : " << m_postScanImage.getTransducerRadius() << std::endl;
+  std::cout << "APitch : " << m_APitch << std::endl;
+  std::cout << "LPitch : " << m_LPitch << std::endl;
+  std::cout << "pitch : " << pitch << std::endl;
+  std::cout << "resolution : " << m_resolution << std::endl;
 }
 
 /**
