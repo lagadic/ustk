@@ -38,22 +38,22 @@ usBackScanConverter2D::usBackScanConverter2D() {}
 
 usBackScanConverter2D::~usBackScanConverter2D() {}
 
+/**
+* Initialize the back-scan converter.
+* @param imageToConvert Post-scan image to convert back.
+* @param depth Distance between the first and the last pixel of a scanline, in meters.
+* @param AN Number of samples in a scanline in the pre-scan image.
+* @param resolution Size of a pixel (in meters).
+*/
 void usBackScanConverter2D::init(const usImagePostScan2D<unsigned char> imageToConvert, double depth, unsigned int AN, double resolution)
 {
-  /*m_AN = AN;
-  m_LN = LN;
-  m_curved = radius != 0;
-  if (m_curved)
-    m_radius = radius;*/
-
   m_postScanImage = imageToConvert;
 
+  //convex transducer scan conversion
   if(imageToConvert.isTransducerConvex()) {
     double fov = (m_postScanImage.getScanLineNumber() - 1) * m_postScanImage.getScanLinePitch();
     double APitch = depth / AN;
     double LPitch = fov * m_postScanImage.getTransducerRadius() / m_postScanImage.getScanLineNumber();
-    //LPitch = 0.000425;
-    //m_resolution = resolution;
 
     double r_min = imageToConvert.getTransducerRadius();
     double r_max = (imageToConvert.getTransducerRadius() + APitch * AN);
@@ -98,6 +98,10 @@ void usBackScanConverter2D::init(const usImagePostScan2D<unsigned char> imageToC
   }
 }
 
+/**
+* Run the back-scan converter.
+* @param [out] imageConverted Pre-scan image obtained after back conversion.
+*/
 void usBackScanConverter2D::run(usImagePreScan2D<unsigned char> &imageConverted)
 {
   imageConverted = m_preScanImage;

@@ -35,70 +35,20 @@
 usScanConverter2D::usScanConverter2D() {}
 
 usScanConverter2D::~usScanConverter2D() {}
-/*
-bool
-usScanConverter2D::isCurved() const
-{
-  return m_curved;
-}
 
-double
-usScanConverter2D::getRadius() const
-{
-  return m_radius;
-}
-
-double
-usScanConverter2D::getDepth() const
-{
-  return m_APitch * m_AN;
-}
-
-double
-usScanConverter2D::getAPitch() const
-{
-  return m_APitch;
-}
-
-double
-usScanConverter2D::getLPitch() const
-{
-  return m_LPitch;
-}
-
-double
-usScanConverter2D::getResolution() const
-{
-  return m_resolution;
-}
-
-double
-usScanConverter2D::getXMin() const
-{
-  return m_x_min;
-}
-
-double
-usScanConverter2D::getYMin() const
-{
-  return m_y_min;
-}
-
-double
-usScanConverter2D::getXMax() const
-{
-  return m_x_max;
-}
-
-double
-usScanConverter2D::getYMax() const
-{
-  return m_y_max;
-}
+/**
+* Initialize the scan-converter.
+* @param AN Number of samples along a scan-line in the pre-scan image.
+* @param LN Number of scanlines in the pre-scan image.
+* @param speedOfSound Speed of sound in meters per seconds (normally 1540 m/s).
+* @param resolution Resolution of the post-scan image you want (size of a pixel in meters).
+* @param radius Transducer radius in meters (0 if linear transducer).
+* @param inputHeight Distance in meters between first and last pixel on a scanline.
+* @param pitch Probe pitch.
+* @param nElements Number of elements on the probe.
 */
-void
-usScanConverter2D::init(unsigned int AN, unsigned int LN, double speedOfSound, double resolution,
-		double radius, int inputHeight, double pitch, int nElements)
+void usScanConverter2D::init(unsigned int AN, unsigned int LN, double speedOfSound, double resolution,
+                             double radius, int inputHeight, double pitch, int nElements)
 {
   m_AN = AN;
   m_LN = LN;
@@ -142,9 +92,19 @@ usScanConverter2D::init(unsigned int AN, unsigned int LN, double speedOfSound, d
   }
 }
 
-void
-usScanConverter2D::init(unsigned int AN, unsigned int LN, double speedOfSound, double resolution,
-		double radius, double samplingFrequency, double pitch, int nElements)
+/**
+* Initialize the scan-converter.
+* @param AN Number of samples along a scan-line in the pre-scan image.
+* @param LN Number of scanlines in the pre-scan image.
+* @param speedOfSound Speed of sound in meters per seconds (normally 1540 m/s).
+* @param resolution Resolution of the post-scan image you want (size of a pixel in meters).
+* @param radius Transducer radius in meters (0 if linear transducer).
+* @param samplingFrequency Sampling frequency used to obtain the pre-scan image.
+* @param pitch Probe pitch.
+* @param nElements Number of elements on the probe.
+*/
+void usScanConverter2D::init(unsigned int AN, unsigned int LN, double speedOfSound, double resolution,
+                             double radius, double samplingFrequency, double pitch, int nElements)
 {
   m_AN = AN;
   m_LN = LN;
@@ -187,29 +147,22 @@ usScanConverter2D::init(unsigned int AN, unsigned int LN, double speedOfSound, d
   m_postScanImage.setTransducerConvexity(true);
   m_postScanImage.setScanLinePitch(m_LPitch/m_radius);
   m_postScanImage.setTransducerRadius(m_radius);
-
-
-  std::cout << "Scan conversion parameters :" << std::endl;
-  std::cout << "AN : " << m_AN << std::endl;
-  std::cout << "LN : " << m_LN << std::endl;
-  std::cout << "radius : " << m_radius << std::endl;
-  std::cout << "m_APitch : " << m_APitch << std::endl;
-  std::cout << "m_LPitch : " << m_LPitch << std::endl;
-  std::cout << "scanLinePitch : " << m_postScanImage.getScanLinePitch() << std::endl;
-  std::cout << "m_resolution : " << m_resolution << std::endl;
-
 }
 
-void
-usScanConverter2D::run(usImagePostScan2D<unsigned char> &Dst, const usImagePreScan2D<unsigned char> &Src)
+/**
+* Run the scan-converter.
+* @param [out] postScanImage Post-scan image : result of the scan conversion.
+* @param [in] preScanImage Pre-scan image to convert.
+*/
+void usScanConverter2D::run(usImagePostScan2D<unsigned char> &postScanImage, const usImagePreScan2D<unsigned char> &preScanImage)
 {
-  Dst = m_postScanImage;
-  Dst.resize(m_height, m_width);
+  postScanImage = m_postScanImage;
+  postScanImage.resize(m_height, m_width);
   for (unsigned int i = 0; i < m_height; ++i)
     for (unsigned int j = 0; j < m_width; ++j) {
       double u = m_rMap[i][j];
       double v = m_tMap[i][j];
-      Dst(i, j, interpolateLinear(Src, u, v));
+      postScanImage(i, j, interpolateLinear(preScanImage, u, v));
     }
 }
 

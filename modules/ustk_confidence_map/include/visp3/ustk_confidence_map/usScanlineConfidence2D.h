@@ -34,31 +34,28 @@
 
 #include <cfloat>
 #include <iostream>
-#include <visp/vpImage.h>
 
+#include <visp3/ustk_core/usImagePreScan2D.h>
 
-class VISP_EXPORT usScanlineConf2D {
+/**
+* @class usScanlineConfidence2D
+* @brief Process a pre-scan image to determine the confidence map.
+* @ingroup module_ustk_confidence_map.
+* An object of usScanlineConfidence2D type should be initialized through init() and then processed through run().
+*/
+class VISP_EXPORT usScanlineConfidence2D {
 
  public:
 
 enum usScanLineConfidenceType {
   US_CONF_MAX, US_CONF_INTEGRATION
 };
-  /**
-   * Default constructor.
-   */
-  usScanlineConf2D();
 
-  /**
-   * Initialize the confidence map processor.
-   * Sets the boundary conditions.
-   */
+  usScanlineConfidence2D();
+
   void init(usScanLineConfidenceType type);
 
-  /**
-   * Run the confidence map processor.
-   */
-  void run(vpImage<unsigned char> &Dst, const vpImage<unsigned char> &Src);
+  void run(usImagePreScan2D<unsigned char> &preScanConfidence, const usImagePreScan2D<unsigned char> &preScanImage);
 
  private:
   usScanLineConfidenceType m_type;

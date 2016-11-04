@@ -53,25 +53,18 @@
 class VISP_EXPORT usScanConverter2D
 {
  public:
-  /// Constructor
+
   usScanConverter2D();
 
-  /// Destructor
   ~usScanConverter2D();
 
-  /**
-   * Initialize the scan-converter.
-   */
   void init(unsigned int AN, unsigned int LN, double speedOfSound, double resolution,
 		double radius, int inputHeight, double pitch, int nElements);
 
   void init(unsigned int AN, unsigned int LN, double speedOfSound, double resolution,
     double radius, double samplingFrequency, double pitch, int nElements);
 
-  /**
-   * Run the scan-converter.
-   */
-  void run(usImagePostScan2D<unsigned char> &Dst, const usImagePreScan2D<unsigned char> &Src);
+  void run(usImagePostScan2D<unsigned char> &postScanImage, const usImagePreScan2D<unsigned char> &preScanImage);
   double interpolateLinear(const vpImage<unsigned char>& I, double x, double y);
 
  private:

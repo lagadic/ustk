@@ -53,22 +53,14 @@
 class VISP_EXPORT usBackScanConverter2D
 {
  public:
-  /// Constructor
+
   usBackScanConverter2D();
 
-  /// Destructor
   ~usBackScanConverter2D();
 
-  /**
-   * Initialize the scan-converter.
-   */
   void init(const usImagePostScan2D<unsigned char> imageToConvert, double depth, unsigned int AN, double resolution);
 
-  /**
-   * Run the scan-converter.
-   */
   void run(usImagePreScan2D<unsigned char> &imageConverted);
-
 
  private:
   usImagePostScan2D<unsigned char> m_postScanImage;
@@ -78,7 +70,6 @@ class VISP_EXPORT usBackScanConverter2D
   vpMatrix m_jMap;
 
   double interpolateLinear(const vpImage<unsigned char>& I, double x, double y);
-
 };
 
 #endif // US_BACK_SCAN_CONVERTER_2D_H
