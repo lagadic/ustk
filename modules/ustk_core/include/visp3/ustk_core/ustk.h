@@ -44,6 +44,6 @@
 namespace ustk
 {
   //default speed of sound : 1540 m/s
-  double defaultSpeedOfSound = 1540;
+  double defaultSpeedOfSound = 1540.;
 }
 #endif // USTK_H

@@ -58,16 +58,21 @@ class VISP_EXPORT usBackScanConverter2D
 
   ~usBackScanConverter2D();
 
-  void init(const usImagePostScan2D<unsigned char> imageToConvert, double depth, unsigned int AN, double resolution);
+  void init(const usImagePostScan2D<unsigned char> &inputSettings, const int BModeSampleNumber, const int scanLineNumber);
+  void init(usTransducerSettings transducerSettings, const double xResolution, const double yResolution,
+            const double BModeSampleNumber, const double scanLineNumber);
 
-  void run(usImagePreScan2D<unsigned char> &imageConverted);
+
+  void run(const usImagePostScan2D<unsigned char> &imageToConvert, usImagePreScan2D<unsigned char> &imageConverted);
 
  private:
-  usImagePostScan2D<unsigned char> m_postScanImage;
-  usImagePreScan2D<unsigned char> m_preScanImage;
-
   vpMatrix m_iMap;
   vpMatrix m_jMap;
+  double m_xResolution;
+  double m_yResolution;
+  int m_scanLineNumber;
+  int m_BModeSampleNumber;
+  usTransducerSettings m_initSettings;
 
   double interpolateLinear(const vpImage<unsigned char>& I, double x, double y);
 };

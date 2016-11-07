@@ -43,107 +43,34 @@ usScanConverter2D::~usScanConverter2D() {}
 * @param speedOfSound Speed of sound in meters per seconds (normally 1540 m/s).
 * @param resolution Resolution of the post-scan image you want (size of a pixel in meters).
 * @param radius Transducer radius in meters (0 if linear transducer).
-* @param inputHeight Distance in meters between first and last pixel on a scanline.
-* @param pitch Probe pitch.
-* @param nElements Number of elements on the probe.
-*/
-void usScanConverter2D::init(unsigned int AN, unsigned int LN, double speedOfSound, double resolution,
-                             double radius, int inputHeight, double pitch, int nElements)
-{
-  m_AN = AN;
-  m_LN = LN;
-  m_speedOfSound = speedOfSound;
-  m_curved = radius != 0;
-  if (m_curved) {
-    m_radius = radius;
-  } else {
-    std::cerr << "Error: In usScanConverter2D::init(): "
-	      << "Probe radius is 0 (linear probe). "
-	      << "Cannot initialize scan converter." << std::endl;
-    exit(EXIT_FAILURE);
-  }
-  m_APitch = (m_speedOfSound * inputHeight) / (4.0e7 * AN); // RF is sampled at 40MHz
-  m_LPitch = (pitch * nElements) / LN;
-  m_resolution = resolution;
-
-  double r_min = m_radius;
-  double r_max = (m_radius + m_APitch * AN);
-  double t_min = - (LN * m_LPitch) / (2.0 * m_radius);
-  double t_max = - t_min;
-  m_x_min = r_min * cos(t_min);
-  m_x_max = r_max;
-  m_y_min = r_max * sin(t_min);
-  m_y_max = r_max * sin(t_max);
-
-  m_height = vpMath::round((m_x_max - m_x_min) / resolution);
-  m_width = vpMath::round((m_y_max - m_y_min) / resolution);
-
-  m_rMap.resize(m_height, m_width);
-  m_tMap.resize(m_height, m_width);
-  
-  double x, y;
-  for (unsigned int i = 0; i < m_height; ++i) {
-    for (unsigned int j = 0; j < m_width; ++j) {
-      x = m_x_min + i * resolution;
-      y = m_y_min + j * resolution;
-      m_rMap[i][j] = (sqrt(x * x + y * y) - m_radius) / m_APitch;
-      m_tMap[i][j] = atan2(y, x) * m_radius / m_LPitch + LN / 2.0;
-    }
-  }
-  //saving settings in postScanImage
-  m_postScanImage.setHeightResolution(m_resolution);
-  m_postScanImage.setWidthResolution(m_resolution);
-  m_postScanImage.setScanLineNumber(m_LN);
-  m_postScanImage.setTransducerConvexity(true);
-  m_postScanImage.setScanLinePitch(m_LPitch/m_radius);
-  m_postScanImage.setTransducerRadius(m_radius);
-}
-
-/**
-* Initialize the scan-converter.
-* @param AN Number of samples along a scan-line in the pre-scan image.
-* @param LN Number of scanlines in the pre-scan image.
-* @param speedOfSound Speed of sound in meters per seconds (normally 1540 m/s).
-* @param resolution Resolution of the post-scan image you want (size of a pixel in meters).
-* @param radius Transducer radius in meters (0 if linear transducer).
 * @param samplingFrequency Sampling frequency used to obtain the pre-scan image.
 * @param pitch Probe pitch.
 * @param nElements Number of elements on the probe.
 */
-void usScanConverter2D::init(unsigned int AN, unsigned int LN, double speedOfSound, double resolution,
-                             double radius, double samplingFrequency, double pitch, int nElements)
+
+void usScanConverter2D::init(const usImagePreScan2D<unsigned char> &inputSettings, const int BModeSampleNumber,
+                             const int scanLineNumber, const double xResolution, const double yResolution)
 {
-  m_AN = AN;
-  m_LN = LN;
-  m_speedOfSound = speedOfSound;
-  m_curved = radius != 0;
-  if (m_curved)
-    m_radius = radius;
-  m_APitch = m_speedOfSound / (2.0 * samplingFrequency);
-  m_LPitch = (pitch * nElements) / (LN-1);
-  m_resolution = resolution;
+  m_scanLineNumber = scanLineNumber;
+  m_BModeSampleNumber = BModeSampleNumber;
+  m_xResolution = xResolution;
+  m_yResolution = yResolution;
+  m_settings = (usTransducerSettings)inputSettings;
 
-  double r_min = m_radius;
-  double r_max = (m_radius + m_APitch * AN);
-  double t_min = - ((LN-1) * m_LPitch) / (2.0 * m_radius);
+  double APitch = inputSettings.getDepth() / (double)(BModeSampleNumber);
+  double LPitch = inputSettings.getFieldOfView() * inputSettings.getTransducerRadius() / (double)(scanLineNumber -1);
+
+  double r_min = inputSettings.getTransducerRadius();
+  double r_max = (inputSettings.getTransducerRadius() + APitch * BModeSampleNumber);
+  double t_min = - ( (double)(scanLineNumber-1) * LPitch) / (2.0 * inputSettings.getTransducerRadius());
   double t_max = - t_min;
-  m_x_min = r_min * cos(t_min);
-  m_x_max = r_max;
-  m_y_min = r_max * sin(t_min);
-  m_y_max = r_max * sin(t_max);
+  double x_min = r_min * cos(t_min);
+  double x_max = r_max;
+  double y_min = r_max * sin(t_min);
+  double y_max = r_max * sin(t_max);
 
-
-  std::cout << "r_min " << r_min << std::endl;
-  std::cout << "r_max " << r_max << std::endl;
-  std::cout << "t_min " <<  t_min<< std::endl;
-  std::cout << "t_max " << t_max << std::endl;
-  std::cout << "x_min" << m_x_min << std::endl;
-  std::cout << "x_max " << m_x_max << std::endl;
-  std::cout << "y_min " << m_y_min << std::endl;
-  std::cout << "y_max " << m_y_max << std::endl;
-
-  m_height = vpMath::round((m_x_max - m_x_min) / resolution);
-  m_width = vpMath::round((m_y_max - m_y_min) / resolution);
+  m_height = vpMath::round((x_max - x_min) / m_yResolution);
+  m_width = vpMath::round((y_max - y_min) / m_xResolution);
 
   m_rMap.resize(m_height, m_width);
   m_tMap.resize(m_height, m_width);
@@ -151,32 +78,12 @@ void usScanConverter2D::init(unsigned int AN, unsigned int LN, double speedOfSou
   double x, y;
   for (unsigned int i = 0; i < m_height; ++i) {
     for (unsigned int j = 0; j < m_width; ++j) {
-      x = m_x_min + i * resolution;
-      y = m_y_min + j * resolution;
-      m_rMap[i][j] = (sqrt(x * x + y * y) - m_radius) / m_APitch;
-      m_tMap[i][j] = atan2(y, x) * m_radius / m_LPitch + (LN-1) / 2.0;
+      x = x_min + i * m_yResolution;
+      y = y_min + j * m_xResolution;
+      m_rMap[i][j] = (sqrt(x * x + y * y) - inputSettings.getTransducerRadius()) / APitch;
+      m_tMap[i][j] = atan2(y, x) * inputSettings.getTransducerRadius() / LPitch + (scanLineNumber-1) / 2.0;
     }
   }
-  //saving settings in postScanImage
-  m_postScanImage.setHeightResolution(m_resolution);
-  m_postScanImage.setWidthResolution(m_resolution);
-  m_postScanImage.setScanLineNumber(m_LN);
-  m_postScanImage.setTransducerConvexity(true);
-  //m_postScanImage.setScanLinePitch(m_LPitch/m_radius);
-  m_postScanImage.setScanLinePitch(0.00783337); // setting for sonosite, to improve (line above is not correct)
-  m_postScanImage.setTransducerRadius(m_radius);
-
-
-  std::cout << "Scan conversion parameters :" << std::endl;
-  std::cout << "AN : " << AN << std::endl;
-  std::cout << "LN : " << m_postScanImage.getScanLineNumber() << std::endl;
-  std::cout << "line pitch : " << m_postScanImage.getScanLinePitch() << std::endl;
-  std::cout << "LN : " << m_postScanImage.getScanLineNumber() << std::endl;
-  std::cout << "radius : " << m_postScanImage.getTransducerRadius() << std::endl;
-  std::cout << "APitch : " << m_APitch << std::endl;
-  std::cout << "LPitch : " << m_LPitch << std::endl;
-  std::cout << "pitch : " << pitch << std::endl;
-  std::cout << "resolution : " << m_resolution << std::endl;
 }
 
 /**
@@ -186,8 +93,6 @@ void usScanConverter2D::init(unsigned int AN, unsigned int LN, double speedOfSou
 */
 void usScanConverter2D::run(usImagePostScan2D<unsigned char> &postScanImage, const usImagePreScan2D<unsigned char> &preScanImage)
 {
-  //saving image settings
-  postScanImage = m_postScanImage;
   postScanImage.resize(m_height, m_width);
   for (unsigned int i = 0; i < m_height; ++i)
     for (unsigned int j = 0; j < m_width; ++j) {
@@ -195,6 +100,14 @@ void usScanConverter2D::run(usImagePostScan2D<unsigned char> &postScanImage, con
       double v = m_tMap[i][j];
       postScanImage(i, j, interpolateLinear(preScanImage, u, v));
     }
+
+  //saving settings in postScanImage
+  postScanImage.setHeightResolution(m_yResolution);
+  postScanImage.setWidthResolution(m_xResolution);
+  postScanImage.setScanLineNumber(m_scanLineNumber);
+  postScanImage.setTransducerConvexity(preScanImage.isTransducerConvex());
+  postScanImage.setScanLinePitch(m_settings.getScanLinePitch());
+  postScanImage.setTransducerRadius(m_settings.getTransducerRadius());
 }
 
 

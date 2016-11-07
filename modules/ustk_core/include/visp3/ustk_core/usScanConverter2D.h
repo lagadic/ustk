@@ -41,6 +41,7 @@
 #include <visp3/ustk_core/usScanConverter2D.h>
 #include <visp3/ustk_core/usImagePostScan2D.h>
 #include <visp3/ustk_core/usImagePreScan2D.h>
+#include <visp3/ustk_core/ustk.h>
 
 /**
  * @class usScanConverter2D
@@ -58,34 +59,28 @@ class VISP_EXPORT usScanConverter2D
 
   ~usScanConverter2D();
 
-  void init(unsigned int AN, unsigned int LN, double speedOfSound, double resolution,
-		double radius, int inputHeight, double pitch, int nElements);
-
-  void init(unsigned int AN, unsigned int LN, double speedOfSound, double resolution,
-    double radius, double samplingFrequency, double pitch, int nElements);
+  void init(const usImagePreScan2D<unsigned char> &inputSettings, const int BModeSampleNumber,
+            const int scanLineNumber, const double xResolution, const double yResolution);
 
   void run(usImagePostScan2D<unsigned char> &postScanImage, const usImagePreScan2D<unsigned char> &preScanImage);
   double interpolateLinear(const vpImage<unsigned char>& I, double x, double y);
 
  private:
-  usImagePostScan2D<unsigned char> m_postScanImage;
 
-  unsigned int m_AN;
-  unsigned int m_LN;
-  double m_speedOfSound;
-  bool m_curved;
-  double m_radius;
-  double m_APitch;
-  double m_LPitch;
-  double m_resolution;
-  double m_x_min;
-  double m_x_max;
-  double m_y_min;
-  double m_y_max;
-  unsigned int m_height;
-  unsigned int m_width;
   vpMatrix m_rMap;
   vpMatrix m_tMap;
+
+  double m_xResolution;
+  double m_yResolution;
+  int m_scanLineNumber;
+  int m_BModeSampleNumber;
+
+  usTransducerSettings m_settings;
+
+  usImagePostScan2D<unsigned char> m_postScanImage;
+
+  unsigned int m_height;
+  unsigned int m_width;
 
 };
 
