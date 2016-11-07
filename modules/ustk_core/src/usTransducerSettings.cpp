@@ -104,8 +104,7 @@ bool usTransducerSettings::operator==(usTransducerSettings const& other)
   return ( this->getTransducerRadius() == other.getTransducerRadius() &&
            this->getScanLinePitch() == other.getScanLinePitch() &&
            this->getScanLineNumber() == other.getScanLineNumber() &&
-           this->isTransducerConvex() == other.isTransducerConvex() &&
-           this->scanLineNumberIsSet() == other.scanLineNumberIsSet());
+           this->isTransducerConvex() == other.isTransducerConvex());
 }
 
 /*!
