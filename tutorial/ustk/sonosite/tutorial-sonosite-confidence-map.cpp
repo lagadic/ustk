@@ -114,16 +114,14 @@ vpThread::Return displayFunction(vpThread::Args args)
 
       // Convert post-scan to pre-scan image
       usBackScanConverter2D backConverter_;
-      backConverter_.init(postScan_, 0.12, 480, (0.12+postScan_.getTransducerRadius()*(1-cos(vpMath::rad(57.0/2.0))))/postScan_.getHeight());
-      backConverter_.run(preScan_);
+      backConverter_.init(usTransducerSettings(postScan_), 0.0005,0.0005, 480, 128);
+      backConverter_.run(postScan_,preScan_);
 
       //Compute confidence map on pre-scan image
       //initialisations
       //settings for sonosite probe
       usScanConverter2D converter_;
-      converter_.init(preScan_.getHeight(), preScan_.getWidth(),1540.0,
-                      (0.12+postScan_.getTransducerRadius()*(1-cos(vpMath::rad(57.0/2.0))))/postScan_.getHeight(),
-                      preScan_.getTransducerRadius(), 3080000.0,0.00046633, 128);
+      converter_.init(preScan_, 480,128,0.0005,0.0005);
 
       //computing pre-scan confidence map
       confidencePreScan_.setImagePreScanSettings(preScan_);
