@@ -44,6 +44,7 @@
 
 //visp includes
 #include <visp3/core/vpConfig.h>
+#include <visp3/core/vpException.h>
 
 //ustk includes
 
@@ -75,6 +76,7 @@ public:
   /** @name Inherited functionalities from usTransducerSettings */
   //@{
 
+  double getFieldOfView() const;
   std::string getProbeName() const;
   unsigned int getScanLineNumber() const;
   double getScanLinePitch() const;
@@ -85,7 +87,9 @@ public:
   usTransducerSettings& operator=(const usTransducerSettings& other);
   bool operator==(usTransducerSettings const& other);
 
+  bool scanLineNumberIsSet() const;
   //Settings for the probe transducer
+  void setFieldOfView(double fieldOfView);
   void setProbeName(std::string probeName);
   void setScanLineNumber(unsigned int scanLineNumber);
   void setScanLinePitch(const double scanLinePitch);
@@ -104,6 +108,8 @@ private:
   unsigned int m_scanLineNumber;
   bool m_isTransducerConvex;
   std::string m_probeName;
+
+  bool m_scanLineNumberIsSet;
 };
 
 #endif // US_TRANSDUCER_SETTINGS_H

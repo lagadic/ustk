@@ -47,7 +47,8 @@
 * Basic constructor, all settings set to default.
 */
 usTransducerSettings::usTransducerSettings()
-  : m_transducerRadius(0.0f), m_scanLinePitch(0.0f), m_scanLineNumber(0), m_isTransducerConvex(true) {}
+  : m_transducerRadius(0.0f), m_scanLinePitch(0.0f), m_scanLineNumber(0), m_isTransducerConvex(true),
+    m_scanLineNumberIsSet(false) {}
 
 /**
 * Full constructor with all the settings availables:
@@ -61,7 +62,8 @@ usTransducerSettings::usTransducerSettings()
 usTransducerSettings::usTransducerSettings(double transducerRadius, double scanLinePitch,
                                            unsigned int scanLineNumber, bool isTransducerConvex)
   : m_transducerRadius(transducerRadius), m_scanLinePitch(scanLinePitch),
-    m_scanLineNumber(scanLineNumber), m_isTransducerConvex(isTransducerConvex)
+    m_scanLineNumber(scanLineNumber), m_isTransducerConvex(isTransducerConvex),
+    m_scanLineNumberIsSet(true)
 {}
 
 /**
@@ -88,6 +90,7 @@ usTransducerSettings& usTransducerSettings::operator=(const usTransducerSettings
   m_scanLinePitch = other.getScanLinePitch();
   m_scanLineNumber = other.getScanLineNumber();
   m_isTransducerConvex = other.isTransducerConvex();
+  m_scanLineNumberIsSet = other.scanLineNumberIsSet();
 
   return *this;
 }
@@ -101,7 +104,8 @@ bool usTransducerSettings::operator==(usTransducerSettings const& other)
   return ( this->getTransducerRadius() == other.getTransducerRadius() &&
            this->getScanLinePitch() == other.getScanLinePitch() &&
            this->getScanLineNumber() == other.getScanLineNumber() &&
-           this->isTransducerConvex() == other.isTransducerConvex());
+           this->isTransducerConvex() == other.isTransducerConvex() &&
+           this->scanLineNumberIsSet() == other.scanLineNumberIsSet());
 }
 
 /*!
@@ -119,7 +123,7 @@ VISP_EXPORT std::ostream& operator<<(std::ostream& out, const usTransducerSettin
     out << "scan line pitch angle: " << other.getScanLinePitch() << std::endl;
   else
     out << "scan line pitch distance: " << other.getScanLinePitch() << std::endl;
-  out << "scanline number : " << other.getScanLineNumber() << std::endl
+    out << "scanline number : " << other.getScanLineNumber() << std::endl
       << "convex probe used: " << other.isTransducerConvex() << std::endl;
   return out;
 }
@@ -203,6 +207,7 @@ unsigned int usTransducerSettings::getScanLineNumber() const
 */
 void usTransducerSettings::setScanLineNumber(unsigned int scanLineNumber)
 {
+  m_scanLineNumberIsSet = true;
   m_scanLineNumber =  scanLineNumber;
 }
 
@@ -222,4 +227,37 @@ std::string usTransducerSettings::getProbeName() const
 void usTransducerSettings::setProbeName(std::string probeName)
 {
   m_probeName = probeName;
+}
+
+/**
+* Getter for the transducer field of view (based on scan line number and pitch).
+* @return The transducer field of view in radians if the probe is convex, in meters if it is linear.
+*/
+double usTransducerSettings::getFieldOfView() const
+{
+  if(!m_scanLineNumberIsSet)
+    throw vpException(vpException::notInitialized, "The scan line number is not set, cannot determine the field of view");
+  return m_scanLinePitch  * (double) (m_scanLineNumber -1);
+}
+
+/**
+* Setter for the transducer field of view (updates the scan line pitch).
+* @param The transducer field of view in radians if the probe is convex, in meters if it is linear.
+* @warning Be sure to update the scan line number before the field of view :
+*          only the scan line pitch is stored in memory, calculated from the field of view and the scan line pitch in this method.
+*/
+void usTransducerSettings::setFieldOfView(double fieldOfView)
+{
+  if(!m_scanLineNumberIsSet)
+    throw vpException(vpException::notInitialized, "The scan line number is not set, cannot determine the pitch from the field of view");
+  m_scanLinePitch = fieldOfView / (double) (m_scanLineNumber - 1);
+}
+
+/**
+* Getter to know if the scan line number is set (usefull in case of field of view setter call).
+* @return Boolean to know if the scan line number is set or not.
+*/
+bool usTransducerSettings::scanLineNumberIsSet() const
+{
+  return m_scanLineNumberIsSet;
 }
