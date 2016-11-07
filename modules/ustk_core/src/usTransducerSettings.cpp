@@ -261,3 +261,21 @@ bool usTransducerSettings::scanLineNumberIsSet() const
 {
   return m_scanLineNumberIsSet;
 }
+
+/**
+* Setter for depth : distance in meters between first and last pixel in a scanline.
+* @param depth Distance in meters.
+*/
+void usTransducerSettings::setDepth(double depth)
+{
+  m_depth = depth;
+}
+
+/**
+* Setter for depth : distance in meters between first and last pixel in a scanline.
+* @return Depth in meters.
+*/
+double usTransducerSettings::getDepth() const
+{
+  return m_depth;
+}

@@ -76,6 +76,7 @@ public:
   /** @name Inherited functionalities from usTransducerSettings */
   //@{
 
+  double getDepth() const;
   double getFieldOfView() const;
   std::string getProbeName() const;
   unsigned int getScanLineNumber() const;
@@ -89,6 +90,7 @@ public:
 
   bool scanLineNumberIsSet() const;
   //Settings for the probe transducer
+  void setDepth(double depth);
   void setFieldOfView(double fieldOfView);
   void setProbeName(std::string probeName);
   void setScanLineNumber(unsigned int scanLineNumber);
@@ -107,6 +109,7 @@ private:
   double m_scanLinePitch;
   unsigned int m_scanLineNumber;
   bool m_isTransducerConvex;
+  double m_depth;
   std::string m_probeName;
 
   bool m_scanLineNumberIsSet;
