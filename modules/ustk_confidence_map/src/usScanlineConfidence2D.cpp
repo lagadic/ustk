@@ -43,8 +43,11 @@ usScanlineConfidence2D::usScanlineConfidence2D() {}
 */
 void usScanlineConfidence2D::run(usImagePreScan2D<unsigned char> &preScanConfidence, const usImagePreScan2D<unsigned char> &preScanImage)
 {
+  preScanConfidence.setImagePreScanSettings(preScanImage);
   unsigned int AN = preScanImage.getHeight();
   unsigned int LN = preScanImage.getWidth();
+  if(AN == 0 || LN == 0)
+    throw(vpException(vpException::notInitialized, "pre-scan image dimension is 0"));
 
   preScanConfidence.resize(AN, LN);
 

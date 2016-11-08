@@ -46,6 +46,11 @@ usBackScanConverter2D::~usBackScanConverter2D() {}
 */
 void usBackScanConverter2D::init(const usImagePostScan2D<unsigned char> &inputSettings, const int BModeSampleNumber, const int scanLineNumber)
 {
+  //check resolution to avoir errors
+  if(inputSettings.getHeightResolution() == 0.0 || inputSettings.getWidthResolution() == 0.0)
+    throw(vpException(vpException::notInitialized, "Please fill the post-scan resplution before init the conversion."));
+
+
   //convex transducer scan conversion
   if(inputSettings.isTransducerConvex()) {
     double APitch = inputSettings.getDepth() / (double)(BModeSampleNumber);

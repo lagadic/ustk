@@ -68,7 +68,7 @@
 class VISP_EXPORT usTransducerSettings {
 public:
   usTransducerSettings();
-  usTransducerSettings(double transducerRadius, double scanLinePitch, unsigned int scanLineNumber, bool isTransducerConvex);
+  usTransducerSettings(double transducerRadius, double scanLinePitch, unsigned int scanLineNumber, bool isTransducerConvex, double depth);
   usTransducerSettings(const usTransducerSettings &other);
 
   virtual ~usTransducerSettings();

@@ -58,12 +58,14 @@ usTransducerSettings::usTransducerSettings()
 * if the probe is convex, or in meters (m) if the probe is linear.
 * @param scanLineNumber Number of scan lines acquired by the probe transducer.
 * @param isTransducerConvex Boolean to specify if the probe transducer is convex or linear.
+* @param depth Distance in meters between first and last pixel of a scanline.
 */
 usTransducerSettings::usTransducerSettings(double transducerRadius, double scanLinePitch,
-                                           unsigned int scanLineNumber, bool isTransducerConvex)
+                                           unsigned int scanLineNumber, bool isTransducerConvex,
+                                           double depth)
   : m_transducerRadius(transducerRadius), m_scanLinePitch(scanLinePitch),
     m_scanLineNumber(scanLineNumber), m_isTransducerConvex(isTransducerConvex),
-    m_scanLineNumberIsSet(true)
+    m_depth(depth), m_scanLineNumberIsSet(true)
 {}
 
 /**
@@ -91,6 +93,7 @@ usTransducerSettings& usTransducerSettings::operator=(const usTransducerSettings
   m_scanLineNumber = other.getScanLineNumber();
   m_isTransducerConvex = other.isTransducerConvex();
   m_scanLineNumberIsSet = other.scanLineNumberIsSet();
+  m_depth = other.getDepth();
 
   return *this;
 }
@@ -122,8 +125,9 @@ VISP_EXPORT std::ostream& operator<<(std::ostream& out, const usTransducerSettin
     out << "scan line pitch angle: " << other.getScanLinePitch() << std::endl;
   else
     out << "scan line pitch distance: " << other.getScanLinePitch() << std::endl;
-    out << "scanline number : " << other.getScanLineNumber() << std::endl
-      << "convex probe used: " << other.isTransducerConvex() << std::endl;
+  out << "scanline number : " << other.getScanLineNumber() << std::endl
+      << "convex probe used: " << other.isTransducerConvex() << std::endl
+      << "depth : " << other.getDepth() << std::endl;
   return out;
 }
 

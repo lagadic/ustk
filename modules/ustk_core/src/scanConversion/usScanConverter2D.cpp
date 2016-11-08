@@ -46,6 +46,11 @@ usScanConverter2D::~usScanConverter2D() {}
 void usScanConverter2D::init(const usImagePostScan2D<unsigned char> &inputSettings, const int BModeSampleNumber,
             const int scanLineNumber)
 {
+
+  //check resolution to avoir errors
+  if(inputSettings.getHeightResolution() == 0.0 || inputSettings.getWidthResolution() == 0.0)
+    throw(vpException(vpException::notInitialized, "Please fill the post-scan resplution before init the conversion."));
+
   m_scanLineNumber = scanLineNumber;
   m_BModeSampleNumber = BModeSampleNumber;
   m_xResolution = inputSettings.getWidthResolution();
