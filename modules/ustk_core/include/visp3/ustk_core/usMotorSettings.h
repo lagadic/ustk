@@ -59,7 +59,7 @@
  *   - the type of motor used to move the transducer: linear, tilting (small rotation) or rotationnal (360&deg; rotation).
  *   - the motor radius \f$R_M\f$ (value set to zero for a linear motor)
  *   - the frame pitch that corresponds to the angle \f$\alpha_F\f$ (in radians) between
- *     to successive frame acquisitions when the motor is convex, or to the distance \f$\d_F\f$ (in meters)
+ *     to successive frame acquisitions when the motor is convex, or to the distance \f$d_F\f$ (in meters)
  *     when the motor is linear.
  *   - the frame number \f$n_F\f$ that corresponds to the number of frames acquired by the probe to generate the 3D volume.
  *   .
