@@ -41,7 +41,6 @@
 #include <visp3/ustk_core/usScanConverter2D.h>
 #include <visp3/ustk_core/usImagePostScan2D.h>
 #include <visp3/ustk_core/usImagePreScan2D.h>
-#include <visp3/ustk_core/ustk.h>
 
 /**
  * @class usScanConverter2D
