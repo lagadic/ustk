@@ -74,7 +74,6 @@ vpThread::Return displayFunction(vpThread::Args args)
   usImagePostScan2D<unsigned char> confidencePostScan_;
   usImagePreScan2D<unsigned char> confidencePreScan_;
   usScanlineConfidence2D confidenceMapProcessor_;
-  confidenceMapProcessor_.init(usScanlineConfidence2D::US_CONF_INTEGRATION);
 
   t_CaptureState capture_state_;
   bool display_initialized_ = false;

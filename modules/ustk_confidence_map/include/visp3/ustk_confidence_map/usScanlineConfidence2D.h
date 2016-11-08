@@ -47,18 +47,9 @@ class VISP_EXPORT usScanlineConfidence2D {
 
  public:
 
-enum usScanLineConfidenceType {
-  US_CONF_MAX, US_CONF_INTEGRATION
-};
-
   usScanlineConfidence2D();
 
-  void init(usScanLineConfidenceType type);
-
   void run(usImagePreScan2D<unsigned char> &preScanConfidence, const usImagePreScan2D<unsigned char> &preScanImage);
-
- private:
-  usScanLineConfidenceType m_type;
 };
 
 #endif // US_SCANLINE_CONF_2D_H

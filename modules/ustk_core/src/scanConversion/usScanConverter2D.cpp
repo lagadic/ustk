@@ -48,14 +48,14 @@ usScanConverter2D::~usScanConverter2D() {}
 * @param nElements Number of elements on the probe.
 */
 
-void usScanConverter2D::init(const usImagePreScan2D<unsigned char> &inputSettings, const int BModeSampleNumber,
+void usScanConverter2D::init(const usTransducerSettings &inputSettings, const int BModeSampleNumber,
                              const int scanLineNumber, const double xResolution, const double yResolution)
 {
   m_scanLineNumber = scanLineNumber;
   m_BModeSampleNumber = BModeSampleNumber;
   m_xResolution = xResolution;
   m_yResolution = yResolution;
-  m_settings = (usTransducerSettings)inputSettings;
+  m_settings = inputSettings;
 
   double APitch = inputSettings.getDepth() / (double)(BModeSampleNumber);
   double LPitch = inputSettings.getFieldOfView() * inputSettings.getTransducerRadius() / (double)(scanLineNumber -1);

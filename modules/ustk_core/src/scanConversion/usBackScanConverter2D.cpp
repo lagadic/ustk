@@ -54,11 +54,11 @@ void usBackScanConverter2D::init(const usImagePostScan2D<unsigned char> &inputSe
     double r_min = inputSettings.getTransducerRadius();
     double r_max = (inputSettings.getTransducerRadius() + APitch * BModeSampleNumber);
     double t_min = - inputSettings.getFieldOfView() / 2.0;
-    double t_max = - t_min;
+    //double t_max = - t_min;
     double x_min = r_min * cos(t_min);
-    double x_max = r_max;
+    //double x_max = r_max;
     double y_min = r_max * sin(t_min);
-    double y_max = r_max * sin(t_max);
+    //double y_max = r_max * sin(t_max);
 
     m_iMap.resize(BModeSampleNumber, scanLineNumber);
     m_jMap.resize(BModeSampleNumber, scanLineNumber);
@@ -93,8 +93,8 @@ void usBackScanConverter2D::init(const usImagePostScan2D<unsigned char> &inputSe
 * @param BModeSampleNumber
 * @param scanLineNumber
 */
-void usBackScanConverter2D:: init(usTransducerSettings transducerSettings, const double xResolution,
-     const double yResolution, const double BModeSampleNumber, const double scanLineNumber)
+void usBackScanConverter2D:: init(usTransducerSettings transducerSettings, const double BModeSampleNumber,
+ const double scanLineNumber,const double xResolution, const double yResolution)
 {
   //convex transducer scan conversion
   if(transducerSettings.isTransducerConvex()) {
@@ -104,11 +104,11 @@ void usBackScanConverter2D:: init(usTransducerSettings transducerSettings, const
     double r_min = transducerSettings.getTransducerRadius();
     double r_max = (transducerSettings.getTransducerRadius() + APitch * BModeSampleNumber);
     double t_min = - transducerSettings.getFieldOfView() / 2.0;
-    double t_max = - t_min;
+    //double t_max = - t_min;
     double x_min = r_min * cos(t_min);
-    double x_max = r_max;
+    //double x_max = r_max;
     double y_min = r_max * sin(t_min);
-    double y_max = r_max * sin(t_max);
+    //double y_max = r_max * sin(t_max);
 
     m_iMap.resize(BModeSampleNumber, scanLineNumber);
     m_jMap.resize(BModeSampleNumber, scanLineNumber);
