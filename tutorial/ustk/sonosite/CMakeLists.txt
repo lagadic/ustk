@@ -2,9 +2,10 @@ project(tutorial-sonosite)
 
 cmake_minimum_required(VERSION 2.6)
 
-find_package(VISP REQUIRED visp_ustk_core visp_ustk_confidence_map)
+find_package(VISP REQUIRED visp_ustk_core visp_ustk_confidence_map visp_robot)
 
 set(tutorial_cpp
+  tutorial-sonosite-confidence-control.cpp
   tutorial-sonosite-confidence-map.cpp
   tutorial-sonosite-grabber.cpp)
 
