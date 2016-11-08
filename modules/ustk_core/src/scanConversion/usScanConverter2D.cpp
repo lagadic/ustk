@@ -38,14 +38,56 @@ usScanConverter2D::~usScanConverter2D() {}
 
 /**
 * Initialize the scan-converter.
-* @param AN Number of samples along a scan-line in the pre-scan image.
-* @param LN Number of scanlines in the pre-scan image.
-* @param speedOfSound Speed of sound in meters per seconds (normally 1540 m/s).
-* @param resolution Resolution of the post-scan image you want (size of a pixel in meters).
-* @param radius Transducer radius in meters (0 if linear transducer).
-* @param samplingFrequency Sampling frequency used to obtain the pre-scan image.
-* @param pitch Probe pitch.
-* @param nElements Number of elements on the probe.
+* @param inputSettings Post-scan settings : transducer radius, pitch, depth, and resolutions.
+* @param BModeSampleNumber Number of samples along a scanline : height of the pre-scan image to convert.
+* @param scanLineNumber Number of scanlines : width of the pre-scan image to convert.
+*/
+
+void usScanConverter2D::init(const usImagePostScan2D<unsigned char> &inputSettings, const int BModeSampleNumber,
+            const int scanLineNumber)
+{
+  m_scanLineNumber = scanLineNumber;
+  m_BModeSampleNumber = BModeSampleNumber;
+  m_xResolution = inputSettings.getWidthResolution();
+  m_yResolution = inputSettings.getHeightResolution();
+  m_settings = inputSettings;
+
+  double APitch = inputSettings.getDepth() / (double)(BModeSampleNumber);
+  double LPitch = inputSettings.getFieldOfView() * inputSettings.getTransducerRadius() / (double)(scanLineNumber -1);
+
+  double r_min = inputSettings.getTransducerRadius();
+  double r_max = (inputSettings.getTransducerRadius() + APitch * BModeSampleNumber);
+  double t_min = - ( (double)(scanLineNumber-1) * LPitch) / (2.0 * inputSettings.getTransducerRadius());
+  double t_max = - t_min;
+  double x_min = r_min * cos(t_min);
+  double x_max = r_max;
+  double y_min = r_max * sin(t_min);
+  double y_max = r_max * sin(t_max);
+
+  m_height = vpMath::round((x_max - x_min) / m_yResolution);
+  m_width = vpMath::round((y_max - y_min) / m_xResolution);
+
+  m_rMap.resize(m_height, m_width);
+  m_tMap.resize(m_height, m_width);
+
+  double x, y;
+  for (unsigned int i = 0; i < m_height; ++i) {
+    for (unsigned int j = 0; j < m_width; ++j) {
+      x = x_min + i * m_yResolution;
+      y = y_min + j * m_xResolution;
+      m_rMap[i][j] = (sqrt(x * x + y * y) - inputSettings.getTransducerRadius()) / APitch;
+      m_tMap[i][j] = atan2(y, x) * inputSettings.getTransducerRadius() / LPitch + (scanLineNumber-1) / 2.0;
+    }
+  }
+}
+
+/**
+* Initialize the scan-converter.
+* @param inputSettings Post-scan settings : transducer radius, pitch, depth, and resolutions.
+* @param BModeSampleNumber Number of samples along a scanline : height of the pre-scan image to convert.
+* @param scanLineNumber Number of scanlines : width of the pre-scan image to convert.
+* @param xResolution Size of a pixel in x direction of the post scan image built.
+* @param yResolution Size of a pixel in y direction of the post scan image built.
 */
 
 void usScanConverter2D::init(const usTransducerSettings &inputSettings, const int BModeSampleNumber,
@@ -140,6 +182,5 @@ double usScanConverter2D::interpolateLinear(const vpImage<unsigned char>& I, dou
     else
       return (y2 - y) * val1 + (y - y1) * val2;
   }
-
   return 0.0;
 }

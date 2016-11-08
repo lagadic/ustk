@@ -40,9 +40,9 @@ usBackScanConverter2D::~usBackScanConverter2D() {}
 
 /**
 * Initialize the back-scan converter.
-* @param imageToConvert Post-scan image to convert back.
-* @param BModeSampleNumber
-* @param scanLineNumber
+* @param inputSettings Post-scan settings you want to use to back-convert image.
+* @param BModeSampleNumber Number of samples along a scanline : height of the pre-scan image built by run().
+* @param scanLineNumber Number of scanlines : width of the pre-scan image built by run().
 */
 void usBackScanConverter2D::init(const usImagePostScan2D<unsigned char> &inputSettings, const int BModeSampleNumber, const int scanLineNumber)
 {
@@ -93,7 +93,7 @@ void usBackScanConverter2D::init(const usImagePostScan2D<unsigned char> &inputSe
 * @param BModeSampleNumber
 * @param scanLineNumber
 */
-void usBackScanConverter2D:: init(usTransducerSettings transducerSettings, const double BModeSampleNumber,
+void usBackScanConverter2D:: init(const usTransducerSettings &transducerSettings, const double BModeSampleNumber,
  const double scanLineNumber,const double xResolution, const double yResolution)
 {
   //convex transducer scan conversion
@@ -137,6 +137,7 @@ void usBackScanConverter2D:: init(usTransducerSettings transducerSettings, const
 
 /**
 * Run the back-scan converter.
+* @param [in] imageToConvert Post-scan image to convert back.
 * @param [out] imageConverted Pre-scan image obtained after back conversion.
 */
 void usBackScanConverter2D::run(const usImagePostScan2D<unsigned char> &imageToConvert, usImagePreScan2D<unsigned char> &imageConverted)

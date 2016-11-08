@@ -127,7 +127,6 @@ public:
   /**
   * Initialize the data container with the specified value.
   * @param value The data
-  * @param numberOfVoxels number of voxels in the volume
   */
   void initData(Type value);
 

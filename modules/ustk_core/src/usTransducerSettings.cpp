@@ -241,7 +241,7 @@ double usTransducerSettings::getFieldOfView() const
 
 /**
 * Setter for the transducer field of view (updates the scan line pitch).
-* @param The transducer field of view in radians if the probe is convex, in meters if it is linear.
+* @param fieldOfView The transducer field of view in radians if the probe is convex, in meters if it is linear.
 * @warning Be sure to update the scan line number before the field of view :
 *          only the scan line pitch is stored in memory, calculated from the field of view and the scan line pitch in this method.
 */

@@ -45,8 +45,6 @@ void usScanlineConfidence2D::run(usImagePreScan2D<unsigned char> &preScanConfide
 {
   unsigned int AN = preScanImage.getHeight();
   unsigned int LN = preScanImage.getWidth();
-  double coef = 0.9;
-  double attenuation = 0.0;
 
   preScanConfidence.resize(AN, LN);
 
@@ -61,7 +59,6 @@ void usScanlineConfidence2D::run(usImagePreScan2D<unsigned char> &preScanConfide
         max = static_cast<double>(preScanImage(i,j));
     }
 
-
   // Integrate scan lines
   for (unsigned int j = 0; j < LN; ++j) {
     double sum = 0.0;
@@ -75,5 +72,4 @@ void usScanlineConfidence2D::run(usImagePreScan2D<unsigned char> &preScanConfide
       preScanConfidence(i, j, val / sum * 255);
     }
   }
-
 }

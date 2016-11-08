@@ -41,7 +41,6 @@
 * @class usScanlineConfidence2D
 * @brief Process a pre-scan image to determine the confidence map.
 * @ingroup module_ustk_confidence_map.
-* An object of usScanlineConfidence2D type should be initialized through init() and then processed through run().
 */
 class VISP_EXPORT usScanlineConfidence2D {
 
