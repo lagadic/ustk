@@ -138,7 +138,7 @@ vpThread::Return displayFunction(vpThread::Args args)
       postScan_.setFieldOfView(vpMath::rad(57.0)); // field of view is 57 deg
       postScan_.setDepth(0.12);
 
-      resolution = (0.12+postScan_.getTransducerRadius()*(1-cos(vpMath::rad(57.0/2.0))))/postScan_.getHeight();
+      resolution = (postScan_.getDepth()+postScan_.getTransducerRadius()*(1-cos(postScan_.getFieldOfVeiw()/2.0)))/postScan_.getHeight();
 
       // Convert post-scan to pre-scan image
       if(firstLoopCycle) {
