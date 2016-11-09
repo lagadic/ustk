@@ -83,10 +83,7 @@ vpThread::Return displayFunction(vpThread::Args args)
       }
 
       //Settings
-      preScan_.setTransducerRadius(0.060);
-      preScan_.setTransducerConvexity(true);
-      preScan_.setScanLineNumber(128);
-      preScan_.setScanLinePitch(vpMath::rad(57/127)); // field of view is 57 deg
+      std::cout << "image acquired settings : " << preScan_ << std::endl;
 
       // Check if we need to initialize the display with the first frame
       if (! display_initialized_) {
