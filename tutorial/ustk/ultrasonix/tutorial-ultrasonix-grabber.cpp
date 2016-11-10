@@ -9,8 +9,12 @@
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/sensor/vpV4l2Grabber.h>
 
+#include <visp3/ustk_core/usImageRF2D.h>
 #include <visp3/ustk_core/usImagePreScan2D.h>
+#include <visp3/ustk_core/usImagePostScan2D.h>
+
 #include <visp3/ustk_grabber/usGrabberUltrasonix.h>
+#include <visp3/ustk_grabber/usGrabberFrame.h>
 
 #if defined(VISP_HAVE_V4L2) && defined(VISP_HAVE_PTHREAD)
 
@@ -21,21 +25,66 @@ typedef enum {
   capture_stopped
 } t_CaptureState;
 t_CaptureState s_capture_state = capture_waiting;
-usImagePreScan2D<unsigned char> s_frame;
+int s_imageType;
+vpMutex s_mutex_imageType;
+usImageRF2D<unsigned char> s_frame_rf;
+usImagePreScan2D<unsigned char> s_frame_prescan;
+usImagePostScan2D<unsigned char> s_frame_postscan;
 vpMutex s_mutex_capture;
 //! [capture-multi-threaded declaration]
 
 //! [capture-multi-threaded captureFunction]
 vpThread::Return captureFunction(vpThread::Args args)
 {
-  usGrabberUltrasonix<usImagePreScan2D<unsigned char> > grabber = *((usGrabberUltrasonix<usImagePreScan2D<unsigned char> >  *) args);
-  usImagePreScan2D<unsigned char> frame_;
-  frame_.resize(480,128);
+  usGrabberUltrasonix grabber = *((usGrabberUltrasonix *) args);
+  usImageRF2D<unsigned char> m_frame_rf;
+  usImagePreScan2D<unsigned char> m_frame_prescan;
+  usImagePostScan2D<unsigned char> m_frame_postscan;
+
+  //resizing images and saving image type in s_imageType
+  if(grabber.getImageType() == usGrabberUltrasonix::TYPE_RF) {      
+    s_imageType = usGrabberUltrasonix::TYPE_RF;
+    m_frame_rf.resize(grabber.getCommunicationsInformations()->m_header.h,
+                      grabber.getCommunicationsInformations()->m_header.w);
+  }
+  else if(grabber.getImageType() == usGrabberUltrasonix::TYPE_PRESCAN) {
+    s_imageType = usGrabberUltrasonix::TYPE_PRESCAN;
+    m_frame_prescan.resize(grabber.getCommunicationsInformations()->m_header.h,
+                           grabber.getCommunicationsInformations()->m_header.w);
+  }
+  else if(grabber.getImageType() == usGrabberUltrasonix::TYPE_POSTSCAN) {
+    s_imageType = usGrabberUltrasonix::TYPE_POSTSCAN;
+    m_frame_postscan.resize(grabber.getCommunicationsInformations()->m_header.h,
+                            grabber.getCommunicationsInformations()->m_header.w);
+  }
+  else
+    throw(vpException(vpException::badValue,"unknown type of grabbed image"));
+
+  s_mutex_imageType.unlock();
+
   bool stop_capture_ = false;
+
+  //init grabbers (only one used but they have to be defined at global scope)
+  usGrabberFrame<usImageRF2D<unsigned char> > grabberFrameRF;
+  grabberFrameRF.setCommunicationinformations(grabber.getCommunicationsInformations());
+  usGrabberFrame<usImagePreScan2D<unsigned char> > grabberFramePreScan;
+  grabberFramePreScan.setCommunicationinformations(grabber.getCommunicationsInformations());
+  usGrabberFrame<usImagePostScan2D<unsigned char> > grabberFramePostScan;
+  grabberFramePostScan.setCommunicationinformations(grabber.getCommunicationsInformations());
+
 
   while (! stop_capture_) {
     // Capture in progress
-    grabber.grabFrame(&frame_);
+    if(grabber.getImageType() == usGrabberUltrasonix::TYPE_RF) {
+       grabberFrameRF.grabFrame(&m_frame_rf);
+    }
+    else if(grabber.getImageType() == usGrabberUltrasonix::TYPE_PRESCAN) {
+      grabberFramePreScan.grabFrame(&m_frame_prescan);
+    }
+    else if(grabber.getImageType() == usGrabberUltrasonix::TYPE_POSTSCAN) {
+      grabberFramePostScan.grabFrame(&m_frame_postscan);
+    }
+
 
     // Update shared data
     {
@@ -44,7 +93,16 @@ vpThread::Return captureFunction(vpThread::Args args)
         stop_capture_ = true;
       else
         s_capture_state = capture_started;
-      s_frame = frame_;
+
+      if(grabber.getImageType() == usGrabberUltrasonix::TYPE_RF) {
+        s_frame_rf = m_frame_rf;
+      }
+      else if(grabber.getImageType() == usGrabberUltrasonix::TYPE_PRESCAN) {
+        s_frame_prescan = m_frame_prescan;
+      }
+      else if(grabber.getImageType() == usGrabberUltrasonix::TYPE_POSTSCAN) {
+        s_frame_postscan = m_frame_postscan;
+      }
     }
   }
 
@@ -52,7 +110,6 @@ vpThread::Return captureFunction(vpThread::Args args)
     vpMutex::vpScopedLock lock(s_mutex_capture);
     s_capture_state = capture_stopped;
   }
-  std::cout << "End of capture thread" << std::endl;
   return 0;
 }
 //! [capture-multi-threaded captureFunction]
@@ -61,7 +118,10 @@ vpThread::Return captureFunction(vpThread::Args args)
 vpThread::Return displayFunction(vpThread::Args args)
 {
   (void)args; // Avoid warning: unused parameter args
+  int m_imageType;
+  usImageRF2D<unsigned char> rf_;
   usImagePreScan2D<unsigned char> preScan_;
+  usImagePostScan2D<unsigned char> postScan_;
 
   t_CaptureState capture_state_;
   bool display_initialized_ = false;
@@ -76,36 +136,83 @@ vpThread::Return displayFunction(vpThread::Args args)
 
     // Check if a frame is available
     if (capture_state_ == capture_started) {
+      {
+        vpMutex::vpScopedLock lock(s_mutex_imageType);
+        m_imageType = s_imageType;
+      }
+      //capture started
       // Create a copy of the captured frame
       {
         vpMutex::vpScopedLock lock(s_mutex_capture);
-        preScan_ = s_frame;
+       if(m_imageType == usGrabberUltrasonix::TYPE_RF) {
+          rf_ = s_frame_rf;
+          std::cout << "image acquired settings : " << rf_ << std::endl;
+       }
+       else if(m_imageType == usGrabberUltrasonix::TYPE_PRESCAN) {
+         preScan_ = s_frame_prescan;
+         std::cout << "image acquired settings : " << preScan_ << std::endl;
+       }
+       else if(m_imageType == usGrabberUltrasonix::TYPE_POSTSCAN) {
+         postScan_ = s_frame_postscan;
+         std::cout << "image acquired settings : " << postScan_ << std::endl;
+       }
       }
 
-      //Settings
-      std::cout << "image acquired settings : " << preScan_ << std::endl;
 
       // Check if we need to initialize the display with the first frame
       if (! display_initialized_) {
         // Initialize the display
 #if defined(VISP_HAVE_X11)
-        d_ = new vpDisplayX(preScan_);
-        display_initialized_ = true;
+        if(m_imageType == usGrabberUltrasonix::TYPE_RF) {
+          d_ = new vpDisplayX(rf_);
+          display_initialized_ = true;
+        }
+        else if(m_imageType == usGrabberUltrasonix::TYPE_PRESCAN) {
+          d_ = new vpDisplayX(preScan_);
+          display_initialized_ = true;
+        }
+        else if(m_imageType == usGrabberUltrasonix::TYPE_POSTSCAN) {
+          d_ = new vpDisplayX(postScan_);
+          display_initialized_ = true;
+        }
 #endif
       }
-
-      // Display the image
-      vpDisplay::display(preScan_);
-
-      // Trigger end of acquisition with a mouse click
-      vpDisplay::displayText(preScan_, 10, 10, "Click to exit...", vpColor::red);
-      if (vpDisplay::getClick(preScan_, false)) {
-        vpMutex::vpScopedLock lock(s_mutex_capture);
-        s_capture_state = capture_stopped;
+      if(m_imageType == usGrabberUltrasonix::TYPE_RF) {
+        // Display the image
+        vpDisplay::display(rf_);
+        // Trigger end of acquisition with a mouse click
+        vpDisplay::displayText(rf_, 10, 10, "Click to exit...", vpColor::red);
+        if (vpDisplay::getClick(rf_, false)) {
+          vpMutex::vpScopedLock lock(s_mutex_capture);
+          s_capture_state = capture_stopped;
+        }
+        // Update the display
+        vpDisplay::flush(rf_);
+      }
+      else if(m_imageType == usGrabberUltrasonix::TYPE_PRESCAN) {
+        vpDisplay::display(preScan_);
+        // Trigger end of acquisition with a mouse click
+        vpDisplay::displayText(preScan_, 10, 10, "Click to exit...", vpColor::red);
+        if (vpDisplay::getClick(preScan_, false)) {
+          vpMutex::vpScopedLock lock(s_mutex_capture);
+          s_capture_state = capture_stopped;
+        }
+        // Update the display
+        vpDisplay::flush(preScan_);
+      }
+      else if(m_imageType == usGrabberUltrasonix::TYPE_POSTSCAN) {
+        vpDisplay::display(postScan_);
+        // Trigger end of acquisition with a mouse click
+        vpDisplay::displayText(postScan_, 10, 10, "Click to exit...", vpColor::red);
+        if (vpDisplay::getClick(postScan_, false)) {
+          vpMutex::vpScopedLock lock(s_mutex_capture);
+          s_capture_state = capture_stopped;
+        }
+        // Update the display
+        vpDisplay::flush(postScan_);
       }
 
-      // Update the display
-      vpDisplay::flush(preScan_);
+
     }
     else {
       vpTime::wait(2); // Sleep 2ms
@@ -125,7 +232,7 @@ vpThread::Return displayFunction(vpThread::Args args)
 int main(int argc, const char* argv[])
 {
   // Instantiate the grabber
-  usGrabberUltrasonix<usImagePreScan2D<unsigned char> > grabber;
+  usGrabberUltrasonix grabber;
 
   grabber.start();
 
