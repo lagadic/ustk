@@ -67,10 +67,13 @@ vpThread::Return captureFunction(vpThread::Args args)
   //init grabbers (only one used but they have to be defined at global scope)
   usGrabberFrame<usImageRF2D<unsigned char> > grabberFrameRF;
   grabberFrameRF.setCommunicationinformations(grabber.getCommunicationsInformations());
+  grabberFrameRF.setTransducerSettings(grabber.getTransducerSettings());
   usGrabberFrame<usImagePreScan2D<unsigned char> > grabberFramePreScan;
   grabberFramePreScan.setCommunicationinformations(grabber.getCommunicationsInformations());
+  grabberFramePreScan.setTransducerSettings(grabber.getTransducerSettings());
   usGrabberFrame<usImagePostScan2D<unsigned char> > grabberFramePostScan;
   grabberFramePostScan.setCommunicationinformations(grabber.getCommunicationsInformations());
+  grabberFramePostScan.setTransducerSettings(grabber.getTransducerSettings());
 
 
   while (! stop_capture_) {
