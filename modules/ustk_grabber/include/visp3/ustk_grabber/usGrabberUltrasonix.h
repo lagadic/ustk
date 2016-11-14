@@ -39,6 +39,8 @@
 #ifndef US_GRABBER_ULTRASONIX_H
 #define US_GRABBER_ULTRASONIX_H
 
+#ifndef _WIN32
+
 #include <cmath>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -191,5 +193,5 @@ class VISP_EXPORT usGrabberUltrasonix {
 
   UsGrabberUltrasonixImageType m_imageType;
 };
-
+#endif // _WIN32
 #endif // US_GRABBER_ULTRASONIX_H

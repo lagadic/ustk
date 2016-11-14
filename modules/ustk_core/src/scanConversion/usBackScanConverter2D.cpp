@@ -98,8 +98,8 @@ void usBackScanConverter2D::init(const usImagePostScan2D<unsigned char> &inputSe
 * @param BModeSampleNumber
 * @param scanLineNumber
 */
-void usBackScanConverter2D:: init(const usTransducerSettings &transducerSettings, const double BModeSampleNumber,
- const double scanLineNumber,const double xResolution, const double yResolution)
+void usBackScanConverter2D:: init(const usTransducerSettings &transducerSettings, const int BModeSampleNumber,
+ const int scanLineNumber,const double xResolution, const double yResolution)
 {
   //convex transducer scan conversion
   if(transducerSettings.isTransducerConvex()) {
@@ -119,8 +119,8 @@ void usBackScanConverter2D:: init(const usTransducerSettings &transducerSettings
     m_jMap.resize(BModeSampleNumber, scanLineNumber);
 
     double r, t;
-    for (unsigned int u = 0; u < BModeSampleNumber; ++u) {
-      for (unsigned int v = 0; v < scanLineNumber; ++v) {
+    for (int u = 0; u < BModeSampleNumber; ++u) {
+      for (int v = 0; v < scanLineNumber; ++v) {
         r = transducerSettings.getTransducerRadius() + APitch * u;
         t = (v - (scanLineNumber - 1) / 2.0) * LPitch / transducerSettings.getTransducerRadius();
         m_iMap[u][v] = (r * cos(t) - x_min) / yResolution; //to check
@@ -162,7 +162,7 @@ void usBackScanConverter2D::run(const usImagePostScan2D<unsigned char> &imageToC
     for (unsigned int v = 0; v < imageConverted.getScanLineNumber(); ++v) {
       i = m_iMap[u][v];
       j = m_jMap[u][v];
-      imageConverted[u][v] = interpolateLinear(imageToConvert, i, j);
+      imageConverted[u][v] = static_cast<unsigned char>(interpolateLinear(imageToConvert, i, j));
     }
 }
 

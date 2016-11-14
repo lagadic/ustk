@@ -29,6 +29,7 @@
  * Pierre Chatelain
  *
  *****************************************************************************/
+#ifndef _WIN32
 
 #include <visp3/ustk_grabber/usGrabberUltrasonix.h>
 
@@ -336,3 +337,4 @@ int usGrabberUltrasonix::getSocket() { return m_communicationInormations.m_cli_f
 
 double usGrabberUltrasonix::getFrameRate() { return m_communicationInormations.m_frameRate; }
 
+#endif
