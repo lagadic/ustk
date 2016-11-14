@@ -39,6 +39,8 @@
 #ifndef US_GRABBER_FRAME_H
 #define US_GRABBER_FRAME_H
 
+#ifdef _WIN32
+
 #include <visp3/ustk_grabber/usGrabberUltrasonix.h>
 
 /**
@@ -58,11 +60,11 @@ class usGrabberFrame {
    */
    ~usGrabberFrame();
 
-  void setCommunicationinformations(usGrabberUltrasonix::usGrabberCommunicationInformations *informations);
+  void setCommunicationInformations(usGrabberUltrasonix::usGrabberCommunicationInformations *informations);
 
   void setTransducerSettings(usTransducerSettings transducerSettings);
 
-  void grabFrame( ImageType * imageToWrite);
+  void grabFrame(ImageType * imageToWrite);
 
  private:
   usGrabberUltrasonix::usGrabberCommunicationInformations *m_informations;
@@ -72,32 +74,32 @@ class usGrabberFrame {
 
 
 
-template <class Type>
-usGrabberFrame<Type>::usGrabberFrame()
+template <class ImageType>
+usGrabberFrame<ImageType>::usGrabberFrame()
 {
 
 }
 
-template <class Type>
-usGrabberFrame<Type>::~usGrabberFrame()
+template <class ImageType>
+usGrabberFrame<ImageType>::~usGrabberFrame()
 {
 
 }
 
-template <class Type>
-void usGrabberFrame<Type>::setCommunicationinformations(usGrabberUltrasonix::usGrabberCommunicationInformations *informations)
+template <class ImageType>
+void usGrabberFrame<ImageType>::setCommunicationInformations(usGrabberUltrasonix::usGrabberCommunicationInformations *informations)
 {
   m_informations = informations;
 }
 
-template <class Type>
-void usGrabberFrame<Type>::setTransducerSettings(usTransducerSettings transducerSettings)
+template <class ImageType>
+void usGrabberFrame<ImageType>::setTransducerSettings(usTransducerSettings transducerSettings)
 {
   m_transducerSettings = transducerSettings;
 }
 
-template <class Type>
-void usGrabberFrame<Type>::grabFrame(Type* imageToWrite) {
+template <class ImageType>
+void usGrabberFrame<ImageType>::grabFrame(ImageType* imageToWrite) {
   // Grab a single frame
   int n = 0;
   // Grab frame information
@@ -219,5 +221,5 @@ void usGrabberFrame<Type>::grabFrame(Type* imageToWrite) {
   m_informations->m_data->setDataIdx(static_cast<int>(m_informations->m_totFrmIdx));*/
   m_informations->m_iter++;
 }
-
+#endif // _WIN32
 #endif // US_GRABBER_FRAME_H
