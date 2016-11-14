@@ -1,4 +1,4 @@
-//! \example tutorial-sonosite-grabber.cpp
+//! \example tutorial-ultrasonix-grabber.cpp
 //! [capture-multi-threaded declaration]
 #include <iostream>
 

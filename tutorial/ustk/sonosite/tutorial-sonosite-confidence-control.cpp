@@ -1,4 +1,4 @@
-//! \example tutorial-sonosite-grabber.cpp
+//! \example tutorial-sonosite-confidence-control.cpp
 //! [capture-multi-threaded declaration]
 #include <iostream>
 
