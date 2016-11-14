@@ -66,13 +66,13 @@ vpThread::Return captureFunction(vpThread::Args args)
 
   //init grabbers (only one used but they have to be defined at global scope)
   usGrabberFrame<usImageRF2D<unsigned char> > grabberFrameRF;
-  grabberFrameRF.setCommunicationinformations(grabber.getCommunicationsInformations());
+  grabberFrameRF.setCommunicationInformations(grabber.getCommunicationsInformations());
   grabberFrameRF.setTransducerSettings(grabber.getTransducerSettings());
   usGrabberFrame<usImagePreScan2D<unsigned char> > grabberFramePreScan;
-  grabberFramePreScan.setCommunicationinformations(grabber.getCommunicationsInformations());
+  grabberFramePreScan.setCommunicationInformations(grabber.getCommunicationsInformations());
   grabberFramePreScan.setTransducerSettings(grabber.getTransducerSettings());
   usGrabberFrame<usImagePostScan2D<unsigned char> > grabberFramePostScan;
-  grabberFramePostScan.setCommunicationinformations(grabber.getCommunicationsInformations());
+  grabberFramePostScan.setCommunicationInformations(grabber.getCommunicationsInformations());
   grabberFramePostScan.setTransducerSettings(grabber.getTransducerSettings());
 
 
@@ -149,15 +149,12 @@ vpThread::Return displayFunction(vpThread::Args args)
         vpMutex::vpScopedLock lock(s_mutex_capture);
        if(m_imageType == usGrabberUltrasonix::TYPE_RF) {
           rf_ = s_frame_rf;
-          std::cout << "image acquired settings : " << rf_ << std::endl;
        }
        else if(m_imageType == usGrabberUltrasonix::TYPE_PRESCAN) {
          preScan_ = s_frame_prescan;
-         std::cout << "image acquired settings : " << preScan_ << std::endl;
        }
        else if(m_imageType == usGrabberUltrasonix::TYPE_POSTSCAN) {
          postScan_ = s_frame_postscan;
-         std::cout << "image acquired settings : " << postScan_ << std::endl;
        }
       }
 

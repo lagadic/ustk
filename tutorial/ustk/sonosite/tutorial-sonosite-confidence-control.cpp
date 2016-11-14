@@ -123,18 +123,13 @@ vpThread::Return displayFunction(vpThread::Args args)
         I_ = s_frame;
       }
 
-      // To check/improve:
-      // - adding depth in usTransducerSettings ?
-      // - in usBackScanConverter2D, rename AN into BModeSampleNumber
-      // - in usTransducerSettings add getFov() and modify the example to use this function
-
       // Convert image into post-scan image
       postScan_.setData(I_);
       postScan_.setProbeName("Sonosite C60");
       postScan_.setTransducerRadius(0.060);
       postScan_.setTransducerConvexity(true);
       postScan_.setScanLineNumber(128);
-      postScan_.setFieldOfView(vpMath::rad(57.0)); // field of view is 57 deg
+      postScan_.setFieldOfView(vpMath::rad(57.0)); // field of view is 57 deg for sonosite
       postScan_.setDepth(0.12);
 
       resolution = (postScan_.getDepth()+postScan_.getTransducerRadius()*(1-cos(postScan_.getFieldOfView()/2.0)))/postScan_.getHeight();
@@ -170,17 +165,11 @@ vpThread::Return displayFunction(vpThread::Args args)
       xc /= I_sum;
       yc /= I_sum;
 
-      //std::cout << "Barycenter: " << xc << ", " << yc << std::endl;
-
       double tc = yc * confidencePreScan_.getScanLinePitch() - confidencePreScan_.getFieldOfView() / 2.0;
-
-      std::cout << "tc = " <<  tc << std::endl;
 
       double time = (vpTime::measureTimeMs() - startTime) / 1000.0;
 
       plot.plot(0,0,time,vpMath::deg(tc));
-
-      //std::cout << "Confidence angle: " << vpMath::deg(tc) << std::endl;
 
       {
         vpMutex::vpScopedLock lock(s_mutex_capture);
@@ -383,8 +372,6 @@ vpThread::Return controlFunction(vpThread::Args args)
       // robot to the environment.
       sHs *= -1;
 
-      // std::cout << "Measured force/torque: " << sHs.t() << std::endl;
-
       // Update the gravity transformation matrix
       robot.getPosition(vpRobot::ARTICULAR_FRAME, q);
       robot.get_fMe(q, fMe);
@@ -404,15 +391,9 @@ vpThread::Return controlFunction(vpThread::Args args)
       if (iter == 0) {
         sHs_bias = sHs - sFg * gHg;
       }
-      /*
-      std::cout << "--\nmeasure          : " << (sHs).t() << std::endl;
-      std::cout << "Gravity gHg      : " << (gHg).t() << std::endl;
-      std::cout << "Gravity gHg in s : " << (sFg * gHg).t() << std::endl;
-      std::cout << "measure - Gravity: " << (sHs - sFg * gHg).t() << std::endl;
-      std::cout << "measure - Gravity - bias: " << (sHs - sFg * gHg- sHs_bias).t() << std::endl;*/
 
+      // Compute rotation in probe frame from command deduced of the confidence map
       vpColVector v_p;
-
       {
         vpMutex::vpScopedLock lock(s_mutex_capture);
         v_p = s_controlVelocity;
@@ -426,7 +407,6 @@ vpThread::Return controlFunction(vpThread::Args args)
 
       // Compute the force/torque control law in the sensor frame
       v_s = lambda*(sFp * pHp_star - (sHs - sFg * gHg - sHs_bias) );
-      //std::cout << "v_s: " << v_s.t() << std::endl;
 
       v_s[0] = 0.0;
       v_s[1] = 0.0;
@@ -439,21 +419,14 @@ vpThread::Return controlFunction(vpThread::Args args)
 
       vpColVector v_e = eVs * v_s + eVp * v_p;
 
-      std::cout << "Velocity: " << v_e.t() << std::endl;
-
       // Get the robot jacobian eJe
       robot.get_eJe(eJe);
 
       // Compute the joint velocities to achieve the force/torque control
-      //q_dot = (sVe * eJe).pseudoInverse() * v_s;
       q_dot = eJe.pseudoInverse() * v_e;
 
       // Send the joint velocities to the robot
-      // std::cout << "\nApply joint velocity (rad/s): " << q_dot.t();
       robot.setVelocity(vpRobot::ARTICULAR_FRAME, q_dot) ;
-
-      /*if (vpDisplay::getClick(plot.I, false))
-        break;*/
 
       iter ++;
     }
@@ -496,8 +469,6 @@ int main(int argc, const char* argv[])
   vpThread thread_capture((vpThread::Fn)captureFunction, (vpThread::Args)&g);
   vpThread thread_display((vpThread::Fn)displayFunction);
   vpThread thread_control((vpThread::Fn)controlFunction);
-
-  std::cout << "toto" << std::endl;
 
   // Wait until thread ends up
   thread_capture.join();

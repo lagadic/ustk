@@ -39,7 +39,7 @@
 #ifndef US_GRABBER_FRAME_H
 #define US_GRABBER_FRAME_H
 
-#ifdef _WIN32
+#ifndef _WIN32
 
 #include <visp3/ustk_grabber/usGrabberUltrasonix.h>
 
