@@ -169,10 +169,10 @@ void usBackScanConverter2D::run(const usImagePostScan2D<unsigned char> &imageToC
 
 double usBackScanConverter2D::interpolateLinear(const vpImage<unsigned char>& I, double x, double y)
 {
-  int x1 = floor(x);
-  int x2 = ceil(x);
-  int y1 = floor(y);
-  int y2 = ceil(y);
+  int x1 = (int)floor(x);
+  int x2 = (int)ceil(x);
+  int y1 = (int)floor(y);
+  int y2 = (int)ceil(y);
   double val1, val2;
 
   if ((0 <= x) && (x < I.getHeight()) && (0 <= y) && (y < I.getWidth())) {

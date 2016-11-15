@@ -116,9 +116,9 @@ public:
   double getSequenceFrameRate() const {return m_sequence_frame_rate;}
   int getSequenceStartNumber() const {return m_sequence_start;}
   int getSequenceStopNumber() const {return m_sequence_stop;}
-  int getSpacingX() const {return m_spacingX;}
-  int getSpacingY() const {return m_spacingY;}
-  int getSpacingZ() const {return m_spacingZ;}
+  double getSpacingX() const {return m_spacingX;}
+  double getSpacingY() const {return m_spacingY;}
+  double getSpacingZ() const {return m_spacingZ;}
   double getWidthResolution() const { return m_widthResolution; }
   usTransducerSettings getTransducerSettings() const { return m_transducerSettings; }
 

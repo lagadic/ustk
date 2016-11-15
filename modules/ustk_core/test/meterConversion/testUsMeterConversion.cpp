@@ -44,7 +44,7 @@ int main(int argc, const char** argv)
     double UBase = 0.0;
     double VBase = 0.0;
     double WBase = 0.0;
-    double X, Y, Z, U, V, W;
+    double X, Y, U, V;
 
     if(argc>=2)
       UBase = atof(argv[1]);

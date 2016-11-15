@@ -145,7 +145,7 @@ void usScanConverter2D::run(usImagePostScan2D<unsigned char> &postScanImage, con
     for (unsigned int j = 0; j < m_width; ++j) {
       double u = m_rMap[i][j];
       double v = m_tMap[i][j];
-      postScanImage(i, j, interpolateLinear(preScanImage, u, v));
+      postScanImage(i, j, (unsigned char)interpolateLinear(preScanImage, u, v));
     }
 
   //saving settings in postScanImage
@@ -160,10 +160,10 @@ void usScanConverter2D::run(usImagePostScan2D<unsigned char> &postScanImage, con
 
 double usScanConverter2D::interpolateLinear(const vpImage<unsigned char>& I, double x, double y)
 {
-  int x1 = floor(x);
-  int x2 = ceil(x);
-  int y1 = floor(y);
-  int y2 = ceil(y);
+  int x1 = (int)floor(x);
+  int x2 = (int)ceil(x);
+  int y1 = (int)floor(y);
+  int y2 = (int)ceil(y);
   double val1, val2;
 
   if ((0 <= x) && (x < I.getHeight()) && (0 <= y) && (y < I.getWidth())) {

@@ -72,7 +72,7 @@ void usScanlineConfidence2D::run(usImagePreScan2D<unsigned char> &preScanConfide
     preScanConfidence(0, j, 255);
     for (unsigned int i = 1; i < AN; ++i) {
       val -= vpMath::sqr((preScanImage(i-1, j) - min) / (max - min));
-      preScanConfidence(i, j, val / sum * 255);
+      preScanConfidence(i, j, (unsigned char)(val / sum * 255));
     }
   }
 }
