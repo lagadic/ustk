@@ -43,15 +43,17 @@ int main(int argc, const char** argv)
 
     double UBase = 0.0;
     double VBase = 0.0;
-    double WBase = 0.0;
-    double X, Y, Z, U, V, W;
+    //For 3D
+    //double WBase = 0.0;
+    double X, Y, U, V;
 
     if(argc>=2)
       UBase = atof(argv[1]);
     if(argc>=3)
       VBase = atof(argv[2]);
-    if(argc>=4)
-      WBase = atof(argv[3]);
+    //For 3D
+    //if(argc>=4)
+      //WBase = atof(argv[3]);
 
     //First test for 2d image with convex transducer
     std::cout << "Test for 2D image with convex transducer" << std::endl;

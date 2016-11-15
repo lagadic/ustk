@@ -172,8 +172,8 @@ void usGrabberFrame<ImageType>::grabFrame(ImageType* imageToWrite) {
   memcpy(dynamic_cast<usDataPrescan2D*>(m_informations->m_data)->bitmap, m_informations->m_voldata,
   m_informations->m_szVol * sizeof(unsigned char));
       */
-    for (unsigned int i = 0; i < m_informations->m_header.h; ++i) {
-      for (unsigned int j = 0; j < m_informations->m_header.w; ++j) {
+    for (int i = 0; i < m_informations->m_header.h; ++i) {
+      for (int j = 0; j < m_informations->m_header.w; ++j) {
         (*imageToWrite)(i, j, m_informations->m_voldata[i + j * m_informations->m_header.h]);
       }
     }
@@ -193,8 +193,8 @@ void usGrabberFrame<ImageType>::grabFrame(ImageType* imageToWrite) {
   }
   else if (m_informations->m_header.type == 1 && m_informations->m_header.fpv == 3) //postScan 2D
   {
-    for (unsigned int i = 0; i < m_informations->m_header.h; ++i) {
-      for (unsigned int j = 0; j < m_informations->m_header.w; ++j) {
+    for (int i = 0; i < m_informations->m_header.h; ++i) {
+      for (int j = 0; j < m_informations->m_header.w; ++j) {
         (*imageToWrite)(i, j, m_informations->m_voldata[i + j * m_informations->m_header.h]);
       }
     }

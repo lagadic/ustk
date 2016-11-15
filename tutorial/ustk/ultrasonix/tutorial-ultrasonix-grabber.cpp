@@ -231,6 +231,8 @@ vpThread::Return displayFunction(vpThread::Args args)
 //! [capture-multi-threaded mainFunction]
 int main(int argc, const char* argv[])
 {
+  (void) argc;
+  (void) argv;
   // Instantiate the grabber
   usGrabberUltrasonix grabber;
 

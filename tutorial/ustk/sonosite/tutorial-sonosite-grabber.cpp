@@ -35,7 +35,6 @@ vpThread::Return captureFunction(vpThread::Args args)
 
   vpRect roi(vpImagePoint(48, 90), vpImagePoint(416, 550)); // roi to remove sonosite banners
 
-  double start_time = vpTime::measureTimeSecond();
   while (! stop_capture_) {
     // Capture in progress
     cap.acquire(frame_, roi); // get a new frame from camera
