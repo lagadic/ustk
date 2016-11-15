@@ -1,4 +1,4 @@
-//! \example tutorial-sonosite-confidence-control.cpp
+//! \example tutorial-servo-target.cpp
 //! [capture-multi-threaded declaration]
 #include <iostream>
 
@@ -12,10 +12,9 @@
 #include <visp3/robot/vpRobotViper850.h>
 
 #include <visp3/ustk_core/usImagePostScan2D.h>
-#include <visp3/ustk_core/usImagePreScan2D.h>
-#include <visp3/ustk_core/usBackScanConverter2D.h>
-#include <visp3/ustk_core/usScanConverter2D.h>
-#include <visp3/ustk_confidence_map/usScanlineConfidence2D.h>
+#include <visp3/ustk_core/usPixelMeterConversion.h>
+
+#include <visp3/ustk_template_tracking/usDenseTracker2D.h>
 
 #if defined(VISP_HAVE_V4L2) && defined(VISP_HAVE_PTHREAD) && defined(VISP_HAVE_VIPER850)
 
@@ -74,42 +73,39 @@ vpThread::Return captureFunction(vpThread::Args args)
 vpThread::Return displayFunction(vpThread::Args args)
 {
   (void)args; // Avoid warning: unused parameter args
-  vpImage<unsigned char> I_;
   usImagePostScan2D<unsigned char> postScan_;
-  usImagePreScan2D<unsigned char> preScan_;
-  usImagePostScan2D<unsigned char> confidencePostScan_;
-  usImagePreScan2D<unsigned char> confidencePreScan_;
-  usScanlineConfidence2D confidenceMapProcessor_;
-  usBackScanConverter2D backConverter_;
-  usScanConverter2D converter_;
-  usTransducerSettings transducerSettings;
+  usDenseTracker2D tracker;
+  usRectangle rectangle;
 
-  transducerSettings.setTransducerRadius(0.060);
-  transducerSettings.setTransducerConvexity(true);
-  transducerSettings.setScanLineNumber(128);
-  transducerSettings.setFieldOfView(vpMath::rad(57.0)); // field of view is 57 deg
-  transducerSettings.setDepth(0.12);
+  postScan_.setTransducerRadius(0.060);
+  postScan_.setTransducerConvexity(true);
+  postScan_.setScanLineNumber(128);
+  postScan_.setFieldOfView(vpMath::rad(57.0)); // field of view is 57 deg
+  postScan_.setDepth(0.12);
+  postScan_.setProbeName("Sonosite C60");
 
-  double resolution;
+
+ //convert(const usImagePostScan2D<unsigned char> &image, const double &u, const double &v, double &x,  double &y);
 
   t_CaptureState capture_state_;
   bool display_initialized_ = false;
 
 #if defined(VISP_HAVE_X11)
   vpDisplayX *dpost_scan_ = NULL;  // display post-scan image
-  vpDisplayX *dpre_scan_ = NULL; // display pre-scan image
-  vpDisplayX *dpost_scan_confidence_ = NULL;  // display post-scan image
-  vpDisplayX *dpre_scan_confidence_ = NULL; // display pre-scan image
 
 #endif
 
   vpPlot plot(1);
   plot.initGraph(0, 1);
-  plot.initRange(0, 0, 10, -10, 10);
+  plot.initRange(0, 0, 10, -0.01, 0.01);
+
+  double xtarget;
+  double ytarget;
+
+  bool firstLoopCycle = true;
 
   double startTime = vpTime::measureTimeMs();
 
-  bool firstLoopCycle = true;
   do {
     s_mutex_capture.lock();
     capture_state_ = s_capture_state;
@@ -120,61 +116,38 @@ vpThread::Return displayFunction(vpThread::Args args)
       // Create a copy of the captured frame
       {
         vpMutex::vpScopedLock lock(s_mutex_capture);
-        I_ = s_frame;
+        postScan_.setData(s_frame);
+        postScan_.setHeightResolution((postScan_.getDepth()+postScan_.getTransducerRadius()*(1-cos(postScan_.getFieldOfView()/2.0)))/postScan_.getHeight());
+        postScan_.setWidthResolution((postScan_.getDepth()+postScan_.getTransducerRadius()*(1-cos(postScan_.getFieldOfView()/2.0)))/postScan_.getHeight());
       }
 
-      // Convert image into post-scan image
-      postScan_.setData(I_);
-      postScan_.setProbeName("Sonosite C60");
-      postScan_.setTransducerRadius(0.060);
-      postScan_.setTransducerConvexity(true);
-      postScan_.setScanLineNumber(128);
-      postScan_.setFieldOfView(vpMath::rad(57.0)); // field of view is 57 deg for sonosite
-      postScan_.setDepth(0.12);
-
-      resolution = (postScan_.getDepth()+postScan_.getTransducerRadius()*(1-cos(postScan_.getFieldOfView()/2.0)))/postScan_.getHeight();
 
       // Convert post-scan to pre-scan image
       if(firstLoopCycle) {
-        backConverter_.init(transducerSettings, 480,128,resolution,resolution);
-        converter_.init(transducerSettings,480,128,resolution,resolution);
+        rectangle.setCenter(postScan_.getHeight()/2,postScan_.getWidth()/2);
+        rectangle.setSize(50,30);
+        rectangle.setOrientation(0);
+        tracker.init(postScan_,rectangle);
       }
 
-      backConverter_.run(postScan_,preScan_);
-      //Compute confidence map on pre-scan image
-      confidenceMapProcessor_.run(confidencePreScan_, preScan_);
+      tracker.update(postScan_);
+      rectangle = tracker.getTarget();
 
-      //converting computed confidence map in post-scan
-      converter_.run(confidencePostScan_,confidencePreScan_);
+      usPixelMeterConversion::convert(postScan_,rectangle.getCy(),rectangle.getCx(),xtarget,ytarget);
 
-      //
-      unsigned int height(confidencePreScan_.getHeight()), width(confidencePreScan_.getWidth());
-
-      double I_sum = 0.0;
-      for (unsigned int i = 0; i < height; ++i)
-        for (unsigned int j = 0; j < width; ++j)
-          I_sum += static_cast<double>(confidencePreScan_[i][j]);
-
-      double xc = 0.0;
-      double yc = 0.0;
-      for (unsigned int x = 0; x < height; ++x)
-        for (unsigned int y = 0; y < width; ++y) {
-          xc += x * confidencePreScan_[x][y];
-          yc += y * confidencePreScan_[x][y];
-        }
-      xc /= I_sum;
-      yc /= I_sum;
-
-      double tc = yc * confidencePreScan_.getScanLinePitch() - confidencePreScan_.getFieldOfView() / 2.0;
+      std::cout << "Height resolution : " << postScan_.getHeightResolution() << std::endl;
+      std::cout << "Width resolution : " << postScan_.getWidthResolution() << std::endl;
+      std::cout << "Cy = " << rectangle.getCy() << ", Cx = " << rectangle.getCx() << std::endl;
+      std::cout << "xtarget = " << xtarget << ", ytarget = " << ytarget << std::endl;
 
       double time = (vpTime::measureTimeMs() - startTime) / 1000.0;
 
-      plot.plot(0,0,time,vpMath::deg(tc));
+      plot.plot(0,0,time,xtarget);
 
       {
         vpMutex::vpScopedLock lock(s_mutex_capture);
         s_controlVelocity = 0.0;
-        s_controlVelocity[3] = 0.5 * tc;
+        s_controlVelocity[1] = - 1 * xtarget;
       }
       // Check if we need to initialize the display with the first frame
       if (! display_initialized_) {
@@ -182,21 +155,29 @@ vpThread::Return displayFunction(vpThread::Args args)
 #if defined(VISP_HAVE_X11)
         unsigned int xpos = 10;
         dpost_scan_ = new vpDisplayX(postScan_, xpos, 10, "post-scan");
-        xpos += 80+postScan_.getWidth();
-        dpre_scan_ = new vpDisplayX(preScan_, xpos, 10, "pre-scan");
-        xpos += 40+preScan_.getWidth();
-        dpre_scan_confidence_ = new vpDisplayX(confidencePreScan_, xpos, 10, "pre-scan confidence");
-        xpos += 40+confidencePreScan_.getWidth();
-        dpost_scan_confidence_ = new vpDisplayX(confidencePostScan_, xpos, 10, "post-scan confidence");
         display_initialized_ = true;
 #endif
       }
 
       // Display the image
       vpDisplay::display(postScan_);
-      vpDisplay::display(preScan_);
-      vpDisplay::display(confidencePreScan_);
-      vpDisplay::display(confidencePostScan_);
+
+      vpDisplay::displayLine(postScan_,
+                 static_cast<int>(rectangle.getX1()), static_cast<int>(rectangle.getY1()),
+                 static_cast<int>(rectangle.getX2()), static_cast<int>(rectangle.getY2()),
+                 vpColor::red);
+            vpDisplay::displayLine(postScan_,
+                 static_cast<int>(rectangle.getX2()), static_cast<int>(rectangle.getY2()),
+                 static_cast<int>(rectangle.getX3()), static_cast<int>(rectangle.getY3()),
+                 vpColor::red);
+            vpDisplay::displayLine(postScan_,
+                 static_cast<int>(rectangle.getX3()), static_cast<int>(rectangle.getY3()),
+                 static_cast<int>(rectangle.getX4()), static_cast<int>(rectangle.getY4()),
+                 vpColor::red);
+            vpDisplay::displayLine(postScan_,
+                 static_cast<int>(rectangle.getX4()), static_cast<int>(rectangle.getY4()),
+                 static_cast<int>(rectangle.getX1()), static_cast<int>(rectangle.getY1()),
+                 vpColor::red);
 
       // Trigger end of acquisition with a mouse click
       vpDisplay::displayText(postScan_, 10, 10, "Click to exit...", vpColor::red);
@@ -204,27 +185,9 @@ vpThread::Return displayFunction(vpThread::Args args)
         vpMutex::vpScopedLock lock(s_mutex_capture);
         s_capture_state = capture_stopped;
       }
-      vpDisplay::displayText(preScan_, 10, 10, "Click to exit...", vpColor::red);
-      if (vpDisplay::getClick(preScan_, false)) {
-        vpMutex::vpScopedLock lock(s_mutex_capture);
-        s_capture_state = capture_stopped;
-      }
-      vpDisplay::displayText(confidencePreScan_, 10, 10, "Click to exit...", vpColor::red);
-      if (vpDisplay::getClick(confidencePreScan_, false)) {
-        vpMutex::vpScopedLock lock(s_mutex_capture);
-        s_capture_state = capture_stopped;
-      }
-      vpDisplay::displayText(confidencePostScan_, 10, 10, "Click to exit...", vpColor::red);
-      if (vpDisplay::getClick(confidencePostScan_, false)) {
-        vpMutex::vpScopedLock lock(s_mutex_capture);
-        s_capture_state = capture_stopped;
-      }
 
       // Update the display
       vpDisplay::flush(postScan_);
-      vpDisplay::flush(preScan_);
-      vpDisplay::flush(confidencePostScan_);
-      vpDisplay::flush(confidencePreScan_);
       firstLoopCycle=false;
     }
     else {
@@ -234,9 +197,6 @@ vpThread::Return displayFunction(vpThread::Args args)
 
 #if defined(VISP_HAVE_X11)
   delete dpost_scan_;
-  delete dpre_scan_;
-  delete dpre_scan_confidence_;
-  delete dpost_scan_confidence_;
 #endif
 
   std::cout << "End of display thread" << std::endl;
@@ -400,8 +360,8 @@ vpThread::Return controlFunction(vpThread::Args args)
       }
 
       v_p[0] = 0;
-      v_p[1] = 0;
       v_p[2] = 0;
+      v_p[3] = 0;
       v_p[4] = 0;
       v_p[5] = 0;
 

@@ -39,7 +39,6 @@ vpThread::Return captureFunction(vpThread::Args args)
 
   vpRect roi(vpImagePoint(55, 70), vpImagePoint(410, 555)); // roi to remove sonosite banners
 
-  double start_time = vpTime::measureTimeSecond();
   while (! stop_capture_) {
     // Capture in progress
     cap.acquire(frame_, roi); // get a new frame from camera
@@ -188,6 +187,8 @@ vpThread::Return displayFunction(vpThread::Args args)
 #if defined(VISP_HAVE_X11)
   delete dpost_scan_;
   delete dpre_scan_;
+  delete dpost_scan_confidence_;
+  delete dpre_scan_confidence_;
 #endif
 
   std::cout << "End of display thread" << std::endl;
