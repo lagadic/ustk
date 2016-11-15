@@ -64,7 +64,7 @@ usTransducerSettings::usTransducerSettings(double transducerRadius, double scanL
                                            unsigned int scanLineNumber, bool transducerConvex,
                                            double depth)
   : m_transducerRadius(transducerRadius), m_scanLinePitch(scanLinePitch),
-    m_scanLineNumber(scanLineNumber), m_isTransducerConvex(isTransducerConvex),
+    m_scanLineNumber(scanLineNumber), m_isTransducerConvex(transducerConvex),
     m_depth(depth), m_scanLineNumberIsSet(true)
 {}
 
