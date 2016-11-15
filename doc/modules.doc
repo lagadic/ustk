@@ -29,3 +29,11 @@
   \defgroup module_ustk_gui ustk_gui: UsTK graphical user interface module
   Ultrasound tool kit graphical user interface module content. It allows to display ultrasound images.
 */
+/*******************************************
+ * Module ustk_confidence_map
+ *******************************************/
+/*!
+  \ingroup module_ustk
+  \defgroup module_ustk_confidence_map ustk_confidence_map: UsTK confidence map module
+  Ultrasound tool kit confidence map module content. It implements different algorithms to compute the confidence map from an ultrasound pre-scan image.
+*/

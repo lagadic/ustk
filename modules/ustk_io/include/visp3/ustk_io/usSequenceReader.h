@@ -63,6 +63,9 @@ template <class ImageType>
 class usSequenceReader
 {
 private:
+
+  void open(ImageType &image);
+
   /** Ultrasound image settings saved for all the sequence reading*/
   ImageType m_frame;
 
@@ -88,6 +91,10 @@ private:
   /** Top know if the sequence is already open*/
   bool is_open;
 
+  /** Loop cycling*/
+  bool m_enableLoopCycling;
+  int loopIncrement; // -1 or +1 depending on witch side we acquire
+
 public:
 
   usSequenceReader();
@@ -101,7 +108,28 @@ public:
     \return true if the end of the sequence is reached.
   */
   inline bool end() {
-    if (m_frameCount > m_lastFrame )
+    if(!is_open) {
+      open(m_frame);
+      m_frameCount--;
+    }
+    //
+    if(m_enableLoopCycling) {
+      if(loopIncrement == 1) {
+        if(m_frameCount > m_lastFrame ) {
+          m_frameCount -= 2;
+          loopIncrement = -1;
+          return false;
+        }
+      }
+      else if(loopIncrement == -1) {
+        if(m_frameCount < m_firstFrame ) {
+          m_frameCount += 2;
+          loopIncrement = 1;
+          return false;
+        }
+      }
+    }
+    else if (m_frameCount > m_lastFrame || m_frameCount < m_firstFrame )
       return true;
     return false;
   }
@@ -111,11 +139,11 @@ public:
 
   //attributes getters/setters
   double getFrameRate() const {return m_frameRate;}
-
-  void open(ImageType &image);
+  long getImageNumber() const {return m_frameCount;}
 
   void setFirstFrameIndex(long firstIndex);
   void setLastFrameIndex(long lastIndex);
+  void setLoopCycling(bool activateLoopCycling);
   void setSequenceFileName(const std::string &sequenceFileName);
 };
 
@@ -128,7 +156,8 @@ public:
 */
 template<class ImageType>
 usSequenceReader<ImageType>::usSequenceReader() : m_frame(), m_frameRate(0.0), m_firstFrame(0), m_firstFrameIsSet(false),
- m_lastFrame(0), m_lastFrameIsSet(false), m_frameCount(0), m_sequenceFileName(""),m_genericImageFileName(""), m_fileNameIsSet(false)
+ m_lastFrame(0), m_lastFrameIsSet(false), m_frameCount(0), m_sequenceFileName(""),m_genericImageFileName(""), m_fileNameIsSet(false),
+is_open(false), m_enableLoopCycling(false), loopIncrement(1)
 {
 
 }
@@ -314,7 +343,6 @@ void usSequenceReader<ImageType>::acquire(ImageType &image)
     this->open(image);
     return;
   }
-
   //Reading image
   char buffer[FILENAME_MAX];
   sprintf(buffer, m_genericImageFileName.c_str(), m_frameCount);
@@ -325,9 +353,10 @@ void usSequenceReader<ImageType>::acquire(ImageType &image)
   std::string imageFileName =  parentName + buffer;
 
   vpImageIo::read(image,imageFileName);
-  image.setImagePreScanSettings(m_frame);
+  image.setTransducerSettings(m_frame);
+  image.setScanLineNumber(image.getWidth());
 
-  m_frameCount++;
+  m_frameCount+=loopIncrement;
 }
 
 /**
@@ -353,6 +382,16 @@ void usSequenceReader<ImageType>::getFrame(ImageType &image, int index)
 
   vpImageIo::read(image,imageFileName);
   image.setImageSettins(m_frame);
+}
+
+/**
+* Activate loop cycling mode
+* @param activateLoopCycling True if you want to activate it, false to stop the loop.
+*/
+template<class ImageType>
+void usSequenceReader<ImageType>::setLoopCycling(bool activateLoopCycling)
+{
+  m_enableLoopCycling = activateLoopCycling;
 }
 
 #endif //US_SEQUENCE_READER_H

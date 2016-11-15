@@ -187,6 +187,7 @@ int main(int argc, const char** argv)
 
     //Init values in reference parser (same values in file read in test)
     usImagePostScan3D<unsigned char> postscan3DReference;
+    //settings initialisation
     postscan3DReference.resize(186,233,163);
     postscan3DReference.setElementSpacingX(1);
     postscan3DReference.setElementSpacingY(1);
@@ -202,6 +203,8 @@ int main(int argc, const char** argv)
     postscan3DReference.setElementSpacingX(0.0058);
     postscan3DReference.setElementSpacingY(0.0058);
     postscan3DReference.setElementSpacingZ(0.01058);
+    //image initialisation
+    postscan3DReference.initData(255);
 
     std::cout << "Written in " << filename << std::endl ;
     std::cout << postscan3DReference;

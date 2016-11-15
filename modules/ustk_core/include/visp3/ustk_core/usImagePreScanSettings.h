@@ -56,15 +56,25 @@
   This class represents ultrasound pre-scan image settings which are:
   - the common settings implemented in usTransducerSettings corresponding to the transducer settings.
     We recall that these common settings are:
-    - the transducer radius \f$R_T\f$ in meters (value set to zero for a linear transducer)
-    - the scan line pitch that corresponds to the angle \f$\alpha_{SC}\f$ (in radians) between
-      to successive scan line beams when the transducer is convex, or to the distance \f$d_{SC}\f$
-      (in meters) when the transducer is linear
-    - the number of scan lines \f$n_{SC}\f$
-    - the type of ultrasound transducer used for data acquisition: convex or linear.
+    - the name of the probe that could be set using setProbeName() or retrieved using getProbeName().
+    - the transducer radius \f$R_{_T}\f$ in meters (value set to zero for a linear transducer).
+      Its value could be set using setTransducerRadius() and retrieved using getTransducerRadius().
+    - the scan line pitch that corresponds to the angle \f$\alpha_{_{SC}}\f$ (in radians) between
+      two successive scan line beams when the transducer is convex, or to the distance \f$d_{_{SC}}\f$
+      (in meters) when the transducer is linear. To set this value use setScanLinePitch() and to get
+      its value use getScanLinePitch().
+    - the number of scan lines \f$n_{_{SC}}\f$. To set this setting use setScanLineNumber() and to access
+      to the value use getScanLineNumber().
+    - the type of ultrasound transducer used for data acquisition: convex or linear. This parameter
+      could be set using setTransducerConvexity(). To know the transducer type use isTransducerConvex().
+    - the depth that corresponds to the distance in meters between the first and the last pixel in a scan line.
+      To set this value use setDepth() and to get the depth use getDepth().
     .
-  - the image axial resolution which corresponds to the size (in meters) of a pixel along the
-    scan line beam.
+  - and an additional axial resolution parameter called \f$a_{_R}\f$ which corresponds to the
+    distance (in meters) between two consecutive samples along a scan line. To set this value use
+    setAxialResolution() and to retrieve this value use getAxialResolution(). Note that \f$a_{_R}\f$
+    may differ for RF images and pre-scan images.
+
  */
 class VISP_EXPORT usImagePreScanSettings : public usTransducerSettings {
 public:

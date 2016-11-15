@@ -123,20 +123,12 @@ public:
   */
   unsigned int getSize() const { return m_size; }
 
-  /**
-  * Initiation of the image.
-  * @param dimX Volume width (number of voxels).
-  * @param dimY Volume height (number of voxels).
-  * @param dimZ Volume size (number of voxels) in the third dimension (orthogonal to ultrasound 2D frames).
-  */
-  void init(unsigned int dimX, unsigned int dimY, unsigned int dimZ);
 
   /**
   * Initialize the data container with the specified value.
   * @param value The data
-  * @param numberOfVoxels number of voxels in the volume
   */
-  void initData(Type value,int numberOfVoxels);
+  void initData(Type value);
 
   /**
   * Assignment operator.
@@ -161,7 +153,7 @@ public:
 
   //! operator[] allows operation like I[i] = x.
   Type& operator[]( const unsigned int i)   { if(i<m_size) {return bitmap[i];} throw(vpException::badValue);}
-  Type& operator[]( const int i) { if(i<m_size) {return bitmap[i];} throw(vpException::badValue);}
+  Type& operator[]( const int i) { if((unsigned int)i<m_size) {return bitmap[i];} throw(vpException::badValue);}
 
   //! operator[] allows operation like x = I[i]
   const  Type& operator[](unsigned int i) const { if(i<m_size) {return bitmap[i];} throw(vpException::badValue);}
@@ -220,6 +212,15 @@ public:
 protected:
 
 private:
+
+  /**
+  * Initiation of the image.
+  * @param dimX Volume width (number of voxels).
+  * @param dimY Volume height (number of voxels).
+  * @param dimZ Volume size (number of voxels) in the third dimension (orthogonal to ultrasound 2D frames).
+  */
+  void init(unsigned int dimX, unsigned int dimY, unsigned int dimZ);
+
   unsigned int m_dimX; /**< Volume width in pixels (number of pixels on the x-axis)*/
   unsigned int m_dimY; /**< Volume height in pixels (number of pixels on the y-axis)*/
   unsigned int m_dimZ; /**< Volume size in 3d dimension (number of pixels on the z-axis)*/
@@ -314,6 +315,7 @@ usImage3D<Type>::usImage3D(unsigned int dimX, unsigned int dimY, unsigned int di
   bitmap(NULL), planesIndex(NULL)
 {
   init(dimX, dimY, dimZ);
+  initData(0);
 }
 
 template<class Type>
@@ -380,8 +382,8 @@ bool usImage3D<Type>::operator==(const usImage3D<Type> &other)
 
 template<class Type> std::ostream& operator<<(std::ostream& out, const usImage3D<Type> &other)
 {
-  return out << "number of A-samples in a scanline : " << other.getDimX() << std::endl
-             << "number of scanlines in a frame : " << other.getDimY() << std::endl
+  return out << "number of A-samples in a scan line : " << other.getDimX() << std::endl
+             << "number of scan lines in a frame : " << other.getDimY() << std::endl
              << "number of frames : " << other.getDimZ() << std::endl;
 }
 
@@ -400,16 +402,14 @@ void usImage3D<Type>::setData(Type* data, int numberOfVoxels)
 }
 
 template<class Type>
-void usImage3D<Type>::initData(Type value, int numberOfVoxels)
+void usImage3D<Type>::initData(Type value)
 {
   try {
-    m_size =numberOfVoxels;
     std::fill_n(bitmap, m_size, value);
   }
   catch (std::exception e)
   {
     std::cout << e.what() << std::endl;
-    std::cout << "Bad allocation using std::fill_n() method." << std::endl;
   }
 }
 

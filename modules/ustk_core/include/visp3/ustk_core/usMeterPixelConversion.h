@@ -57,7 +57,7 @@ public:
   static void convert(const usImagePostScan2D<unsigned char> &image, const double &x, const double &y,
                                                                     double &u,  double &v);
 
-  static void convert(const usImagePostScan2D<unsigned char> &image, const double &x, const double &y, const double &z,
+  static void convert(const usImagePostScan3D<unsigned char> &image, const double &x, const double &y, const double &z,
                                                                     double &u,  double &v, double &w);
 };
 

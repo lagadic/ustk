@@ -186,11 +186,16 @@ int main(int argc, const char** argv)
 
     //Init values in reference parser (same values in file read in test)
     usImageRF3D<unsigned char> rf3DReference;
+    //settings initialisation
     rf3DReference.resize(186, 233, 163);
     rf3DReference.setScanLinePitch(0.0145);
     rf3DReference.setTransducerRadius(0.554);
     rf3DReference.setTransducerConvexity(true);
     rf3DReference.setAxialResolution(0.0058);
+    //image initialisation
+    rf3DReference.initData(255);
+
+    //printing settings
     std::cout << "Written in " << filename << std::endl ;
     std::cout << rf3DReference;
 
@@ -202,8 +207,10 @@ int main(int argc, const char** argv)
     filename = dirname + vpIoTools::path("/") + "rf3d.mhd";
     usImageIo::read(rf3D,filename);
 
+    //printing settings read
     std::cout << "Read from " << filename << std::endl ;
     std::cout << rf3D;
+
 
 
     if(rf3D == rf3DReference) {

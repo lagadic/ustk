@@ -37,8 +37,6 @@
 #ifndef US_PIXEL_METER_CONVERSION_H
 #define US_PIXEL_METER_CONVERSION_H
 
-#include <algorithm>
-
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpException.h>
 
@@ -49,6 +47,8 @@
 * @class usPixelMeterConversion
 * @brief Conversion between a pixel position in the ultrasound image and the real position in meters.
 * @ingroup module_ustk_core
+*
+* @warning Be sure you correctly filled your acquisition settings (probe raduis, scan line pitch, etc...). Those parameters are used in the conversion !
 */
 class VISP_EXPORT usPixelMeterConversion
 {

@@ -187,6 +187,7 @@ int main(int argc, const char** argv)
 
     //Init values in reference parser (same values in file read in test)
     usImagePreScan3D<unsigned char> prescan3DReference;
+    //settings initialisation
     prescan3DReference.resize(186,233,163);
     prescan3DReference.setScanLinePitch(0.0145);
     prescan3DReference.setTransducerRadius(0.554);
@@ -195,6 +196,8 @@ int main(int argc, const char** argv)
     prescan3DReference.setMotorRadius(0.025);
     prescan3DReference.setMotorType(usMotorSettings::TiltingMotor);
     prescan3DReference.setAxialResolution(0.0058);
+    //image initialisation
+    prescan3DReference.initData(255);
 
     std::cout << "Written in " << filename << std::endl ;
     std::cout << prescan3DReference;

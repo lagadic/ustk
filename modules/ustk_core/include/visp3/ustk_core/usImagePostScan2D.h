@@ -54,15 +54,23 @@
 
   The settings associated to an usImagePostScan2D image are the following:
   - the transducer settings (see usTransducerSettings) that are:
-    - the transducer radius \f$R_T\f$ in meters (value set to zero for a linear transducer)
-    - the scan line pitch that corresponds to the angle \f$\alpha_{SC}\f$ (in radians) between
-      to successive scan line beams when the transducer is convex, or to the distance \f$d_{SC}\f$
-      (in meters) when the transducer is linear
-    - the number of scan lines \f$n_{SC}\f$
-    - the type of ultrasound transducer used for data acquisition: convex or linear.
+    - the name of the probe that could be set using setProbeName() or retrieved using getProbeName().
+    - the transducer radius \f$R_{_T}\f$ in meters (value set to zero for a linear transducer).
+      Its value could be set using setTransducerRadius() and retrieved using getTransducerRadius().
+    - the scan line pitch that corresponds to the angle \f$\alpha_{_{SC}}\f$ (in radians) between
+      two successive scan line beams when the transducer is convex, or to the distance \f$d_{_{SC}}\f$
+      (in meters) when the transducer is linear. To set this value use setScanLinePitch() and to get
+      its value use getScanLinePitch().
+    - the number of scan lines \f$n_{_{SC}}\f$. To set this setting use setScanLineNumber() and to access
+      to the value use getScanLineNumber().
+    - the type of ultrasound transducer used for data acquisition: convex or linear. This parameter
+      could be set using setTransducerConvexity(). To know the transducer type use isTransducerConvex().
+    - the depth that corresponds to the distance in meters between the first and the last pixel in a scan line.
+      To set this value use setDepth() and to get the depth use getDepth().
     .
-  - and two additional resolution parameter called \f$p_x, p_y\f$ that correspond to the size in meter
-    of a pixel.
+  - and two additional resolution parameters called \f$p_x, p_y\f$ that correspond to the size in meter
+    of a pixel. They can be set using setWidthResolution() and setHeightResolution() respectively. To access
+    to the values use getWidthResolution() and getHeightResolution() respectively.
 
   The following figure summarize these settings and shows the structure of an usImagePostScan2D image:
   \image html img-usImagePostScan2D.png
@@ -81,8 +89,8 @@ int main()
   double scanLinePitch = 0.0012;
   unsigned int scanLineNumber = 256;
   bool isTransducerConvex = true;
+  double widthResolution = 0.002;
   double heightResolution = 0.002;
-  double widthResolution = 0.004;
 
   vpImage<unsigned char> I(height, width);
   usImagePostScan2D<unsigned char> postScan2d;
@@ -90,6 +98,8 @@ int main()
   postScan2d.setScanLinePitch(scanLinePitch);
   postScan2d.setScanLineNumber(scanLineNumber);
   postScan2d.setTransducerConvexity(isTransducerConvex);
+  postScan2d.setWidthResolution(widthResolution);
+  postScan2d.setHeightResolution(heightResolution);
   postScan2d.setData(I);
 }
   \endcode

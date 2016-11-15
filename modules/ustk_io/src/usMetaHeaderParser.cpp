@@ -352,11 +352,11 @@ void usMetaHeaderParser::parse()
       MHDfile << "UltrasoundImageType = " << "RF_2D" << "\n";
       MHDfile << "Comment = True if probe transducer is convex, false if linear. \n";
       MHDfile << "IsTransducerConvex = " << header.isTransducerConvex << "\n";
-      MHDfile << "Comment = Radius between the scanlines intersection and the first pixel of each line acquired. 0 if linear probe.\n";
+      MHDfile << "Comment = Radius between the scan lines intersection and the first pixel of each line acquired. 0 if linear probe.\n";
       MHDfile << "TransducerRadius = " << header.transducerRadius << "\n";
-      MHDfile << "Comment = Distance between 2 scanlines.\n";
+      MHDfile << "Comment = Distance between 2 scan lines.\n";
       MHDfile << "ScanLinePitch = " << header.scanLinePitch << "\n";
-      MHDfile << "Comment = The axial resolution is the distance in meters between two successives A-samples in a scanline.\n";
+      MHDfile << "Comment = The axial resolution is the distance in meters between two successives A-samples in a scan line.\n";
       MHDfile << "AxialResolution = " << this->m_axialResolution << "\n";
     }
     else if (header.imageType == RF_3D) {
@@ -364,9 +364,9 @@ void usMetaHeaderParser::parse()
       MHDfile << "UltrasoundImageType = " << "RF_3D" << "\n";
       MHDfile << "Comment = True if probe transducer is convex, false if linear. \n";
       MHDfile << "IsTransducerConvex = " << header.isTransducerConvex << "\n";
-      MHDfile << "Comment = Radius between the scanlines intersection and the first pixel of each line acquired. 0 if linear probe.\n";
+      MHDfile << "Comment = Radius between the scan lines intersection and the first pixel of each line acquired. 0 if linear probe.\n";
       MHDfile << "TransducerRadius = " << header.transducerRadius << "\n";
-      MHDfile << "Comment = Distance between 2 scanlines.\n";
+      MHDfile << "Comment = Distance between 2 scan lines.\n";
       MHDfile << "ScanLinePitch = " << header.scanLinePitch << "\n";
       MHDfile << "Comment = Probe motor type : LinearMotor, TiltingMotor (for small roatations), or RotationalMotor (for 360 deg rotation).\n";
       if (header.motorType == usMotorSettings::LinearMotor) {
@@ -382,7 +382,7 @@ void usMetaHeaderParser::parse()
       MHDfile << "MotorRadius = " << header.motorRadius << "\n";
       MHDfile << "Comment = Only in 3d. Distance between 2 successive frames.\n";
       MHDfile << "FramePitch = " << header.framePitch << "\n";
-      MHDfile << "Comment = The axial resolution is the distance in meters between two successives A-samples in a scanline.\n";
+      MHDfile << "Comment = The axial resolution is the distance in meters between two successives A-samples in a scan line.\n";
       MHDfile << "AxialResolution = " << this->m_axialResolution << "\n";
     }
     else if (header.imageType == PRESCAN_2D) {
@@ -390,11 +390,11 @@ void usMetaHeaderParser::parse()
       MHDfile << "UltrasoundImageType = " << "PRESCAN_2D" << "\n";
       MHDfile << "Comment = True if probe transducer is convex, false if linear. \n";
       MHDfile << "IsTransducerConvex = " << header.isTransducerConvex << "\n";
-      MHDfile << "Comment = Radius between the scanlines intersection and the first pixel of each line acquired. 0 if linear probe.\n";
+      MHDfile << "Comment = Radius between the scan lines intersection and the first pixel of each line acquired. 0 if linear probe.\n";
       MHDfile << "TransducerRadius = " << header.transducerRadius << "\n";
       MHDfile << "Comment = Distance between 2 scanlines.\n";
       MHDfile << "ScanLinePitch = " << header.scanLinePitch << "\n";
-      MHDfile << "Comment = The axial resolution is the distance in meters between two successives A-samples in a scanline.\n";
+      MHDfile << "Comment = The axial resolution is the distance in meters between two successives A-samples in a scan line.\n";
       MHDfile << "AxialResolution = " << this->m_axialResolution << "\n";
     }
     else if (header.imageType == PRESCAN_3D) {
@@ -402,9 +402,9 @@ void usMetaHeaderParser::parse()
       MHDfile << "UltrasoundImageType = " << "PRESCAN_3D" << "\n";
       MHDfile << "Comment = True if probe transducer is convex, false if linear. \n";
       MHDfile << "IsTransducerConvex = " << header.isTransducerConvex << "\n";
-      MHDfile << "Comment = Radius between the scanlines intersection and the first pixel of each line acquired. 0 if linear probe.\n";
+      MHDfile << "Comment = Radius between the scan lines intersection and the first pixel of each line acquired. 0 if linear probe.\n";
       MHDfile << "TransducerRadius = " << header.transducerRadius << "\n";
-      MHDfile << "Comment = Distance between 2 scanlines.\n";
+      MHDfile << "Comment = Distance between 2 scan lines.\n";
       MHDfile << "ScanLinePitch = " << header.scanLinePitch << "\n";
       MHDfile << "Comment = Probe motor type : LinearMotor, TiltingMotor (for small roatations), or RotationalMotor (for 360 deg rotation).\n";
       if (header.motorType == usMotorSettings::LinearMotor) {
@@ -420,7 +420,7 @@ void usMetaHeaderParser::parse()
       MHDfile << "MotorRadius = " << header.motorRadius << "\n";
       MHDfile << "Comment = Only in 3d. Distance between 2 successive frames.\n";
       MHDfile << "FramePitch = " << header.framePitch << "\n";
-      MHDfile << "Comment = The axial resolution is the distance in meters between two successives A-samples in a scanline.\n";
+      MHDfile << "Comment = The axial resolution is the distance in meters between two successives A-samples in a scan line.\n";
       MHDfile << "AxialResolution = " << this->m_axialResolution << "\n";
     }
     else if (header.imageType == POSTSCAN_2D) {
@@ -428,9 +428,9 @@ void usMetaHeaderParser::parse()
       MHDfile << "UltrasoundImageType = " << "POSTSCAN_2D" << "\n";
       MHDfile << "Comment = True if probe transducer is convex, false if linear. \n";
       MHDfile << "IsTransducerConvex = " << header.isTransducerConvex << "\n";
-      MHDfile << "Comment = Radius between the scanlines intersection and the first pixel of each line acquired. 0 if linear probe.\n";
+      MHDfile << "Comment = Radius between the scan lines intersection and the first pixel of each line acquired. 0 if linear probe.\n";
       MHDfile << "TransducerRadius = " << header.transducerRadius << "\n";
-      MHDfile << "Comment = Distance between 2 scanlines.\n";
+      MHDfile << "Comment = Distance between 2 scan lines.\n";
       MHDfile << "ScanLinePitch = " << header.scanLinePitch << "\n";
       MHDfile << "HeightResolution = " << this->m_heightResolution << "\n";
       MHDfile << "WidthResolution = " << this->m_widthResolution << "\n";
@@ -441,9 +441,9 @@ void usMetaHeaderParser::parse()
       MHDfile << "UltrasoundImageType = " << "POSTSCAN_3D" << "\n";
       MHDfile << "Comment = True if probe transducer is convex, false if linear. \n";
       MHDfile << "IsTransducerConvex = " << header.isTransducerConvex << "\n";
-      MHDfile << "Comment = Radius between the scanlines intersection and the first pixel of each line acquired. 0 if linear probe.\n";
+      MHDfile << "Comment = Radius between the scan lines intersection and the first pixel of each line acquired. 0 if linear probe.\n";
       MHDfile << "TransducerRadius = " << header.transducerRadius << "\n";
-      MHDfile << "Comment = Distance between 2 scanlines.\n";
+      MHDfile << "Comment = Distance between 2 scan lines.\n";
       MHDfile << "ScanLinePitch = " << header.scanLinePitch << "\n";
       MHDfile << "Comment = Probe motor type : LinearMotor, TiltingMotor (for small roatations), or RotationalMotor (for 360 deg rotation).\n";
       if (header.motorType == usMotorSettings::LinearMotor) {
