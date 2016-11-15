@@ -2,14 +2,14 @@
  *
  * This file is part of the UsTk software.
  * Copyright (C) 2014 by Inria. All rights reserved.
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License ("GPL") as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
  * See the file COPYING at the root directory of this source
  * distribution for additional information about the GNU GPL.
- * 
+ *
  * This software was developed at:
  * INRIA Rennes - Bretagne Atlantique
  * Campus Universitaire de Beaulieu
@@ -19,7 +19,7 @@
  *
  * If you have questions regarding the use of this file, please contact the
  * authors at Alexandre.Krupa@inria.fr
- * 
+ *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
@@ -56,14 +56,14 @@ void usDenseTracker2D::init(const vpImage<unsigned char> &I, const usRectangle &
 
   for (unsigned int u = 0; u < m_height; ++u)
     for (unsigned int v = 0; v < m_width; ++v)
-      {
-	s_desired[u * m_width + v] = m_template[u][v];
-	s_current[u * m_width + v] = m_region[u][v];
-	m_LI[u * m_width + v][0] = m_gradX[u][v];
-	m_LI[u * m_width + v][1] = m_gradY[u][v];
-	m_LI[u * m_width + v][2] = (static_cast<double>(u) - u0) * m_gradY[u][v]
-	  - (static_cast<double>(v) - v0) * m_gradX[u][v];
-      }
+    {
+      s_desired[u * m_width + v] = m_template[u][v];
+      s_current[u * m_width + v] = m_region[u][v];
+      m_LI[u * m_width + v][0] = m_gradX[u][v];
+      m_LI[u * m_width + v][1] = m_gradY[u][v];
+      m_LI[u * m_width + v][2] = (static_cast<double>(u) - u0) * m_gradY[u][v]
+          - (static_cast<double>(v) - v0) * m_gradX[u][v];
+    }
 
   m_LI_inverse = m_LI.pseudoInverse();
 }
@@ -80,29 +80,29 @@ void usDenseTracker2D::update(const vpImage<unsigned char> &I)
   double drms = 1.0e-5;
 
   while ((i < max_iter) && (std::abs(rms - rms0) > drms))
-    {
-      usImageMathematics::extract(I, m_region, m_target);
-      
-      for (unsigned int u = 0; u < m_height; ++u)
-	for (unsigned int v = 0; v < m_width; ++v)
-	  s_current[u * m_width + v] = m_region[u][v];
+  {
+    usImageMathematics::extract(I, m_region, m_target);
 
-      vpColVector e = s_current - s_desired;
-      vpColVector v = - gain * m_LI_inverse * e;
-      
-      rms0 = rms;
-      rms = e.euclideanNorm() / m_size;
+    for (unsigned int u = 0; u < m_height; ++u)
+      for (unsigned int v = 0; v < m_width; ++v)
+        s_current[u * m_width + v] = m_region[u][v];
 
-      double alpha = m_target.getOrientation();
-      dx = v[0] * cos(alpha) + v[1] * sin(alpha);
-      dy = v[1] * cos(alpha) - v[0] * sin(alpha);
-      da = - v[2];
-      
-      m_target.setCenter(m_target.getCx() + gain * dx, m_target.getCy() + gain * dy);
-      m_target.setOrientation(alpha + gain * da);
+    vpColVector e = s_current - s_desired;
+    vpColVector v = - gain * m_LI_inverse * e;
 
-      ++i;
-    }
+    rms0 = rms;
+    rms = e.euclideanNorm() / m_size;
+
+    double alpha = m_target.getOrientation();
+    dx = v[0] * cos(alpha) + v[1] * sin(alpha);
+    dy = v[1] * cos(alpha) - v[0] * sin(alpha);
+    da = - v[2];
+
+    m_target.setCenter(m_target.getCx() + gain * dx, m_target.getCy() + gain * dy);
+    m_target.setOrientation(alpha + gain * da);
+
+    ++i;
+  }
 
   //std::cout << "Converged in " << i << " iterations with rms = " << rms
   //	    << "and drms = " << std::abs(rms - rms0) << std::endl;
