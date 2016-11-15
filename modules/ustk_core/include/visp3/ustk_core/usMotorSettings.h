@@ -47,23 +47,31 @@
 #include <visp3/ustk_core/usTransducerSettings.h>
 
 /**
- * @class usMotorSettings
- *
- * @brief Generic class for 3D ultrasound motor settings associated to the 3D probe used
- * during acquisition.
- * @ingroup module_ustk_core
- *
- * This class represents motor settings for 3D ultrasound images which are:
- * - the common settings corresponding to the motor used to produce the third dimension.
- *   These settings are:
- *   - the type of motor used to move the transducer: linear, tilting (small rotation) or rotationnal (360&deg; rotation).
- *   - the motor radius \f$R_M\f$ (value set to zero for a linear motor)
- *   - the frame pitch that corresponds to the angle \f$\alpha_F\f$ (in radians) between
- *     to successive frame acquisitions when the motor is convex, or to the distance \f$d_F\f$ (in meters)
- *     when the motor is linear.
- *   - the frame number \f$n_F\f$ that corresponds to the number of frames acquired by the probe to generate the 3D volume.
- *   .
- *
+   @class usMotorSettings
+
+   @brief Generic class for 3D ultrasound motor settings associated to the 3D probe used
+   during acquisition.
+   @ingroup module_ustk_core
+
+   This class represents motor settings for 3D ultrasound images which are the common settings
+   corresponding to the motor used to produce the third dimension.
+
+   These settings are:
+    - the type of motor used to move the transducer: linear, tilting (small rotation) or rotationnal
+      (360&deg; rotation). This type is defined in usMotorType and could be set using setMotorType(). To retrieve
+      the motor type use getMotorType().
+    - the motor radius \f$R_{_M}\f$ (value set to zero for a linear motor). This value could be set using
+      setMotorRadius() or get using getMotorRadius().
+    - the frame pitch that corresponds to the angle \f$\alpha_{_F}\f$ (in radians) between
+      to successive frame acquisitions when the motor is convex, or to the distance \f$d_{_F}\f$ (in meters)
+      when the motor is linear. To set this value use setFramePitch() and to access use getFramePitch().
+    - the frame number \f$n_{_F}\f$ that corresponds to the number of frames acquired by the probe to
+      generate the 3D volume. This number is set using setFrameNumber() and could be retrieved using
+      getFrameNumber().
+
+   The following figure summerize these motor settings.
+
+   \image html img-usMotorSettings.png
  */
 class VISP_EXPORT usMotorSettings {
 public:

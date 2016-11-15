@@ -57,11 +57,11 @@ usTransducerSettings::usTransducerSettings()
 * @param scanLinePitch Radius or distance between 2 successives scan lines acquired by the probe transducer; in radians (rad)
 * if the probe is convex, or in meters (m) if the probe is linear.
 * @param scanLineNumber Number of scan lines acquired by the probe transducer.
-* @param isTransducerConvex Boolean to specify if the probe transducer is convex or linear.
-* @param depth Distance in meters between first and last pixel of a scanline.
+* @param transducerConvex Boolean to specify if the probe transducer is convex (true) or linear (false).
+* @param depth Distance in meters between first and last pixel of a scan line.
 */
 usTransducerSettings::usTransducerSettings(double transducerRadius, double scanLinePitch,
-                                           unsigned int scanLineNumber, bool isTransducerConvex,
+                                           unsigned int scanLineNumber, bool transducerConvex,
                                            double depth)
   : m_transducerRadius(transducerRadius), m_scanLinePitch(scanLinePitch),
     m_scanLineNumber(scanLineNumber), m_isTransducerConvex(isTransducerConvex),
@@ -125,7 +125,7 @@ VISP_EXPORT std::ostream& operator<<(std::ostream& out, const usTransducerSettin
     out << "scan line pitch angle: " << other.getScanLinePitch() << std::endl;
   else
     out << "scan line pitch distance: " << other.getScanLinePitch() << std::endl;
-  out << "scanline number : " << other.getScanLineNumber() << std::endl
+  out << "scan line number : " << other.getScanLineNumber() << std::endl
       << "convex probe used: " << other.isTransducerConvex() << std::endl
       << "depth : " << other.getDepth() << std::endl;
   return out;
@@ -244,10 +244,17 @@ double usTransducerSettings::getFieldOfView() const
 }
 
 /**
-* Setter for the transducer field of view (updates the scan line pitch).
-* @param fieldOfView The transducer field of view in radians if the probe is convex, in meters if it is linear.
-* @warning Be sure to update the scan line number before the field of view :
-*          only the scan line pitch is stored in memory, calculated from the field of view and the scan line pitch in this method.
+  Setter for the transducer field of view (updates the scan line pitch).
+  @param fieldOfView The transducer field of view in radians if the transducer is convex, in meters
+  if the transducer is linear.
+  @warning Be sure to use setScanLineNumber() to update the scan line number before the field of view
+  since this method computes the scan line pitch from the field of view and the scan line pitch.
+\code
+  usTransducerSettings transducerSettings;
+
+  transducerSettings.setScanLineNumber(128);
+  transducerSettings.setFieldOfView(vpMath::rad(57.0)); // field of view is 57 deg
+\endcode
 */
 void usTransducerSettings::setFieldOfView(double fieldOfView)
 {
@@ -266,7 +273,7 @@ bool usTransducerSettings::scanLineNumberIsSet() const
 }
 
 /**
-* Setter for depth : distance in meters between first and last pixel in a scanline.
+* Setter for depth : distance in meters between first and last pixel in a scan line.
 * @param depth Distance in meters.
 */
 void usTransducerSettings::setDepth(double depth)
@@ -275,7 +282,7 @@ void usTransducerSettings::setDepth(double depth)
 }
 
 /**
-* Setter for depth : distance in meters between first and last pixel in a scanline.
+* Setter for depth : distance in meters between first and last pixel in a scan line.
 * @return Depth in meters.
 */
 double usTransducerSettings::getDepth() const

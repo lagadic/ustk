@@ -61,7 +61,7 @@ usImagePreScanSettings::usImagePreScanSettings(const usImagePreScanSettings &oth
 * Full settings constructor.
 * @param transducerSettings Transducer settings.
 * @param axialResolution Image axial resolution in meters (distance between two samples
-* in a scanline).
+* in a scan line).
 */
 usImagePreScanSettings::usImagePreScanSettings(const usTransducerSettings &transducerSettings, double axialResolution)
   : usTransducerSettings(transducerSettings), m_axialResolution(axialResolution)

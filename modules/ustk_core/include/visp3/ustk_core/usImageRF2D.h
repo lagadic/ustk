@@ -54,20 +54,29 @@
   The settings associated to an usImageRF2D image are the one implemented in usImagePreScanSettings.
   We recall that these settings are:
   - the transducer settings (see usTransducerSettings) that are:
-    - the transducer radius \f$R_T\f$ in meters (value set to zero for a linear transducer)
-    - the scan line pitch that corresponds to the angle \f$\alpha_{SC}\f$ (in radians) between
-      to successive scan line beams when the transducer is convex, or to the distance \f$d_{SC}\f$
-      (in meters) when the transducer is linear
-    - the number of scan lines \f$n_{SC}\f$
-    - the type of ultrasound transducer used for data acquisition: convex or linear.
+    - the name of the probe that could be set using setProbeName() or retrieved using getProbeName().
+    - the transducer radius \f$R_{_T}\f$ in meters (value set to zero for a linear transducer).
+      Its value could be set using setTransducerRadius() and retrieved using getTransducerRadius().
+    - the scan line pitch that corresponds to the angle \f$\alpha_{_{SC}}\f$ (in radians) between
+      two successive scan line beams when the transducer is convex, or to the distance \f$d_{_{SC}}\f$
+      (in meters) when the transducer is linear. To set this value use setScanLinePitch() and to get
+      its value use getScanLinePitch().
+    - the number of scan lines \f$n_{_{SC}}\f$. To set this setting use setScanLineNumber() and to access
+      to the value use getScanLineNumber().
+    - the type of ultrasound transducer used for data acquisition: convex or linear. This parameter
+      could be set using setTransducerConvexity(). To know the transducer type use isTransducerConvex().
+    - the depth that corresponds to the distance in meters between the first and the last pixel in a scan line.
+      To set this value use setDepth() and to get the depth use getDepth().
     .
-  - and an additional axial resolution parameter called \f$a_R\f$ that correspond to the distance in meter
-    between 2 RF samples.
+  - and an additional axial resolution parameter called \f$a_{_R}\f$ which corresponds to the
+    distance (in meters) between two consecutive RF samples along a scan line. To set this value use
+    setAxialResolution() and to retrieve this value use getAxialResolution().
 
   The following figure summarize these settings and shows the structure of an usImageRF2D image:
   \image html img-usImageRF2D.png
 
-  The following example shows how to build a 2D RF ultrasound image from a vpImage, and from acquisition settings.
+  The following example shows how to build a 2D RF ultrasound image from a vpImage, and from
+  acquisition settings.
 
   \code
 #include <visp3/ustk_core/usImageRF2D.h>
@@ -135,7 +144,7 @@ usImageRF2D<Type>::usImageRF2D(const vpImage<Type> &image, const usImagePreScanS
   : vpImage<Type>(image), usImagePreScanSettings(preScanSettings)
 {
   if (image.getWidth() != preScanSettings.getScanLineNumber())
-    throw(vpException(vpException::badValue, "RF image width differ from transducer scanline number"));
+    throw(vpException(vpException::badValue, "RF image width differ from transducer scan line number"));
 }
 
 /**
@@ -192,8 +201,8 @@ std::ostream& operator<<(std::ostream& out, const usImageRF2D<Type> &other)
   return out << static_cast<const usImagePreScanSettings &>(other) <<
     "image height : " << other.getHeight() << std::endl <<
     "image width : " << other.getWidth() << std::endl <<
-    "number of A-samples in a scanline : " << other.getRFSampleNumber() << std::endl <<
-    "number of scanlines : " << other.getScanLineNumber() << std::endl;
+    "number of A-samples in a scan line : " << other.getRFSampleNumber() << std::endl <<
+    "number of scan lines : " << other.getScanLineNumber() << std::endl;
 }
 
 /**

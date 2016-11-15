@@ -185,7 +185,7 @@ usImageSettingsXmlParser::readMainClass (xmlDocPtr doc, xmlNodePtr node)
           break;
         case CODE_XML_SCANLINE_NUMBER :
           if (this->m_image_type == IMAGE_TYPE_RF || this->m_image_type == IMAGE_TYPE_PRESCAN) {
-            throw(vpException(vpException::fatalError, std::string("Trying to assign a scanline number to a pre-scan image (for pre-scan images scanline number is the image width) !")));
+            throw(vpException(vpException::fatalError, std::string("Trying to assign a scan line number to a pre-scan image (for pre-scan images scan line number is the image width) !")));
           } else
             this->m_transducerSettings.setScanLineNumber(xmlReadIntChild(doc, dataNode));
           break;
@@ -335,9 +335,9 @@ void usImageSettingsXmlParser::setImageSettings(double transducerRadius, double 
 /**
 * Setter for post-scan settings. Each transducer setting available.
 * @param transducerRadius : the transducer rabius.
-* @param scanLinePitch : the scanline pitch.
+* @param scanLinePitch : the scan line pitch.
 * @param isTransducerConvex : the transducer type (true if convex transducer, false if linear).
-* @param scanLineNumber : the number of scanLines of the probe used.
+* @param scanLineNumber : the number of scan lines of the probe used.
 * @param widthResolution : the image width resolution.
 * @param heightResolution : the image height resolution.
 */

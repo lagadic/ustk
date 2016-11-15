@@ -54,24 +54,40 @@
 
   The settings associated to an usImagePreScan3D image are the:
   - pre-scan image settings implemented in usImagePreScanSettings that are:
-    - the transducer radius \f$R_T\f$ in meters (value set to zero for a linear transducer)
-    - the scan line pitch that corresponds to the angle \f$\alpha_{SC}\f$ (in radians) between
-      to successive scan line beams when the transducer is convex, or to the distance \f$d_{SC}\f$
-      (in meters) when the transducer is linear
-    - the number of scan lines \f$n_{SC}\f$
-    - the type of ultrasound transducer used for data acquisition: convex or linear.
-    - an axial resolution parameter called \f$a_R\f$ that correspond to the distance in meter
-      between 2 RF samples.
+    - the name of the probe that could be set using setProbeName() or retrieved using getProbeName().
+    - the transducer radius \f$R_{_T}\f$ in meters (value set to zero for a linear transducer).
+      Its value could be set using setTransducerRadius() and retrieved using getTransducerRadius().
+    - the scan line pitch that corresponds to the angle \f$\alpha_{_{SC}}\f$ (in radians) between
+      two successive scan line beams when the transducer is convex, or to the distance \f$d_{_{SC}}\f$
+      (in meters) when the transducer is linear. To set this value use setScanLinePitch() and to get
+      its value use getScanLinePitch().
+    - the number of scan lines \f$n_{_{SC}}\f$. To set this setting use setScanLineNumber() and to access
+      to the value use getScanLineNumber().
+    - the type of ultrasound transducer used for data acquisition: convex or linear. This parameter
+      could be set using setTransducerConvexity(). To know the transducer type use isTransducerConvex().
+    - the depth that corresponds to the distance in meters between the first and the last pixel in a scan line.
+      To set this value use setDepth() and to get the depth use getDepth().
+    - an additional axial resolution parameter called \f$a_{_R}\f$ which corresponds to the
+      distance (in meters) between two consecutive B-Mode samples along a scan line. To set this value use
+      setAxialResolution() and to retrieve this value use getAxialResolution().
     .
   - the motor settings implemented in usMotorSettings that are:
-    - the type of motor used to move the transducer: linear, tilting (small rotation) or rotationnal (360&deg; rotation).
-    - the motor radius \f$R_M\f$ (value set to zero for a linear motor)
-    - the frame pitch that corresponds to the angle \f$\alpha_F\f$ (in radians) between
-      to successive frame acquisitions when the motor is convex, or to the distance \f$d_F\f$ (in meters)
-      when the motor is linear.
-    - the frame number \f$n_F\f$ that corresponds to the number of frames acquired by the probe to generate the 3D volume.
+    - the type of motor used to move the transducer: linear, tilting (small rotation) or rotationnal
+      (360&deg; rotation). This type is defined in usMotorType and could be set using setMotorType(). To retrieve
+      the motor type use getMotorType().
+    - the motor radius \f$R_{_M}\f$ (value set to zero for a linear motor). This value could be set using
+      setMotorRadius() or get using getMotorRadius().
+    - the frame pitch that corresponds to the angle \f$\alpha_{_F}\f$ (in radians) between
+      to successive frame acquisitions when the motor is convex, or to the distance \f$d_{_F}\f$ (in meters)
+      when the motor is linear. To set this value use setFramePitch() and to access use getFramePitch().
+    - the frame number \f$n_{_F}\f$ that corresponds to the number of frames acquired by the probe to
+      generate the 3D volume. This number is set using setFrameNumber() and could be retrieved using
+      getFrameNumber().
     .
   .
+
+  The following figure summarize these settings and shows the structure of an usImagePreScan3D image:
+  \image html img-usImagePreScan3D.png
 
   The following example shows how to build a 3D pre-scan ultrasound image from an usImage3D, and from acquisiton settings.
 
@@ -167,7 +183,7 @@ usImagePreScan3D<Type>::usImagePreScan3D(const usImage3D<Type> &image,
   : usImage3D<Type>(image), usImagePreScanSettings(preScanSettings), usMotorSettings(motorSettings)
 {
   if (image.getDimX() != preScanSettings.getScanLineNumber())
-    throw(vpException(vpException::badValue, "3D pre-scan image X-size differ from transducer scanline number"));
+    throw(vpException(vpException::badValue, "3D pre-scan image X-size differ from transducer scan line number"));
   if (image.getDimZ() != motorSettings.getFrameNumber())
     throw(vpException(vpException::badValue, "3D pre-scan image Z-size differ from motor frame number"));
 }

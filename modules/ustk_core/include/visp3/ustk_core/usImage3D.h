@@ -382,8 +382,8 @@ bool usImage3D<Type>::operator==(const usImage3D<Type> &other)
 
 template<class Type> std::ostream& operator<<(std::ostream& out, const usImage3D<Type> &other)
 {
-  return out << "number of A-samples in a scanline : " << other.getDimX() << std::endl
-             << "number of scanlines in a frame : " << other.getDimY() << std::endl
+  return out << "number of A-samples in a scan line : " << other.getDimX() << std::endl
+             << "number of scan lines in a frame : " << other.getDimY() << std::endl
              << "number of frames : " << other.getDimZ() << std::endl;
 }
 

@@ -41,10 +41,11 @@ usBackScanConverter2D::~usBackScanConverter2D() {}
 /**
 * Initialize the back-scan converter.
 * @param inputSettings Post-scan settings you want to use to back-convert image.
-* @param BModeSampleNumber Number of samples along a scanline : height of the pre-scan image built by run().
-* @param scanLineNumber Number of scanlines : width of the pre-scan image built by run().
+* @param BModeSampleNumber Number of samples along a scan line : height of the pre-scan image built by run().
+* @param scanLineNumber Number of scan lines : width of the pre-scan image built by run().
 */
-void usBackScanConverter2D::init(const usImagePostScan2D<unsigned char> &inputSettings, const int BModeSampleNumber, const int scanLineNumber)
+void usBackScanConverter2D::init(const usImagePostScan2D<unsigned char> &inputSettings, const int BModeSampleNumber,
+                                 const int scanLineNumber)
 {
   //check resolution to avoir errors
   if(inputSettings.getHeightResolution() == 0.0 || inputSettings.getWidthResolution() == 0.0)

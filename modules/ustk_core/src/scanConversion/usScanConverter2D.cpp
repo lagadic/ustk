@@ -39,8 +39,8 @@ usScanConverter2D::~usScanConverter2D() {}
 /**
 * Initialize the scan-converter.
 * @param inputSettings Post-scan settings : transducer radius, pitch, depth, and resolutions.
-* @param BModeSampleNumber Number of samples along a scanline : height of the pre-scan image to convert.
-* @param scanLineNumber Number of scanlines : width of the pre-scan image to convert.
+* @param BModeSampleNumber Number of samples along a scan line : height of the pre-scan image to convert.
+* @param scanLineNumber Number of scan lines : width of the pre-scan image to convert.
 */
 
 void usScanConverter2D::init(const usImagePostScan2D<unsigned char> &inputSettings, const int BModeSampleNumber,
@@ -89,8 +89,8 @@ void usScanConverter2D::init(const usImagePostScan2D<unsigned char> &inputSettin
 /**
 * Initialize the scan-converter.
 * @param inputSettings Post-scan settings : transducer radius, pitch, depth, and resolutions.
-* @param BModeSampleNumber Number of samples along a scanline : height of the pre-scan image to convert.
-* @param scanLineNumber Number of scanlines : width of the pre-scan image to convert.
+* @param BModeSampleNumber Number of samples along a scan line : height of the pre-scan image to convert.
+* @param scanLineNumber Number of scan lines : width of the pre-scan image to convert.
 * @param xResolution Size of a pixel in x direction of the post scan image built.
 * @param yResolution Size of a pixel in y direction of the post scan image built.
 */

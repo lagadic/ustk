@@ -53,22 +53,41 @@
 
   The settings associated to an usImagePostScan3D image are the:
   - transducer settings implemented in usTransducerSettings that are:
-    - the transducer radius \f$R_T\f$ in meters (value set to zero for a linear transducer)
-    - the scan line pitch that corresponds to the angle \f$\alpha_{SC}\f$ (in radians) between
-      to successive scan line beams when the transducer is convex, or to the distance \f$d_{SC}\f$
-      (in meters) when the transducer is linear
-    - the number of scan lines \f$n_{SC}\f$
-    - the type of ultrasound transducer used for data acquisition: convex or linear.
+    - the name of the probe that could be set using setProbeName() or retrieved using getProbeName().
+    - the transducer radius \f$R_{_T}\f$ in meters (value set to zero for a linear transducer).
+      Its value could be set using setTransducerRadius() and retrieved using getTransducerRadius().
+    - the scan line pitch that corresponds to the angle \f$\alpha_{_{SC}}\f$ (in radians) between
+      two successive scan line beams when the transducer is convex, or to the distance \f$d_{_{SC}}\f$
+      (in meters) when the transducer is linear. To set this value use setScanLinePitch() and to get
+      its value use getScanLinePitch().
+    - the number of scan lines \f$n_{_{SC}}\f$. To set this setting use setScanLineNumber() and to access
+      to the value use getScanLineNumber().
+    - the type of ultrasound transducer used for data acquisition: convex or linear. This parameter
+      could be set using setTransducerConvexity(). To know the transducer type use isTransducerConvex().
+    - the depth that corresponds to the distance in meters between the first and the last pixel in a scan line.
+      To set this value use setDepth() and to get the depth use getDepth().
     .
   - the motor settings implemented in usMotorSettings that are:
-    - the type of motor used to move the transducer: linear, tilting (small rotation) or rotationnal (360&deg; rotation).
-    - the motor radius \f$R_M\f$ (value set to zero for a linear motor)
-    - the frame pitch that corresponds to the angle \f$\alpha_F\f$ (in radians) between
-      to successive frame acquisitions when the motor is convex, or to the distance \f$d_F\f$ (in meters)
-      when the motor is linear.
-    - the frame number \f$n_F\f$ that corresponds to the number of frames acquired by the probe to generate the 3D volume.
+    - the type of motor used to move the transducer: linear, tilting (small rotation) or rotationnal
+      (360&deg; rotation). This type is defined in usMotorType and could be set using setMotorType(). To retrieve
+      the motor type use getMotorType().
+    - the motor radius \f$R_{_M}\f$ (value set to zero for a linear motor). This value could be set using
+      setMotorRadius() or get using getMotorRadius().
+    - the frame pitch that corresponds to the angle \f$\alpha_{_F}\f$ (in radians) between
+      to successive frame acquisitions when the motor is convex, or to the distance \f$d_{_F}\f$ (in meters)
+      when the motor is linear. To set this value use setFramePitch() and to access use getFramePitch().
+    - the frame number \f$n_{_F}\f$ that corresponds to the number of frames acquired by the probe to
+      generate the 3D volume. This number is set using setFrameNumber() and could be retrieved using
+      getFrameNumber().
     .
   .
+
+  The following figure summarize these settings and shows the structure of an usImagePostScan3D image when
+  the motor is linear:
+  \image html img-usImagePostScan3D-linear.png
+  This other figure summarize these settings and shows the structure of an usImagePostScan3D image when
+  the motor is convex:
+  \image html img-usImagePostScan3D-convex.png
 
   The following example shows how to build a 3D post-scan ultrasound image from an usImage3D, and from acquisiton settings.
   \code
@@ -149,7 +168,7 @@ private:
   double m_elementSpacingY; /**< Element spacing along the y-axis, in meters */
   double m_elementSpacingZ; /**< Element spacing along the z-axis, in meters */
 
-  double m_scanLineDepth; /**< Distance between first and last pixel of a scanline, in meters */
+  double m_scanLineDepth; /**< Distance between first and last pixel of a scan line, in meters */
 };
 
 
@@ -185,7 +204,7 @@ usImagePostScan3D<Type>::usImagePostScan3D(const usImagePostScan3D &other)
 * @param spacingX distancee (in meters) between two voxels on X-axis
 * @param spacingY distancee (in meters) between two voxels on Y-axis
 * @param spacingZ distancee (in meters) between two voxels on Z-axis
-* @param scanLineDepth distancee (in meters) between first and last voxel of a scanline.
+* @param scanLineDepth distancee (in meters) between first and last voxel of a scan line.
 */
 template<class Type>
 usImagePostScan3D<Type>::usImagePostScan3D(const usImage3D<Type> &image,
@@ -254,7 +273,7 @@ template<class Type> std::ostream& operator<<(std::ostream& out, const usImagePo
              << "spacingX = " << other.getElementSpacingX() << std::endl
              << "spacingY = " << other.getElementSpacingY() << std::endl
              << "spacingZ = " << other.getElementSpacingZ() << std::endl
-             << "scanline depth = " << other.getScanLineDepth() << std::endl;
+             << "scan line depth = " << other.getScanLineDepth() << std::endl;
 }
 
 /**
@@ -299,8 +318,8 @@ double usImagePostScan3D<Type>::getElementSpacingZ() const
 
 
 /**
-* Get the scanline depth in meters.
-* @return The scanline depth, in meters.
+* Get the scan line depth in meters.
+* @return The scan line depth, in meters.
 */
 template<class Type>
 double usImagePostScan3D<Type>::getScanLineDepth() const
@@ -339,8 +358,8 @@ void usImagePostScan3D<Type>::setElementSpacingZ(double elementSpacingZ)
 }
 
 /**
-* Set the scanline depth (distance between first and last pixel of a scanline).
-* @param scanLineDepth The scanline depth, in meters.
+* Set the scan line depth (distance between first and last pixel of a scan line).
+* @param scanLineDepth The scan line depth, in meters.
 */
 template<class Type>
 void usImagePostScan3D<Type>::setScanLineDepth(double scanLineDepth)

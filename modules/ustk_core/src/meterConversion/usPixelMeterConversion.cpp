@@ -54,8 +54,8 @@
  *  -The image dimensions (normally set when you filled your image).
  *  -The height and width resolutions.
  *  -The transducer radius (in meters).
- *  -The scanline number : number of scanlines used when you acqired the image.
- *  -The scanline pitch : angle (radians) between two successive scanlines in acquisition.
+ *  -The scan line number : number of scan lines used when you acqired the image.
+ *  -The scan line pitch : angle (radians) between two successive scan lines in acquisition.
  */
 void usPixelMeterConversion::convert(const usImagePostScan2D<unsigned char> &image,
                                      const double &u, const double &v,
@@ -100,8 +100,8 @@ void usPixelMeterConversion::convert(const usImagePostScan2D<unsigned char> &ima
  *  -The image dimensions (normally set when you filled your image).
  *  -The 3 elements spacing (x,y and z).
  *  -The transducer radius (in meters).
- *  -The scanline number : number of scanlines used when you acqired the image.
- *  -The scanline pitch : angle (radians) between two successive scanlines in acquisition.
+ *  -The scan line number : number of scan lines used when you acqired the image.
+ *  -The scan line pitch : angle (radians) between two successive scan lines in acquisition.
  *
  *  Settings needed in case of convewx transducer and tilting motor :
  */
