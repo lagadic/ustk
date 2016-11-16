@@ -165,7 +165,7 @@ vpThread::Return displayFunction(vpThread::Args args)
       //Compute confidence map on pre-scan image
       confidenceMapProcessor_.run(confidencePreScan_, preScan_);
       //converting computed confidence map in post-scan
-      converter_.run(confidencePostScan_,confidencePreScan_);
+      converter_.run(confidencePreScan_, confidencePostScan_);
 
       //if ROI defined, we can send commands
       if(stateROI == ROI_started ) {
