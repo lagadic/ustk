@@ -113,6 +113,7 @@ public:
 
   friend VISP_EXPORT std::ostream& operator<<(std::ostream& out, const usTransducerSettings &other);
 
+  int Framenumber;
 private:
   //Settings for the probe transducer
   double m_transducerRadius;

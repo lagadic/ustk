@@ -174,6 +174,7 @@ void usGrabberFrame<ImageType>::grabFrame(ImageType* imageToWrite) {
   memcpy(dynamic_cast<usDataPrescan2D*>(m_informations->m_data)->bitmap, m_informations->m_voldata,
   m_informations->m_szVol * sizeof(unsigned char));
       */
+    std::cout << "pre scan 2D grabbing" << std::endl;
     for (int i = 0; i < m_informations->m_header.h; ++i) {
       for (int j = 0; j < m_informations->m_header.w; ++j) {
         (*imageToWrite)(i, j, m_informations->m_voldata[i + j * m_informations->m_header.h]);
@@ -193,10 +194,11 @@ void usGrabberFrame<ImageType>::grabFrame(ImageType* imageToWrite) {
     //Trying to send frame by frame in preScan2D format
     for (int i = 0; i < m_informations->m_header.h; ++i) {
       for (int j = 0; j < m_informations->m_header.w; ++j) {
-        (*imageToWrite)(i, j, m_informations->m_voldata[i + j * m_informations->m_header.h]);
+        (*imageToWrite)(i, j, m_informations->m_voldata[m_informations->m_frmIdx * m_informations->m_szFrm + i + j * m_informations->m_header.h]);
       }
     }
     imageToWrite->setTransducerSettings(m_transducerSettings);
+    imageToWrite->Framenumber = m_informations->m_totFrmIdx;
     //imageToWrite->setMotorSettings(m_informations->m_motorSettings);
   }
   else if (m_informations->m_header.type == 1 && m_informations->m_header.fpv == 3) //postScan 2D

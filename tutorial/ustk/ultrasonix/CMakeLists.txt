@@ -6,7 +6,8 @@ find_package(VISP REQUIRED visp_ustk_core visp_ustk_grabber)
 
 set(tutorial_ultrasonix_cpp
   tutorial-ultrasonix-grabber.cpp
-  tutorial-ultrasonix-confidence-2D.cpp)
+  tutorial-ultrasonix-confidence-2D.cpp
+  tutorial-ultrasonix-servo-confidence-3D.cpp)
 
 foreach(cpp ${tutorial_ultrasonix_cpp})
   visp_add_target(${cpp})

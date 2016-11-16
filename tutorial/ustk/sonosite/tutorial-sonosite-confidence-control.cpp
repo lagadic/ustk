@@ -147,7 +147,6 @@ vpThread::Return displayFunction(vpThread::Args args)
       //converting computed confidence map in post-scan
       converter_.run(confidencePreScan_, confidencePostScan_);
 
-      //
       unsigned int height(confidencePreScan_.getHeight()), width(confidencePreScan_.getWidth());
 
       double I_sum = 0.0;
@@ -296,7 +295,7 @@ vpThread::Return controlFunction(vpThread::Args args)
 
   // Initialize the desired force/torque values
   pHp_star = 0;
-  pHp_star[2] = 3; // Fz = 1N
+  pHp_star[2] = 3; // Fz = 3N
   //
   // Case of the C65 US probe
   //

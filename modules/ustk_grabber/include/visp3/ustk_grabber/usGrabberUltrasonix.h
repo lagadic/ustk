@@ -84,18 +84,18 @@ class VISP_EXPORT usGrabberUltrasonix {
   struct SocketHeader3D
   {
     double startTime;
-    int type;
-    int volumes;
-    int fpv;
-    int w;
-    int h;
-    int ss;
-    int degPerFr;
-    int BSampleFreq; // hz
+    int type; // 0: prescan 1: postscan 2: rf
+    int volumes; // Number of volumes in the sequence
+    int fpv; // Frames per volumes
+    int w; // Width (scan line number)
+    int h; // Height (sample number)
+    int ss; // Sample size (in bits)
+    int degPerFr; // Frame pitch (check if the value is correct) (x 1000?)
+    int BSampleFreq; // Sampling frequency (Hz)
     int ProbeElementPitch; //micron
     int ProbeRadius; //micron
     int MotorRadius; //micron
-    int framerate;
+    int framerate; // Frames per second
   };
 
 
@@ -167,6 +167,8 @@ class VISP_EXPORT usGrabberUltrasonix {
 
   usTransducerSettings getTransducerSettings() const {return m_transducerSettings;}
 
+  usMotorSettings getMotorSettings() const {return m_motorSettings;}
+
   //void grabFrame( ImageType * imageToWrite);
 
   /**
@@ -183,7 +185,6 @@ class VISP_EXPORT usGrabberUltrasonix {
    * Get the frame rate.
    */
   double getFrameRate();
-
  private:
 
   usTransducerSettings m_transducerSettings;

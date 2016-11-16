@@ -40,9 +40,7 @@ vpMutex s_mutex_capture;
 vpThread::Return captureFunction(vpThread::Args args)
 {
   usGrabberUltrasonix grabber = *((usGrabberUltrasonix *) args);
-  usImageRF2D<unsigned char> m_frame_rf;
   usImagePreScan2D<unsigned char> m_frame_prescan;
-  usImagePostScan2D<unsigned char> m_frame_postscan;
 
   //resizing images and saving image type in s_imageType
   if(grabber.getImageType() == usGrabberUltrasonix::TYPE_RF) {      
@@ -94,6 +92,7 @@ vpThread::Return captureFunction(vpThread::Args args)
     vpMutex::vpScopedLock lock(s_mutex_capture);
     s_capture_state = capture_stopped;
   }
+  std::cout << "End of capture thread" << std::endl;
   return 0;
 }
 //! [capture-multi-threaded captureFunction]
@@ -136,13 +135,13 @@ vpThread::Return displayFunction(vpThread::Args args)
       {
        vpMutex::vpScopedLock lock(s_mutex_capture);
        if(m_imageType == usGrabberUltrasonix::TYPE_PRESCAN) {
+
          preScan_ = s_frame_prescan;
        }
        else {
          std::cout << "You must send pre-scan data from ultrasonix station for this example" << std::endl;
        }
       }
-
 
       //Confidence map
       scanlineConfidence.run(preScanConfidence_,preScan_);
@@ -153,7 +152,6 @@ vpThread::Return displayFunction(vpThread::Args args)
       }
       scanConverter.run(preScan_,postScan_);
       scanConverter.run(preScanConfidence_, postScanConfidence_);
-
 
       // Check if we need to initialize the display with the first frame
       if (! display_initialized_) {

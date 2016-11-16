@@ -129,6 +129,7 @@ public:
   //Filtering before calling vpImage::resize() to update scanLineNumber
   void resize(const unsigned int h, const unsigned int w);
   void resize(const unsigned int h, const unsigned int w, const Type val);
+
 };
 
 /**
