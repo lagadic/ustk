@@ -48,9 +48,11 @@ void usDenseTracker2D::init(const vpImage<unsigned char> &I, const usRectangle &
   s_current.resize(m_size);
   m_LI.resize(m_size, 3);
   
+  //compute gradients
   vpImageFilter::getGradY(m_template, m_gradX);
   vpImageFilter::getGradX(m_template, m_gradY);
 
+  //center of the target
   double u0 = m_target.getHeight() / 2.0;
   double v0 = m_target.getWidth() / 2.0;
 
@@ -81,6 +83,7 @@ void usDenseTracker2D::update(const vpImage<unsigned char> &I)
 
   while ((i < max_iter) && (std::abs(rms - rms0) > drms))
   {
+
     usImageMathematics::extract(I, m_region, m_target);
 
     for (unsigned int u = 0; u < m_height; ++u)

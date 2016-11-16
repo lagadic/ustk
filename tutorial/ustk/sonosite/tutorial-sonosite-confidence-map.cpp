@@ -126,7 +126,7 @@ vpThread::Return displayFunction(vpThread::Args args)
       confidenceMapProcessor_.run(confidencePreScan_, preScan_);
 
       //converting computed confidence map in post-scan
-      converter_.run(confidencePostScan_,confidencePreScan_);
+      converter_.run(confidencePreScan_, confidencePostScan_);
 
 
       // Check if we need to initialize the display with the first frame
