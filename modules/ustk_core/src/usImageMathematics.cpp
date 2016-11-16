@@ -228,10 +228,10 @@ namespace usImageMathematics {
     case NEAREST:
       return I(vpMath::round(x), vpMath::round(y));
     case BILINEAR: {
-      int x1 = floor(x);
-      int x2 = ceil(x);
-      int y1 = floor(y);
-      int y2 = ceil(y);
+      int x1 = (int)floor(x);
+      int x2 = (int)ceil(x);
+      int y1 = (int)floor(y);
+      int y2 = (int)ceil(y);
       double v1, v2;
       if (x1 == x2) {
   v1 = I(x1, y1);
@@ -264,7 +264,7 @@ namespace usImageMathematics {
     double sy = static_cast<double>(y_s) / static_cast<double>(y_d);
     for (unsigned int x = 0; x < x_d; ++x) {
       for (unsigned int y = 0; y < y_d; ++y) {
-  Dst(x, y, interpolate(Src, x * sx, y * sy, it));
+        Dst(x, y, (unsigned char)interpolate(Src, x * sx, y * sy, it));
       }
     }
   }
@@ -278,7 +278,7 @@ namespace usImageMathematics {
     Dst.resize(x_d, y_d);
     for (unsigned int x = 0; x < x_d; ++x)
       for (unsigned int y = 0; y < y_d; ++y)
-  Dst(x, y, interpolate(Src, x1 + x * cos(t) + y * sin(t), y1 - x * sin(t) + y * cos(t),
+  Dst(x, y, (unsigned char)interpolate(Src, x1 + x * cos(t) + y * sin(t), y1 - x * sin(t) + y * cos(t),
             usImageMathematics::BILINEAR));
   }
 
