@@ -138,7 +138,7 @@ void usScanConverter2D::init(const usTransducerSettings &inputSettings, const in
 * @param [out] postScanImage Post-scan image : result of the scan conversion.
 * @param [in] preScanImage Pre-scan image to convert.
 */
-void usScanConverter2D::run(usImagePostScan2D<unsigned char> &postScanImage, const usImagePreScan2D<unsigned char> &preScanImage)
+void usScanConverter2D::run(const usImagePreScan2D<unsigned char> &preScanImage, usImagePostScan2D<unsigned char> &postScanImage)
 {
   postScanImage.resize(m_height, m_width);
   for (unsigned int i = 0; i < m_height; ++i)
