@@ -56,6 +56,8 @@ void usDenseTracker2D::init(const vpImage<unsigned char> &I, const usRectangle &
   double u0 = m_target.getHeight() / 2.0;
   double v0 = m_target.getWidth() / 2.0;
 
+  //filling desired col vector with pixels values of template region
+  //filling interaction matrix
   for (unsigned int u = 0; u < m_height; ++u)
     for (unsigned int v = 0; v < m_width; ++v)
     {
@@ -66,7 +68,7 @@ void usDenseTracker2D::init(const vpImage<unsigned char> &I, const usRectangle &
       m_LI[u * m_width + v][2] = (static_cast<double>(u) - u0) * m_gradY[u][v]
           - (static_cast<double>(v) - v0) * m_gradX[u][v];
     }
-
+  //pseudo inverse of interaction matrix
   m_LI_inverse = m_LI.pseudoInverse();
 }
 
@@ -83,24 +85,28 @@ void usDenseTracker2D::update(const vpImage<unsigned char> &I)
 
   while ((i < max_iter) && (std::abs(rms - rms0) > drms))
   {
-
+    //extract new region from previous target rectangle
     usImageMathematics::extract(I, m_region, m_target);
 
+    //filling current features colVector 
     for (unsigned int u = 0; u < m_height; ++u)
       for (unsigned int v = 0; v < m_width; ++v)
         s_current[u * m_width + v] = m_region[u][v];
 
+    //compute error and velocity command
     vpColVector e = s_current - s_desired;
     vpColVector v = - gain * m_LI_inverse * e;
 
     rms0 = rms;
     rms = e.euclideanNorm() / m_size;
 
+    //extract deplacements to apply to follow the region
     double alpha = m_target.getOrientation();
     dx = v[0] * cos(alpha) + v[1] * sin(alpha);
     dy = v[1] * cos(alpha) - v[0] * sin(alpha);
     da = - v[2];
 
+    //update target with old values and deplacements previously comuted
     m_target.setCenter(m_target.getCx() + gain * dx, m_target.getCy() + gain * dy);
     m_target.setOrientation(alpha + gain * da);
 
