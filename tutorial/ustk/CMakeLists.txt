@@ -25,6 +25,10 @@ if(MSVC)
   endif()
 endif()
 
+if(WIN32)
+#only sonosite grabber (V4L2) available for windows
+visp_add_subdirectory(sonosite REQUIRED_DEPS visp_ustk_core visp_ustk_confidence_map)
+else()
 visp_add_subdirectory(sonosite REQUIRED_DEPS visp_ustk_core visp_ustk_confidence_map)
 visp_add_subdirectory(ultrasonix REQUIRED_DEPS visp_ustk_core visp_ustk_grabber)
-
+endif()
