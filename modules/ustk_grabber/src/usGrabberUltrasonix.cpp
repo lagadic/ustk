@@ -262,7 +262,7 @@ void usGrabberUltrasonix::start()
                                                   m_communicationInormations.m_header.w, true,US_4DC7_BSAMPLE_DISTANCE *  m_communicationInormations.m_header.h );
 
       m_motorSettings= usMotorSettings (m_communicationInormations.m_header.MotorRadius / 1000000.0,vpMath::rad(m_communicationInormations.m_header.degPerFr / 1000.0),
-                                        m_communicationInormations.m_header.fpv - 1, usMotorSettings::TiltingMotor);
+                                        m_communicationInormations.m_header.fpv, usMotorSettings::TiltingMotor);
     }
   }
   else if (m_communicationInormations.m_header.type == 1) // Postscan

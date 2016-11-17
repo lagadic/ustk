@@ -7,6 +7,7 @@
 #include <visp3/core/vpThread.h>
 #include <visp3/core/vpTime.h>
 #include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpPlot.h>
 #include <visp3/sensor/vpV4l2Grabber.h>
 #include <visp3/robot/vpRobotViper850.h>
 
@@ -32,8 +33,8 @@ t_CaptureState s_capture_state = capture_waiting;
 int s_imageType;
 vpMutex s_mutex_imageType;
 usImagePreScan3D<unsigned char> s_volume_prescan;
-int s_frameNumber;
-int s_volumeNumber;
+int s_frameIndex;
+int s_volumeIndex;
 vpMutex s_mutex_capture;
 
 vpMutex s_mutex_control_velocity;
@@ -59,7 +60,7 @@ vpThread::Return captureFunction(vpThread::Args args)
                            grabber.getCommunicationsInformations()->m_header.w);
     m_prescan_3D.resize(grabber.getCommunicationsInformations()->m_header.w,
                         grabber.getCommunicationsInformations()->m_header.h,
-                        grabber.getCommunicationsInformations()->m_header.fpv - 1);
+                        grabber.getCommunicationsInformations()->m_header.fpv);
   }
   else if(grabber.getImageType() == usGrabberUltrasonix::TYPE_POSTSCAN) {
     s_imageType = usGrabberUltrasonix::TYPE_POSTSCAN;
@@ -73,7 +74,8 @@ vpThread::Return captureFunction(vpThread::Args args)
   bool stop_capture_ = false;
 
   int frameIncrement = -1;
-  int frameNumber = 0;
+  int frameIndex = 0;
+  int volumeIndex = 0;
 
   //init grabber
   usGrabberFrame<usImagePreScan2D<unsigned char> > grabberFramePreScan;
@@ -93,13 +95,19 @@ vpThread::Return captureFunction(vpThread::Args args)
       if(m_frame_prescan.Framenumber % (grabber.getCommunicationsInformations()->m_header.fpv - 1) == 0)
         frameIncrement = -1 * frameIncrement;
 
-      frameNumber += frameIncrement;
-      //std::cout << "frame number = " << frameNumber << std::endl;
+      volumeIndex = m_frame_prescan.Framenumber / grabber.getCommunicationsInformations()->m_header.fpv;
+      frameIndex = m_frame_prescan.Framenumber % grabber.getCommunicationsInformations()->m_header.fpv;
+
+      if (volumeIndex % 2)
+        frameIndex = grabber.getCommunicationsInformations()->m_header.fpv - frameIndex - 1;
+
+      //frameNumber += frameIncrement;
+      std::cout << "frame index = " << frameIndex << std::endl;
 
       //update 3d image
       for(int i=0;i<grabber.getCommunicationsInformations()->m_header.h;i++) {
         for(int j=0;j<grabber.getCommunicationsInformations()->m_header.w;j++) {
-          m_prescan_3D(j,i,frameNumber,m_frame_prescan(i,j));
+          m_prescan_3D(j,i,frameIndex,m_frame_prescan(i,j));
         }
       }
     }
@@ -114,8 +122,8 @@ vpThread::Return captureFunction(vpThread::Args args)
 
       if(grabber.getImageType() == usGrabberUltrasonix::TYPE_PRESCAN) {
         s_volume_prescan = m_prescan_3D;
-        s_frameNumber = frameNumber;
-        s_volumeNumber = grabber.getCommunicationsInformations()->m_totFrmIdx;
+        s_frameIndex = frameIndex;
+        s_volumeIndex = volumeIndex;
       }
     }
   }
@@ -139,7 +147,8 @@ vpThread::Return displayFunction(vpThread::Args args)
   usImagePreScan2D<unsigned char> preScanConfidence_;
   usImagePreScan3D<unsigned char> preScanConfidence3D_;
   usScanlineConfidence2D scanlineConfidence;
-  int frameNumber;
+  int frameIndex;
+  int volumeIndex;
   bool frameAlreadyReadInPreviousLoop = false;
 
   vpColVector imageMoments(2);
@@ -149,6 +158,18 @@ vpThread::Return displayFunction(vpThread::Args args)
   bool initialized = false;
 
   double r, theta, phi;
+
+  vpPlot plot(2);
+  plot.initGraph(0, 1);
+  plot.setTitle(0, "confidence barycenter X");
+  plot.setUnitY(0, "error");
+  plot.setLegend(0, 0, "time");
+
+  plot.initGraph(1, 1);
+  plot.setTitle(1, "confidence barycenter Y");
+  plot.setUnitY(1, "error");
+  plot.setLegend(1, 0, "time");
+  double startTime = vpTime::measureTimeMs();
 
   t_CaptureState capture_state_;
   bool display_initialized_ = false;
@@ -174,12 +195,13 @@ vpThread::Return displayFunction(vpThread::Args args)
         vpMutex::vpScopedLock lock(s_mutex_capture);
         if(m_imageType == usGrabberUltrasonix::TYPE_PRESCAN) {
           preScan3D_ = s_volume_prescan;
-          if(frameNumber == s_frameNumber) {
+          if((frameIndex == s_frameIndex) && (volumeIndex == s_volumeIndex)) {
             frameAlreadyReadInPreviousLoop = true;
           }
           else {
             frameAlreadyReadInPreviousLoop = false;
-            frameNumber = s_frameNumber;
+            frameIndex = s_frameIndex;
+            volumeIndex = s_volumeIndex;
           }
           preScan_.resize(preScan3D_.getBModeSampleNumber(),preScan3D_.getScanLineNumber());
           preScanConfidence3D_.resize(preScan3D_.getDimX(), preScan3D_.getDimY(), preScan3D_.getDimZ());
@@ -191,10 +213,10 @@ vpThread::Return displayFunction(vpThread::Args args)
         }
       }
 
-      //extract new frame (at frameNumber position in 3D image)
+      //extract new frame (at frameIndex position in 3D image)
       for(unsigned int i=0;i<preScan3D_.getDimX();i++) {
         for(unsigned int j=0;j<preScan3D_.getDimY();j++) {
-          preScan_(j,i,preScan3D_(i,j,frameNumber));
+          preScan_(j,i,preScan3D_(i,j,frameIndex));
         }
       }
 
@@ -207,10 +229,10 @@ vpThread::Return displayFunction(vpThread::Args args)
       {
         //we do not recompute the command law if the frame hasn't been updated
         if(!frameAlreadyReadInPreviousLoop) {
-          std::cout << "[DISPLAY] init imageSum = " << imageSum << ", on frame " << frameNumber << std::endl;
+          std::cout << "[DISPLAY] init imageSum = " << imageSum << ", on frame " << frameIndex << std::endl;
           for (unsigned int j = 0; j < preScan3D_.getScanLineNumber(); ++j) {
             theta = preScan3D_.getScanLinePitch() * j - preScan3D_.getScanLinePitch() / 2.0 * (preScan3D_.getScanLineNumber() - 1.0);
-            phi = preScan3D_.getFramePitch() * preScan3D_.getFrameNumber() / 2.0 - preScan3D_.getFramePitch() * preScan3D_.getFrameNumber() / (preScan3D_.getScanLineNumber() * preScan3D_.getFrameNumber() - 1.0) * (j + preScan3D_.getScanLineNumber() * frameNumber);
+            phi = preScan3D_.getFramePitch() * preScan3D_.getFrameNumber() / 2.0 - preScan3D_.getFramePitch() * preScan3D_.getFrameNumber() / (preScan3D_.getScanLineNumber() * preScan3D_.getFrameNumber() - 1.0) * (j + preScan3D_.getScanLineNumber() * frameIndex);
             for (unsigned int i = 0; i < preScan3D_.getBModeSampleNumber(); ++i)
             {
               r = preScan3D_.getAxialResolution() * i + preScan3D_.getTransducerRadius();
@@ -220,12 +242,12 @@ vpThread::Return displayFunction(vpThread::Args args)
                   * (r * cos(theta) - dr) * phi * preScanConfidence_(i,j);
               imageSum +=  r * vpMath::sqr(cos(theta)) * vpMath::sqr(cos(phi))
                   * (r * cos(theta) - dr) * preScanConfidence_(i,j);
-              preScanConfidence3D_(j,i,frameNumber,preScanConfidence_(i,j));
+              preScanConfidence3D_(j,i,frameIndex,preScanConfidence_(i,j));
             }
           }
         }
-
-        if (frameNumber == (preScan3D_.getFrameNumber()))
+        std::cout << "frameNumber = " << frameIndex << std::endl;
+        if (frameIndex == (preScan3D_.getFrameNumber() - 1))
         {
           std::cout << "End of initialisation (first volume entirely captured)" << std::endl;
           initializing = false;
@@ -234,50 +256,58 @@ vpThread::Return displayFunction(vpThread::Args args)
       }
       else if (initialized)
       {
-        //std::cout << std::endl << "XXXXX frmIdx = " << frmIdx << std::endl;
-
         // unsigned int k = (volumeNumber % 2) ? (preScan3D_.getFrameNumber() - frameNumber - 1) : frameNumber;
 
         //we do not recompute the command law if the frame hasn't been updated
         if(!frameAlreadyReadInPreviousLoop) {
-        unsigned int k = frameNumber;
+          std::cout << std::endl << "[DISPLAY] XXXXXXXXXXXXXXXXXX s_frameIndex = " << frameIndex << ", " << std::endl;
 
-        for (unsigned int j = 0; j < preScan3D_.getScanLineNumber(); ++j) {
-          theta = preScan3D_.getScanLinePitch() * j - preScan3D_.getScanLinePitch() / 2.0 * (preScan3D_.getScanLineNumber() - 1.0);
-          phi = preScan3D_.getFramePitch() * preScan3D_.getFrameNumber() / 2.0 - preScan3D_.getFramePitch() * preScan3D_.getFrameNumber() / (preScan3D_.getScanLineNumber() * preScan3D_.getFrameNumber() - 1.0) * (j + preScan3D_.getScanLineNumber() * frameNumber);
-          //       if (volIdx % 2) phi = - phi;
+          std::cout << "FN = " << preScan3D_.getFrameNumber() << std::endl;
 
-          //std::cout << "   theta = " << theta << "     phi = " << phi << std::endl;
-          for (unsigned int i = 0; i < preScan3D_.getBModeSampleNumber(); ++i)
-          {
-            r = preScan3D_.getAxialResolution() * i + preScan3D_.getTransducerRadius();
-            imageMoments[0] += r * vpMath::sqr(cos(theta)) * vpMath::sqr(cos(phi)) * (r * cos(theta) - dr) * theta
-                * (preScanConfidence_(i,j) - preScanConfidence3D_(j,i,k));
-            imageMoments[1] += r * vpMath::sqr(cos(theta)) * vpMath::sqr(cos(phi)) * (r * cos(theta) - dr) * phi
-                * (preScanConfidence_(i,j) - preScanConfidence3D_(j,i,k));
-            imageSum += r * vpMath::sqr(cos(theta)) * vpMath::sqr(cos(phi)) * (r * cos(theta) - dr)
-                * (preScanConfidence_(i,j) - preScanConfidence3D_(j,i,k));
-            preScanConfidence3D_(j,i,k,preScanConfidence_(i,j));
-            /*std::cout << "r = " << r << std::endl;
-            std::cout << "theta = " << theta << std::endl;
-            std::cout << "phi = " << phi << std::endl;
-            std::cout << "dr = " << dr << std::endl;*/
+          unsigned int k = (volumeIndex % 2) ? (preScan3D_.getFrameNumber() - frameIndex - 1) : frameIndex;
+
+          std::cout << "k = " << k << std::endl;
+
+          for (unsigned int j = 0; j < preScan3D_.getScanLineNumber(); ++j) {
+            theta = preScan3D_.getScanLinePitch() * j - preScan3D_.getScanLinePitch() / 2.0 * (preScan3D_.getScanLineNumber() - 1.0);
+            phi = preScan3D_.getFramePitch() * preScan3D_.getFrameNumber() / 2.0 - preScan3D_.getFramePitch() * preScan3D_.getFrameNumber() / (preScan3D_.getScanLineNumber() * preScan3D_.getFrameNumber() - 1.0) * (j + preScan3D_.getScanLineNumber() * k);
+            if (volumeIndex % 2) phi = - phi;
+
+            //std::cout << "   theta = " << theta << "     phi = " << phi << std::endl;
+            for (unsigned int i = 0; i < preScan3D_.getBModeSampleNumber(); ++i)
+            {
+              r = preScan3D_.getAxialResolution() * i + preScan3D_.getTransducerRadius();
+              imageMoments[0] += r * vpMath::sqr(cos(theta)) * vpMath::sqr(cos(phi)) * (r * cos(theta) - dr) * theta
+                  * (preScanConfidence_(i,j) - preScanConfidence3D_(j,i,frameIndex));
+              imageMoments[1] += r * vpMath::sqr(cos(theta)) * vpMath::sqr(cos(phi)) * (r * cos(theta) - dr) * phi
+                  * (preScanConfidence_(i,j) - preScanConfidence3D_(j,i,frameIndex));
+              imageSum += r * vpMath::sqr(cos(theta)) * vpMath::sqr(cos(phi)) * (r * cos(theta) - dr)
+                  * (preScanConfidence_(i,j) - preScanConfidence3D_(j,i,frameIndex));
+              preScanConfidence3D_(j,i,frameIndex,preScanConfidence_(i,j));
+            }
+            if(j%32 == 0)
+              std::cout << "theta = " << theta << " --- phi = " << phi << std::endl;
           }
-        }
 
-        s_conf[0] = imageMoments[0] / imageSum;
-        s_conf[1] = - imageMoments[1] / imageSum;
+          s_conf[0] = imageMoments[0] / imageSum;
+          s_conf[1] = - imageMoments[1] / imageSum;
 
-        std::cout << "[DISPLAY] imageSum = " << imageSum << std::endl;
+          std::cout << "[DISPLAY] imageSum = " << imageSum << std::endl;
+          /*std::cout << "[DISPLAY] s_conf[0]  = " << s_conf[0]  << std::endl;
+        std::cout << "[DISPLAY] s_conf[1]  = " << s_conf[1]  << std::endl;*/
 
-        double lambda_c = 0.5;
+          double time = (vpTime::measureTimeMs() - startTime) / 1000.0;
+          plot.plot(0,0,time,s_conf[0]);
+          plot.plot(1,0,time,s_conf[1]);
 
-        {
-          vpMutex::vpScopedLock lock(s_mutex_capture);
-          s_controlVelocity = 0.0;
-          s_controlVelocity[3] = - lambda_c * s_conf[0];
-          s_controlVelocity[4] = - lambda_c * s_conf[1];
-        }
+          double lambda_c = 5.0;
+
+          {
+            vpMutex::vpScopedLock lock(s_mutex_capture);
+            s_controlVelocity = 0.0;
+            s_controlVelocity[3] = lambda_c * s_conf[0];
+            s_controlVelocity[4] = lambda_c * s_conf[1];
+          }
         }
       }
 
@@ -373,7 +403,6 @@ vpThread::Return controlFunction(vpThread::Args args)
   vpColVector q_dot(6);
 
   // Initialized the force gain
-  lambda = 0;
   for (int i=0; i< 3; i++)
     lambda[i][i] = 0.02/6;
   // Initialized the torque gain
@@ -513,7 +542,7 @@ vpThread::Return controlFunction(vpThread::Args args)
       q_dot = eJe.pseudoInverse() * v_e;
 
       // Send the joint velocities to the robot
-      //robot.setVelocity(vpRobot::ARTICULAR_FRAME, q_dot) ;
+      robot.setVelocity(vpRobot::ARTICULAR_FRAME, q_dot) ;
 
       iter ++;
     }
