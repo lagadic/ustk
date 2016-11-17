@@ -261,8 +261,8 @@ void usGrabberUltrasonix::start()
       m_transducerSettings= usTransducerSettings (m_communicationInormations.m_header.ProbeRadius / 1000000.0, vpMath::rad(US_4DC7_DEG_PER_LINE),
                                                   m_communicationInormations.m_header.w, true,US_4DC7_BSAMPLE_DISTANCE *  m_communicationInormations.m_header.h );
 
-      m_motorSettings= usMotorSettings (m_communicationInormations.m_header.MotorRadius / 1000000.0,vpMath::rad(m_communicationInormations.m_header.degPerFr / 1000.0),1,
-                                        usMotorSettings::TiltingMotor);
+      m_motorSettings= usMotorSettings (m_communicationInormations.m_header.MotorRadius / 1000000.0,vpMath::rad(m_communicationInormations.m_header.degPerFr / 1000.0),
+                                        m_communicationInormations.m_header.fpv - 1, usMotorSettings::TiltingMotor);
     }
   }
   else if (m_communicationInormations.m_header.type == 1) // Postscan
