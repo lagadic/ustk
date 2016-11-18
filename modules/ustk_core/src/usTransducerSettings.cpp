@@ -94,7 +94,6 @@ usTransducerSettings& usTransducerSettings::operator=(const usTransducerSettings
   m_isTransducerConvex = other.isTransducerConvex();
   m_scanLineNumberIsSet = other.scanLineNumberIsSet();
   m_depth = other.getDepth();
-  Framenumber = other.Framenumber;
 
   return *this;
 }

@@ -91,17 +91,19 @@ vpThread::Return captureFunction(vpThread::Args args)
     // Capture in progress
     if(grabber.getImageType() == usGrabberUltrasonix::TYPE_PRESCAN) {
       grabberFramePreScan.grabFrame(&m_frame_prescan);
+
       //update frame increment if we reach last frame in a deirection
-      if(m_frame_prescan.Framenumber % (grabber.getCommunicationsInformations()->m_header.fpv - 1) == 0)
+      if(grabber.getCommunicationsInformations()->m_totFrmIdx % (grabber.getCommunicationsInformations()->m_header.fpv - 1) == 0)
         frameIncrement = -1 * frameIncrement;
 
-      volumeIndex = m_frame_prescan.Framenumber / grabber.getCommunicationsInformations()->m_header.fpv;
-      frameIndex = m_frame_prescan.Framenumber % grabber.getCommunicationsInformations()->m_header.fpv;
+      volumeIndex = grabber.getCommunicationsInformations()->m_totFrmIdx / grabber.getCommunicationsInformations()->m_header.fpv;
+      frameIndex = grabber.getCommunicationsInformations()->m_totFrmIdx % grabber.getCommunicationsInformations()->m_header.fpv;
 
       if (volumeIndex % 2)
         frameIndex = grabber.getCommunicationsInformations()->m_header.fpv - frameIndex - 1;
 
       //frameNumber += frameIncrement;
+      std::cout << "total frame index = " << grabber.getCommunicationsInformations()->m_totFrmIdx << std::endl;
       std::cout << "frame index = " << frameIndex << std::endl;
 
       //update 3d image

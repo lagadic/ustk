@@ -64,7 +64,7 @@ class usGrabberFrame {
 
   void setTransducerSettings(usTransducerSettings transducerSettings);
 
-  void grabFrame(ImageType * imageToWrite);
+  void grabFrame(ImageType* imageToWrite) ;
 
  private:
   usGrabberUltrasonix::usGrabberCommunicationInformations *m_informations;
@@ -198,8 +198,6 @@ void usGrabberFrame<ImageType>::grabFrame(ImageType* imageToWrite) {
       }
     }
     imageToWrite->setTransducerSettings(m_transducerSettings);
-    imageToWrite->Framenumber = m_informations->m_totFrmIdx;
-    //imageToWrite->setMotorSettings(m_informations->m_motorSettings);
   }
   else if (m_informations->m_header.type == 1 && m_informations->m_header.fpv == 3) //postScan 2D
   {
