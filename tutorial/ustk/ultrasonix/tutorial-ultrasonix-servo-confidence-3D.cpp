@@ -56,11 +56,11 @@ vpThread::Return captureFunction(vpThread::Args args)
   }
   else if(grabber.getImageType() == usGrabberUltrasonix::TYPE_PRESCAN) {
     s_imageType = usGrabberUltrasonix::TYPE_PRESCAN;
-    m_frame_prescan.resize(grabber.getCommunicationsInformations()->m_header.h,
-                           grabber.getCommunicationsInformations()->m_header.w);
-    m_prescan_3D.resize(grabber.getCommunicationsInformations()->m_header.w,
-                        grabber.getCommunicationsInformations()->m_header.h,
-                        grabber.getCommunicationsInformations()->m_header.fpv);
+    m_frame_prescan.resize(grabber.getCommunicationsInformations()->m_header.height,
+                           grabber.getCommunicationsInformations()->m_header.width);
+    m_prescan_3D.resize(grabber.getCommunicationsInformations()->m_header.width,
+                        grabber.getCommunicationsInformations()->m_header.height,
+                        grabber.getCommunicationsInformations()->m_header.framesPerVolume);
   }
   else if(grabber.getImageType() == usGrabberUltrasonix::TYPE_POSTSCAN) {
     s_imageType = usGrabberUltrasonix::TYPE_POSTSCAN;
@@ -93,22 +93,22 @@ vpThread::Return captureFunction(vpThread::Args args)
       grabberFramePreScan.grabFrame(&m_frame_prescan);
 
       //update frame increment if we reach last frame in a direction
-      if(grabber.getCommunicationsInformations()->m_totFrmIdx % (grabber.getCommunicationsInformations()->m_header.fpv - 1) == 0)
+      if(grabber.getCommunicationsInformations()->m_totFrmIdx % (grabber.getCommunicationsInformations()->m_header.framesPerVolume - 1) == 0)
         frameIncrement = -1 * frameIncrement;
 
-      volumeIndex = grabber.getCommunicationsInformations()->m_totFrmIdx / grabber.getCommunicationsInformations()->m_header.fpv;
-      frameIndex = grabber.getCommunicationsInformations()->m_totFrmIdx % grabber.getCommunicationsInformations()->m_header.fpv;
+      volumeIndex = grabber.getCommunicationsInformations()->m_totFrmIdx / grabber.getCommunicationsInformations()->m_header.framesPerVolume;
+      frameIndex = grabber.getCommunicationsInformations()->m_totFrmIdx % grabber.getCommunicationsInformations()->m_header.framesPerVolume;
 
       if (volumeIndex % 2)
-        frameIndex = grabber.getCommunicationsInformations()->m_header.fpv - frameIndex - 1;
+        frameIndex = grabber.getCommunicationsInformations()->m_header.framesPerVolume - frameIndex - 1;
 
       //frameNumber += frameIncrement;
       std::cout << "total frame index = " << grabber.getCommunicationsInformations()->m_totFrmIdx << std::endl;
       std::cout << "frame index = " << frameIndex << std::endl;
 
       //update 3d image
-      for(int i=0;i<grabber.getCommunicationsInformations()->m_header.h;i++) {
-        for(int j=0;j<grabber.getCommunicationsInformations()->m_header.w;j++) {
+      for(int i=0;i<grabber.getCommunicationsInformations()->m_header.height;i++) {
+        for(int j=0;j<grabber.getCommunicationsInformations()->m_header.width;j++) {
           m_prescan_3D(j,i,frameIndex,m_frame_prescan(i,j));
         }
       }
