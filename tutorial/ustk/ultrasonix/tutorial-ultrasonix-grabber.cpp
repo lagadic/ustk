@@ -44,18 +44,18 @@ vpThread::Return captureFunction(vpThread::Args args)
   //resizing images and saving image type in s_imageType
   if(grabber.getImageType() == usGrabberUltrasonix::TYPE_RF) {      
     s_imageType = usGrabberUltrasonix::TYPE_RF;
-    m_frame_rf.resize(grabber.getCommunicationsInformations()->m_header.h,
-                      grabber.getCommunicationsInformations()->m_header.w);
+    m_frame_rf.resize(grabber.getCommunicationsInformations()->m_header.height,
+                      grabber.getCommunicationsInformations()->m_header.width);
   }
   else if(grabber.getImageType() == usGrabberUltrasonix::TYPE_PRESCAN) {
     s_imageType = usGrabberUltrasonix::TYPE_PRESCAN;
-    m_frame_prescan.resize(grabber.getCommunicationsInformations()->m_header.h,
-                           grabber.getCommunicationsInformations()->m_header.w);
+    m_frame_prescan.resize(grabber.getCommunicationsInformations()->m_header.height,
+                           grabber.getCommunicationsInformations()->m_header.width);
   }
   else if(grabber.getImageType() == usGrabberUltrasonix::TYPE_POSTSCAN) {
     s_imageType = usGrabberUltrasonix::TYPE_POSTSCAN;
-    m_frame_postscan.resize(grabber.getCommunicationsInformations()->m_header.h,
-                            grabber.getCommunicationsInformations()->m_header.w);
+    m_frame_postscan.resize(grabber.getCommunicationsInformations()->m_header.height,
+                            grabber.getCommunicationsInformations()->m_header.width);
   }
   else
     throw(vpException(vpException::badValue,"unknown type of grabbed image"));

@@ -92,7 +92,7 @@ vpThread::Return captureFunction(vpThread::Args args)
     if(grabber.getImageType() == usGrabberUltrasonix::TYPE_PRESCAN) {
       grabberFramePreScan.grabFrame(&m_frame_prescan);
 
-      //update frame increment if we reach last frame in a deirection
+      //update frame increment if we reach last frame in a direction
       if(grabber.getCommunicationsInformations()->m_totFrmIdx % (grabber.getCommunicationsInformations()->m_header.fpv - 1) == 0)
         frameIncrement = -1 * frameIncrement;
 

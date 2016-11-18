@@ -164,12 +164,12 @@ void usGrabberUltrasonix::start()
   // Print data info
   std::cout << std::endl << "Data header information: " << std::endl
             << "   Ultrasonix time reference = " << m_communicationInormations.m_deviceTime << "ms" << std::endl
-            << "   type = " << m_communicationInormations.m_header.type << std::endl
-            << "   volumes = " << m_communicationInormations.m_header.volumes << std::endl
-            << "   fpv = " << m_communicationInormations.m_header.fpv << std::endl
-            << "   w = " << m_communicationInormations.m_header.w << std::endl
-            << "   h = " << m_communicationInormations.m_header.h << std::endl
-            << "   ss = " << m_communicationInormations.m_header.ss << std::endl
+            << "   type = " << m_communicationInormations.m_header.imageType << std::endl
+            << "   volumes = " << m_communicationInormations.m_header.volumeNumber << std::endl
+            << "   fpv = " << m_communicationInormations.m_header.framesPerVolume << std::endl
+            << "   w = " << m_communicationInormations.m_header.width << std::endl
+            << "   h = " << m_communicationInormations.m_header.height << std::endl
+            << "   ss = " << m_communicationInormations.m_header.sampleSize << std::endl
             << "   degPerFr = " << m_communicationInormations.m_header.degPerFr / 1000.0 << "°" << std::endl
             << "   BSampleFreq = " << m_communicationInormations.m_header.BSampleFreq << "Hz" << std::endl
             << "   ProbeElementPitch = " << m_communicationInormations.m_header.ProbeElementPitch << "µm" << std::endl
@@ -178,25 +178,25 @@ void usGrabberUltrasonix::start()
             << "   frameRate = " << m_communicationInormations.m_header.framerate << std::endl << std::endl;
 
   // Check data type
-  if (m_communicationInormations.m_header.type == 0) {
+  if (m_communicationInormations.m_header.imageType == 0) {
     std::cout << "Pre-scan data mode." << std::endl;
     m_imageType = TYPE_PRESCAN;
-    m_communicationInormations.m_szFrm = (m_communicationInormations.m_header.w * m_communicationInormations.m_header.h * (m_communicationInormations.m_header.ss / 8));
-  } else if (m_communicationInormations.m_header.type == 1) {
+    m_communicationInormations.m_szFrm = (m_communicationInormations.m_header.width * m_communicationInormations.m_header.height * (m_communicationInormations.m_header.sampleSize / 8));
+  } else if (m_communicationInormations.m_header.imageType == 1) {
     std::cout << "Post-scan data mode" << std::endl;
     m_imageType = TYPE_POSTSCAN;
-    m_communicationInormations.m_szFrm = m_communicationInormations.m_header.w * m_communicationInormations.m_header.h;
-  } else if (m_communicationInormations.m_header.type == 2) {
+    m_communicationInormations.m_szFrm = m_communicationInormations.m_header.width * m_communicationInormations.m_header.height;
+  } else if (m_communicationInormations.m_header.imageType == 2) {
     std::cout << "RF data mode" << std::endl;
     m_imageType = TYPE_RF;
-    m_communicationInormations.m_szFrm = m_communicationInormations.m_header.w * m_communicationInormations.m_header.h * 2; // RF = short = 2 bytes
+    m_communicationInormations.m_szFrm = m_communicationInormations.m_header.width * m_communicationInormations.m_header.height * 2; // RF = short = 2 bytes
   } else {
     std::cerr << "Error: in usGrabberUltrasonix::start(): "
-              << "Invalid volume data mode (" << m_communicationInormations.m_header.type << ")" << std::endl;
+              << "Invalid volume data mode (" << m_communicationInormations.m_header.imageType << ")" << std::endl;
     exit(EXIT_FAILURE);
   }
 
-  m_communicationInormations.m_szVol = m_communicationInormations.m_szFrm * m_communicationInormations.m_header.fpv;
+  m_communicationInormations.m_szVol = m_communicationInormations.m_szFrm * m_communicationInormations.m_header.framesPerVolume;
   m_communicationInormations.m_voldata = (unsigned char*)malloc(m_communicationInormations.m_szVol * sizeof(unsigned char));
 
   // frmIdx + frmTime + frmData
@@ -247,35 +247,35 @@ void usGrabberUltrasonix::start()
 
   //init acquisition settings
   // Init data
-  if (m_communicationInormations.m_header.type == 0) // Prescan
+  if (m_communicationInormations.m_header.imageType == 0) // Prescan
   {
 
-    if (m_communicationInormations.m_header.fpv == 1) // 2D
+    if (m_communicationInormations.m_header.framesPerVolume == 1) // 2D
     {
       m_transducerSettings= usTransducerSettings (m_communicationInormations.m_header.ProbeRadius / 1000000.0, vpMath::rad(US_4DC7_DEG_PER_LINE),
-                                                  m_communicationInormations.m_header.w, true,US_4DC7_BSAMPLE_DISTANCE *  m_communicationInormations.m_header.h );
+                                                  m_communicationInormations.m_header.width, true,US_4DC7_BSAMPLE_DISTANCE *  m_communicationInormations.m_header.height );
     }
     else // 3D
     {
 
       m_transducerSettings= usTransducerSettings (m_communicationInormations.m_header.ProbeRadius / 1000000.0, vpMath::rad(US_4DC7_DEG_PER_LINE),
-                                                  m_communicationInormations.m_header.w, true,US_4DC7_BSAMPLE_DISTANCE *  m_communicationInormations.m_header.h );
+                                                  m_communicationInormations.m_header.width, true,US_4DC7_BSAMPLE_DISTANCE *  m_communicationInormations.m_header.height );
 
       m_motorSettings= usMotorSettings (m_communicationInormations.m_header.MotorRadius / 1000000.0,vpMath::rad(m_communicationInormations.m_header.degPerFr / 1000.0),
-                                        m_communicationInormations.m_header.fpv, usMotorSettings::TiltingMotor);
+                                        m_communicationInormations.m_header.framesPerVolume, usMotorSettings::TiltingMotor);
     }
   }
-  else if (m_communicationInormations.m_header.type == 1) // Postscan
+  else if (m_communicationInormations.m_header.imageType == 1) // Postscan
   {
-    std::cout << "fpv : " << m_communicationInormations.m_header.fpv << std::endl;
-    if (m_communicationInormations.m_header.fpv == 1) // 2D
+    std::cout << "fpv : " << m_communicationInormations.m_header.framesPerVolume << std::endl;
+    if (m_communicationInormations.m_header.framesPerVolume == 1) // 2D
     {
       /*std::cerr << "Error: in in usGrabberUltrasonix::start(): "
                 << "Handling of 2D postscan data is not implemented." << std::endl;
       exit(EXIT_FAILURE);*/
 
       m_transducerSettings= usTransducerSettings (m_communicationInormations.m_header.ProbeRadius / 1000000.0, vpMath::rad(US_4DC7_DEG_PER_LINE),
-                                                  m_communicationInormations.m_header.w, true,US_4DC7_BSAMPLE_DISTANCE *  m_communicationInormations.m_header.h );
+                                                  m_communicationInormations.m_header.width, true,US_4DC7_BSAMPLE_DISTANCE *  m_communicationInormations.m_header.height );
 
       /*m_data = new usImagePostScan2D();
       dynamic_cast<usDataPostscan2D*>(m_data)->resize(m_header.h, m_header.w);
@@ -290,22 +290,22 @@ void usGrabberUltrasonix::start()
       exit(EXIT_FAILURE);*/
 
       m_transducerSettings= usTransducerSettings (m_communicationInormations.m_header.ProbeRadius / 1000000.0, vpMath::rad(US_4DC7_DEG_PER_LINE),
-                                                  m_communicationInormations.m_header.w, true,US_4DC7_BSAMPLE_DISTANCE *  m_communicationInormations.m_header.h );
+                                                  m_communicationInormations.m_header.width, true,US_4DC7_BSAMPLE_DISTANCE *  m_communicationInormations.m_header.height );
 
       m_motorSettings= usMotorSettings (m_communicationInormations.m_header.MotorRadius / 1000000.0,vpMath::rad(m_communicationInormations.m_header.degPerFr / 1000.0),1,
                                         usMotorSettings::TiltingMotor);
     }
   }
-  else if (m_communicationInormations.m_header.type == 2) // RF
+  else if (m_communicationInormations.m_header.imageType == 2) // RF
   {
     std::cerr << "Error: in in usGrabberUltrasonix::start(): "
-              << "Handling of data type " << m_communicationInormations.m_header.type << " (RF) is not implemented." << std::endl;
+              << "Handling of data type " << m_communicationInormations.m_header.imageType << " (RF) is not implemented." << std::endl;
     exit(EXIT_FAILURE);
   }
   else // Wrong data type
   {
     std::cerr << "Error: in in usGrabberUltrasonix::start(): "
-              << "Wrong data type: " << m_communicationInormations.m_header.type << std::endl;
+              << "Wrong data type: " << m_communicationInormations.m_header.imageType << std::endl;
     exit(EXIT_FAILURE);
   }
 

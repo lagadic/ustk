@@ -49,8 +49,8 @@ vpThread::Return captureFunction(vpThread::Args args)
   }
   else if(grabber.getImageType() == usGrabberUltrasonix::TYPE_PRESCAN) {
     s_imageType = usGrabberUltrasonix::TYPE_PRESCAN;
-    m_frame_prescan.resize(grabber.getCommunicationsInformations()->m_header.h,
-                           grabber.getCommunicationsInformations()->m_header.w);
+    m_frame_prescan.resize(grabber.getCommunicationsInformations()->m_header.height,
+                           grabber.getCommunicationsInformations()->m_header.width);
   }
   else if(grabber.getImageType() == usGrabberUltrasonix::TYPE_POSTSCAN) {
     s_imageType = usGrabberUltrasonix::TYPE_POSTSCAN;

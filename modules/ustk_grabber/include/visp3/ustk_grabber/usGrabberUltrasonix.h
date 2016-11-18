@@ -84,13 +84,13 @@ class VISP_EXPORT usGrabberUltrasonix {
   struct SocketHeader3D
   {
     double startTime;
-    int type; // 0: prescan 1: postscan 2: rf
-    int volumes; // Number of volumes in the sequence
-    int fpv; // Frames per volumes
-    int w; // Width (scan line number)
-    int h; // Height (sample number)
-    int ss; // Sample size (in bits)
-    int degPerFr; // Frame pitch (check if the value is correct) (x 1000?)
+    int imageType; // 0: prescan 1: postscan 2: rf
+    int volumeNumber; // Number of volumes in the sequence
+    int framesPerVolume; // Frames per volumes
+    int width; // Frame width (scan line number)
+    int height; // Frame height (sample number)
+    int sampleSize; // Sample size (in bits)
+    int degPerFr; // TO RENAME ! Frame pitch (check if the value is correct) (x 1000?)
     int BSampleFreq; // Sampling frequency (Hz)
     int ProbeElementPitch; //micron
     int ProbeRadius; //micron

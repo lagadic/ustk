@@ -160,14 +160,14 @@ void usGrabberFrame<ImageType>::grabFrame(ImageType* imageToWrite) {
 
   // offset
   m_informations->m_totFrmIdx -= NUM_FRAME_OFFSET;
-  m_informations->m_frmIdx = m_informations->m_totFrmIdx % m_informations->m_header.fpv;
+  m_informations->m_frmIdx = m_informations->m_totFrmIdx % m_informations->m_header.framesPerVolume;
 
   // Copy data
   memcpy(m_informations->m_voldata + m_informations->m_frmIdx * m_informations->m_szFrm,  m_informations->m_frmInf + sizeof(int) + sizeof(double),
          m_informations->m_szFrm * sizeof(unsigned char));
 
   // Update data
-  if (m_informations->m_header.type == 0 && m_informations->m_header.fpv == 1) // pre-scan 2D
+  if (m_informations->m_header.imageType == 0 && m_informations->m_header.framesPerVolume == 1) // pre-scan 2D
   {
     //usImagePreScan2D *data_d = dynamic_cast<usImagePreScan2D*>(m_data);
     /*
@@ -175,14 +175,14 @@ void usGrabberFrame<ImageType>::grabFrame(ImageType* imageToWrite) {
   m_informations->m_szVol * sizeof(unsigned char));
       */
     std::cout << "pre scan 2D grabbing" << std::endl;
-    for (int i = 0; i < m_informations->m_header.h; ++i) {
-      for (int j = 0; j < m_informations->m_header.w; ++j) {
-        (*imageToWrite)(i, j, m_informations->m_voldata[i + j * m_informations->m_header.h]);
+    for (int i = 0; i < m_informations->m_header.height; ++i) {
+      for (int j = 0; j < m_informations->m_header.width; ++j) {
+        (*imageToWrite)(i, j, m_informations->m_voldata[i + j * m_informations->m_header.height]);
       }
     }
     imageToWrite->setTransducerSettings(m_transducerSettings);
   }
-  else if (m_informations->m_header.type == 0 && m_informations->m_header.fpv >3) //prescan 3D
+  else if (m_informations->m_header.imageType == 0 && m_informations->m_header.framesPerVolume >3) //prescan 3D
   {
     /*std::cerr << "Error: in in usGrabberUltrasonix::grabFrame(): "
               << "Handling of 3D prescan data is not implemented." << std::endl;
@@ -192,23 +192,23 @@ void usGrabberFrame<ImageType>::grabFrame(ImageType* imageToWrite) {
            m_szFrm * sizeof(unsigned char));*/
 
     //Trying to send frame by frame in preScan2D format
-    for (int i = 0; i < m_informations->m_header.h; ++i) {
-      for (int j = 0; j < m_informations->m_header.w; ++j) {
-        (*imageToWrite)(i, j, m_informations->m_voldata[m_informations->m_frmIdx * m_informations->m_szFrm + i + j * m_informations->m_header.h]);
+    for (int i = 0; i < m_informations->m_header.height; ++i) {
+      for (int j = 0; j < m_informations->m_header.width; ++j) {
+        (*imageToWrite)(i, j, m_informations->m_voldata[m_informations->m_frmIdx * m_informations->m_szFrm + i + j * m_informations->m_header.height]);
       }
     }
     imageToWrite->setTransducerSettings(m_transducerSettings);
   }
-  else if (m_informations->m_header.type == 1 && m_informations->m_header.fpv == 3) //postScan 2D
+  else if (m_informations->m_header.imageType == 1 && m_informations->m_header.framesPerVolume == 3) //postScan 2D
   {
-    for (int i = 0; i < m_informations->m_header.h; ++i) {
-      for (int j = 0; j < m_informations->m_header.w; ++j) {
-        (*imageToWrite)(i, j, m_informations->m_voldata[i + j * m_informations->m_header.h]);
+    for (int i = 0; i < m_informations->m_header.height; ++i) {
+      for (int j = 0; j < m_informations->m_header.width; ++j) {
+        (*imageToWrite)(i, j, m_informations->m_voldata[i + j * m_informations->m_header.height]);
       }
     }
     imageToWrite->setTransducerSettings(m_transducerSettings);
   }
-  else if (m_informations->m_header.type == 1 && m_informations->m_header.fpv != 1)
+  else if (m_informations->m_header.imageType == 1 && m_informations->m_header.framesPerVolume != 1)
   {
     std::cerr << "Error: in in usGrabberUltrasonix::grabFrame(): "
               << "Handling of 3D postscan data is not implemented." << std::endl;
