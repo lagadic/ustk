@@ -56,6 +56,12 @@ class VISP_EXPORT usBackScanConverter2D
 
   usBackScanConverter2D();
 
+  //initialisations constructors
+  usBackScanConverter2D(const usImagePostScan2D<unsigned char> &inputSettings,
+  const int BModeSampleNumber, const int scanLineNumber);
+  usBackScanConverter2D(const usTransducerSettings &transducerSettings,
+  const int BModeSampleNumber, const int scanLineNumber,const double xResolution, const double yResolution);
+
   ~usBackScanConverter2D();
 
   void init(const usImagePostScan2D<unsigned char> &inputSettings, const int BModeSampleNumber, const int scanLineNumber);

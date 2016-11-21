@@ -47,6 +47,9 @@
  * @class usGrabberFrame
  * @brief Frame data grabber.
  * @ingroup module_ustk_grabber
+ *
+ * Template class to grab frames from ultrasonix station. The initialisation is done in usGrabberUltrasonix,
+ * and the frame grabbing is done by the method grabFrame from this class.
  */
 template <class ImageType>
 class usGrabberFrame {
@@ -61,11 +64,11 @@ class usGrabberFrame {
    */
    ~usGrabberFrame();
 
+  void grabFrame(ImageType * imageToWrite);
+
   void setCommunicationInformations(usGrabberUltrasonix::usGrabberCommunicationInformations *informations);
 
   void setTransducerSettings(usTransducerSettings transducerSettings);
-
-  void grabFrame(ImageType * imageToWrite);
 
  private:
   usGrabberUltrasonix::usGrabberCommunicationInformations *m_informations;

@@ -332,9 +332,9 @@ void usGrabberUltrasonix::stop() {
 }
 
 
-int usGrabberUltrasonix::getSocket() { return m_communicationInormations.m_cli_fd; }
+int usGrabberUltrasonix::getSocket() const { return m_communicationInormations.m_cli_fd; }
 
 
-double usGrabberUltrasonix::getFrameRate() { return m_communicationInormations.m_frameRate; }
+double usGrabberUltrasonix::getFrameRate() const { return m_communicationInormations.m_frameRate; }
 
 #endif

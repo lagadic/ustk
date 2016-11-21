@@ -71,7 +71,7 @@ public:
 
   double getFrameRate() const;
 
-  void saveImage(ImageType &image);
+  void saveImage(const ImageType &image);
 
   void setFirstFrameIndex(long firstIndex);
   void setFrameRate(double frameRate);
@@ -101,7 +101,7 @@ private:
   bool is_open;
 
 
-  void open(ImageType &image);
+  void open(const ImageType &image);
 };
 
 /****************************************************************************
@@ -194,7 +194,7 @@ void usSequenceWriter<ImageType>::setFirstFrameIndex(long firstIndex)
 * @param image First image to write.
 */
 template<class ImageType>
-void usSequenceWriter<ImageType>::open(ImageType &image)
+void usSequenceWriter<ImageType>::open(const ImageType &image)
 {
   if(!m_headerFileNameIsSet || !m_imageFileNameIsSet )
     throw(vpException(vpException::badValue, "file names not set"));
@@ -301,7 +301,7 @@ void usSequenceWriter<usImagePostScan2D<unsigned char> >::close()
 * @param image Next image to write.
 */
 template<class ImageType>
-void usSequenceWriter<ImageType>::saveImage(ImageType &image)
+void usSequenceWriter<ImageType>::saveImage(const ImageType &image)
 {
   if (!is_open) {
     open(image);

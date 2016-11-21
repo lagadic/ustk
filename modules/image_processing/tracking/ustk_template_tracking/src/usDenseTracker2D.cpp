@@ -36,6 +36,11 @@
 
 #include <visp3/core/vpImageFilter.h>
 
+/**
+ * @brief Initialisation of the tracker : to call to set the region to track (R) in the image (I) before starting the tracking.
+ * @param I Image containing a region to track.
+ * @param R Region of interest (in the image pxiel coordinates).
+ */
 void usDenseTracker2D::init(const vpImage<unsigned char> &I, const usRectangle &R)
 {
   usImageMathematics::extract(I, m_template, R);
@@ -72,6 +77,10 @@ void usDenseTracker2D::init(const vpImage<unsigned char> &I, const usRectangle &
   m_LI_inverse = m_LI.pseudoInverse();
 }
 
+/**
+ * @brief Tracking method, to call at every new frame to track.
+ * @param I The new image.
+ */
 void usDenseTracker2D::update(const vpImage<unsigned char> &I)
 {
   double dx, dy, da;
@@ -117,6 +126,10 @@ void usDenseTracker2D::update(const vpImage<unsigned char> &I)
   //	    << "and drms = " << std::abs(rms - rms0) << std::endl;
 }
 
+/**
+ * @brief To call after update() at each new frame, to get the position of the ROI in the last acquired frame.
+ * @return The rectangle pixel coordinates in the new frame.
+ */
 usRectangle usDenseTracker2D::getTarget()
 {
   return m_target;
