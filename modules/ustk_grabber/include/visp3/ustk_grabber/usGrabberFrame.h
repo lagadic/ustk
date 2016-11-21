@@ -46,6 +46,7 @@
 /**
  * @class usGrabberFrame
  * @brief Frame data grabber.
+ * @ingroup module_ustk_grabber
  */
 template <class ImageType>
 class usGrabberFrame {

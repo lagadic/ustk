@@ -76,6 +76,7 @@
 /**
  * @class usGrabberUltrasonix
  * @brief Ultrasonix data grabber.
+ * @ingroup module_ustk_grabber
  *
  * Class for Ultrasonix data grabber.
  */
