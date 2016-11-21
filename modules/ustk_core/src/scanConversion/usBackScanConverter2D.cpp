@@ -31,11 +31,37 @@
 
 #include <visp3/ustk_core/usBackScanConverter2D.h>
 
+//#include <visp/vpMath.h>
 
-#include <visp/vpMath.h>
-
+/**
+ * Default constructor.
+ */
 usBackScanConverter2D::usBackScanConverter2D() {}
 
+/**
+ * Initialisation constructor.
+* @param inputSettings Post-scan settings you want to use to back-convert image.
+* @param BModeSampleNumber Number of samples along a scan line : height of the pre-scan image built by run().
+* @param scanLineNumber Number of scan lines : width of the pre-scan image built by run().
+ */
+usBackScanConverter2D::usBackScanConverter2D(const usImagePostScan2D<unsigned char> &inputSettings,
+ const int BModeSampleNumber, const int scanLineNumber)
+ {
+ init(inputSettings,BModeSampleNumber,scanLineNumber);
+ }
+
+/**
+ * Default constructor.
+ */
+usBackScanConverter2D::usBackScanConverter2D(const usTransducerSettings &transducerSettings,
+ const int BModeSampleNumber, const int scanLineNumber,const double xResolution, const double yResolution)
+{
+init(transducerSettings, BModeSampleNumber, scanLineNumber, xResolution, yResolution);
+}
+
+/**
+ * Destructor.
+ */
 usBackScanConverter2D::~usBackScanConverter2D() {}
 
 /**
@@ -94,12 +120,12 @@ void usBackScanConverter2D::init(const usImagePostScan2D<unsigned char> &inputSe
 /**
 * Initialize the back-scan converter.
 * @param transducerSettings Transducer settings of the pre-scan image.
-* @param xResolution
-* @param yResolution
-* @param BModeSampleNumber
-* @param scanLineNumber
+* @param xResolution Height of a pixel
+* @param yResolution Width of a pixel.
+* @param BModeSampleNumber Number of pre-scan samples you want in output of back conversion.
+* @param scanLineNumber Number of scan lines you want in output of back conversion.
 */
-void usBackScanConverter2D:: init(const usTransducerSettings &transducerSettings, const int BModeSampleNumber,
+void usBackScanConverter2D::init(const usTransducerSettings &transducerSettings, const int BModeSampleNumber,
  const int scanLineNumber,const double xResolution, const double yResolution)
 {
   //convex transducer scan conversion

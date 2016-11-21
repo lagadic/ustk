@@ -99,7 +99,7 @@ class VISP_EXPORT usGrabberUltrasonix {
     int framerate; // Frames per second
   };
 
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
   struct usGrabberCommunicationInformations
   {
   int m_serv_fd;
@@ -127,6 +127,8 @@ class VISP_EXPORT usGrabberUltrasonix {
   int m_frmIdx;
   double m_frameRate;
   };
+#endif //DOXYGEN_SHOULD_SKIP_THIS
+
   //Enum to return the grabbed image type
   //It's known only in start(), when we read the header sent from the ultrasonix station.
   typedef enum{
@@ -144,6 +146,22 @@ class VISP_EXPORT usGrabberUltrasonix {
    * Destructor.
    */
    ~usGrabberUltrasonix();
+
+  usGrabberCommunicationInformations* getCommunicationsInformations(){return &m_communicationInormations;}
+
+  usGrabberUltrasonixImageType getImageType() const {return m_imageType;}
+
+  /**
+   * Get the frame rate.
+   */
+  double getFrameRate() const;
+
+  /**
+   * Get the socket identifier.
+   */
+  int getSocket() const;
+
+  usTransducerSettings getTransducerSettings() const {return m_transducerSettings;}
 
   /**
    * Initialization method.
@@ -186,6 +204,7 @@ class VISP_EXPORT usGrabberUltrasonix {
    * Get the frame rate.
    */
   double getFrameRate();
+
  private:
 
   usTransducerSettings m_transducerSettings;
