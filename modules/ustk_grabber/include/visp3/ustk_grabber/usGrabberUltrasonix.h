@@ -76,6 +76,7 @@
 /**
  * @class usGrabberUltrasonix
  * @brief Ultrasonix data grabber.
+ * @ingroup module_ustk_grabber
  *
  * Class for Ultrasonix data grabber.
  */
@@ -133,7 +134,7 @@ class VISP_EXPORT usGrabberUltrasonix {
     TYPE_RF,
     TYPE_PRESCAN,
     TYPE_POSTSCAN
-  } UsGrabberUltrasonixImageType;
+  } usGrabberUltrasonixImageType;
   /**
    * Constructor
    */
@@ -163,7 +164,7 @@ class VISP_EXPORT usGrabberUltrasonix {
 
   usGrabberCommunicationInformations* getCommunicationsInformations(){return &m_communicationInormations;}
 
-  UsGrabberUltrasonixImageType getImageType() const {return m_imageType;}
+  usGrabberUltrasonixImageType getImageType() const {return m_imageType;}
 
   usTransducerSettings getTransducerSettings() const {return m_transducerSettings;}
 
@@ -191,7 +192,7 @@ class VISP_EXPORT usGrabberUltrasonix {
 
   usGrabberCommunicationInformations m_communicationInormations;
 
-  UsGrabberUltrasonixImageType m_imageType;
+  usGrabberUltrasonixImageType m_imageType;
 };
 #endif // _WIN32
 #endif // US_GRABBER_ULTRASONIX_H

@@ -41,7 +41,7 @@
 /**
  * @class usRectangle
  * @brief Representation of a rectangle.
- * @author Pierre Chatelain
+ * @ingroup module_ustk_core
  *
  * This class implements a (possibly inclined) rectangle of the plane.
  */

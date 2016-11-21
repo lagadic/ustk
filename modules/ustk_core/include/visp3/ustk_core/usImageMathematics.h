@@ -45,7 +45,7 @@
 /**
  * @namespace usImageMathematics
  * @brief Image processing tools.
- * @author Pierre Chatelain.
+ * @ingroup module_ustk_core
  *
  * This class implements processing tools for ultrasound images.
  */
