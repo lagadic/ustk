@@ -576,6 +576,8 @@ int main(int argc, const char* argv[])
   thread_display.join();
   thread_control.join();
 
+  grabber.stop();
+
   return 0;
 }
 //! [capture-multi-threaded mainFunction]
