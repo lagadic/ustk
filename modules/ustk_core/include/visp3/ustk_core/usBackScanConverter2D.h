@@ -32,7 +32,6 @@
 /**
  * @file usBackScanConverter2D.h
  * @brief 2D scan-converter
- * @author Pierre Chatelain
  */
 
 #ifndef US_BACK_SCAN_CONVERTER_2D_H
@@ -45,7 +44,7 @@
 /**
  * @class usBackScanConverter2D
  * @brief 2D back-scan converter
- * @author Pierre Chatelain
+ * @ingroup module_ustk_core
  *
  * This class allows to convert 2D postscan ultrasound images to prescan.
  * The converter should be initialized through init() and then applied through run().

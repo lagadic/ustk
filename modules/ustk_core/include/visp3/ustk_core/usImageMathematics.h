@@ -32,7 +32,6 @@
 /**
  * @file usImageMathematics.h
  * @brief Image processing tools.
- * @author Pierre Chatelain
  */
 
 #ifndef US_IMAGE_MATHEMATICS
@@ -45,7 +44,7 @@
 /**
  * @namespace usImageMathematics
  * @brief Image processing tools.
- * @author Pierre Chatelain.
+ * @ingroup module_ustk_core
  *
  * This class implements processing tools for ultrasound images.
  */
