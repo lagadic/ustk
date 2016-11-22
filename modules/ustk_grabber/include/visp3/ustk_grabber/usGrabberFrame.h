@@ -185,10 +185,10 @@ void usGrabberFrame<ImageType>::grabFrame(ImageType* imageToWrite) {
     }
     imageToWrite->setTransducerSettings(m_transducerSettings);
   }
-  else if (m_informations->m_header.type == 0 && m_informations->m_header.fpv >3) //prescan 3D
+  else if (m_informations->m_header.type == 0 && m_informations->m_header.fpv >3) //pre-scan 3D
   {
     /*std::cerr << "Error: in in usGrabberUltrasonix::grabFrame(): "
-              << "Handling of 3D prescan data is not implemented." << std::endl;
+              << "Handling of 3D pre-scan data is not implemented." << std::endl;
     exit(EXIT_FAILURE);*/
     /*memcpy(dynamic_cast<usDataPrescan3D*>(m_data)->getData() + m_frmIdx * m_szFrm,
            m_voldata + m_frmIdx * m_szFrm,
@@ -215,7 +215,7 @@ void usGrabberFrame<ImageType>::grabFrame(ImageType* imageToWrite) {
   else if (m_informations->m_header.type == 1 && m_informations->m_header.fpv != 1)
   {
     std::cerr << "Error: in in usGrabberUltrasonix::grabFrame(): "
-              << "Handling of 3D postscan data is not implemented." << std::endl;
+              << "Handling of 3D post-scan data is not implemented." << std::endl;
     exit(EXIT_FAILURE);
 
     imageToWrite->setTransducerSettings(m_transducerSettings);
