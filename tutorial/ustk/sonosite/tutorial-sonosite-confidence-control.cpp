@@ -106,6 +106,9 @@ vpThread::Return displayFunction(vpThread::Args args)
   vpPlot plot(1);
   plot.initGraph(0, 1);
   plot.initRange(0, 0, 10, -10, 10);
+  plot.setTitle(0, "confidence barycenter error");
+  plot.setUnitY(0, "error(degrees)");
+  plot.setLegend(0, 0, "time");
 
   double startTime = vpTime::measureTimeMs();
 
