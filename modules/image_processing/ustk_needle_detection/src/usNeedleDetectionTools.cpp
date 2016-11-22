@@ -34,10 +34,10 @@
 void UsNeedleDetectionTools::arithmeticMean(vpMatrix points, double *mean,
 				    unsigned int npts, unsigned int d)
 {
-  for (int i=0; i<d; i++)
+  for (unsigned int i=0; i<d; i++)
     {
       mean[i] = 0;
-      for (int j=0; j<npts; j++)
+      for (unsigned int j=0; j<npts; j++)
 	{
 	  mean[i] += points[j][i];;
 	}
@@ -646,7 +646,7 @@ void UsNeedleDetectionTools::linearRegression(vpMatrix &points, double &Xm, doub
   double theta = atan2(2*Sxy,(Sxx-Syy))/2;
   double K11 = (Syy+Szz)*pow(cos(theta),2)+(Sxx+Szz)*pow(sin(theta),2)-2*Sxy*cos(theta)*sin(theta);
   double K22 = (Syy+Szz)*pow(sin(theta),2)+(Sxx+Szz)*pow(cos(theta),2)+2*Sxy*cos(theta)*sin(theta);
-  double K12 = -Sxy*(pow(cos(theta),2)-pow(sin(theta),2))+(Sxx-Syy)*cos(theta)*sin(theta);
+  //double K12 = -Sxy*(pow(cos(theta),2)-pow(sin(theta),2))+(Sxx-Syy)*cos(theta)*sin(theta);
   double K10 = Sxz*cos(theta)+Syz*sin(theta);
   double K01 = -Sxz*sin(theta)+Syz*cos(theta);
   double K00 = Sxx+Syy;
@@ -694,7 +694,7 @@ void UsNeedleDetectionTools::linearRegression(vpMatrix &points, double &a, doubl
   double theta = atan2(2*Sxy,(Sxx-Syy))/2;
   double K11 = (Syy+Szz)*pow(cos(theta),2)+(Sxx+Szz)*pow(sin(theta),2)-2*Sxy*cos(theta)*sin(theta);
   double K22 = (Syy+Szz)*pow(sin(theta),2)+(Sxx+Szz)*pow(cos(theta),2)+2*Sxy*cos(theta)*sin(theta);
-  double K12 = -Sxy*(pow(cos(theta),2)-pow(sin(theta),2))+(Sxx-Syy)*cos(theta)*sin(theta);
+  //double K12 = -Sxy*(pow(cos(theta),2)-pow(sin(theta),2))+(Sxx-Syy)*cos(theta)*sin(theta);
   double K10 = Sxz*cos(theta)+Syz*sin(theta);
   double K01 = -Sxz*sin(theta)+Syz*cos(theta);
   double K00 = Sxx+Syy;

@@ -82,6 +82,8 @@
  */
 class VISP_EXPORT usGrabberUltrasonix {
  public:
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
   struct SocketHeader3D
   {
     double startTime;
@@ -98,6 +100,7 @@ class VISP_EXPORT usGrabberUltrasonix {
     int MotorRadius; //micron
     int framerate; // Frames per second
   };
+#endif //DOXYGEN_SHOULD_SKIP_THIS
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
   struct usGrabberCommunicationInformations
@@ -129,14 +132,15 @@ class VISP_EXPORT usGrabberUltrasonix {
   };
 #endif //DOXYGEN_SHOULD_SKIP_THIS
 
-  //Enum to return the grabbed image type
-  //It's known only in start(), when we read the header sent from the ultrasonix station.
+  /*! Enum to return the grabbed image type
+  It's known only in start(), when we read the header sent from the ultrasound station.*/
   typedef enum{
-    TYPE_UNKNOWN = -1,
-    TYPE_RF,
-    TYPE_PRESCAN,
-    TYPE_POSTSCAN
+    TYPE_UNKNOWN = -1,  /*!< Unkownn format. */
+    TYPE_RF,            /*!< Case of RF image. */
+    TYPE_PRESCAN,       /*!< Case of pre-scan image. */
+    TYPE_POSTSCAN       /*!< Case of post-scan image. */
   } usGrabberUltrasonixImageType;
+
   /**
    * Constructor
    */
@@ -171,9 +175,9 @@ class VISP_EXPORT usGrabberUltrasonix {
    *    The methods blocks until a connection is established.
    *  - If the connection is successful, initialization of the usData container with the corresponding type.
    *    This will consume the first frame sent by the scanner to determine the data type.
-   *    Currently supported types are 2D and 3D prescan, and 2D postcan.
+   *    Currently supported types are 2D and 3D pre-scan, and 2D post-scan.
    *
-   * @todo Implement the initialization of 3D postscan data.
+   * @todo Implement the initialization of 3D post-scan data.
    * @todo Implement the initialization of RF data.
    * @todo Make the method non-blocking (for usQtApplication).
    * @todo Throw an usGrabberException when the data initialization fails.

@@ -81,6 +81,7 @@ public:
     POSTSCAN_3D,
   }ImageType;
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
   struct MHDHeader
   {
     std::string MHDFileName;
@@ -103,6 +104,7 @@ public:
     unsigned int scanLineNumber; // for post-scan
     unsigned int frameNumber; // for post-scan
   };
+#endif //DOXYGEN_SHOULD_SKIP_THIS
 
   //Constructor
   usMetaHeaderParser();

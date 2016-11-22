@@ -48,7 +48,7 @@
 * @brief Conversion between a pixel position in the ultrasound image and the real position in meters.
 * @ingroup module_ustk_core
 *
-* @warning Be sure you correctly filled your acquisition settings (probe raduis, scan line pitch, etc...). Those parameters are used in the conversion !
+* @warning Be sure you correctly filled your acquisition settings (probe radius, scan line pitch, etc...). Those parameters are used in the conversion !
 */
 class VISP_EXPORT usPixelMeterConversion
 {

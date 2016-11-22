@@ -46,7 +46,7 @@
  * @brief 2D back-scan converter
  * @ingroup module_ustk_core
  *
- * This class allows to convert 2D postscan ultrasound images to prescan.
+ * This class allows to convert 2D post-scan ultrasound images to pre-scan.
  * The converter should be initialized through init() and then applied through run().
  */
 class VISP_EXPORT usBackScanConverter2D
