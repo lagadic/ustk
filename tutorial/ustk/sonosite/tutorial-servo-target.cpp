@@ -98,6 +98,9 @@ vpThread::Return displayFunction(vpThread::Args args)
   vpPlot plot(1);
   plot.initGraph(0, 1);
   plot.initRange(0, 0, 10, -0.01, 0.01);
+  plot.setTitle(0, "X target error");
+  plot.setUnitY(0, "error(meters)");
+  plot.setLegend(0, 0, "time");
 
   double xtarget;
   double ytarget;
