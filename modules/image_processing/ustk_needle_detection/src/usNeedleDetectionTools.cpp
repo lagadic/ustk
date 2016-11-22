@@ -282,7 +282,7 @@ bool UsNeedleDetectionTools::findEntry(const vpMatrix &model, double *entry, uns
     for (unsigned int i=1; i<nPoints; ++i)
       a[i] = a[i-1] * t;
     p = model * a;
-    dotProduct = abs(entryPlane * (p - origin)) / (p - origin).euclideanNorm();
+    dotProduct = std::abs(entryPlane * (p - origin)) / (p - origin).euclideanNorm();
     if (dotProduct < bestDotProduct) {
       found = true;
       entry[0] = p[0];
