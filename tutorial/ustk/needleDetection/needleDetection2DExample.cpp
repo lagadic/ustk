@@ -2,14 +2,14 @@
  *
  * This file is part of the UsNeedleDetection software.
  * Copyright (C) 2013 - 2016 by Inria. All rights reserved.
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License ("GPL") as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
  * See the file COPYING at the root directory of this source
  * distribution for additional information about the GNU GPL.
- * 
+ *
  * This software was developed at:
  * INRIA Rennes - Bretagne Atlantique
  * Campus Universitaire de Beaulieu
@@ -19,7 +19,7 @@
  *
  * If you have questions regarding the use of this file, please contact the
  * authors at Alexandre.Krupa@inria.fr
- * 
+ *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
@@ -40,12 +40,8 @@
 #----------------------------------------------------------------------------
 */
 
-/*!
-  Input: Camera images.
-*/
 
 // visp
-
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/gui/vpDisplayGTK.h>
 #include <visp3/gui/vpDisplayGDI.h>
@@ -57,190 +53,162 @@
 #include <visp3/core/vpMatrix.h>
 #include <visp3/gui/vpPlot.h>
 
+//ustk
+#include <visp3/ustk_io/usSequenceReader.h>
 #include <visp3/ustk_needle_detection/usNeedleTrackerSIR2D.h>
 
 using namespace std;
 
+/* -------------------------------------------------------------------------- */
+/*                         COMMAND LINE OPTIONS                               */
+/* -------------------------------------------------------------------------- */
+
+// List of allowed command line options
+#define GETOPTARGS	"cdo:h"
+
+void usage(const char *name, const char *badparam, const std::string& opath, const std::string& user);
+bool getOptions(int argc, const char **argv, std::string &opath, const std::string& user);
+
+/*!
+
+Print the program options.
+
+\param name : Program name.
+\param badparam : Bad parameter name.
+\param opath : Output image path.
+\param user : Username.
+
+ */
+void usage(const char *name, const char *badparam, const std::string& opath, const std::string& user)
+{
+  fprintf(stdout, "\n\
+          Write and read ultrasound sequences in 2d image files, and the associated xml settings file.\n\
+          \n\
+          SYNOPSIS\n\
+          %s [-o <output image path>] [-h]\n", name);
+
+      fprintf(stdout, "\n\
+              OPTIONS:                                               Default\n\
+              -o <output data path>                               %s\n\
+              Set data output path.\n\
+              From this directory, creates the \"%s\"\n\
+              subdirectory depending on the username, where \n\
+              sequenceRF2D.xml file is written.\n\
+              \n\
+              -h\n\
+              Print the help.\n\n", opath.c_str(), user.c_str());
+
+              if (badparam) {
+                fprintf(stderr, "ERROR: \n" );
+                fprintf(stderr, "\nBad parameter [%s]\n", badparam);
+              }
+}
+
+/*!
+  Set the program options.
+
+  \param argc : Command line number of parameters.
+  \param argv : Array of command line parameters.
+  \param opath : Output data path.
+  \param user : Username.
+  \return false if the program has to be stopped, true otherwise.
+*/
+bool getOptions(int argc, const char **argv, std::string &opath, const std::string& user)
+{
+  const char *optarg_;
+  int	c;
+  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
+
+    switch (c) {
+    case 'o': opath = optarg_; break;
+    case 'h': usage(argv[0], NULL, opath, user); return false; break;
+
+    case 'c':
+    case 'd':
+      break;
+
+    default:
+      usage(argv[0], optarg_, opath, user); return false; break;
+    }
+  }
+
+  if ((c == 1) || (c == -1)) {
+    // standalone param or error
+    usage(argv[0], NULL, opath, user);
+    std::cerr << "ERROR: " << std::endl;
+    std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
+    return false;
+  }
+
+  return true;
+}
+
 
 int main(int argc, const char *argv[])
 {
-  char *filename = new char [FILENAME_MAX];
-  char *opath = new char [FILENAME_MAX];
-  char *_opath = NULL;
-  char *iseq  = new char [FILENAME_MAX];
-  char *_iseq = NULL;
-  char *windowTitle = new char[32];
+  std::string opt_opath;
+  std::string ipath;
   std::string username;
 
-  // Configuration variable
-  string baseName;
-  string extension;
-  int n0;
-  
-  ///////////////////////////////////////////////////////////////////////
-  //
-  // Set options and paths
-  //
-  ///////////////////////////////////////////////////////////////////////
+  char *logFilename = new char [FILENAME_MAX];
+  const char *opath = new char [FILENAME_MAX];
+  char *windowTitle = new char[32];
+
+  // Set the default output path
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+  opt_opath = "/tmp";
+#elif defined(_WIN32)
+  opt_opath = "C:\\temp";
+#endif
 
   // Get the user login name
   vpIoTools::getUserName(username);
-#ifdef WIN32
-  sprintf(opath, "%s", getenv("TEMP"));
-#else
-  sprintf(opath, "/tmp/%s", username.c_str());
-#endif
-  if (vpIoTools::checkDirectory(opath) == false) {
+
+  // Read the command line options
+  if (getOptions(argc, argv, opt_opath, username) == false) {
+    exit (-1);
+  }
+
+  // Get the option values
+  if (!opt_opath.empty())
+    opath = opt_opath.c_str();
+
+  // Append to the output path string, the login name of the user
+  std::string dirname = vpIoTools::createFilePath(opath, username);
+
+  // Test if the output path exist. If no try to create it
+  if (vpIoTools::checkDirectory(dirname) == false) {
     try {
       // Create the dirname
-      cout << "Create: " << opath << endl;
-      vpIoTools::makeDirectory(opath);
+      vpIoTools::makeDirectory(dirname);
     }
     catch (...) {
-      cerr << endl
-	   << "ERROR:" << endl;
-      cerr << "  Cannot create " << opath << " directory..." << endl;
-      delete [] opath;
-      delete [] filename;
-      return -1;
+      usage(argv[0], NULL, opath, username);
+      std::cerr << std::endl
+                << "ERROR:" << std::endl;
+      std::cerr << "  Cannot create " << dirname << std::endl;
+      std::cerr << "  Check your -o " << opath << " option " << std::endl;
+      exit(-1);
     }
   }
-  
-#ifdef WIN32
-  sprintf(opath, "%s/UsNeedleDetection", getenv("TEMP"));
-#else
-  sprintf(opath, "/tmp/%s/UsNeedleDetection", username.c_str());
-#endif
-  _opath = opath;
-  
-  vpParseArgv::vpArgvInfo argTable[] =
-    {
-      {NULL, vpParseArgv::ARGV_HELP, NULL, NULL,"     "},
-      {NULL, vpParseArgv::ARGV_HELP, NULL, NULL,"2D US Needle Detection. \n"},
-      {NULL, vpParseArgv::ARGV_HELP, NULL, NULL,"     "},
-      {"-iseq", vpParseArgv::ARGV_STRING, (char *) 1, (char *) &_iseq,
-       "Input sequence.\n"
-       "         Path to the image sequence.  \n"},
-      {"-opath", vpParseArgv::ARGV_STRING, (char *) 1, (char *) &_opath,
-       "Output directory.\n"
-       "         Directory which will contain the generated\n"
-       "         data files.  Default value: "},
-      {NULL, vpParseArgv::ARGV_HELP, NULL, NULL,"     "},
-      {NULL, vpParseArgv::ARGV_END, NULL,NULL,NULL}
-    } ;
 
-  //Parsing of the table
-  if (vpParseArgv::parse(&argc,argv,argTable,0)) {
-    cout << "Usage : " << argv[0] << " [-iseq] [-opath directory] [-help] "
-	 << endl;
-    delete [] iseq;
-    delete [] filename;
-    exit(EXIT_SUCCESS);
-  }
 
-  if (_iseq!= NULL)
-    sprintf(iseq, "%s", _iseq);
-  else {
-    cout << "Check your -iseq option." << endl;
-    exit(EXIT_SUCCESS);
-  }
 
-  if (_opath != NULL)
-    sprintf(opath, "%s", _opath);
-  
-  sprintf(filename, "%s", iseq);
-  
-  // Check input file
-  vpIoTools::setBaseDir(string(filename));
-  vpIoTools::setBaseName(string("sequence.txt"));
 
-  if (vpIoTools::checkFilename(vpIoTools::getFullName())) {
-	  cout << "Found configuration file: "
-	       << vpIoTools::path(vpIoTools::getFullName()) << endl;
-  }
-  else {
-    cout << "Error: Could not read configuration file " << vpIoTools::getFullName()
-	 << endl;
-    delete [] filename;
-    delete [] iseq;
-    delete [] opath;
-    return 0;
-  }
-
-  // Read sequence configuration file
-  if (vpIoTools::loadConfigFile(vpIoTools::getFullName())) {
-    if (!vpIoTools::readConfigVar("baseName", baseName)) {
-      cerr << "Error: Failed to load parameter baseName." << endl;
-      exit(EXIT_FAILURE);
-    }
-    if (!vpIoTools::readConfigVar("extension", extension)) {
-      cerr << "Error: Failed to load parameter extension." << endl;
-      exit(EXIT_FAILURE);
-    }
-    if (!vpIoTools::readConfigVar("n0", n0)) {
-      cerr << "Error: Failed to load parameter n0." << endl;
-      exit(EXIT_FAILURE);
-    }
-  }
-  else {
-    cerr << "Error: Could not read configuration file " << filename << endl;
-    delete [] filename;
-    delete [] iseq;
-    delete [] opath;
-    exit(EXIT_FAILURE);
-  }
-
-  vpIoTools::setBaseName(string(baseName));
-
-  // Check output directory
-  if (vpIoTools::checkDirectory(opath) == false) {
-    try {
-      // Create the dirname
-      cout << "Create: " << opath << endl;
-      vpIoTools::makeDirectory(opath);
-    }
-    catch (...) {
-      cerr << endl
-	   << "ERROR:" << endl;
-      cerr << "  Cannot create " << opath << " directory..." << endl;
-      cout << "Check your -opath <path> option..." << endl << endl;
-      delete [] opath;
-      delete [] filename;
-      return -1;
-    }
-  }
-  
   ///////////////////////////////////////////////////////////////////////
   //
   // Initializations.
   //
   ///////////////////////////////////////////////////////////////////////
-  
-  // Load image parameters
-  cout << "Base name: " << baseName << endl;
-  cout << "Full name: " << vpIoTools::getFullName() << endl;
-  cout << "Extension: " << extension << endl;
 
-  sprintf(filename, "%05d.%s", n0, extension.c_str());
-
-  vpIoTools::setBaseName(filename);
-
-  if (!vpIoTools::checkFilename(vpIoTools::getFullName())) {
-	  cout << "Error: Could not read file " << vpIoTools::getFullName() << endl;
-    exit(EXIT_FAILURE);
-  }
+  usSequenceReader<usImagePostScan2D<unsigned char> > reader;
+  reader.setSequenceFileName("/home/mpouliqu/Documents/usData/needle/water_bath_minimal_noise_png/sequence.xml");
 
   // Read the first image
-  vpImage<unsigned char> I;
-  cout << "Reading " << vpIoTools::path(vpIoTools::getFullName()) << "..." << flush;
-  try {
-	  vpImageIo::readPNG(I, vpIoTools::path(vpIoTools::getFullName()));
-  }
-  catch (vpImageException e) {
-	  cout << "Caught exception: " << e.getMessage() << endl;
-	  exit(EXIT_FAILURE);
-  }
-  cout << "done." << endl;
+  usImagePostScan2D<unsigned char> I;
+  reader.acquire(I);
+
+  int n0 = 150;
 
 #if defined VISP_HAVE_X11
   vpDisplay *display = new vpDisplayX(I);
@@ -292,16 +260,16 @@ int main(int argc, const char *argv[])
   std::cout << "Needle detector initialized." << std::endl;
 
   // Output
-  sprintf(filename, "%s/needle.dat", opath);
-  std::ofstream ofile(filename);
-  std::cout << "Results will be saved in " << filename << std::endl;
+  sprintf(logFilename, "%s/needle.dat", dirname.c_str());
+  std::ofstream ofile(logFilename);
+  std::cout << "Results will be saved in " << logFilename << std::endl;
 
   unsigned int nPoints =  needleDetector.getNeedle()->getOrder();
   controlPoints = needleDetector.getNeedle()->getControlPoints();
   ofile << nPoints;
   for (unsigned int i = 0; i < nPoints; ++i)
     ofile << " " << controlPoints[0][i]
-	  << " " << controlPoints[1][i];
+             << " " << controlPoints[1][i];
   ofile << std::endl;
   
   vpColVector tipPose, entryPose;
@@ -312,9 +280,7 @@ int main(int argc, const char *argv[])
   //
   ///////////////////////////////////////////////////////////////////////
 
-  sprintf(filename, "%05d.%s", n0++, extension.c_str());
-
-  vpIoTools::setBaseName(filename);
+  //printf(logFilename, "%05d.%s", n0++, extension.c_str());
 
   unsigned int it = 1;
   vpMatrix tipStd(2, 2);
@@ -322,17 +288,17 @@ int main(int argc, const char *argv[])
   vpColVector evalue, evector;
   vpMatrix rendering;
 
-  while (vpIoTools::checkFilename(vpIoTools::getFullName())) {
-	  vpImageIo::read(I, vpIoTools::getFullName());
+  while (!reader.end()) {
+    reader.acquire(I);
     needleDetector.run(I, 0.0);
 
     tipMean = needleDetector.getNeedle()->getPoint(1.0);
     entryPose = needleDetector.getNeedle()->getPoint(0.0);
     cout << "Tip position: (" << tipMean[0] << "," << tipMean[1]
-	 << ")" << endl;
+         << ")" << endl;
     cout << "Needle length: " << needleDetector.getNeedle()->getLength() << endl;
     cout << "Number of control points: " << needleDetector.getNeedle()->getOrder()
-	 << endl;
+         << endl;
 
     // Output
     nPoints =  needleDetector.getNeedle()->getOrder();
@@ -340,12 +306,12 @@ int main(int argc, const char *argv[])
     ofile << nPoints;
     for (unsigned int i = 0; i < nPoints; ++i)
       ofile << " " << controlPoints[0][i]
-	    << " " << controlPoints[1][i];
+               << " " << controlPoints[1][i];
     ofile << std::endl;
 
     // Display
-	std::sprintf(windowTitle, "Frame %d", n0);
-	vpDisplay::setTitle(I, windowTitle);
+    std::sprintf(windowTitle, "Frame %d", n0);
+    vpDisplay::setTitle(I, windowTitle);
     vpDisplay::display(I);
 
     rendering = needleDetector.getNeedle()->getRenderingPoints();
@@ -353,44 +319,29 @@ int main(int argc, const char *argv[])
     
     for (unsigned int j = 0; j < n - 1; ++j)
       vpDisplay::displayLine(I, rendering[0][j], rendering[1][j],
-			     rendering[0][j+1], rendering[1][j+1],
-			     vpColor::red, 2);
+          rendering[0][j+1], rendering[1][j+1],
+          vpColor::red, 2);
 
     tipStd = 0.0;
 
     for (unsigned int i = 0; i < nParticles; ++i) {
       tipPose = needleDetector.getParticle(i)->getPoint(1.0);
       tipStd += needleDetector.getWeight(i)
-	* (tipPose - tipMean) * (tipPose - tipMean).t();
+          * (tipPose - tipMean) * (tipPose - tipMean).t();
 
       if ((it % 10) == 0)
-	vpDisplay::displayCross(I, tipPose[0], tipPose[1], 3, vpColor::blue);
+        vpDisplay::displayCross(I, tipPose[0], tipPose[1], 3, vpColor::blue);
     }
 
-    // Ensure the matrix is symmetric
-	/*
-    tipStd[0][1] = tipStd[1][0];
-
-    tipStd.eigenValues(evalue, evector);
-    P.set_i(tipMean[0]);
-    P.set_j(tipMean[1]);
-    
-    vpDisplay::displayEllipse(I, P, sqrt(evalue[0]), sqrt(evalue[1]),
-			      atan2(evector.column(1)[0], evector.column(1)[1]),
-			      false, vpColor::green);
-    */
     vpDisplay::flush(I);
 
+    //sprintf(logFilename, "%05d.%s", n0++, extension.c_str());
 
-    //cin.ignore();
-
-	sprintf(filename, "%05d.%s", n0++, extension.c_str());
-
-	vpIoTools::setBaseName(filename);
+    //vpIoTools::setBaseName(logFilenames);
     ++it;
-
   }
 
+  //delete and close everything
 #if defined VISP_HAVE_DISPLAY
   delete display;
 #endif
