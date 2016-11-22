@@ -32,7 +32,7 @@
 #ifndef US2DNEEDLEMODEL_H
 #define US2DNEEDLEMODEL_H
 
-#include <visp/vpMatrix.h>
+#include <visp3/core/vpMatrix.h>
 
 #include <visp3/ustk_needle_detection/usNeedleDetectionTools.h>
 

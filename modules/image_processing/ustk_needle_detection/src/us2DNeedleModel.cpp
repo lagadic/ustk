@@ -107,7 +107,7 @@ void us2DNeedleModel::setControlPoints(const vpMatrix &controlPoints) {
     }
   } else {
     if (m_order!=6) {
-      vpMatrix tapprox = UsNeedleDetectionTools::approximateCoordinates(m_controlPoints.t(),
+      vpMatrix tapprox = usNeedleDetectionTools::approximateCoordinates(m_controlPoints.t(),
 									m_controlPoints.t(),
 									m_order);
       m_model = m_controlPoints * tapprox.inverseByLU();
@@ -159,7 +159,7 @@ void us2DNeedleModel::setControlPoints(double **controlPoints) {
     for (unsigned int j=0; j<m_order; ++j)
       m_controlPoints[i][j] = controlPoints[j][i];
 
-  vpMatrix tapprox = UsNeedleDetectionTools::approximateCoordinates(m_controlPoints.t(),
+  vpMatrix tapprox = usNeedleDetectionTools::approximateCoordinates(m_controlPoints.t(),
 								    m_controlPoints.t(),
 								    m_order);
   m_model = m_controlPoints * tapprox.inverseByLU();
