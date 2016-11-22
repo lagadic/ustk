@@ -70,70 +70,70 @@ T max(const vpImage<T>& I);
 /**
 * Compute the image mean.
 */
-double mean(const vpImage<double>& I);
+double VISP_EXPORT mean(const vpImage<double>& I);
 
 /**
 * Compute the sum of image intensities.
 */
-double sum(const vpImage<double>& I);
+double VISP_EXPORT sum(const vpImage<double>& I);
 
 /**
 * Compute the sum of image intensities.
 */
-double sum(const vpImage<unsigned char>& I);
+double VISP_EXPORT sum(const vpImage<unsigned char>& I);
 
 /**
 * Compute the absolute difference image from two images.
 */
-void absoluteDiff(const vpImage<double>& I, const vpImage<double>& J,
+void VISP_EXPORT absoluteDiff(const vpImage<double>& I, const vpImage<double>& J,
                   vpImage<double>& D);
 
 /**
 * Compute the normalized correlation between two images.
 */
-double normalizedCorrelation(const vpImage<double>& I, const vpImage<double>& J);
+double VISP_EXPORT normalizedCorrelation(const vpImage<double>& I, const vpImage<double>& J);
 
 /**
 * Normalize the image intensities.
 */
-void normalize(vpImage<double>& I);
+void VISP_EXPORT normalize(vpImage<double>& I);
 
 /**
 * Compute the column-wise mean intensities.
 */
-void computeColumnMean(const vpImage<double>& I, vpColVector& V);
+void VISP_EXPORT computeColumnMean(const vpImage<double>& I, vpColVector& V);
 
 /**
 * Compute the column-wise mean intensities.
 */
-void computeColumnMean(const vpImage<unsigned char>& I, vpColVector& V,
+void VISP_EXPORT computeColumnMean(const vpImage<unsigned char>& I, vpColVector& V,
                        const bool &rescale = true);
 
 /**
 * Compute the mean value of an image within a mask.
 */
-double computeRegionMean(const vpImage<unsigned char>& I, const vpImage<unsigned char>& M);
+double VISP_EXPORT computeRegionMean(const vpImage<unsigned char>& I, const vpImage<unsigned char>& M);
 
 /**
 * Compute the photometric moment of the image at order (p,q).
 */
-double computePhotometricMoment(const vpImage<unsigned char> &I, int p, int q);
+double VISP_EXPORT computePhotometricMoment(const vpImage<unsigned char> &I, int p, int q);
 
 /**
 * Compute the photometric moment of the object at order (p,q).
 */
-double computePhotometricMoment(const vpImage<unsigned char> &I, const vpImage<unsigned char> &M,
+double VISP_EXPORT computePhotometricMoment(const vpImage<unsigned char> &I, const vpImage<unsigned char> &M,
                                 int p, int q);
 
 /**
 * Compute the image's photometric barycenter (first-order moment).
 */
-void computeBarycenter(const vpImage<unsigned char> &I, double &xc, double &yc);
+void VISP_EXPORT computeBarycenter(const vpImage<unsigned char> &I, double &xc, double &yc);
 
 /**
 * Compute the object's photometric barycenter (first-order moment).
 */
-void computeBarycenter(const vpImage<unsigned char> &I, const vpImage<unsigned char> &M,
+void VISP_EXPORT computeBarycenter(const vpImage<unsigned char> &I, const vpImage<unsigned char> &M,
                        double &xc, double &yc);
 
 /**
@@ -144,7 +144,7 @@ double VISP_EXPORT interpolate(const vpImage<unsigned char> &I, double x, double
 /**
 * Re-sample an image.
 */
-void resample(const vpImage<unsigned char> &Src, vpImage<unsigned char> &Dst, InterpolationType it);
+void VISP_EXPORT resample(const vpImage<unsigned char> &Src, vpImage<unsigned char> &Dst, InterpolationType it);
 
 /**
 * Extract a rectangular region from an image.
