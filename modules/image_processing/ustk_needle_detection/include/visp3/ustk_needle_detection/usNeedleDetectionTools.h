@@ -58,7 +58,7 @@
 #endif
 
 /**
- * @namespace UsNeedleDetectionTools
+ * @namespace usNeedleDetectionTools
  * @brief Basic tools for needle detection.
  * @author Pierre Chatelain
  * @date 2013-09-09
@@ -66,7 +66,7 @@
  * This class implements diverse tools for 3D point cloud processing.
  *
  */
-namespace UsNeedleDetectionTools
+namespace usNeedleDetectionTools
 {
   /**
    * Compute the mean (center of mass) of a set of d-dimensional points.

@@ -31,7 +31,7 @@
 
 #include <visp3/ustk_needle_detection/usNeedleDetectionTools.h>
 
-void UsNeedleDetectionTools::arithmeticMean(vpMatrix points, double *mean,
+void usNeedleDetectionTools::arithmeticMean(vpMatrix points, double *mean,
 				    unsigned int npts, unsigned int d)
 {
   for (unsigned int i=0; i<d; i++)
@@ -45,11 +45,11 @@ void UsNeedleDetectionTools::arithmeticMean(vpMatrix points, double *mean,
     }
 }
 
-vpColVector UsNeedleDetectionTools::geometricMedian(vpMatrix points,
+vpColVector usNeedleDetectionTools::geometricMedian(vpMatrix points,
 					    unsigned int npts, unsigned int d)
 {
   if (npts == 0) {
-    std::cerr << "Error: In UsNeedleDetectionTools::geometricMedian(): "
+    std::cerr << "Error: In usNeedleDetectionTools::geometricMedian(): "
 	      << "argument 2 should be > 0." << std::endl;
     exit(EXIT_FAILURE);
   }
@@ -78,7 +78,7 @@ vpColVector UsNeedleDetectionTools::geometricMedian(vpMatrix points,
   return oldMedian; 
 }
 
-double UsNeedleDetectionTools::variance(vpMatrix points, unsigned int npts, unsigned int d)
+double usNeedleDetectionTools::variance(vpMatrix points, unsigned int npts, unsigned int d)
 {
   double *mean = new double[3];
   double sumSquare = 0;
@@ -94,7 +94,7 @@ bool diff(int i, int j)
   return (i!=j);
 }
 
-short UsNeedleDetectionTools::quantile(short *data, unsigned int num, unsigned int n)
+short usNeedleDetectionTools::quantile(short *data, unsigned int num, unsigned int n)
 {
   unsigned int *hist = new unsigned int[512];
   for (unsigned int i=0; i<512; i++)
@@ -112,7 +112,7 @@ short UsNeedleDetectionTools::quantile(short *data, unsigned int num, unsigned i
 }
 
 #if defined USNEEDLEDETECTION_HAVE_VTK
-short UsNeedleDetectionTools::quantile(vtkDataSet *data, unsigned int num)
+short usNeedleDetectionTools::quantile(vtkDataSet *data, unsigned int num)
 {
   unsigned int n = data->GetNumberOfPoints();
   unsigned int *hist = new unsigned int[512];
@@ -129,7 +129,7 @@ short UsNeedleDetectionTools::quantile(vtkDataSet *data, unsigned int num)
 }
 #endif
 
-void UsNeedleDetectionTools::computeQuantile(unsigned char *data, unsigned int dataSize,
+void usNeedleDetectionTools::computeQuantile(unsigned char *data, unsigned int dataSize,
 				     unsigned int nDesired, unsigned int &q,
 				     unsigned int &nThresholded)
 {
@@ -147,7 +147,7 @@ void UsNeedleDetectionTools::computeQuantile(unsigned char *data, unsigned int d
     }
 }
 
-void UsNeedleDetectionTools::computeQuantile(short *data, unsigned int dataSize,
+void usNeedleDetectionTools::computeQuantile(short *data, unsigned int dataSize,
 					     unsigned int nDesired, unsigned int &q,
 					     unsigned int &nThresholded)
 {
@@ -165,7 +165,7 @@ void UsNeedleDetectionTools::computeQuantile(short *data, unsigned int dataSize,
     }
 }
 
-void UsNeedleDetectionTools::computeQuantile(const unsigned int *data, unsigned int dataSize,
+void usNeedleDetectionTools::computeQuantile(const unsigned int *data, unsigned int dataSize,
 					     unsigned int nDesired, unsigned int &q,
 					     unsigned int &nThresholded)
 {
@@ -188,7 +188,7 @@ void UsNeedleDetectionTools::computeQuantile(const unsigned int *data, unsigned 
 }
 
 #if defined USNEEDLEDETECTION_HAVE_VTK
-int UsNeedleDetectionTools::findTip(vtkDataArray *data, unsigned int dataSize, double gap)
+int usNeedleDetectionTools::findTip(vtkDataArray *data, unsigned int dataSize, double gap)
 {
   int stop = -1;
   std::cerr << "Needle profile: ";
@@ -202,7 +202,7 @@ int UsNeedleDetectionTools::findTip(vtkDataArray *data, unsigned int dataSize, d
   return stop;
 }
 
-bool UsNeedleDetectionTools::findTip(vtkImageData *image, const vpMatrix &model, int *VOI, double *tip, unsigned int nPoints, double gap)
+bool usNeedleDetectionTools::findTip(vtkImageData *image, const vpMatrix &model, int *VOI, double *tip, unsigned int nPoints, double gap)
 {
   bool found = 0;
   vpColVector a(nPoints);
@@ -245,11 +245,11 @@ bool UsNeedleDetectionTools::findTip(vtkImageData *image, const vpMatrix &model,
 }
 #endif
 
-bool UsNeedleDetectionTools::findEntry(const vpMatrix &model, double *entry, unsigned int nPoints,
+bool usNeedleDetectionTools::findEntry(const vpMatrix &model, double *entry, unsigned int nPoints,
 				       const vpColVector &origin, const vpColVector &entryPlane,
 				       int VOI[6])
 {
-  //std::cerr << "In UsNeedleDetectionTools::findEntry()" << std::endl;
+  //std::cerr << "In usNeedleDetectionTools::findEntry()" << std::endl;
   bool found = 0;
   vpColVector a(nPoints);
   vpColVector p0(3);
@@ -290,12 +290,12 @@ bool UsNeedleDetectionTools::findEntry(const vpMatrix &model, double *entry, uns
       entry[2] = p[2];
     }
   }
-  //std::cerr << "Out UsNeedleDetectionTools::findEntry()" << std::endl;
+  //std::cerr << "Out usNeedleDetectionTools::findEntry()" << std::endl;
   return found;
 }
 
 #if defined USNEEDLEDETECTION_HAVE_VTK
-bool UsNeedleDetectionTools::findTip(vtkImageData *image, const vpMatrix &model, int *VOI, double *tip, unsigned int nPoints, double gap, double length)
+bool usNeedleDetectionTools::findTip(vtkImageData *image, const vpMatrix &model, int *VOI, double *tip, unsigned int nPoints, double gap, double length)
 {
   bool found = 0;
   vpColVector a(nPoints);
@@ -341,7 +341,7 @@ bool UsNeedleDetectionTools::findTip(vtkImageData *image, const vpMatrix &model,
   return found;
 }
 
-bool UsNeedleDetectionTools::findTipUsingMeanValues(vtkImageData *image, const vpMatrix &model, int *VOI, double *tip, unsigned int nPoints, double gap, double length)
+bool usNeedleDetectionTools::findTipUsingMeanValues(vtkImageData *image, const vpMatrix &model, int *VOI, double *tip, unsigned int nPoints, double gap, double length)
 {
   //std::cerr << "Finding tip..." << std::endl;
   bool found = 0;
@@ -410,14 +410,14 @@ bool UsNeedleDetectionTools::findTipUsingMeanValues(vtkImageData *image, const v
 }
 #endif
 
-bool UsNeedleDetectionTools::inside(const vpColVector point, int *VOI) {
+bool usNeedleDetectionTools::inside(const vpColVector point, int *VOI) {
   return (vpMath::round(point[0]) > (VOI[0] + 1) && vpMath::round(point[0]) < (VOI[1] - 1)
 	  && vpMath::round(point[1]) > (VOI[2] + 1) && vpMath::round(point[1]) < (VOI[3] - 1)
 	  && vpMath::round(point[2]) > (VOI[4] + 1) && vpMath::round(point[2]) < (VOI[5] - 1));
 }
 
 #if defined USNEEDLEDETECTION_HAVE_VTK
-unsigned int UsNeedleDetectionTools::findTip(vtkDataArray *data, unsigned int dataSize,
+unsigned int usNeedleDetectionTools::findTip(vtkDataArray *data, unsigned int dataSize,
 				     double threshL, double threshU)
 {
   int start = -1;
@@ -452,7 +452,7 @@ unsigned int UsNeedleDetectionTools::findTip(vtkDataArray *data, unsigned int da
   return stop;
 }
 
-unsigned int UsNeedleDetectionTools::findTip(vtkDataArray *data, unsigned int dataSize,
+unsigned int usNeedleDetectionTools::findTip(vtkDataArray *data, unsigned int dataSize,
 				     double threshL, double threshU, int prediction)
 {
   int idx;
@@ -482,7 +482,7 @@ unsigned int UsNeedleDetectionTools::findTip(vtkDataArray *data, unsigned int da
   return stop;
 }
 
-vpList<double*> UsNeedleDetectionTools::getThresholdedIds(vtkImageData *image,
+vpList<double*> usNeedleDetectionTools::getThresholdedIds(vtkImageData *image,
 						   double threshold)
 {
   unsigned int npts = image->GetNumberOfPoints();
@@ -493,7 +493,7 @@ vpList<double*> UsNeedleDetectionTools::getThresholdedIds(vtkImageData *image,
   return points;
 }
 
-void UsNeedleDetectionTools::getThresholdedCoordinates(vtkImageData *image,
+void usNeedleDetectionTools::getThresholdedCoordinates(vtkImageData *image,
 						       vpMatrix &points,
 						       double threshold)
 {
@@ -538,7 +538,7 @@ void UsNeedleDetectionTools::getThresholdedCoordinates(vtkImageData *image,
 }
 #endif
 #if 0
-double UsNeedleDetectionTools::getThresholdedCoordinates(const usVolume<unsigned int> &V,
+double usNeedleDetectionTools::getThresholdedCoordinates(const usVolume<unsigned int> &V,
 							 vpMatrix &points,
 							 unsigned int nDesired)
 {
@@ -546,7 +546,7 @@ double UsNeedleDetectionTools::getThresholdedCoordinates(const usVolume<unsigned
   unsigned int nThresholded;
   unsigned int q;
   const unsigned int *data_ptr = V.getConstData();
-  UsNeedleDetectionTools::computeQuantile(data_ptr, npts, nDesired, q, nThresholded);
+  usNeedleDetectionTools::computeQuantile(data_ptr, npts, nDesired, q, nThresholded);
   points.resize(nThresholded, 3);
   unsigned int counter = 0;
   for (unsigned int z = 0; z < V.getDimZ(); ++z)
@@ -563,7 +563,7 @@ double UsNeedleDetectionTools::getThresholdedCoordinates(const usVolume<unsigned
 }
 #endif
 #if defined USNEEDLEDETECTION_HAVE_VTK
-double UsNeedleDetectionTools::getThresholdedCoordinates(vtkImageData *image,
+double usNeedleDetectionTools::getThresholdedCoordinates(vtkImageData *image,
 						 vpMatrix &points,
 						 unsigned int nDesired)
 {
@@ -575,7 +575,7 @@ double UsNeedleDetectionTools::getThresholdedCoordinates(vtkImageData *image,
   if (image->GetScalarType() == VTK_UNSIGNED_CHAR)
     {
       uchar_ptr = (unsigned char*)image->GetScalarPointer();
-      UsNeedleDetectionTools::computeQuantile(uchar_ptr, npts, nDesired, q, nThresholded);
+      usNeedleDetectionTools::computeQuantile(uchar_ptr, npts, nDesired, q, nThresholded);
       points = vpMatrix(nThresholded, 3);
       unsigned int counter = 0;
       for (unsigned int i=0; i<npts; i++)
@@ -590,7 +590,7 @@ double UsNeedleDetectionTools::getThresholdedCoordinates(vtkImageData *image,
   else
     {
       short_ptr = (short*)image->GetScalarPointer();
-      UsNeedleDetectionTools::computeQuantile(short_ptr, npts, nDesired, q, nThresholded);
+      usNeedleDetectionTools::computeQuantile(short_ptr, npts, nDesired, q, nThresholded);
       points = vpMatrix(nThresholded, 3);
       unsigned int counter = 0;
       for (unsigned int i=0; i<npts; i++)
@@ -606,7 +606,7 @@ double UsNeedleDetectionTools::getThresholdedCoordinates(vtkImageData *image,
 }
 #endif
 
-double UsNeedleDetectionTools::dist3(double *x, double *y)
+double usNeedleDetectionTools::dist3(double *x, double *y)
 {
   double d = 0;
   for (int i=0; i<3; i++)
@@ -614,7 +614,7 @@ double UsNeedleDetectionTools::dist3(double *x, double *y)
   return sqrt(d);
 }
 
-double UsNeedleDetectionTools::angle(double *p1, double *p2, double *q1, double *q2)
+double usNeedleDetectionTools::angle(double *p1, double *p2, double *q1, double *q2)
 {
   // Returns the unsigned angle between two lines (in rad)
   vpColVector d1(3);
@@ -628,7 +628,7 @@ double UsNeedleDetectionTools::angle(double *p1, double *p2, double *q1, double 
   return acos(orientation);
 }
 
-void UsNeedleDetectionTools::linearRegression(vpMatrix &points, double &Xm, double &Ym, double &Zm, double &u, double &v, double &w)
+void usNeedleDetectionTools::linearRegression(vpMatrix &points, double &Xm, double &Ym, double &Zm, double &u, double &v, double &w)
 {
   unsigned int n = points.getRows();
   vpColVector X = points.getCol(0);
@@ -676,7 +676,7 @@ void UsNeedleDetectionTools::linearRegression(vpMatrix &points, double &Xm, doub
   w = (a*Xm+b*Ym+(a*a+b*b)*Zm)/(1+a*a+b*b);
 }
 
-void UsNeedleDetectionTools::linearRegression(vpMatrix &points, double &a, double &b, double &u, double &v, double &w)
+void usNeedleDetectionTools::linearRegression(vpMatrix &points, double &a, double &b, double &u, double &v, double &w)
 {
   unsigned int n = points.getCols();
   vpColVector X = points.getRow(0).t();
@@ -724,7 +724,7 @@ void UsNeedleDetectionTools::linearRegression(vpMatrix &points, double &a, doubl
   w = (a*Xm+b*Ym+(a*a+b*b)*Zm)/(1+a*a+b*b);
 }
 
-void UsNeedleDetectionTools::computeControlPoints(const vpMatrix &model, vpMatrix &mss, double **points, const unsigned int &nPoints) {
+void usNeedleDetectionTools::computeControlPoints(const vpMatrix &model, vpMatrix &mss, double **points, const unsigned int &nPoints) {
   double t;
   if (nPoints > 2) {
     vpMatrix extremities(2,3);
@@ -747,7 +747,7 @@ void UsNeedleDetectionTools::computeControlPoints(const vpMatrix &model, vpMatri
   }
 }
 		       
-vpMatrix UsNeedleDetectionTools::approximateCoordinates(vpMatrix X,
+vpMatrix usNeedleDetectionTools::approximateCoordinates(vpMatrix X,
 							vpMatrix MSS,
 							unsigned int s)
 {
@@ -765,7 +765,7 @@ vpMatrix UsNeedleDetectionTools::approximateCoordinates(vpMatrix X,
 
   double ss = dirVec.sumSquare();
   if (ss == 0.0) {
-    std::cerr << "Error: in UsNeedleDetectionTools::approximateCoordinates(): "
+    std::cerr << "Error: in usNeedleDetectionTools::approximateCoordinates(): "
 	      << "first and last points are equal." << std::endl;
     exit(EXIT_FAILURE);
   }
@@ -789,7 +789,7 @@ vpMatrix UsNeedleDetectionTools::approximateCoordinates(vpMatrix X,
 }
 
 
-bool UsNeedleDetectionTools::intersectionLinePlane(vpMatrix line,
+bool usNeedleDetectionTools::intersectionLinePlane(vpMatrix line,
 						   const vpColVector &plane, double offset,
 						   double &x, double &y, double &z)
 {
