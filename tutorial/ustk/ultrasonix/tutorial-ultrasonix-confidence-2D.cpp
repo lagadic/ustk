@@ -65,7 +65,7 @@ vpThread::Return captureFunction(vpThread::Args args)
 
   //init grabber
   usGrabberFrame<usImagePreScan2D<unsigned char> > grabberFramePreScan;
-  grabberFramePreScan.setCommunicationInformations(grabber.getCommunicationsInformations());
+  grabberFramePreScan.setCommunicationInformation(grabber.getCommunicationsInformations());
   grabberFramePreScan.setTransducerSettings(grabber.getTransducerSettings());
 
   while (! stop_capture_) {

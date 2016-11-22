@@ -66,7 +66,7 @@ class usGrabberFrame {
 
   void grabFrame(ImageType * imageToWrite);
 
-  void setCommunicationInformations(usGrabberUltrasonix::usGrabberCommunicationInformations *informations);
+  void setCommunicationInformation(usGrabberUltrasonix::usGrabberCommunicationInformations *informations);
 
   void setTransducerSettings(usTransducerSettings transducerSettings);
 
@@ -93,7 +93,7 @@ usGrabberFrame<ImageType>::~usGrabberFrame()
 }
 
 template <class ImageType>
-void usGrabberFrame<ImageType>::setCommunicationInformations(usGrabberUltrasonix::usGrabberCommunicationInformations *informations)
+void usGrabberFrame<ImageType>::setCommunicationInformation(usGrabberUltrasonix::usGrabberCommunicationInformations *informations)
 {
   m_informations = informations;
 }
