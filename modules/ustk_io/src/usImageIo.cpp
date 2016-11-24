@@ -188,6 +188,7 @@ void usImageIo::read(usImageRF2D<unsigned char> &imageRf2D, const std::string &h
     imageRf2D.setTransducerConvexity(xmlSettings.getTransducerSettings().isTransducerConvex());
     imageRf2D.setAxialResolution(xmlSettings.getAxialResolution());
     imageRf2D.setScanLineNumber(imageRf2D.getWidth());
+    imageRf2D.setDepth(imageRf2D.getAxialResolution()*imageRf2D.getHeight());
 #else
     throw(vpException(vpException::fatalEtrror, "Requires xml2 library"));
 #endif //VISP_HAVE_XML2
@@ -210,6 +211,7 @@ void usImageIo::read(usImageRF2D<unsigned char> &imageRf2D, const std::string &h
     settings.setScanLinePitch(mhdHeader.scanLinePitch);
     settings.setTransducerConvexity(mhdHeader.isTransducerConvex);
     settings.setAxialResolution(mhdParser.getAxialResolution());
+    settings.setDepth(settings.getAxialResolution()*mhdHeader.dim[1]);
     imageRf2D.setImagePreScanSettings(settings);
 
     //resizing image in memory
@@ -471,6 +473,7 @@ void usImageIo::read(usImagePreScan2D<unsigned char> &preScanImage,const std::st
     preScanImage.setTransducerConvexity(xmlSettings.getTransducerSettings().isTransducerConvex());
     preScanImage.setAxialResolution(xmlSettings.getAxialResolution());
     preScanImage.setScanLineNumber(preScanImage.getWidth());
+    preScanImage.setDepth(xmlSettings.getAxialResolution()*preScanImage.getHeight());
 #else
     throw(vpException(vpException::fatalEtrror, "Requires xml2 library"));
 #endif //VISP_HAVE_XML2
@@ -497,6 +500,7 @@ void usImageIo::read(usImagePreScan2D<unsigned char> &preScanImage,const std::st
     settings.setTransducerConvexity(mhdHeader.isTransducerConvex);
     settings.setAxialResolution(mhdParser.getAxialResolution());
     preScanImage.setImagePreScanSettings(settings);
+    preScanImage.setDepth(settings.getAxialResolution()*preScanImage.getHeight());
     preScanImage.setScanLineNumber(preScanImage.getWidth());
 
     //data parsing
