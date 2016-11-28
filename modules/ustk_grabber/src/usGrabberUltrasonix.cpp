@@ -271,7 +271,7 @@ void usGrabberUltrasonix::start()
     if (m_communicationInormations.m_header.fpv == 1) // 2D
     {
       /*std::cerr << "Error: in in usGrabberUltrasonix::start(): "
-                << "Handling of 2D postscan data is not implemented." << std::endl;
+                << "Handling of 2D post-scan data is not implemented." << std::endl;
       exit(EXIT_FAILURE);*/
 
       m_transducerSettings= usTransducerSettings (m_communicationInormations.m_header.ProbeRadius / 1000000.0, vpMath::rad(US_4DC7_DEG_PER_LINE),
@@ -286,7 +286,7 @@ void usGrabberUltrasonix::start()
     else // 3D
     {
       /*std::cerr << "Error: in in usGrabberUltrasonix::start(): "
-                << "Handling of 3D postscan data is not implemented." << std::endl;
+                << "Handling of 3D post-scan data is not implemented." << std::endl;
       exit(EXIT_FAILURE);*/
 
       m_transducerSettings= usTransducerSettings (m_communicationInormations.m_header.ProbeRadius / 1000000.0, vpMath::rad(US_4DC7_DEG_PER_LINE),
@@ -332,9 +332,9 @@ void usGrabberUltrasonix::stop() {
 }
 
 
-int usGrabberUltrasonix::getSocket() { return m_communicationInormations.m_cli_fd; }
+int usGrabberUltrasonix::getSocket() const { return m_communicationInormations.m_cli_fd; }
 
 
-double usGrabberUltrasonix::getFrameRate() { return m_communicationInormations.m_frameRate; }
+double usGrabberUltrasonix::getFrameRate() const { return m_communicationInormations.m_frameRate; }
 
 #endif

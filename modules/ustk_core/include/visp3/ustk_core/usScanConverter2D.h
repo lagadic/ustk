@@ -45,9 +45,9 @@
 /**
  * @class usScanConverter2D
  * @brief 2D scan-converter
- * @author Pierre Chatelain
+ * @ingroup module_ustk_core
  *
- * This class allows to convert 2D prescan ultrasound images to postscan.
+ * This class allows to convert 2D pre-scan ultrasound images to post-scan.
  * The converter should be initialized through init() and then applied through run().
  */
 class VISP_EXPORT usScanConverter2D
@@ -64,7 +64,7 @@ class VISP_EXPORT usScanConverter2D
   void init(const usTransducerSettings &inputSettings, const int BModeSampleNumber,
             const int scanLineNumber, const double xResolution, const double yResolution);
 
-  void run(usImagePostScan2D<unsigned char> &postScanImage, const usImagePreScan2D<unsigned char> &preScanImage);
+  void run(const usImagePreScan2D<unsigned char> &preScanImage, usImagePostScan2D<unsigned char> &postScanImage);
 
  private:
   double interpolateLinear(const vpImage<unsigned char>& I, double x, double y);

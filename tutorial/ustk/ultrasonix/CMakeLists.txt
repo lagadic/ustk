@@ -5,7 +5,8 @@ cmake_minimum_required(VERSION 2.6)
 find_package(VISP REQUIRED visp_ustk_core visp_ustk_grabber)
 
 set(tutorial_ultrasonix_cpp
-  tutorial-ultrasonix-grabber.cpp)
+  tutorial-ultrasonix-grabber.cpp
+  tutorial-ultrasonix-confidence-2D.cpp)
 
 foreach(cpp ${tutorial_ultrasonix_cpp})
   visp_add_target(${cpp})

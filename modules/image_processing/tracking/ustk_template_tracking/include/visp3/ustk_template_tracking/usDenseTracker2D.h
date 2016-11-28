@@ -47,13 +47,13 @@
  * @class usDenseTracker2D
  * @brief 2D region tracker
  * @author Pierre Chatelain
+ * @ingroup module_ustk_template_tracking
+ *
+ * Class to perform a 2D tracking of a region of interest.
  */
 class VISP_EXPORT usDenseTracker2D
 {
 public:
-  /**
-   * Initialize the scan-converter.
-   */
   void init(const vpImage<unsigned char> &I, const usRectangle &R);
 
   void update(const vpImage<unsigned char> &I);

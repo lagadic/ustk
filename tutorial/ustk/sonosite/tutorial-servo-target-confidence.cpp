@@ -116,7 +116,15 @@ vpThread::Return displayFunction(vpThread::Args args)
 
   vpPlot plot(2);
   plot.initGraph(0, 1);
+  plot.setTitle(0, "X target error");
+  plot.setUnitY(0, "error");
+  plot.setLegend(0, 0, "time");
+
   plot.initGraph(1, 1);
+  plot.setTitle(1, "confidence barycenter error");
+  plot.setUnitY(1, "error");
+  plot.setLegend(1, 0, "time");
+
   //BUG :
   //plot.initRange(0, 0, 10, -0.01, 0.01);
   //plot.initRange(1, 0, 10, 5.0, 5.0);
@@ -165,7 +173,7 @@ vpThread::Return displayFunction(vpThread::Args args)
       //Compute confidence map on pre-scan image
       confidenceMapProcessor_.run(confidencePreScan_, preScan_);
       //converting computed confidence map in post-scan
-      converter_.run(confidencePostScan_,confidencePreScan_);
+      converter_.run(confidencePreScan_, confidencePostScan_);
 
       //if ROI defined, we can send commands
       if(stateROI == ROI_started ) {

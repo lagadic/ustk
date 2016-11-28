@@ -46,6 +46,10 @@
 /**
  * @class usGrabberFrame
  * @brief Frame data grabber.
+ * @ingroup module_ustk_grabber
+ *
+ * Template class to grab frames from ultrasonix station. The initialisation is done in usGrabberUltrasonix,
+ * and the frame grabbing is done by the method grabFrame from this class.
  */
 template <class ImageType>
 class usGrabberFrame {
@@ -60,11 +64,11 @@ class usGrabberFrame {
    */
    ~usGrabberFrame();
 
-  void setCommunicationInformations(usGrabberUltrasonix::usGrabberCommunicationInformations *informations);
+  void grabFrame(ImageType * imageToWrite);
+
+  void setCommunicationInformation(usGrabberUltrasonix::usGrabberCommunicationInformations *informations);
 
   void setTransducerSettings(usTransducerSettings transducerSettings);
-
-  void grabFrame(ImageType * imageToWrite);
 
  private:
   usGrabberUltrasonix::usGrabberCommunicationInformations *m_informations;
@@ -87,7 +91,7 @@ usGrabberFrame<ImageType>::~usGrabberFrame()
 }
 
 template <class ImageType>
-void usGrabberFrame<ImageType>::setCommunicationInformations(usGrabberUltrasonix::usGrabberCommunicationInformations *informations)
+void usGrabberFrame<ImageType>::setCommunicationInformation(usGrabberUltrasonix::usGrabberCommunicationInformations *informations)
 {
   m_informations = informations;
 }
@@ -98,6 +102,8 @@ void usGrabberFrame<ImageType>::setTransducerSettings(usTransducerSettings trans
   m_transducerSettings = transducerSettings;
 }
 
+
+//Generic method (works for 2D)
 template <class ImageType>
 void usGrabberFrame<ImageType>::grabFrame(ImageType* imageToWrite) {
   // Grab a single frame
@@ -179,15 +185,21 @@ void usGrabberFrame<ImageType>::grabFrame(ImageType* imageToWrite) {
     }
     imageToWrite->setTransducerSettings(m_transducerSettings);
   }
-  else if (m_informations->m_header.type == 0 && m_informations->m_header.fpv >3) //prescan 3D
+  else if (m_informations->m_header.type == 0 && m_informations->m_header.fpv >3) //pre-scan 3D
   {
-    std::cerr << "Error: in in usGrabberUltrasonix::grabFrame(): "
-              << "Handling of 3D prescan data is not implemented." << std::endl;
-    exit(EXIT_FAILURE);
+    /*std::cerr << "Error: in in usGrabberUltrasonix::grabFrame(): "
+              << "Handling of 3D pre-scan data is not implemented." << std::endl;
+    exit(EXIT_FAILURE);*/
     /*memcpy(dynamic_cast<usDataPrescan3D*>(m_data)->getData() + m_frmIdx * m_szFrm,
            m_voldata + m_frmIdx * m_szFrm,
            m_szFrm * sizeof(unsigned char));*/
-    //update image settings
+
+    //Trying to send frame by frame in preScan2D format
+    for (int i = 0; i < m_informations->m_header.h; ++i) {
+      for (int j = 0; j < m_informations->m_header.w; ++j) {
+        (*imageToWrite)(i, j, m_informations->m_voldata[i + j * m_informations->m_header.h]);
+      }
+    }
     imageToWrite->setTransducerSettings(m_transducerSettings);
     //imageToWrite->setMotorSettings(m_informations->m_motorSettings);
   }
@@ -203,7 +215,7 @@ void usGrabberFrame<ImageType>::grabFrame(ImageType* imageToWrite) {
   else if (m_informations->m_header.type == 1 && m_informations->m_header.fpv != 1)
   {
     std::cerr << "Error: in in usGrabberUltrasonix::grabFrame(): "
-              << "Handling of 3D postscan data is not implemented." << std::endl;
+              << "Handling of 3D post-scan data is not implemented." << std::endl;
     exit(EXIT_FAILURE);
 
     imageToWrite->setTransducerSettings(m_transducerSettings);
@@ -221,5 +233,6 @@ void usGrabberFrame<ImageType>::grabFrame(ImageType* imageToWrite) {
   m_informations->m_data->setDataIdx(static_cast<int>(m_informations->m_totFrmIdx));*/
   m_informations->m_iter++;
 }
+
 #endif // _WIN32
 #endif // US_GRABBER_FRAME_H

@@ -76,11 +76,14 @@
 /**
  * @class usGrabberUltrasonix
  * @brief Ultrasonix data grabber.
+ * @ingroup module_ustk_grabber
  *
  * Class for Ultrasonix data grabber.
  */
 class VISP_EXPORT usGrabberUltrasonix {
  public:
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
   struct SocketHeader3D
   {
     double startTime;
@@ -97,8 +100,9 @@ class VISP_EXPORT usGrabberUltrasonix {
     int MotorRadius; //micron
     int framerate;
   };
+#endif //DOXYGEN_SHOULD_SKIP_THIS
 
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
   struct usGrabberCommunicationInformations
   {
   int m_serv_fd;
@@ -126,14 +130,17 @@ class VISP_EXPORT usGrabberUltrasonix {
   int m_frmIdx;
   double m_frameRate;
   };
-  //Enum to return the grabbed image type
-  //It's known only in start(), when we read the header sent from the ultrasonix station.
+#endif //DOXYGEN_SHOULD_SKIP_THIS
+
+  /*! Enum to return the grabbed image type
+  It's known only in start(), when we read the header sent from the ultrasound station.*/
   typedef enum{
-    TYPE_UNKNOWN = -1,
-    TYPE_RF,
-    TYPE_PRESCAN,
-    TYPE_POSTSCAN
-  } UsGrabberUltrasonixImageType;
+    TYPE_UNKNOWN = -1,  /*!< Unkownn format. */
+    TYPE_RF,            /*!< Case of RF image. */
+    TYPE_PRESCAN,       /*!< Case of pre-scan image. */
+    TYPE_POSTSCAN       /*!< Case of post-scan image. */
+  } usGrabberUltrasonixImageType;
+
   /**
    * Constructor
    */
@@ -144,6 +151,22 @@ class VISP_EXPORT usGrabberUltrasonix {
    */
    ~usGrabberUltrasonix();
 
+  usGrabberCommunicationInformations* getCommunicationsInformations(){return &m_communicationInormations;}
+
+  usGrabberUltrasonixImageType getImageType() const {return m_imageType;}
+
+  /**
+   * Get the frame rate.
+   */
+  double getFrameRate() const;
+
+  /**
+   * Get the socket identifier.
+   */
+  int getSocket() const;
+
+  usTransducerSettings getTransducerSettings() const {return m_transducerSettings;}
+
   /**
    * Initialization method.
    *
@@ -152,37 +175,19 @@ class VISP_EXPORT usGrabberUltrasonix {
    *    The methods blocks until a connection is established.
    *  - If the connection is successful, initialization of the usData container with the corresponding type.
    *    This will consume the first frame sent by the scanner to determine the data type.
-   *    Currently supported types are 2D and 3D prescan, and 2D postcan.
+   *    Currently supported types are 2D and 3D pre-scan, and 2D post-scan.
    *
-   * @todo Implement the initialization of 3D postscan data.
+   * @todo Implement the initialization of 3D post-scan data.
    * @todo Implement the initialization of RF data.
    * @todo Make the method non-blocking (for usQtApplication).
    * @todo Throw an usGrabberException when the data initialization fails.
    */
   void start();
 
-  usGrabberCommunicationInformations* getCommunicationsInformations(){return &m_communicationInormations;}
-
-  UsGrabberUltrasonixImageType getImageType() const {return m_imageType;}
-
-  usTransducerSettings getTransducerSettings() const {return m_transducerSettings;}
-
-  //void grabFrame( ImageType * imageToWrite);
-
   /**
    * Close input connection.
    */
   void stop();
-
-  /**
-   * Get the socket identifier.
-   */
-  int getSocket();
-
-  /**
-   * Get the frame rate.
-   */
-  double getFrameRate();
 
  private:
 
@@ -191,7 +196,7 @@ class VISP_EXPORT usGrabberUltrasonix {
 
   usGrabberCommunicationInformations m_communicationInormations;
 
-  UsGrabberUltrasonixImageType m_imageType;
+  usGrabberUltrasonixImageType m_imageType;
 };
 #endif // _WIN32
 #endif // US_GRABBER_ULTRASONIX_H

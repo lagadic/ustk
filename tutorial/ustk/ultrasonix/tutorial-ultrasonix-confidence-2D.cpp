@@ -1,4 +1,4 @@
-//! \example tutorial-ultrasonix-grabber.cpp
+//! \example tutorial-ultrasonix-confidence-2D.cpp
 //! [capture-multi-threaded declaration]
 #include <iostream>
 
@@ -12,6 +12,9 @@
 #include <visp3/ustk_core/usImageRF2D.h>
 #include <visp3/ustk_core/usImagePreScan2D.h>
 #include <visp3/ustk_core/usImagePostScan2D.h>
+#include <visp3/ustk_core/usScanConverter2D.h>
+
+#include <visp3/ustk_confidence_map/usScanlineConfidence2D.h>
 
 #include <visp3/ustk_grabber/usGrabberUltrasonix.h>
 #include <visp3/ustk_grabber/usGrabberFrame.h>
@@ -44,8 +47,7 @@ vpThread::Return captureFunction(vpThread::Args args)
   //resizing images and saving image type in s_imageType
   if(grabber.getImageType() == usGrabberUltrasonix::TYPE_RF) {      
     s_imageType = usGrabberUltrasonix::TYPE_RF;
-    m_frame_rf.resize(grabber.getCommunicationsInformations()->m_header.h,
-                      grabber.getCommunicationsInformations()->m_header.w);
+    std::cout << "Error : you must send pre-scan images for this example" << std::endl;
   }
   else if(grabber.getImageType() == usGrabberUltrasonix::TYPE_PRESCAN) {
     s_imageType = usGrabberUltrasonix::TYPE_PRESCAN;
@@ -54,8 +56,7 @@ vpThread::Return captureFunction(vpThread::Args args)
   }
   else if(grabber.getImageType() == usGrabberUltrasonix::TYPE_POSTSCAN) {
     s_imageType = usGrabberUltrasonix::TYPE_POSTSCAN;
-    m_frame_postscan.resize(grabber.getCommunicationsInformations()->m_header.h,
-                            grabber.getCommunicationsInformations()->m_header.w);
+    std::cout << "Error : you must send pre-scan images for this example" << std::endl;
   }
   else
     throw(vpException(vpException::badValue,"unknown type of grabbed image"));
@@ -64,30 +65,16 @@ vpThread::Return captureFunction(vpThread::Args args)
 
   bool stop_capture_ = false;
 
-  //init grabbers (only one used but they have to be defined at global scope)
-  usGrabberFrame<usImageRF2D<unsigned char> > grabberFrameRF;
-  grabberFrameRF.setCommunicationInformation(grabber.getCommunicationsInformations());
-  grabberFrameRF.setTransducerSettings(grabber.getTransducerSettings());
+  //init grabber
   usGrabberFrame<usImagePreScan2D<unsigned char> > grabberFramePreScan;
   grabberFramePreScan.setCommunicationInformation(grabber.getCommunicationsInformations());
   grabberFramePreScan.setTransducerSettings(grabber.getTransducerSettings());
-  usGrabberFrame<usImagePostScan2D<unsigned char> > grabberFramePostScan;
-  grabberFramePostScan.setCommunicationInformation(grabber.getCommunicationsInformations());
-  grabberFramePostScan.setTransducerSettings(grabber.getTransducerSettings());
-
 
   while (! stop_capture_) {
     // Capture in progress
-    if(grabber.getImageType() == usGrabberUltrasonix::TYPE_RF) {
-       grabberFrameRF.grabFrame(&m_frame_rf);
-    }
-    else if(grabber.getImageType() == usGrabberUltrasonix::TYPE_PRESCAN) {
+    if(grabber.getImageType() == usGrabberUltrasonix::TYPE_PRESCAN) {
       grabberFramePreScan.grabFrame(&m_frame_prescan);
     }
-    else if(grabber.getImageType() == usGrabberUltrasonix::TYPE_POSTSCAN) {
-      grabberFramePostScan.grabFrame(&m_frame_postscan);
-    }
-
 
     // Update shared data
     {
@@ -97,14 +84,8 @@ vpThread::Return captureFunction(vpThread::Args args)
       else
         s_capture_state = capture_started;
 
-      if(grabber.getImageType() == usGrabberUltrasonix::TYPE_RF) {
-        s_frame_rf = m_frame_rf;
-      }
-      else if(grabber.getImageType() == usGrabberUltrasonix::TYPE_PRESCAN) {
+      if(grabber.getImageType() == usGrabberUltrasonix::TYPE_PRESCAN) {
         s_frame_prescan = m_frame_prescan;
-      }
-      else if(grabber.getImageType() == usGrabberUltrasonix::TYPE_POSTSCAN) {
-        s_frame_postscan = m_frame_postscan;
       }
     }
   }
@@ -122,14 +103,21 @@ vpThread::Return displayFunction(vpThread::Args args)
 {
   (void)args; // Avoid warning: unused parameter args
   int m_imageType;
-  usImageRF2D<unsigned char> rf_;
   usImagePreScan2D<unsigned char> preScan_;
   usImagePostScan2D<unsigned char> postScan_;
+  usImagePreScan2D<unsigned char> preScanConfidence_;
+  usImagePostScan2D<unsigned char> postScanConfidence_;
+  usScanlineConfidence2D scanlineConfidence;
+  usScanConverter2D scanConverter;
+  bool firstIteration = true;
 
   t_CaptureState capture_state_;
   bool display_initialized_ = false;
 #if defined(VISP_HAVE_X11)
-  vpDisplayX *d_ = NULL;
+  vpDisplayX *d_preScan = NULL;
+  vpDisplayX *d_conf = NULL;
+  vpDisplayX *d_postScan = NULL;
+  vpDisplayX *d_confPostScan = NULL;
 #endif
 
   do {
@@ -146,50 +134,41 @@ vpThread::Return displayFunction(vpThread::Args args)
       //capture started
       // Create a copy of the captured frame
       {
-        vpMutex::vpScopedLock lock(s_mutex_capture);
-       if(m_imageType == usGrabberUltrasonix::TYPE_RF) {
-          rf_ = s_frame_rf;
-       }
-       else if(m_imageType == usGrabberUltrasonix::TYPE_PRESCAN) {
+       vpMutex::vpScopedLock lock(s_mutex_capture);
+       if(m_imageType == usGrabberUltrasonix::TYPE_PRESCAN) {
          preScan_ = s_frame_prescan;
        }
-       else if(m_imageType == usGrabberUltrasonix::TYPE_POSTSCAN) {
-         postScan_ = s_frame_postscan;
+       else {
+         std::cout << "You must send pre-scan data from ultrasonix station for this example" << std::endl;
        }
       }
+
+
+      //Confidence map
+      scanlineConfidence.run(preScanConfidence_,preScan_);
+
+      //Scan conversions
+      if(firstIteration) {
+        scanConverter.init(preScan_,preScan_.getBModeSampleNumber(),preScan_.getScanLineNumber(),0.0005,0.0005);
+      }
+      scanConverter.run(preScan_,postScan_);
+      scanConverter.run(preScanConfidence_, postScanConfidence_);
 
 
       // Check if we need to initialize the display with the first frame
       if (! display_initialized_) {
         // Initialize the display
 #if defined(VISP_HAVE_X11)
-        if(m_imageType == usGrabberUltrasonix::TYPE_RF) {
-          d_ = new vpDisplayX(rf_);
-          display_initialized_ = true;
-        }
-        else if(m_imageType == usGrabberUltrasonix::TYPE_PRESCAN) {
-          d_ = new vpDisplayX(preScan_);
-          display_initialized_ = true;
-        }
-        else if(m_imageType == usGrabberUltrasonix::TYPE_POSTSCAN) {
-          d_ = new vpDisplayX(postScan_);
+        if(m_imageType == usGrabberUltrasonix::TYPE_PRESCAN) {
+          d_preScan = new vpDisplayX(preScan_);
+          d_conf = new vpDisplayX(preScanConfidence_);
+          d_postScan = new vpDisplayX(postScan_);
+          d_confPostScan = new vpDisplayX(postScanConfidence_);
           display_initialized_ = true;
         }
 #endif
       }
-      if(m_imageType == usGrabberUltrasonix::TYPE_RF) {
-        // Display the image
-        vpDisplay::display(rf_);
-        // Trigger end of acquisition with a mouse click
-        vpDisplay::displayText(rf_, 10, 10, "Click to exit...", vpColor::red);
-        if (vpDisplay::getClick(rf_, false)) {
-          vpMutex::vpScopedLock lock(s_mutex_capture);
-          s_capture_state = capture_stopped;
-        }
-        // Update the display
-        vpDisplay::flush(rf_);
-      }
-      else if(m_imageType == usGrabberUltrasonix::TYPE_PRESCAN) {
+      if(m_imageType == usGrabberUltrasonix::TYPE_PRESCAN) {
         vpDisplay::display(preScan_);
         // Trigger end of acquisition with a mouse click
         vpDisplay::displayText(preScan_, 10, 10, "Click to exit...", vpColor::red);
@@ -199,8 +178,19 @@ vpThread::Return displayFunction(vpThread::Args args)
         }
         // Update the display
         vpDisplay::flush(preScan_);
-      }
-      else if(m_imageType == usGrabberUltrasonix::TYPE_POSTSCAN) {
+
+        //Display pre scan confidence
+        vpDisplay::display(preScanConfidence_);
+        // Trigger end of acquisition with a mouse click
+        vpDisplay::displayText(preScanConfidence_, 10, 10, "Click to exit...", vpColor::red);
+        if (vpDisplay::getClick(preScanConfidence_, false)) {
+          vpMutex::vpScopedLock lock(s_mutex_capture);
+          s_capture_state = capture_stopped;
+        }
+        // Update the display
+        vpDisplay::flush(preScanConfidence_);
+
+        //Display post scan
         vpDisplay::display(postScan_);
         // Trigger end of acquisition with a mouse click
         vpDisplay::displayText(postScan_, 10, 10, "Click to exit...", vpColor::red);
@@ -210,9 +200,19 @@ vpThread::Return displayFunction(vpThread::Args args)
         }
         // Update the display
         vpDisplay::flush(postScan_);
+
+        //Display post scan confidence
+        vpDisplay::display(postScanConfidence_);
+        // Trigger end of acquisition with a mouse click
+        vpDisplay::displayText(postScanConfidence_, 10, 10, "Click to exit...", vpColor::red);
+        if (vpDisplay::getClick(postScanConfidence_, false)) {
+          vpMutex::vpScopedLock lock(s_mutex_capture);
+          s_capture_state = capture_stopped;
+        }
+        // Update the display
+        vpDisplay::flush(postScanConfidence_);
       }
-
-
+      firstIteration = false;
     }
     else {
       vpTime::wait(2); // Sleep 2ms
@@ -220,7 +220,10 @@ vpThread::Return displayFunction(vpThread::Args args)
   } while(capture_state_ != capture_stopped);
 
 #if defined(VISP_HAVE_X11)
-  delete d_;
+  delete d_preScan;
+  delete d_conf;
+  delete d_confPostScan;
+  delete d_postScan;
 #endif
 
   std::cout << "End of display thread" << std::endl;

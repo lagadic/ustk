@@ -37,3 +37,11 @@
   \defgroup module_ustk_confidence_map ustk_confidence_map: UsTK confidence map module
   Ultrasound tool kit confidence map module content. It implements different algorithms to compute the confidence map from an ultrasound pre-scan image.
 */
+/*******************************************
+ * Module ustk_template_tracking
+ *******************************************/
+/*!
+  \ingroup module_ustk
+  \defgroup module_ustk_template_tracking ustk_template_tracking: UsTK template tracking module
+  Ultrasound tool kit tracking module content. It implements different algorithms to compute the tracking of a region of interest from an ultrasound post-scan image.
+*/
