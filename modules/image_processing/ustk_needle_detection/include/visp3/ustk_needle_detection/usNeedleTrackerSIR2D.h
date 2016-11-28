@@ -37,7 +37,7 @@
 #include <visp3/core/vpImage.h>
 
 // UsNeedleDetection
-#include <visp3/ustk_needle_detection/us2DNeedleModel.h>
+#include <visp3/ustk_needle_detection/usPolynomialCurve2D.h>
 
 /**
  * @brief Needle detection in 2D images based on particle filtering.
@@ -69,7 +69,7 @@ class VISP_EXPORT usNeedleTrackerSIR2D
    * Should be called before to start the detection.
    */
   void init(unsigned int dims[2], unsigned int nPoints, unsigned int nParticles,
-	    const us2DNeedleModel &needle);
+      const usPolynomialCurve2D &needle);
 
   /**
    * Initialization method.
@@ -82,17 +82,17 @@ class VISP_EXPORT usNeedleTrackerSIR2D
    * @param needle The initial needle model.
    */
   void init(const vpImage<unsigned char>& I, unsigned int nPoints, unsigned int nParticles,
-	    const us2DNeedleModel &needle);
+      const usPolynomialCurve2D &needle);
 
   /**
    * Returns the detected needle model.
    */
-  us2DNeedleModel *getNeedle();
+  usPolynomialCurve2D *getNeedle();
 
   /**
    * Get a specific particle.
    */
-  us2DNeedleModel *getParticle(unsigned int i);
+  usPolynomialCurve2D *getParticle(unsigned int i);
 
   /**
    * Get a specific particle's weight.
@@ -128,7 +128,7 @@ class VISP_EXPORT usNeedleTrackerSIR2D
    * @param model The needle model.
    * @param I The input image.
    */
-  double computeLikelihood(us2DNeedleModel *model, vpImage<unsigned char> &I);
+  double computeLikelihood(usPolynomialCurve2D *model, vpImage<unsigned char> &I);
 
   /**
    * Resample the particles proportionnaly to their weights.
@@ -139,8 +139,8 @@ class VISP_EXPORT usNeedleTrackerSIR2D
   unsigned int m_nParticles;
   unsigned int m_nPoints;
   unsigned int m_nPointsCurrent;
-  us2DNeedleModel *m_needleModel;
-  us2DNeedleModel **m_particles;
+  usPolynomialCurve2D *m_needleModel;
+  usPolynomialCurve2D **m_particles;
   double *m_weights;
   vpGaussRand m_noise;
   vpUniRand m_sample;

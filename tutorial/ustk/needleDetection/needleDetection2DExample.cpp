@@ -228,7 +228,7 @@ int main(int argc, const char *argv[])
   vpDisplay::flush(I);
 
   // Initialize the needle model
-  us2DNeedleModel needle(2);
+  usPolynomialCurve2D needle(2);
   vpMatrix controlPoints(2, 2);
   vpImagePoint P;
 
