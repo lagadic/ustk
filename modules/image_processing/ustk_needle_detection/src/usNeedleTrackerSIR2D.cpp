@@ -305,11 +305,11 @@ double usNeedleTrackerSIR2D::computeLikelihood(usPolynomialCurve2D *model, vpIma
 	double l = 0.0;
 	vpColVector point;
 	unsigned int c = 0;
-	double length = model->getLength();
+  double length = model->getLength();
 	double intensity;
 
 	for (double t = 0; t <= 1.0; t += 1.0 / length) {
-		point = model->getPoint(t);
+    point = model->getPoint(t);
     unsigned int x = vpMath::round(point[0]);
     unsigned int y = vpMath::round(point[1]);
 		if ((3 <= x) && (x < m_dims[0] - 3) && (3 <= y) && (y < m_dims[1] - 3)) {
@@ -324,7 +324,7 @@ double usNeedleTrackerSIR2D::computeLikelihood(usPolynomialCurve2D *model, vpIma
 
 	l /= c;
 
-	point = model->getPoint(1.0);
+  point = model->getPoint(1.0);
   unsigned int x = vpMath::round(point[0]);
   unsigned int y = vpMath::round(point[1]);
 	if ((3 <= x) && (x < m_dims[0] - 3) && (3 <= y) && (y < m_dims[1] - 3)) {
@@ -332,7 +332,7 @@ double usNeedleTrackerSIR2D::computeLikelihood(usPolynomialCurve2D *model, vpIma
 		l += intensity;
 	}
 
-	point = model->getPoint(1.0 + 1.0 / length);
+  point = model->getPoint(1.0 + 1.0 / length);
 	x = vpMath::round(point[0]);
 	y = vpMath::round(point[1]);
 	if ((3 <= x) && (x < m_dims[0] - 3) && (3 <= y) && (y < m_dims[1] - 3)) {

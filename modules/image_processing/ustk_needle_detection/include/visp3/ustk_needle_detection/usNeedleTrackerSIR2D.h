@@ -58,6 +58,29 @@ class VISP_EXPORT usNeedleTrackerSIR2D
   ~usNeedleTrackerSIR2D();
  
   /**
+   * Computing the likelihood of the model for a given observation.
+   *
+   * @param model The needle model.
+   * @param I The input image.
+   */
+  double computeLikelihood(usPolynomialCurve2D *model, vpImage<unsigned char> &I);
+
+  /**
+   * Returns the detected needle model.
+   */
+  usPolynomialCurve2D *getNeedle();
+
+  /**
+   * Get a specific particle.
+   */
+  usPolynomialCurve2D *getParticle(unsigned int i);
+
+  /**
+   * Get a specific particle's weight.
+   */
+  double getWeight(unsigned int i);
+
+  /**
    * Initialization method.
    *
    * @param dims The image dimensions (height, width).
@@ -85,21 +108,19 @@ class VISP_EXPORT usNeedleTrackerSIR2D
       const usPolynomialCurve2D &needle);
 
   /**
-   * Returns the detected needle model.
+   * Resample the particles proportionnaly to their weights.
    */
-  usPolynomialCurve2D *getNeedle();
+  void resample();
 
   /**
-   * Get a specific particle.
+   * Runs the needle detection process with the current post-scan volume.
+   *
+   * @param I The input image.
+   * @param v The insertion velocity.
    */
-  usPolynomialCurve2D *getParticle(unsigned int i);
+  void run(vpImage<unsigned char>& I, double v);
 
-  /**
-   * Get a specific particle's weight.
-   */
-  double getWeight(unsigned int i);
-
-  /**
+/**
    * Set the standard deviation for the update noise.
    */
   void setSigma(double s);
@@ -113,27 +134,6 @@ class VISP_EXPORT usNeedleTrackerSIR2D
    * Set the standard deviation orthogonal to the insertion direction.
    */
   void setSigma2(double s);
-
-  /**
-   * Runs the needle detection process with the current post-scan volume.
-   *
-   * @param I The input image.
-   * @param v The insertion velocity.
-   */
-  void run(vpImage<unsigned char>& I, double v);
-
-  /**
-   * Computing the likelihood of the model for a given observation.
-   *
-   * @param model The needle model.
-   * @param I The input image.
-   */
-  double computeLikelihood(usPolynomialCurve2D *model, vpImage<unsigned char> &I);
-
-  /**
-   * Resample the particles proportionnaly to their weights.
-   */
-  void resample();
 
  private:
   unsigned int m_nParticles;
