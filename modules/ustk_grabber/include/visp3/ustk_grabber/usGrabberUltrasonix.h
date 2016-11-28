@@ -55,7 +55,7 @@
 
 #include <visp3/core/vpTime.h>
 
-
+#include <visp3/ustk_core/us.h>
 //usImages
 #include <visp3/ustk_core/usImagePostScan2D.h>
 #include <visp3/ustk_core/usImagePreScan2D.h>
@@ -132,15 +132,6 @@ class VISP_EXPORT usGrabberUltrasonix {
   };
 #endif //DOXYGEN_SHOULD_SKIP_THIS
 
-  /*! Enum to return the grabbed image type
-  It's known only in start(), when we read the header sent from the ultrasound station.*/
-  typedef enum{
-    TYPE_UNKNOWN = -1,  /*!< Unkownn format. */
-    TYPE_RF,            /*!< Case of RF image. */
-    TYPE_PRESCAN,       /*!< Case of pre-scan image. */
-    TYPE_POSTSCAN       /*!< Case of post-scan image. */
-  } usGrabberUltrasonixImageType;
-
   /**
    * Constructor
    */
@@ -153,7 +144,7 @@ class VISP_EXPORT usGrabberUltrasonix {
 
   usGrabberCommunicationInformations* getCommunicationsInformations(){return &m_communicationInormations;}
 
-  usGrabberUltrasonixImageType getImageType() const {return m_imageType;}
+  us::ImageType getImageType() const {return m_imageType;}
 
   /**
    * Get the frame rate.
@@ -196,7 +187,7 @@ class VISP_EXPORT usGrabberUltrasonix {
 
   usGrabberCommunicationInformations m_communicationInormations;
 
-  usGrabberUltrasonixImageType m_imageType;
+  us::ImageType m_imageType;
 };
 #endif // _WIN32
 #endif // US_GRABBER_ULTRASONIX_H

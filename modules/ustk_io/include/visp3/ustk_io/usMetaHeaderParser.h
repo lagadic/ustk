@@ -47,6 +47,7 @@
 #include <sstream>
 
 #include <visp3/core/vpConfig.h>
+#include <visp3/ustk_core/us.h>
 #include <visp3/ustk_core/usImagePostScan2D.h>
 #include <visp3/ustk_core/usImagePostScan3D.h>
 #include <visp3/ustk_core/usImagePreScan2D.h>
@@ -70,17 +71,6 @@ public:
     MET_DOUBLE,
   }ElementType;
 
-  typedef enum {
-    UNKNOWN = -1,
-    NOT_SET,
-    RF_2D,
-    RF_3D,
-    PRESCAN_2D,
-    PRESCAN_3D,
-    POSTSCAN_2D,
-    POSTSCAN_3D,
-  }ImageType;
-
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
   struct MHDHeader
   {
@@ -94,7 +84,7 @@ public:
     double position[4];
     int headerSize;
     bool msb;
-    ImageType imageType;
+    us::ImageType imageType;
     bool isTransducerConvex;
     usMotorSettings::usMotorType motorType;
     double transducerRadius;
@@ -116,7 +106,7 @@ public:
   double getAxialResolution() const { return m_axialResolution; }
   ElementType getElementType() const { return header.elementType; }
   double getHeightResolution() const { return m_heightResolution; }
-  ImageType getImageType() const { return header.imageType; }
+  us::ImageType getImageType() const { return header.imageType; }
   MHDHeader getMHDHeader() const { return header; }
   usMotorSettings getMotorSettings() const {return m_motorSettings;}
   std::string getRawFileName() const {return header.rawFileName;}

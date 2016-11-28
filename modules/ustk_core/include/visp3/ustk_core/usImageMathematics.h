@@ -31,8 +31,6 @@
 
 /**
  * @file usImageMathematics.h
- * @brief Image processing tools.
- * @author Pierre Chatelain
  */
 
 #ifndef US_IMAGE_MATHEMATICS

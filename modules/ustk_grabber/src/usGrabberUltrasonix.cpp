@@ -178,17 +178,27 @@ void usGrabberUltrasonix::start()
             << "   frameRate = " << m_communicationInormations.m_header.framerate << std::endl << std::endl;
 
   // Check data type
+  bool isVolume = m_communicationInormations.m_header.fpv != 1;
   if (m_communicationInormations.m_header.type == 0) {
     std::cout << "Pre-scan data mode." << std::endl;
-    m_imageType = TYPE_PRESCAN;
+    if (isVolume)
+      m_imageType = us::PRESCAN_3D;
+    else
+      m_imageType = us::PRESCAN_2D;
     m_communicationInormations.m_szFrm = (m_communicationInormations.m_header.w * m_communicationInormations.m_header.h * (m_communicationInormations.m_header.ss / 8));
   } else if (m_communicationInormations.m_header.type == 1) {
     std::cout << "Post-scan data mode" << std::endl;
-    m_imageType = TYPE_POSTSCAN;
+    if (isVolume)
+      m_imageType = us::POSTSCAN_3D;
+    else
+      m_imageType = us::POSTSCAN_2D;
     m_communicationInormations.m_szFrm = m_communicationInormations.m_header.w * m_communicationInormations.m_header.h;
   } else if (m_communicationInormations.m_header.type == 2) {
     std::cout << "RF data mode" << std::endl;
-    m_imageType = TYPE_RF;
+    if (isVolume)
+      m_imageType = us::RF_3D;
+    else
+      m_imageType = us::RF_2D;
     m_communicationInormations.m_szFrm = m_communicationInormations.m_header.w * m_communicationInormations.m_header.h * 2; // RF = short = 2 bytes
   } else {
     std::cerr << "Error: in usGrabberUltrasonix::start(): "
