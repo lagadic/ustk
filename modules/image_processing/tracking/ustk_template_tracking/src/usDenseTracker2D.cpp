@@ -130,17 +130,17 @@ void usDenseTracker2D::update(const vpImage<unsigned char> &I)
  * @brief To call after update() at each new frame, to get the position of the ROI in the last acquired frame.
  * @return The rectangle pixel coordinates in the new frame.
  */
-usRectangle usDenseTracker2D::getTarget()
+usRectangle usDenseTracker2D::getTarget() const
 {
   return m_target;
 }
 
-vpImage<unsigned char> &usDenseTracker2D::getTemplate()
+vpImage<unsigned char> &usDenseTracker2D::getTemplate() const
 {
   return m_template;
 }
 
-vpImage<unsigned char> &usDenseTracker2D::getRegion()
+vpImage<unsigned char> &usDenseTracker2D::getRegion() const
 {
   return m_region;
 }
