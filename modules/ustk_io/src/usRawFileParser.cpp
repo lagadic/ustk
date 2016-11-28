@@ -28,7 +28,7 @@
 *Marc Pouliquen
 *
 *****************************************************************************/
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 /**
 * @file usRawFileParser.cpp
 * @brief Input/output operations between ultrasound images and binary raw files.
@@ -94,3 +94,4 @@ void usRawFileParser::write(const vpImage<unsigned char> &image2D, const std::st
   fileStream.write((char *)image2D.bitmap, image2D.getSize());
   fileStream.close();
 }
+#endif //DOXYGEN_SHOULD_SKIP_THIS
