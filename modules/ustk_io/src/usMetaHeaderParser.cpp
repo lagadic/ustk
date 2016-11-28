@@ -33,7 +33,7 @@
 * @file usMetaHeaderParser.cpp
 * @brief Input/output operations between ultrasound settings and mhd files.
 */
-#include<visp3/core/vpException.h>
+#include <visp3/core/vpException.h>
 #include <visp3/ustk_io/usMetaHeaderParser.h>
 #include <algorithm>
 #include <string>
@@ -47,12 +47,12 @@ usMetaHeaderParser::usMetaHeaderParser()
   elementTypeMap["MET_SHORT"] = MET_SHORT;
   elementTypeMap["MET_DOUBLE"] = MET_DOUBLE;
 
-  imageTypeMap["RF_2D"] = RF_2D;
-  imageTypeMap["RF_3D"] = RF_3D;
-  imageTypeMap["PRESCAN_2D"] = PRESCAN_2D;
-  imageTypeMap["PRESCAN_3D"] = PRESCAN_3D;
-  imageTypeMap["POSTSCAN_2D"] = POSTSCAN_2D;
-  imageTypeMap["POSTSCAN_3D"] = POSTSCAN_3D;
+  imageTypeMap["RF_2D"] = us::RF_2D;
+  imageTypeMap["RF_3D"] = us::RF_3D;
+  imageTypeMap["PRESCAN_2D"] = us::PRESCAN_2D;
+  imageTypeMap["PRESCAN_3D"] = us::PRESCAN_3D;
+  imageTypeMap["POSTSCAN_2D"] = us::POSTSCAN_2D;
+  imageTypeMap["POSTSCAN_3D"] = us::POSTSCAN_3D;
 }
 
 /**
@@ -94,7 +94,7 @@ void  usMetaHeaderParser::readMHDHeader(const std::string &fileName)
   this->header.position[3] = 0.0;
   this->header.msb = false;
   this->header.headerSize = 0;
-  this->header.imageType = NOT_SET;
+  this->header.imageType = us::NOT_SET;
   this->header.isTransducerConvex = false;
   this->header.motorType = usMotorSettings::LinearMotor;
   this->header.transducerRadius = 0.0;
@@ -200,7 +200,7 @@ void  usMetaHeaderParser::readMHDHeader(const std::string &fileName)
       it=keyval.end();
       keyval.erase(std::remove(keyval.begin(),keyval.end(),'\r'),it);
       std::map<std::string, int>::iterator mapIt = imageTypeMap.find(keyval);
-      this->header.imageType = ((mapIt != imageTypeMap.end()) ? (ImageType)mapIt->second : UNKNOWN );
+      this->header.imageType = ((mapIt != imageTypeMap.end()) ? (us::ImageType)mapIt->second : us::UNKNOWN );
     }
     else if (keyword == "ScanLinePitch")
     {
@@ -263,7 +263,7 @@ void  usMetaHeaderParser::readMHDHeader(const std::string &fileName)
     }
     else if (keyword == "AxialResolution")
     {
-      if(this->header.imageType == POSTSCAN_2D || this->header.imageType == POSTSCAN_3D) {
+      if(this->header.imageType == us::POSTSCAN_2D || this->header.imageType == us::POSTSCAN_3D) {
         throw(vpException(vpException::badValue, "bad header file : trying to assign an axial resolution to a post-scan image"));
       }
       else {
@@ -273,7 +273,7 @@ void  usMetaHeaderParser::readMHDHeader(const std::string &fileName)
     }
     else if (keyword == "HeightResolution")
     {
-      if(this->header.imageType == PRESCAN_2D || this->header.imageType == PRESCAN_3D || this->header.imageType == RF_2D || this->header.imageType == RF_3D) {
+      if(this->header.imageType == us::PRESCAN_2D || this->header.imageType == us::PRESCAN_3D || this->header.imageType == us::RF_2D || this->header.imageType == us::RF_3D) {
         throw(vpException(vpException::badValue, "bad header file : trying to assign a height resolution to a pre-scan image"));
       }
       else {
@@ -283,7 +283,7 @@ void  usMetaHeaderParser::readMHDHeader(const std::string &fileName)
     }
     else if (keyword == "WidthResolution")
     {
-      if(this->header.imageType == PRESCAN_2D || this->header.imageType == PRESCAN_3D || this->header.imageType == RF_2D || this->header.imageType == RF_3D) {
+      if(this->header.imageType == us::PRESCAN_2D || this->header.imageType == us::PRESCAN_3D || this->header.imageType == us::RF_2D || this->header.imageType == us::RF_3D) {
         throw(vpException(vpException::badValue, "bad header file : trying to assign a width resolution to a pre-scan image"));
       }
       else {
@@ -347,7 +347,7 @@ void usMetaHeaderParser::parse()
 
     MHDfile << "ElementDataFile = " << header.rawFileName << "\n";
 
-    if (header.imageType == RF_2D) {
+    if (header.imageType == us::RF_2D) {
       MHDfile << "Comment = Availables ultrasound image types are RF_2D, RF_3D, PRESCAN_2D, PRESCAN_3D, POSTSCAN_2D and POSTSCAN_3D.\n";
       MHDfile << "UltrasoundImageType = " << "RF_2D" << "\n";
       MHDfile << "Comment = True if probe transducer is convex, false if linear. \n";
@@ -359,7 +359,7 @@ void usMetaHeaderParser::parse()
       MHDfile << "Comment = The axial resolution is the distance in meters between two successives A-samples in a scan line.\n";
       MHDfile << "AxialResolution = " << this->m_axialResolution << "\n";
     }
-    else if (header.imageType == RF_3D) {
+    else if (header.imageType == us::RF_3D) {
       MHDfile << "Comment = Availables ultrasound image types are RF_2D, RF_3D, PRESCAN_2D, PRESCAN_3D, POSTSCAN_2D and POSTSCAN_3D.\n";
       MHDfile << "UltrasoundImageType = " << "RF_3D" << "\n";
       MHDfile << "Comment = True if probe transducer is convex, false if linear. \n";
@@ -385,7 +385,7 @@ void usMetaHeaderParser::parse()
       MHDfile << "Comment = The axial resolution is the distance in meters between two successives A-samples in a scan line.\n";
       MHDfile << "AxialResolution = " << this->m_axialResolution << "\n";
     }
-    else if (header.imageType == PRESCAN_2D) {
+    else if (header.imageType == us::PRESCAN_2D) {
       MHDfile << "Comment = Availables ultrasound image types are RF_2D, RF_3D, PRESCAN_2D, PRESCAN_3D, POSTSCAN_2D and POSTSCAN_3D.\n";
       MHDfile << "UltrasoundImageType = " << "PRESCAN_2D" << "\n";
       MHDfile << "Comment = True if probe transducer is convex, false if linear. \n";
@@ -397,7 +397,7 @@ void usMetaHeaderParser::parse()
       MHDfile << "Comment = The axial resolution is the distance in meters between two successives A-samples in a scan line.\n";
       MHDfile << "AxialResolution = " << this->m_axialResolution << "\n";
     }
-    else if (header.imageType == PRESCAN_3D) {
+    else if (header.imageType == us::PRESCAN_3D) {
       MHDfile << "Comment = Availables ultrasound image types are RF_2D, RF_3D, PRESCAN_2D, PRESCAN_3D, POSTSCAN_2D and POSTSCAN_3D.\n";
       MHDfile << "UltrasoundImageType = " << "PRESCAN_3D" << "\n";
       MHDfile << "Comment = True if probe transducer is convex, false if linear. \n";
@@ -423,7 +423,7 @@ void usMetaHeaderParser::parse()
       MHDfile << "Comment = The axial resolution is the distance in meters between two successives A-samples in a scan line.\n";
       MHDfile << "AxialResolution = " << this->m_axialResolution << "\n";
     }
-    else if (header.imageType == POSTSCAN_2D) {
+    else if (header.imageType == us::POSTSCAN_2D) {
       MHDfile << "Comment = Availables ultrasound image types are RF_2D, RF_3D, PRESCAN_2D, PRESCAN_3D, POSTSCAN_2D and POSTSCAN_3D.\n";
       MHDfile << "UltrasoundImageType = " << "POSTSCAN_2D" << "\n";
       MHDfile << "Comment = True if probe transducer is convex, false if linear. \n";
@@ -436,7 +436,7 @@ void usMetaHeaderParser::parse()
       MHDfile << "WidthResolution = " << this->m_widthResolution << "\n";
       MHDfile << "ScanLineNumber = " << header.scanLineNumber << "\n";
     }
-    else if (header.imageType == POSTSCAN_3D) {
+    else if (header.imageType == us::POSTSCAN_3D) {
       MHDfile << "Comment = Availables ultrasound image types are RF_2D, RF_3D, PRESCAN_2D, PRESCAN_3D, POSTSCAN_2D and POSTSCAN_3D.\n";
       MHDfile << "UltrasoundImageType = " << "POSTSCAN_3D" << "\n";
       MHDfile << "Comment = True if probe transducer is convex, false if linear. \n";
@@ -487,7 +487,7 @@ void usMetaHeaderParser::read(const std::string& filename)
   this->m_transducerSettings.setScanLinePitch(header.scanLinePitch);
   this->m_transducerSettings.setTransducerConvexity(header.isTransducerConvex);
 
-  if(this->header.imageType == RF_3D || this->header.imageType == PRESCAN_3D || this->header.imageType == POSTSCAN_3D) {
+  if(this->header.imageType == us::RF_3D || this->header.imageType == us::PRESCAN_3D || this->header.imageType == us::POSTSCAN_3D) {
     this->m_motorSettings.setMotorRadius(header.motorRadius);
     this->m_motorSettings.setFramePitch(header.framePitch);
     this->m_motorSettings.setMotorType(header.motorType);

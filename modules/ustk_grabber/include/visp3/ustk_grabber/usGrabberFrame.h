@@ -70,8 +70,6 @@ class usGrabberFrame {
 
   void setTransducerSettings(usTransducerSettings transducerSettings);
 
-  void grabFrame(ImageType* imageToWrite) ;
-
  private:
   usGrabberUltrasonix::usGrabberCommunicationInformations *m_informations;
 

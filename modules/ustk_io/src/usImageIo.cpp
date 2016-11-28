@@ -134,7 +134,7 @@ void usImageIo::write(const usImageRF2D<unsigned char> &imageRf2D, const std::st
     usMetaHeaderParser::MHDHeader header;
     header.numberOfDimensions = 2;
     header.elementType = usMetaHeaderParser::MET_UCHAR;
-    header.imageType = usMetaHeaderParser::RF_2D;
+    header.imageType = us::RF_2D;
     header.elementSpacing[0] = 1;
     header.elementSpacing[1] = 1;
     header.dim[0] = imageRf2D.getScanLineNumber();
@@ -197,7 +197,7 @@ void usImageIo::read(usImageRF2D<unsigned char> &imageRf2D, const std::string &h
     //header parsing
     usMetaHeaderParser mhdParser;
     mhdParser.read(headerFileName);
-    if (mhdParser.getImageType() != usMetaHeaderParser::RF_2D && mhdParser.getImageType() != usMetaHeaderParser::NOT_SET) {
+    if (mhdParser.getImageType() != us::RF_2D && mhdParser.getImageType() != us::NOT_SET) {
       throw(vpException(vpException::badValue, "Reading a non rf 2D image!"));
     }
     if (mhdParser.getElementType() != usMetaHeaderParser::MET_UCHAR) {
@@ -270,7 +270,7 @@ void usImageIo::write(const usImageRF3D<unsigned char> &imageRf3D, const std::st
     usMetaHeaderParser::MHDHeader header;
     header.numberOfDimensions = 3;
     header.elementType = usMetaHeaderParser::MET_UCHAR;
-    header.imageType = usMetaHeaderParser::RF_3D;
+    header.imageType = us::RF_3D;
     header.elementSpacing[0] = 1;
     header.elementSpacing[1] = 1;
     header.elementSpacing[2] = 1;
@@ -321,7 +321,7 @@ void usImageIo::read(usImageRF3D<unsigned char> &imageRf3, const std::string &he
     //header parsing
     usMetaHeaderParser mhdParser;
     mhdParser.read(headerFileName);
-    if (mhdParser.getImageType() != usMetaHeaderParser::RF_3D && mhdParser.getImageType() != usMetaHeaderParser::NOT_SET) {
+    if (mhdParser.getImageType() != us::RF_3D && mhdParser.getImageType() != us::NOT_SET) {
       throw(vpException(vpException::badValue, "Reading a non rf 3D image!"));
     }
     if (mhdParser.getElementType() != usMetaHeaderParser::MET_UCHAR) {
@@ -424,7 +424,7 @@ void usImageIo::write(const usImagePreScan2D<unsigned char> &preScanImage, const
     usMetaHeaderParser::MHDHeader header;
     header.numberOfDimensions = 2;
     header.elementType = usMetaHeaderParser::MET_UCHAR;
-    header.imageType = usMetaHeaderParser::PRESCAN_2D;
+    header.imageType = us::PRESCAN_2D;
     header.elementSpacing[0] = 1;
     header.elementSpacing[1] = 1;
     header.dim[0] = preScanImage.getScanLineNumber();
@@ -482,7 +482,7 @@ void usImageIo::read(usImagePreScan2D<unsigned char> &preScanImage,const std::st
     //header parsing
     usMetaHeaderParser mhdParser;
     mhdParser.read(headerFileName);
-    if (mhdParser.getImageType() != usMetaHeaderParser::PRESCAN_2D && mhdParser.getImageType() != usMetaHeaderParser::NOT_SET) {
+    if (mhdParser.getImageType() != us::PRESCAN_2D && mhdParser.getImageType() != us::NOT_SET) {
       throw(vpException(vpException::badValue, "Reading a non pre-scan 2D image!"));
     }
     if (mhdParser.getElementType() != usMetaHeaderParser::MET_UCHAR) {
@@ -556,7 +556,7 @@ void usImageIo::write(const usImagePreScan3D<unsigned char> &preScanImage, const
     usMetaHeaderParser::MHDHeader header;
     header.numberOfDimensions = 3;
     header.elementType = usMetaHeaderParser::MET_UCHAR;
-    header.imageType = usMetaHeaderParser::PRESCAN_3D;
+    header.imageType = us::PRESCAN_3D;
     header.elementSpacing[0] = 1;
     header.elementSpacing[1] = 1;
     header.elementSpacing[2] = 1;
@@ -607,7 +607,7 @@ void usImageIo::read(usImagePreScan3D<unsigned char> &preScanImage,const std::st
     //header parsing
     usMetaHeaderParser mhdParser;
     mhdParser.read(headerFileName);
-    if (mhdParser.getImageType() != usMetaHeaderParser::PRESCAN_3D && mhdParser.getImageType() != usMetaHeaderParser::NOT_SET) {
+    if (mhdParser.getImageType() != us::PRESCAN_3D && mhdParser.getImageType() != us::NOT_SET) {
       throw(vpException(vpException::badValue, "Reading a non pre-scan 3D image!"));
     }
     if (mhdParser.getElementType() != usMetaHeaderParser::MET_UCHAR) {
@@ -763,7 +763,7 @@ void usImageIo::write(const usImagePostScan2D<unsigned char> &postScanImage, con
     usMetaHeaderParser::MHDHeader header;
     header.numberOfDimensions = 2;
     header.elementType = usMetaHeaderParser::MET_UCHAR;
-    header.imageType = usMetaHeaderParser::POSTSCAN_2D;
+    header.imageType = us::POSTSCAN_2D;
     header.elementSpacing[0] = 1;
     header.elementSpacing[1] = 1;
     header.dim[0] = postScanImage.getWidth();
@@ -828,7 +828,7 @@ void usImageIo::read(usImagePostScan2D<unsigned char> &postScanImage,const std::
     //header parsing
     usMetaHeaderParser mhdParser;
     mhdParser.read(headerFileName);
-    if (mhdParser.getImageType() != usMetaHeaderParser::POSTSCAN_2D && mhdParser.getImageType() != usMetaHeaderParser::NOT_SET) {
+    if (mhdParser.getImageType() != us::POSTSCAN_2D && mhdParser.getImageType() != us::NOT_SET) {
       throw(vpException(vpException::badValue, "Reading a non post-scan 2D image!"));
     }
     if (mhdParser.getElementType() != usMetaHeaderParser::MET_UCHAR) {
@@ -899,7 +899,7 @@ void usImageIo::write(const usImagePostScan3D<unsigned char> &postScanImage, con
     usMetaHeaderParser::MHDHeader header;
     header.numberOfDimensions = 3;
     header.elementType = usMetaHeaderParser::MET_UCHAR;
-    header.imageType = usMetaHeaderParser::POSTSCAN_3D;
+    header.imageType = us::POSTSCAN_3D;
     header.elementSpacing[0] = postScanImage.getElementSpacingX();
     header.elementSpacing[1] = postScanImage.getElementSpacingY();
     header.elementSpacing[2] = postScanImage.getElementSpacingZ();
@@ -952,7 +952,7 @@ void usImageIo::read(usImagePostScan3D<unsigned char> &postScanImage, const std:
     //header parsing
     usMetaHeaderParser mhdParser;
     mhdParser.read(headerFileName);
-    if (mhdParser.getImageType() != usMetaHeaderParser::POSTSCAN_3D && mhdParser.getImageType() != usMetaHeaderParser::NOT_SET) {
+    if (mhdParser.getImageType() != us::POSTSCAN_3D && mhdParser.getImageType() != us::NOT_SET) {
       throw(vpException(vpException::badValue,"Reading a non post-scan 3D image!"));
     }
     if (mhdParser.getElementType() != usMetaHeaderParser::MET_UCHAR) {
