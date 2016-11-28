@@ -60,9 +60,9 @@ public:
 
   usRectangle getTarget() const;
 
-  vpImage<unsigned char> &getTemplate() const;
+  vpImage<unsigned char> &getTemplate();
 
-  vpImage<unsigned char> &getRegion() const;
+  vpImage<unsigned char> &getRegion();
 
 private:
   vpColVector s_desired;
