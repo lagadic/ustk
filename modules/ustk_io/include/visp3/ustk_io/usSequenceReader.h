@@ -137,6 +137,9 @@ public:
   //get image by its number in the sequence
   void getFrame(ImageType &image,int index);
 
+  //get image by its number in the sequence
+  ImageType& getFrame(int index);
+
   //attributes getters/setters
   double getFrameRate() const {return m_frameRate;}
   long getImageNumber() const {return m_frameCount;}
@@ -382,6 +385,18 @@ void usSequenceReader<ImageType>::getFrame(ImageType &image, int index)
 
   vpImageIo::read(image,imageFileName);
   image.setImageSettins(m_frame);
+}
+
+/**
+* Sequence image acquisition with selection of the index (bypassing the internal counter).
+* @return image Image read.
+* @param index Index of the image you want to acquire.
+*/
+template<class ImageType>
+ImageType& usSequenceReader<ImageType>::getFrame(int index) {
+  ImageType image;
+  getFrame(image, index);
+  return image;
 }
 
 /**
