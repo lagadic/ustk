@@ -37,6 +37,11 @@
 usScanlineConfidence2D::usScanlineConfidence2D() {}
 
 /**
+* Default destructor.
+*/
+usScanlineConfidence2D::~usScanlineConfidence2D() {}
+
+/**
 * Run the confidence map processor on pre-scan image.
 * @param [out] preScanConfidence Confidence image computed.
 * @param [in] preScanImage Pre-scan image to process.

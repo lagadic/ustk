@@ -102,7 +102,6 @@ class VISP_EXPORT usGrabberUltrasonix {
   };
 #endif //DOXYGEN_SHOULD_SKIP_THIS
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
   struct usGrabberCommunicationInformations
   {
   int m_serv_fd;
@@ -130,7 +129,6 @@ class VISP_EXPORT usGrabberUltrasonix {
   int m_frmIdx;
   double m_frameRate;
   };
-#endif //DOXYGEN_SHOULD_SKIP_THIS
 
   /**
    * Constructor

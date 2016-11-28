@@ -48,6 +48,8 @@ class VISP_EXPORT usScanlineConfidence2D {
 
   usScanlineConfidence2D();
 
+  virtual ~usScanlineConfidence2D();
+
   void run(usImagePreScan2D<unsigned char> &preScanConfidence, const usImagePreScan2D<unsigned char> &preScanImage);
 };
 
