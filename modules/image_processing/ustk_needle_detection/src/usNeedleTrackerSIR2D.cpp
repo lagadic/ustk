@@ -68,17 +68,17 @@ usNeedleTrackerSIR2D::~usNeedleTrackerSIR2D()
 
 void usNeedleTrackerSIR2D::init(unsigned int dims[2],
 				unsigned int nPoints, unsigned int nParticles,
-				const us2DNeedleModel &needle)
+        const usPolynomialCurve2D &needle)
 {
   m_dims[0] = dims[0];
   m_dims[1] = dims[1];
   m_nPoints = nPoints;
   m_nPointsCurrent = needle.getOrder();
   m_nParticles = nParticles;
-  m_needleModel = new us2DNeedleModel(needle);
-  m_particles = new us2DNeedleModel*[m_nParticles];
+  m_needleModel = new usPolynomialCurve2D(needle);
+  m_particles = new usPolynomialCurve2D*[m_nParticles];
   for (unsigned int i = 0; i < m_nParticles; ++i)
-    m_particles[i] = new us2DNeedleModel(needle);
+    m_particles[i] = new usPolynomialCurve2D(needle);
   m_weights = new double[m_nParticles];
   for (unsigned int i = 0; i < m_nParticles; ++i)
     m_weights[i] = 1.0 / m_nParticles;
@@ -86,7 +86,7 @@ void usNeedleTrackerSIR2D::init(unsigned int dims[2],
 }
 
 void usNeedleTrackerSIR2D::init(const vpImage<unsigned char>& I, unsigned int nPoints,
-				unsigned int nParticles, const us2DNeedleModel &needle) {
+        unsigned int nParticles, const usPolynomialCurve2D &needle) {
   unsigned int dims[2];
   dims[0] = I.getHeight();
   dims[1] = I.getWidth();
@@ -110,9 +110,9 @@ void usNeedleTrackerSIR2D::init(const vpImage<unsigned char>& I, unsigned int nP
   init(dims, nPoints, nParticles, needle);
 }
 
-us2DNeedleModel *usNeedleTrackerSIR2D::getNeedle() { return m_needleModel; }
+usPolynomialCurve2D *usNeedleTrackerSIR2D::getNeedle() { return m_needleModel; }
 
-us2DNeedleModel *usNeedleTrackerSIR2D::getParticle(unsigned int i) {
+usPolynomialCurve2D *usNeedleTrackerSIR2D::getParticle(unsigned int i) {
   if (i >= m_nParticles) {
     std::cerr << "Error: in usNeedleTrackerSIR2D::getParticle(): "
 	      << "Particle index is out of range." << std::endl;
@@ -239,13 +239,13 @@ void usNeedleTrackerSIR2D::run(vpImage<unsigned char>& I, double v)
   if ((m_needleModel->getLength()) > m_lengthThreshold && (m_nPoints != m_nPointsCurrent)) {
     std::cout << "Changing polynomial order from " << m_nPointsCurrent
         << " to " << (m_nPointsCurrent++) << std::endl;
-    us2DNeedleModel *newModel =
-      new us2DNeedleModel(m_needleModel->changePolynomialOrder(m_nPointsCurrent));
+    usPolynomialCurve2D *newModel =
+      new usPolynomialCurve2D(m_needleModel->changePolynomialOrder(m_nPointsCurrent));
     delete m_needleModel;
     m_needleModel = newModel;
     for (unsigned int i = 0; i < m_nParticles; ++i) {
-      us2DNeedleModel *newModel =
-	new us2DNeedleModel(m_particles[i]->changePolynomialOrder(m_nPointsCurrent));
+      usPolynomialCurve2D *newModel =
+  new usPolynomialCurve2D(m_particles[i]->changePolynomialOrder(m_nPointsCurrent));
       delete m_particles[i];
     m_particles[i] = newModel;
     }
@@ -253,7 +253,7 @@ void usNeedleTrackerSIR2D::run(vpImage<unsigned char>& I, double v)
   }
 }
 /*
-double usNeedleTrackerSIR2D::computeLikelihood(us2DNeedleModel *model, vpImage<unsigned char> &I)
+double usNeedleTrackerSIR2D::computeLikelihood(usPolynomialCurve2D *model, vpImage<unsigned char> &I)
 {
   double ll = 0.0;
   vpColVector point, dir;
@@ -300,7 +300,7 @@ double usNeedleTrackerSIR2D::computeLikelihood(us2DNeedleModel *model, vpImage<u
 }
 */
 
-double usNeedleTrackerSIR2D::computeLikelihood(us2DNeedleModel *model, vpImage<unsigned char> &I)
+double usNeedleTrackerSIR2D::computeLikelihood(usPolynomialCurve2D *model, vpImage<unsigned char> &I)
 {
 	double l = 0.0;
 	vpColVector point;
@@ -359,13 +359,13 @@ void usNeedleTrackerSIR2D::resample() {
       sumWeights += m_weights[j];
     }
   }
-  us2DNeedleModel **oldParticles = new us2DNeedleModel*[m_nParticles];
+  usPolynomialCurve2D **oldParticles = new usPolynomialCurve2D*[m_nParticles];
   for (unsigned int i = 0; i < m_nParticles; ++i) {
-    oldParticles[i] = new us2DNeedleModel(*m_particles[i]);
+    oldParticles[i] = new usPolynomialCurve2D(*m_particles[i]);
   }
   for (unsigned int i = 0; i < m_nParticles; ++i) {
     delete m_particles[i];
-    m_particles[i] = new us2DNeedleModel(*oldParticles[idx[i]]);
+    m_particles[i] = new usPolynomialCurve2D(*oldParticles[idx[i]]);
   }
   for (unsigned int i = 0; i < m_nParticles; ++i) {
     delete oldParticles[i];

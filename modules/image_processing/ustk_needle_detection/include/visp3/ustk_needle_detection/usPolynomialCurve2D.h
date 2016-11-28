@@ -29,8 +29,8 @@
  *
  *****************************************************************************/
 
-#ifndef US2DNEEDLEMODEL_H
-#define US2DNEEDLEMODEL_H
+#ifndef USPOLYNOMIALCURVE2D_H
+#define USPOLYNOMIALCURVE2D_H
 
 #include <visp3/core/vpMatrix.h>
 
@@ -40,33 +40,61 @@
  * This class represents a needle modeled as a 2D polynomial curve.
  *
  * @brief 2D needle model
- * @author Pierre Chatelain
- * @date 2013-09-11
  *
  */
-class VISP_EXPORT us2DNeedleModel {
+class VISP_EXPORT usPolynomialCurve2D {
  public:
   /**
    * Default constructor. Requires a call to setOrder().
    */
-  us2DNeedleModel();
+  usPolynomialCurve2D();
 
   /**
    * Copy constructor.
    */
-  us2DNeedleModel(const us2DNeedleModel &needle);
+  usPolynomialCurve2D(const usPolynomialCurve2D &needle);
 
   /**
    * Constructor.
    *
    * @param order The order of the polynomial curve representing the needle.
    */
-  us2DNeedleModel(unsigned int order);
+  usPolynomialCurve2D(unsigned int order);
 
   /**
-   * Set the order of the polynomial curve representing the needle.
+   * Change the order of the polynomial representing the needle.
    */
-  void setOrder(unsigned int order);
+  usPolynomialCurve2D changePolynomialOrder(unsigned int newOrder);
+
+  /**
+   * Compute the distance between two needles.
+   */
+  static double curveDistance(usPolynomialCurve2D &n1, usPolynomialCurve2D &n2);
+
+  /**
+   * Get the control points.
+   */
+  vpMatrix getControlPoints() const;
+
+  /**
+   * Get the needle curvature.
+   */
+  double getCurvature();
+
+  /**
+   * Get the needle length.
+   */
+  double getLength() const;
+
+  /**
+   * Get the needle model.
+   */
+  vpMatrix *getModel();
+
+  /**
+   * Get the number of lines used to display the needle.
+   */
+  unsigned int getNumberOfRenderingLines() const;
 
   /**
    * Get the order of the polynomial curve representing the needle.
@@ -74,14 +102,19 @@ class VISP_EXPORT us2DNeedleModel {
   unsigned int getOrder() const;
 
   /**
-   * Set the number of lines used to diplay the needle.
+   * Get the needle coordinates at a given curvilinear abscissa.
    */
-  void setNumberOfRenderingLines(unsigned int nRenderingLines);
+  vpColVector getPoint(double abscissa) const;
 
   /**
-   * Get the number of lines used to display the needle.
+   * Get the rendering points.
    */
-  unsigned int getNumberOfRenderingLines() const;
+  vpMatrix getRenderingPoints() const;
+
+  /**
+   * Get the tangent vector at a given curvilinear abscissa.
+   */
+  vpColVector getTangent(double abscissa) const;
 
   /**
    * Set the control points.
@@ -97,54 +130,19 @@ class VISP_EXPORT us2DNeedleModel {
   void setControlPoints(double **controlPoints);
 
   /**
-   * Get the control points.
-   */
-  vpMatrix getControlPoints() const;
-
-  /**
-   * Get the rendering points.
-   */
-  vpMatrix getRenderingPoints() const;
-
-  /**
    * Set the needle model.
    */
   void setModel(const vpMatrix &model);
 
   /**
-   * Get the needle model.
+   * Set the number of lines used to diplay the needle.
    */
-  vpMatrix *getModel();
+  void setNumberOfRenderingLines(unsigned int nRenderingLines);
 
   /**
-   * Get the needle coordinates at a given curvilinear abscissa.
+   * Set the order of the polynomial curve representing the needle.
    */
-  vpColVector getPoint(double abscissa) const;
-
-  /**
-   * Get the tangent vector at a given curvilinear abscissa.
-   */
-  vpColVector getTangent(double abscissa) const;
-
-  /**
-   * Get the needle length.
-   */
-  double getLength() const;
-
-  /**
-   * Get the needle curvature.
-   */
-  double getCurvature();
-
-  /**
-   * Compute the distance between two needles.
-   */
-  static double curveDistance(us2DNeedleModel &n1, us2DNeedleModel &n2);
-
-  /**
-   * Change the order of the polynomial representing the needle.
-   */
-  us2DNeedleModel changePolynomialOrder(unsigned int newOrder);
+  void setOrder(unsigned int order);
 
  private:
   unsigned int m_order;
@@ -154,4 +152,4 @@ class VISP_EXPORT us2DNeedleModel {
   vpMatrix m_renderingPoints;
 };
 
-#endif // US2DNEEDLEMODEL_H
+#endif // USPOLYNOMIALCURVE2D_H

@@ -29,10 +29,10 @@
  *
  *****************************************************************************/
 
-#include <visp3/ustk_needle_detection/us2DNeedleModel.h>
+#include <visp3/ustk_needle_detection/usPolynomialCurve2D.h>
 #include <visp3/ustk_needle_detection/usNeedleDetectionTools.h>
 
-us2DNeedleModel::us2DNeedleModel() {
+usPolynomialCurve2D::usPolynomialCurve2D() {
   m_order = 0;
   m_nRenderingLines = 0;
   m_controlPoints = vpMatrix();
@@ -40,7 +40,7 @@ us2DNeedleModel::us2DNeedleModel() {
   m_renderingPoints = vpMatrix();
 }
 
-us2DNeedleModel::us2DNeedleModel(const us2DNeedleModel &needle) {
+usPolynomialCurve2D::usPolynomialCurve2D(const usPolynomialCurve2D &needle) {
   m_order = needle.getOrder();
   m_nRenderingLines = needle.getNumberOfRenderingLines();
   m_controlPoints = needle.getControlPoints();
@@ -48,7 +48,7 @@ us2DNeedleModel::us2DNeedleModel(const us2DNeedleModel &needle) {
   m_renderingPoints = needle.getRenderingPoints();
 }
 
-us2DNeedleModel::us2DNeedleModel(unsigned int order) {
+usPolynomialCurve2D::usPolynomialCurve2D(unsigned int order) {
   m_order = order;
   if (m_order < 2) {
     std::cerr << "Error: the order of the polynomial curve should be at least 2." << std::endl;
@@ -64,7 +64,7 @@ us2DNeedleModel::us2DNeedleModel(unsigned int order) {
   m_renderingPoints = vpMatrix(2, m_nRenderingLines+1);
 }
 
-void us2DNeedleModel::setOrder(unsigned int order) {
+void usPolynomialCurve2D::setOrder(unsigned int order) {
   m_order = order;
   if (m_order < 2)
     std::cerr << "Error: the order of the polynomial curve should be at least 2." << std::endl;
@@ -77,17 +77,17 @@ void us2DNeedleModel::setOrder(unsigned int order) {
   m_model = vpMatrix(2, order);
 }
 
-unsigned int us2DNeedleModel::getOrder() const { return m_order; }
+unsigned int usPolynomialCurve2D::getOrder() const { return m_order; }
 
-void us2DNeedleModel::setNumberOfRenderingLines(unsigned int nRenderingLines) {
+void usPolynomialCurve2D::setNumberOfRenderingLines(unsigned int nRenderingLines) {
   m_nRenderingLines = nRenderingLines;
 }
 
-unsigned int us2DNeedleModel::getNumberOfRenderingLines() const { return m_nRenderingLines; }
+unsigned int usPolynomialCurve2D::getNumberOfRenderingLines() const { return m_nRenderingLines; }
 
-void us2DNeedleModel::setControlPoints(const vpMatrix &controlPoints) {
+void usPolynomialCurve2D::setControlPoints(const vpMatrix &controlPoints) {
   if (controlPoints.getCols() != 2) {
-    std::cerr << "Error: in us2DNeedleModel::setControlPoints(): "
+    std::cerr << "Error: in usPolynomialCurve2D::setControlPoints(): "
 	      << "Input matrix should of size nx2." << std::endl;
     exit(EXIT_FAILURE);
   }
@@ -98,7 +98,7 @@ void us2DNeedleModel::setControlPoints(const vpMatrix &controlPoints) {
   m_controlPoints = controlPoints.t();
   
   if ((m_controlPoints.getCol(m_order-1) - m_controlPoints.getCol(0)).euclideanNorm() == 0.0) {
-    std::cerr << "Warning: in us2DNeedleModel::setControlPoints(): needle model is degenerate."
+    std::cerr << "Warning: in usPolynomialCurve2D::setControlPoints(): needle model is degenerate."
 	      << std::endl;
     for (unsigned int i=0; i<2; ++i) {
       m_model[i][0] = m_controlPoints[i][0];
@@ -115,7 +115,7 @@ void us2DNeedleModel::setControlPoints(const vpMatrix &controlPoints) {
     else {
       double norm = (m_controlPoints.getCol(2) - m_controlPoints.getCol(0)).euclideanNorm();
       if (norm == 0.0) {
-	std::cerr << "Warning: in us2DNeedleModel::setControlPoints(): needle model is degenerate."
+  std::cerr << "Warning: in usPolynomialCurve2D::setControlPoints(): needle model is degenerate."
 		  << std::endl;
 	norm = 1;
 	for (unsigned int i=0; i<2; ++i) {
@@ -126,7 +126,7 @@ void us2DNeedleModel::setControlPoints(const vpMatrix &controlPoints) {
       } else {
 	double t = (m_controlPoints.getCol(1) - m_controlPoints.getCol(0)).euclideanNorm() / norm;
 	if (t == 0.0) {
-	  std::cerr << "Warning: in us2DNeedleModel::setControlPoints(): needle model is degenerate."
+    std::cerr << "Warning: in usPolynomialCurve2D::setControlPoints(): needle model is degenerate."
 		    << std::endl;
 	  for (unsigned int i=0; i<3; ++i) {
 	    m_model[i][0] = m_controlPoints[i][0];
@@ -154,7 +154,7 @@ void us2DNeedleModel::setControlPoints(const vpMatrix &controlPoints) {
   m_renderingPoints = m_model * coords;
 }
 
-void us2DNeedleModel::setControlPoints(double **controlPoints) {
+void usPolynomialCurve2D::setControlPoints(double **controlPoints) {
   for (unsigned int i=0; i<2; ++i)
     for (unsigned int j=0; j<m_order; ++j)
       m_controlPoints[i][j] = controlPoints[j][i];
@@ -174,15 +174,15 @@ void us2DNeedleModel::setControlPoints(double **controlPoints) {
   m_renderingPoints = m_model * coords;
 }
 
-vpMatrix us2DNeedleModel::getControlPoints() const { return m_controlPoints; }
+vpMatrix usPolynomialCurve2D::getControlPoints() const { return m_controlPoints; }
 
-vpMatrix us2DNeedleModel::getRenderingPoints() const
+vpMatrix usPolynomialCurve2D::getRenderingPoints() const
 {
   vpMatrix points = m_renderingPoints;
   return points;
 }
 
-void us2DNeedleModel::setModel(const vpMatrix &model) {
+void usPolynomialCurve2D::setModel(const vpMatrix &model) {
   m_model = model;
   vpMatrix coords(m_order,m_order);
   for (unsigned int j=0; j<m_order; ++j) {
@@ -202,9 +202,9 @@ void us2DNeedleModel::setModel(const vpMatrix &model) {
   m_renderingPoints = m_model * coords;
 }
 
-vpMatrix *us2DNeedleModel::getModel() { return &m_model; }
+vpMatrix *usPolynomialCurve2D::getModel() { return &m_model; }
 
-vpColVector us2DNeedleModel::getPoint(double t) const {
+vpColVector usPolynomialCurve2D::getPoint(double t) const {
   vpColVector T(m_order);
   T[0] = 1.0;
   for (unsigned int i=1; i<m_order; ++i)
@@ -212,7 +212,7 @@ vpColVector us2DNeedleModel::getPoint(double t) const {
   return m_model * T;
 }
 
-vpColVector us2DNeedleModel::getTangent(double t) const {
+vpColVector usPolynomialCurve2D::getTangent(double t) const {
   vpColVector T(m_order);
   double tt = 1.0;
   T[0] = 0.0;
@@ -223,7 +223,7 @@ vpColVector us2DNeedleModel::getTangent(double t) const {
   return m_model * T;
 }
 
-double us2DNeedleModel::getLength() const {
+double usPolynomialCurve2D::getLength() const {
   vpMatrix coords(m_order, 50);
   for (unsigned int j=0; j<50; ++j) {
     coords[0][j] = 1.0;
@@ -238,7 +238,7 @@ double us2DNeedleModel::getLength() const {
   return length;
 };
 
-double us2DNeedleModel::curveDistance(us2DNeedleModel &n1, us2DNeedleModel &n2) {
+double usPolynomialCurve2D::curveDistance(usPolynomialCurve2D &n1, usPolynomialCurve2D &n2) {
   unsigned int order1 = n1.getOrder();
   unsigned int order2 = n2.getOrder();
   vpMatrix coords1(order1, 50);
@@ -261,7 +261,7 @@ double us2DNeedleModel::curveDistance(us2DNeedleModel &n1, us2DNeedleModel &n2) 
   return distance;
 }
 
-double us2DNeedleModel::getCurvature() {
+double usPolynomialCurve2D::getCurvature() {
   vpMatrix coords(m_order, 50);
   for (unsigned int j=0; j<50; ++j) {
     coords[0][j] = 1.0;
@@ -281,8 +281,8 @@ double us2DNeedleModel::getCurvature() {
   return curvature;
 }
 
-us2DNeedleModel us2DNeedleModel::changePolynomialOrder(unsigned int newOrder) {
-  us2DNeedleModel newNeedleModel(newOrder);
+usPolynomialCurve2D usPolynomialCurve2D::changePolynomialOrder(unsigned int newOrder) {
+  usPolynomialCurve2D newNeedleModel(newOrder);
   vpMatrix newControlPoints;
   vpMatrix coords(m_order,newOrder);
   for (unsigned int j=0; j<newOrder; ++j) {
