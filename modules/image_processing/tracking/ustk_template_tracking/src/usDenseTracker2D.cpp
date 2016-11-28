@@ -135,12 +135,12 @@ usRectangle usDenseTracker2D::getTarget() const
   return m_target;
 }
 
-vpImage<unsigned char> &usDenseTracker2D::getTemplate() const
+vpImage<unsigned char> &usDenseTracker2D::getTemplate()
 {
   return m_template;
 }
 
-vpImage<unsigned char> &usDenseTracker2D::getRegion() const
+vpImage<unsigned char> &usDenseTracker2D::getRegion()
 {
   return m_region;
 }

@@ -64,7 +64,7 @@ class usGrabberFrame {
    */
    ~usGrabberFrame();
 
-  void grabFrame(ImageType * imageToWrite);
+  void grabFrame(ImageType * imageToWrite) const;
 
   void setCommunicationInformation(usGrabberUltrasonix::usGrabberCommunicationInformations *informations);
 
@@ -105,7 +105,7 @@ void usGrabberFrame<ImageType>::setTransducerSettings(usTransducerSettings trans
 
 //Generic method (works for 2D)
 template <class ImageType>
-void usGrabberFrame<ImageType>::grabFrame(ImageType* imageToWrite) {
+void usGrabberFrame<ImageType>::grabFrame(ImageType* imageToWrite) const {
   // Grab a single frame
   int n = 0;
   // Grab frame information
