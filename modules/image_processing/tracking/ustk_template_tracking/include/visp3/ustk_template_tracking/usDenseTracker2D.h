@@ -58,11 +58,11 @@ public:
 
   void update(const vpImage<unsigned char> &I);
 
-  usRectangle getTarget();
+  usRectangle getTarget() const;
 
-  vpImage<unsigned char> &getTemplate();
+  vpImage<unsigned char> &getTemplate() const;
 
-  vpImage<unsigned char> &getRegion();
+  vpImage<unsigned char> &getRegion() const;
 
 private:
   vpColVector s_desired;
