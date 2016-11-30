@@ -63,8 +63,29 @@ private:
   {
     FORMAT_XML,
     FORMAT_MHD,
+    FORMAT_VOL,
     HEADER_FORMAT_UNKNOWN
   } usHeaderFormatType;
+
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+  struct VolHeader
+  {
+    double startTime;
+    int type;
+    int volumes;
+    int fpv;
+    int w;
+    int h;
+    int ss;
+    int degPerFr;
+    int BSampleFreq; // hz
+    int ProbeElementPitch; //micron
+    int ProbeRadius; //micron
+    int MotorRadius; //micron
+    int framerate;
+  };
+#endif //DOXYGEN_SHOULD_SKIP_THIS
 
   static usHeaderFormatType getHeaderFormat(const std::string &headerfilename);
   static std::string getExtension(const std::string &filename);
