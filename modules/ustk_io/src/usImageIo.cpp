@@ -33,6 +33,8 @@
  * @file usImageIo.cpp
  * @brief Input/output operations between ultrasound data and classical 2D image files.
  */
+#include <iostream>
+#include <fstream>
 
 #include <visp3/io/vpImageIo.h>
 #include <visp3/core/vpXmlParser.h>
@@ -55,6 +57,10 @@ usImageIo::getHeaderFormat(const std::string &headerFileName)
     return FORMAT_MHD;
   else if (ext.compare(".MHD") == 0)
     return FORMAT_MHD;
+  else if (ext.compare(".vol") == 0)
+    return FORMAT_VOL;
+  else if (ext.compare(".VOL") == 0)
+    return FORMAT_VOL;
   else
     return HEADER_FORMAT_UNKNOWN;
 }
@@ -542,7 +548,8 @@ void usImageIo::write(const usImagePreScan3D<unsigned char> &preScanImage, const
   if (headerFormat == FORMAT_XML) {
     std::string imageFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(imageExtension2D);
 #ifdef VISP_HAVE_XML2
-  //case of a set of successive 2D frames
+  //case of a set of successive 2D frames, not implemented
+  throw(vpException(vpException::notImplementedError, "Reading a 3D image as a set of 2D frames is not implemented"));
 #else
     throw(vpException(vpException::fatalError, "Requires xml2"));
 #endif
@@ -565,7 +572,7 @@ void usImageIo::write(const usImagePreScan3D<unsigned char> &preScanImage, const
     header.dim[2] = preScanImage.getDimZ();
     header.msb = false;
     header.MHDFileName = headerFileName;
-    //remove full path for image file name (located in the same directory as the mhd
+    //remove full path for image file name (located in the same directory as the mhd)
     header.rawFileName = vpIoTools::getName(imageFileName);
     header.isTransducerConvex = preScanImage.isTransducerConvex();
     header.transducerRadius = preScanImage.getTransducerRadius();
@@ -638,6 +645,66 @@ void usImageIo::read(usImagePreScan3D<unsigned char> &preScanImage,const std::st
     usRawFileParser rawParser;    
     std::string fullImageFileName = vpIoTools::getParent(headerFileName) + vpIoTools::path("/") + mhdParser.getRawFileName();
     rawParser.read(preScanImage, fullImageFileName);
+  }
+  else if(headerFormat == FORMAT_VOL) {
+    //READING HEADER
+    int szHeader = sizeof(VolHeader);
+    int n = 0;
+    char byte;
+    VolHeader header;
+    header.type = 0;
+    header.volumes = 0;
+    header.fpv  = 0;
+    header.w = 0;
+    header.h  = 0;
+    header.ss = 0;
+    header.degPerFr= 0;
+    header.BSampleFreq= 0;
+    header.ProbeElementPitch = 0;
+    header.ProbeRadius = 0;
+    header.MotorRadius = 0;
+    header.framerate= 0;
+
+    std::ifstream volFile;
+    volFile.open( headerFileName.c_str(), std::ios::in|std::ios::binary);
+
+    std::cout << "header size : " << szHeader << std::endl;
+
+    while (n < szHeader) {
+      volFile.read(&byte, 1);
+      ((char*)&header)[n] = byte;
+      n++;
+    }
+/*
+  volFile >> header.type;
+  volFile >> header.volumes;
+  volFile >> header.fpv;
+  volFile >> header.w;
+  volFile >> header.h;
+  volFile >> header.ss;
+  volFile >> header.degPerFr;
+  volFile >> header.BSampleFreq;
+  volFile >> header.ProbeElementPitch;
+  volFile >> header.ProbeRadius;
+  volFile >> header.MotorRadius;
+  volFile >> header.framerate;
+*/
+
+  // Print data info
+  std::cout << std::endl << "Data header information: " << std::endl
+            << "   type = " << header.type << std::endl
+            << "   volumes = " << header.volumes << std::endl
+            << "   fpv = " << header.fpv << std::endl
+            << "   w = " << header.w << std::endl
+            << "   h = " << header.h << std::endl
+            << "   ss = " << header.ss << std::endl
+            << "   degPerFr = " << header.degPerFr / 1000.0 << "°" << std::endl
+            << "   BSampleFreq = " << header.BSampleFreq << "Hz" << std::endl
+            << "   ProbeElementPitch = " << header.ProbeElementPitch << "µm" << std::endl
+            << "   ProbeRadius = " << header.ProbeRadius << "µm" << std::endl
+            << "   MotorRadius = " << header.MotorRadius << "µm" << std::endl
+            << "   frameRate = " << header.framerate << std::endl << std::endl;
+
   }
   else
     throw(vpException(vpException::fatalError, "Unknown header format."));
