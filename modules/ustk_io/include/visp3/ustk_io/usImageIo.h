@@ -71,19 +71,12 @@ private:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
   struct VolHeader
   {
-    double startTime;
-    int type;
-    int volumes;
-    int fpv;
-    int w;
-    int h;
-    int ss;
-    int degPerFr;
-    int BSampleFreq; // hz
-    int ProbeElementPitch; //micron
-    int ProbeRadius; //micron
-    int MotorRadius; //micron
-    int framerate;
+    int type;     // Data type(0: prescan B, 1 : postscan B, 2 : rf, 3 : vel / var, 5 = B + flow RGB)
+    int volumes;  // Number of volumes in the file
+    int fpv;      // Number of frames per volumes
+    int w;        // frame width
+    int h;        // frame height
+    int ss;       // sample size in bits
   };
 #endif //DOXYGEN_SHOULD_SKIP_THIS
 

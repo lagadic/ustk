@@ -647,7 +647,7 @@ void usImageIo::read(usImagePreScan3D<unsigned char> &preScanImage,const std::st
     rawParser.read(preScanImage, fullImageFileName);
   }
   else if(headerFormat == FORMAT_VOL) {
-    //READING HEADER
+    //INIT
     int szHeader = sizeof(VolHeader);
     int n = 0;
     char byte;
@@ -658,52 +658,49 @@ void usImageIo::read(usImagePreScan3D<unsigned char> &preScanImage,const std::st
     header.w = 0;
     header.h  = 0;
     header.ss = 0;
-    header.degPerFr= 0;
-    header.BSampleFreq= 0;
-    header.ProbeElementPitch = 0;
-    header.ProbeRadius = 0;
-    header.MotorRadius = 0;
-    header.framerate= 0;
 
+    //FILE OPENING
     std::ifstream volFile;
     volFile.open( headerFileName.c_str(), std::ios::in|std::ios::binary);
 
-    std::cout << "header size : " << szHeader << std::endl;
-
+    //READING HEADER
     while (n < szHeader) {
       volFile.read(&byte, 1);
       ((char*)&header)[n] = byte;
       n++;
     }
-/*
-  volFile >> header.type;
-  volFile >> header.volumes;
-  volFile >> header.fpv;
-  volFile >> header.w;
-  volFile >> header.h;
-  volFile >> header.ss;
-  volFile >> header.degPerFr;
-  volFile >> header.BSampleFreq;
-  volFile >> header.ProbeElementPitch;
-  volFile >> header.ProbeRadius;
-  volFile >> header.MotorRadius;
-  volFile >> header.framerate;
-*/
+    // Print header info
+    std::cout << std::endl << "Data header information: " << std::endl
+      << "   type = " << header.type << std::endl
+      << "   volumes = " << header.volumes << std::endl
+      << "   fpv = " << header.fpv << std::endl
+      << "   w = " << header.w << std::endl
+      << "   h = " << header.h << std::endl
+      << "   ss = " << header.ss << std::endl;
 
-  // Print data info
-  std::cout << std::endl << "Data header information: " << std::endl
-            << "   type = " << header.type << std::endl
-            << "   volumes = " << header.volumes << std::endl
-            << "   fpv = " << header.fpv << std::endl
-            << "   w = " << header.w << std::endl
-            << "   h = " << header.h << std::endl
-            << "   ss = " << header.ss << std::endl
-            << "   degPerFr = " << header.degPerFr / 1000.0 << "°" << std::endl
-            << "   BSampleFreq = " << header.BSampleFreq << "Hz" << std::endl
-            << "   ProbeElementPitch = " << header.ProbeElementPitch << "µm" << std::endl
-            << "   ProbeRadius = " << header.ProbeRadius << "µm" << std::endl
-            << "   MotorRadius = " << header.MotorRadius << "µm" << std::endl
-            << "   frameRate = " << header.framerate << std::endl << std::endl;
+    //CHECK IMAGE TYPE
+    if (header.type != 0)
+      throw(vpException(vpException::badValue, "trying to read non-prescan in .vol file"));
+
+    //CHECK DATA TYPE
+    if (header.ss != 8)
+      throw(vpException(vpException::badValue, ".vol file doesn't contain unsigned char data"));
+
+    // OFFSET : TODO
+    // to select volume to read (in .vol files multiple volumes can be stacked after the header part)
+
+    //READING DATA
+    preScanImage.resize(header.w, header.h, header.fpv);
+    n = 0;
+    unsigned char voxel;
+    for (int k = 0; k < header.fpv; k++) {
+      for (int j = 0; j < header.w; j++) {
+        for (int i = 0; i < header.h; i++) {
+          volFile.read((char*)&voxel, 1);
+          preScanImage(j, i, k, voxel);
+        }
+      }
+    }
 
   }
   else

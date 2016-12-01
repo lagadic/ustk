@@ -147,6 +147,29 @@ bool getOptions(int argc, const char **argv, std::string &opath, const std::stri
 int main(int argc, const char *argv[])
 {
   usImagePreScan3D<unsigned char> image;
-  usImageIo::read(image,"/home/mpouliqu/Documents/usData/needle/Needle-experiments/Online/Volumes/02.vol");
+# if defined(_WIN32)
+  usImageIo::read(image, "C:/Users/mpouliqu/Documents/DataUS/needle/01.vol");
+#else
+  usImageIo::read(image,"/home/mpouliqu/Documents/usData/needle/Needle-experiments/Online/Volumes/01.vol");
+#endif
+  vpImage<unsigned char> firstFrame;
+  firstFrame.resize(image.getBModeSampleNumber(), image.getScanLineNumber());
+  char buffer[300];
+
+# if defined(_WIN32)
+  std::string base = "C:/Users/mpouliqu/Documents/DataUS/needle/01-frame%d.png";
+#else
+  std::string base = "/home/mpouliqu/Documents/usData/needle/Needle-experiments/Online/Volumes/01-frame%d.png";
+#endif
+
+  for (unsigned int k = 0; k < image.getDimZ(); k++) {
+    for (unsigned int i = 0; i < image.getBModeSampleNumber(); i++) {
+      for (unsigned int j = 0; j < image.getScanLineNumber(); j++) {
+        firstFrame(i, j, image(j, i, k));
+      }
+    }
+    sprintf(buffer, base.c_str(), k);
+    vpImageIo::write(firstFrame, buffer);
+  }
   return 0;
 }
