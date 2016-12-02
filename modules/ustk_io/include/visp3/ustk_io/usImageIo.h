@@ -103,6 +103,7 @@ public:
   //@{
   static void read(usImagePreScan2D<unsigned char> &preScanImage,const std::string &headerFileName);
   static void read(usImagePreScan3D<unsigned char> &preScanImage3D, const std::string &headerFileName);
+  static void read(usImagePreScan3D<unsigned char> &preScanImage,const std::string &headerFileName, int imageNumberInSequence);
 
   //Doubles types writing not implemented
   static void read(usImagePreScan2D<double> &preScanImage,const std::string &headerFileName);
