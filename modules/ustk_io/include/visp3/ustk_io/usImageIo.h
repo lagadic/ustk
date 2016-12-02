@@ -77,6 +77,7 @@ private:
     int w;        // frame width
     int h;        // frame height
     int ss;       // sample size in bits
+    int degPerFr; // degree step between frames
   };
 #endif //DOXYGEN_SHOULD_SKIP_THIS
 
