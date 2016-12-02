@@ -59,29 +59,6 @@ class VISP_EXPORT usImageIo
 {
 private:
 
-  typedef enum
-  {
-    FORMAT_XML,
-    FORMAT_MHD,
-    FORMAT_VOL,
-    HEADER_FORMAT_UNKNOWN
-  } usHeaderFormatType;
-
-
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-  struct VolHeader
-  {
-    int type;     // Data type(0: prescan B, 1 : postscan B, 2 : rf, 3 : vel / var, 5 = B + flow RGB)
-    int volumes;  // Number of volumes in the file
-    int fpv;      // Number of frames per volumes
-    int w;        // frame width
-    int h;        // frame height
-    int ss;       // sample size in bits
-    int degPerFr; // degree step between frames
-  };
-#endif //DOXYGEN_SHOULD_SKIP_THIS
-
-  static usHeaderFormatType getHeaderFormat(const std::string &headerfilename);
   static std::string getExtension(const std::string &filename);
 
 public:
@@ -139,6 +116,29 @@ public:
                     const std::string &imageExtension2D);
   static void write(const usImagePostScan3D<unsigned char> &postScanImage3D, const std::string &headerFileName);
   //@}
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+  struct VolHeader
+  {
+    int type;     // Data type(0: prescan B, 1 : postscan B, 2 : rf, 3 : vel / var, 5 = B + flow RGB)
+    int volumes;  // Number of volumes in the file
+    int fpv;      // Number of frames per volumes
+    int w;        // frame width
+    int h;        // frame height
+    int ss;       // sample size in bits
+    int degPerFr; // degree step between frames
+  };
+#endif //DOXYGEN_SHOULD_SKIP_THIS
+
+  typedef enum
+  {
+    FORMAT_XML,
+    FORMAT_MHD,
+    FORMAT_VOL,
+    HEADER_FORMAT_UNKNOWN
+  } usHeaderFormatType;
+
+  static usHeaderFormatType getHeaderFormat(const std::string &headerfilename);
 };
 
 #endif //US_IMAGE_IO_H
