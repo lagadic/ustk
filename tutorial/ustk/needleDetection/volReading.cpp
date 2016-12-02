@@ -146,6 +146,8 @@ bool getOptions(int argc, const char **argv, std::string &opath, const std::stri
 
 int main(int argc, const char *argv[])
 {
+  (void) argc;
+  (void*) argv;
   usImagePreScan3D<unsigned char> image;
 # if defined(_WIN32)
   std::string volFileName = "C:/Users/mpouliqu/Documents/DataUS/needle/01.vol"
