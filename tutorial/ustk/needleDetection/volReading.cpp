@@ -54,7 +54,7 @@
 #include <visp3/gui/vpPlot.h>
 
 //ustk
-#include <visp3/ustk_io/usSequenceReader.h>
+#include <visp3/ustk_io/usSequenceReader3D.h>
 #include <visp3/ustk_needle_detection/usNeedleTrackerSIR2D.h>
 
 using namespace std;
@@ -147,16 +147,18 @@ bool getOptions(int argc, const char **argv, std::string &opath, const std::stri
 int main(int argc, const char *argv[])
 {
   (void) argc;
-  (void*) argv;
+  (void) argv;
   usImagePreScan3D<unsigned char> image;
 # if defined(_WIN32)
   std::string volFileName = "C:/Users/mpouliqu/Documents/DataUS/needle/01.vol"
-#else
+    #else
   std::string volFileName = "/home/mpouliqu/Documents/usData/needle/Needle-experiments/Online/Volumes/01.vol";
 #endif
-  usImageIo::read(image, volFileName);
+  //usImageIo::read(image, volFileName);
+  usSequenceReader3D<usImagePreScan3D<unsigned char> > reader;
+  reader.setSequenceFileName(volFileName);
+
   vpImage<unsigned char> firstFrame;
-  firstFrame.resize(image.getBModeSampleNumber(), image.getScanLineNumber());
   char buffer[300];
 
 # if defined(_WIN32)
@@ -164,15 +166,16 @@ int main(int argc, const char *argv[])
 #else
   std::string base = "/home/mpouliqu/Documents/usData/needle/Needle-experiments/Online/Volumes/vol%d-frame%d.png";
 #endif
-  for(int v = 0; v< 3;v++) {
-    usImageIo::read(image, volFileName,v);
+  while(!reader.end()) {
+    reader.acquire(image);
+    firstFrame.resize(image.getBModeSampleNumber(), image.getScanLineNumber());
     for (unsigned int k = 0; k < image.getDimZ(); k++) {
       for (unsigned int i = 0; i < image.getBModeSampleNumber(); i++) {
         for (unsigned int j = 0; j < image.getScanLineNumber(); j++) {
           firstFrame(i, j, image(j, i, k));
         }
       }
-      sprintf(buffer, base.c_str(), v, k);
+      sprintf(buffer, base.c_str(), reader.getImageNumber(), k);
       vpImageIo::write(firstFrame, buffer);
     }
   }
