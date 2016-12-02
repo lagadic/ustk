@@ -658,6 +658,7 @@ void usImageIo::read(usImagePreScan3D<unsigned char> &preScanImage,const std::st
     header.w = 0;
     header.h  = 0;
     header.ss = 0;
+    header.degPerFr = 0;
 
     //FILE OPENING
     std::ifstream volFile;
@@ -729,6 +730,7 @@ void usImageIo::read(usImagePreScan3D<unsigned char> &preScanImage,const std::st
     header.w = 0;
     header.h  = 0;
     header.ss = 0;
+    header.degPerFr = 0;
 
     //FILE OPENING
     std::ifstream volFile;
