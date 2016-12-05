@@ -122,7 +122,7 @@ void usImageIo::write(const usImageRF2D<unsigned char> &imageRf2D, const std::st
       //write xml
       xmlSettings.save(headerFileName);
     }
-    catch (std::exception e) {
+    catch (std::exception &e) {
       std::cout << "Error writing rf image : " << std::endl;
       std::cout << e.what() << std::endl;
     }
@@ -179,13 +179,7 @@ void usImageIo::read(usImageRF2D<unsigned char> &imageRf2D, const std::string &h
 #ifdef VISP_HAVE_XML2
     //parsing xml file
     usImageSettingsXmlParser xmlSettings;
-    try {
-      xmlSettings.parse(headerFileName);
-    }
-    catch (std::exception e) {
-      std::cout << "Error parsing rf settings file" << std::endl;
-      throw e;
-    }
+    xmlSettings.parse(headerFileName);
     std::string fullImageFileName = vpIoTools::getParent(headerFileName) + vpIoTools::path("/") + xmlSettings.getImageFileName();
     vpImageIo::read(imageRf2D, fullImageFileName);
 
@@ -413,7 +407,7 @@ void usImageIo::write(const usImagePreScan2D<unsigned char> &preScanImage, const
       //write xml
       xmlSettings.save(headerFileName);
     }
-    catch (std::exception e) {
+    catch (std::exception &e) {
       std::cout << "Error writing postScan image : " << std::endl;
       std::cout << e.what() << std::endl;
     }
@@ -810,7 +804,7 @@ void usImageIo::write(const usImagePostScan2D<unsigned char> &postScanImage, con
       xmlSettings.setImageFileName(imageFileName);
       xmlSettings.save(headerFileName);
     }
-    catch (std::exception e) {
+    catch (std::exception &e) {
       std::cout << "Error writing postScan image : " << std::endl;
       std::cout << e.what() << std::endl;
     }
@@ -870,7 +864,7 @@ void usImageIo::read(usImagePostScan2D<unsigned char> &postScanImage,const std::
     try {
       xmlSettings.parse(headerFileName);
     }
-    catch (std::exception e) {
+    catch (std::exception &e) {
       std::cout << "Error parsing postScan settings file" << std::endl;
       std::cout << "file name : " << headerFileName << std::endl;
       throw e;
