@@ -30,7 +30,7 @@
 *****************************************************************************/
 
 /**
-* @file usSequenceReader3D3D.h
+* @file usSequenceReader3D.h
 * @brief Reading of sequences of ultrasound 3D images
 *
 * This class is used to read ultrasound images from a sequence of volumes.
@@ -91,6 +91,9 @@ public:
 
   //get images in grabber style
   void acquire(ImageType &image);
+
+  //get image with its number in the sequence
+  void getVolume(usImagePreScan3D<unsigned char> &preScanImage,const std::string &headerFileName, int volumeNumberInSequence);
 
   /*!
     \return true if the end of the sequence is reached.
@@ -308,6 +311,84 @@ void usSequenceReader3D<usImagePreScan3D<unsigned char> >::acquire(usImagePreSca
   }
 
   m_frameCount ++;
+}
+
+/**
+* Read a 3D unsigned char pre-scan ultrasound image contained in a sequence. Works only for .vol files.
+* @param [out] preScanImage The pre-scan image to read.
+* @param [in] headerFileName The header file name to read, with header extension.
+* @param [in] volumeNumberInSequence The image number of the image to read in the sequence (from 0 for 1st volume stored).
+*
+* @warning Using this method between 2 calls of acquire() breaks the sequence grabbing system (the offset in the vol file is broken by calling this method).
+*/
+template<>
+void usSequenceReader3D<usImagePreScan3D<unsigned char> >::getVolume(usImagePreScan3D<unsigned char> &preScanImage,
+  const std::string &headerFileName, int volumeNumberInSequence)
+{
+  usImageIo::usHeaderFormatType headerFormat = usImageIo::getHeaderFormat(headerFileName);
+  if(headerFormat == usImageIo::FORMAT_VOL) {
+    //INIT
+    int szHeader = sizeof(usImageIo::VolHeader);
+    int n = 0;
+    char byte;
+    usImageIo::VolHeader header;
+    header.type = 0;
+    header.volumes = 0;
+    header.fpv  = 0;
+    header.w = 0;
+    header.h  = 0;
+    header.ss = 0;
+    header.degPerFr = 0;
+
+    //FILE OPENING
+    std::ifstream volFile;
+    volFile.open( headerFileName.c_str(), std::ios::in|std::ios::binary);
+
+    //READING HEADER
+    while (n < szHeader) {
+      volFile.read(&byte, 1);
+      ((char*)&header)[n] = byte;
+      n++;
+    }
+    // Print header info
+    std::cout << std::endl << "Data header information: " << std::endl
+              << "   type = " << header.type << std::endl
+              << "   volumes = " << header.volumes << std::endl
+              << "   fpv = " << header.fpv << std::endl
+              << "   w = " << header.w << std::endl
+              << "   h = " << header.h << std::endl
+              << "   ss = " << header.ss << std::endl;
+
+    //CHECK IMAGE TYPE
+    if (header.type != 0)
+      throw(vpException(vpException::badValue, "trying to read non-prescan in .vol file"));
+
+    //CHECK DATA TYPE
+    if (header.ss != 8)
+      throw(vpException(vpException::badValue, ".vol file doesn't contain unsigned char data"));
+
+    // OFFSET
+    // to select volume to read (in .vol files multiple volumes can be stacked after the header part)
+    int offset = szHeader + volumeNumberInSequence * header.fpv * header.w * header.h;
+    volFile.seekg(offset);
+
+    //READING DATA
+    preScanImage.resize(header.w, header.h, header.fpv);
+    n = 0;
+    unsigned char voxel;
+    for (int k = 0; k < header.fpv; k++) {
+      for (int j = 0; j < header.w; j++) {
+        for (int i = 0; i < header.h; i++) {
+          volFile.read((char*)&voxel, 1);
+          preScanImage(j, i, k, voxel);
+        }
+      }
+    }
+
+  }
+  else
+    throw(vpException(vpException::fatalError, "Unknown header format."));
+
 }
 
 #endif // US_SEQUENCE_READER_3D_H
