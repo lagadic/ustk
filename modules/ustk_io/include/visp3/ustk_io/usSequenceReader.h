@@ -104,6 +104,7 @@ public:
   //get images in grabber style
   void acquire(ImageType &image);
 
+
   /*!
     \return true if the end of the sequence is reached.
   */
