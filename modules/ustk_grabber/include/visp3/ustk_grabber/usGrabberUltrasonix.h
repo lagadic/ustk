@@ -182,16 +182,6 @@ class VISP_EXPORT usGrabberUltrasonix {
    */
   void stop();
 
-  /**
-   * Get the socket identifier.
-   */
-  int getSocket();
-
-  /**
-   * Get the frame rate.
-   */
-  double getFrameRate();
-
  private:
 
   usTransducerSettings m_transducerSettings;
