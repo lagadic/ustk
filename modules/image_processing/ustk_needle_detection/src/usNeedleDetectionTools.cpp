@@ -108,6 +108,7 @@ short usNeedleDetectionTools::quantile(short *data, unsigned int num, unsigned i
       counter += hist[idx];
       idx--;
     }
+  delete[] hist;
   return idx+1;
 }
 
@@ -125,6 +126,7 @@ short usNeedleDetectionTools::quantile(vtkDataSet *data, unsigned int num)
       counter += hist[idx];
       idx--;
     }
+  delete[] hist;
   return idx+1;
 }
 #endif
@@ -145,6 +147,7 @@ void usNeedleDetectionTools::computeQuantile(unsigned char *data, unsigned int d
       q--;
       nThresholded += hist[q];
     }
+  delete[] hist;
 }
 
 void usNeedleDetectionTools::computeQuantile(short *data, unsigned int dataSize,
@@ -152,7 +155,7 @@ void usNeedleDetectionTools::computeQuantile(short *data, unsigned int dataSize,
 					     unsigned int &nThresholded)
 {
   unsigned int *hist = new unsigned int[511];
-  for (unsigned int i=0; i<512; i++)
+  for (unsigned int i=0; i<511; i++)
       hist[i] = 0;
   for (unsigned int i=0; i<dataSize; i++)
     hist[data[i]]++;
@@ -163,6 +166,7 @@ void usNeedleDetectionTools::computeQuantile(short *data, unsigned int dataSize,
       q--;
       nThresholded += hist[q];
     }
+  delete[] hist;
 }
 
 void usNeedleDetectionTools::computeQuantile(const unsigned int *data, unsigned int dataSize,
@@ -185,6 +189,7 @@ void usNeedleDetectionTools::computeQuantile(const unsigned int *data, unsigned 
       q--;
       nThresholded += hist[q];
     }
+  delete[] hist;
 }
 
 #if defined USNEEDLEDETECTION_HAVE_VTK
@@ -463,6 +468,7 @@ unsigned int usNeedleDetectionTools::findTip(vtkDataArray *data, unsigned int da
     {
       std::cerr << "Error in findTip: threshU should be greater than or equal to threshL."
 		<< std::endl;
+      delete[] keep;
       return 0;
     }
   keep[0] = 1;
@@ -479,6 +485,7 @@ unsigned int usNeedleDetectionTools::findTip(vtkDataArray *data, unsigned int da
 	  stop = idx;
 	} 
   std::cerr << "Tip index: " << stop << std::endl;
+  delete[] keep;
   return stop;
 }
 

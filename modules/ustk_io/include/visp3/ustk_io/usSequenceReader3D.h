@@ -344,7 +344,6 @@ void usSequenceReader3D<usImagePreScan3D<unsigned char> >::getVolume(usImagePreS
 
     //READING DATA
     preScanImage.resize(m_volHeader.w, m_volHeader.h, m_volHeader.fpv);
-    int n = 0;
     unsigned char voxel;
     for (int k = 0; k < m_volHeader.fpv; k++) {
       for (int j = 0; j < m_volHeader.w; j++) {
