@@ -166,6 +166,20 @@ int main(int argc, const char *argv[])
 #else
   std::string base = "/home/mpouliqu/Documents/usData/needle/Needle-experiments/Online/Volumes/vol%d-frame%d.png";
 #endif
+
+  //reading 10th volume with getVolume method, and writing the 1st frame to check it
+  reader.getVolume(image,10);
+  firstFrame.resize(image.getBModeSampleNumber(), image.getScanLineNumber());
+  for (unsigned int i = 0; i < image.getBModeSampleNumber(); i++) {
+    for (unsigned int j = 0; j < image.getScanLineNumber(); j++) {
+      firstFrame(i, j, image(j, i, 0));
+    }
+  }
+  sprintf(buffer, base.c_str(), 10, 0);
+  vpImageIo::write(firstFrame, buffer);
+
+  //Reading all the sequence with the  reader
+  /*
   while(!reader.end()) {
     reader.acquire(image);
     firstFrame.resize(image.getBModeSampleNumber(), image.getScanLineNumber());
@@ -178,6 +192,6 @@ int main(int argc, const char *argv[])
       sprintf(buffer, base.c_str(), reader.getImageNumber(), k);
       vpImageIo::write(firstFrame, buffer);
     }
-  }
+  }*/
   return 0;
 }
