@@ -188,6 +188,7 @@ int main(int argc, const char *argv[])
                 << "ERROR:" << std::endl;
       std::cerr << "  Cannot create " << dirname << std::endl;
       std::cerr << "  Check your -o " << opath << " option " << std::endl;
+      delete[] opath;
       exit(-1);
     }
   }
