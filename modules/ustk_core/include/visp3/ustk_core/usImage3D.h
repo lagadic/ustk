@@ -45,6 +45,7 @@
 #include <vector>
 #include <algorithm>
 
+#include <visp3/core/vpImage.h>
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpException.h>
 
@@ -123,12 +124,18 @@ public:
   */
   unsigned int getSize() const { return m_size; }
 
-
   /**
   * Initialize the data container with the specified value.
   * @param value The data
   */
   void initData(Type value);
+
+  /**
+  * Insert at a given index to update the volume while grabbing successive 2D frames.
+  * @param frame The 2D frame to insert.
+  * @param index Position to insert the frame in the volume.
+  */
+  void insertFrame(vpImage<Type> frame, int index);
 
   /**
   * Assignment operator.
@@ -311,8 +318,8 @@ usImage3D<Type>::usImage3D() : m_dimX(0), m_dimY(0), m_dimZ(0),
 
 template<class Type>
 usImage3D<Type>::usImage3D(unsigned int dimX, unsigned int dimY, unsigned int dimZ)
-: m_dimX(dimX), m_dimY(dimY), m_dimZ(dimZ), m_size(dimX * dimY * dimZ),
-  bitmap(NULL), planesIndex(NULL)
+  : m_dimX(dimX), m_dimY(dimY), m_dimZ(dimZ), m_size(dimX * dimY * dimZ),
+    bitmap(NULL), planesIndex(NULL)
 {
   init(dimX, dimY, dimZ);
   initData(0);
@@ -377,6 +384,8 @@ bool usImage3D<Type>::operator==(const usImage3D<Type> &other)
         return false;
     }
   }
+  else
+    return false;
   return true;
 }
 
@@ -417,6 +426,28 @@ template<class Type>
 void usImage3D<Type>::resize(unsigned int dimx,unsigned int dimy,unsigned int dimz)
 {
   init(dimx,dimy,dimz);
+}
+
+template<class Type>
+void usImage3D<Type>::insertFrame(vpImage<Type> frame, int index)
+{
+  //Dimentions checks
+  if(index > m_dimZ)
+    throw(vpException(vpException::badValue,"usImage3D::insertFrame : frame index out of volume"));
+
+  if(frame.getHeight() != m_dimY || frame.getWidth() != m_dimX)
+    throw(vpException(vpException::badValue,"usImage3D::insertFrame : frame size don't match volume size"));
+
+  //offset to access the frame in the volume
+  int offset = index * m_dimY * m_dimX;
+  Type* frameBeginning = bitmap + offset;
+
+  //copy
+  for(int i=0; i<m_dimY; i++) {
+    for(int j=0; j<m_dimY; j++) {
+      frameBeginning[i*m_dimY + j] = frame[j][i];
+    }
+  }
 }
 
 #endif //US_IMAGE_3D_H
