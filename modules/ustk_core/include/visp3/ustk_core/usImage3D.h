@@ -131,7 +131,7 @@ public:
   void initData(Type value);
 
   /**
-  * Insert at a given index to update the volume while grabbing successive 2D frames.
+  * Insert a frame at a given index to update the volume while grabbing successive 2D frames.
   * @param frame The 2D frame to insert.
   * @param index Position to insert the frame in the volume.
   */
@@ -443,7 +443,7 @@ void usImage3D<Type>::insertFrame(vpImage<Type> frame, int index)
   Type* frameBeginning = bitmap + offset;
 
   //copy
-  for(int i=0; i<m_dimY; i++) {
+  for(int i=0; i<m_dimX; i++) {
     for(int j=0; j<m_dimY; j++) {
       frameBeginning[i*m_dimY + j] = frame[j][i];
     }

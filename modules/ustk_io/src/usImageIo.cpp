@@ -922,12 +922,14 @@ void usImageIo::read(usImagePostScan2D<unsigned char> &postScanImage,const std::
 */
 void usImageIo::write(const usImagePostScan3D<unsigned char> &postScanImage, const std::string &headerFileName)
 {
+  std::cout << "writing postScan3D" << std::endl;
   //checking header type
   usImageIo::usHeaderFormatType headerFormat = getHeaderFormat(headerFileName);
   if (headerFormat == FORMAT_XML) {
     write(postScanImage, headerFileName, std::string(".png"));
   }
   else if (headerFormat == FORMAT_MHD) {
+  std::cout << "writing mhd" << std::endl;
     write(postScanImage, headerFileName, std::string(".raw"));
   }
 }
