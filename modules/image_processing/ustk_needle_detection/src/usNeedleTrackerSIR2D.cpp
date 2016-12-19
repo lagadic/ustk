@@ -238,7 +238,7 @@ void usNeedleTrackerSIR2D::run(vpImage<unsigned char>& I, double v)
 
   if ((m_needleModel->getLength()) > m_lengthThreshold && (m_nPoints != m_nPointsCurrent)) {
     std::cout << "Changing polynomial order from " << m_nPointsCurrent
-        << " to " << (m_nPointsCurrent++) << std::endl;
+        << " to " << (m_nPointsCurrent+1) << std::endl;
     usPolynomialCurve2D *newModel =
       new usPolynomialCurve2D(m_needleModel->changePolynomialOrder(m_nPointsCurrent));
     delete m_needleModel;
