@@ -131,13 +131,6 @@ public:
   void initData(Type value);
 
   /**
-  * Insert at a given index to update the volume while grabbing successive 2D frames.
-  * @param frame The 2D frame to insert.
-  * @param index Position to insert the frame in the volume.
-  */
-  void insertFrame(vpImage<Type> frame, int index);
-
-  /**
   * Assignment operator.
   * @param other other 3D-image to copy
   */
@@ -426,28 +419,6 @@ template<class Type>
 void usImage3D<Type>::resize(unsigned int dimx,unsigned int dimy,unsigned int dimz)
 {
   init(dimx,dimy,dimz);
-}
-
-template<class Type>
-void usImage3D<Type>::insertFrame(vpImage<Type> frame, int index)
-{
-  //Dimentions checks
-  if(index > m_dimZ)
-    throw(vpException(vpException::badValue,"usImage3D::insertFrame : frame index out of volume"));
-
-  if(frame.getHeight() != m_dimY || frame.getWidth() != m_dimX)
-    throw(vpException(vpException::badValue,"usImage3D::insertFrame : frame size don't match volume size"));
-
-  //offset to access the frame in the volume
-  int offset = index * m_dimY * m_dimX;
-  Type* frameBeginning = bitmap + offset;
-
-  //copy
-  for(int i=0; i<m_dimY; i++) {
-    for(int j=0; j<m_dimY; j++) {
-      frameBeginning[i*m_dimY + j] = frame[j][i];
-    }
-  }
 }
 
 #endif //US_IMAGE_3D_H

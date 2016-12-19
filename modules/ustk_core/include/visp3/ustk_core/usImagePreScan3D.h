@@ -147,6 +147,8 @@ public:
 
   unsigned int getBModeSampleNumber() const;
 
+  void insertFrame(vpImage<Type> frame, int index);
+
   //assignement
   usImagePreScan3D<Type>& operator=(const usImagePreScan3D<Type> &other);
   //comparison
@@ -308,4 +310,30 @@ void usImagePreScan3D<Type>::resize(unsigned int dimX, unsigned int dimY, unsign
   usTransducerSettings::setScanLineNumber(dimX);
 }
 
+/**
+ * Insert at a given index to update the volume while grabbing successive 2D frames.
+ * @param frame The 2D frame to insert.
+ * @param index Position to insert the frame in the volume.
+ */
+template<class Type>
+void usImagePreScan3D<Type>::insertFrame(vpImage<Type> frame, int index)
+{
+  //Dimentions checks
+  if(index > this->getDimZ())
+    throw(vpException(vpException::badValue,"usImage3D::insertFrame : frame index out of volume"));
+
+  if(frame.getHeight() != this->getDimY() || frame.getWidth() != this->getDimX())
+    throw(vpException(vpException::badValue,"usImage3D::insertFrame : frame size don't match volume size"));
+
+  //offset to access the frame in the volume
+  int offset = index * this->getDimY() * this->getDimX();
+  Type* frameBeginning = this->getData() + offset;
+
+  //copy
+  for(int i=0; i<this->getDimX(); i++) {
+    for(int j=0; j<this->getDimY(); j++) {
+      frameBeginning[i*this->getDimY() + j] = frame[j][i];
+    }
+  }
+}
 #endif // US_IMAGE_PRESCAN_3D_H
