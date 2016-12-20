@@ -6,7 +6,7 @@ int main(int argc, const char *argv[])
 {
   usImagePreScan2D<unsigned char> frame;
   usImagePreScan3D<unsigned char> prescanImage;
-  prescanImage.resize(128,480,31);
+  prescanImage.resize(128,480,9);
   usImagePostScan3D<unsigned char> postscanImage;
 
   std::cout << "volume size : " << prescanImage.getSize();
@@ -27,7 +27,7 @@ int main(int argc, const char *argv[])
   //scan-conversion
   usScanConverter3D converter;
   std::cout << "init converter" << std::endl;
-  converter.init(128,480,31);
+  converter.init(128,480,9);
   std::cout << "setting volume in converter" << std::endl;
   converter.setVolume(prescanImage);
   std::cout << "converting" << std::endl;

@@ -29,8 +29,10 @@ protected:
         double _W[8];
     };
 
-    std::vector<VoxelWeightAndIndex> _lookupTable1;
-    std::vector<VoxelWeightAndIndex> _lookupTable2;
+    VoxelWeightAndIndex* _lookupTable1;
+    unsigned int lut1Size;
+    VoxelWeightAndIndex* _lookupTable2;
+    unsigned int lut2Size;
 
     usImagePreScan3D<unsigned char> _VpreScan;
     usImagePostScan3D<unsigned char> _VpostScan;
