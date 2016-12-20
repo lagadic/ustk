@@ -145,7 +145,7 @@ public:
 
   unsigned int getRFSampleNumber() const ;
 
-  void insertFrame(vpImage<Type> frame, int index);
+  void insertFrame(vpImage<Type> frame, unsigned int index);
 
   usImageRF3D<Type>& operator=(const usImageRF3D<Type> &other);
   bool operator==(const usImageRF3D<Type> &other);
@@ -321,7 +321,7 @@ void usImageRF3D<Type>::resize(unsigned int dimX, unsigned int dimY, unsigned in
  * @param index Position to insert the frame in the volume.
  */
 template<class Type>
-void usImageRF3D<Type>::insertFrame(vpImage<Type> frame, int index)
+void usImageRF3D<Type>::insertFrame(vpImage<Type> frame, unsigned int index)
 {
   //Dimentions checks
   if(index > this->getDimZ())
@@ -335,9 +335,9 @@ void usImageRF3D<Type>::insertFrame(vpImage<Type> frame, int index)
   Type* frameBeginning = this->getData() + offset;
 
   //copy
-  for(int i=0; i<this->getDimX(); i++) {
-    for(int j=0; j<this->getDimY(); j++) {
-      frameBeginning[i*this->getDimY() + j] = frame[j][i];
+  for(unsigned int i=0; i<this->getDimX(); i++) {
+    for(unsigned int j=0; j<this->getDimY(); j++) {
+      frameBeginning[i + this->getDimX() * j] = frame[j][i];
     }
   }
 }

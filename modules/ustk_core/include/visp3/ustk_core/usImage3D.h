@@ -420,5 +420,4 @@ void usImage3D<Type>::resize(unsigned int dimx,unsigned int dimy,unsigned int di
 {
   init(dimx,dimy,dimz);
 }
-
 #endif //US_IMAGE_3D_H
