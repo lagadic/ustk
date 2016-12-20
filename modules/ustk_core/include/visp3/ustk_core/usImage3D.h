@@ -445,7 +445,7 @@ void usImage3D<Type>::insertFrame(vpImage<Type> frame, int index)
   //copy
   for(int i=0; i<m_dimX; i++) {
     for(int j=0; j<m_dimY; j++) {
-      frameBeginning[i*m_dimY + j] = frame[j][i];
+      frameBeginning[i + m_dimX * j] = frame[j][i];
     }
   }
 }

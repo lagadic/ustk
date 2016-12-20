@@ -17,13 +17,8 @@ usScanConverter3D::usScanConverter3D(int X, int Y, int Z, int down) :
 
 void usScanConverter3D::init(int X, int Y, int Z, int down)
 {
-  std::cout << "X : " << X << std::endl;
-  std::cout << "Y : " << Y << std::endl;
-  std::cout << "Z : " << Z << std::endl;
-
   _VpreScan.resize(X,Y,Z),
       _resolution = down*DEFAULT_BSAMPLE_DISTANCE;
-  double xmin;
   double xmax;
   double ymin;
   double ymax;
@@ -39,33 +34,17 @@ void usScanConverter3D::init(int X, int Y, int Z, int down)
   unsigned int nbX = ceil(2*xmax/_resolution);
   unsigned int nbY = ceil((ymax-ymin)/_resolution);
   unsigned int nbZ = ceil(2*zmax/_resolution);
+
   unsigned int nbXY = nbX*nbY;
   unsigned int XY = X*Y;
 
-
-  std::cout << "nbX : " << nbX << std::endl;
-  std::cout << "nbY : " << nbY << std::endl;
-  std::cout << "nbZ : " << nbZ << std::endl;
-
-  std::cout << "xmax : " << xmax << std::endl;
-  std::cout << "xmin : " << xmin << std::endl;
-  std::cout << "ymax : " << ymax << std::endl;
-  std::cout << "zmax : " << zmax << std::endl;
-
   _VpostScan.resize(nbX,nbY,nbZ);
-
-
-  std::cout << "resized postScan : " << nbX*nbY*nbZ << std::endl;
-
-  std::cout << "lut size (bits): " << nbX*nbY*nbZ*sizeof(VoxelWeightAndIndex) << std::endl;
-
 
   lut1Size = nbX*nbY*nbZ;
   lut2Size = nbX*nbY*nbZ;
+
   _lookupTable1 = (VoxelWeightAndIndex*)malloc(nbX*nbY*nbZ*sizeof(VoxelWeightAndIndex));
-  std::cout << "allocated lut1" << std::endl;
   _lookupTable2 = (VoxelWeightAndIndex*)malloc(nbX*nbY*nbZ*sizeof(VoxelWeightAndIndex));
-  std::cout << "allocated lut2" << std::endl;
 
   VoxelWeightAndIndex m;
 
@@ -89,12 +68,10 @@ void usScanConverter3D::init(int X, int Y, int Z, int down)
         double jj = floor(j);
         double kk = floor(k);
 
-        //std::cout << "Index x:" << x << ", y:" << y << ", z:" << z<< std::endl;
         if(ii>=0 && jj>=0 && kk>=0 && ii+1<X && jj+1<Y && kk+1<Z)
         {
-          m._outputIndex = x + nbX*y + nbXY*z;// ???? not changed x-y
+          m._outputIndex = x + nbX*y + nbXY*z;
 
-          // ???
           double u = i - ii;
           double v = j -jj;
           double w = k - kk;
@@ -102,7 +79,6 @@ void usScanConverter3D::init(int X, int Y, int Z, int down)
           double v1 = 1-v;
           double w1 = 1-w;
 
-          // ???
           m._W[0] = u1 * v1 * w1;
           m._W[1] = u  * v1 * w1;
           m._W[2] = u1 * v  * w1;
@@ -112,7 +88,6 @@ void usScanConverter3D::init(int X, int Y, int Z, int down)
           m._W[6] = u1 * v  * w;
           m._W[7] = u  * v  * w;
 
-          // ???
           m._inputIndex[0] = ii   + X* jj    + XY* kk;
           m._inputIndex[1] = ii+1 + X* jj    + XY* kk;
           m._inputIndex[2] = ii   + X*(jj+1) + XY* kk;
@@ -136,9 +111,8 @@ void usScanConverter3D::init(int X, int Y, int Z, int down)
         {
           VoxelWeightAndIndex m;
 
-          m._outputIndex = x + nbX*y + nbXY*z;// ???? not changed x-y
+          m._outputIndex = x + nbX*y + nbXY*z;
 
-          // ???
           double u = i - ii;
           double v = j -jj;
           double w = k - kk;
@@ -146,7 +120,6 @@ void usScanConverter3D::init(int X, int Y, int Z, int down)
           double v1 = 1-v;
           double w1 = 1-w;
 
-          // ???
           m._W[0] = u1 * v1 * w1;
           m._W[1] = u  * v1 * w1;
           m._W[2] = u1 * v  * w1;
@@ -156,7 +129,6 @@ void usScanConverter3D::init(int X, int Y, int Z, int down)
           m._W[6] = u1 * v  * w;
           m._W[7] = u  * v  * w;
 
-          // ???
           m._inputIndex[0] = ii   + X* jj    + XY* kk;
           m._inputIndex[1] = ii+1 + X* jj    + XY* kk;
           m._inputIndex[2] = ii   + X*(jj+1) + XY* kk;
@@ -206,7 +178,6 @@ void usScanConverter3D::convert()
     for(int i=lut1Size-1 ; i>=0 ; i--)
     {
       double v = 0;
-      // ???
       for(int j=0 ; j<8 ; j++) v += _lookupTable1[i]._W[j] * dataPre[_lookupTable1[i]._inputIndex[j]];
       dataPost[_lookupTable1[i]._outputIndex] = v;
     }
@@ -216,68 +187,23 @@ void usScanConverter3D::convert()
     for(int i=lut2Size-1 ; i>=0 ; i--)
     {
       double v = 0;
-      // ???
       for(int j=0 ; j<8 ; j++) v += _lookupTable2[i]._W[j] * dataPre[_lookupTable2[i]._inputIndex[j]];
       dataPost[_lookupTable2[i]._outputIndex] = v;
     }
   }
 }
-/* ORIGINAL
-void usScanConverter3D::convertPreScanCoordToPostScanCoord(double i, double j, double k, double *x, double *y, double *z, bool sweepInZdirection)
-{
-
-    // i : samples ->  NScanLines
-    // j : scanLines -> samples
-    // k : Ok
-
-    // x : samples ->  NScanLines
-    // y : scanLines -> samples
-    // z : Ok
-
-    const double Nframe = _VpreScan.getDimZ();
-    const double Nline = _VpreScan.getDimY();//
-
-    const double offsetPhi = 0.5*DEFAULT_RAD_PER_LINE*(Nline-1); // demi-arc phi
-    const double offsetTheta = 0.5*DEFAULT_RAD_PER_FRAME*Nframe; // demi-arc theta
-
-    const double r = DEFAULT_PROBE_RADIUS + i * DEFAULT_BSAMPLE_DISTANCE;
-    const double phi = j * DEFAULT_RAD_PER_LINE - offsetPhi;
-    const double theta = (sweepInZdirection?1:-1) * (DEFAULT_RAD_PER_FRAME * Nframe * (j + Nline*k) / (Nframe*Nline-1) - offsetTheta);
-
-    const double cPhi = cos(phi);
-
-    if(x) *x = (r * cPhi - DEFAULT_CENTER_OFFSET) * cos(theta);
-    if(y) *y = r * sin(phi);
-    if(z) *z = (r * cPhi - DEFAULT_CENTER_OFFSET) * sin(theta);
-}*/
 
 void usScanConverter3D::convertPreScanCoordToPostScanCoord(double i, double j, double k, double *x, double *y, double *z, bool sweepInZdirection)
 {
-
-  // i : samples ->  NScanLines
-  // j : scanLines -> samples
-  // k : Ok
-
-  // x : samples ->  NScanLines
-  // y : scanLines -> samples
-  // z : Ok
-
   const double Nframe = _VpreScan.getFrameNumber();
-  std::cout << "Nframe : "  << Nframe << std::endl;
   const double Nline = _VpreScan.getScanLineNumber();
-  std::cout << "Nline : "  << Nline << std::endl;
 
-  const double offsetPhi = 0.5*DEFAULT_RAD_PER_LINE*(Nline-1); // demi-arc phi
-  std::cout << "offsetPhi (rad) : "  << offsetPhi << std::endl;
-  const double offsetTheta = 0.5*DEFAULT_RAD_PER_FRAME*Nframe; // demi-arc theta
-  std::cout << "offsetTheta (rad) : "  << offsetTheta << std::endl;
+  const double offsetPhi = 0.5*DEFAULT_RAD_PER_LINE*(Nline-1);
+  const double offsetTheta = 0.5*DEFAULT_RAD_PER_FRAME*Nframe;
 
   const double r = DEFAULT_PROBE_RADIUS + j * DEFAULT_BSAMPLE_DISTANCE;
-  std::cout << "r : "  << r << std::endl;
   const double phi = i * DEFAULT_RAD_PER_LINE - offsetPhi;
-  std::cout << "phi (rad) : "  << phi << std::endl;
   const double theta = (sweepInZdirection?1:-1) * (DEFAULT_RAD_PER_FRAME * Nframe * (i + Nline*k) / (Nframe*Nline-1) - offsetTheta);
-  std::cout << "theta (rad) : "  << theta << std::endl;
 
   const double cPhi = cos(phi);
 
@@ -285,21 +211,6 @@ void usScanConverter3D::convertPreScanCoordToPostScanCoord(double i, double j, d
   if(y) *y = (r * cPhi - DEFAULT_CENTER_OFFSET) * cos(theta);
   if(z) *z = (r * cPhi - DEFAULT_CENTER_OFFSET) * sin(theta);
 }
-/* ORIGINAL
-void usScanConverter3D::convertPostScanCoordToPreScanCoord(double x, double y, double z, double *i, double *j, double *k, bool sweepInZdirection)
-{
-    const double Nframe = _VpreScan.getDimZ();
-    const double Nline = _VpreScan.getDimY();
-    const double rProbe = DEFAULT_CENTER_OFFSET + sqrt(x*x+z*z);
-    const double r = sqrt(rProbe*rProbe + y*y);
-    const double phi = atan(y/rProbe);
-    const double theta = atan(z/x);
-
-    if(i) *i = (r - DEFAULT_PROBE_RADIUS) / DEFAULT_BSAMPLE_DISTANCE;
-    double jtmp = phi / DEFAULT_RAD_PER_LINE + 0.5*(Nline-1);
-    if(j) *j = jtmp;
-    if(k) *k = (Nframe*Nline-1) * (0.5/Nline + (sweepInZdirection?1:-1) * theta / (DEFAULT_RAD_PER_FRAME * Nframe*Nline)) - jtmp/Nline;
-}*/
 
 void usScanConverter3D::convertPostScanCoordToPreScanCoord(double x, double y, double z, double *i, double *j, double *k, bool sweepInZdirection)
 {
