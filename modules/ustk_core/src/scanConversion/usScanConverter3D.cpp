@@ -1,6 +1,9 @@
 #include<visp3/ustk_core/usScanConverter3D.h>
 
 
+/**
+ * Default constructor.
+ */
 usScanConverter3D::usScanConverter3D() :
   _VpreScan(),
   _VpostScan(),
@@ -9,12 +12,26 @@ usScanConverter3D::usScanConverter3D() :
 {
 }
 
+/**
+ * Initialisation constructor.
+* @param X pre-scan image size along X axis (scanline number).
+* @param Y pre-scan image size along Y axis (Bmode sample number).
+* @param Z pre-scan image size along Z axis (frame number).
+* @param down Downsampling factor (sample number divided by this number).
+ */
 usScanConverter3D::usScanConverter3D(int X, int Y, int Z, int down) :
   usScanConverter3D()
 {
   this->init(X,Y,Z,down);
 }
 
+/**
+ * Initialisation method.
+* @param X pre-scan image size along X axis (scanline number).
+* @param Y pre-scan image size along Y axis (Bmode sample number).
+* @param Z pre-scan image size along Z axis (frame number).
+* @param down Downsampling factor (sample number divided by this number).
+ */
 void usScanConverter3D::init(int X, int Y, int Z, int down)
 {
   _VpreScan.resize(X,Y,Z),
@@ -146,27 +163,45 @@ void usScanConverter3D::init(int X, int Y, int Z, int down)
   }
 }
 
+/**
+ * Destructor.
+ */
 usScanConverter3D::~usScanConverter3D()
 {
 
 }
 
+/**
+ * Set pre-scan volume.
+* @param V pre-scan image to convert into post-scan.
+ */
 void usScanConverter3D::setVolume(const usImagePreScan3D<unsigned char> &V)
 {
   if(V.getDimX()!=_VpreScan.getDimX() || V.getDimY()!=_VpreScan.getDimY() || V.getDimZ()!=_VpreScan.getDimZ()) throw vpException(vpException::dimensionError, "usScanConverter3D::setVolume: volume dimensions does not correspond to initial dimensions");
   _VpreScan = V;
 }
 
+/**
+ * Get post-scan volume.
+* @param V post-scan image converted.
+ */
 void usScanConverter3D::getVolume(usImagePostScan3D<unsigned char> &V)
 {
   V = _VpostScan;
 }
 
+/**
+ * Get post-scan volume.
+* @param V post-scan image converted.
+ */
 usImagePostScan3D<unsigned char> usScanConverter3D::getVolume()
 {
   return _VpostScan;
 }
 
+/**
+ * Conversion method : compute the scan-conversion 3D.
+ */
 void usScanConverter3D::convert()
 {
   _VpostScan.initData(0);
@@ -193,6 +228,17 @@ void usScanConverter3D::convert()
   }
 }
 
+/**
+ * Converts the pre-scan coordinates into post-scan coordinates of the corresponding voxel.
+* @param i Position in pre-scan image : scanline coordinate.
+* @param j Position in pre-scan image : sample coordinate.
+* @param k Position in pre-scan image : frame coordinate.
+* @param [out] x Position in the post-scan image along x axis.
+* @param [out] y Position in the post-scan image along y axis.
+* @param [out] z Position in the post-scan image along z axis.
+* @param sweepInZdirection Motor direction.
+* @todo check sweepInZdirection parameter
+ */
 void usScanConverter3D::convertPreScanCoordToPostScanCoord(double i, double j, double k, double *x, double *y, double *z, bool sweepInZdirection)
 {
   const double Nframe = _VpreScan.getFrameNumber();
@@ -212,6 +258,17 @@ void usScanConverter3D::convertPreScanCoordToPostScanCoord(double i, double j, d
   if(z) *z = (r * cPhi - DEFAULT_CENTER_OFFSET) * sin(theta);
 }
 
+/**
+ * Converts the pre-scan coordinates into post-scan coordinates of the corresponding voxel.
+* @param x Position in the post-scan image along x axis.
+* @param y Position in the post-scan image along y axis.
+* @param z Position in the post-scan image along z axis.
+* @param [out] i Position in pre-scan image : scanline coordinate.
+* @param [out] j Position in pre-scan image : sample coordinate.
+* @param [out] k Position in pre-scan image : frame coordinate.
+* @param sweepInZdirection Motor direction.
+* @todo check sweepInZdirection parameter
+ */
 void usScanConverter3D::convertPostScanCoordToPreScanCoord(double x, double y, double z, double *i, double *j, double *k, bool sweepInZdirection)
 {
   const double Nframe = _VpreScan.getFrameNumber();
