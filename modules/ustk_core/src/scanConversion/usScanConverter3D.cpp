@@ -41,6 +41,10 @@ void usScanConverter3D::init(const usImagePreScan3D<unsigned char> &V, int down)
   int Y = V.getDimY();
   int Z = V.getDimZ();
 
+  std::cout << "X :" << X << std::endl;
+  std::cout << "Y :" << Y << std::endl;
+  std::cout << "Z :" << Z << std::endl;
+
   double xmax;
   double ymin;
   double ymax;
@@ -53,9 +57,18 @@ void usScanConverter3D::init(const usImagePreScan3D<unsigned char> &V, int down)
   usScanConverter3D::convertPreScanCoordToPostScanCoord((double)X, (double)Y, Z/2.0, &xmax, NULL, NULL);
   usScanConverter3D::convertPreScanCoordToPostScanCoord(X/2.0, (double)Y, Z, NULL, NULL, &zmax);
 
+  std::cout << "xmax :" << xmax << std::endl;
+  std::cout << "ymin :" << ymin << std::endl;
+  std::cout << "ymax :" << ymax << std::endl;
+  std::cout << "zmax :" << zmax << std::endl;
+
   unsigned int nbX = ceil(2*xmax/_resolution);
   unsigned int nbY = ceil((ymax-ymin)/_resolution);
   unsigned int nbZ = ceil(2*zmax/_resolution);
+
+  std::cout << "nbX :" << nbX << std::endl;
+  std::cout << "nbY :" << nbY << std::endl;
+  std::cout << "nbY :" << nbY << std::endl;
 
   unsigned int nbXY = nbX*nbY;
   unsigned int XY = X*Y;
@@ -256,12 +269,20 @@ void usScanConverter3D::convertPreScanCoordToPostScanCoord(double i, double j, d
   const double phi = i * _VpreScan.getScanLinePitch() - offsetPhi;
   const double theta = (sweepInZdirection?1:-1) * (_VpreScan.getFramePitch() * Nframe * (i + Nline*k) / (Nframe*Nline-1) - offsetTheta);
 
+  std::cout << "r :" << r << std::endl;
+  std::cout << "phi :" << phi << std::endl;
+  std::cout << "theta :" << theta << std::endl;
+
   const double cPhi = cos(phi);
 
   if(x) *x = r * sin(phi);
   double radiusOffset = _VpreScan.getTransducerRadius() - _VpreScan.getMotorRadius();
   if(y) *y = (r * cPhi - radiusOffset) * cos(theta);
   if(z) *z = (r * cPhi - radiusOffset) * sin(theta);
+
+  std::cout << "x :" << *x << std::endl;
+  std::cout << "y :" << *y << std::endl;
+  std::cout << "z :" << *z << std::endl;
 }
 
 /**
@@ -285,10 +306,19 @@ void usScanConverter3D::convertPostScanCoordToPreScanCoord(double x, double y, d
   const double phi = atan(x/rProbe);
   const double theta = atan(z/y);
 
+
+  std::cout << "r :" << r << std::endl;
+  std::cout << "phi :" << phi << std::endl;
+  std::cout << "theta :" << theta << std::endl;
+
   double itmp = phi / _VpreScan.getScanLinePitch() + 0.5*(Nline-1);
   if(j) *i = itmp;
   if(j) *j = (r - _VpreScan.getTransducerRadius()) / _VpreScan.getAxialResolution();
   if(k) *k = (Nframe*Nline-1) * (0.5/Nline + (sweepInZdirection?1:-1) * theta / (_VpreScan.getFramePitch() * Nframe*Nline)) - itmp/Nline;
+
+  std::cout << "i :" << *i << std::endl;
+  std::cout << "j :" << *j << std::endl;
+  std::cout << "k :" << *k << std::endl;
 }
 
 
