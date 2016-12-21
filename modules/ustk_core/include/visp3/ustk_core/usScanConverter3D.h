@@ -96,7 +96,7 @@ public:
     usScanConverter3D(int x, int y, int z, int down = 1);
     virtual ~usScanConverter3D();
 
-    void init(int X, int Y, int Z, int down = 1);
+    void init(const usImagePreScan3D<unsigned char> &V, int down = 1);
 
     double getResolution() const;
 

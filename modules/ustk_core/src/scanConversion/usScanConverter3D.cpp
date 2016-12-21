@@ -22,7 +22,7 @@ usScanConverter3D::usScanConverter3D() :
 usScanConverter3D::usScanConverter3D(int X, int Y, int Z, int down) :
   usScanConverter3D()
 {
-  this->init(X,Y,Z,down);
+  //this->init(X,Y,Z,down);
 }
 
 /**
@@ -32,10 +32,15 @@ usScanConverter3D::usScanConverter3D(int X, int Y, int Z, int down) :
 * @param Z pre-scan image size along Z axis (frame number).
 * @param down Downsampling factor (sample number divided by this number).
  */
-void usScanConverter3D::init(int X, int Y, int Z, int down)
+void usScanConverter3D::init(const usImagePreScan3D<unsigned char> &V, int down)
 {
-  _VpreScan.resize(X,Y,Z),
-      _resolution = down*DEFAULT_BSAMPLE_DISTANCE;
+  _VpreScan = V;
+  _resolution = down * V.getAxialResolution();
+
+  int X = V.getDimX();
+  int Y = V.getDimY();
+  int Z = V.getDimZ();
+
   double xmax;
   double ymin;
   double ymax;
@@ -244,18 +249,19 @@ void usScanConverter3D::convertPreScanCoordToPostScanCoord(double i, double j, d
   const double Nframe = _VpreScan.getFrameNumber();
   const double Nline = _VpreScan.getScanLineNumber();
 
-  const double offsetPhi = 0.5*DEFAULT_RAD_PER_LINE*(Nline-1);
-  const double offsetTheta = 0.5*DEFAULT_RAD_PER_FRAME*Nframe;
+  const double offsetPhi = 0.5*_VpreScan.getScanLinePitch()*(Nline-1);
+  const double offsetTheta = 0.5*_VpreScan.getFramePitch()*Nframe;
 
-  const double r = DEFAULT_PROBE_RADIUS + j * DEFAULT_BSAMPLE_DISTANCE;
-  const double phi = i * DEFAULT_RAD_PER_LINE - offsetPhi;
-  const double theta = (sweepInZdirection?1:-1) * (DEFAULT_RAD_PER_FRAME * Nframe * (i + Nline*k) / (Nframe*Nline-1) - offsetTheta);
+  const double r = _VpreScan.getTransducerRadius() + j * _VpreScan.getAxialResolution();
+  const double phi = i * _VpreScan.getScanLinePitch() - offsetPhi;
+  const double theta = (sweepInZdirection?1:-1) * (_VpreScan.getFramePitch() * Nframe * (i + Nline*k) / (Nframe*Nline-1) - offsetTheta);
 
   const double cPhi = cos(phi);
 
   if(x) *x = r * sin(phi);
-  if(y) *y = (r * cPhi - DEFAULT_CENTER_OFFSET) * cos(theta);
-  if(z) *z = (r * cPhi - DEFAULT_CENTER_OFFSET) * sin(theta);
+  double radiusOffset = _VpreScan.getTransducerRadius() - _VpreScan.getMotorRadius();
+  if(y) *y = (r * cPhi - radiusOffset) * cos(theta);
+  if(z) *z = (r * cPhi - radiusOffset) * sin(theta);
 }
 
 /**
@@ -273,15 +279,16 @@ void usScanConverter3D::convertPostScanCoordToPreScanCoord(double x, double y, d
 {
   const double Nframe = _VpreScan.getFrameNumber();
   const double Nline = _VpreScan.getScanLineNumber();
-  const double rProbe = DEFAULT_CENTER_OFFSET + sqrt(y*y+z*z);
+  double radiusOffset = _VpreScan.getTransducerRadius() - _VpreScan.getMotorRadius();
+  const double rProbe = radiusOffset + sqrt(y*y+z*z);
   const double r = sqrt(rProbe*rProbe + x*x);
   const double phi = atan(x/rProbe);
   const double theta = atan(z/y);
 
-  double itmp = phi / DEFAULT_RAD_PER_LINE + 0.5*(Nline-1);
+  double itmp = phi / _VpreScan.getScanLinePitch() + 0.5*(Nline-1);
   if(j) *i = itmp;
-  if(j) *j = (r - DEFAULT_PROBE_RADIUS) / DEFAULT_BSAMPLE_DISTANCE;
-  if(k) *k = (Nframe*Nline-1) * (0.5/Nline + (sweepInZdirection?1:-1) * theta / (DEFAULT_RAD_PER_FRAME * Nframe*Nline)) - itmp/Nline;
+  if(j) *j = (r - _VpreScan.getTransducerRadius()) / _VpreScan.getAxialResolution();
+  if(k) *k = (Nframe*Nline-1) * (0.5/Nline + (sweepInZdirection?1:-1) * theta / (_VpreScan.getFramePitch() * Nframe*Nline)) - itmp/Nline;
 }
 
 

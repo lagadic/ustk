@@ -9,7 +9,9 @@ int main()
   prescanImage.resize(128,480,9);
   usImagePostScan3D<unsigned char> postscanImage;
 
-  std::cout << "volume size : " << prescanImage.getSize();
+  //get ultrasonix settings for scan conversion
+  us::getUltrasonix4DC7MotorSettings(prescanImage);
+  us::getUltrasonix4DC7PreScanSettings(prescanImage);
 
   //reading the set of images
   usSequenceReader<usImagePreScan2D<unsigned char> >reader;
@@ -24,12 +26,12 @@ int main()
     i++;
   }
   std::cout << "end reading" << std::endl;
+
+  std::cout << "prescanImage : " << prescanImage << std::endl;
   //scan-conversion
   usScanConverter3D converter;
   std::cout << "init converter" << std::endl;
-  converter.init(128,480,9);
-  std::cout << "setting volume in converter" << std::endl;
-  converter.setVolume(prescanImage);
+  converter.init(prescanImage);
   std::cout << "converting" << std::endl;
   converter.convert();
   std::cout << "writing post-scan" << std::endl;
