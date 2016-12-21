@@ -173,7 +173,7 @@ void usScanConverter3D::getVolume(usImagePostScan3D<unsigned char> &V)
 
 /**
  * Get post-scan volume.
-* @param V post-scan image converted.
+ * @return Post-scan image converted.
  */
 usImagePostScan3D<unsigned char> usScanConverter3D::getVolume()
 {
@@ -266,5 +266,3 @@ void usScanConverter3D::convertPostScanCoordToPreScanCoord(double x, double y, d
   if(j) *j = (r - _VpreScan.getTransducerRadius()) / _VpreScan.getAxialResolution();
   if(k) *k = (Nframe*Nline-1) * (0.5/Nline + (sweepInZdirection?1:-1) * theta / (_VpreScan.getFramePitch() * Nframe*Nline)) - itmp/Nline;
 }
-
-

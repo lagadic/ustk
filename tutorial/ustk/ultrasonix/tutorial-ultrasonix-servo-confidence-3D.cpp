@@ -1,4 +1,4 @@
-//! \example tutorial-ultrasonix-confidence-2D.cpp
+//! \example tutorial-ultrasonix-servo-confidence-3D.cpp
 //! [capture-multi-threaded declaration]
 #include <iostream>
 
