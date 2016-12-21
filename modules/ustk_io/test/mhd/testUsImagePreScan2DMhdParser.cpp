@@ -135,7 +135,6 @@ int main(int argc, const char** argv)
 {
   try {
     std::string opt_opath;
-    std::string ipath;
     std::string opath;
     std::string filename;
     std::string username;

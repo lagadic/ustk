@@ -83,7 +83,6 @@ void usDenseTracker2D::init(const vpImage<unsigned char> &I, const usRectangle &
  */
 void usDenseTracker2D::update(const vpImage<unsigned char> &I)
 {
-  double dx, dy, da;
   double gain = 0.6;
 
   unsigned int max_iter = 40;
@@ -111,9 +110,9 @@ void usDenseTracker2D::update(const vpImage<unsigned char> &I)
 
     //extract deplacements to apply to follow the region
     double alpha = m_target.getOrientation();
-    dx = v[0] * cos(alpha) + v[1] * sin(alpha);
-    dy = v[1] * cos(alpha) - v[0] * sin(alpha);
-    da = - v[2];
+    double dx = v[0] * cos(alpha) + v[1] * sin(alpha);
+    double dy = v[1] * cos(alpha) - v[0] * sin(alpha);
+    double da = - v[2];
 
     //update target with old values and deplacements previously comuted
     m_target.setCenter(m_target.getCx() + gain * dx, m_target.getCy() + gain * dy);

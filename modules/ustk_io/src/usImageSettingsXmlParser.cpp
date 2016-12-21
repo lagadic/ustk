@@ -125,7 +125,6 @@ usImageSettingsXmlParser::readMainClass (xmlDocPtr doc, xmlNodePtr node)
           else
             throw(vpException(vpException::fatalError, std::string("unknown image type in xml file")));
           break;
-          value = "";
         case CODE_XML_AXIAL_RESOLUTION:
           if (this->m_image_type == IMAGE_TYPE_PRESCAN || this->m_image_type == IMAGE_TYPE_RF) {
             this->m_axialResolution =  xmlReadDoubleChild(doc, dataNode);

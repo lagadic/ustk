@@ -69,9 +69,8 @@ usMetaHeaderParser::~usMetaHeaderParser()
 */
 void  usMetaHeaderParser::readMHDHeader(const std::string &fileName)
 {
-  std::string pathPrefix;
-  std::string tmp;
-
+  //std::string pathPrefix;
+  //std::string tmp;
   //splitPathPrefixAndFileName(std::string(fileName), pathPrefix, tmp);
 
   std::string keyword, keyval;
@@ -469,7 +468,7 @@ void usMetaHeaderParser::parse()
 
     MHDfile.close();
   }
-  catch (std::exception e) {
+  catch (std::exception &e) {
     std::cout << "Error opening file : " << e.what() << std::endl;
   }
 }

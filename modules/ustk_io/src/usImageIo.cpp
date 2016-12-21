@@ -256,7 +256,7 @@ void usImageIo::write(const usImageRF3D<unsigned char> &imageRf3D, const std::st
   if (headerFormat == FORMAT_XML) {
     std::string imageFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(imageExtension2D);
 #ifdef VISP_HAVE_XML2
-    //case of a set of successive 2D frames
+    //case of a set of successive 2D frames, to do
 #else
     throw(vpException(vpException::fatalError, "Requires xml2"));
 #endif
@@ -861,14 +861,8 @@ void usImageIo::read(usImagePostScan2D<unsigned char> &postScanImage,const std::
   if (headerFormat == FORMAT_XML) {
 #ifdef VISP_HAVE_XML2
     usImageSettingsXmlParser xmlSettings;
-    try {
-      xmlSettings.parse(headerFileName);
-    }
-    catch (std::exception &e) {
-      std::cout << "Error parsing postScan settings file" << std::endl;
-      std::cout << "file name : " << headerFileName << std::endl;
-      throw e;
-    }
+    xmlSettings.parse(headerFileName);
+
     std::string fullImageFileName = vpIoTools::getParent(headerFileName) + vpIoTools::path("/") + xmlSettings.getImageFileName();
     vpImageIo::read(postScanImage, fullImageFileName);
 

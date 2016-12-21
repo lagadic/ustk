@@ -147,7 +147,6 @@ bool getOptions(int argc, const char **argv, std::string &opath, const std::stri
 int main(int argc, const char *argv[])
 {
   std::string opt_opath;
-  std::string ipath;
   std::string username;
 
   char *logFilename = new char [FILENAME_MAX];
