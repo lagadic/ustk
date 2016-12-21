@@ -6,7 +6,7 @@ int main()
 {
   usImagePreScan2D<unsigned char> frame;
   usImagePreScan3D<unsigned char> prescanImage;
-  prescanImage.resize(128,480,9);
+  prescanImage.resize(128,480,16);
   usImagePostScan3D<unsigned char> postscanImage;
 
   //get ultrasonix settings for scan conversion
@@ -19,22 +19,19 @@ int main()
   std::cout << "reading images..." << std::endl;
   int i = 0;
   while(!reader.end()) {
-    std::cout << "reading image : " << i << std::endl;
     reader.acquire(frame);
-    std::cout << "inserting image : " << i << std::endl;
     prescanImage.insertFrame(frame,i);
     i++;
   }
   std::cout << "end reading" << std::endl;
 
-  std::cout << "prescanImage : " << prescanImage << std::endl;
   //scan-conversion
   usScanConverter3D converter;
-  std::cout << "init converter" << std::endl;
+  std::cout << "init converter..." << std::endl;
   converter.init(prescanImage);
-  std::cout << "converting" << std::endl;
+  std::cout << "converting..." << std::endl;
   converter.convert();
-  std::cout << "writing post-scan" << std::endl;
+  std::cout << "writing post-scan..." << std::endl;
   converter.getVolume(postscanImage);
   std::string mhdFileName ="/home/mpouliqu/Documents/usData/prescan/3D/USpreScan_volume-0000/volume.mhd";
   usImageIo::write(postscanImage,mhdFileName);

@@ -49,7 +49,7 @@ void us::getUltrasonix4DC7PreScanSettings(usImagePreScanSettings &preScanSetting
 * @param [out] motorSettings Motor settings of the 4DC7 probe.
 */
 void us::getUltrasonix4DC7MotorSettings(usMotorSettings &motorSettings){
-  motorSettings.setFramePitch(0.010625);
-  motorSettings.setMotorRadius(0.0255342);
+  motorSettings.setFramePitch(0.0255342);
+  motorSettings.setMotorRadius(0.02725);
   motorSettings.setMotorType(usMotorSettings::TiltingMotor);
 }

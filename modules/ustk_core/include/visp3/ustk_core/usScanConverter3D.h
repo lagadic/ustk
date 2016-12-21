@@ -53,22 +53,11 @@
  * This class allows to convert 3D pre-scan ultrasound images to post-scan.
  * The converter should be initialized through init() and then applied through convert().
  *
- * @warning probe and motor settings are set for ultrasonix 3D probe only for the moment (in the protected attributes).
- * @todo use usTransducer and usMotor settings instead of ultrasonix default values.
+ * @warning Converting with this class uses a lot of RAM when computing the LUTs in init().
  */
 class VISP_EXPORT usScanConverter3D
 {
 protected:
-    double DEFAULT_DEG_PER_LINE = 0.608767657441;
-    double DEFAULT_PROBE_RADIUS = 0.04;
-    double DEFAULT_MOTOR_RADIUS = 0.02725;
-    double DEFAULT_CENTER_OFFSET = DEFAULT_PROBE_RADIUS - DEFAULT_MOTOR_RADIUS;
-    double SPEED_OF_SOUND = 1540;
-    double DEFAULT_BSAMPLE_DISTANCE = 0.000308;
-    double DEFAULT_DEG_PER_FRAME = 1.463;
-    double DEFAULT_RAD_PER_FRAME = M_PI / 180.0 * DEFAULT_DEG_PER_FRAME;
-    double DEFAULT_RAD_PER_LINE = M_PI / 180.0 * DEFAULT_DEG_PER_LINE;
-
     class VoxelWeightAndIndex
     {
         friend class usScanConverter3D;
@@ -77,10 +66,8 @@ protected:
         double _W[8];
     };
 
-    VoxelWeightAndIndex* _lookupTable1;
-    unsigned int lut1Size;
-    VoxelWeightAndIndex* _lookupTable2;
-    unsigned int lut2Size;
+    std::vector<VoxelWeightAndIndex> _lookupTable1;
+    std::vector<VoxelWeightAndIndex> _lookupTable2;
 
     usImagePreScan3D<unsigned char> _VpreScan;
     usImagePostScan3D<unsigned char> _VpostScan;
@@ -93,14 +80,12 @@ public:
     //! Constructors, destructors
 
     usScanConverter3D();
-    usScanConverter3D(int x, int y, int z, int down = 1);
+    usScanConverter3D(const usImagePreScan3D<unsigned char> &V, int down);
     virtual ~usScanConverter3D();
 
     void init(const usImagePreScan3D<unsigned char> &V, int down = 1);
 
     double getResolution() const;
-
-    void setVolume(const usImagePreScan3D<unsigned char> &V);
 
     void getVolume(usImagePostScan3D<unsigned char> &V);
     usImagePostScan3D<unsigned char> getVolume();
