@@ -40,7 +40,7 @@ void us::getUltrasonix4DC7PreScanSettings(usImagePreScanSettings &preScanSetting
    preScanSettings.setTransducerConvexity(true);
    preScanSettings.setTransducerRadius(0.04);
    preScanSettings.setAxialResolution(0.000308);
-   preScanSettings.setScanLinePitch(1.463);
+   preScanSettings.setScanLinePitch(0.010625);
 }
 
 /**
@@ -50,6 +50,6 @@ void us::getUltrasonix4DC7PreScanSettings(usImagePreScanSettings &preScanSetting
 */
 void us::getUltrasonix4DC7MotorSettings(usMotorSettings &motorSettings){
   motorSettings.setFramePitch(0.010625);
-  motorSettings.setMotorRadius(0.02725);
+  motorSettings.setMotorRadius(0.0255342);
   motorSettings.setMotorType(usMotorSettings::TiltingMotor);
 }

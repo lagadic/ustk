@@ -34,6 +34,16 @@ usScanConverter3D::usScanConverter3D(int X, int Y, int Z, int down) :
  */
 void usScanConverter3D::init(const usImagePreScan3D<unsigned char> &V, int down)
 {
+  std::cout << "DEFAULT_PROBE_RADIUS : " << DEFAULT_PROBE_RADIUS << std::endl;
+  std::cout << "DEFAULT_MOTOR_RADIUS : " << DEFAULT_MOTOR_RADIUS << std::endl;
+  std::cout << "DEFAULT_BSAMPLE_DISTANCE : " << DEFAULT_BSAMPLE_DISTANCE << std::endl;
+  std::cout << "DEFAULT_RAD_PER_FRAME : " << DEFAULT_RAD_PER_FRAME << std::endl;
+  std::cout << "DEFAULT_RAD_PER_LINE : " << DEFAULT_RAD_PER_LINE << std::endl;
+
+  std::cout <<   _VpreScan << std::endl;
+  _VpreScan.setAxialResolution(DEFAULT_BSAMPLE_DISTANCE);
+  std::cout <<  "axial res : " << _VpreScan.getAxialResolution() << std::endl;
+
   _VpreScan = V;
   _resolution = down * V.getAxialResolution();
 
@@ -261,9 +271,15 @@ void usScanConverter3D::convertPreScanCoordToPostScanCoord(double i, double j, d
 {
   const double Nframe = _VpreScan.getFrameNumber();
   const double Nline = _VpreScan.getScanLineNumber();
+  std::cout << "Nframe :" << Nframe << std::endl;
+  std::cout << "Nline :" << Nline << std::endl;
+
 
   const double offsetPhi = 0.5*_VpreScan.getScanLinePitch()*(Nline-1);
   const double offsetTheta = 0.5*_VpreScan.getFramePitch()*Nframe;
+
+  std::cout << "offsetPhi :" << offsetPhi << std::endl;
+  std::cout << "offsetTheta :" << offsetTheta << std::endl;
 
   const double r = _VpreScan.getTransducerRadius() + j * _VpreScan.getAxialResolution();
   const double phi = i * _VpreScan.getScanLinePitch() - offsetPhi;

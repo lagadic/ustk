@@ -111,8 +111,8 @@ bool usImagePreScanSettings::operator==(const usImagePreScanSettings& other)
 template<class T> VISP_EXPORT
 std::ostream& operator<<(std::ostream& out, const usImagePreScanSettings &other)
 {
-  return out << static_cast<const usTransducerSettings &>(other) << std::endl
-             << "Axial resolution : " << other.getAxialResolution() << std::endl;
+  return out << "Axial resolution : " << other.getAxialResolution() << std::endl
+             << static_cast<const usTransducerSettings &>(other) <<std::endl;
 }
 
 /**
