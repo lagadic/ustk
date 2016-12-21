@@ -33,6 +33,9 @@ usScanConverter3D::usScanConverter3D(const usImagePreScan3D<unsigned char> &V, i
  */
 void usScanConverter3D::init(const usImagePreScan3D<unsigned char> &V, int down)
 {
+  if(!V.isTransducerConvex() || !(V.getMotorType() == usMotorSettings::TiltingMotor))
+    throw(vpException(vpException::functionNotImplementedError, "3D scan-conversion available only for convex transducer and tilting motor"));
+
   _VpreScan = V;
   _resolution = down * V.getAxialResolution();
 

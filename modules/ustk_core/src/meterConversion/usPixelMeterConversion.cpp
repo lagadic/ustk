@@ -39,11 +39,11 @@
 
 /**
  * @brief Conversion for 2D post-scan images.
- * @param image
- * @param u
- * @param v
- * @param x
- * @param y
+ * @param [in] image 2D Post-scan image with settings well filled.
+ * @param [in] x Position in meters along x axis to convert.
+ * @param [in] y Position in meters along y axis to convert.
+ * @param [out] u Converted position in pixels along x axis.
+ * @param [out] v Converted position in pixels along y axis.
  *
  * @warning Make sure you completed the following transducer settings and the image settings before the conversion.
  * Settings needed in case of linear transducer :
@@ -76,13 +76,13 @@ void usPixelMeterConversion::convert(const usImagePostScan2D<unsigned char> &ima
 
 /**
  * @brief Conversion for 3D post-scan images.
- * @param image
- * @param u
- * @param v
- * @param w
- * @param x
- * @param y
- * @param z
+ * @param [in] image 2D Post-scan image with voxels spacings, transducer settings and motor settings well filled.
+ * @param [in] x Position in meters along x axis to convert.
+ * @param [in] y Position in meters along y axis to convert.
+ * @param [in] z Position in meters along z axis to convert.
+ * @param [out] u Converted position in pixels along x axis.
+ * @param [out] v Converted position in pixels along y axis.
+ * @param [out] w Converted position in pixels along z axis.
  *
  * @warning Make sure you completed the following transducer settings, the motor settings, and the image settings before the conversion.
  * Settings needed in case of linear transducer and linear motor :

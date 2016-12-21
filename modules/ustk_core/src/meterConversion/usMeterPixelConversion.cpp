@@ -31,11 +31,20 @@
 
 /**
 * @file usMeterPixelConversion.cpp
-* @brief Conversion between a position in meters in the space and the equivalent pixel position in the ultrasound image.
+* @brief Conversion from a position in meters in the space to the equivalent pixel position in the ultrasound image.
 */
 
 #include <visp3/ustk_core/usMeterPixelConversion.h>
 
+/**
+* Conversion method for 2D ultrasound images.
+*
+* @param [in] image 2D Post-scan image with transducer settings well filled.
+* @param [in] x Position in meters along x axis to convert.
+* @param [in] y Position in meters along y axis to convert.
+* @param [out] u Converted position in pixels along x axis.
+* @param [out] v Converted position in pixels along y axis.
+*/
 void usMeterPixelConversion::convert(const usImagePostScan2D<unsigned char> &image,
                                      const double &x, const double &y,
                                      double &u,  double &v)
@@ -53,6 +62,17 @@ void usMeterPixelConversion::convert(const usImagePostScan2D<unsigned char> &ima
   }
 }
 
+/**
+* Conversion method for 3D ultrasound images.
+*
+* @param [in] image 2D Post-scan image with voxels spacings, transducer settings and motor settings well filled.
+* @param [in] x Position in meters along x axis to convert.
+* @param [in] y Position in meters along y axis to convert.
+* @param [in] z Position in meters along z axis to convert.
+* @param [out] u Converted position in pixels along x axis.
+* @param [out] v Converted position in pixels along y axis.
+* @param [out] w Converted position in pixels along z axis.
+*/
 void usMeterPixelConversion::convert(const usImagePostScan3D<unsigned char> &image,
                                      const double &x, const double &y, const double &z,
                                      double &u,  double &v, double &w)

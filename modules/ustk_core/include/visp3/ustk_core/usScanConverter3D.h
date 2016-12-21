@@ -52,6 +52,7 @@
  *
  * This class allows to convert 3D pre-scan ultrasound images to post-scan.
  * The converter should be initialized through init() and then applied through convert().
+ * This class accepts converts only images acquired by a convex transducer and a tilting motor for now.
  *
  * @warning Converting with this class uses a lot of RAM when computing the LUTs in init().
  */
@@ -76,8 +77,6 @@ protected:
     bool _SweepInZdirection;
 
 public:
-
-    //! Constructors, destructors
 
     usScanConverter3D();
     usScanConverter3D(const usImagePreScan3D<unsigned char> &V, int down);
