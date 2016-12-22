@@ -54,15 +54,16 @@
 class VISP_EXPORT usDenseTracker2D
 {
 public:
-  void init(const vpImage<unsigned char> &I, const usRectangle &R);
 
-  void update(const vpImage<unsigned char> &I);
+  vpImage<unsigned char> &getRegion();
 
   usRectangle getTarget() const;
 
   vpImage<unsigned char> &getTemplate();
 
-  vpImage<unsigned char> &getRegion();
+  void init(const vpImage<unsigned char> &I, const usRectangle &R);
+
+  void update(const vpImage<unsigned char> &I);
 
 private:
   vpColVector s_desired;

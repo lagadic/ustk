@@ -202,7 +202,7 @@ void usPolynomialCurve2D::setModel(const vpMatrix &model) {
   m_renderingPoints = m_model * coords;
 }
 
-vpMatrix *usPolynomialCurve2D::getModel() { return &m_model; }
+const vpMatrix *usPolynomialCurve2D::getModel() const { return &m_model; }
 
 vpColVector usPolynomialCurve2D::getPoint(double t) const {
   vpColVector T(m_order);
@@ -238,7 +238,7 @@ double usPolynomialCurve2D::getLength() const {
   return length;
 };
 
-double usPolynomialCurve2D::curveDistance(usPolynomialCurve2D &n1, usPolynomialCurve2D &n2) {
+double usPolynomialCurve2D::curveDistance(const usPolynomialCurve2D &n1, const usPolynomialCurve2D &n2) {
   unsigned int order1 = n1.getOrder();
   unsigned int order2 = n2.getOrder();
   vpMatrix coords1(order1, 50);

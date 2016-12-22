@@ -69,7 +69,7 @@ class VISP_EXPORT usPolynomialCurve2D {
   /**
    * Compute the distance between two needles.
    */
-  static double curveDistance(usPolynomialCurve2D &n1, usPolynomialCurve2D &n2);
+  static double curveDistance(const usPolynomialCurve2D &n1, const usPolynomialCurve2D &n2);
 
   /**
    * Get the control points.
@@ -89,7 +89,7 @@ class VISP_EXPORT usPolynomialCurve2D {
   /**
    * Get the needle model.
    */
-  vpMatrix *getModel();
+  const vpMatrix *getModel() const;
 
   /**
    * Get the number of lines used to display the needle.
