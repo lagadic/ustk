@@ -14,34 +14,36 @@ usScanConverter3D::usScanConverter3D() :
 
 /**
  * Initialisation constructor.
-* @param V Pre-scan image to convert, with settings filled (transducer and motor).
-* @param down Downsampling factor (sample number divided by this number).
+ * @param V Pre-scan image to convert, with settings filled (transducer and motor).
+ * @param [out] postScanImage Reference of post-scan image to write.
+ * @param down Downsampling factor (sample number divided by this number).
  */
-usScanConverter3D::usScanConverter3D(const usImagePreScan3D<unsigned char> &V, int down) :
+usScanConverter3D::usScanConverter3D(const usImagePreScan3D<unsigned char> &preScanImage, int down) :
   _VpreScan(),
   _VpostScan(),
   _resolution(),
   _SweepInZdirection(true)
 {
-  this->init(V,down);
+  this->init(preScanImage, down);
 }
 
 /**
  * Initialisation method.
-* @param V Pre-scan image to convert, with settings filled (transducer and motor).
-* @param down Down-sampling factor.
+ * @param preScanImage Pre-scan image to convert, with settings filled (transducer and motor).
+ * @param [out] postScanImage Reference of post-scan image to write.
+ * @param down Down-sampling factor.
  */
-void usScanConverter3D::init(const usImagePreScan3D<unsigned char> &V, int down)
+void usScanConverter3D::init(const usImagePreScan3D<unsigned char> &preScanImage,int down)
 {
-  if(!V.isTransducerConvex() || !(V.getMotorType() == usMotorSettings::TiltingMotor))
+  if(!preScanImage.isTransducerConvex() || !(preScanImage.getMotorType() == usMotorSettings::TiltingMotor))
     throw(vpException(vpException::functionNotImplementedError, "3D scan-conversion available only for convex transducer and tilting motor"));
 
-  _VpreScan = V;
-  _resolution = down * V.getAxialResolution();
+  _VpreScan = preScanImage;
+  _resolution = down * _VpreScan.getAxialResolution();
 
-  int X = V.getDimX();
-  int Y = V.getDimY();
-  int Z = V.getDimZ();
+  int X = _VpreScan.getDimX();
+  int Y = _VpreScan.getDimY();
+  int Z = _VpreScan.getDimZ();
 
   double xmax;
   double ymin;
@@ -53,22 +55,20 @@ void usScanConverter3D::init(const usImagePreScan3D<unsigned char> &V, int down)
   usScanConverter3D::convertPreScanCoordToPostScanCoord((double)X, (double)Y, Z/2.0, &xmax, NULL, NULL);
   usScanConverter3D::convertPreScanCoordToPostScanCoord(X/2.0, (double)Y, Z, NULL, NULL, &zmax);
 
-  unsigned int nbX = ceil(2*xmax/_resolution);
-  unsigned int nbY = ceil((ymax-ymin)/_resolution);
-  unsigned int nbZ = ceil(2*zmax/_resolution);
+  m_nbX = ceil(2*xmax/_resolution);
+  m_nbY = ceil((ymax-ymin)/_resolution);
+  m_nbZ = ceil(2*zmax/_resolution);
 
-  unsigned int nbXY = nbX*nbY;
+  unsigned int nbXY = m_nbX*m_nbY;
   unsigned int XY = X*Y;
-
-  _VpostScan.resize(nbX,nbY,nbZ);
 
   VoxelWeightAndIndex m;
 
-  for(unsigned int x=0 ; x<nbX ; x++)
+  for(unsigned int x=0 ; x<m_nbX ; x++)
   {
-    for(unsigned int y=0 ; y<nbY ; y++)
+    for(unsigned int y=0 ; y<m_nbY ; y++)
     {
-      for(unsigned int z=0 ; z<nbZ ; z++)
+      for(unsigned int z=0 ; z<m_nbZ ; z++)
       {
         double xx = _resolution*x-xmax;
         double yy = ymin+_resolution*y;
@@ -83,7 +83,7 @@ void usScanConverter3D::init(const usImagePreScan3D<unsigned char> &V, int down)
 
         if(ii>=0 && jj>=0 && kk>=0 && ii+1<X && jj+1<Y && kk+1<Z)
         {
-          m._outputIndex = x + nbX*y + nbXY*z;
+          m._outputIndex = x + m_nbX*y + nbXY*z;
 
           double u = i - ii;
           double v = j -jj;
@@ -123,7 +123,7 @@ void usScanConverter3D::init(const usImagePreScan3D<unsigned char> &V, int down)
         {
           VoxelWeightAndIndex m;
 
-          m._outputIndex = x + nbX*y + nbXY*z;
+          m._outputIndex = x + m_nbX*y + nbXY*z;
 
           double u = i - ii;
           double v = j -jj;
@@ -167,7 +167,7 @@ usScanConverter3D::~usScanConverter3D()
 
 /**
  * Get post-scan volume.
-* @param V post-scan image converted.
+ * @param V post-scan image converted.
  */
 void usScanConverter3D::getVolume(usImagePostScan3D<unsigned char> &V)
 {
@@ -184,12 +184,12 @@ usImagePostScan3D<unsigned char> usScanConverter3D::getVolume()
 }
 
 /**
- * Conversion method : compute the scan-conversion 3D.
+ * Conversion method : compute the scan-conversion 3D and write the post-scan image settings.
  */
-void usScanConverter3D::convert()
+void usScanConverter3D::convert( usImagePostScan3D<unsigned char> &postScanImage)
 {
-  _VpostScan.initData(0);
-  unsigned char *dataPost = _VpostScan.getData();
+  postScanImage.resize(m_nbX,m_nbY,m_nbZ);
+  unsigned char *dataPost = postScanImage.getData();
   const unsigned char *dataPre = _VpreScan.getConstData();
 
   if(_SweepInZdirection)
@@ -210,18 +210,26 @@ void usScanConverter3D::convert()
       dataPost[_lookupTable2[i]._outputIndex] = v;
     }
   }
+
+  //writing post-scan image settings
+  postScanImage.setTransducerSettings(_VpreScan);
+  postScanImage.setMotorSettings(_VpreScan);
+  postScanImage.setElementSpacingX(_resolution);
+  postScanImage.setElementSpacingY(_resolution);
+  postScanImage.setElementSpacingZ(_resolution);
+  postScanImage.setScanLineDepth(_resolution * _VpreScan.getBModeSampleNumber());
 }
 
 /**
  * Converts the pre-scan coordinates into post-scan coordinates of the corresponding voxel.
-* @param i Position in pre-scan image : scanline coordinate.
-* @param j Position in pre-scan image : sample coordinate.
-* @param k Position in pre-scan image : frame coordinate.
-* @param [out] x Position in the post-scan image along x axis.
-* @param [out] y Position in the post-scan image along y axis.
-* @param [out] z Position in the post-scan image along z axis.
-* @param sweepInZdirection Motor direction.
-* @todo check sweepInZdirection parameter
+ * @param i Position in pre-scan image : scanline coordinate.
+ * @param j Position in pre-scan image : sample coordinate.
+ * @param k Position in pre-scan image : frame coordinate.
+ * @param [out] x Position in the post-scan image along x axis.
+ * @param [out] y Position in the post-scan image along y axis.
+ * @param [out] z Position in the post-scan image along z axis.
+ * @param sweepInZdirection Motor direction.
+ * @todo check sweepInZdirection parameter
  */
 void usScanConverter3D::convertPreScanCoordToPostScanCoord(double i, double j, double k, double *x, double *y, double *z, bool sweepInZdirection)
 {
@@ -245,14 +253,14 @@ void usScanConverter3D::convertPreScanCoordToPostScanCoord(double i, double j, d
 
 /**
  * Converts the pre-scan coordinates into post-scan coordinates of the corresponding voxel.
-* @param x Position in the post-scan image along x axis.
-* @param y Position in the post-scan image along y axis.
-* @param z Position in the post-scan image along z axis.
-* @param [out] i Position in pre-scan image : scanline coordinate.
-* @param [out] j Position in pre-scan image : sample coordinate.
-* @param [out] k Position in pre-scan image : frame coordinate.
-* @param sweepInZdirection Motor direction.
-* @todo check sweepInZdirection parameter
+ * @param x Position in the post-scan image along x axis.
+ * @param y Position in the post-scan image along y axis.
+ * @param z Position in the post-scan image along z axis.
+ * @param [out] i Position in pre-scan image : scanline coordinate.
+ * @param [out] j Position in pre-scan image : sample coordinate.
+ * @param [out] k Position in pre-scan image : frame coordinate.
+ * @param sweepInZdirection Motor direction.
+ * @todo check sweepInZdirection parameter
  */
 void usScanConverter3D::convertPostScanCoordToPreScanCoord(double x, double y, double z, double *i, double *j, double *k, bool sweepInZdirection)
 {

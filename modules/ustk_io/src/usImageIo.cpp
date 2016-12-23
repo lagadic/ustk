@@ -40,10 +40,10 @@
 #include <visp3/core/vpXmlParser.h>
 
 #include <visp3/ustk_io/usImageIo.h>
-#include <visp3/ustk_io/usImageSettingsXmlParser.h>
 #include <visp3/ustk_core/usMotorSettings.h>
 #include <visp3/ustk_core/usImagePreScanSettings.h>
 #include <visp3/ustk_io/usRawFileParser.h>
+#include <visp3/ustk_io/usSequenceReader.h>
 
 usImageIo::usHeaderFormatType
 usImageIo::getHeaderFormat(const std::string &headerFileName)
@@ -112,10 +112,10 @@ void usImageIo::write(const usImageRF2D<unsigned char> &imageRf2D, const std::st
       usImageSettingsXmlParser xmlSettings;
       xmlSettings.setImageType(usImageSettingsXmlParser::IMAGE_TYPE_RF);
       xmlSettings.setImageSettings(imageRf2D.getTransducerRadius(),
-        imageRf2D.getScanLinePitch(),
-        imageRf2D.isTransducerConvex(),
-        imageRf2D.getAxialResolution(),
-        usImageSettingsXmlParser::IMAGE_TYPE_RF);
+                                   imageRf2D.getScanLinePitch(),
+                                   imageRf2D.isTransducerConvex(),
+                                   imageRf2D.getAxialResolution(),
+                                   usImageSettingsXmlParser::IMAGE_TYPE_RF);
       //just writing the image file name without parents directories (header and image are in the same directory).
       imageFileName = vpIoTools::getName(imageFileName);
       xmlSettings.setImageFileName(imageFileName);
@@ -397,10 +397,10 @@ void usImageIo::write(const usImagePreScan2D<unsigned char> &preScanImage, const
       usImageSettingsXmlParser xmlSettings;
       xmlSettings.setImageType(usImageSettingsXmlParser::IMAGE_TYPE_PRESCAN);
       xmlSettings.setImageSettings(preScanImage.getTransducerRadius(),
-        preScanImage.getScanLinePitch(),
-        preScanImage.isTransducerConvex(),
-        preScanImage.getAxialResolution(),
-        usImageSettingsXmlParser::IMAGE_TYPE_PRESCAN);
+                                   preScanImage.getScanLinePitch(),
+                                   preScanImage.isTransducerConvex(),
+                                   preScanImage.getAxialResolution(),
+                                   usImageSettingsXmlParser::IMAGE_TYPE_PRESCAN);
       //just writing the image file name without parents directories (header and image are in the same directory).
       imageFileName = vpIoTools::getName(imageFileName);
       xmlSettings.setImageFileName(imageFileName);
@@ -542,8 +542,8 @@ void usImageIo::write(const usImagePreScan3D<unsigned char> &preScanImage, const
   if (headerFormat == FORMAT_XML) {
     std::string imageFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(imageExtension2D);
 #ifdef VISP_HAVE_XML2
-  //case of a set of successive 2D frames, not implemented
-  throw(vpException(vpException::notImplementedError, "Reading a 3D image as a set of 2D frames is not implemented"));
+    //case of a set of successive 2D frames, not implemented
+    throw(vpException(vpException::notImplementedError, "Reading a 3D image as a set of 2D frames is not implemented"));
 #else
     throw(vpException(vpException::fatalError, "Requires xml2"));
 #endif
@@ -598,8 +598,38 @@ void usImageIo::read(usImagePreScan3D<unsigned char> &preScanImage,const std::st
 {
   usImageIo::usHeaderFormatType headerFormat = getHeaderFormat(headerFileName);
   if (headerFormat == FORMAT_XML) {
+  //case of a set of sucessive 2D frames
 #ifdef VISP_HAVE_XML2
-    //case of a set of sucessive 2D frames
+    usImagePreScan2D<unsigned char> preScanFrame;
+    usSequenceReader<usImagePreScan2D<unsigned char> > sequenceReader;
+    sequenceReader.setSequenceFileName(headerFileName);
+
+    //read the first frame outside the loop to get the image settings contained in xml sequence file to resize 3D image
+    sequenceReader.open(preScanFrame);
+    if(sequenceReader.getFrameCount() == 0)
+      throw(vpException(vpException::fatalError, "Trying to open a 2D image, check your xml settings (frameNumber) !"));
+
+    preScanImage.resize(preScanFrame.getScanLineNumber(),
+                        preScanFrame.getBModeSampleNumber(),
+                        sequenceReader.getFrameCount()
+                        );
+
+    int frameIndex = 0;
+    preScanImage.insertFrame(preScanFrame,frameIndex);
+
+    while(!sequenceReader.end()) {
+      sequenceReader.acquire(preScanFrame);
+      preScanImage.insertFrame(preScanFrame,frameIndex);
+      frameIndex++;
+    }
+    //here we have filled all the volume
+
+    //we set the image settings
+    preScanImage.setImagePreScanSettings(preScanFrame);
+    usMotorSettings motorSettings = sequenceReader.getXmlParser().getMotorSettings();
+    motorSettings.setFrameNumber(sequenceReader.getFrameCount());
+    preScanImage.setMotorSettings(motorSettings);
+
 #else
     throw(vpException(vpException::fatalEtrror, "Requires xml2 library"));
 #endif //VISP_HAVE_XML2
@@ -636,7 +666,7 @@ void usImageIo::read(usImagePreScan3D<unsigned char> &preScanImage,const std::st
     preScanImage.setMotorSettings(motorSettings);
 
     //data parsing
-    usRawFileParser rawParser;    
+    usRawFileParser rawParser;
     std::string fullImageFileName = vpIoTools::getParent(headerFileName) + vpIoTools::path("/") + mhdParser.getRawFileName();
     rawParser.read(preScanImage, fullImageFileName);
   }
@@ -666,12 +696,12 @@ void usImageIo::read(usImagePreScan3D<unsigned char> &preScanImage,const std::st
     }
     // Print header info
     std::cout << std::endl << "Data header information: " << std::endl
-      << "   type = " << header.type << std::endl
-      << "   volumes = " << header.volumes << std::endl
-      << "   fpv = " << header.fpv << std::endl
-      << "   w = " << header.w << std::endl
-      << "   h = " << header.h << std::endl
-      << "   ss = " << header.ss << std::endl;
+              << "   type = " << header.type << std::endl
+              << "   volumes = " << header.volumes << std::endl
+              << "   fpv = " << header.fpv << std::endl
+              << "   w = " << header.w << std::endl
+              << "   h = " << header.h << std::endl
+              << "   ss = " << header.ss << std::endl;
 
     //CHECK IMAGE TYPE
     if (header.type != 0)
@@ -792,11 +822,11 @@ void usImageIo::write(const usImagePostScan2D<unsigned char> &postScanImage, con
       //writing xml file using xml parser
       usImageSettingsXmlParser xmlSettings;
       xmlSettings.setImageSettings(postScanImage.getTransducerRadius(),
-        postScanImage.getScanLinePitch(),
-        postScanImage.isTransducerConvex(),
-        postScanImage.getScanLineNumber(),
-        postScanImage.getWidthResolution(),
-        postScanImage.getHeightResolution());
+                                   postScanImage.getScanLinePitch(),
+                                   postScanImage.isTransducerConvex(),
+                                   postScanImage.getScanLineNumber(),
+                                   postScanImage.getWidthResolution(),
+                                   postScanImage.getHeightResolution());
 
       xmlSettings.setImageType(usImageSettingsXmlParser::IMAGE_TYPE_POSTSCAN);
       //just writing the image file name without parents directories (header and image are in the same directory).
@@ -923,7 +953,7 @@ void usImageIo::write(const usImagePostScan3D<unsigned char> &postScanImage, con
     write(postScanImage, headerFileName, std::string(".png"));
   }
   else if (headerFormat == FORMAT_MHD) {
-  std::cout << "writing mhd" << std::endl;
+    std::cout << "writing mhd" << std::endl;
     write(postScanImage, headerFileName, std::string(".raw"));
   }
 }
@@ -1030,7 +1060,7 @@ void usImageIo::read(usImagePostScan3D<unsigned char> &postScanImage, const std:
     postScanImage.setFramePitch(mhdHeader.framePitch);
     postScanImage.setFrameNumber(mhdHeader.frameNumber);
     postScanImage.setMotorType(mhdHeader.motorType);
-      
+
     //data parsing
     usRawFileParser rawParser;
     std::string fullImageFileName = vpIoTools::getParent(headerFileName) + vpIoTools::path("/") + mhdParser.getRawFileName();

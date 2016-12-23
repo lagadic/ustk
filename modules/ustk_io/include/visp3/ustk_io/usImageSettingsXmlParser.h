@@ -61,7 +61,7 @@ class VISP_EXPORT usImageSettingsXmlParser: public vpXmlParser
 {
 public:
   usImageSettingsXmlParser();
-  usImageSettingsXmlParser(usImageSettingsXmlParser& twinParser);
+  //usImageSettingsXmlParser(usImageSettingsXmlParser& twinParser);
   usImageSettingsXmlParser& operator =(const usImageSettingsXmlParser& twinparser);
   virtual ~usImageSettingsXmlParser();
 

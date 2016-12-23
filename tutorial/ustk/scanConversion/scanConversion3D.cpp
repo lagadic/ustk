@@ -10,7 +10,7 @@ int main()
   usImagePostScan3D<unsigned char> postscanImage;
 
   //get ultrasonix settings for scan conversion
-  us::getUltrasonix4DC7MotorSettings(prescanImage);
+  /*us::getUltrasonix4DC7MotorSettings(prescanImage);
   us::getUltrasonix4DC7PreScanSettings(prescanImage);
 
   //reading the set of images
@@ -22,7 +22,9 @@ int main()
     reader.acquire(frame);
     prescanImage.insertFrame(frame,i);
     i++;
-  }
+  }*/
+
+  usImageIo::read(prescanImage,"/home/mpouliqu/Documents/usData/prescan/3D/USpreScan_volume-0000/sequencepreScan2D.xml");
   std::cout << "end reading" << std::endl;
 
   //scan-conversion
@@ -30,9 +32,8 @@ int main()
   std::cout << "init converter..." << std::endl;
   converter.init(prescanImage);
   std::cout << "converting..." << std::endl;
-  converter.convert();
+  converter.convert(postscanImage);
   std::cout << "writing post-scan..." << std::endl;
-  converter.getVolume(postscanImage);
   std::string mhdFileName ="/home/mpouliqu/Documents/usData/prescan/3D/USpreScan_volume-0000/volume.mhd";
   usImageIo::write(postscanImage,mhdFileName);
 

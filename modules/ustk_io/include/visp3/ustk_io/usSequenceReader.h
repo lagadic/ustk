@@ -64,7 +64,6 @@ class usSequenceReader
 {
 private:
 
-  void open(ImageType &image);
 
   /** Ultrasound image settings saved for all the sequence reading*/
   ImageType m_frame;
@@ -94,6 +93,9 @@ private:
   /** Loop cycling*/
   bool m_enableLoopCycling;
   int loopIncrement; // -1 or +1 depending on witch side we acquire
+
+  /** Xml parser used*/
+  usImageSettingsXmlParser m_xmlParser;
 
 public:
 
@@ -141,9 +143,18 @@ public:
   //get image by its number in the sequence
   ImageType& getFrame(int index);
 
+  //total number of frames in the sequence
+  long getFrameCount();
+
   //attributes getters/setters
   double getFrameRate() const {return m_frameRate;}
   long getImageNumber() const {return m_frameCount;}
+
+  //get the xml parser : usefull to acess all the image settings contained in it
+  usImageSettingsXmlParser getXmlParser();
+
+
+  void open(ImageType &image);
 
   void setFirstFrameIndex(long firstIndex);
   void setLastFrameIndex(long lastIndex);
@@ -225,20 +236,19 @@ void usSequenceReader<usImageRF2D<unsigned char> >::open(usImageRF2D<unsigned ch
   if(!m_fileNameIsSet) {
     throw(vpException(vpException::badValue, "Sequence settings file name not set"));
   }
-  usImageSettingsXmlParser xmlParser;
-  xmlParser.parse(m_sequenceFileName);
+  m_xmlParser.parse(m_sequenceFileName);
 
-  setFirstFrameIndex(xmlParser.getSequenceStartNumber());
-  setLastFrameIndex(xmlParser.getSequenceStopNumber());
-  m_frameRate = xmlParser.getSequenceFrameRate();
-  m_genericImageFileName = xmlParser.getImageFileName();
+  setFirstFrameIndex(m_xmlParser.getSequenceStartNumber());
+  setLastFrameIndex(m_xmlParser.getSequenceStopNumber());
+  m_frameRate = m_xmlParser.getSequenceFrameRate();
+  m_genericImageFileName = m_xmlParser.getImageFileName();
 
   //saving the settings for all the rf sequence
-  m_frame.setTransducerRadius(xmlParser.getTransducerSettings().getTransducerRadius());
-  m_frame.setScanLinePitch(xmlParser.getTransducerSettings().getScanLinePitch());
-  m_frame.setScanLineNumber(xmlParser.getTransducerSettings().getScanLineNumber());
-  m_frame.setTransducerConvexity(xmlParser.getTransducerSettings().isTransducerConvex());
-  m_frame.setAxialResolution(xmlParser.getAxialResolution());
+  m_frame.setTransducerRadius(m_xmlParser.getTransducerSettings().getTransducerRadius());
+  m_frame.setScanLinePitch(m_xmlParser.getTransducerSettings().getScanLinePitch());
+  m_frame.setScanLineNumber(m_xmlParser.getTransducerSettings().getScanLineNumber());
+  m_frame.setTransducerConvexity(m_xmlParser.getTransducerSettings().isTransducerConvex());
+  m_frame.setAxialResolution(m_xmlParser.getAxialResolution());
 
   //Reading image
   char buffer[FILENAME_MAX];
@@ -262,20 +272,19 @@ void usSequenceReader<usImagePreScan2D<unsigned char> >::open(usImagePreScan2D<u
     throw(vpException(vpException::badValue, "Sequence settings file name not set"));
   }
 
-  usImageSettingsXmlParser xmlParser;
-  xmlParser.parse(m_sequenceFileName);
+  m_xmlParser.parse(m_sequenceFileName);
 
-  setFirstFrameIndex(xmlParser.getSequenceStartNumber());
-  setLastFrameIndex(xmlParser.getSequenceStopNumber());
-  m_frameRate = xmlParser.getSequenceFrameRate();
-  m_genericImageFileName = xmlParser.getImageFileName();
+  setFirstFrameIndex(m_xmlParser.getSequenceStartNumber());
+  setLastFrameIndex(m_xmlParser.getSequenceStopNumber());
+  m_frameRate = m_xmlParser.getSequenceFrameRate();
+  m_genericImageFileName = m_xmlParser.getImageFileName();
 
   //saving the settings for all the pre-scan sequence
-  m_frame.setTransducerRadius(xmlParser.getTransducerSettings().getTransducerRadius());
-  m_frame.setScanLinePitch(xmlParser.getTransducerSettings().getScanLinePitch());
-  m_frame.setScanLineNumber(xmlParser.getTransducerSettings().getScanLineNumber());
-  m_frame.setTransducerConvexity(xmlParser.getTransducerSettings().isTransducerConvex());
-  m_frame.setAxialResolution(xmlParser.getAxialResolution());
+  m_frame.setTransducerRadius(m_xmlParser.getTransducerSettings().getTransducerRadius());
+  m_frame.setScanLinePitch(m_xmlParser.getTransducerSettings().getScanLinePitch());
+  m_frame.setScanLineNumber(m_xmlParser.getTransducerSettings().getScanLineNumber());
+  m_frame.setTransducerConvexity(m_xmlParser.getTransducerSettings().isTransducerConvex());
+  m_frame.setAxialResolution(m_xmlParser.getAxialResolution());
 
   //Reading image
   char buffer[FILENAME_MAX];
@@ -286,7 +295,11 @@ void usSequenceReader<usImagePreScan2D<unsigned char> >::open(usImagePreScan2D<u
   }
   std::string imageFileName =  parentName + buffer;
   vpImageIo::read(image,imageFileName);
+
+  //workaround to prevent the resize by setImagePreScanSettings (having a scanline number at 0 if not precised in the xml)
+  int scanlineNumber = image.getWidth();
   image.setImagePreScanSettings(m_frame);
+  image.setScanLineNumber(scanlineNumber);
 
   m_frameCount = m_firstFrame + 1;
   is_open = true;
@@ -299,21 +312,20 @@ void usSequenceReader<usImagePostScan2D<unsigned char> >::open(usImagePostScan2D
     throw(vpException(vpException::badValue, "Sequence settings file name not set"));
   }
 
-  usImageSettingsXmlParser xmlParser;
-  xmlParser.parse(m_sequenceFileName);
+  m_xmlParser.parse(m_sequenceFileName);
 
-  setFirstFrameIndex(xmlParser.getSequenceStartNumber());
-  setLastFrameIndex(xmlParser.getSequenceStopNumber());
-  m_frameRate = xmlParser.getSequenceFrameRate();
-  m_genericImageFileName = xmlParser.getImageFileName();
+  setFirstFrameIndex(m_xmlParser.getSequenceStartNumber());
+  setLastFrameIndex(m_xmlParser.getSequenceStopNumber());
+  m_frameRate = m_xmlParser.getSequenceFrameRate();
+  m_genericImageFileName = m_xmlParser.getImageFileName();
 
   //saving the settings for all the post scan sequence
-  m_frame.setTransducerRadius(xmlParser.getTransducerSettings().getTransducerRadius());
-  m_frame.setScanLinePitch(xmlParser.getTransducerSettings().getScanLinePitch());
-  m_frame.setScanLineNumber(xmlParser.getTransducerSettings().getScanLineNumber());
-  m_frame.setTransducerConvexity(xmlParser.getTransducerSettings().isTransducerConvex());
-  m_frame.setWidthResolution(xmlParser.getWidthResolution());
-  m_frame.setHeightResolution(xmlParser.getHeightResolution());
+  m_frame.setTransducerRadius(m_xmlParser.getTransducerSettings().getTransducerRadius());
+  m_frame.setScanLinePitch(m_xmlParser.getTransducerSettings().getScanLinePitch());
+  m_frame.setScanLineNumber(m_xmlParser.getTransducerSettings().getScanLineNumber());
+  m_frame.setTransducerConvexity(m_xmlParser.getTransducerSettings().isTransducerConvex());
+  m_frame.setWidthResolution(m_xmlParser.getWidthResolution());
+  m_frame.setHeightResolution(m_xmlParser.getHeightResolution());
 
   //Reading image
   char buffer[FILENAME_MAX];
@@ -410,4 +422,27 @@ void usSequenceReader<ImageType>::setLoopCycling(bool activateLoopCycling)
   m_enableLoopCycling = activateLoopCycling;
 }
 
+/**
+* Get the total number of frames in the sequence.
+* @return Total number of frames in the sequence.
+*/
+template<class ImageType>
+long usSequenceReader<ImageType>::getFrameCount()
+{
+  if(is_open)
+    return m_lastFrame - m_firstFrame;
+  throw(vpException(vpException::fatalError, "Cannot compute the frame number of the sequence before opening it !"));
+}
+
+/**
+* Get the xml parser used to access all the image settings written in the xml file.
+* @return Xml parser used by the sequence reader.
+*/
+template<class ImageType>
+usImageSettingsXmlParser usSequenceReader<ImageType>::getXmlParser()
+{
+  if(is_open)
+    return m_xmlParser;
+  throw(vpException(vpException::fatalError, "Sequence not opened, xml parser is empty !"));
+}
 #endif //US_SEQUENCE_READER_H

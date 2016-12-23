@@ -47,6 +47,7 @@
 #include <visp3/ustk_core/usImagePostScan2D.h>
 #include <visp3/ustk_core/usImagePostScan3D.h>
 #include <visp3/ustk_io/usMetaHeaderParser.h>
+#include <visp3/ustk_io/usImageSettingsXmlParser.h>
 
 
 /**

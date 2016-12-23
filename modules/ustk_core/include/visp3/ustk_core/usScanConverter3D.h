@@ -76,13 +76,17 @@ protected:
     double _resolution;
     bool _SweepInZdirection;
 
+    int m_nbX;
+    int m_nbY;
+    int m_nbZ;
+
 public:
 
     usScanConverter3D();
-    usScanConverter3D(const usImagePreScan3D<unsigned char> &V, int down);
+    usScanConverter3D(const usImagePreScan3D<unsigned char> &preScanImage, int down);
     virtual ~usScanConverter3D();
 
-    void init(const usImagePreScan3D<unsigned char> &V, int down = 1);
+    void init(const usImagePreScan3D<unsigned char> &preScanImage, int down = 1);
 
     double getResolution() const;
 
@@ -93,7 +97,7 @@ public:
 
     void SweepInZdirection(bool flag) {_SweepInZdirection = flag;}
 
-    void convert();
+    void convert(usImagePostScan3D<unsigned char> &postScanImage);
 
     void convertPreScanCoordToPostScanCoord(double i, double j, double k, double *x=NULL, double *y=NULL, double *z=NULL, bool sweepInZdirection=true);
     void convertPostScanCoordToPreScanCoord(double x, double y, double z, double *i=NULL, double *j=NULL, double *k=NULL, bool sweepInZdirection=true);
