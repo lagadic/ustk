@@ -50,24 +50,16 @@ vpThread::Return captureFunction(vpThread::Args args)
   usImagePreScan3D<unsigned char> m_prescan_3D;
 
   //resizing images and saving image type in s_imageType
-  if(grabber.getImageType() == usGrabberUltrasonix::TYPE_RF) {
-    s_imageType = usGrabberUltrasonix::TYPE_RF;
-    std::cout << "Error : you must send pre-scan images for this example" << std::endl;
-  }
-  else if(grabber.getImageType() == usGrabberUltrasonix::TYPE_PRESCAN) {
-    s_imageType = usGrabberUltrasonix::TYPE_PRESCAN;
+  if(grabber.getImageType() == us::PRESCAN_3D) {
+    s_imageType = us::PRESCAN_3D;
     m_frame_prescan.resize(grabber.getCommunicationsInformations()->m_header.height,
                            grabber.getCommunicationsInformations()->m_header.width);
     m_prescan_3D.resize(grabber.getCommunicationsInformations()->m_header.width,
                         grabber.getCommunicationsInformations()->m_header.height,
                         grabber.getCommunicationsInformations()->m_header.framesPerVolume);
   }
-  else if(grabber.getImageType() == usGrabberUltrasonix::TYPE_POSTSCAN) {
-    s_imageType = usGrabberUltrasonix::TYPE_POSTSCAN;
-    std::cout << "Error : you must send pre-scan images for this example" << std::endl;
-  }
   else
-    throw(vpException(vpException::badValue,"unknown type of grabbed image"));
+    throw(vpException(vpException::badValue,"use pre-scan 3D images for this example : auto mode on propello"));
 
   s_mutex_imageType.unlock();
 
@@ -79,7 +71,7 @@ vpThread::Return captureFunction(vpThread::Args args)
 
   //init grabber
   usGrabberFrame<usImagePreScan2D<unsigned char> > grabberFramePreScan;
-  grabberFramePreScan.setCommunicationInformations(grabber.getCommunicationsInformations());
+  grabberFramePreScan.setCommunicationInformation(grabber.getCommunicationsInformations());
   grabberFramePreScan.setTransducerSettings(grabber.getTransducerSettings());
 
   m_prescan_3D.setMotorSettings(grabber.getMotorSettings());
@@ -89,7 +81,7 @@ vpThread::Return captureFunction(vpThread::Args args)
 
   while (! stop_capture_) {
     // Capture in progress
-    if(grabber.getImageType() == usGrabberUltrasonix::TYPE_PRESCAN) {
+    if(grabber.getImageType() == us::PRESCAN_3D) {
       grabberFramePreScan.grabFrame(&m_frame_prescan);
 
       //update frame increment if we reach last frame in a direction
@@ -122,7 +114,7 @@ vpThread::Return captureFunction(vpThread::Args args)
       else
         s_capture_state = capture_started;
 
-      if(grabber.getImageType() == usGrabberUltrasonix::TYPE_PRESCAN) {
+      if(grabber.getImageType() == us::PRESCAN_3D) {
         s_volume_prescan = m_prescan_3D;
         s_frameIndex = frameIndex;
         s_volumeIndex = volumeIndex;
@@ -149,8 +141,8 @@ vpThread::Return displayFunction(vpThread::Args args)
   usImagePreScan2D<unsigned char> preScanConfidence_;
   usImagePreScan3D<unsigned char> preScanConfidence3D_;
   usScanlineConfidence2D scanlineConfidence;
-  int frameIndex;
-  int volumeIndex;
+  int frameIndex = 0;
+  int volumeIndex = 0;
   bool frameAlreadyReadInPreviousLoop = false;
 
   vpColVector imageMoments(2);
@@ -195,7 +187,7 @@ vpThread::Return displayFunction(vpThread::Args args)
       // Create a copy of the captured frame
       {
         vpMutex::vpScopedLock lock(s_mutex_capture);
-        if(m_imageType == usGrabberUltrasonix::TYPE_PRESCAN) {
+        if(m_imageType == us::PRESCAN_3D) {
           preScan3D_ = s_volume_prescan;
           if((frameIndex == s_frameIndex) && (volumeIndex == s_volumeIndex)) {
             frameAlreadyReadInPreviousLoop = true;
@@ -317,14 +309,14 @@ vpThread::Return displayFunction(vpThread::Args args)
       if (! display_initialized_) {
         // Initialize the display
 #if defined(VISP_HAVE_X11)
-        if(m_imageType == usGrabberUltrasonix::TYPE_PRESCAN) {
+        if(m_imageType == us::PRESCAN_3D) {
           d_preScan = new vpDisplayX(preScan_);
           d_conf = new vpDisplayX(preScanConfidence_);
           display_initialized_ = true;
         }
 #endif
       }
-      if(m_imageType == usGrabberUltrasonix::TYPE_PRESCAN) {
+      if(m_imageType == us::PRESCAN_3D) {
         vpDisplay::display(preScan_);
         // Trigger end of acquisition with a mouse click
         vpDisplay::displayText(preScan_, 10, 10, "Click to exit...", vpColor::red);
