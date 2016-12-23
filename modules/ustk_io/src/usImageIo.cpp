@@ -110,12 +110,12 @@ void usImageIo::write(const usImageRF2D<unsigned char> &imageRf2D, const std::st
       vpImageIo::write(imageRf2D, imageFileName);
       //writing xml
       usImageSettingsXmlParser xmlSettings;
-      xmlSettings.setImageType(usImageSettingsXmlParser::IMAGE_TYPE_RF);
+      xmlSettings.setImageType(us::RF_2D);
       xmlSettings.setImageSettings(imageRf2D.getTransducerRadius(),
                                    imageRf2D.getScanLinePitch(),
                                    imageRf2D.isTransducerConvex(),
                                    imageRf2D.getAxialResolution(),
-                                   usImageSettingsXmlParser::IMAGE_TYPE_RF);
+                                   us::RF_2D);
       //just writing the image file name without parents directories (header and image are in the same directory).
       imageFileName = vpIoTools::getName(imageFileName);
       xmlSettings.setImageFileName(imageFileName);
@@ -395,12 +395,12 @@ void usImageIo::write(const usImagePreScan2D<unsigned char> &preScanImage, const
       vpImageIo::write(preScanImage, imageFileName);
       //writing xml
       usImageSettingsXmlParser xmlSettings;
-      xmlSettings.setImageType(usImageSettingsXmlParser::IMAGE_TYPE_PRESCAN);
+      xmlSettings.setImageType(us::PRESCAN_2D);
       xmlSettings.setImageSettings(preScanImage.getTransducerRadius(),
                                    preScanImage.getScanLinePitch(),
                                    preScanImage.isTransducerConvex(),
                                    preScanImage.getAxialResolution(),
-                                   usImageSettingsXmlParser::IMAGE_TYPE_PRESCAN);
+                                   us::PRESCAN_2D);
       //just writing the image file name without parents directories (header and image are in the same directory).
       imageFileName = vpIoTools::getName(imageFileName);
       xmlSettings.setImageFileName(imageFileName);
@@ -828,7 +828,7 @@ void usImageIo::write(const usImagePostScan2D<unsigned char> &postScanImage, con
                                    postScanImage.getWidthResolution(),
                                    postScanImage.getHeightResolution());
 
-      xmlSettings.setImageType(usImageSettingsXmlParser::IMAGE_TYPE_POSTSCAN);
+      xmlSettings.setImageType(us::POSTSCAN_2D);
       //just writing the image file name without parents directories (header and image are in the same directory).
       imageFileName = vpIoTools::getName(imageFileName);
       xmlSettings.setImageFileName(imageFileName);
