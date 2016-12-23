@@ -76,9 +76,9 @@ protected:
     double _resolution;
     bool _SweepInZdirection;
 
-    int m_nbX;
-    int m_nbY;
-    int m_nbZ;
+    unsigned int m_nbX;
+    unsigned int m_nbY;
+    unsigned int m_nbZ;
 
 public:
 
