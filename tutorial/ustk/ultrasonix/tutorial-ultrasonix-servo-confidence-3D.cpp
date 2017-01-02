@@ -294,9 +294,8 @@ vpThread::Return displayFunction(vpThread::Args args)
           plot.plot(0,0,time,s_conf[0]);
           plot.plot(1,0,time,s_conf[1]);
 
-          double lambda_c = 5.0;
-
           {
+            double lambda_c = 5.0;
             vpMutex::vpScopedLock lock(s_mutex_capture);
             s_controlVelocity = 0.0;
             s_controlVelocity[3] = lambda_c * s_conf[0];

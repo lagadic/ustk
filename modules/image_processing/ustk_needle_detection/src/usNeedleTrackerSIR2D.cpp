@@ -345,16 +345,14 @@ double usNeedleTrackerSIR2D::computeLikelihood(usPolynomialCurve2D *model, vpIma
 
 void usNeedleTrackerSIR2D::resample() {
   // std::cout << "Resampling..." << std::endl;
-  double x;
-  double sumWeights;
   int *idx = new int[m_nParticles];
   for (unsigned int i = 0; i < m_nParticles; ++i) {
-    x = m_sample();
-    sumWeights = 0.0;
+    double x = m_sample();
+    double sumWeights = 0.0;
     for (unsigned int j = 0; j < m_nParticles; ++j) {
       if (x < sumWeights + m_weights[j]) {
-	idx[i] = j;
-	break;
+        idx[i] = j;
+        break;
       }
       sumWeights += m_weights[j];
     }

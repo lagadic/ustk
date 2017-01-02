@@ -363,8 +363,6 @@ bool usNeedleDetectionTools::findTipUsingMeanValues(vtkImageData *image, const v
   p = model * a;
   double l = (p-p0).euclideanNorm();
   double minLengthError = DBL_MAX;
-  double lengthError = 0.0;
-  double intensity1, intensity2;
   t = 0.0;
   a[0] = 1;
   for (unsigned int i=1; i<nPoints; ++i)
@@ -372,7 +370,7 @@ bool usNeedleDetectionTools::findTipUsingMeanValues(vtkImageData *image, const v
   p = model * a;
   if (inside(p,VOI)) {
     bool found = 0;
-    intensity1 = 0;
+    double intensity1 = 0;
     intensity1 += image->GetScalarComponentAsDouble(p[0], p[1], p[2], 0);
     intensity1 += image->GetScalarComponentAsDouble(p[0]+1.0, p[1], p[2], 0);
     intensity1 += image->GetScalarComponentAsDouble(p[0], p[1]+1.0, p[2], 0);
@@ -387,7 +385,7 @@ bool usNeedleDetectionTools::findTipUsingMeanValues(vtkImageData *image, const v
       for (unsigned int i=1; i<nPoints; ++i)
         a[i] = a[i-1] * t;
       p = model * a;
-      intensity2 = 0;
+      double intensity2 = 0;
       intensity2 += image->GetScalarComponentAsDouble(vpMath::round(p[0]), vpMath::round(p[1]), vpMath::round(p[2]), 0);
       intensity2 += image->GetScalarComponentAsDouble(vpMath::round(p[0])+1.0, vpMath::round(p[1]), vpMath::round(p[2]), 0);
       intensity2 += image->GetScalarComponentAsDouble(vpMath::round(p[0]), vpMath::round(p[1])+1.0, vpMath::round(p[2]), 0);
@@ -396,7 +394,7 @@ bool usNeedleDetectionTools::findTipUsingMeanValues(vtkImageData *image, const v
       intensity2 += image->GetScalarComponentAsDouble(vpMath::round(p[0]), vpMath::round(p[1])-1.0, vpMath::round(p[2]), 0);
       intensity2 += image->GetScalarComponentAsDouble(vpMath::round(p[0]), vpMath::round(p[1]), vpMath::round(p[2])-1.0, 0);
       intensity2 /= 7.0;
-      lengthError = abs((p-p0).euclideanNorm() - length);
+      double lengthError = abs((p-p0).euclideanNorm() - length);
       //std::cerr << "("<< p[0] << "," << p[1] << "," << p[2] << "): I=" << intensity2 << " dL=" << lengthError << std::endl;
       if (intensity1 - intensity2 > gap && lengthError < minLengthError) {
         found = true;
@@ -505,11 +503,9 @@ void usNeedleDetectionTools::getThresholdedCoordinates(vtkImageData *image,
 {
   unsigned int npts = image->GetNumberOfPoints();
   unsigned int nThresholded = 0;
-  unsigned char *uchar_ptr = NULL;
-  short *short_ptr = NULL;
   if (image->GetScalarType() == VTK_UNSIGNED_CHAR)
   {
-    uchar_ptr = (unsigned char*)image->GetScalarPointer();
+    unsigned char *uchar_ptr = (unsigned char*)image->GetScalarPointer();
     for (unsigned int i=0; i<npts; i++)
       if (*(uchar_ptr+i) >= threshold)
         ++nThresholded;
@@ -526,7 +522,7 @@ void usNeedleDetectionTools::getThresholdedCoordinates(vtkImageData *image,
   }
   else
   {
-    short_ptr = (short*)image->GetScalarPointer();
+    short *short_ptr = (short*)image->GetScalarPointer();
     for (unsigned int i=0; i<npts; i++)
       if (*(short_ptr+i) >= threshold)
         ++nThresholded;
@@ -576,11 +572,9 @@ double usNeedleDetectionTools::getThresholdedCoordinates(vtkImageData *image,
   unsigned int npts = image->GetNumberOfPoints();
   unsigned int nThresholded;
   unsigned int q;
-  unsigned char *uchar_ptr;
-  short *short_ptr;
   if (image->GetScalarType() == VTK_UNSIGNED_CHAR)
   {
-    uchar_ptr = (unsigned char*)image->GetScalarPointer();
+    unsigned char *uchar_ptr = (unsigned char*)image->GetScalarPointer();
     usNeedleDetectionTools::computeQuantile(uchar_ptr, npts, nDesired, q, nThresholded);
     points = vpMatrix(nThresholded, 3);
     unsigned int counter = 0;
@@ -595,7 +589,7 @@ double usNeedleDetectionTools::getThresholdedCoordinates(vtkImageData *image,
   }
   else
   {
-    short_ptr = (short*)image->GetScalarPointer();
+    short *short_ptr = (short*)image->GetScalarPointer();
     usNeedleDetectionTools::computeQuantile(short_ptr, npts, nDesired, q, nThresholded);
     points = vpMatrix(nThresholded, 3);
     unsigned int counter = 0;
