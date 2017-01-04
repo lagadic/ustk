@@ -101,14 +101,19 @@ void usScanConverter3D::init(const usImagePreScan3D<unsigned char> &preScanImage
           m._W[6] = u1 * v  * w;
           m._W[7] = u  * v  * w;
 
-          m._inputIndex[0] = ii   + X* jj    + XY* kk;
-          m._inputIndex[1] = ii+1 + X* jj    + XY* kk;
-          m._inputIndex[2] = ii   + X*(jj+1) + XY* kk;
-          m._inputIndex[3] = ii+1 + X*(jj+1) + XY* kk;
-          m._inputIndex[4] = ii   + X* jj    + XY*(kk+1);
-          m._inputIndex[5] = ii+1 + X* jj    + XY*(kk+1);
-          m._inputIndex[6] = ii   + X*(jj+1) + XY*(kk+1);
-          m._inputIndex[7] = ii+1 + X*(jj+1) + XY*(kk+1);
+          double Xjj = X * jj;
+          double Xjj1 = X *(jj + 1);
+          double XYKK = XY * kk;
+          double XYKK1 = XY * (kk + 1);
+
+          m._inputIndex[0] = ii   + Xjj  + XYKK;
+          m._inputIndex[1] = ii+1 + Xjj  + XYKK;
+          m._inputIndex[2] = ii   + Xjj1 + XYKK;
+          m._inputIndex[3] = ii+1 + Xjj1 + XYKK;
+          m._inputIndex[4] = ii   + Xjj  + XYKK1;
+          m._inputIndex[5] = ii+1 + Xjj  + XYKK1;
+          m._inputIndex[6] = ii   + Xjj1 + XYKK1;
+          m._inputIndex[7] = ii+1 + Xjj1 + XYKK1;
 
           _lookupTable1.push_back(m);
         }
@@ -141,20 +146,27 @@ void usScanConverter3D::init(const usImagePreScan3D<unsigned char> &preScanImage
           m._W[6] = u1 * v  * w;
           m._W[7] = u  * v  * w;
 
-          m._inputIndex[0] = ii   + X* jj    + XY* kk;
-          m._inputIndex[1] = ii+1 + X* jj    + XY* kk;
-          m._inputIndex[2] = ii   + X*(jj+1) + XY* kk;
-          m._inputIndex[3] = ii+1 + X*(jj+1) + XY* kk;
-          m._inputIndex[4] = ii   + X* jj    + XY*(kk+1);
-          m._inputIndex[5] = ii+1 + X* jj    + XY*(kk+1);
-          m._inputIndex[6] = ii   + X*(jj+1) + XY*(kk+1);
-          m._inputIndex[7] = ii+1 + X*(jj+1) + XY*(kk+1);
+          double Xjj = X * jj;
+          double Xjj1 = X *(jj + 1);
+          double XYKK = XY * kk;
+          double XYKK1 = XY * (kk + 1);
+
+          m._inputIndex[0] = ii   + Xjj  + XYKK;
+          m._inputIndex[1] = ii+1 + Xjj  + XYKK;
+          m._inputIndex[2] = ii   + Xjj1 + XYKK;
+          m._inputIndex[3] = ii+1 + Xjj1 + XYKK;
+          m._inputIndex[4] = ii   + Xjj  + XYKK1;
+          m._inputIndex[5] = ii+1 + Xjj  + XYKK1;
+          m._inputIndex[6] = ii   + Xjj1 + XYKK1;
+          m._inputIndex[7] = ii+1 + Xjj1 + XYKK1;
 
           _lookupTable2.push_back(m);
         }
       }
     }
   }
+  std::cout << "LUT 1 size (bytes) : " << sizeof(VoxelWeightAndIndex) * _lookupTable1.size() << std::endl;
+  std::cout << "LUT 2 size (bytes) : " << sizeof(VoxelWeightAndIndex) * _lookupTable2.size() << std::endl;
 }
 
 /**
