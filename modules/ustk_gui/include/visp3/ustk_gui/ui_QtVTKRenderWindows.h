@@ -116,14 +116,14 @@ public:
 
     void retranslateUi(QMainWindow *QtVTKRenderWindows)
     {
-        QtVTKRenderWindows->setWindowTitle(QApplication::translate("QtVTKRenderWindows", "QtVTKRenderWindows", 0, QApplication::UnicodeUTF8));
-        actionOpenFile->setText(QApplication::translate("QtVTKRenderWindows", "Open File...", 0, QApplication::UnicodeUTF8));
-        actionExit->setText(QApplication::translate("QtVTKRenderWindows", "Exit", 0, QApplication::UnicodeUTF8));
-        actionPrint->setText(QApplication::translate("QtVTKRenderWindows", "Print", 0, QApplication::UnicodeUTF8));
-        actionHelp->setText(QApplication::translate("QtVTKRenderWindows", "Help", 0, QApplication::UnicodeUTF8));
-        actionSave->setText(QApplication::translate("QtVTKRenderWindows", "Save", 0, QApplication::UnicodeUTF8));
-        resetButton->setText(QApplication::translate("QtVTKRenderWindows", "Reset", 0, QApplication::UnicodeUTF8));
-        AddDistance1Button->setText(QApplication::translate("QtVTKRenderWindows", "Add Distance On View 1", 0, QApplication::UnicodeUTF8));
+        QtVTKRenderWindows->setWindowTitle(QApplication::translate("QtVTKRenderWindows", "QtVTKRenderWindows"));
+        actionOpenFile->setText(QApplication::translate("QtVTKRenderWindows", "Open File..."));
+        actionExit->setText(QApplication::translate("QtVTKRenderWindows", "Exit"));
+        actionPrint->setText(QApplication::translate("QtVTKRenderWindows", "Print"));
+        actionHelp->setText(QApplication::translate("QtVTKRenderWindows", "Help"));
+        actionSave->setText(QApplication::translate("QtVTKRenderWindows", "Save"));
+        resetButton->setText(QApplication::translate("QtVTKRenderWindows", "Reset"));
+        AddDistance1Button->setText(QApplication::translate("QtVTKRenderWindows", "Add Distance On View 1"));
     } // retranslateUi
 
 };
