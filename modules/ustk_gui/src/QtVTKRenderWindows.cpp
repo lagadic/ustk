@@ -336,7 +336,7 @@ void QtVTKRenderWindows::Render()
   {
     riw[i]->Render();
   }
-  this->ui->view3->GetRenderWindow()->Render();
+  this->ui->view4->GetRenderWindow()->Render();
 }
 
 void QtVTKRenderWindows::AddDistanceMeasurementToView1()
