@@ -1,3 +1,39 @@
+/****************************************************************************
+ *
+ * This file is part of the UsTk software.
+ * Copyright (C) 2014 by Inria. All rights reserved.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License ("GPL") as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * See the file COPYING at the root directory of this source
+ * distribution for additional information about the GNU GPL.
+ *
+ * This software was developed at:
+ * INRIA Rennes - Bretagne Atlantique
+ * Campus Universitaire de Beaulieu
+ * 35042 Rennes Cedex
+ * France
+ * http://www.irisa.fr/lagadic
+ *
+ * If you have questions regarding the use of this file, please contact the
+ * authors at Alexandre.Krupa@inria.fr
+ *
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ *
+ * Authors:
+ * Marc Pouliquen
+ *
+ *****************************************************************************/
+
+/**
+* @file usMedicalImageViewer.cpp
+* @brief Graphical main window containing 4 vtk views.
+*/
+
 #include <visp3/ustk_gui/usMedicalImageViewer.h>
 
 #include <vtkRenderer.h>
@@ -123,6 +159,10 @@ public:
 };
 
 
+/**
+* Constructor.
+* @param imageFileName the mhd file to read.
+*/
 usMedicalImageViewer::usMedicalImageViewer(std::string imageFileName )
 {
   this->setupUi();
@@ -255,11 +295,17 @@ usMedicalImageViewer::usMedicalImageViewer(std::string imageFileName )
   ResetViews();
 };
 
+/**
+* Exit slot, to exit the QApplication.
+*/
 void usMedicalImageViewer::slotExit()
 {
   qApp->exit();
 }
 
+/**
+* Reset views slot : reset the planes positions at the middle of the volume.
+*/
 void usMedicalImageViewer::ResetViews()
 {
   // Reset the reslice image views
@@ -287,6 +333,9 @@ void usMedicalImageViewer::ResetViews()
   this->Render();
 }
 
+/**
+* Render slot, to recompute all the views.
+*/
 void usMedicalImageViewer::Render()
 {
   for (int i = 0; i < 3; i++)
@@ -296,11 +345,18 @@ void usMedicalImageViewer::Render()
   this->view4->GetRenderWindow()->Render();
 }
 
+/**
+* Slot to add a distance measure widget to wiew 1.
+*/
 void usMedicalImageViewer::AddDistanceMeasurementToView1()
 {
   this->AddDistanceMeasurementToView(1);
 }
 
+/**
+* Slot to add a distance measure widget to a wiew.
+* @param i View number to add the measure on.
+*/
 void usMedicalImageViewer::AddDistanceMeasurementToView(int i)
 {
   // remove existing widgets.
@@ -337,7 +393,9 @@ void usMedicalImageViewer::AddDistanceMeasurementToView(int i)
   this->DistanceWidget[i]->EnabledOn();
 }
 
-
+/**
+* Setup all the widgets in the window.
+*/
 void usMedicalImageViewer::setupUi() {
   this->setMinimumSize(640,480);
   QRect screenRect = QApplication::desktop()->screenGeometry();
@@ -382,6 +440,9 @@ void usMedicalImageViewer::setupUi() {
 
 }
 
+/**
+* Get the resize event of the window, to re-comute size and positions of all widgets/layouts.
+*/
 void usMedicalImageViewer::resizeEvent(QResizeEvent* event)
 {
   //Min size : 640*480
