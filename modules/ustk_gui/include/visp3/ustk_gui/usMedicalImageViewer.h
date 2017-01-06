@@ -52,10 +52,10 @@
 #include <vtkResliceImageViewerMeasurements.h>
 
 //Qt includes
-#include <QApplication>
-#include <QMainWindow>
-#include <QGridLayout>
-#include <QPushButton>
+#include <QtGui/QApplication>
+#include <QtGui/QMainWindow>
+#include <QtGui/QGridLayout>
+#include <QtGui/QPushButton>
 
 #include <QVTKWidget.h>
 
