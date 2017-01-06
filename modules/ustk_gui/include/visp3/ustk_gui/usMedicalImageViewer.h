@@ -79,6 +79,7 @@ public:
 public slots:
 
   virtual void ResetViews();
+  virtual void ResetColorMap();
   virtual void Render();
   virtual void AddDistanceMeasurementToView1();
   virtual void AddDistanceMeasurementToView( int );
@@ -108,6 +109,7 @@ private:
     QVTKWidget *view3;
     QVTKWidget *view1;
     QPushButton *resetButton;
+    QPushButton *resetColorsButton;
     QPushButton *AddDistance1Button;
 };
 

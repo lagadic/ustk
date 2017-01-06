@@ -99,7 +99,6 @@ public:
         dynamic_cast< vtkImagePlaneWidget* >( caller );
     if (ipw)
     {
-      std::cout << "ipw" << std::endl;
       double* wl = static_cast<double*>( callData );
 
       if ( ipw == this->IPW[0] )
@@ -123,7 +122,6 @@ public:
         vtkResliceCursorWidget * >(caller);
     if (rcw)
     {
-      //std::cout << "rcw" << std::endl;
       /*vtkResliceCursorLineRepresentation *rep = dynamic_cast<
         vtkResliceCursorLineRepresentation * >(rcw->GetRepresentation());*/
       // Although the return value is not used, we keep the get calls
@@ -291,6 +289,7 @@ usMedicalImageViewer::usMedicalImageViewer(std::string imageFileName )
   // Set up action signals and slots
   //connect(this->actionExit, SIGNAL(triggered()), this, SLOT(slotExit()));
   connect(this->resetButton, SIGNAL(pressed()), this, SLOT(ResetViews()));
+  connect(this->resetColorsButton, SIGNAL(pressed()), this, SLOT(ResetColorMap()));
   connect(this->AddDistance1Button, SIGNAL(pressed()), this, SLOT(AddDistanceMeasurementToView1()));
   ResetViews();
 };
@@ -331,6 +330,20 @@ void usMedicalImageViewer::ResetViews()
 
   // Render in response to changes.
   this->Render();
+}
+
+/**
+* Reset color map slot : reset the color map to initial one in each view.
+*/
+void usMedicalImageViewer::ResetColorMap()
+{
+  // Render everything
+  for (int i = 0; i < 3; i++)
+  {
+    riw[i]->GetLookupTable()->SetRange(0,255);
+    riw[i]->GetResliceCursorWidget()->Render();
+  }
+  planeWidget[0]->GetInteractor()->GetRenderWindow()->Render();
 }
 
 /**
@@ -432,10 +445,15 @@ void usMedicalImageViewer::setupUi() {
   resetButton->setText(QString::fromUtf8("Reset views"));
   resetButton->setGeometry(QRect(screenRect.width() - 180, 30, 160, 31));
 
+  resetColorsButton = new QPushButton(this);
+  resetColorsButton->setObjectName(QString::fromUtf8("resetColorsButton"));
+  resetColorsButton->setText(QString::fromUtf8("Reset colormap"));
+  resetColorsButton->setGeometry(QRect(screenRect.width() - 180, 80, 160, 31));
+
   AddDistance1Button = new QPushButton(this);
   AddDistance1Button->setObjectName(QString::fromUtf8("AddDistance1Button"));
   AddDistance1Button->setText(QString::fromUtf8("Add distance 1"));
-  AddDistance1Button->setGeometry(QRect(screenRect.width() - 180, 80, 160, 31));
+  AddDistance1Button->setGeometry(QRect(screenRect.width() - 180, 130, 160, 31));
 
 }
 
@@ -449,6 +467,7 @@ void usMedicalImageViewer::resizeEvent(QResizeEvent* event)
     QMainWindow::resizeEvent(event);
     gridLayoutWidget->setGeometry(QRect(10, 10, event->size().width() - 220, event->size().height() - 20));
     resetButton->setGeometry(QRect(event->size().width() - 180, 30, 160, 31));
-    AddDistance1Button->setGeometry(QRect(event->size().width() - 180, 80, 160, 31));
+    resetColorsButton->setGeometry(QRect(event->size().width() - 180, 80, 160, 31));
+    AddDistance1Button->setGeometry(QRect(event->size().width() - 180, 130, 160, 31));
   }
 }
