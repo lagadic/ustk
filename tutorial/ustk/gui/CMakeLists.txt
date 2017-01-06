@@ -8,8 +8,8 @@ set(tutorial_cpp
   usMedicalViewerExample.cpp)
 
 foreach(cpp ${tutorial_cpp})
-  #visp_add_target(${cpp})
-  include_directories(${VISP_INCLUDE_DIRS})
-  add_executable(usMedicalViewerExample ${cpp})
-  target_link_libraries(usMedicalViewerExample ${VISP_LIBRARIES})
+  visp_add_target(${cpp})
+  if(COMMAND visp_add_dependency)
+    visp_add_dependency(${cpp} "tutorials")
+  endif()
 endforeach()
