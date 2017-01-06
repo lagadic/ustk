@@ -384,12 +384,10 @@ void usMedicalImageViewer::setupUi() {
 
 void usMedicalImageViewer::resizeEvent(QResizeEvent* event)
 {
-  QMainWindow::resizeEvent(event);
-  std::cout << "Resize event : " << event->size().width() << ", " << event->size().height() << std::endl;
-
   //Min size : 640*480
-  if(event->size().width() > 640 && event->size().height() > 480) {
-    gridLayoutWidget->setGeometry(QRect(10, 10, event->size().width() - 200, event->size().height() - 40));
+  if(event->size().width() >= 640 && event->size().height() >= 480) {
+    QMainWindow::resizeEvent(event);
+    gridLayoutWidget->setGeometry(QRect(10, 10, event->size().width() - 220, event->size().height() - 20));
     resetButton->setGeometry(QRect(event->size().width() - 180, 30, 160, 31));
     AddDistance1Button->setGeometry(QRect(event->size().width() - 180, 80, 160, 31));
   }
