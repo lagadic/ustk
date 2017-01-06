@@ -43,8 +43,12 @@ else()
   set(QT_MOC_EXECUTABLE ${VTK_QT_MOC_EXECUTABLE} CACHE FILEPATH "")
   set(QT_UIC_EXECUTABLE ${VTK_QT_UIC_EXECUTABLE} CACHE FILEPATH "")
 
-  #VISP version
+  #adding Qt 4 includes (we use QtCore and QtGui modulues)
+  list(APPEND QT_INCLUDE_DIRS "${QT_INCLUDE_DIR}/QtGui")
+  list(APPEND QT_INCLUDE_DIRS "${QT_INCLUDE_DIR}/QtCore")
+
+  #VISP
   vp_glob_module_sources()
-  vp_module_include_directories(${QT_INCLUDE_DIR} ${VTK_INCLUDE_DIRS})
+  vp_module_include_directories(${QT_INCLUDE_DIRS} ${VTK_INCLUDE_DIRS})
   vp_create_module(${QT_LIBRARIES} ${VTK_LIBRARIES})
 endif()

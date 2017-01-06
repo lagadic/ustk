@@ -399,7 +399,6 @@ void usMedicalImageViewer::AddDistanceMeasurementToView(int i)
 void usMedicalImageViewer::setupUi() {
   this->setMinimumSize(640,480);
   QRect screenRect = QApplication::desktop()->screenGeometry();
-  std::cout << " screen size : " << screenRect.size().height() << ", " << screenRect.size().width() << std::endl;
   this->resize(screenRect.size());
 
   gridLayoutWidget = new QWidget(this);
