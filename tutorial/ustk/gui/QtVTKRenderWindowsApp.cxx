@@ -4,7 +4,7 @@
 
 int main( int argc, char** argv )
 {
-  // QT Stuff
+  // QT application
   QApplication app( argc, argv );
 
   std::string fileName = "/home/mpouliqu/Documents/usData/prescan/3D/USpreScan_volume-0000/volume.mhd";
