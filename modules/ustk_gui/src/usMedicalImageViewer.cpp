@@ -1,5 +1,4 @@
-#include <visp3/ustk_gui/ui_QtVTKRenderWindows.h>
-#include <visp3/ustk_gui/QtVTKRenderWindows.h>
+#include <visp3/ustk_gui/usMedicalImageViewer.h>
 
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
@@ -30,6 +29,9 @@
 #include <vtkPointHandleRepresentation3D.h>
 #include <vtkPointHandleRepresentation2D.h>
 
+#include <QDesktopWidget>
+#include <QResizeEvent>
+
 
 //----------------------------------------------------------------------------
 class vtkResliceCursorCallback : public vtkCommand
@@ -58,7 +60,7 @@ public:
     }*/
 
     vtkImagePlaneWidget* ipw =
-      dynamic_cast< vtkImagePlaneWidget* >( caller );
+        dynamic_cast< vtkImagePlaneWidget* >( caller );
     if (ipw)
     {
       std::cout << "ipw" << std::endl;
@@ -82,7 +84,7 @@ public:
     }
 
     vtkResliceCursorWidget *rcw = dynamic_cast<
-      vtkResliceCursorWidget * >(caller);
+        vtkResliceCursorWidget * >(caller);
     if (rcw)
     {
       //std::cout << "rcw" << std::endl;
@@ -94,13 +96,13 @@ public:
       for (int i = 0; i < 3; i++)
       {
         vtkPlaneSource *ps = static_cast< vtkPlaneSource * >(
-            this->IPW[i]->GetPolyDataAlgorithm());
+              this->IPW[i]->GetPolyDataAlgorithm());
         ps->SetOrigin(this->RCW[i]->GetResliceCursorRepresentation()->
-                                          GetPlaneSource()->GetOrigin());
+                      GetPlaneSource()->GetOrigin());
         ps->SetPoint1(this->RCW[i]->GetResliceCursorRepresentation()->
-                                          GetPlaneSource()->GetPoint1());
+                      GetPlaneSource()->GetPoint1());
         ps->SetPoint2(this->RCW[i]->GetResliceCursorRepresentation()->
-                                          GetPlaneSource()->GetPoint2());
+                      GetPlaneSource()->GetPoint2());
 
         // If the reslice plane has modified, update it on the 3D widget
         this->IPW[i]->UpdatePlacement();
@@ -121,13 +123,12 @@ public:
 };
 
 
-QtVTKRenderWindows::QtVTKRenderWindows( std::string imageFileName )
+usMedicalImageViewer::usMedicalImageViewer(std::string imageFileName )
 {
-  this->ui = new Ui_QtVTKRenderWindows;
-  this->ui->setupUi(this);
+  this->setupUi();
 
   vtkSmartPointer< vtkMetaImageReader > reader =
-    vtkSmartPointer< vtkMetaImageReader >::New();
+      vtkSmartPointer< vtkMetaImageReader >::New();
   reader->SetFileName(imageFileName.c_str());
   reader->Update();
   int imageDims[3];
@@ -138,28 +139,28 @@ QtVTKRenderWindows::QtVTKRenderWindows( std::string imageFileName )
     riw[i] = vtkSmartPointer< vtkResliceImageViewer >::New();
   }
 
-  this->ui->view1->SetRenderWindow(riw[0]->GetRenderWindow());
+  this->view1->SetRenderWindow(riw[0]->GetRenderWindow());
   riw[0]->SetupInteractor(
-      this->ui->view1->GetRenderWindow()->GetInteractor());
+        this->view1->GetRenderWindow()->GetInteractor());
 
-  this->ui->view2->SetRenderWindow(riw[1]->GetRenderWindow());
+  this->view2->SetRenderWindow(riw[1]->GetRenderWindow());
   riw[1]->SetupInteractor(
-      this->ui->view2->GetRenderWindow()->GetInteractor());
+        this->view2->GetRenderWindow()->GetInteractor());
 
-  this->ui->view3->SetRenderWindow(riw[2]->GetRenderWindow());
+  this->view3->SetRenderWindow(riw[2]->GetRenderWindow());
   riw[2]->SetupInteractor(
-      this->ui->view3->GetRenderWindow()->GetInteractor());
+        this->view3->GetRenderWindow()->GetInteractor());
 
   for (int i = 0; i < 3; i++)
   {
     // make them all share the same reslice cursor object.
     vtkResliceCursorLineRepresentation *rep =
-      vtkResliceCursorLineRepresentation::SafeDownCast(
+        vtkResliceCursorLineRepresentation::SafeDownCast(
           riw[i]->GetResliceCursorWidget()->GetRepresentation());
     riw[i]->SetResliceCursor(riw[0]->GetResliceCursor());
 
     rep->GetResliceCursorActor()->
-      GetCursorAlgorithm()->SetReslicePlaneNormal(i);
+        GetCursorAlgorithm()->SetReslicePlaneNormal(i);
 
     riw[i]->SetInputData(reader->GetOutput());
     riw[i]->SetSliceOrientation(i);
@@ -167,17 +168,17 @@ QtVTKRenderWindows::QtVTKRenderWindows( std::string imageFileName )
   }
 
   vtkSmartPointer<vtkCellPicker> picker =
-    vtkSmartPointer<vtkCellPicker>::New();
+      vtkSmartPointer<vtkCellPicker>::New();
   picker->SetTolerance(0.005);
 
   vtkSmartPointer<vtkProperty> ipwProp =
-    vtkSmartPointer<vtkProperty>::New();
+      vtkSmartPointer<vtkProperty>::New();
 
   vtkSmartPointer< vtkRenderer > ren =
-    vtkSmartPointer< vtkRenderer >::New();
+      vtkSmartPointer< vtkRenderer >::New();
 
-  this->ui->view4->GetRenderWindow()->AddRenderer(ren);
-  vtkRenderWindowInteractor *iren = this->ui->view4->GetInteractor();
+  this->view4->GetRenderWindow()->AddRenderer(ren);
+  vtkRenderWindowInteractor *iren = this->view4->GetInteractor();
 
   for (int i = 0; i < 3; i++)
   {
@@ -207,20 +208,20 @@ QtVTKRenderWindows::QtVTKRenderWindows( std::string imageFileName )
   }
 
   vtkSmartPointer<vtkResliceCursorCallback> cbk =
-    vtkSmartPointer<vtkResliceCursorCallback>::New();
+      vtkSmartPointer<vtkResliceCursorCallback>::New();
 
   for (int i = 0; i < 3; i++)
   {
     cbk->IPW[i] = planeWidget[i];
     cbk->RCW[i] = riw[i]->GetResliceCursorWidget();
     riw[i]->GetResliceCursorWidget()->AddObserver(
-        vtkResliceCursorWidget::ResliceAxesChangedEvent, cbk );
+          vtkResliceCursorWidget::ResliceAxesChangedEvent, cbk );
     riw[i]->GetResliceCursorWidget()->AddObserver(
-        vtkResliceCursorWidget::WindowLevelEvent, cbk );
+          vtkResliceCursorWidget::WindowLevelEvent, cbk );
     /*riw[i]->GetResliceCursorWidget()->AddObserver(
         vtkResliceCursorWidget::ResliceThicknessChangedEvent, cbk );*/
     riw[i]->GetResliceCursorWidget()->AddObserver(
-        vtkResliceCursorWidget::ResetCursorEvent, cbk );
+          vtkResliceCursorWidget::ResetCursorEvent, cbk );
     /*riw[i]->GetInteractorStyle()->AddObserver(
         vtkCommand::WindowLevelEvent, cbk );*/
 
@@ -236,9 +237,9 @@ QtVTKRenderWindows::QtVTKRenderWindows( std::string imageFileName )
 
   }
 
-  this->ui->view1->show();
-  this->ui->view2->show();
-  this->ui->view3->show();
+  this->view1->show();
+  this->view2->show();
+  this->view3->show();
 
   for (int i = 0; i < 3; i++)
   {
@@ -248,64 +249,18 @@ QtVTKRenderWindows::QtVTKRenderWindows( std::string imageFileName )
   }
 
   // Set up action signals and slots
-  connect(this->ui->actionExit, SIGNAL(triggered()), this, SLOT(slotExit()));
-  connect(this->ui->resetButton, SIGNAL(pressed()), this, SLOT(ResetViews()));
-  connect(this->ui->AddDistance1Button, SIGNAL(pressed()), this, SLOT(AddDistanceMeasurementToView1()));
+  //connect(this->actionExit, SIGNAL(triggered()), this, SLOT(slotExit()));
+  connect(this->resetButton, SIGNAL(pressed()), this, SLOT(ResetViews()));
+  connect(this->AddDistance1Button, SIGNAL(pressed()), this, SLOT(AddDistanceMeasurementToView1()));
   ResetViews();
 };
 
-void QtVTKRenderWindows::slotExit()
+void usMedicalImageViewer::slotExit()
 {
   qApp->exit();
 }
 
-void QtVTKRenderWindows::resliceMode(int mode)
-{
-  for (int i = 0; i < 3; i++)
-  {
-    riw[i]->SetResliceMode(mode ? 1 : 0);
-    riw[i]->GetRenderer()->ResetCamera();
-    riw[i]->Render();
-  }
-}
-
-void QtVTKRenderWindows::thickMode(int mode)
-{
-  for (int i = 0; i < 3; i++)
-  {
-    riw[i]->SetThickMode(mode ? 1 : 0);
-    riw[i]->Render();
-  }
-}
-
-void QtVTKRenderWindows::SetBlendMode(int m)
-{
-  for (int i = 0; i < 3; i++)
-  {
-    vtkImageSlabReslice *thickSlabReslice = vtkImageSlabReslice::SafeDownCast(
-        vtkResliceCursorThickLineRepresentation::SafeDownCast(
-          riw[i]->GetResliceCursorWidget()->GetRepresentation())->GetReslice());
-    thickSlabReslice->SetBlendMode(m);
-    riw[i]->Render();
-  }
-}
-
-void QtVTKRenderWindows::SetBlendModeToMaxIP()
-{
-  this->SetBlendMode(VTK_IMAGE_SLAB_MAX);
-}
-
-void QtVTKRenderWindows::SetBlendModeToMinIP()
-{
-  this->SetBlendMode(VTK_IMAGE_SLAB_MIN);
-}
-
-void QtVTKRenderWindows::SetBlendModeToMeanIP()
-{
-  this->SetBlendMode(VTK_IMAGE_SLAB_MEAN);
-}
-
-void QtVTKRenderWindows::ResetViews()
+void usMedicalImageViewer::ResetViews()
 {
   // Reset the reslice image views
   for (int i = 0; i < 3; i++)
@@ -320,7 +275,7 @@ void QtVTKRenderWindows::ResetViews()
   for (int i = 0; i < 3; i++)
   {
     vtkPlaneSource *ps = static_cast< vtkPlaneSource * >(
-        planeWidget[i]->GetPolyDataAlgorithm());
+          planeWidget[i]->GetPolyDataAlgorithm());
     ps->SetNormal(riw[0]->GetResliceCursor()->GetPlane(i)->GetNormal());
     ps->SetCenter(riw[0]->GetResliceCursor()->GetPlane(i)->GetOrigin());
 
@@ -332,21 +287,21 @@ void QtVTKRenderWindows::ResetViews()
   this->Render();
 }
 
-void QtVTKRenderWindows::Render()
+void usMedicalImageViewer::Render()
 {
   for (int i = 0; i < 3; i++)
   {
     riw[i]->Render();
   }
-  this->ui->view4->GetRenderWindow()->Render();
+  this->view4->GetRenderWindow()->Render();
 }
 
-void QtVTKRenderWindows::AddDistanceMeasurementToView1()
+void usMedicalImageViewer::AddDistanceMeasurementToView1()
 {
   this->AddDistanceMeasurementToView(1);
 }
 
-void QtVTKRenderWindows::AddDistanceMeasurementToView(int i)
+void usMedicalImageViewer::AddDistanceMeasurementToView(int i)
 {
   // remove existing widgets.
   if (this->DistanceWidget[i])
@@ -358,16 +313,16 @@ void QtVTKRenderWindows::AddDistanceMeasurementToView(int i)
   // add new widget
   this->DistanceWidget[i] = vtkSmartPointer< vtkDistanceWidget >::New();
   this->DistanceWidget[i]->SetInteractor(
-    this->riw[i]->GetResliceCursorWidget()->GetInteractor());
+        this->riw[i]->GetResliceCursorWidget()->GetInteractor());
 
   // Set a priority higher than our reslice cursor widget
   this->DistanceWidget[i]->SetPriority(
-    this->riw[i]->GetResliceCursorWidget()->GetPriority() + 0.01);
+        this->riw[i]->GetResliceCursorWidget()->GetPriority() + 0.01);
 
   vtkSmartPointer< vtkPointHandleRepresentation2D > handleRep =
-    vtkSmartPointer< vtkPointHandleRepresentation2D >::New();
+      vtkSmartPointer< vtkPointHandleRepresentation2D >::New();
   vtkSmartPointer< vtkDistanceRepresentation2D > distanceRep =
-    vtkSmartPointer< vtkDistanceRepresentation2D >::New();
+      vtkSmartPointer< vtkDistanceRepresentation2D >::New();
   distanceRep->SetHandleRepresentation(handleRep);
   this->DistanceWidget[i]->SetRepresentation(distanceRep);
   distanceRep->InstantiateHandleRepresentation();
@@ -380,4 +335,62 @@ void QtVTKRenderWindows::AddDistanceMeasurementToView(int i)
 
   this->DistanceWidget[i]->CreateDefaultRepresentation();
   this->DistanceWidget[i]->EnabledOn();
+}
+
+
+void usMedicalImageViewer::setupUi() {
+  this->setMinimumSize(640,480);
+  QRect screenRect = QApplication::desktop()->screenGeometry();
+  std::cout << " screen size : " << screenRect.size().height() << ", " << screenRect.size().width() << std::endl;
+  this->resize(screenRect.size());
+
+  gridLayoutWidget = new QWidget(this);
+  gridLayoutWidget->setObjectName(QString::fromUtf8("gridLayoutWidget"));
+  gridLayoutWidget->setGeometry(QRect(10, 10, screenRect.width() - 200, screenRect.height() - 40));
+  gridLayout_2 = new QGridLayout(gridLayoutWidget);
+  gridLayout_2->setObjectName(QString::fromUtf8("gridLayout_2"));
+  gridLayout_2->setContentsMargins(0, 0, 0, 0);
+  view2 = new QVTKWidget(gridLayoutWidget);
+  view2->setObjectName(QString::fromUtf8("view2"));
+
+  gridLayout_2->addWidget(view2, 1, 0, 1, 1);
+
+  view4 = new QVTKWidget(gridLayoutWidget);
+  view4->setObjectName(QString::fromUtf8("view4"));
+
+  gridLayout_2->addWidget(view4, 0, 1, 1, 1);
+
+  view3 = new QVTKWidget(gridLayoutWidget);
+  view3->setObjectName(QString::fromUtf8("view3"));
+
+  gridLayout_2->addWidget(view3, 1, 1, 1, 1);
+
+  view1 = new QVTKWidget(gridLayoutWidget);
+  view1->setObjectName(QString::fromUtf8("view1"));
+
+  gridLayout_2->addWidget(view1, 0, 0, 1, 1);
+
+  resetButton = new QPushButton(this);
+  resetButton->setObjectName(QString::fromUtf8("resetButton"));
+  resetButton->setText(QString::fromUtf8("Reset views"));
+  resetButton->setGeometry(QRect(screenRect.width() - 180, 30, 160, 31));
+
+  AddDistance1Button = new QPushButton(this);
+  AddDistance1Button->setObjectName(QString::fromUtf8("AddDistance1Button"));
+  AddDistance1Button->setText(QString::fromUtf8("Add distance 1"));
+  AddDistance1Button->setGeometry(QRect(screenRect.width() - 180, 80, 160, 31));
+
+}
+
+void usMedicalImageViewer::resizeEvent(QResizeEvent* event)
+{
+  QMainWindow::resizeEvent(event);
+  std::cout << "Resize event : " << event->size().width() << ", " << event->size().height() << std::endl;
+
+  //Min size : 640*480
+  if(event->size().width() > 640 && event->size().height() > 480) {
+    gridLayoutWidget->setGeometry(QRect(10, 10, event->size().width() - 200, event->size().height() - 40));
+    resetButton->setGeometry(QRect(event->size().width() - 180, 30, 160, 31));
+    AddDistance1Button->setGeometry(QRect(event->size().width() - 180, 80, 160, 31));
+  }
 }

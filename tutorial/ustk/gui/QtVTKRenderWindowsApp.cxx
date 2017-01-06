@@ -1,6 +1,6 @@
 #include <QtGui/QMainWindow>
 #include <QtGui/QApplication>
-#include <visp3/ustk_gui/QtVTKRenderWindows.h>
+#include <visp3/ustk_gui/usMedicalImageViewer.h>
 
 int main( int argc, char** argv )
 {
@@ -8,8 +8,8 @@ int main( int argc, char** argv )
   QApplication app( argc, argv );
 
   std::string fileName = "/home/mpouliqu/Documents/usData/prescan/3D/USpreScan_volume-0000/volume.mhd";
-  QtVTKRenderWindows myQtVTKRenderWindows(fileName);
-  myQtVTKRenderWindows.show();
+  usMedicalImageViewer medicalImageViewer(fileName);
+  medicalImageViewer.show();
 
   return app.exec();
 }
