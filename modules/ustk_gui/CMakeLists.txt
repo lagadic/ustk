@@ -26,14 +26,9 @@ endif()
 set(CMAKE_AUTOMOC ON)
 
 #Find Qt version corresponding to the Qt version used to compile VTK (4 or 5)
-if(VTK_QT_VERSION VERSION_GREATER "4") #Qt5 not tested yet
+if(VTK_QT_VERSION VERSION_GREATER "4") #Qt5 not working yet
   find_package(Qt5 COMPONENTS Widgets REQUIRED QUIET)
   qt5_wrap_ui(UI_Srcs ${UIs})
-
-  #ORIGNIAL
-  #add_executable(QtVTKRenderWindows ${Srcs} ${Hdrs} ${UI_Srcs} ${MOC_Hdrs})
-  #qt5_use_modules(QtVTKRenderWindows Core Gui Widgets)
-  #target_link_libraries(QtVTKRenderWindows ${VTK_LIBRARIES})
 
   #VISP version (not tested yet)
   vp_glob_module_sources()
@@ -44,14 +39,9 @@ else()
   find_package(Qt4 REQUIRED)
   include(${QT_USE_FILE})
   # Use what VTK built with
-  #set(QT_QMAKE_EXECUTABLE ${VTK_QT_QMAKE_EXECUTABLE} CACHE FILEPATH "")
-  #set(QT_MOC_EXECUTABLE ${VTK_QT_MOC_EXECUTABLE} CACHE FILEPATH "")
-  #(QT_UIC_EXECUTABLE ${VTK_QT_UIC_EXECUTABLE} CACHE FILEPATH "")
-  #(UI_Srcs ${UIs})
- 
-  # ORIGNIAL
-  # add_executable(QtVTKRenderWindows ${Srcs} ${Hdrs} ${UI_Srcs} ${MOC_Hdrs})
-  #target_link_libraries(QtVTKRenderWindows ${QT_LIBRARIES} ${VTK_LIBRARIES})
+  set(QT_QMAKE_EXECUTABLE ${VTK_QT_QMAKE_EXECUTABLE} CACHE FILEPATH "")
+  set(QT_MOC_EXECUTABLE ${VTK_QT_MOC_EXECUTABLE} CACHE FILEPATH "")
+  set(QT_UIC_EXECUTABLE ${VTK_QT_UIC_EXECUTABLE} CACHE FILEPATH "")
 
   #VISP version
   vp_glob_module_sources()
