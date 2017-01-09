@@ -164,11 +164,11 @@ public:
 usMedicalImageViewer::usMedicalImageViewer(std::string imageFileName )
 {
   this->setupUi();
-
   vtkSmartPointer< vtkMetaImageReader > reader =
       vtkSmartPointer< vtkMetaImageReader >::New();
   reader->SetFileName(imageFileName.c_str());
   reader->Update();
+
   int imageDims[3];
   reader->GetOutput()->GetDimensions(imageDims);
 
@@ -228,16 +228,16 @@ usMedicalImageViewer::usMedicalImageViewer(std::string imageFileName )
     color[i] = 1;
     planeWidget[i]->GetPlaneProperty()->SetColor(color);
 
-    color[i] /= 4.0;
-    riw[i]->GetRenderer()->SetBackground( color );
+    //color[i] /= 4.0;
+    //riw[i]->GetRenderer()->SetBackground( color );
 
     planeWidget[i]->SetTexturePlaneProperty(ipwProp);
     planeWidget[i]->TextureInterpolateOff();
     planeWidget[i]->SetResliceInterpolateToLinear();
+
     planeWidget[i]->SetInputConnection(reader->GetOutputPort());
     planeWidget[i]->SetPlaneOrientation(i);
     planeWidget[i]->SetSliceIndex(imageDims[i]/2);
-    //planeWidget[i]->GetDisplayText();
     planeWidget[i]->SetDefaultRenderer(ren);
     planeWidget[i]->SetWindowLevel(1358, -27);
     planeWidget[i]->DisplayTextOff();
@@ -274,6 +274,10 @@ usMedicalImageViewer::usMedicalImageViewer(std::string imageFileName )
 
 
   }
+
+  this->view1->update();
+  this->view2->update();
+  this->view3->update();
 
   this->view1->show();
   this->view2->show();
@@ -356,6 +360,11 @@ void usMedicalImageViewer::Render()
     riw[i]->Render();
   }
   this->view4->GetRenderWindow()->Render();
+
+  this->view1->update();
+  this->view2->update();
+  this->view3->update();
+  this->view4->update();
 }
 
 /**
@@ -420,22 +429,22 @@ void usMedicalImageViewer::setupUi() {
   gridLayout_2 = new QGridLayout(gridLayoutWidget);
   gridLayout_2->setObjectName(QString::fromUtf8("gridLayout_2"));
   gridLayout_2->setContentsMargins(0, 0, 0, 0);
-  view2 = new QVTKWidget(gridLayoutWidget);
+  view2 = new usViewerWidget(gridLayoutWidget);
   view2->setObjectName(QString::fromUtf8("view2"));
 
   gridLayout_2->addWidget(view2, 1, 0, 1, 1);
 
-  view4 = new QVTKWidget(gridLayoutWidget);
+  view4 = new usViewerWidget(gridLayoutWidget);
   view4->setObjectName(QString::fromUtf8("view4"));
 
   gridLayout_2->addWidget(view4, 0, 1, 1, 1);
 
-  view3 = new QVTKWidget(gridLayoutWidget);
+  view3 = new usViewerWidget(gridLayoutWidget);
   view3->setObjectName(QString::fromUtf8("view3"));
 
   gridLayout_2->addWidget(view3, 1, 1, 1, 1);
 
-  view1 = new QVTKWidget(gridLayoutWidget);
+  view1 = new usViewerWidget(gridLayoutWidget);
   view1->setObjectName(QString::fromUtf8("view1"));
 
   gridLayout_2->addWidget(view1, 0, 0, 1, 1);

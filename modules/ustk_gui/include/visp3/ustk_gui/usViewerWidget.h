@@ -30,19 +30,19 @@
  *****************************************************************************/
 
 /**
- * @file usMedicalImageViewer.h
- * @brief Graphical main window containing 4 vtk views.
+ * @file usViewerWidget.h
+ * @brief View used to render a vtk scene in a QWidget (based on QVTKWidget)
  */
 
 
-#ifndef US_MEDICAL_IMAGE_VIEWER
-#define US_MEDICAL_IMAGE_VIEWER
+#ifndef US_VIEWER_WIDGET
+#define US_VIEWER_WIDGET
 
 //VISP includes
 #include <visp3/core/vpConfig.h>
 
 //USTK includes
-#include <visp3/ustk_gui/usViewerWidget.h>
+
 
 //VTK includes
 #include <vtkSmartPointer.h>
@@ -57,58 +57,24 @@
 #include <QtGui/QGridLayout>
 #include <QtGui/QPushButton>
 
+#include <QVTKWidget.h>
+
 /**
- * @class usMedicalImageViewer
- * @brief Graphical main window containing 4 vtk views.
+ * @class usViewerWidget
+ * @brief View used to render a vtk scene in a QWidget (based on QVTKWidget)
  * @ingroup module_ustk_gui
  */
 
-class VISP_EXPORT usMedicalImageViewer : public QMainWindow
+class VISP_EXPORT usViewerWidget : public QVTKWidget
 {
   Q_OBJECT
 public:
 
   // Constructor/Destructor
-  usMedicalImageViewer(std::string imageFileName);
-  ~usMedicalImageViewer() {}
+  usViewerWidget(QWidget* parent = NULL, Qt::WindowFlags f = 0);
+  ~usViewerWidget() {}
 
-  void resizeEvent(QResizeEvent* event);
-
-public slots:
-
-  virtual void ResetViews();
-  virtual void ResetColorMap();
-  virtual void Render();
-  virtual void AddDistanceMeasurementToView1();
-  virtual void AddDistanceMeasurementToView( int );
-  virtual void slotExit();
-
-protected:
-  vtkSmartPointer< vtkResliceImageViewer > riw[3];
-  vtkSmartPointer< vtkImagePlaneWidget > planeWidget[3];
-  vtkSmartPointer< vtkDistanceWidget > DistanceWidget[3];
-  vtkSmartPointer< vtkResliceImageViewerMeasurements > ResliceMeasurements[3];
-
-protected slots:
-
-private:
-    void setupUi();
-
-    QAction *actionOpenFile;
-    QAction *actionExit;
-    QAction *actionPrint;
-    QAction *actionHelp;
-    QAction *actionSave;
-    QWidget *centralwidget;
-    QWidget *gridLayoutWidget;
-    QGridLayout *gridLayout_2;
-    usViewerWidget *view2;
-    usViewerWidget *view4;
-    usViewerWidget *view3;
-    usViewerWidget *view1;
-    QPushButton *resetButton;
-    QPushButton *resetColorsButton;
-    QPushButton *AddDistance1Button;
+  void paintEvent( QPaintEvent* event );
 };
 
-#endif // US_MEDICAL_IMAGE_VIEWER
+#endif // US_VIEWER_WIDGET
