@@ -1,11 +1,12 @@
-project(tutorial-image-viewer)
+project(tutorial-medical-image-viewer)
 
 cmake_minimum_required(VERSION 2.6)
 
 find_package(VISP REQUIRED visp_ustk_gui)
 
 set(tutorial_cpp
-  usMedicalViewerExample.cpp)
+  usMedicalViewerExample.cpp
+  usVTKconverter.cpp)
 
 foreach(cpp ${tutorial_cpp})
   visp_add_target(${cpp})

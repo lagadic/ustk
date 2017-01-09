@@ -5,25 +5,44 @@
 
 int main()
 {
-  usImagePreScan2D<unsigned char> frame;
+/*  TEST : WRITE A SEQUENCE OF VOXEL IN A IMAGE
+  usImagePreScan3D<unsigned char> prescanImage;
+  prescanImage.resize(3,3,3);
+
+  prescanImage(0,0,0,0);
+  prescanImage(1,0,0,1);
+  prescanImage(2,0,0,2);
+  prescanImage(0,1,0,3);
+  prescanImage(1,1,0,4);
+  prescanImage(2,1,0,5);
+  prescanImage(0,2,0,6);
+  prescanImage(1,2,0,7);
+  prescanImage(2,2,0,8);
+  prescanImage(0,0,1,9);
+  prescanImage(1,0,1,10);
+  prescanImage(2,0,1,11);
+  prescanImage(0,1,1,12);
+  prescanImage(1,1,1,13);
+  prescanImage(2,1,1,14);
+  prescanImage(0,2,1,15);
+  prescanImage(1,2,1,16);
+  prescanImage(2,2,1,17);
+  prescanImage(0,0,2,18);
+  prescanImage(1,0,2,19);
+  prescanImage(2,0,2,20);
+  prescanImage(0,1,2,21);
+  prescanImage(1,1,2,22);
+  prescanImage(2,1,2,23);
+  prescanImage(0,2,2,24);
+  prescanImage(1,2,2,25);
+  prescanImage(2,2,2,26);
+
+  usImageIo::write(prescanImage,"/home/mpouliqu/Documents/ustk-dataset/3D/volumeTest.mhd");
+*/
+
   usImagePreScan3D<unsigned char> prescanImage;
   prescanImage.resize(128,480,16);
   usImagePostScan3D<unsigned char> postscanImage;
-
-  //get ultrasonix settings for scan conversion
-  /*us::getUltrasonix4DC7MotorSettings(prescanImage);
-  us::getUltrasonix4DC7PreScanSettings(prescanImage);
-
-  //reading the set of images
-  usSequenceReader<usImagePreScan2D<unsigned char> >reader;
-  reader.setSequenceFileName("/home/mpouliqu/Documents/usData/prescan/3D/USpreScan_volume-0000/sequencepreScan2D.xml");
-  std::cout << "reading images..." << std::endl;
-  int i = 0;
-  while(!reader.end()) {
-    reader.acquire(frame);
-    prescanImage.insertFrame(frame,i);
-    i++;
-  }*/
 
   usImageIo::read(prescanImage,"/home/mpouliqu/Documents/ustk-dataset/pre-scan/3D_xml/sequencepreScan3D.xml");
   std::cout << "end reading" << std::endl;
