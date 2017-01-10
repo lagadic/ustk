@@ -106,12 +106,7 @@ class VISP_EXPORT usGrabberUltrasonix {
   {
   int m_serv_fd;
   int m_cli_fd;
-#ifdef TCP
   socklen_t m_clilen;
-#endif // TCP
-#ifdef UDP
-  int m_clilen;
-#endif // UDP
   struct sockaddr_in m_serv_addr;
   struct sockaddr_in m_cli_addr;
   SocketHeader3D m_header;
