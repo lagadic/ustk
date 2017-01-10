@@ -66,12 +66,12 @@ void usScanConverter3D::init(const usImagePreScan3D<unsigned char> &preScanImage
 
   for(unsigned int x=0 ; x<m_nbX ; x++)
   {
+    double xx = _resolution*x-xmax;
     for(unsigned int y=0 ; y<m_nbY ; y++)
     {
+      double yy = ymin+_resolution*y;
       for(unsigned int z=0 ; z<m_nbZ ; z++)
       {
-        double xx = _resolution*x-xmax;
-        double yy = ymin+_resolution*y;
         double zz = _resolution*z-zmax;
 
         double i,j,k;
@@ -92,14 +92,19 @@ void usScanConverter3D::init(const usImagePreScan3D<unsigned char> &preScanImage
           double v1 = 1-v;
           double w1 = 1-w;
 
-          m._W[0] = u1 * v1 * w1;
-          m._W[1] = u  * v1 * w1;
-          m._W[2] = u1 * v  * w1;
-          m._W[3] = u  * v  * w1;
-          m._W[4] = u1 * v1 * w;
-          m._W[5] = u  * v1 * w;
-          m._W[6] = u1 * v  * w;
-          m._W[7] = u  * v  * w;
+          double v1w1 = v1 * w1;
+          double vw1 = v * w1;
+          double v1w = v1 * w;
+          double vw = v * w;
+
+          m._W[0] = u1 * v1w1;
+          m._W[1] = u  * v1w1;
+          m._W[2] = u1 * vw1;
+          m._W[3] = u  * vw1;
+          m._W[4] = u1 * v1w;
+          m._W[5] = u  * v1w;
+          m._W[6] = u1 * vw;
+          m._W[7] = u  * vw;
 
           double Xjj = X * jj;
           double Xjj1 = X *(jj + 1);
@@ -137,14 +142,19 @@ void usScanConverter3D::init(const usImagePreScan3D<unsigned char> &preScanImage
           double v1 = 1-v;
           double w1 = 1-w;
 
-          m._W[0] = u1 * v1 * w1;
-          m._W[1] = u  * v1 * w1;
-          m._W[2] = u1 * v  * w1;
-          m._W[3] = u  * v  * w1;
-          m._W[4] = u1 * v1 * w;
-          m._W[5] = u  * v1 * w;
-          m._W[6] = u1 * v  * w;
-          m._W[7] = u  * v  * w;
+          double v1w1 = v1 * w1;
+          double vw1 = v * w1;
+          double v1w = v1 * w;
+          double vw = v * w;
+
+          m._W[0] = u1 * v1w1;
+          m._W[1] = u  * v1w1;
+          m._W[2] = u1 * vw1;
+          m._W[3] = u  * vw1;
+          m._W[4] = u1 * v1w;
+          m._W[5] = u  * v1w;
+          m._W[6] = u1 * vw;
+          m._W[7] = u  * vw;
 
           double Xjj = X * jj;
           double Xjj1 = X *(jj + 1);
