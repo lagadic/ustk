@@ -25,7 +25,7 @@ int main()
     i++;
   }*/
 
-  usImageIo::read(prescanImage,"/home/mpouliqu/Documents/usData/prescan/3D/USpreScan_volume-0000/sequencepreScan2D.xml");
+  usImageIo::read(prescanImage,"/home/mpouliqu/Documents/ustk-dataset/pre-scan/3D_xml/sequencepreScan3D.xml");
   std::cout << "end reading" << std::endl;
 
   //scan-conversion

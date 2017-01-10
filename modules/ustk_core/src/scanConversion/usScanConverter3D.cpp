@@ -1,5 +1,8 @@
 #include<visp3/ustk_core/usScanConverter3D.h>
 
+#ifdef VISP_HAVE_OPENMP
+#include <omp.h>
+#endif
 
 /**
  * Default constructor.
@@ -70,10 +73,12 @@ void usScanConverter3D::init(const usImagePreScan3D<unsigned char> &preScanImage
     for(unsigned int y=0 ; y<m_nbY ; y++)
     {
       double yy = ymin+_resolution*y;
+
+#ifdef VISP_HAVE_OPENMP
+#pragma omp parallel for
       for(unsigned int z=0 ; z<m_nbZ ; z++)
       {
         double zz = _resolution*z-zmax;
-
         double i,j,k;
         usScanConverter3D::convertPostScanCoordToPreScanCoord(xx,yy,zz,&i,&j,&k,true);
 
@@ -119,7 +124,7 @@ void usScanConverter3D::init(const usImagePreScan3D<unsigned char> &preScanImage
           m._inputIndex[5] = ii+1 + Xjj  + XYKK1;
           m._inputIndex[6] = ii   + Xjj1 + XYKK1;
           m._inputIndex[7] = ii+1 + Xjj1 + XYKK1;
-
+          #pragma omp critical
           _lookupTable1.push_back(m);
         }
 
@@ -169,10 +174,113 @@ void usScanConverter3D::init(const usImagePreScan3D<unsigned char> &preScanImage
           m._inputIndex[5] = ii+1 + Xjj  + XYKK1;
           m._inputIndex[6] = ii   + Xjj1 + XYKK1;
           m._inputIndex[7] = ii+1 + Xjj1 + XYKK1;
+          #pragma omp critical
+          _lookupTable2.push_back(m);
 
+        }
+      }
+#else
+      for(unsigned int z=0 ; z<m_nbZ ; z++)
+      {
+        double zz = _resolution*z-zmax;
+        double i,j,k;
+        usScanConverter3D::convertPostScanCoordToPreScanCoord(xx,yy,zz,&i,&j,&k,true);
+
+        double ii = floor(i);
+        double jj = floor(j);
+        double kk = floor(k);
+
+        if(ii>=0 && jj>=0 && kk>=0 && ii+1<X && jj+1<Y && kk+1<Z)
+        {
+          m._outputIndex = x + m_nbX*y + nbXY*z;
+
+          double u = i - ii;
+          double v = j -jj;
+          double w = k - kk;
+          double u1 = 1-u;
+          double v1 = 1-v;
+          double w1 = 1-w;
+
+          double v1w1 = v1 * w1;
+          double vw1 = v * w1;
+          double v1w = v1 * w;
+          double vw = v * w;
+
+          m._W[0] = u1 * v1w1;
+          m._W[1] = u  * v1w1;
+          m._W[2] = u1 * vw1;
+          m._W[3] = u  * vw1;
+          m._W[4] = u1 * v1w;
+          m._W[5] = u  * v1w;
+          m._W[6] = u1 * vw;
+          m._W[7] = u  * vw;
+
+          double Xjj = X * jj;
+          double Xjj1 = X *(jj + 1);
+          double XYKK = XY * kk;
+          double XYKK1 = XY * (kk + 1);
+
+          m._inputIndex[0] = ii   + Xjj  + XYKK;
+          m._inputIndex[1] = ii+1 + Xjj  + XYKK;
+          m._inputIndex[2] = ii   + Xjj1 + XYKK;
+          m._inputIndex[3] = ii+1 + Xjj1 + XYKK;
+          m._inputIndex[4] = ii   + Xjj  + XYKK1;
+          m._inputIndex[5] = ii+1 + Xjj  + XYKK1;
+          m._inputIndex[6] = ii   + Xjj1 + XYKK1;
+          m._inputIndex[7] = ii+1 + Xjj1 + XYKK1;
+          _lookupTable1.push_back(m);
+        }
+
+        usScanConverter3D::convertPostScanCoordToPreScanCoord(xx,yy,zz,&i,&j,&k,false);
+
+        ii = floor(i);
+        jj = floor(j);
+        kk = floor(k);
+
+        if(ii>=0 && jj>=0 && kk>=0 && ii+1<X && jj+1<Y && kk+1<Z)
+        {
+          VoxelWeightAndIndex m;
+
+          m._outputIndex = x + m_nbX*y + nbXY*z;
+
+          double u = i - ii;
+          double v = j -jj;
+          double w = k - kk;
+          double u1 = 1-u;
+          double v1 = 1-v;
+          double w1 = 1-w;
+
+          double v1w1 = v1 * w1;
+          double vw1 = v * w1;
+          double v1w = v1 * w;
+          double vw = v * w;
+
+          m._W[0] = u1 * v1w1;
+          m._W[1] = u  * v1w1;
+          m._W[2] = u1 * vw1;
+          m._W[3] = u  * vw1;
+          m._W[4] = u1 * v1w;
+          m._W[5] = u  * v1w;
+          m._W[6] = u1 * vw;
+          m._W[7] = u  * vw;
+
+          double Xjj = X * jj;
+          double Xjj1 = X *(jj + 1);
+          double XYKK = XY * kk;
+          double XYKK1 = XY * (kk + 1);
+
+          m._inputIndex[0] = ii   + Xjj  + XYKK;
+          m._inputIndex[1] = ii+1 + Xjj  + XYKK;
+          m._inputIndex[2] = ii   + Xjj1 + XYKK;
+          m._inputIndex[3] = ii+1 + Xjj1 + XYKK;
+          m._inputIndex[4] = ii   + Xjj  + XYKK1;
+          m._inputIndex[5] = ii+1 + Xjj  + XYKK1;
+          m._inputIndex[6] = ii   + Xjj1 + XYKK1;
+          m._inputIndex[7] = ii+1 + Xjj1 + XYKK1;
           _lookupTable2.push_back(m);
         }
       }
+#endif
     }
   }
   std::cout << "LUT 1 size (bytes) : " << sizeof(VoxelWeightAndIndex) * _lookupTable1.size() << std::endl;
