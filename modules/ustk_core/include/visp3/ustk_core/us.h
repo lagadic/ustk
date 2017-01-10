@@ -60,9 +60,6 @@ typedef enum {
     POSTSCAN_3D,  /*!< Case of 3D post-scan image. */
   }ImageType;
 
-
-  VISP_EXPORT void getUltrasonix4DC7MotorSettings(usMotorSettings &motorSettings);
-  VISP_EXPORT void getUltrasonix4DC7PreScanSettings(usImagePreScanSettings &preScanSettings);
 };
 
 
