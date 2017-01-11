@@ -39,7 +39,6 @@
 
 void usVTKConverter::convert(const usImagePostScan3D<unsigned char> &postScanImage,vtkSmartPointer<vtkImageData> &vtkPostScanImage, vtkImageImport* importer)
 {
-  double t0 = vpTime::measureTimeMs();
   if(importer==NULL) {
     importer = vtkImageImport::New();
     importer->SetDataScalarTypeToUnsignedChar();
@@ -51,31 +50,26 @@ void usVTKConverter::convert(const usImagePostScan3D<unsigned char> &postScanIma
   else
     importer->SetImportVoidPointer((void *)postScanImage.getConstData());
 
-  double t5 = vpTime::measureTimeMs();
-
   importer->Update();
-  double t6 = vpTime::measureTimeMs();
 
   vtkPostScanImage = importer->GetOutput();
-  double t7 = vpTime::measureTimeMs();
   vtkPostScanImage->SetSpacing(postScanImage.getElementSpacingX(),postScanImage.getElementSpacingY(),postScanImage.getElementSpacingZ());
-  double t8 = vpTime::measureTimeMs();
-
-  std::cout << "t5 = " << t5-t0 << std::endl;
-  std::cout << "t6 = " << t6-t0 << std::endl;
-  std::cout << "t7 = " << t7-t0 << std::endl;
-  std::cout << "t8 = " << t8-t0 << std::endl;
 }
 
-void usVTKConverter::convert(const usImagePreScan3D<unsigned char> &preScanImage,vtkSmartPointer<vtkImageData> &vtkPreScanImage)
+void usVTKConverter::convert(const usImagePreScan3D<unsigned char> &preScanImage,vtkSmartPointer<vtkImageData> &vtkPreScanImage, vtkImageImport* importer)
 {
-  vtkImageImport* importer = vtkImageImport::New();
-  importer->SetDataScalarTypeToUnsignedChar();
-  importer->SetImportVoidPointer((void *)preScanImage.getConstData(),0);
-  importer->SetWholeExtent(0,preScanImage.getDimX()-1,0, preScanImage.getDimY()-1, 0, preScanImage.getDimZ()-1);
-  importer->SetDataExtentToWholeExtent();
-  importer->SetNumberOfScalarComponents(1);
+  if(importer==NULL) {
+    vtkImageImport* importer = vtkImageImport::New();
+    importer->SetDataScalarTypeToUnsignedChar();
+    importer->SetImportVoidPointer((void *)preScanImage.getConstData());
+    importer->SetWholeExtent(0,preScanImage.getDimX()-1,0, preScanImage.getDimY()-1, 0, preScanImage.getDimZ()-1);
+    importer->SetDataExtentToWholeExtent();
+    importer->SetNumberOfScalarComponents(1);
+  }
+  else
+    importer->SetImportVoidPointer((void *)preScanImage.getConstData());
+
   importer->Update();
 
-  vtkPreScanImage= importer->GetOutput();
+  vtkPreScanImage = importer->GetOutput();
 }
