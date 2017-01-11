@@ -37,22 +37,22 @@
 #include <visp3/ustk_gui/usVTKConverter.h>
 #include <vtkImageImport.h>
 
-void usVTKConverter::convert(const usImagePostScan3D<unsigned char> &postScanImage,vtkSmartPointer<vtkImageData> &vtkPostScanImage)
+void usVTKConverter::convert(const usImagePostScan3D<unsigned char> &postScanImage,vtkSmartPointer<vtkImageData> &vtkPostScanImage, vtkImageImport* importer)
 {
-  //vpTime::wait(3000);
-  std::cout << "BEGIN COPY" << std::endl;
   double t0 = vpTime::measureTimeMs();
-  vtkImageImport* importer = vtkImageImport::New();
-  importer->SetDataScalarTypeToUnsignedChar();
-  double t1 = vpTime::measureTimeMs();
-  importer->SetImportVoidPointer((void *)postScanImage.getConstData());
-  double t2 = vpTime::measureTimeMs();
-  importer->SetWholeExtent(0,postScanImage.getDimX()-1,0, postScanImage.getDimY()-1, 0, postScanImage.getDimZ()-1);
-  double t3 = vpTime::measureTimeMs();
-  importer->SetDataExtentToWholeExtent();
-  double t4 = vpTime::measureTimeMs();
-  importer->SetNumberOfScalarComponents(1);
+  if(importer==NULL) {
+    importer = vtkImageImport::New();
+    importer->SetDataScalarTypeToUnsignedChar();
+    importer->SetImportVoidPointer((void *)postScanImage.getConstData());
+    importer->SetWholeExtent(0,postScanImage.getDimX()-1,0, postScanImage.getDimY()-1, 0, postScanImage.getDimZ()-1);
+    importer->SetDataExtentToWholeExtent();
+    importer->SetNumberOfScalarComponents(1);
+  }
+  else
+    importer->SetImportVoidPointer((void *)postScanImage.getConstData());
+
   double t5 = vpTime::measureTimeMs();
+
   importer->Update();
   double t6 = vpTime::measureTimeMs();
 
@@ -61,11 +61,6 @@ void usVTKConverter::convert(const usImagePostScan3D<unsigned char> &postScanIma
   vtkPostScanImage->SetSpacing(postScanImage.getElementSpacingX(),postScanImage.getElementSpacingY(),postScanImage.getElementSpacingZ());
   double t8 = vpTime::measureTimeMs();
 
-
-  std::cout << "t1 = " << t1-t0 << std::endl;
-  std::cout << "t2 = " << t2-t0 << std::endl;
-  std::cout << "t3 = " << t3-t0 << std::endl;
-  std::cout << "t4 = " << t4-t0 << std::endl;
   std::cout << "t5 = " << t5-t0 << std::endl;
   std::cout << "t6 = " << t6-t0 << std::endl;
   std::cout << "t7 = " << t7-t0 << std::endl;

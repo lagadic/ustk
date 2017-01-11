@@ -1,18 +1,16 @@
-#include <QtGui/QMainWindow>
-#include <QtGui/QApplication>
-
 #include <vtkMetaImageWriter.h>
-
+#include <vtkImageImport.h>
 #include <visp3/ustk_io/usImageIo.h>
 #include <visp3/ustk_gui/usVTKConverter.h>
-#include <visp3/ustk_gui/usMedicalImageViewer.h>
+//#include <visp3/ustk_gui/usMedicalImageViewer.h>
 
 int main( int argc, char** argv )
 {
   //read the us data
   usImagePostScan3D<unsigned char> postScanImage;
   //usImageIo::read(postScanImage,"/home/mpouliqu/Documents/ustk-dataset/3D/volumeTest.mhd");
-  usImageIo::read(postScanImage,"/home/mpouliqu/Documents/usData/prescan/3D/USpreScan_volume-0000/volume.mhd");
+  //usImageIo::read(postScanImage,"/home/mpouliqu/Documents/usData/prescan/3D/USpreScan_volume-0000/volume.mhd");
+  usImageIo::read(postScanImage,"/udd/mpouliqu/soft/ustk/ustk-dataset/pre-scan/3D_mhd/volume.mhd");
 
   std::cout << postScanImage.getDimX() << std::endl;
   std::cout << postScanImage.getDimY() << std::endl;
@@ -21,9 +19,17 @@ int main( int argc, char** argv )
   //convert to vtkImageData to display the image
   vtkSmartPointer<vtkImageData> vtkImage;
   std::cout << "begin conversion" << std::endl;
+
+  vtkImageImport *importer = vtkImageImport::New();
+  importer->SetDataScalarTypeToUnsignedChar();
+  importer->SetImportVoidPointer((void *)postScanImage.getConstData());
+  importer->SetWholeExtent(0,postScanImage.getDimX()-1,0, postScanImage.getDimY()-1, 0, postScanImage.getDimZ()-1);
+  importer->SetDataExtentToWholeExtent();
+  importer->SetNumberOfScalarComponents(1);
+
   double t1 = vpTime::measureTimeMs();
 
-  usVTKConverter::convert(postScanImage,vtkImage);
+  usVTKConverter::convert(postScanImage,vtkImage,importer);
   double t2 = vpTime::measureTimeMs();
 
   std::cout << "vtk convert time = " << t2-t1 << std::endl;
@@ -55,14 +61,5 @@ int main( int argc, char** argv )
   writer->SetInputData(vtkImage);
   writer->Write();
 
-/*
-  // QT application
-  QApplication app( argc, argv );
-
-  //std::string fileName = "/home/mpouliqu/Documents/ustk-dataset/pre-scan/3D_mhd/volume.mhd";
-  usMedicalImageViewer medicalImageViewer(vtkImage);
-  medicalImageViewer.show();
-
-  return app.exec();*/
   return 0;
 }
