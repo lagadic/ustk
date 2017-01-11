@@ -47,6 +47,7 @@
 //VTK includes
 #include <vtkSmartPointer.h>
 #include <vtkImageData.h>
+#include <vtkImageImport.h>
 
 /**
  * @class usVTKConverter
@@ -57,7 +58,7 @@
 class VISP_EXPORT usVTKConverter
 {
 public:
-  static void convert(const usImagePostScan3D<unsigned char> &postScanImage, vtkSmartPointer<vtkImageData> &vtkPostScanImage);
+  static void convert(const usImagePostScan3D<unsigned char> &postScanImage, vtkSmartPointer<vtkImageData> &vtkPostScanImage, vtkImageImport *importer = NULL);
   static void convert(const usImagePreScan3D<unsigned char> &preScanImage, vtkSmartPointer<vtkImageData> &vtkPreScanImage);
 
 };
