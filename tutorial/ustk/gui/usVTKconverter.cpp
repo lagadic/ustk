@@ -10,20 +10,20 @@
 int main( int argc, char** argv )
 {
   //read the us data
-  usImagePreScan3D<unsigned char> preScanImage;
-  usImageIo::read(preScanImage,"/home/mpouliqu/Documents/ustk-dataset/3D/volumeTest.mhd");
+  usImagePostScan3D<unsigned char> postScanImage;
+  //usImageIo::read(postScanImage,"/home/mpouliqu/Documents/ustk-dataset/3D/volumeTest.mhd");
+  usImageIo::read(postScanImage,"/home/mpouliqu/Documents/usData/prescan/3D/USpreScan_volume-0000/volume.mhd");
 
-  std::cout << preScanImage.getDimX() << std::endl;
-  std::cout << preScanImage.getDimY() << std::endl;
-  std::cout << preScanImage.getDimZ() << std::endl;
+  std::cout << postScanImage.getDimX() << std::endl;
+  std::cout << postScanImage.getDimY() << std::endl;
+  std::cout << postScanImage.getDimZ() << std::endl;
 
   //convert to vtkImageData to display the image
   vtkSmartPointer<vtkImageData> vtkImage;
   std::cout << "begin conversion" << std::endl;
   double t1 = vpTime::measureTimeMs();
 
-  usVTKConverter converter;
-  converter.convert(preScanImage,vtkImage);
+  usVTKConverter::convert(postScanImage,vtkImage);
   double t2 = vpTime::measureTimeMs();
 
   std::cout << "vtk convert time = " << t2-t1 << std::endl;
@@ -31,7 +31,7 @@ int main( int argc, char** argv )
   std::cout << "vtk ptr = " << vtkImage->GetScalarPointer(0,0,0) << std::endl;
 
   unsigned char* ptr = (unsigned char*) vtkImage->GetScalarPointer(0,0,0);
-
+/*
   int i=0;
   while (i<26) {
     std::cout << "vtkImage [" << i << "] = " << (int) *ptr << std::endl;
@@ -39,10 +39,10 @@ int main( int argc, char** argv )
     i++;
   }
 
-/*
-  for (int i = 0; i < preScanImage.getDimX(); i++) {
-    for (int j = 0; j < preScanImage.getDimY(); j++) {
-      for (int k = 0; k < preScanImage.getDimZ(); k++) {
+
+  for (int i = 0; i < postScanImage.getDimX(); i++) {
+    for (int j = 0; j < postScanImage.getDimY(); j++) {
+      for (int k = 0; k < postScanImage.getDimZ(); k++) {
         //std::cout << "i = " << i << ", j = " << j << ", k = " << k << std::endl;
         std::cout << "imageData [" << i << "] [" << j << "] [" << k << "] = " << vtkImage->GetScalarComponentAsDouble(i,j,k,0) << std::endl;
       }
