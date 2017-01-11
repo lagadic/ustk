@@ -110,7 +110,6 @@ void usGrabberFrame<ImageType>::grabFrame(ImageType* imageToWrite) const {
   int n = 0;
   // Grab frame information
   while(n < m_informations->m_byteSizeFrmInf){
-#ifdef TCP
     ssize_t len = recv(m_informations->m_cli_fd, m_informations->m_frmInf + n, m_informations->m_byteSizeFrmInf - n, 0);
     if (len == 0) {
       std::cerr << "Error: in usGrabberUltrasonix::grabFrame(): "
@@ -125,26 +124,6 @@ void usGrabberFrame<ImageType>::grabFrame(ImageType* imageToWrite) const {
       throw vpException(vpException::ioError, "recv() error");
     }
     n += len;
-#elif defined UDP
-    ssize_t len = recvfrom(m_informations->m_serv_fd, m_informations->m_frmInf + n, m_informationsm_byteSizeFrmInf - n, 0,
-                           (sockaddr*)&m_informationsm_cli_addr, (socklen_t*)&m_informationsm_clilen);
-    if (len == 0) {
-      std::cerr << "Error: in usGrabberUltrasonix::grabFrame(): "
-                << "recvfrom() returned value 0: "
-                << "No messages are available to be received "
-                << "and the peer has performed an orderly shutdown." << std::endl;
-      throw vpException(vpException::ioError, "Connection shutdown by peer.");
-    }
-    if (len < 0) {
-      std::cerr << "Error: in usGrabberUltrasonix::grabFrame(): "
-                << "recvfrom() returned value " << len << std::endl;
-      throw vpException(vpException::ioError, "recvfrom() error");
-    }
-    n += len;
-#else
-#error "No connection protocol defined. Please define either TCP or UDP."
-#endif
-    //std::cout << "Received " << n << " bytes / " << m_informations->m_byteSizeFrmInf << std::endl;
   }
 
   // Parse frame information

@@ -55,13 +55,7 @@ void usGrabberUltrasonix::start()
   m_communicationInormations.m_previousFrmIdx = 0;
 
   // Create communication endpoint.
-#ifdef TCP
   m_communicationInormations.m_serv_fd = socket(AF_INET, SOCK_STREAM, 0);
-#elif defined UDP
-  m_communicationInormations.m_serv_fd = socket(AF_INET, SOCK_DGRAM, 0);
-#else
-#error "No connection protocol defined. Please define either TCP or UDP."
-#endif
   if (m_communicationInormations.m_serv_fd < 0) {
     std::cerr << "Error: in usGrabberUltrasonix::start(): "
               << "socket() failed (error " << errno << ")." << std::endl;
@@ -82,7 +76,6 @@ void usGrabberUltrasonix::start()
   }
   std::cout << "bind() OK" << std::endl;
 
-#ifdef TCP
   // Listen.
   if(listen(m_communicationInormations.m_serv_fd, 1) < 0) {
     std::cerr << "Error: in usGrabberUltrasonix::start(): "
@@ -101,7 +94,6 @@ void usGrabberUltrasonix::start()
               << "accept() failed (error " << errno << ")." << std::endl;
     throw vpException(vpException::ioError, "accept() error");
   }
-#endif
 
   // Print client's IP
   printf("You got a connection from %s\n", inet_ntoa(m_communicationInormations.m_cli_addr.sin_addr));
@@ -110,7 +102,6 @@ void usGrabberUltrasonix::start()
   int szHeader = sizeof(m_communicationInormations.m_header);
   int n = 0;
   while (n < szHeader) {
-#ifdef TCP
     ssize_t len = recv(m_communicationInormations.m_cli_fd, &m_communicationInormations.m_header + n, szHeader - n, 0);
     if (len == 0) {
       std::cerr << "Error: in usGrabberUltrasonix::start(): "
@@ -125,17 +116,10 @@ void usGrabberUltrasonix::start()
       throw vpException(vpException::ioError, "recv() error");
     }
     n += len;
-#elif defined UDP
-    n += recvfrom(m_communicationInormations.m_serv_fd, &m_communicationInormations.m_header+n, szHeader-n, 0, (sockaddr*)&m_communicationInormations.m_cli_addr,
-                  (socklen_t*)&m_communicationInormations.m_clilen);
-#else
-#error "No connection protocol defined. Please define either TCP or UDP."
-#endif
   }
 
   n = 0;
   while (n < szHeader) {
-#ifdef TCP
     ssize_t len = recv(m_communicationInormations.m_cli_fd, &m_communicationInormations.m_header + n, szHeader - n, 0);
     if (len == 0) {
       std::cerr << "Error: in usGrabberUltrasonix::start(): "
@@ -150,12 +134,6 @@ void usGrabberUltrasonix::start()
       throw vpException(vpException::ioError, "recv() error");
     }
     n += len;
-#elif defined UDP
-    n += recvfrom(m_communicationInormations.m_serv_fd, &m_communicationInormations.m_header+n, szHeader-n, 0, (sockaddr*)&m_communicationInormations.m_cli_addr,
-                  (socklen_t*)&m_communicationInormations.m_clilen);
-#else
-#error "No connection protocol defined. Please define either TCP or UDP."
-#endif
   }
 
   m_communicationInormations.m_localTime = vpTime::measureTimeMs();
@@ -218,7 +196,6 @@ void usGrabberUltrasonix::start()
   for (int i = 0; i < NUM_FRAME_OFFSET; ++i) {
     n = 0;
     while(n < m_communicationInormations.m_byteSizeFrmInf) {
-#ifdef TCP
       ssize_t len = recv(m_communicationInormations.m_cli_fd, m_communicationInormations.m_frmInf + n, m_communicationInormations.m_byteSizeFrmInf - n, 0);
       if (len == 0) {
         std::cerr << "Error: in usGrabberUltrasonix::start(): "
@@ -233,25 +210,6 @@ void usGrabberUltrasonix::start()
         throw vpException(vpException::ioError, "recv() error");
       }
       n += len;
-#elif defined UDP
-      ssize_t len = recvfrom(m_communicationInormations.m_serv_fd, m_communicationInormations.m_frmInf + n, m_communicationInormations.m_byteSizeFrmInf - n, 0,
-                             (sockaddr*)&m_communicationInormations.m_cli_addr, (socklen_t*)&m_communicationInormations.m_clilen);
-      if (len == 0) {
-        std::cerr << "Error: in usGrabberUltrasonix::start(): "
-                  << "recvfrom() returned value 0: "
-                  << "No messages are available to be received "
-                  << "and the peer has performed an orderly shutdown." << std::endl;
-        throw vpException(vpException::ioError, "Connection shutdown by peer.");
-      }
-      if (len < 0) {
-        std::cerr << "Error: in usGrabberUltrasonix::start(): "
-                  << "recvfrom() returned value " << len << std::endl;
-        throw vpException(vpException::ioError, "recv() error");
-      }
-      n += len;
-#else
-#error "No connection protocol defined. Please define either TCP or UDP."
-#endif
     }
   }
 
@@ -327,14 +285,8 @@ void usGrabberUltrasonix::start()
 
 void usGrabberUltrasonix::stop() {
   // close client socket
-#ifdef TCP
   close(m_communicationInormations.m_cli_fd);
   close(m_communicationInormations.m_serv_fd);
-#elif defined UDP
-  close(m_communicationInormations.m_serv_fd);
-#else
-#error "No connection protocol defined. Please define either TCP or UDP."
-#endif
 
   // free
   free(m_communicationInormations.m_frmInf);
