@@ -37,34 +37,43 @@
 #include <visp3/ustk_gui/usVTKConverter.h>
 #include <vtkImageImport.h>
 
-void usVTKConverter::convert(const usImagePostScan3D<unsigned char> &postScanImage,vtkSmartPointer<vtkImageData> vtkPostScanImage) {
+void usVTKConverter::convert(const usImagePostScan3D<unsigned char> &postScanImage,vtkSmartPointer<vtkImageData> &vtkPostScanImage)
+{
+  //vpTime::wait(3000);
+  std::cout << "BEGIN COPY" << std::endl;
+  double t0 = vpTime::measureTimeMs();
+  vtkImageImport* importer = vtkImageImport::New();
+  importer->SetDataScalarTypeToUnsignedChar();
+  double t1 = vpTime::measureTimeMs();
+  importer->SetImportVoidPointer((void *)postScanImage.getConstData());
+  double t2 = vpTime::measureTimeMs();
+  importer->SetWholeExtent(0,postScanImage.getDimX()-1,0, postScanImage.getDimY()-1, 0, postScanImage.getDimZ()-1);
+  double t3 = vpTime::measureTimeMs();
+  importer->SetDataExtentToWholeExtent();
+  double t4 = vpTime::measureTimeMs();
+  importer->SetNumberOfScalarComponents(1);
+  double t5 = vpTime::measureTimeMs();
+  importer->Update();
+  double t6 = vpTime::measureTimeMs();
 
-  std::cout << "toto" << std::endl;
-  //set image settings (dims and spacings), and allocate memory
-  vtkPostScanImage->SetDimensions(postScanImage.getDimX(), postScanImage.getDimY(),postScanImage.getDimZ());
-  std::cout << "toto" << std::endl;
-  vtkPostScanImage->AllocateScalars(VTK_UNSIGNED_CHAR,1);
-  std::cout << "toto" << std::endl;
+  vtkPostScanImage = importer->GetOutput();
+  double t7 = vpTime::measureTimeMs();
   vtkPostScanImage->SetSpacing(postScanImage.getElementSpacingX(),postScanImage.getElementSpacingY(),postScanImage.getElementSpacingZ());
-  std::cout << "toto" << std::endl;
+  double t8 = vpTime::measureTimeMs();
 
-  unsigned char * dataToCopy = postScanImage.getConstData();
 
-  for (int i = 0; i < postScanImage.getDimX(); i++) {
-    for (int j = 0; j < postScanImage.getDimY(); j++) {
-      for (int k = 0; k < postScanImage.getDimZ(); k++) {
-        std::cout << "i = " << i << ", j = " << j << ", k = " << k << std::endl;
-        // std::cout << "imageData [" << i << "] [" << j << "] [" << k << "] = " << reader->GetOutput()->GetScalarComponentAsDouble(i,j,k,0) << std::endl;
-        *static_cast<unsigned char*>(vtkPostScanImage->GetScalarPointer(i,j,k)) = *dataToCopy++;
-      }
-    }
-  }
-
+  std::cout << "t1 = " << t1-t0 << std::endl;
+  std::cout << "t2 = " << t2-t0 << std::endl;
+  std::cout << "t3 = " << t3-t0 << std::endl;
+  std::cout << "t4 = " << t4-t0 << std::endl;
+  std::cout << "t5 = " << t5-t0 << std::endl;
+  std::cout << "t6 = " << t6-t0 << std::endl;
+  std::cout << "t7 = " << t7-t0 << std::endl;
+  std::cout << "t8 = " << t8-t0 << std::endl;
 }
 
-void usVTKConverter::convert(const usImagePreScan3D<unsigned char> &preScanImage,vtkSmartPointer<vtkImageData> &vtkPreScanImage) {
-
-  std::cout << "convert() data ptr = " << (void*)preScanImage.getConstData() << std::endl;
+void usVTKConverter::convert(const usImagePreScan3D<unsigned char> &preScanImage,vtkSmartPointer<vtkImageData> &vtkPreScanImage)
+{
   vtkImageImport* importer = vtkImageImport::New();
   importer->SetDataScalarTypeToUnsignedChar();
   importer->SetImportVoidPointer((void *)preScanImage.getConstData(),0);
@@ -74,61 +83,4 @@ void usVTKConverter::convert(const usImagePreScan3D<unsigned char> &preScanImage
   importer->Update();
 
   vtkPreScanImage= importer->GetOutput();
-
-/*
-  for (int i = 0; i < preScanImage.getDimX(); i++) {
-    for (int j = 0; j < preScanImage.getDimY(); j++) {
-      for (int k = 0; k < preScanImage.getDimZ(); k++) {
-        //std::cout << "i = " << i << ", j = " << j << ", k = " << k << std::endl;
-        std::cout << "imageData (" << i << ", " << j << ", " << k << ") = " << (int)  preScanImage(i,j,k) << std::endl;
-      }
-    }
-  }
-
-  std::cout << "*********************************************************" << std::endl<< std::endl;
-
-  unsigned char * dataPtr = preScanImage.getConstData();
-  int i=0;
-  while(i<26) {
-    std::cout << "imageData [" << i << "] =" << (int) *dataPtr << std::endl;
-    i++;
-    dataPtr++;
-  }
-
-  std::cout << "*********************************************************" << std::endl<< std::endl;
-
-
-  for (int i = 0; i < preScanImage.getDimX(); i++) {
-    for (int j = 0; j < preScanImage.getDimY(); j++) {
-      for (int k = 0; k < preScanImage.getDimZ(); k++) {
-        //std::cout << "i = " << i << ", j = " << j << ", k = " << k << std::endl;
-        std::cout << "imageData [" << i << "] [" << j << "] [" << k << "] = " << vtkPreScanImage->GetScalarComponentAsDouble(i,j,k,0) << std::endl;
-      }
-    }
-  }*/
-
-
-/*
-  std::cout << "toto" << std::endl;
-  //set image settings (dims and spacings), and allocate memory
-  int dims[3];
-  dims[0] = 3;
-  dims[1] = 3;
-  dims[2] = 3;
-  vtkPreScanImage->AllocateScalars(VTK_UNSIGNED_CHAR,1);
-  std::cout << "toto" << std::endl;
-  vtkPreScanImage->SetDimensions(dims);
-  std::cout << "toto" << std::endl;
-  unsigned char * dataToCopy = preScanImage.getConstData();
-
-  for (int i = 0; i < preScanImage.getDimX(); i++) {
-    for (int j = 0; j < preScanImage.getDimY(); j++) {
-      for (int k = 0; k < preScanImage.getDimZ(); k++) {
-        std::cout << "i = " << i << ", j = " << j << ", k = " << k << std::endl;
-        // std::cout << "imageData [" << i << "] [" << j << "] [" << k << "] = " << reader->GetOutput()->GetScalarComponentAsDouble(i,j,k,0) << std::endl;
-        *static_cast<unsigned char*>(vtkPreScanImage->GetScalarPointer(i,j,k)) = *dataToCopy++;
-      }
-    }
-  }
-*/
 }
