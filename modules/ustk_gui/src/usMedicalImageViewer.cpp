@@ -64,6 +64,8 @@
 #include <vtkDistanceRepresentation2D.h>
 #include <vtkPointHandleRepresentation3D.h>
 #include <vtkPointHandleRepresentation2D.h>
+#include <vtkCamera.h>
+#include <vtkRendererCollection.h>
 
 #include <QDesktopWidget>
 #include <QResizeEvent>
@@ -131,15 +133,23 @@ public:
       {
         vtkPlaneSource *ps = static_cast< vtkPlaneSource * >(
               this->IPW[i]->GetPolyDataAlgorithm());
+
+
+
         ps->SetOrigin(this->RCW[i]->GetResliceCursorRepresentation()->
                       GetPlaneSource()->GetOrigin());
         ps->SetPoint1(this->RCW[i]->GetResliceCursorRepresentation()->
                       GetPlaneSource()->GetPoint1());
+
         ps->SetPoint2(this->RCW[i]->GetResliceCursorRepresentation()->
                       GetPlaneSource()->GetPoint2());
 
         // If the reslice plane has modified, update it on the 3D widget
         this->IPW[i]->UpdatePlacement();
+        /* TRY TO FIX in-plane rotation bug when rotating a plane up to 90deg
+        std::cout << "imagePlaneWidget[" << i << "] : origin =(" << ps->GetOrigin()[0] << "," << ps->GetOrigin()[1] << "," << ps->GetOrigin()[2]
+                                              << "), pt1 =(" << ps->GetPoint1()[0] << "," << ps->GetPoint1()[1] << "," << ps->GetPoint1()[2]
+                                              << "), pt2 =(" << ps->GetPoint2()[0] << "," << ps->GetPoint2()[1] << ","<< ps->GetPoint2()[2] << ")" << std::endl;*/
       }
     }
 
@@ -202,6 +212,9 @@ usMedicalImageViewer::usMedicalImageViewer(std::string imageFileName )
 
     riw[i]->SetInputData(reader->GetOutput());
     riw[i]->SetSliceOrientation(i);
+    riw[i]->GetRenderer()->GetActiveCamera()->SetRoll(180);
+
+
     riw[i]->SetResliceModeToAxisAligned();
   }
 
@@ -287,6 +300,8 @@ usMedicalImageViewer::usMedicalImageViewer(std::string imageFileName )
   {
     riw[i]->SetResliceMode(1);
     riw[i]->GetRenderer()->ResetCamera();
+    if(i==2)
+      riw[i]->GetRenderer()->GetActiveCamera()->SetRoll(180);
     riw[i]->Render();
   }
 
@@ -317,6 +332,8 @@ void usMedicalImageViewer::ResetViews()
     riw[i]->Reset();
     riw[i]->SetResliceMode(1);
     riw[i]->GetRenderer()->ResetCamera();
+    if(i==2)
+      riw[i]->GetRenderer()->GetActiveCamera()->SetRoll(180);
   }
 
   // Also sync the Image plane widget on the 3D top right view with any
@@ -332,6 +349,7 @@ void usMedicalImageViewer::ResetViews()
     this->planeWidget[i]->UpdatePlacement();
   }
 
+  this->view4->GetRenderWindow()->GetRenderers()->GetFirstRenderer()->GetActiveCamera()->SetRoll(180);
   // Render in response to changes.
   this->Render();
 }
