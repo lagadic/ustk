@@ -53,9 +53,9 @@ usViewerWidget::usViewerWidget(QWidget* parent, Qt::WindowFlags f) : QVTKWidget(
 */
 void usViewerWidget::paintEvent( QPaintEvent* event )
 {
-/*
+
   QVTKWidget::paintEvent( event );
-  QPainter painter ( this );
+/*  QPainter painter ( this );
   QPen pen(Qt::red, 10, Qt::SolidLine);
   painter.setPen(pen);
   painter.drawLine(10, 10, 20, 20);

@@ -8,8 +8,8 @@ int main( int argc, char** argv )
   QApplication app( argc, argv );
 
   //std::string fileName = "/home/mpouliqu/Documents/ustk-dataset/3D/volumeTest.mhd";
-  //std::string fileName = "/home/mpouliqu/Documents/ustk-dataset/pre-scan/3D_mhd/volume.mhd";
-  std::string fileName = "/udd/mpouliqu/soft/ustk/ustk-dataset/pre-scan/3D_mhd/volume.mhd";
+  std::string fileName = "/home/mpouliqu/Documents/ustk-dataset/pre-scan/3D_mhd/volume.mhd";
+  //std::string fileName = "/udd/mpouliqu/soft/ustk/ustk-dataset/pre-scan/3D_mhd/volume.mhd";
   usMedicalImageViewer medicalImageViewer(fileName);
   medicalImageViewer.show();
 
