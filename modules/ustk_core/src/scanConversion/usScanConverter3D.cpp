@@ -73,10 +73,10 @@ void usScanConverter3D::init(const usImagePreScan3D<unsigned char> &preScanImage
     for(unsigned int y=0 ; y<m_nbY ; y++)
     {
       double yy = ymin+_resolution*y;
-
+/*  BUG WHEN USING OPENMP FOR INIT : some black voxels appears in the middle of the image with no reason
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
-#endif
+#endif*/
       for(unsigned int z=0 ; z<m_nbZ ; z++)
       {
         double zz = _resolution*z-zmax;
@@ -125,9 +125,9 @@ void usScanConverter3D::init(const usImagePreScan3D<unsigned char> &preScanImage
           m._inputIndex[5] = ii+1 + Xjj  + XYKK1;
           m._inputIndex[6] = ii   + Xjj1 + XYKK1;
           m._inputIndex[7] = ii+1 + Xjj1 + XYKK1;
-#ifdef VISP_HAVE_OPENMP
+/*#ifdef VISP_HAVE_OPENMP
 #pragma omp critical
-#endif
+#endif*/
           _lookupTable1.push_back(m);
         }
 
@@ -177,9 +177,9 @@ void usScanConverter3D::init(const usImagePreScan3D<unsigned char> &preScanImage
           m._inputIndex[5] = ii+1 + Xjj  + XYKK1;
           m._inputIndex[6] = ii   + Xjj1 + XYKK1;
           m._inputIndex[7] = ii+1 + Xjj1 + XYKK1;
-#ifdef VISP_HAVE_OPENMP
+/*#ifdef VISP_HAVE_OPENMP
 #pragma omp critical
-#endif
+#endif*/
           _lookupTable2.push_back(m);
 
         }
@@ -229,41 +229,26 @@ void usScanConverter3D::convert( usImagePostScan3D<unsigned char> &postScanImage
   {
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
-    for(int i=_lookupTable1.size()-1 ; i>=0 ; i--)
-    {
-      double v = 0;
-      for(int j=0 ; j<8 ; j++) v += _lookupTable1[i]._W[j] * dataPre[_lookupTable1[i]._inputIndex[j]];
-      dataPost[_lookupTable1[i]._outputIndex] = v;
-
-    }
-#else
-    for(int i=_lookupTable1.size()-1 ; i>=0 ; i--)
-    {
-      double v = 0;
-      for(int j=0 ; j<8 ; j++) v += _lookupTable1[i]._W[j] * dataPre[_lookupTable1[i]._inputIndex[j]];
-      dataPost[_lookupTable1[i]._outputIndex] = v;
-
-    }
 #endif
+    for(int i=_lookupTable1.size()-1 ; i>=0 ; i--)
+    {
+      double v = 0;
+      for(int j=0 ; j<8 ; j++) v += _lookupTable1[i]._W[j] * dataPre[_lookupTable1[i]._inputIndex[j]];
+      dataPost[_lookupTable1[i]._outputIndex] = v;
+
+    }
   }
   else
   {
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
-    for(int i=_lookupTable2.size()-1 ; i>=0 ; i--)
-    {
-      double v = 0;
-      for(int j=0 ; j<8 ; j++) v += _lookupTable2[i]._W[j] * dataPre[_lookupTable2[i]._inputIndex[j]];
-      dataPost[_lookupTable2[i]._outputIndex] = v;
-    }
-#else
-    for(int i=_lookupTable2.size()-1 ; i>=0 ; i--)
-    {
-      double v = 0;
-      for(int j=0 ; j<8 ; j++) v += _lookupTable2[i]._W[j] * dataPre[_lookupTable2[i]._inputIndex[j]];
-      dataPost[_lookupTable2[i]._outputIndex] = v;
-    }
 #endif
+    for(int i=_lookupTable2.size()-1 ; i>=0 ; i--)
+    {
+      double v = 0;
+      for(int j=0 ; j<8 ; j++) v += _lookupTable2[i]._W[j] * dataPre[_lookupTable2[i]._inputIndex[j]];
+      dataPost[_lookupTable2[i]._outputIndex] = v;
+    }
   }
 
   //writing post-scan image settings
