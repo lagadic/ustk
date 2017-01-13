@@ -1,5 +1,7 @@
-#include <QtGui/QMainWindow>
-#include <QtGui/QApplication>
+#include <visp3/ustk_gui/usGuiConfig.h>
+
+#ifdef USTK_HAVE_VTK_QT
+
 #include <visp3/ustk_gui/usMedicalImageViewer.h>
 
 int main( int argc, char** argv )
@@ -15,3 +17,12 @@ int main( int argc, char** argv )
 
   return app.exec();
 }
+#else
+#include <iostream>
+
+int main()
+{
+  std::cout << "Install vtk with qt4 or qt5 support to run this tutorial." << std::endl;
+}
+
+#endif

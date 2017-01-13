@@ -1,9 +1,13 @@
+#include <visp3/ustk_gui/usGuiConfig.h>
+
+#ifdef USTK_HAVE_VTK_QT
+
 #include <vtkMetaImageWriter.h>
 #include <vtkImageImport.h>
 #include <visp3/ustk_io/usImageIo.h>
 #include <visp3/ustk_gui/usVTKConverter.h>
 
-int main( int argc, char** argv )
+int main()
 {
   //read the us data
   usImagePostScan3D<unsigned char> postScanImage;
@@ -46,3 +50,12 @@ int main( int argc, char** argv )
 
   return 0;
 }
+#else
+#include <iostream>
+
+int main()
+{
+  std::cout << "Install vtk with qt4 or qt5 support to run this tutorial." << std::endl;
+}
+
+#endif

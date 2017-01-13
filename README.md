@@ -6,8 +6,22 @@ Copyright (C) 2016 by Inria.
 
 #### Dependencies
 
-This UsTK project needs [ViSP](https://visp.inria.fr) as third-party.
-For compilation, UsTK is considered as a set of ViSP external modules. Thus ViSP and UsTK have to be compiled together. 
+This UsTK project needs [ViSP](https://visp.inria.fr) and [VTK](http://www.vtk.org/) with Qt4 or Qt5 support as third-party.
+
+- ViSP: UsTK is considered as a set of ViSP external modules. Thus ViSP and UsTK have to be compiled together. It means that you should get ViSP source code as explained in the next section.
+
+- VTK: Should be installed from pre-build packages
+
+
+  - How to install VTK OS X
+
+		$ brew update
+		$ brew install vtk —-with-qt5
+		
+  - How to install VTK on Ubuntu 16.04 LTS
+  
+ 		$ sudo apt-get install libvtk6-qt-dev
+ 		 
 
 #### How to build UsTK libraries
 
