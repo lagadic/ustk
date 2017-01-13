@@ -236,7 +236,7 @@ usMedicalImageViewer::usMedicalImageViewer(std::string imageFileName )
     planeWidget[i] = vtkSmartPointer<vtkImagePlaneWidget>::New();
     planeWidget[i]->SetInteractor( iren );
     planeWidget[i]->SetPicker(picker);
-    planeWidget[i]->RestrictPlaneToVolumeOn();
+    //planeWidget[i]->RestrictPlaneToVolumeOn();
     double color[3] = {0, 0, 0};
     color[i] = 1;
     planeWidget[i]->GetPlaneProperty()->SetColor(color);
@@ -244,8 +244,8 @@ usMedicalImageViewer::usMedicalImageViewer(std::string imageFileName )
     //color[i] /= 4.0;
     //riw[i]->GetRenderer()->SetBackground( color );
 
-    planeWidget[i]->SetTexturePlaneProperty(ipwProp);
-    planeWidget[i]->TextureInterpolateOff();
+    //planeWidget[i]->SetTexturePlaneProperty(ipwProp);
+    //planeWidget[i]->TextureInterpolateOff();
     planeWidget[i]->SetResliceInterpolateToLinear();
 
     planeWidget[i]->SetInputConnection(reader->GetOutputPort());
@@ -253,7 +253,7 @@ usMedicalImageViewer::usMedicalImageViewer(std::string imageFileName )
     planeWidget[i]->SetSliceIndex(imageDims[i]/2);
     planeWidget[i]->SetDefaultRenderer(ren);
     planeWidget[i]->SetWindowLevel(1358, -27);
-    planeWidget[i]->DisplayTextOff();
+    //planeWidget[i]->DisplayTextOff();
     planeWidget[i]->On();
     planeWidget[i]->InteractionOff();
   }
@@ -269,19 +269,13 @@ usMedicalImageViewer::usMedicalImageViewer(std::string imageFileName )
           vtkResliceCursorWidget::ResliceAxesChangedEvent, cbk );
     riw[i]->GetResliceCursorWidget()->AddObserver(
           vtkResliceCursorWidget::WindowLevelEvent, cbk );
-    /*riw[i]->GetResliceCursorWidget()->AddObserver(
-        vtkResliceCursorWidget::ResliceThicknessChangedEvent, cbk );*/
     riw[i]->GetResliceCursorWidget()->AddObserver(
           vtkResliceCursorWidget::ResetCursorEvent, cbk );
-    /*riw[i]->GetInteractorStyle()->AddObserver(
-        vtkCommand::WindowLevelEvent, cbk );*/
 
-    //riw[i]->
 
     // Make them all share the same color map.
     riw[i]->SetLookupTable(riw[0]->GetLookupTable());
     planeWidget[i]->GetColorMap()->SetLookupTable(riw[0]->GetLookupTable());
-    //planeWidget[i]->GetColorMap()->SetInput(riw[i]->GetResliceCursorWidget()->GetResliceCursorRepresentation()->GetColorMap()->GetInput());
     planeWidget[i]->SetColorMap(riw[i]->GetResliceCursorWidget()->GetResliceCursorRepresentation()->GetColorMap());
     planeWidget[i]->DisplayTextOff();
 
@@ -342,6 +336,7 @@ void usMedicalImageViewer::ResetViews()
   {
     vtkPlaneSource *ps = static_cast< vtkPlaneSource * >(
           planeWidget[i]->GetPolyDataAlgorithm());
+
     ps->SetNormal(riw[0]->GetResliceCursor()->GetPlane(i)->GetNormal());
     ps->SetCenter(riw[0]->GetResliceCursor()->GetPlane(i)->GetOrigin());
 
