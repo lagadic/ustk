@@ -50,7 +50,7 @@
 #cmakedefine USTK_HAVE_VTK_QT5
 
 // VTK version in hexadecimal (for example 5.8.0 gives 0x050800).
-#ifdef USTK_HAVE_VTK
+#ifdef USTK_HAVE_VTK_QT
 #  define USTK_HAVE_VTK_VERSION ${USTK_HAVE_VTK_VERSION}
 #endif
 
