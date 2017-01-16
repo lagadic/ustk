@@ -35,10 +35,12 @@
  * @brief us namespace.
  */
 
-#ifndef US_H
-#define US_H
+#ifndef __us_h_
+#define __us_h_
 
 #include <visp3/core/vpConfig.h>
+#include <visp3/core/vpIoTools.h>
+
 #include <visp3/ustk_core/usImagePreScanSettings.h>
 #include <visp3/ustk_core/usMotorSettings.h>
 /**
@@ -48,9 +50,9 @@
  */
 namespace us {
 
-/*! Enum to know the ultrasound image type
+  /*! Enum to know the ultrasound image type
   Used in ultrasonix grabber to adapt the grabber when we receive the header, and in the mhd parser.*/
-typedef enum {
+  typedef enum {
     UNKNOWN = -1, /*!< Unkownn format. */
     NOT_SET,      /*!< Not set (usefull for mhd parser). */
     RF_2D,        /*!< Case of 2D RF image. */
@@ -61,6 +63,7 @@ typedef enum {
     POSTSCAN_3D,  /*!< Case of 3D post-scan image. */
   }ImageType;
 
+  VISP_EXPORT std::string getDataSetPath();
 };
 
 

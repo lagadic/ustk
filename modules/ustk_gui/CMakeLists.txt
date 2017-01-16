@@ -1,36 +1,36 @@
 # TODO: Check if vtkGUISupportQt found
 # TODO: Check if ${QT_LIBRARIES} for Qt4 sould be imported using IMPORTED_LOCATION_
+# TODO: Check if VTK_VERSION_BUILD or VTK_VERSION_PATH on vtk-6.x and vtk-5.x
+# TODO: find how to suppress include(${VTK_USE_FILE}). For the moment, if not used on OSX, produces a segfault
+# TODO: find a way to remove all the warnings due to vtk headers
 
-if(NOT USE_VTK)
-  #VP_OPTION(USE_VTK       VTK        ""    "Include vtk support"          "" ON IF ${VTK_VERSION} VERSION_EQUAL 6.0.0 OR ${VTK_VERSION} VERSION_GREATER 6.0.0)
-  VP_OPTION(USE_VTK       VTK        ""    "Include vtk support"          "" ON)
-endif()
+VP_OPTION(USE_VTK "VTK;COMPONENTS;vtkCommonCore;vtkFiltersSources;vtkIOImage;vtkInteractionImage;vtkGUISupportQt" "" "Include vtk support" "" ON)
 
 if(USE_VTK)
-  if(${VTK_VERSION} VERSION_LESS 6.0.0)
+  if(NOT VTK_VERSION)
+    set(VTK_VERSION "${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}.${VTK_BUILD_VERSION}")
+  endif()
+  if(${VTK_VERSION} VERSION_LESS "6.0.0")
     message("vtk-${VTK_VERSION} detected but too old to be used by ustk. You should install at least vtk-6.0.0 to use ustk_gui module.")
     set(USE_VTK OFF CACHE BOOL "Enables vtk usage" FORCE)
   endif()
 endif()
 
-find_package(VTK QUIET COMPONENTS
-  vtkCommonCore
-  vtkFiltersSources
-  vtkIOImage
-  vtkInteractionImage
-)
-
+#message("VTK_LIBRARIES: ${VTK_LIBRARIES}")
 if(USE_VTK)
   if("${VTK_QT_VERSION}" STREQUAL "")
-    message("vtk found, but turn vtk usage off since vtk was not built with Qt")
+    message("vtk found, but turned off since vtk was not built with Qt")
     set(USE_VTK OFF CACHE BOOL "Turn vtk support off" FORCE)
-  elseif(VTK_QT_VERSION VERSION_GREATER "4")
-    find_package(VTK QUIET COMPONENTS vtkGUISupportQt)
+#  elseif(VTK_QT_VERSION VERSION_GREATER "4")
+#    find_package(VTK QUIET COMPONENTS vtkGUISupportQt)
   endif()
 endif()
 
 if(USE_VTK)
-  set(USTK_HAVE_VTK_VERSION "(${VTK_VERSION_MAJOR}<<16 | ${VTK_VERSION_MINOR}<<8 | ${VTK_VERSION_PATCH})") # for vpConfig.h
+  #set(USTK_HAVE_VTK_VERSION "(${VTK_VERSION_MAJOR}<<16 | ${VTK_VERSION_MINOR}<<8 | ${VTK_VERSION_PATCH})") # for vpConfig.h
+  set(USTK_HAVE_VTK_VERSION "(${VTK_VERSION_MAJOR}<<16 | ${VTK_VERSION_MINOR}<<8 | ${VTK_VERSION_BUILD})") # since 7.1.0 for vpConfig.h
+
+include(${VTK_USE_FILE})
 
   list(APPEND opt_incs ${VTK_INCLUDE_DIRS})
 
@@ -79,25 +79,41 @@ if(USE_VTK)
 
     list(APPEND opt_incs "${Qt5Widgets_INCLUDE_DIRS}")
 
-     list(APPEND opt_libs "${Qt5Widgets_LIBRARIES}")
+    # list(APPEND opt_libs "${Qt5Widgets_LIBRARIES}")
     # Using Qt5Widgets_LIBRARIES works to build visp/ustk library, examples, demos and test thanks to the components,
     # but not tutorials when they are build outside ViSP as they are stand alone CMake projects that use
     # ViSP as a 3rd party.
 
     foreach(lib_ ${Qt5Widgets_LIBRARIES})
       foreach(imp_config_ ${config_})
-        get_target_property(lib_property_${imp_config_}_ ${Qt5Widgets_LIBRARIES} IMPORTED_LOCATION_${imp_config_})
+        get_target_property(lib_property_${imp_config_}_ ${lib_} IMPORTED_LOCATION_${imp_config_})
         # Under Unix, there is no specific suffix for PCL/VTK libraries.         # Under Windows, we add the "optimized", "debug" specific keywords
         if(WIN32 AND EXISTS "${lib_property_${imp_config_}_}" AND "${imp_config_}" MATCHES "RELEASE") # also valid for RELEASEWITHDEBINFO
-  #        list(APPEND opt_libs optimized "${component_property_${imp_config_}_}")
+          list(APPEND opt_libs optimized "${component_property_${imp_config_}_}")
         elseif(WIN32 AND EXISTS "${lib_property_${imp_config_}_}" AND "${imp_config_}" MATCHES "DEBUG")
-  #        list(APPEND opt_libs debug     "${lib_property_${imp_config_}_}")
+          list(APPEND opt_libs debug     "${lib_property_${imp_config_}_}")
         elseif(EXISTS "${lib_property_${imp_config_}_}")
-  #        list(APPEND opt_libs "${lib_property_${imp_config_}_}")
+          list(APPEND opt_libs "${lib_property_${imp_config_}_}")
         endif()
+        get_target_property(lib_deps_${imp_config_}_ ${lib_} IMPORTED_LINK_INTERFACE_LIBRARIES_${imp_config_})
+
+        if(lib_deps_${imp_config_}_)
+          foreach(deps_ ${lib_deps_${imp_config_}_})
+            get_target_property(deps_location_ ${deps_} IMPORTED_LOCATION_${imp_config_})
+            if(EXISTS "${deps_location_}")
+              if(WIN32 AND "${imp_config_}" MATCHES "RELEASE")
+                list(APPEND opt_libs optimized ${deps_location_})
+              elseif(WIN32 AND "${imp_config_}" MATCHES "DEBUG")
+                list(APPEND opt_libs debug ${deps_location_})
+              else()
+                list(APPEND opt_libs ${deps_location_})
+              endif()
+            endif()
+          endforeach()
+        endif()
+
       endforeach()
     endforeach()
-
     set(USTK_HAVE_VTK_QT5 TRUE)
 
   elseif(VTK_QT_VERSION VERSION_EQUAL "4")
