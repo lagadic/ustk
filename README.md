@@ -15,12 +15,12 @@ This UsTK project needs [ViSP](https://visp.inria.fr) and [VTK](http://www.vtk.o
 
   - How to install VTK OS X
 
-		$ brew update
-		$ brew install vtk —-with-qt5
+			$ brew update
+			$ brew install vtk —-with-qt5
 		
   - How to install VTK on Ubuntu 16.04 LTS
   
- 		$ sudo apt-get install libvtk6-qt-dev
+			$ sudo apt-get install libvtk6-qt-dev
  		 
 
 #### How to build UsTK libraries
@@ -51,7 +51,7 @@ This UsTK project needs [ViSP](https://visp.inria.fr) and [VTK](http://www.vtk.o
 		$ make -j4
 
 #### How to build UsTK documentation
-
+ 
 There are two ways to build UsTK documentation.
 
 - If UsTK was build as an external contrib module (see previous section), UsTK documentation is part of ViSP documentation. To build UsTK documentation that will be part of ViSP documentation, run
