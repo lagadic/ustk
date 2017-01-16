@@ -140,16 +140,21 @@ public:
                       GetPlaneSource()->GetOrigin());
         ps->SetPoint1(this->RCW[i]->GetResliceCursorRepresentation()->
                       GetPlaneSource()->GetPoint1());
-
         ps->SetPoint2(this->RCW[i]->GetResliceCursorRepresentation()->
                       GetPlaneSource()->GetPoint2());
+/*
+        ps->SetPoint2(this->RCW[i]->GetResliceCursorRepresentation()->GetPlaneSource()->GetPoint2()[0]*2.0,
+                      this->RCW[i]->GetResliceCursorRepresentation()->GetPlaneSource()->GetPoint2()[1]*2.0,
+                      this->RCW[i]->GetResliceCursorRepresentation()->GetPlaneSource()->GetPoint2()[2]*2.0);*/
+
+//        /ps->SetResolution();
 
         // If the reslice plane has modified, update it on the 3D widget
         this->IPW[i]->UpdatePlacement();
-        /* TRY TO FIX in-plane rotation bug when rotating a plane up to 90deg
+        /* TRY TO FIX in-plane rotation bug when rotating a plane up to 90deg*/
         std::cout << "imagePlaneWidget[" << i << "] : origin =(" << ps->GetOrigin()[0] << "," << ps->GetOrigin()[1] << "," << ps->GetOrigin()[2]
                                               << "), pt1 =(" << ps->GetPoint1()[0] << "," << ps->GetPoint1()[1] << "," << ps->GetPoint1()[2]
-                                              << "), pt2 =(" << ps->GetPoint2()[0] << "," << ps->GetPoint2()[1] << ","<< ps->GetPoint2()[2] << ")" << std::endl;*/
+                                              << "), pt2 =(" << ps->GetPoint2()[0] << "," << ps->GetPoint2()[1] << ","<< ps->GetPoint2()[2] << ")" << std::endl;
       }
     }
 
@@ -180,7 +185,13 @@ usMedicalImageViewer::usMedicalImageViewer(std::string imageFileName )
   reader->Update();
 
   int imageDims[3];
+  double spacing[3];
   reader->GetOutput()->GetDimensions(imageDims);
+  reader->GetOutput()->GetSpacing(spacing);
+
+  std::cout << "dims = " << imageDims[0] << ", "<< imageDims[1] << ", "<< imageDims[2] << std::endl;
+  std::cout << "spacing = " << spacing[0] << ", "<< spacing[1] << ", "<< spacing[2] << std::endl;
+  std::cout << "Size = " << spacing[0]*imageDims[0] << ", "<< spacing[1]*imageDims[1] << ", "<< spacing[2]*imageDims[2] << std::endl;
 
   for (int i = 0; i < 3; i++)
   {
