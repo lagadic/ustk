@@ -5,6 +5,7 @@
 # TODO: find a way to remove all the warnings due to vtk headers
 
 VP_OPTION(USE_VTK "VTK;COMPONENTS;vtkCommonCore;vtkFiltersSources;vtkIOImage;vtkInteractionImage;vtkGUISupportQt" "" "Include vtk support" "" ON)
+#VP_OPTION(USE_VTK "VTK;COMPONENTS;vtkCommonCore;vtkFiltersSources;vtkIOImage;vtkInteractionImage" "" "Include vtk support" "" ON)
 
 if(USE_VTK)
   if(NOT VTK_VERSION)
@@ -117,17 +118,16 @@ include(${VTK_USE_FILE})
     set(USTK_HAVE_VTK_QT5 TRUE)
 
   elseif(VTK_QT_VERSION VERSION_EQUAL "4")
-    find_package(Qt4 REQUIRED)
+    find_package(Qt4 REQUIRED QtGui QtCore)
     # Use what VTK built with
     set(QT_QMAKE_EXECUTABLE ${VTK_QT_QMAKE_EXECUTABLE} CACHE FILEPATH "")
     set(QT_MOC_EXECUTABLE ${VTK_QT_MOC_EXECUTABLE} CACHE FILEPATH "")
     set(QT_UIC_EXECUTABLE ${VTK_QT_UIC_EXECUTABLE} CACHE FILEPATH "")
 
-    # adding Qt 4 includes (we use QtCore and QtGui modulues)
-
-    list(APPEND opt_incs "${QT_INCLUDE_DIR}/QtGui")
-    list(APPEND opt_incs "${QT_INCLUDE_DIR}/QtCore")
-    list(APPEND opt_libs ${QT_LIBRARIES})
+    list(APPEND opt_incs "${QT_QTGUI_INCLUDE_DIR}")
+    #list(APPEND opt_incs "${QT_INCLUDE_DIR}/QtCore") # seems not useful
+    list(APPEND opt_libs ${QT_QTGUI_LIBRARIES})
+    list(APPEND opt_libs ${QT_QTCORE_LIBRARIES})
 
     set(USTK_HAVE_VTK_QT4 TRUE)
 
