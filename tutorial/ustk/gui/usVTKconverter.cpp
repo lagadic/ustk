@@ -7,13 +7,33 @@
 #include <visp3/ustk_io/usImageIo.h>
 #include <visp3/ustk_gui/usVTKConverter.h>
 
-int main()
+int main(int argc, char** argv)
 {
-  //read the us data
+  std::string mhd_filename;
+
+  for (int i=0; i<argc; i++) {
+    if (std::string(argv[i]) == "--input")
+      mhd_filename = std::string(argv[i+1]);
+    else if (std::string(argv[i]) == "--help") {
+      std::cout << "\nUsage: " << argv[0] << " [--input <3D volume.mhd>] [--help]\n" << std::endl;
+      return 0;
+    }
+  }
+
+  // Get the ustk-dataset package path or USTK_DATASET_PATH environment variable value
+  if (mhd_filename.empty()) {
+    std::string env_ipath = us::getDataSetPath();
+    if (! env_ipath.empty())
+      mhd_filename = env_ipath + "/pre-scan/3D_mhd/volume.mhd";
+    else {
+      std::cout << "You should set USTK_DATASET_PATH environment var to access to ustk dataset" << std::endl;
+      return 0;
+    }
+  }
+
   usImagePostScan3D<unsigned char> postScanImage;
-  //usImageIo::read(postScanImage,"/home/mpouliqu/Documents/ustk-dataset/3D/volumeTest.mhd");
-  usImageIo::read(postScanImage,"/home/mpouliqu/Documents/usData/prescan/3D/USpreScan_volume-0000/volume.mhd");
-  //usImageIo::read(postScanImage,"/udd/mpouliqu/soft/ustk/ustk-dataset/pre-scan/3D_mhd/volume.mhd");
+  // read the us data
+  usImageIo::read(postScanImage, mhd_filename);
 
   //convert to vtkImageData to display the image
   vtkSmartPointer<vtkImageData> vtkImage;
@@ -42,9 +62,28 @@ int main()
   std::cout << "us ptr (10,10,10) = " << (void*)ptr << std::endl;
   std::cout << "vtk ptr (10,10,10) = " << vtkImage->GetScalarPointer(10,10,10) << std::endl;*/
 
+  // Set the default output path
+  std::string username;
+#if defined(_WIN32)
+  std::string opath = "C:/temp";
+#else
+  std::string opath = "/tmp";
+#endif
+
+  // Get the user login name
+  vpIoTools::getUserName(username);
+
+  // Append to the output path string, the login name of the user
+  std::string dirname = vpIoTools::createFilePath(opath, username);
+
+  // Test if the output path exist. If no try to create it
+  if (vpIoTools::checkDirectory(dirname) == false) {
+    vpIoTools::makeDirectory(dirname);
+  }
+  std::string ofilename = dirname + "/volumeTestWritingVTK.mhd";
   //write mhd using VTK
   vtkSmartPointer<vtkMetaImageWriter> writer = vtkSmartPointer<vtkMetaImageWriter>::New();
-  writer->SetFileName("/home/mpouliqu/Documents/ustk-dataset/3D/volumeTestWritingVTK.mhd");
+  writer->SetFileName(ofilename.c_str());
   writer->SetInputData(vtkImage);
   writer->Write();
 
