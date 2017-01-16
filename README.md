@@ -21,6 +21,10 @@ This UsTK project needs [ViSP](https://visp.inria.fr) and [VTK](http://www.vtk.o
   - How to install VTK on Ubuntu 16.04 LTS
   
 			$ sudo apt-get install libvtk6-qt-dev
+			
+  - How to install VTK on Fedora 23
+
+			$ sudo yum install vtk-devel vtk-qt
  		 
 
 #### How to build UsTK libraries
