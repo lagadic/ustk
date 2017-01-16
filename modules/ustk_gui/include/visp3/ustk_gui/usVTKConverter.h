@@ -1,28 +1,29 @@
 /****************************************************************************
  *
- * This file is part of the UsTk software.
- * Copyright (C) 2014 by Inria. All rights reserved.
+ * This file is part of the ustk software.
+ * Copyright (C) 2016 - 2017 by Inria. All rights reserved.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License ("GPL") as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * See the file COPYING at the root directory of this source
+ * This software is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * ("GPL") version 2 as published by the Free Software Foundation.
+ * See the file LICENSE.txt at the root directory of this source
  * distribution for additional information about the GNU GPL.
  *
+ * For using ustk with software that can not be combined with the GNU
+ * GPL, please contact Inria about acquiring a ViSP Professional
+ * Edition License.
+ *
  * This software was developed at:
- * INRIA Rennes - Bretagne Atlantique
+ * Inria Rennes - Bretagne Atlantique
  * Campus Universitaire de Beaulieu
  * 35042 Rennes Cedex
  * France
- * http://www.irisa.fr/lagadic
  *
- * If you have questions regarding the use of this file, please contact the
- * authors at Alexandre.Krupa@inria.fr
+ * If you have questions regarding the use of this file, please contact
+ * Inria at ustk@inria.fr
  *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
  *
  * Authors:
  * Marc Pouliquen
@@ -34,17 +35,19 @@
  * @brief Class to convert ustk image types to vtkImageData
  */
 
-#ifndef US_VTK_CONVERTER
-#define US_VTK_CONVERTER
+#ifndef __usVTKConverter_h_
+#define __usVTKConverter_h_
 
-//VISP includes
-#include <visp3/core/vpConfig.h>
+// VISP includes
+#include <visp3/ustk_gui/usGuiConfig.h>
 
-//USTK includes
+#ifdef USTK_HAVE_VTK_QT
+
+// USTK includes
 #include <visp3/ustk_core/usImagePostScan3D.h>
 #include <visp3/ustk_core/usImagePreScan3D.h>
 
-//VTK includes
+// VTK includes
 #include <vtkSmartPointer.h>
 #include <vtkImageData.h>
 #include <vtkImageImport.h>
@@ -62,5 +65,5 @@ public:
   static void convert(const usImagePreScan3D<unsigned char> &preScanImage,vtkSmartPointer<vtkImageData> &vtkPreScanImage, vtkImageImport* importer);
 
 };
-
+#endif
 #endif // US_VTK_CONVERTER
