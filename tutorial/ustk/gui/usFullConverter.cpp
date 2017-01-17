@@ -80,7 +80,7 @@ int main(int argc, char** argv)
       converter.convert(postScanImage2,preScanImage2.getConstData());
 
     double endConvertTime = vpTime::measureTimeMs();
-    std::cout << "convert time (ms) = " << (endConvertTime - t1) << std::endl;
+    std::cout << "scan convert time (ms) = " << (endConvertTime - t1) << std::endl;
 
     //vtk conversion
     if(i%2==0)
@@ -90,7 +90,8 @@ int main(int argc, char** argv)
 
     double t2 = vpTime::measureTimeMs();
 
-    std::cout << "vtk convert time (ms) = " << t2-t1 << std::endl;
+    std::cout << "vtk convert time (ms) = " << t2-endConvertTime << std::endl;
+    std::cout << "full convert time (ms) = " << t2-t1 << std::endl;
     std::cout << "vtk image @ : " << vtkImage->GetScalarPointer() << std::endl;
   }
   //picking random voxels to compare pointers
