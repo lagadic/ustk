@@ -28,10 +28,13 @@ if(USE_VTK)
 endif()
 
 if(USE_VTK)
-  #set(USTK_HAVE_VTK_VERSION "(${VTK_VERSION_MAJOR}<<16 | ${VTK_VERSION_MINOR}<<8 | ${VTK_VERSION_PATCH})") # for vpConfig.h
-  set(USTK_HAVE_VTK_VERSION "(${VTK_VERSION_MAJOR}<<16 | ${VTK_VERSION_MINOR}<<8 | ${VTK_VERSION_BUILD})") # since 7.1.0 for vpConfig.h
+  if(VTK_VERSION VERSION_LESS "7.1.0")
+    set(USTK_HAVE_VTK_VERSION "(${VTK_VERSION_MAJOR}<<16 | ${VTK_VERSION_MINOR}<<8 | ${VTK_VERSION_PATCH})") # for vpConfig.h
+  else()
+    set(USTK_HAVE_VTK_VERSION "(${VTK_VERSION_MAJOR}<<16 | ${VTK_VERSION_MINOR}<<8 | ${VTK_VERSION_BUILD})") # since 7.1.0 for vpConfig.h
+  endif()
 
-include(${VTK_USE_FILE})
+  include(${VTK_USE_FILE})
 
   list(APPEND opt_incs ${VTK_INCLUDE_DIRS})
 
