@@ -98,7 +98,7 @@ public:
 
     void SweepInZdirection(bool flag) {_SweepInZdirection = flag;}
 
-    void convert(usImagePostScan3D<unsigned char> &postScanImage);
+    void convert(usImagePostScan3D<unsigned char> &postScanImage, const unsigned char *dataPreScan=NULL);
 
     void convertPreScanCoordToPostScanCoord(double i, double j, double k, double *x=NULL, double *y=NULL, double *z=NULL, bool sweepInZdirection=true);
     void convertPostScanCoordToPreScanCoord(double x, double y, double z, double *i=NULL, double *j=NULL, double *k=NULL, bool sweepInZdirection=true);

@@ -6,6 +6,7 @@ find_package(VISP REQUIRED visp_ustk_gui visp_ustk_io)
 
 set(tutorial_cpp
   usMedicalViewerExample.cpp
+  usFullConverter.cpp
   usVTKconverter.cpp)
 
 foreach(cpp ${tutorial_cpp})
