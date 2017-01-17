@@ -1,28 +1,29 @@
 /****************************************************************************
  *
- * This file is part of the UsTk software.
- * Copyright (C) 2014 by Inria. All rights reserved.
+ * This file is part of the ustk software.
+ * Copyright (C) 2016 - 2017 by Inria. All rights reserved.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License ("GPL") as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * See the file COPYING at the root directory of this source
+ * This software is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * ("GPL") version 2 as published by the Free Software Foundation.
+ * See the file LICENSE.txt at the root directory of this source
  * distribution for additional information about the GNU GPL.
  *
+ * For using ustk with software that can not be combined with the GNU
+ * GPL, please contact Inria about acquiring a ViSP Professional
+ * Edition License.
+ *
  * This software was developed at:
- * INRIA Rennes - Bretagne Atlantique
+ * Inria Rennes - Bretagne Atlantique
  * Campus Universitaire de Beaulieu
  * 35042 Rennes Cedex
  * France
- * http://www.irisa.fr/lagadic
  *
- * If you have questions regarding the use of this file, please contact the
- * authors at Alexandre.Krupa@inria.fr
+ * If you have questions regarding the use of this file, please contact
+ * Inria at ustk@inria.fr
  *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
  *
  * Authors:
  * Marc Pouliquen
@@ -35,6 +36,8 @@
 */
 
 #include <visp3/ustk_gui/usMedicalImageViewer.h>
+
+#ifdef USTK_HAVE_VTK_QT
 
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
@@ -64,6 +67,8 @@
 #include <vtkDistanceRepresentation2D.h>
 #include <vtkPointHandleRepresentation3D.h>
 #include <vtkPointHandleRepresentation2D.h>
+#include <vtkCamera.h>
+#include <vtkRendererCollection.h>
 
 #include <QDesktopWidget>
 #include <QResizeEvent>
@@ -131,15 +136,28 @@ public:
       {
         vtkPlaneSource *ps = static_cast< vtkPlaneSource * >(
               this->IPW[i]->GetPolyDataAlgorithm());
+
+
+
         ps->SetOrigin(this->RCW[i]->GetResliceCursorRepresentation()->
                       GetPlaneSource()->GetOrigin());
         ps->SetPoint1(this->RCW[i]->GetResliceCursorRepresentation()->
                       GetPlaneSource()->GetPoint1());
         ps->SetPoint2(this->RCW[i]->GetResliceCursorRepresentation()->
                       GetPlaneSource()->GetPoint2());
+/*
+        ps->SetPoint2(this->RCW[i]->GetResliceCursorRepresentation()->GetPlaneSource()->GetPoint2()[0]*2.0,
+                      this->RCW[i]->GetResliceCursorRepresentation()->GetPlaneSource()->GetPoint2()[1]*2.0,
+                      this->RCW[i]->GetResliceCursorRepresentation()->GetPlaneSource()->GetPoint2()[2]*2.0);*/
+
+//        /ps->SetResolution();
 
         // If the reslice plane has modified, update it on the 3D widget
         this->IPW[i]->UpdatePlacement();
+        /* TRY TO FIX in-plane rotation bug when rotating a plane up to 90deg*/
+        std::cout << "imagePlaneWidget[" << i << "] : origin =(" << ps->GetOrigin()[0] << "," << ps->GetOrigin()[1] << "," << ps->GetOrigin()[2]
+                                              << "), pt1 =(" << ps->GetPoint1()[0] << "," << ps->GetPoint1()[1] << "," << ps->GetPoint1()[2]
+                                              << "), pt2 =(" << ps->GetPoint2()[0] << "," << ps->GetPoint2()[1] << ","<< ps->GetPoint2()[2] << ")" << std::endl;
       }
     }
 
@@ -170,7 +188,13 @@ usMedicalImageViewer::usMedicalImageViewer(std::string imageFileName )
   reader->Update();
 
   int imageDims[3];
+  double spacing[3];
   reader->GetOutput()->GetDimensions(imageDims);
+  reader->GetOutput()->GetSpacing(spacing);
+
+  std::cout << "dims = " << imageDims[0] << ", "<< imageDims[1] << ", "<< imageDims[2] << std::endl;
+  std::cout << "spacing = " << spacing[0] << ", "<< spacing[1] << ", "<< spacing[2] << std::endl;
+  std::cout << "Size = " << spacing[0]*imageDims[0] << ", "<< spacing[1]*imageDims[1] << ", "<< spacing[2]*imageDims[2] << std::endl;
 
   for (int i = 0; i < 3; i++)
   {
@@ -202,6 +226,9 @@ usMedicalImageViewer::usMedicalImageViewer(std::string imageFileName )
 
     riw[i]->SetInputData(reader->GetOutput());
     riw[i]->SetSliceOrientation(i);
+    riw[i]->GetRenderer()->GetActiveCamera()->SetRoll(180);
+
+
     riw[i]->SetResliceModeToAxisAligned();
   }
 
@@ -223,7 +250,7 @@ usMedicalImageViewer::usMedicalImageViewer(std::string imageFileName )
     planeWidget[i] = vtkSmartPointer<vtkImagePlaneWidget>::New();
     planeWidget[i]->SetInteractor( iren );
     planeWidget[i]->SetPicker(picker);
-    planeWidget[i]->RestrictPlaneToVolumeOn();
+    //planeWidget[i]->RestrictPlaneToVolumeOn();
     double color[3] = {0, 0, 0};
     color[i] = 1;
     planeWidget[i]->GetPlaneProperty()->SetColor(color);
@@ -231,8 +258,8 @@ usMedicalImageViewer::usMedicalImageViewer(std::string imageFileName )
     //color[i] /= 4.0;
     //riw[i]->GetRenderer()->SetBackground( color );
 
-    planeWidget[i]->SetTexturePlaneProperty(ipwProp);
-    planeWidget[i]->TextureInterpolateOff();
+    //planeWidget[i]->SetTexturePlaneProperty(ipwProp);
+    //planeWidget[i]->TextureInterpolateOff();
     planeWidget[i]->SetResliceInterpolateToLinear();
 
     planeWidget[i]->SetInputConnection(reader->GetOutputPort());
@@ -240,7 +267,7 @@ usMedicalImageViewer::usMedicalImageViewer(std::string imageFileName )
     planeWidget[i]->SetSliceIndex(imageDims[i]/2);
     planeWidget[i]->SetDefaultRenderer(ren);
     planeWidget[i]->SetWindowLevel(1358, -27);
-    planeWidget[i]->DisplayTextOff();
+    //planeWidget[i]->DisplayTextOff();
     planeWidget[i]->On();
     planeWidget[i]->InteractionOff();
   }
@@ -256,19 +283,13 @@ usMedicalImageViewer::usMedicalImageViewer(std::string imageFileName )
           vtkResliceCursorWidget::ResliceAxesChangedEvent, cbk );
     riw[i]->GetResliceCursorWidget()->AddObserver(
           vtkResliceCursorWidget::WindowLevelEvent, cbk );
-    /*riw[i]->GetResliceCursorWidget()->AddObserver(
-        vtkResliceCursorWidget::ResliceThicknessChangedEvent, cbk );*/
     riw[i]->GetResliceCursorWidget()->AddObserver(
           vtkResliceCursorWidget::ResetCursorEvent, cbk );
-    /*riw[i]->GetInteractorStyle()->AddObserver(
-        vtkCommand::WindowLevelEvent, cbk );*/
 
-    //riw[i]->
 
     // Make them all share the same color map.
     riw[i]->SetLookupTable(riw[0]->GetLookupTable());
     planeWidget[i]->GetColorMap()->SetLookupTable(riw[0]->GetLookupTable());
-    //planeWidget[i]->GetColorMap()->SetInput(riw[i]->GetResliceCursorWidget()->GetResliceCursorRepresentation()->GetColorMap()->GetInput());
     planeWidget[i]->SetColorMap(riw[i]->GetResliceCursorWidget()->GetResliceCursorRepresentation()->GetColorMap());
     planeWidget[i]->DisplayTextOff();
 
@@ -287,6 +308,8 @@ usMedicalImageViewer::usMedicalImageViewer(std::string imageFileName )
   {
     riw[i]->SetResliceMode(1);
     riw[i]->GetRenderer()->ResetCamera();
+    if(i==2)
+      riw[i]->GetRenderer()->GetActiveCamera()->SetRoll(180);
     riw[i]->Render();
   }
 
@@ -317,6 +340,8 @@ void usMedicalImageViewer::ResetViews()
     riw[i]->Reset();
     riw[i]->SetResliceMode(1);
     riw[i]->GetRenderer()->ResetCamera();
+    if(i==2)
+      riw[i]->GetRenderer()->GetActiveCamera()->SetRoll(180);
   }
 
   // Also sync the Image plane widget on the 3D top right view with any
@@ -325,6 +350,7 @@ void usMedicalImageViewer::ResetViews()
   {
     vtkPlaneSource *ps = static_cast< vtkPlaneSource * >(
           planeWidget[i]->GetPolyDataAlgorithm());
+
     ps->SetNormal(riw[0]->GetResliceCursor()->GetPlane(i)->GetNormal());
     ps->SetCenter(riw[0]->GetResliceCursor()->GetPlane(i)->GetOrigin());
 
@@ -332,6 +358,7 @@ void usMedicalImageViewer::ResetViews()
     this->planeWidget[i]->UpdatePlacement();
   }
 
+  this->view4->GetRenderWindow()->GetRenderers()->GetFirstRenderer()->GetActiveCamera()->SetRoll(180);
   // Render in response to changes.
   this->Render();
 }
@@ -480,3 +507,4 @@ void usMedicalImageViewer::resizeEvent(QResizeEvent* event)
     AddDistance1Button->setGeometry(QRect(event->size().width() - 180, 130, 160, 31));
   }
 }
+#endif
