@@ -31,14 +31,22 @@ int main(int argc, char** argv)
     }
   }
 
-  usImagePostScan3D<unsigned char> postScanImage;
-  // read the us data
-  usImageIo::read(postScanImage, mhd_filename);
+  //read 2 us images to simulate double buffer system for real grabbing
 
-  //convert to vtkImageData to display the image
-  vtkSmartPointer<vtkImageData> vtkImage;
+  // 1st us image
+  usImagePostScan3D<unsigned char> postScanImage;
+  usImageIo::read(postScanImage, mhd_filename);
+  // 2nd us image
+  usImagePostScan3D<unsigned char> postScanImage2;
+  usImageIo::read(postScanImage2, mhd_filename);
+
+  //check addresses of each image
+  std::cout << "image 1 @ : " << (void *)postScanImage.getConstData() << std::endl;
+  std::cout << "image 2 @ : " << (void *)postScanImage2.getConstData() << std::endl;
 
   //pre-compute the importer to save time during the data import in vtk
+  //this importer will switch between the 2 previsous usImages at each iteration
+  vtkSmartPointer<vtkImageData> vtkImage = vtkSmartPointer<vtkImageData>::New();
   vtkImageImport *importer = vtkImageImport::New();
   importer->SetDataScalarTypeToUnsignedChar();
   importer->SetImportVoidPointer((void *)postScanImage.getConstData());
@@ -46,13 +54,20 @@ int main(int argc, char** argv)
   importer->SetDataExtentToWholeExtent();
   importer->SetNumberOfScalarComponents(1);
 
-  double t1 = vpTime::measureTimeMs();
+  //trying successive conversions to simulate the double buffer system that should be used to grab and display sucessive volumes
+  for(int i=0;i<20;i++) {
+    double t1 = vpTime::measureTimeMs();
 
-  usVTKConverter::convert(postScanImage,vtkImage,importer);
-  double t2 = vpTime::measureTimeMs();
+    if(i%2==0)
+      usVTKConverter::convert(postScanImage,vtkImage,importer);
+    else
+      usVTKConverter::convert(postScanImage2,vtkImage,importer);
 
-  std::cout << "vtk convert time = " << t2-t1 << std::endl;
+    double t2 = vpTime::measureTimeMs();
 
+    std::cout << "vtk convert time (" << i << ") = " << t2-t1 << std::endl;
+    std::cout << "vtk image @ : " << vtkImage->GetScalarPointer() << std::endl;
+  }
   //picking random voxels to compare pointers
   /*std::cout << "us ptr = " << (void*)postScanImage.getConstData() << std::endl;
   std::cout << "vtk ptr = " << vtkImage->GetScalarPointer(0,0,0) << std::endl;
@@ -69,7 +84,7 @@ int main(int argc, char** argv)
 #else
   std::string opath = "/tmp";
 #endif
-
+/*
   // Get the user login name
   vpIoTools::getUserName(username);
 
@@ -86,7 +101,7 @@ int main(int argc, char** argv)
   writer->SetFileName(ofilename.c_str());
   writer->SetInputData(vtkImage);
   writer->Write();
-
+*/
   return 0;
 }
 #else

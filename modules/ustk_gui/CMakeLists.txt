@@ -134,7 +134,7 @@ include(${VTK_USE_FILE})
   endif()
 
   # Create ustk_gui module, only if vtk found
-  vp_add_module(ustk_gui visp_ustk_core)
+  vp_add_module(ustk_gui visp_ustk_io)
   vp_glob_module_sources()
   vp_module_include_directories(${opt_incs})
   vp_create_module(${opt_libs})
