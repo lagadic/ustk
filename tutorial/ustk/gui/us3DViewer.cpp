@@ -46,15 +46,18 @@ int main(int argc, char** argv)
   us3DSceneWidget scene;
   scene.setImageData(vtkImage);
 
+  double spacing[3];
+  vtkImage->GetSpacing(spacing);
+
   vtkSmartPointer<vtkPlane> planeX = vtkSmartPointer<vtkPlane>::New();
   planeX->SetNormal(1,0,0);
-  planeX->SetOrigin(postScan3D.getDimX()/2,0,0);
+  planeX->SetOrigin(postScan3D.getDimX()*spacing[0]/2.0,0,0);
   vtkSmartPointer<vtkPlane> planeY = vtkSmartPointer<vtkPlane>::New();
   planeY->SetNormal(0,1,0);
-  planeY->SetOrigin(0,postScan3D.getDimY()/2,0);
+  planeY->SetOrigin(0,postScan3D.getDimY()*spacing[1]/2.0,0);
   vtkSmartPointer<vtkPlane> planeZ = vtkSmartPointer<vtkPlane>::New();
   planeZ->SetNormal(0,0,1);
-  planeZ->SetOrigin(0,0,postScan3D.getDimZ()/2);
+  planeZ->SetOrigin(0,0,postScan3D.getDimZ()*spacing[2]/2.0);
   scene.setPlanes(planeX,planeY,planeZ);
 
   scene.init();

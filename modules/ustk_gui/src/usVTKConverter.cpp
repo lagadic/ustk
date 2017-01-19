@@ -57,10 +57,7 @@ void usVTKConverter::convert(const usImagePostScan3D<unsigned char> &postScanIma
   importer->Update();
 
   vtkPostScanImage = importer->GetOutput();
-  //vtkPostScanImage->SetSpacing(postScanImage.getElementSpacingX(),postScanImage.getElementSpacingY(),postScanImage.getElementSpacingZ());
-
-  std::cout << "vtk convert imageData print" << std::endl;
-  vtkPostScanImage->Print(std::cout);
+  vtkPostScanImage->SetSpacing(postScanImage.getElementSpacingX(),postScanImage.getElementSpacingY(),postScanImage.getElementSpacingZ());
 }
 
 void usVTKConverter::convert(const usImagePreScan3D<unsigned char> &preScanImage,vtkSmartPointer<vtkImageData> &vtkPreScanImage, vtkImageImport* importer)
