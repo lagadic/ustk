@@ -41,7 +41,7 @@
 
 #include <vtkImageImport.h>
 
-void usVTKConverter::convert(const usImagePostScan3D<unsigned char> &postScanImage,vtkSmartPointer<vtkImageData> &vtkPostScanImage, vtkImageImport* importer)
+void usVTKConverter::convert(const usImagePostScan3D<unsigned char> &postScanImage, vtkSmartPointer<vtkImageData> &vtkPostScanImage, vtkImageImport* importer)
 {
   if(importer==NULL) {
     importer = vtkImageImport::New();
@@ -57,7 +57,6 @@ void usVTKConverter::convert(const usImagePostScan3D<unsigned char> &postScanIma
   importer->Update();
 
   vtkPostScanImage = importer->GetOutput();
-  vtkPostScanImage->SetSpacing(postScanImage.getElementSpacingX(),postScanImage.getElementSpacingY(),postScanImage.getElementSpacingZ());
 }
 
 void usVTKConverter::convert(const usImagePreScan3D<unsigned char> &preScanImage,vtkSmartPointer<vtkImageData> &vtkPreScanImage, vtkImageImport* importer)

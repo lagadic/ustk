@@ -4,7 +4,15 @@
 # TODO: find how to suppress include(${VTK_USE_FILE}). For the moment, if not used on OSX, produces a segfault
 # TODO: find a way to remove all the warnings due to vtk headers
 
-VP_OPTION(USE_VTK "VTK;COMPONENTS;vtkCommonCore;vtkFiltersSources;vtkIOImage;vtkInteractionImage;vtkGUISupportQt" "" "Include vtk support" "" ON)
+#VP_OPTION(USE_VTK "VTK;COMPONENTS;vtkCommonCore;vtkFiltersSources;vtkIOImage;vtkInteractionImage;vtkGUISupportQt" "" "Include vtk support" "" ON)
+
+
+VP_OPTION(USE_VTK "VTK;COMPONENTS;vtkCommonCore;vtkFiltersSources;vtkIOImage;vtkInteractionImage;vtkGUISupportQt;vtkIOExodus;vtksys;vtkCommonDataModel;vtkCommonMath;vtkCommonMisc;vtkCommonSystem;vtkCommonTransforms;vtkCommonExecutionModel;vtkFiltersCore;vtkIOCore;vtkzlib;vtkIOXMLParser;vtkexpat;vtkhdf5;vtklibxml2;vtkImagingGeneral;vtkImagingCore;vtkImagingSources;vtkFiltersExtraction;vtkFiltersGeneral;vtkCommonComputationalGeometry;vtkFiltersStatistics;vtkImagingFourier;vtkalglib;vtkInteractionStyle;vtkRenderingCore;vtkCommonColor;vtkFiltersGeometry;vtkDICOMParser;vtkjpeg;vtkpng;vtktiff;vtkRenderingLOD;vtkFiltersModeling;vtkGUISupportQtSQL;vtkIOSQL;vtksqlite;vtkImagingMorphological;vtkIOGeometry;vtkIOLegacy;vtkIOParallel;vtkFiltersParallel;vtkParallelCore;vtkIONetCDF;vtkjsoncpp;vtkViewsContext2D;vtkRenderingContext2D;vtkRenderingFreeType;vtkfreetype;vtkViewsCore;vtkInteractionWidgets;vtkFiltersHybrid;vtkImagingColor;vtkImagingHybrid;vtkRenderingAnnotation;vtkRenderingVolume;vtkIOXML;vtkLocalExample;vtkFiltersGeneric;vtkIOAMR;vtkFiltersAMR;vtkViewsQt;vtkInfovisCore;vtkViewsInfovis;vtkChartsCore;vtkFiltersImaging;vtkInfovisLayout;vtkRenderingLabel;vtkFiltersParallelImaging;vtkFiltersTexture;vtkIOMovie;vtkoggtheora;vtkIOInfovis;vtkRenderingImage;vtkFiltersFlowPaths;vtkIOVideo;vtkgl2ps;vtkImagingStatistics;vtkIOLSDyna;vtkRenderingQt;vtkFiltersSelection;vtkFiltersSMP;vtkIOExport;vtkFiltersHyperTree;vtkDomainsChemistry;vtkIOParallelXML;vtkImagingMath;vtkIOPLY;vtkFiltersProgrammable;vtkIOMINC;vtkGeovisCore;vtkFiltersVerdict;vtkGUISupportQtOpenGL;vtkIOEnSight;vtkImagingStencil;vtkIOImport" "" "Include vtk support" "" ON)
+
+
+
+
+
 #VP_OPTION(USE_VTK "VTK;COMPONENTS;vtkCommonCore;vtkFiltersSources;vtkIOImage;vtkInteractionImage" "" "Include vtk support" "" ON)
 
 if(USE_VTK)
