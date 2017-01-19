@@ -35,6 +35,9 @@
 * @brief Graphical main window containing 4 vtk views.
 */
 
+#include <visp3/ustk_core/usImagePostScan3D.h>
+#include <visp3/ustk_io/usImageIo.h>
+#include <visp3/ustk_gui/usVTKConverter.h>
 #include <visp3/ustk_gui/usMedicalImageViewer.h>
 
 #ifdef USTK_HAVE_VTK_QT
@@ -84,94 +87,25 @@ public:
   void Execute( vtkObject *caller, unsigned long ev,
                 void *callData )
   {
-    (void) ev;
-    /*if (ev == vtkResliceCursorWidget::WindowLevelEvent ||
-        ev == vtkCommand::WindowLevelEvent ||
-        ev == vtkResliceCursorWidget::ResliceThicknessChangedEvent)
-    {
-      std::cout << "event" << std::endl;
-      // Render everything
-      for (int i = 0; i < 3; i++)
-      {
-        this->RCW[i]->Render();
-      }
-      this->IPW[0]->GetInteractor()->GetRenderWindow()->Render();
-      std::cout << "end event" << std::endl;
-      return;
-    }*/
+    std::cout << "EXECUTE" << std::endl;
+    std::cout << "EXECUTE" << std::endl;
+    //image->Print(std::cout);
 
-    vtkImagePlaneWidget* ipw =
-        dynamic_cast< vtkImagePlaneWidget* >( caller );
-    if (ipw)
-    {
-      double* wl = static_cast<double*>( callData );
-
-      if ( ipw == this->IPW[0] )
-      {
-        this->IPW[1]->SetWindowLevel(wl[0],wl[1],1);
-        this->IPW[2]->SetWindowLevel(wl[0],wl[1],1);
-      }
-      else if( ipw == this->IPW[1] )
-      {
-        this->IPW[0]->SetWindowLevel(wl[0],wl[1],1);
-        this->IPW[2]->SetWindowLevel(wl[0],wl[1],1);
-      }
-      else if (ipw == this->IPW[2])
-      {
-        this->IPW[0]->SetWindowLevel(wl[0],wl[1],1);
-        this->IPW[1]->SetWindowLevel(wl[0],wl[1],1);
-      }
-    }
-
-    vtkResliceCursorWidget *rcw = dynamic_cast<
-        vtkResliceCursorWidget * >(caller);
-    if (rcw)
-    {
-      /*vtkResliceCursorLineRepresentation *rep = dynamic_cast<
-        vtkResliceCursorLineRepresentation * >(rcw->GetRepresentation());*/
-      // Although the return value is not used, we keep the get calls
-      // in case they had side-effects
-      //rep->GetResliceCursorActor()->GetCursorAlgorithm()->GetResliceCursor();
-      for (int i = 0; i < 3; i++)
-      {
-        vtkPlaneSource *ps = static_cast< vtkPlaneSource * >(
-              this->IPW[i]->GetPolyDataAlgorithm());
-
-
-
-        ps->SetOrigin(this->RCW[i]->GetResliceCursorRepresentation()->
-                      GetPlaneSource()->GetOrigin());
-        ps->SetPoint1(this->RCW[i]->GetResliceCursorRepresentation()->
-                      GetPlaneSource()->GetPoint1());
-        ps->SetPoint2(this->RCW[i]->GetResliceCursorRepresentation()->
-                      GetPlaneSource()->GetPoint2());
-/*
-        ps->SetPoint2(this->RCW[i]->GetResliceCursorRepresentation()->GetPlaneSource()->GetPoint2()[0]*2.0,
-                      this->RCW[i]->GetResliceCursorRepresentation()->GetPlaneSource()->GetPoint2()[1]*2.0,
-                      this->RCW[i]->GetResliceCursorRepresentation()->GetPlaneSource()->GetPoint2()[2]*2.0);*/
-
-//        /ps->SetResolution();
-
-        // If the reslice plane has modified, update it on the 3D widget
-        this->IPW[i]->UpdatePlacement();
-        /* TRY TO FIX in-plane rotation bug when rotating a plane up to 90deg*/
-        std::cout << "imagePlaneWidget[" << i << "] : origin =(" << ps->GetOrigin()[0] << "," << ps->GetOrigin()[1] << "," << ps->GetOrigin()[2]
-                                              << "), pt1 =(" << ps->GetPoint1()[0] << "," << ps->GetPoint1()[1] << "," << ps->GetPoint1()[2]
-                                              << "), pt2 =(" << ps->GetPoint2()[0] << "," << ps->GetPoint2()[1] << ","<< ps->GetPoint2()[2] << ")" << std::endl;
-      }
-    }
 
     // Render everything
     for (int i = 0; i < 3; i++)
     {
+      std::cout << "i=" << i << std::endl;
+      RCW[i]->Print(std::cout);
       this->RCW[i]->Render();
     }
-    this->IPW[0]->GetInteractor()->GetRenderWindow()->Render();
+    widget3D->update();
   }
 
   vtkResliceCursorCallback() {}
-  vtkImagePlaneWidget* IPW[3];
+  us3DSceneWidget* widget3D;
   vtkResliceCursorWidget *RCW[3];
+  vtkImageData* image;
 };
 
 
@@ -186,11 +120,25 @@ usMedicalImageViewer::usMedicalImageViewer(std::string imageFileName )
       vtkSmartPointer< vtkMetaImageReader >::New();
   reader->SetFileName(imageFileName.c_str());
   reader->Update();
+/*
+  usImagePostScan3D<unsigned char> postScanImage;
+  usImageIo::read(postScanImage,imageFileName);*/
+
+  this->vtkImage = vtkSmartPointer<vtkImageData>::New();
+  vtkImage = reader->GetOutput();
+
+  //usVTKConverter::convert(postScanImage,vtkImage);
+
+  //DEBUG
+  std::cout << "PRINT READER OUTPUT" << std::endl;
+  reader->GetOutput()->Print(std::cout);
+  std::cout << "PRINT IMAGE" << std::endl;
+  vtkImage->Print(std::cout);
 
   int imageDims[3];
   double spacing[3];
-  reader->GetOutput()->GetDimensions(imageDims);
-  reader->GetOutput()->GetSpacing(spacing);
+  vtkImage->GetDimensions(imageDims);
+  vtkImage->GetSpacing(spacing);
 
   std::cout << "dims = " << imageDims[0] << ", "<< imageDims[1] << ", "<< imageDims[2] << std::endl;
   std::cout << "spacing = " << spacing[0] << ", "<< spacing[1] << ", "<< spacing[2] << std::endl;
@@ -224,60 +172,41 @@ usMedicalImageViewer::usMedicalImageViewer(std::string imageFileName )
     rep->GetResliceCursorActor()->
         GetCursorAlgorithm()->SetReslicePlaneNormal(i);
 
-    riw[i]->SetInputData(reader->GetOutput());
+    riw[i]->SetInputData(vtkImage);
     riw[i]->SetSliceOrientation(i);
+    riw[i]->SetSlice(imageDims[i]/2);
     riw[i]->GetRenderer()->GetActiveCamera()->SetRoll(180);
-
-
-    riw[i]->SetResliceModeToAxisAligned();
+    riw[i]->SetResliceModeToOblique();
   }
 
-  vtkSmartPointer<vtkCellPicker> picker =
-      vtkSmartPointer<vtkCellPicker>::New();
-  picker->SetTolerance(0.005);
+  this->view4->setImageData(vtkImage);
+/*  int dims[3];
+  vtkImage->GetDimensions(dims);
 
-  vtkSmartPointer<vtkProperty> ipwProp =
-      vtkSmartPointer<vtkProperty>::New();
+  vtkSmartPointer<vtkPlane> planeX = vtkSmartPointer<vtkPlane>::New();
+  planeX->SetNormal(1,0,0);
+  planeX->SetOrigin(dims[0]/2,0,0);
+  vtkSmartPointer<vtkPlane> planeY = vtkSmartPointer<vtkPlane>::New();
+  planeY->SetNormal(0,1,0);
+  planeY->SetOrigin(0,dims[1]/2,0);
+  vtkSmartPointer<vtkPlane> planeZ = vtkSmartPointer<vtkPlane>::New();
+  planeZ->SetNormal(0,0,1);
+  planeZ->SetOrigin(0,0,dims[2]/2);
+  this->view4->setPlanes(planeX,planeY,planeZ);*/
 
-  vtkSmartPointer< vtkRenderer > ren =
-      vtkSmartPointer< vtkRenderer >::New();
+  this->view4->setPlanes(riw[0]->GetResliceCursor()->GetPlane(0),riw[1]->GetResliceCursor()->GetPlane(1),riw[2]->GetResliceCursor()->GetPlane(2));
 
-  this->view4->GetRenderWindow()->AddRenderer(ren);
-  vtkRenderWindowInteractor *iren = this->view4->GetInteractor();
 
-  for (int i = 0; i < 3; i++)
-  {
-    planeWidget[i] = vtkSmartPointer<vtkImagePlaneWidget>::New();
-    planeWidget[i]->SetInteractor( iren );
-    planeWidget[i]->SetPicker(picker);
-    //planeWidget[i]->RestrictPlaneToVolumeOn();
-    double color[3] = {0, 0, 0};
-    color[i] = 1;
-    planeWidget[i]->GetPlaneProperty()->SetColor(color);
-
-    //color[i] /= 4.0;
-    //riw[i]->GetRenderer()->SetBackground( color );
-
-    //planeWidget[i]->SetTexturePlaneProperty(ipwProp);
-    //planeWidget[i]->TextureInterpolateOff();
-    planeWidget[i]->SetResliceInterpolateToLinear();
-
-    planeWidget[i]->SetInputConnection(reader->GetOutputPort());
-    planeWidget[i]->SetPlaneOrientation(i);
-    planeWidget[i]->SetSliceIndex(imageDims[i]/2);
-    planeWidget[i]->SetDefaultRenderer(ren);
-    planeWidget[i]->SetWindowLevel(1358, -27);
-    //planeWidget[i]->DisplayTextOff();
-    planeWidget[i]->On();
-    planeWidget[i]->InteractionOff();
-  }
+  this->view4->init();
 
   vtkSmartPointer<vtkResliceCursorCallback> cbk =
       vtkSmartPointer<vtkResliceCursorCallback>::New();
 
+  cbk->image = vtkImage;
+  cbk->widget3D = this->view4;
+
   for (int i = 0; i < 3; i++)
   {
-    cbk->IPW[i] = planeWidget[i];
     cbk->RCW[i] = riw[i]->GetResliceCursorWidget();
     riw[i]->GetResliceCursorWidget()->AddObserver(
           vtkResliceCursorWidget::ResliceAxesChangedEvent, cbk );
@@ -285,24 +214,17 @@ usMedicalImageViewer::usMedicalImageViewer(std::string imageFileName )
           vtkResliceCursorWidget::WindowLevelEvent, cbk );
     riw[i]->GetResliceCursorWidget()->AddObserver(
           vtkResliceCursorWidget::ResetCursorEvent, cbk );
-
-
-    // Make them all share the same color map.
-    riw[i]->SetLookupTable(riw[0]->GetLookupTable());
-    planeWidget[i]->GetColorMap()->SetLookupTable(riw[0]->GetLookupTable());
-    planeWidget[i]->SetColorMap(riw[i]->GetResliceCursorWidget()->GetResliceCursorRepresentation()->GetColorMap());
-    planeWidget[i]->DisplayTextOff();
-
-
   }
 
   this->view1->update();
   this->view2->update();
   this->view3->update();
+  this->view4->update();
 
   this->view1->show();
   this->view2->show();
   this->view3->show();
+  this->view4->show();
 
   for (int i = 0; i < 3; i++)
   {
@@ -313,12 +235,14 @@ usMedicalImageViewer::usMedicalImageViewer(std::string imageFileName )
     riw[i]->Render();
   }
 
+  this->view4->GetRenderWindow()->GetRenderers()->GetFirstRenderer()->GetActiveCamera()->SetRoll(180);
   // Set up action signals and slots
   //connect(this->actionExit, SIGNAL(triggered()), this, SLOT(slotExit()));
   connect(this->resetButton, SIGNAL(pressed()), this, SLOT(ResetViews()));
   connect(this->resetColorsButton, SIGNAL(pressed()), this, SLOT(ResetColorMap()));
   connect(this->AddDistance1Button, SIGNAL(pressed()), this, SLOT(AddDistanceMeasurementToView1()));
   ResetViews();
+  std::cout << "end convstructor" << std::endl;
 };
 
 /**
@@ -343,23 +267,6 @@ void usMedicalImageViewer::ResetViews()
     if(i==2)
       riw[i]->GetRenderer()->GetActiveCamera()->SetRoll(180);
   }
-
-  // Also sync the Image plane widget on the 3D top right view with any
-  // changes to the reslice cursor.
-  for (int i = 0; i < 3; i++)
-  {
-    vtkPlaneSource *ps = static_cast< vtkPlaneSource * >(
-          planeWidget[i]->GetPolyDataAlgorithm());
-
-    ps->SetNormal(riw[0]->GetResliceCursor()->GetPlane(i)->GetNormal());
-    ps->SetCenter(riw[0]->GetResliceCursor()->GetPlane(i)->GetOrigin());
-
-    // If the reslice plane has modified, update it on the 3D widget
-    this->planeWidget[i]->UpdatePlacement();
-  }
-
-  this->view4->GetRenderWindow()->GetRenderers()->GetFirstRenderer()->GetActiveCamera()->SetRoll(180);
-  // Render in response to changes.
   this->Render();
 }
 
@@ -382,12 +289,13 @@ void usMedicalImageViewer::ResetColorMap()
 */
 void usMedicalImageViewer::Render()
 {
+std::cout << "Render()" << std::endl;
   for (int i = 0; i < 3; i++)
   {
     riw[i]->Render();
   }
-  this->view4->GetRenderWindow()->Render();
 
+std::cout << "Render() updates" << std::endl;
   this->view1->update();
   this->view2->update();
   this->view3->update();
@@ -461,7 +369,7 @@ void usMedicalImageViewer::setupUi() {
 
   gridLayout_2->addWidget(view2, 1, 0, 1, 1);
 
-  view4 = new usViewerWidget(gridLayoutWidget);
+  view4 = new us3DSceneWidget(gridLayoutWidget);
   view4->setObjectName(QString::fromUtf8("view4"));
 
   gridLayout_2->addWidget(view4, 0, 1, 1, 1);

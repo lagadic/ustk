@@ -122,7 +122,7 @@ void us3DSceneWidget::init() {
   renderer->AddActor(imageSlice1);
   renderer->AddActor(imageSlice2);
   renderer->AddActor(imageSlice3);
-  renderer->SetBackground(1.0, 1.0, 1.0);
+  renderer->SetBackground(0.5, 0.5, 0.5);
   renderer->ResetCamera();
 
   // Setup render window

@@ -46,9 +46,11 @@
 
 // USTK includes
 #include <visp3/ustk_gui/usViewerWidget.h>
+#include <visp3/ustk_gui/us3DSceneWidget.h>
 
 // VTK includes
 #include <vtkSmartPointer.h>
+#include <vtkPlane.h>
 #include <vtkResliceImageViewer.h>
 #include <vtkImagePlaneWidget.h>
 #include <vtkDistanceWidget.h>
@@ -60,7 +62,7 @@
 #  include <QtGui/QMainWindow>
 #  include <QtGui/QGridLayout>
 #  include <QtGui/QPushButton>
-#elif defined(USTK_HAVE_VTK_QT4)
+#elif defined(USTK_HAVE_VTK_QT4) //  QT 5 ?
 #  include <QtWidgets/QApplication>
 #  include <QtWidgets/QMainWindow>
 #  include <QtWidgets/QGridLayout>
@@ -113,12 +115,20 @@ private:
     QWidget *gridLayoutWidget;
     QGridLayout *gridLayout_2;
     usViewerWidget *view2;
-    usViewerWidget *view4;
+    us3DSceneWidget *view4;
     usViewerWidget *view3;
     usViewerWidget *view1;
     QPushButton *resetButton;
     QPushButton *resetColorsButton;
     QPushButton *AddDistance1Button;
+
+    //VTK planes
+    vtkPlane *plane1;
+    vtkPlane *plane2;
+    vtkPlane *plane3;
+
+    //image
+    vtkSmartPointer<vtkImageData> vtkImage;
 };
 #endif
 #endif // US_MEDICAL_IMAGE_VIEWER
