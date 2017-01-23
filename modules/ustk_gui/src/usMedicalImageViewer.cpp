@@ -87,6 +87,12 @@ public:
   void Execute( vtkObject *caller, unsigned long ev,
                 void *callData )
   {
+    //remove warnings
+    (void*) caller;
+    (void) ev;
+    (void*) callData;
+
+
     std::cout << "EXECUTE" << std::endl;
     std::cout << "EXECUTE" << std::endl;
     //image->Print(std::cout);

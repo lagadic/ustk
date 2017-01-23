@@ -7,6 +7,7 @@
 #include <visp3/ustk_io/usImageIo.h>
 #include <visp3/ustk_gui/us3DSceneWidget.h>
 #include <visp3/ustk_gui/usVTKConverter.h>
+#include <vtkMetaImageReader.h>
 
 int main(int argc, char** argv)
 {
@@ -32,15 +33,33 @@ int main(int argc, char** argv)
     }
   }
 
+  vtkSmartPointer< vtkMetaImageReader > reader =
+      vtkSmartPointer< vtkMetaImageReader >::New();
+  reader->SetFileName(mhd_filename.c_str());
+  reader->Update();
+
+  std::cout << "reader output" << std::endl;
+
+  reader->GetOutput()->Print(std::cout);
+
   // QT application
   QApplication app( argc, argv );
+
 
   //read us image
   usImagePostScan3D<unsigned char> postScan3D;
   usImageIo::read(postScan3D, mhd_filename);
   //conversion to vtk format
   vtkSmartPointer<vtkImageData> vtkImage = vtkSmartPointer<vtkImageData>::New();
-  usVTKConverter::convert(postScan3D,vtkImage);
+
+  vtkSmartPointer<vtkImageImport> importer = vtkSmartPointer<vtkImageImport>::New();
+  importer->SetDataScalarTypeToUnsignedChar();
+  importer->SetWholeExtent(0,postScan3D.getDimX()-1,0, postScan3D.getDimY()-1, 0, postScan3D.getDimZ()-1);
+  importer->SetDataExtentToWholeExtent();
+  importer->SetNumberOfScalarComponents(1);
+  usVTKConverter::convert(postScan3D,vtkImage,importer);
+
+  vtkImage->Print(std::cout);
 
   //setup view widget
   us3DSceneWidget scene;
@@ -60,7 +79,10 @@ int main(int argc, char** argv)
   planeZ->SetOrigin(0,0,postScan3D.getDimZ()*spacing[2]/2.0);
   scene.setPlanes(planeX,planeY,planeZ);
 
+  std::cout << "planeZ origin Z" << planeZ->GetOrigin()[2] << std::endl;
+
   scene.init();
+  app.setActiveWindow(&scene);
   scene.show();
 
   return app.exec();

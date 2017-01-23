@@ -180,4 +180,12 @@ void us3DSceneWidget::setPlanes(vtkPlane* plane1,vtkPlane* plane2,vtkPlane* plan
   this->plane3 = plane3;
 }
 
+/**
+* Slot called to update image to display
+*/
+void us3DSceneWidget::updateImageData(vtkImageData* imageData) {
+  this->imageData = imageData;
+  this->update();
+}
+
 #endif

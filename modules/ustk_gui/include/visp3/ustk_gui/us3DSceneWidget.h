@@ -133,6 +133,9 @@ public:
   void setPlane3(vtkPlane* plane);
   void setPlanes(vtkPlane* plane1,vtkPlane* plane2,vtkPlane* plane3);
 
+public slots:
+  void updateImageData(vtkImageData* imageData);
+
 private:
   //image
   vtkImageData* imageData;

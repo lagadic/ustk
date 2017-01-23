@@ -40,16 +40,18 @@
 #ifdef USTK_HAVE_VTK_QT
 
 #include <vtkImageImport.h>
+#include <vtkPointData.h>
+#include <vtkDataArray.h>
 
-void usVTKConverter::convert(const usImagePostScan3D<unsigned char> &postScanImage, vtkSmartPointer<vtkImageData> &vtkPostScanImage, vtkImageImport* importer)
+void usVTKConverter::convert(const usImagePostScan3D<unsigned char> &postScanImage, vtkSmartPointer<vtkImageData> vtkPostScanImage, vtkSmartPointer<vtkImageImport> importer)
 {
   if(importer==NULL) {
-    importer = vtkImageImport::New();
+    importer = vtkSmartPointer<vtkImageImport>::New();
     importer->SetDataScalarTypeToUnsignedChar();
-    importer->SetImportVoidPointer((void *)postScanImage.getConstData());
     importer->SetWholeExtent(0,postScanImage.getDimX()-1,0, postScanImage.getDimY()-1, 0, postScanImage.getDimZ()-1);
     importer->SetDataExtentToWholeExtent();
     importer->SetNumberOfScalarComponents(1);
+    importer->SetImportVoidPointer((void *)postScanImage.getConstData(),1);
   }
   else
     importer->SetImportVoidPointer((void *)postScanImage.getConstData());
@@ -58,6 +60,15 @@ void usVTKConverter::convert(const usImagePostScan3D<unsigned char> &postScanIma
 
   vtkPostScanImage = importer->GetOutput();
   vtkPostScanImage->SetSpacing(postScanImage.getElementSpacingX(),postScanImage.getElementSpacingY(),postScanImage.getElementSpacingZ());
+
+  //try to avoid delete of imageData
+  vtkPostScanImage->GetPointData()->AllocateArrays(3);
+  vtkPostScanImage->GetPointData()->GetNumberOfComponents();
+
+  //vtkPostScanImage->SetReferenceCount(vtkPostScanImage->GetReferenceCount()+1);
+  //importer->SetReferenceCount(5);
+  vtkPostScanImage->GetPointData()->GetScalars()->SetReferenceCount(10);
+  vtkPostScanImage->Print(std::cout);
 }
 
 void usVTKConverter::convert(const usImagePreScan3D<unsigned char> &preScanImage,vtkSmartPointer<vtkImageData> &vtkPreScanImage, vtkImageImport* importer)

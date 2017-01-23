@@ -8,6 +8,7 @@ set(tutorial_cpp
   usMedicalViewerExample.cpp
   usFullConverter.cpp
   usVTKconverter.cpp
+  usGrabber3DViewer.cpp
   us3DViewer.cpp)
 
 foreach(cpp ${tutorial_cpp})

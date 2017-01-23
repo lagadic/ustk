@@ -241,7 +241,7 @@ vpThread::Return displayFunction(vpThread::Args args)
           }
         }
         std::cout << "frameNumber = " << frameIndex << std::endl;
-        if (frameIndex == (preScan3D_.getFrameNumber() - 1))
+        if ( (unsigned int)frameIndex +1 >= preScan3D_.getFrameNumber())
         {
           std::cout << "End of initialisation (first volume entirely captured)" << std::endl;
           initializing = false;
