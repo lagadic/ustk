@@ -3,8 +3,30 @@
 #include <visp3/ustk_io/usSequenceReader.h>
 #include <visp3/core/vpTime.h>
 
-int main()
+int main(int argc, char** argv)
 {
+  std::string mhd_filename;
+
+  for (int i=0; i<argc; i++) {
+    if (std::string(argv[i]) == "--input")
+      mhd_filename = std::string(argv[i+1]);
+    else if (std::string(argv[i]) == "--help") {
+      std::cout << "\nUsage: " << argv[0] << " [--input <preScan3D.xml>] [--help]\n" << std::endl;
+      return 0;
+    }
+  }
+
+  // Get the ustk-dataset package path or USTK_DATASET_PATH environment variable value
+  if (mhd_filename.empty()) {
+    std::string env_ipath = us::getDataSetPath();
+    if (! env_ipath.empty())
+      mhd_filename = env_ipath + "/pre-scan/3D_xml/sequencepreScan3D.xml";
+    else {
+      std::cout << "You should set USTK_DATASET_PATH environment var to access to ustk dataset" << std::endl;
+      return 0;
+    }
+  }
+
 /*  TEST : WRITE A SEQUENCE OF VOXEL IN A IMAGE
   usImagePreScan3D<unsigned char> prescanImage;
   prescanImage.resize(3,3,3);
@@ -37,14 +59,14 @@ int main()
   prescanImage(1,2,2,25);
   prescanImage(2,2,2,26);
 
-  usImageIo::write(prescanImage,"/home/mpouliqu/Documents/ustk-dataset/3D/volumeTest.mhd");
+  usImageIo::write(prescanImage,"volumeTest.mhd");
 */
 
   usImagePreScan3D<unsigned char> prescanImage;
   prescanImage.resize(128,480,16);
   usImagePostScan3D<unsigned char> postscanImage;
 
-  usImageIo::read(prescanImage,"/home/mpouliqu/Documents/usData/prescan/3D/USpreScan_volume-0000/sequencepreScan2D.xml");
+  usImageIo::read(prescanImage,mhd_filename);
 
   std::cout << "end reading" << std::endl;
 
@@ -66,7 +88,7 @@ int main()
   std::cout << "convert time (sec) = " << (endConvertTime - endInitTime) / 1000.0 << std::endl;
 
   std::cout << "writing post-scan..." << std::endl;
-  std::string mhdFileName ="/home/mpouliqu/Documents/usData/prescan/3D/USpreScan_volume-0000/volume.mhd";
+  std::string mhdFileName ="volume.mhd";
   usImageIo::write(postscanImage,mhdFileName);
 
   return 0;
