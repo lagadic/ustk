@@ -45,6 +45,8 @@
 #ifdef USTK_HAVE_VTK_QT
 
 // USTK includes
+
+#include <visp3/ustk_io/usImageIo.h>
 #include <visp3/ustk_gui/usViewerWidget.h>
 #include <visp3/ustk_gui/us3DSceneWidget.h>
 
@@ -128,6 +130,7 @@ private:
     vtkPlane *plane3;
 
     //image
+    usImagePostScan3D<unsigned char> postScanImage;
     vtkSmartPointer<vtkImageData> vtkImage;
 };
 #endif

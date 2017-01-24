@@ -36,7 +36,6 @@
 */
 
 #include <visp3/ustk_core/usImagePostScan3D.h>
-#include <visp3/ustk_io/usImageIo.h>
 #include <visp3/ustk_gui/usVTKConverter.h>
 #include <visp3/ustk_gui/usMedicalImageViewer.h>
 
@@ -87,22 +86,9 @@ public:
   void Execute( vtkObject *caller, unsigned long ev,
                 void *callData )
   {
-    //remove warnings
-    (void*) caller;
-    (void) ev;
-    (void*) callData;
-
-
-    std::cout << "EXECUTE" << std::endl;
-    std::cout << "EXECUTE" << std::endl;
-    //image->Print(std::cout);
-
-
     // Render everything
     for (int i = 0; i < 3; i++)
     {
-      std::cout << "i=" << i << std::endl;
-      RCW[i]->Print(std::cout);
       this->RCW[i]->Render();
     }
     widget3D->update();
@@ -111,7 +97,6 @@ public:
   vtkResliceCursorCallback() {}
   us3DSceneWidget* widget3D;
   vtkResliceCursorWidget *RCW[3];
-  vtkImageData* image;
 };
 
 
@@ -122,33 +107,13 @@ public:
 usMedicalImageViewer::usMedicalImageViewer(std::string imageFileName )
 {
   this->setupUi();
-  vtkSmartPointer< vtkMetaImageReader > reader =
-      vtkSmartPointer< vtkMetaImageReader >::New();
-  reader->SetFileName(imageFileName.c_str());
-  reader->Update();
-/*
-  usImagePostScan3D<unsigned char> postScanImage;
-  usImageIo::read(postScanImage,imageFileName);*/
-
-  this->vtkImage = vtkSmartPointer<vtkImageData>::New();
-  vtkImage = reader->GetOutput();
-
-  //usVTKConverter::convert(postScanImage,vtkImage);
-
-  //DEBUG
-  std::cout << "PRINT READER OUTPUT" << std::endl;
-  reader->GetOutput()->Print(std::cout);
-  std::cout << "PRINT IMAGE" << std::endl;
-  vtkImage->Print(std::cout);
+  usImageIo::read(postScanImage,imageFileName);
+  usVTKConverter::convert(postScanImage,vtkImage);
 
   int imageDims[3];
   double spacing[3];
   vtkImage->GetDimensions(imageDims);
   vtkImage->GetSpacing(spacing);
-
-  std::cout << "dims = " << imageDims[0] << ", "<< imageDims[1] << ", "<< imageDims[2] << std::endl;
-  std::cout << "spacing = " << spacing[0] << ", "<< spacing[1] << ", "<< spacing[2] << std::endl;
-  std::cout << "Size = " << spacing[0]*imageDims[0] << ", "<< spacing[1]*imageDims[1] << ", "<< spacing[2]*imageDims[2] << std::endl;
 
   for (int i = 0; i < 3; i++)
   {
@@ -186,29 +151,12 @@ usMedicalImageViewer::usMedicalImageViewer(std::string imageFileName )
   }
 
   this->view4->setImageData(vtkImage);
-/*  int dims[3];
-  vtkImage->GetDimensions(dims);
-
-  vtkSmartPointer<vtkPlane> planeX = vtkSmartPointer<vtkPlane>::New();
-  planeX->SetNormal(1,0,0);
-  planeX->SetOrigin(dims[0]/2,0,0);
-  vtkSmartPointer<vtkPlane> planeY = vtkSmartPointer<vtkPlane>::New();
-  planeY->SetNormal(0,1,0);
-  planeY->SetOrigin(0,dims[1]/2,0);
-  vtkSmartPointer<vtkPlane> planeZ = vtkSmartPointer<vtkPlane>::New();
-  planeZ->SetNormal(0,0,1);
-  planeZ->SetOrigin(0,0,dims[2]/2);
-  this->view4->setPlanes(planeX,planeY,planeZ);*/
-
   this->view4->setPlanes(riw[0]->GetResliceCursor()->GetPlane(0),riw[1]->GetResliceCursor()->GetPlane(1),riw[2]->GetResliceCursor()->GetPlane(2));
-
-
   this->view4->init();
 
   vtkSmartPointer<vtkResliceCursorCallback> cbk =
       vtkSmartPointer<vtkResliceCursorCallback>::New();
 
-  cbk->image = vtkImage;
   cbk->widget3D = this->view4;
 
   for (int i = 0; i < 3; i++)
@@ -248,7 +196,6 @@ usMedicalImageViewer::usMedicalImageViewer(std::string imageFileName )
   connect(this->resetColorsButton, SIGNAL(pressed()), this, SLOT(ResetColorMap()));
   connect(this->AddDistance1Button, SIGNAL(pressed()), this, SLOT(AddDistanceMeasurementToView1()));
   ResetViews();
-  std::cout << "end convstructor" << std::endl;
 };
 
 /**
@@ -295,13 +242,11 @@ void usMedicalImageViewer::ResetColorMap()
 */
 void usMedicalImageViewer::Render()
 {
-std::cout << "Render()" << std::endl;
   for (int i = 0; i < 3; i++)
   {
     riw[i]->Render();
   }
 
-std::cout << "Render() updates" << std::endl;
   this->view1->update();
   this->view2->update();
   this->view3->update();

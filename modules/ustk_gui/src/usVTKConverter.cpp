@@ -60,15 +60,6 @@ void usVTKConverter::convert(const usImagePostScan3D<unsigned char> &postScanIma
 
   vtkPostScanImage = importer->GetOutput();
   vtkPostScanImage->SetSpacing(postScanImage.getElementSpacingX(),postScanImage.getElementSpacingY(),postScanImage.getElementSpacingZ());
-
-  //try to avoid delete of imageData
-  /*vtkPostScanImage->GetPointData()->AllocateArrays(3);
-  vtkPostScanImage->GetPointData()->GetNumberOfComponents();
-
-  //vtkPostScanImage->SetReferenceCount(vtkPostScanImage->GetReferenceCount()+1);
-  //importer->SetReferenceCount(5);
-  vtkPostScanImage->GetPointData()->GetScalars()->SetReferenceCount(10);*/
-  vtkPostScanImage->Print(std::cout);
 }
 
 void usVTKConverter::convert(const usImagePreScan3D<unsigned char> &preScanImage,vtkSmartPointer<vtkImageData> &vtkPreScanImage, vtkImageImport* importer)
