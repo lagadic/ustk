@@ -68,17 +68,8 @@ int main(int argc, char** argv)
   //this importer will switch between the 2 previsous usImages at each iteration
   vtkSmartPointer<vtkImageData> vtkImage = vtkSmartPointer<vtkImageData>::New();
   vtkSmartPointer<vtkImageData> vtkImage2 = vtkSmartPointer<vtkImageData>::New();
-  vtkImageImport *importer = vtkImageImport::New();
-  importer->SetDataScalarTypeToUnsignedChar();
-  importer->SetImportVoidPointer((void *)postScanImage.getConstData());
-  importer->SetWholeExtent(0,postScanImage.getDimX()-1,0, postScanImage.getDimY()-1, 0, postScanImage.getDimZ()-1);
-  importer->SetDataExtentToWholeExtent();
-  importer->SetNumberOfScalarComponents(1);
 
-  vtkImage = importer->GetOutput();
-  vtkImage->SetSpacing(postScanImage.getElementSpacingX(),postScanImage.getElementSpacingY(),postScanImage.getElementSpacingZ());
-
-  vtkImage->Print(std::cout);
+  usVTKConverter::convert(postScanImage,vtkImage);
 
   //setup view widget
   us3DSceneWidget scene;
@@ -100,7 +91,8 @@ int main(int argc, char** argv)
 
   scene.init();
   scene.show();
-  app.setActiveWindow(&scene);
+
+
 /*
 
   //loop to simulate grabbing
