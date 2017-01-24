@@ -146,26 +146,39 @@ bool getOptions(int argc, const char **argv, std::string &opath, const std::stri
 
 int main(int argc, const char *argv[])
 {
-  (void) argc;
-  (void) argv;
+
+  std::string vol_filename;
+
+  for (int i=0; i<argc; i++) {
+    if (std::string(argv[i]) == "--input")
+      vol_filename = std::string(argv[i+1]);
+    else if (std::string(argv[i]) == "--help") {
+      std::cout << "\nUsage: " << argv[0] << " [--input <file.vol>] [--help]\n" << std::endl;
+      return 0;
+    }
+  }
+
+  // Get the ustk-dataset package path or USTK_DATASET_PATH environment variable value
+  if (vol_filename.empty()) {
+    std::string env_ipath = us::getDataSetPath();
+    if (! env_ipath.empty())
+      vol_filename = env_ipath + "/vol/01.vol";
+    else {
+      std::cout << "You should set USTK_DATASET_PATH environment var to access to ustk dataset" << std::endl;
+      return 0;
+    }
+  }
+
   usImagePreScan3D<unsigned char> image;
-# if defined(_WIN32)
-  std::string volFileName = "C:/Users/mpouliqu/Documents/DataUS/needle/01.vol"
-    #else
-  std::string volFileName = "/home/mpouliqu/Documents/usData/needle/Needle-experiments/Online/Volumes/01.vol";
-#endif
-  //usImageIo::read(image, volFileName);
+
+  //usImageIo::read(image, vol_filename);
   usSequenceReader3D<usImagePreScan3D<unsigned char> > reader;
-  reader.setSequenceFileName(volFileName);
+  reader.setSequenceFileName(vol_filename);
 
   vpImage<unsigned char> firstFrame;
   char buffer[300];
 
-# if defined(_WIN32)
-  std::string base = "C:/Users/mpouliqu/Documents/DataUS/needle/vol%d-frame%d.png";
-#else
-  std::string base = "/home/mpouliqu/Documents/usData/needle/Needle-experiments/Online/Volumes/vol%d-frame%d.png";
-#endif
+  std::string base = "vol%d-frame%d.png";
 
   //reading 10th volume with getVolume method, and writing the 1st frame to check it
   reader.getVolume(image,10);

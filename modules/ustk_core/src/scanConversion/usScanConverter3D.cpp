@@ -219,11 +219,15 @@ usImagePostScan3D<unsigned char> usScanConverter3D::getVolume()
 /**
  * Conversion method : compute the scan-conversion 3D and write the post-scan image settings.
  */
-void usScanConverter3D::convert( usImagePostScan3D<unsigned char> &postScanImage)
+void usScanConverter3D::convert( usImagePostScan3D<unsigned char> &postScanImage, const unsigned char *dataPreScan)
 {
   postScanImage.resize(m_nbX,m_nbY,m_nbZ);
   unsigned char *dataPost = postScanImage.getData();
-  const unsigned char *dataPre = _VpreScan.getConstData();
+  const unsigned char *dataPre;
+  if(dataPreScan==NULL)
+    dataPre= _VpreScan.getConstData();
+  else
+    dataPre = dataPreScan;
 
   if(_SweepInZdirection)
   {
