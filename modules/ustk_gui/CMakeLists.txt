@@ -56,8 +56,10 @@ if(USE_VTK)
   foreach(lib_ ${VTK_LIBRARIES})
     if(${lib_} MATCHES "^(vtk.*)")
       foreach(imp_config_ ${config_})
-        get_target_property(lib_property_${imp_config_}_ ${lib_} IMPORTED_LOCATION_${imp_config_})
-
+        get_target_property(lib_property_${imp_config_}_ ${lib_} IMPORTED_IMPLIB_${imp_config_})
+        if(NOT EXISTS ${lib_property_${imp_config_}_})
+          get_target_property(lib_property_${imp_config_}_ ${lib_} IMPORTED_LOCATION_${imp_config_})
+        endif()
         # Under Unix, there is no specific suffix for PCL/VTK libraries.         # Under Windows, we add the "optimized", "debug" specific keywords
         if(WIN32 AND EXISTS "${lib_property_${imp_config_}_}" AND "${imp_config_}" MATCHES "RELEASE") # also valid for RELEASEWITHDEBINFO
           list(APPEND opt_libs optimized "${component_property_${imp_config_}_}")
@@ -144,4 +146,11 @@ if(USE_VTK)
   set(USTK_HAVE_VTK_QT TRUE)
 
   vp_add_config_file("cmake/templates/usGuiConfig.h.in")
+
+  # Add specific build flag to turn off warnings coming from VTK 3rd party
+  vp_set_source_file_compile_flag(src/us3DSceneWidget.cpp -Wno-inconsistent-missing-override)
+  vp_set_source_file_compile_flag(src/usMedicalImageViewer.cpp -Wno-inconsistent-missing-override)
+  vp_set_source_file_compile_flag(src/usViewerWidget.cpp -Wno-inconsistent-missing-override)
+  vp_set_source_file_compile_flag(src/usVTKConverter.cpp -Wno-inconsistent-missing-override)
+  vp_set_source_file_compile_flag(${VISP_BINARY_DIR}/modules/ustk_gui/visp_ustk_gui_automoc.cpp -Wno-inconsistent-missing-override)
 endif()
