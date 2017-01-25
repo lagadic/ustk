@@ -71,6 +71,8 @@
 #include <vtkPointHandleRepresentation2D.h>
 #include <vtkCamera.h>
 #include <vtkRendererCollection.h>
+#include <vtkMatrix4x4.h>
+#include <vtkAbstractTransform.h>
 
 #include <QDesktopWidget>
 #include <QResizeEvent>
@@ -83,14 +85,23 @@ public:
   static vtkResliceCursorCallback *New()
   { return new vtkResliceCursorCallback; }
 
-  void Execute( vtkObject *caller, unsigned long ev,
-                void *callData )
+  //implementing virtual method of parent class but we don't need arguments, so they've been remove to avoid warings at compilation
+  void Execute( vtkObject *, unsigned long ,
+                void * )
   {
     // Render everything
     for (int i = 0; i < 3; i++)
     {
       this->RCW[i]->Render();
     }
+
+    std::cout << "Plane 1 " << std::endl;
+    widget3D->getPlane1()->Print(std::cout);
+    //widget3D->getPlane1()->Get;
+    std::cout << "Plane 2 " << std::endl;
+    widget3D->getPlane2()->Print(std::cout);
+    std::cout << "Plane 3 " << std::endl;
+    widget3D->getPlane3()->Print(std::cout);
     widget3D->update();
   }
 
@@ -98,7 +109,6 @@ public:
   us3DSceneWidget* widget3D;
   vtkResliceCursorWidget *RCW[3];
 };
-
 
 /**
 * Constructor.
@@ -146,12 +156,14 @@ usMedicalImageViewer::usMedicalImageViewer(std::string imageFileName )
     riw[i]->SetInputData(vtkImage);
     riw[i]->SetSliceOrientation(i);
     riw[i]->SetSlice(imageDims[i]/2);
-    riw[i]->GetRenderer()->GetActiveCamera()->SetRoll(180);
+    //riw[i]->GetRenderer()->GetActiveCamera()->SetRoll(180);
     riw[i]->SetResliceModeToOblique();
+    riw[i]->SliceScrollOnMouseWheelOff(); // scroll on mouse wheel not working weell (differents views not synchronized), so we disable it
   }
 
   this->view4->setImageData(vtkImage);
   this->view4->setPlanes(riw[0]->GetResliceCursor()->GetPlane(0),riw[1]->GetResliceCursor()->GetPlane(1),riw[2]->GetResliceCursor()->GetPlane(2));
+  this->view4->getPlane2()->SetNormal(0,1,0);
   this->view4->init();
 
   vtkSmartPointer<vtkResliceCursorCallback> cbk =
@@ -170,16 +182,6 @@ usMedicalImageViewer::usMedicalImageViewer(std::string imageFileName )
           vtkResliceCursorWidget::ResetCursorEvent, cbk );
   }
 
-  this->view1->update();
-  this->view2->update();
-  this->view3->update();
-  this->view4->update();
-
-  this->view1->show();
-  this->view2->show();
-  this->view3->show();
-  this->view4->show();
-
   for (int i = 0; i < 3; i++)
   {
     riw[i]->SetResliceMode(1);
@@ -196,7 +198,7 @@ usMedicalImageViewer::usMedicalImageViewer(std::string imageFileName )
   connect(this->resetColorsButton, SIGNAL(pressed()), this, SLOT(ResetColorMap()));
   connect(this->AddDistance1Button, SIGNAL(pressed()), this, SLOT(AddDistanceMeasurementToView1()));
   ResetViews();
-};
+}
 
 /**
 * Exit slot, to exit the QApplication.
@@ -234,7 +236,6 @@ void usMedicalImageViewer::ResetColorMap()
     riw[i]->GetLookupTable()->SetRange(0,255);
     riw[i]->GetResliceCursorWidget()->Render();
   }
-  planeWidget[0]->GetInteractor()->GetRenderWindow()->Render();
 }
 
 /**

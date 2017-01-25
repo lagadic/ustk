@@ -119,10 +119,14 @@ public:
 
   vtkImageData* getImageData();
 
-  //Catch paint events, in case we want to display some informations (writing in this widget) over the vtk scene
-  void paintEvent( QPaintEvent* event );
+  vtkPlane* getPlane1();
+  vtkPlane* getPlane2();
+  vtkPlane* getPlane3();
 
   void init();
+
+  //Catch paint events, in case we want to display some informations (writing in this widget) over the vtk scene
+  void paintEvent( QPaintEvent* event );
 
   //Set image to display
   void setImageData(vtkImageData* imageData);

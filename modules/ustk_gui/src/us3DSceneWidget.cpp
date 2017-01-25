@@ -167,6 +167,29 @@ void us3DSceneWidget::setPlane2(vtkPlane* plane) {
 void us3DSceneWidget::setPlane3(vtkPlane* plane) {
   this->plane3 = plane;
 }
+/**
+* Plane 1 getter.
+* @return Pointer on first vtkPlane.
+*/
+vtkPlane* us3DSceneWidget::getPlane1() {
+  return this->plane1;
+}
+
+/**
+* Plane 2 getter.
+* @return Pointer on second vtkPlane.
+*/
+vtkPlane* us3DSceneWidget::getPlane2() {
+  return this->plane2;
+}
+
+/**
+* Plane 3 getter.
+* @return  Pointer on third vtkPlane.
+*/
+vtkPlane* us3DSceneWidget::getPlane3() {
+  return this->plane3;
+}
 
 /**
 * All planes setter.
