@@ -53,7 +53,7 @@ namespace us {
   std::string getDataSetPath()
   {
     std::string data_path;
-    std::string file_to_test("pre-scan/3D_mhd/volume.mhd");
+    std::string file_to_test("post-scan/3D_mhd/volume31.mhd");
     std::string filename;
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
     // Test if ustk-data package is installed (Ubuntu and Debian)
