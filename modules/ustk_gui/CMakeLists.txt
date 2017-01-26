@@ -4,7 +4,7 @@
 # TODO: find how to suppress include(${VTK_USE_FILE}). For the moment, if not used on OSX, produces a segfault
 # TODO: find a way to remove all the warnings due to vtk headers
 
-VP_OPTION(USE_VTK "VTK;COMPONENTS;vtkCommonCore;vtkFiltersSources;vtkIOImage;vtkInteractionImage;vtkGUISupportQt;vtkRenderingImage" "" "Include vtk support" "" ON)
+VP_OPTION(USE_VTK "VTK;COMPONENTS;vtkCommonCore;vtkFiltersSources;vtkIOImage;vtkIOExport;vtkInteractionImage;vtkGUISupportQt;vtkRenderingImage" "" "Include vtk support" "" ON)
 
 if(USE_VTK)
   if(NOT VTK_VERSION)
@@ -36,6 +36,18 @@ if(USE_VTK)
   include(${VTK_USE_FILE})
 
   list(APPEND opt_incs ${VTK_INCLUDE_DIRS})
+
+  # Check for vtk dependencies
+  foreach(lib_ ${VTK_LIBRARIES})
+    if(${lib_} MATCHES "^(vtk.*)")
+      get_target_property(imported_dependency_ ${lib_} INTERFACE_LINK_LIBRARIES)
+      if(imported_dependency_)
+        list(APPEND vtk_opt_libs_deps_ ${imported_dependency_})
+      endif()
+    endif()
+  endforeach()
+  list(APPEND VTK_LIBRARIES ${vtk_opt_libs_deps_})
+  vp_list_unique(vtk_opt_libs_deps_)
 
   # list(APPEND opt_libs ${VTK_LIBRARIES})
   # Using VTK_LIBRARIES works to build visp/ustk library, examples, demos and test thanks to the components,
@@ -150,6 +162,7 @@ if(USE_VTK)
   # Add specific build flag to turn off warnings coming from VTK 3rd party
   vp_set_source_file_compile_flag(src/us3DSceneWidget.cpp -Wno-inconsistent-missing-override)
   vp_set_source_file_compile_flag(src/usMedicalImageViewer.cpp -Wno-inconsistent-missing-override)
+  vp_set_source_file_compile_flag(src/usResliceImageViewer.cpp -Wno-inconsistent-missing-override)
   vp_set_source_file_compile_flag(src/usViewerWidget.cpp -Wno-inconsistent-missing-override)
   vp_set_source_file_compile_flag(src/usVTKConverter.cpp -Wno-inconsistent-missing-override)
   vp_set_source_file_compile_flag(${VISP_BINARY_DIR}/modules/ustk_gui/visp_ustk_gui_automoc.cpp -Wno-inconsistent-missing-override)
