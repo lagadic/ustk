@@ -1,17 +1,38 @@
-/*=========================================================================
+/****************************************************************************
+ *
+ * This file is part of the ustk software.
+ * Copyright (C) 2016 - 2017 by Inria. All rights reserved.
+ *
+ * This software is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * ("GPL") version 2 as published by the Free Software Foundation.
+ * See the file LICENSE.txt at the root directory of this source
+ * distribution for additional information about the GNU GPL.
+ *
+ * For using ustk with software that can not be combined with the GNU
+ * GPL, please contact Inria about acquiring a ViSP Professional
+ * Edition License.
+ *
+ * This software was developed at:
+ * Inria Rennes - Bretagne Atlantique
+ * Campus Universitaire de Beaulieu
+ * 35042 Rennes Cedex
+ * France
+ *
+ * If you have questions regarding the use of this file, please contact
+ * Inria at ustk@inria.fr
+ *
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * Authors:
+ * Marc Pouliquen
+ *
+ *****************************************************************************/
 
-  Program:   Visualization Toolkit
-  Module:    vtkResliceImageViewer.cxx
+#include <visp3/ustk_gui/usGuiConfig.h>
 
-  Copyright (c) Ken Martin, Will Schroeder, Bill Lorensen
-  All rights reserved.
-  See Copyright.txt or http://www.kitware.com/Copyright.htm for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
+#ifdef USTK_HAVE_VTK_QT
 
 #include <visp3/ustk_gui/usResliceImageViewer.h>
 
@@ -345,7 +366,7 @@ void usResliceImageViewer::UnInstallPipeline()
 //----------------------------------------------------------------------------
 void usResliceImageViewer::UpdatePointPlacer()
 {
-  std::cout << "usResliceImageViewer::UpdatePointPlacer()" << std::cout;
+  std::cout << "usResliceImageViewer::UpdatePointPlacer()" << std::endl;
   if (this->ResliceMode == RESLICE_OBLIQUE)
   {
     this->PointPlacer->SetProjectionNormalToOblique();
@@ -412,7 +433,7 @@ void usResliceImageViewer::UpdatePointPlacer()
 //----------------------------------------------------------------------------
 void usResliceImageViewer::Render()
 {
-  //std::cout << "usResliceImageViewer::UpdatePointPlacer()" << std::cout;
+  //std::cout << "usResliceImageViewer::UpdatePointPlacer()" << std::endl;
   if (!this->WindowLevel->GetInput())
   {
     return;
@@ -623,3 +644,4 @@ void usResliceImageViewer::PrintSelf(ostream& os, vtkIndent indent)
     this->Interactor->PrintSelf(os,indent.GetNextIndent());
   }
 }
+#endif
