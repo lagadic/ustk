@@ -12,6 +12,7 @@
      PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
+
 #include <visp3/ustk_gui/usResliceImageViewer.h>
 
 #include <vtkCamera.h>
@@ -411,7 +412,7 @@ void usResliceImageViewer::UpdatePointPlacer()
 //----------------------------------------------------------------------------
 void usResliceImageViewer::Render()
 {
-  std::cout << "usResliceImageViewer::UpdatePointPlacer()" << std::cout;
+  //std::cout << "usResliceImageViewer::UpdatePointPlacer()" << std::cout;
   if (!this->WindowLevel->GetInput())
   {
     return;
