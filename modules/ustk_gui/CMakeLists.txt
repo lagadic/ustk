@@ -155,6 +155,8 @@ if(USE_VTK)
   vp_module_include_directories(${opt_incs})
   vp_create_module(${opt_libs})
 
+  vp_add_tests()
+  
   set(USTK_HAVE_VTK_QT TRUE)
 
   vp_add_config_file("cmake/templates/usGuiConfig.h.in")

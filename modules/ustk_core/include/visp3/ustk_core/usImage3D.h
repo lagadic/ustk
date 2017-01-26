@@ -102,6 +102,15 @@ public:
   Type* getData() { return bitmap; }
 
   /**
+  * Get the pointer to the data container for specified position in the volume.
+  * @param indexX Index on x-axis to acess
+  * @param indexY Index on y-axis to acess
+  * @param indexZ Index on z-axis to acess
+  * @return The pointer to the voxel specified indexes.
+  */
+  Type* getData(unsigned int indexX, unsigned int indexY, unsigned int indexZ) { return bitmap + (m_dimX * m_dimY)*indexZ + m_dimX*indexY + indexX;}
+
+  /**
   * Get the volume width.
   * @return The volume width, in number of voxels.
   */
