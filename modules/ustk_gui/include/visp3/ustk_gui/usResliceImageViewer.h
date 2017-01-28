@@ -45,7 +45,7 @@
 #ifdef USTK_HAVE_VTK_QT
 
 //#include "vtkInteractionImageModule.h" // For export macro
-#include "vtkImageViewer2.h"
+#include <visp3/ustk_gui/usImageViewer.h>
 
 class vtkResliceCursorWidget;
 class vtkResliceCursor;
@@ -55,7 +55,7 @@ class vtkResliceImageViewerMeasurements;
 class vtkResliceImageViewerScrollCallback;
 class vtkPlane;
 
-class VISP_EXPORT usResliceImageViewer : public vtkImageViewer2
+class VISP_EXPORT usResliceImageViewer : public usImageViewer
 {
 public:
 
@@ -64,7 +64,7 @@ public:
    * Standard VTK methods.
    */
   static usResliceImageViewer *New();
-  vtkTypeMacro(usResliceImageViewer,vtkImageViewer2);
+  vtkTypeMacro(usResliceImageViewer,usImageViewer);
   void PrintSelf(ostream& os, vtkIndent indent);
   //@}
 

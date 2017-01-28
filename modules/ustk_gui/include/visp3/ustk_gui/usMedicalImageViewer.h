@@ -49,6 +49,7 @@
 #include <visp3/ustk_io/usImageIo.h>
 #include <visp3/ustk_gui/usViewerWidget.h>
 #include <visp3/ustk_gui/us3DSceneWidget.h>
+#include <visp3/ustk_gui/usResliceImageViewer.h>
 
 // VTK includes
 #include <vtkSmartPointer.h>
@@ -57,6 +58,7 @@
 #include <vtkImagePlaneWidget.h>
 #include <vtkDistanceWidget.h>
 #include <vtkResliceImageViewerMeasurements.h>
+#include <vtkImageMapper3D.h>
 
 // Qt includes
 #if defined(USTK_HAVE_VTK_QT4)
@@ -98,7 +100,7 @@ public slots:
   virtual void slotExit();
 
 protected:
-  vtkSmartPointer< vtkResliceImageViewer > riw[3];
+  vtkSmartPointer< usResliceImageViewer > riw[3];
   vtkSmartPointer< vtkImagePlaneWidget > planeWidget[3];
   vtkSmartPointer< vtkDistanceWidget > DistanceWidget[3];
   vtkSmartPointer< vtkResliceImageViewerMeasurements > ResliceMeasurements[3];
@@ -128,6 +130,12 @@ private:
     vtkPlane *plane1;
     vtkPlane *plane2;
     vtkPlane *plane3;
+
+    //mappers (views2D)
+    vtkImageResliceMapper* imageMapper1;
+    vtkImageResliceMapper* imageMapper2;
+    vtkImageResliceMapper* imageMapper3;
+
 
     //image
     usImagePostScan3D<unsigned char> postScanImage;

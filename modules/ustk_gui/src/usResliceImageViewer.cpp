@@ -258,19 +258,19 @@ void usResliceImageViewer::UpdateOrientation()
     {
       switch (this->SliceOrientation)
       {
-        case vtkImageViewer2::SLICE_ORIENTATION_XY:
+        case usImageViewer::SLICE_ORIENTATION_XY:
           cam->SetFocalPoint(0,0,0);
           cam->SetPosition(0,0,1); // -1 if medical ?
           cam->SetViewUp(0,0,1);
           break;
 
-        case vtkImageViewer2::SLICE_ORIENTATION_XZ:
+        case usImageViewer::SLICE_ORIENTATION_XZ:
           cam->SetFocalPoint(0,0,0);
           cam->SetPosition(0,1,0); // 1 if medical ?
           cam->SetViewUp(0,1,0);
           break;
 
-        case vtkImageViewer2::SLICE_ORIENTATION_YZ:
+        case usImageViewer::SLICE_ORIENTATION_YZ:
           cam->SetFocalPoint(0,0,0);
           cam->SetPosition(1,0,0); // -1 if medical ?
           cam->SetViewUp(1,0,0);
@@ -287,7 +287,60 @@ void usResliceImageViewer::UpdateDisplayExtent()
   if (this->ResliceMode == RESLICE_AXIS_ALIGNED)
   {
     this->Superclass::UpdateDisplayExtent();
+    switch (this->SliceOrientation)
+    {
+    case usImageViewer::SLICE_ORIENTATION_XY:
+      this->ImageActor->SetDisplayExtent(
+        1000,1000,1000,1000, this->Slice, this->Slice);
+      break;
+
+    case usImageViewer::SLICE_ORIENTATION_XZ:
+      this->ImageActor->SetDisplayExtent(
+        1000,1000,this->Slice, this->Slice, 1000,1000);
+      break;
+
+    case usImageViewer::SLICE_ORIENTATION_YZ:
+      this->ImageActor->SetDisplayExtent(
+        this->Slice, this->Slice, 1000,1000,1000,1000);
+      break;
+    }
+
+    /*vtkCamera *cam = this->Renderer->GetActiveCamera();
+      if (cam)
+      {
+        double bounds[6];
+        this->ImageActor->GetBounds(bounds);
+        double spos = bounds[this->SliceOrientation * 2];
+        double cpos = cam->GetPosition()[this->SliceOrientation];
+        double range = fabs(spos - cpos);
+        double *spacing = outInfo->Get(vtkDataObject::SPACING());
+        double avg_spacing =
+          (spacing[0] + spacing[1] + spacing[2]) / 3.0;
+        cam->SetClippingRange(
+          range - avg_spacing * 3.0, range + avg_spacing * 3.0);*/
+
   }
+  else {
+  std::cout << "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"<< std::endl;
+    switch (this->SliceOrientation)
+    {
+    case usImageViewer::SLICE_ORIENTATION_XY:
+      this->ImageActor->SetDisplayExtent(
+        1000,1000,1000,1000, this->Slice, this->Slice);
+      break;
+
+    case usImageViewer::SLICE_ORIENTATION_XZ:
+      this->ImageActor->SetDisplayExtent(
+        1000,1000,this->Slice, this->Slice, 1000,1000);
+      break;
+
+    case usImageViewer::SLICE_ORIENTATION_YZ:
+      this->ImageActor->SetDisplayExtent(
+        this->Slice, this->Slice, 1000,1000,1000,1000);
+      break;
+    }
+  }
+
 }
 
 //----------------------------------------------------------------------------
@@ -366,7 +419,7 @@ void usResliceImageViewer::UnInstallPipeline()
 //----------------------------------------------------------------------------
 void usResliceImageViewer::UpdatePointPlacer()
 {
-  std::cout << "usResliceImageViewer::UpdatePointPlacer()" << std::endl;
+  //std::cout << "usResliceImageViewer::UpdatePointPlacer()" << std::endl;
   if (this->ResliceMode == RESLICE_OBLIQUE)
   {
     this->PointPlacer->SetProjectionNormalToOblique();
@@ -377,6 +430,7 @@ void usResliceImageViewer::UpdatePointPlacer()
       const int planeOrientation =
         rep->GetCursorAlgorithm()->GetReslicePlaneNormal();
       vtkPlane *plane = this->GetResliceCursor()->GetPlane(planeOrientation);
+      //plane->Print(std::cout);
       this->PointPlacer->SetObliquePlane(plane);
     }
   }

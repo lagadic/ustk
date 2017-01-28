@@ -211,4 +211,28 @@ void us3DSceneWidget::updateImageData(vtkImageData* imageData) {
   this->update();
 }
 
+vtkImageResliceMapper* us3DSceneWidget::getMapper1() {
+  return this->imageResliceMapper1;
+}
+
+vtkImageResliceMapper* us3DSceneWidget::getMapper2() {
+  return this->imageResliceMapper2;
+}
+
+vtkImageResliceMapper* us3DSceneWidget::getMapper3(){
+  return this->imageResliceMapper3;
+}
+
+vtkImageSlice* us3DSceneWidget::getActor1() {
+  return imageSlice1;
+}
+
+vtkImageSlice* us3DSceneWidget::getActor2() {
+  return imageSlice2;
+}
+
+vtkImageSlice* us3DSceneWidget::getActor3() {
+  return imageSlice3;
+}
+
 #endif

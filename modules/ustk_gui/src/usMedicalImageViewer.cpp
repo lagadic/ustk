@@ -73,6 +73,10 @@
 #include <vtkRendererCollection.h>
 #include <vtkMatrix4x4.h>
 #include <vtkAbstractTransform.h>
+#include <vtkImageActor.h>
+#include <vtkMapper.h>
+#include <vtkActor2D.h>
+#include <vtkActor.h>
 
 #include <QDesktopWidget>
 #include <QResizeEvent>
@@ -92,22 +96,63 @@ public:
     // Render everything
     for (int i = 0; i < 3; i++)
     {
-      this->RCW[i]->Render();
+      if(i==0) {
+        /*this->RIW[i]->GetRenderer()->GetActiveCamera()->Print(std::cout);
+        //this->RIW[i]->GetRenderer()->GetActiveCamera()->GetClippingRange()->Print(;)
+        double dop[3];
+        this->RIW[i]->GetRenderer()->GetActiveCamera()->GetDirectionOfProjection(dop);
+        //std::cout << "DOP : " << dop[0] << ","<< dop[1] << ","<< dop[2] << std::endl;
+        //std::cout << "ROLL : " <<this->RIW[i]->GetRenderer()->GetActiveCamera()->GetRoll() << std::endl;
+        //this->RIW[i]->GetRenderer()->GetActiveCamera()->SetRoll(90);
+
+        //view plane normal
+        double vpn[3];
+        this->RIW[i]->GetRenderer()->GetActiveCamera()->GetViewPlaneNormal(vpn);
+        //std::cout << "VPN : " << vpn[0] << ","<< vpn[1] << ","<< vpn[2] << std::endl;
+
+        //projection transform
+        vtkMatrix4x4* pt;
+        pt = this->RIW[i]->GetRenderer()->GetActiveCamera()->GetProjectionTransformMatrix(this->RIW[i]->GetRenderer());
+        //std::cout << "proj transform : " << std::endl;
+        for(int a = 0 ; a < 4 ; a++) {
+          for(int b=0;b<4;b++) {
+            std::cout << pt->Element[a][b] << "\t\t";
+          }
+          std::cout << std::endl;
+        }
+
+        this->RIW[i]->GetImageActor()->Print(std::cout);
+
+        double bounds[6];
+    this->RIW[i]->GetImageActor()->GetDisplayBounds(bounds);
+    std::cout << "extend["<<i<<"] : " << bounds[0] << "," << bounds[1] << "," << bounds[2] << "," << bounds[3] << "," << bounds[4] << "," << bounds[5] << std::endl;
+        int extend[6];
+    this->RIW[i]->GetImageActor()->GetDisplayExtent(extend);
+    std::cout << "extend["<<i<<"] : " << extend[0] << "," << extend[1] << "," << extend[2] << "," << extend[3] << "," << extend[4] << "," << extend[5] << std::endl;
+*/
+      }
+      //if(i==0)
+        this->RIW[i]->Render();
+
     }
 
-    std::cout << "Plane 1 " << std::endl;
-    widget3D->getPlane1()->Print(std::cout);
+
     //widget3D->getPlane1()->Get;
-    std::cout << "Plane 2 " << std::endl;
-    widget3D->getPlane2()->Print(std::cout);
-    std::cout << "Plane 3 " << std::endl;
-    widget3D->getPlane3()->Print(std::cout);
+    //std::cout << "Plane 2 " << std::endl;
+    //widget3D->getPlane2()->Print(std::cout);
+    //std::cout << "Plane 3 " << std::endl;
+    //widget3D->getPlane3()->Print(std::cout);
     widget3D->update();
+    //std::cout << "3D view Plane 1 " << std::endl;
+    //double norm[3];
+    //widget3D->getPlane1()->GetNormal(norm);
+    //std::cout << "NORMAL : " << norm[0] << ","<< norm[1] << ","<< norm[2] << std::endl;
   }
 
   vtkResliceCursorCallback() {}
   us3DSceneWidget* widget3D;
-  vtkResliceCursorWidget *RCW[3];
+  //vtkResliceCursorWidget *RCW[3];
+  usResliceImageViewer* RIW[3];
 };
 
 /**
@@ -125,9 +170,11 @@ usMedicalImageViewer::usMedicalImageViewer(std::string imageFileName )
   vtkImage->GetDimensions(imageDims);
   vtkImage->GetSpacing(spacing);
 
+  std::cout << "convert done " << std::endl;
+
   for (int i = 0; i < 3; i++)
   {
-    riw[i] = vtkSmartPointer< vtkResliceImageViewer >::New();
+    riw[i] = vtkSmartPointer< usResliceImageViewer >::New();
   }
 
   this->view1->SetRenderWindow(riw[0]->GetRenderWindow());
@@ -160,11 +207,130 @@ usMedicalImageViewer::usMedicalImageViewer(std::string imageFileName )
     riw[i]->SetResliceModeToOblique();
     riw[i]->SliceScrollOnMouseWheelOff(); // scroll on mouse wheel not working weell (differents views not synchronized), so we disable it
   }
+/*
+  plane1 = vtkPlane::New();
+  plane1->SetOrigin(0,0,0);
+  plane1->SetNormal(1,0,0);
+
+  plane2 = vtkPlane::New();
+  plane2->SetNormal(0,1,0);
+  plane2->SetOrigin(0,0,0);
+
+  plane3 = vtkPlane::New();
+  plane3->SetNormal(0,0,1);
+  plane3->SetOrigin(0,0,0);*/
 
   this->view4->setImageData(vtkImage);
   this->view4->setPlanes(riw[0]->GetResliceCursor()->GetPlane(0),riw[1]->GetResliceCursor()->GetPlane(1),riw[2]->GetResliceCursor()->GetPlane(2));
-  this->view4->getPlane2()->SetNormal(0,1,0);
+  //this->view4->setPlanes(plane1,plane2,plane3);
+
   this->view4->init();
+
+
+  //////////////////////////////////////////////////////////////////////////////
+  /*//VIEW 1
+  imageMapper1 = vtkSmartPointer<vtkImageResliceMapper>::New();
+  std::cout << "toto" << std::endl;
+  imageMapper1->SetInputData(vtkImage);
+  std::cout << "toto" << std::endl;
+  imageMapper1->SetSlicePlane(plane1);
+  std::cout << "toto" << std::endl;
+  //imageMapper1->Update();
+  imageMapper1->SliceFacesCameraOn();
+  std::cout << "toto" << std::endl;
+
+  vtkSmartPointer<vtkImageSlice> slice1 = vtkSmartPointer<vtkImageSlice>::New();
+  slice1->SetMapper(imageMapper1);
+
+  vtkSmartPointer<vtkRenderer> renderer1 = vtkSmartPointer<vtkRenderer>::New();
+  renderer1->AddViewProp(slice1);
+  renderer1->ResetCamera();
+
+  view1->GetRenderWindow()->AddRenderer(renderer1);
+
+  std::cout << "toto" << std::endl;
+  std::cout << "toto" << std::endl;
+  //interaction
+  vtkSmartPointer<vtkRenderWindowInteractor> renderWindowInteractor = vtkSmartPointer<vtkRenderWindowInteractor>::New();
+  vtkSmartPointer<vtkInteractorStyleImage> style = vtkSmartPointer<vtkInteractorStyleImage>::New();
+  renderWindowInteractor->SetInteractorStyle(style);
+  view1->GetRenderWindow()->SetInteractor(renderWindowInteractor);
+
+
+
+  std::cout << "toto" << std::endl;
+
+
+
+  vtkSmartPointer<vtkCamera> camera1 = renderer1->GetActiveCamera();
+  std::cout << "cam1 @ : " << (void*)camera1 << std::endl;
+  camera1->SetViewUp (0, 0, -1);
+  camera1->SetPosition (1, 0, 0);
+  camera1->SetFocalPoint (0, 0, 0);
+  camera1->ComputeViewPlaneNormal();
+  camera1->Azimuth(30.0);
+  camera1->Elevation(30.0);
+
+  //verify the camera plane
+  double plane[3];
+  camera1->GetViewPlaneNormal(plane);
+  std::cout << "plane 1 : " << *plane << ", " << plane[1] << ", " << plane[2] << std::endl;
+
+  view1->GetRenderWindow()->AddRenderer(renderer1);
+
+
+
+  //VIEW 2
+  vtkSmartPointer<vtkRenderer> renderer2 = vtkSmartPointer<vtkRenderer>::New();
+  //vtkSmartPointer<vtkMapper> mapper2 = vtkSmartPointer<vtkRenderer>::New();
+  //vtkSmartPointer<vtkActor> actor2 = vtkSmartPointer<vtkRenderer>::New();
+  //mapper2 = view4->getMapper2();
+  //actor2->SetMapper(view4->getMapper2());
+  //renderer2->AddActor(actor2);
+
+
+  vtkSmartPointer<vtkImageMapper> imageMapper = vtkSmartPointer<vtkImageMapper>::New();
+
+
+  renderer2->AddActor(view4->getActor2());
+
+  vtkSmartPointer<vtkCamera> camera2 = renderer2->GetActiveCamera();
+  std::cout << "cam2 @ : " << (void*)camera2 << std::endl;
+  camera2->SetViewUp (0, 0, -1);
+  camera2->SetPosition (0, 1, 0);
+  camera2->SetFocalPoint (0, 0, 0);
+  camera2->ComputeViewPlaneNormal();
+  camera2->Azimuth(30.0);
+  camera2->Elevation(30.0);
+
+  //verify the camera plane
+  camera2->GetViewPlaneNormal(plane);
+  std::cout << "plane 2 : " << *plane << ", " << plane[1] << ", " << plane[2] << std::endl;
+
+  view2->GetRenderWindow()->AddRenderer(renderer2);
+
+
+
+  //VIEW 3
+  vtkSmartPointer<vtkRenderer> renderer3 = vtkSmartPointer<vtkRenderer>::New();
+  renderer3->AddActor(view4->getActor3());
+  vtkSmartPointer<vtkCamera> camera3 = renderer3->GetActiveCamera();
+  std::cout << "cam3 @ : " << (void*)camera3 << std::endl;
+  camera3->SetViewUp (0, 0, -1);
+  camera3->SetPosition (0, 1, 0);
+  camera3->SetFocalPoint (0, 0, 0);
+  camera3->ComputeViewPlaneNormal();
+  camera3->Azimuth(30.0);
+  camera3->Elevation(30.0);
+
+  //verify the camera plane
+  camera3->GetViewPlaneNormal(plane);
+  std::cout << "plane 3 : " << *plane << ", " << plane[1] << ", " << plane[2] << std::endl;
+
+  view3->GetRenderWindow()->AddRenderer(renderer3);
+*/
+
+  //////////////////////////////////////////////////////////////////////////////
 
   vtkSmartPointer<vtkResliceCursorCallback> cbk =
       vtkSmartPointer<vtkResliceCursorCallback>::New();
@@ -173,7 +339,8 @@ usMedicalImageViewer::usMedicalImageViewer(std::string imageFileName )
 
   for (int i = 0; i < 3; i++)
   {
-    cbk->RCW[i] = riw[i]->GetResliceCursorWidget();
+    //cbk->RCW[i] = riw[i]->GetResliceCursorWidget();
+    cbk->RIW[i] = riw[i];
     riw[i]->GetResliceCursorWidget()->AddObserver(
           vtkResliceCursorWidget::ResliceAxesChangedEvent, cbk );
     riw[i]->GetResliceCursorWidget()->AddObserver(
@@ -181,6 +348,11 @@ usMedicalImageViewer::usMedicalImageViewer(std::string imageFileName )
     riw[i]->GetResliceCursorWidget()->AddObserver(
           vtkResliceCursorWidget::ResetCursorEvent, cbk );
   }
+
+
+  //riw[0]->GetImageActor()->SetMapper(view4->getMapper1());
+  //riw[1]->GetImageActor()->SetMapper(view4->getMapper2());
+  //riw[2]->GetImageActor()->SetMapper(view4->getMapper3());
 
   for (int i = 0; i < 3; i++)
   {
@@ -195,8 +367,8 @@ usMedicalImageViewer::usMedicalImageViewer(std::string imageFileName )
   // Set up action signals and slots
   //connect(this->actionExit, SIGNAL(triggered()), this, SLOT(slotExit()));
   connect(this->resetButton, SIGNAL(pressed()), this, SLOT(ResetViews()));
-  connect(this->resetColorsButton, SIGNAL(pressed()), this, SLOT(ResetColorMap()));
-  connect(this->AddDistance1Button, SIGNAL(pressed()), this, SLOT(AddDistanceMeasurementToView1()));
+  //connect(this->resetColorsButton, SIGNAL(pressed()), this, SLOT(ResetColorMap()));
+  //connect(this->AddDistance1Button, SIGNAL(pressed()), this, SLOT(AddDistanceMeasurementToView1()));
   ResetViews();
 }
 
@@ -216,12 +388,15 @@ void usMedicalImageViewer::ResetViews()
   // Reset the reslice image views
   for (int i = 0; i < 3; i++)
   {
-    riw[i]->Reset();
+    /*riw[i]->Reset();
     riw[i]->SetResliceMode(1);
-    riw[i]->GetRenderer()->ResetCamera();
+    vi[i]->GetRenderer()->ResetCamera();
     if(i==2)
-      riw[i]->GetRenderer()->GetActiveCamera()->SetRoll(180);
+      riw[i]->GetRenderer()->GetActiveCamera()->SetRoll(180);*/
   }
+  /*view1->GetRenderWindow()->GetRenderers()->GetFirstRenderer()->ResetCamera();
+  view2->GetRenderWindow()->GetRenderers()->GetFirstRenderer()->ResetCamera();
+  view3->GetRenderWindow()->GetRenderers()->GetFirstRenderer()->ResetCamera();*/
   this->Render();
 }
 
@@ -245,8 +420,12 @@ void usMedicalImageViewer::Render()
 {
   for (int i = 0; i < 3; i++)
   {
-    riw[i]->Render();
+    //riw[i]->Render();
   }
+
+  this->view1->GetRenderWindow()->Render();
+  this->view2->GetRenderWindow()->Render();
+  this->view3->GetRenderWindow()->Render();
 
   this->view1->update();
   this->view2->update();
