@@ -333,6 +333,7 @@ void usImageViewer::SetSliceOrientation(int orientation)
 void usImageViewer::UpdateOrientation()
 {
   // Set the camera position
+  std::cout << "usImageViewer::UpdateOrientation()" << std::endl;
 
   vtkCamera *cam = this->Renderer ? this->Renderer->GetActiveCamera() : NULL;
   if (cam)
@@ -363,7 +364,7 @@ void usImageViewer::UpdateOrientation()
 //----------------------------------------------------------------------------
 void usImageViewer::UpdateDisplayExtent()
 {
-  //std::cout << "usImageViewer::UpdateDisplayExtent()" << std::endl;
+  std::cout << "usImageViewer::UpdateDisplayExtent()" << std::endl;
   vtkAlgorithm *input = this->GetInputAlgorithm();
   if (!input || !this->ImageActor)
   {
@@ -392,17 +393,17 @@ void usImageViewer::UpdateDisplayExtent()
   {
     case usImageViewer::SLICE_ORIENTATION_XY:
       this->ImageActor->SetDisplayExtent(
-        w_ext[0], w_ext[1], w_ext[2], w_ext[3], this->Slice, this->Slice);
+        w_ext[0]*2, w_ext[1]*2, w_ext[2]*2, w_ext[3]*2, this->Slice, this->Slice);
       break;
 
     case usImageViewer::SLICE_ORIENTATION_XZ:
       this->ImageActor->SetDisplayExtent(
-        w_ext[0], w_ext[1], this->Slice, this->Slice, w_ext[4], w_ext[5]);
+        w_ext[0]*2, w_ext[1]*2, this->Slice, this->Slice, w_ext[4]*2, w_ext[5]*2);
       break;
 
     case usImageViewer::SLICE_ORIENTATION_YZ:
       this->ImageActor->SetDisplayExtent(
-        this->Slice, this->Slice, w_ext[2], w_ext[3], w_ext[4], w_ext[5]);
+        this->Slice, this->Slice, w_ext[2]*2, w_ext[3]*2, w_ext[4]*2, w_ext[5]*2);
       break;
   }
 
@@ -429,7 +430,7 @@ void usImageViewer::UpdateDisplayExtent()
         double avg_spacing =
           (spacing[0] + spacing[1] + spacing[2]) / 3.0;
         cam->SetClippingRange(
-          range - avg_spacing * 3.0, range + avg_spacing * 3.0);
+          (range - avg_spacing * 3.0)*2, (range + avg_spacing * 3.0)*2);
       }
     }
   }
@@ -709,12 +710,22 @@ void usImageViewer::Render()
       if (this->Renderer)
       {
         this->Renderer->ResetCamera();
-        this->Renderer->GetActiveCamera()->SetParallelScale(
-          xs < 150 ? 75 : (xs - 1 ) / 2.0);
+        /*this->Renderer->GetActiveCamera()->SetParallelScale(
+          xs < 150 ? 75 : (xs - 1 ) / 2.0);*/
       }
       this->FirstRender = 0;
     }
   }
+  std::cout << "max x bound" << this->ImageActor->GetMaxXBound() << std::endl;
+  std::cout << "min x bound" << this->ImageActor->GetMinXBound() << std::endl;
+  std::cout << "max y bound" << this->ImageActor->GetMaxYBound() << std::endl;
+  std::cout << "min y bound" << this->ImageActor->GetMinYBound() << std::endl;
+  std::cout << "max z bound" << this->ImageActor->GetMaxZBound() << std::endl;
+  std::cout << "min z bound" << this->ImageActor->GetMinZBound() << std::endl;
+
+
+  int* ext = this->ImageActor->GetDisplayExtent();
+  std::cout << "ext " << *ext << ext[1] << ext[2] << ext[3] << ext[4] << ext[5] << std::endl;
   if (this->GetInput())
   {
     this->RenderWindow->Render();

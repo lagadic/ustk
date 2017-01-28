@@ -419,7 +419,7 @@ void usResliceImageViewer::UnInstallPipeline()
 //----------------------------------------------------------------------------
 void usResliceImageViewer::UpdatePointPlacer()
 {
-  //std::cout << "usResliceImageViewer::UpdatePointPlacer()" << std::endl;
+  std::cout << "usResliceImageViewer::UpdatePointPlacer()" << std::endl;
   if (this->ResliceMode == RESLICE_OBLIQUE)
   {
     this->PointPlacer->SetProjectionNormalToOblique();
@@ -487,7 +487,7 @@ void usResliceImageViewer::UpdatePointPlacer()
 //----------------------------------------------------------------------------
 void usResliceImageViewer::Render()
 {
-  //std::cout << "usResliceImageViewer::UpdatePointPlacer()" << std::endl;
+  std::cout << "usResliceImageViewer::Render()" << std::endl;
   if (!this->WindowLevel->GetInput())
   {
     return;
