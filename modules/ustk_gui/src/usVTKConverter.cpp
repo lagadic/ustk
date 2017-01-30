@@ -62,10 +62,10 @@ void usVTKConverter::convert(const usImagePostScan3D<unsigned char> &postScanIma
   vtkPostScanImage->SetSpacing(postScanImage.getElementSpacingX(),postScanImage.getElementSpacingY(),postScanImage.getElementSpacingZ());
 }
 
-void usVTKConverter::convert(const usImagePreScan3D<unsigned char> &preScanImage,vtkSmartPointer<vtkImageData> &vtkPreScanImage, vtkImageImport* importer)
+void usVTKConverter::convert(const usImagePreScan3D<unsigned char> &preScanImage,vtkSmartPointer<vtkImageData> &vtkPreScanImage, vtkSmartPointer<vtkImageImport> importer)
 {
   if(importer==NULL) {
-    vtkImageImport* importer = vtkImageImport::New();
+    importer = vtkSmartPointer<vtkImageImport>::New();
     importer->SetDataScalarTypeToUnsignedChar();
     importer->SetImportVoidPointer((void *)preScanImage.getConstData());
     importer->SetWholeExtent(0,preScanImage.getDimX()-1,0, preScanImage.getDimY()-1, 0, preScanImage.getDimZ()-1);
@@ -79,4 +79,17 @@ void usVTKConverter::convert(const usImagePreScan3D<unsigned char> &preScanImage
 
   vtkPreScanImage = importer->GetOutput();
 }
+
+void usVTKConverter::convert(const vpHomogeneousMatrix & vispMatrix, vtkMatrix4x4 * vtkMatrix) {
+  for(int i=0; i<4; i++)
+    for(int j=0;j<4; j++)
+      vtkMatrix->SetElement(i,j,vispMatrix[i][j]);
+}
+
+void usVTKConverter::convert(vtkMatrix4x4 * vtkMatrix, vpHomogeneousMatrix & vispMatrix) {
+  for(int i=0; i<4; i++)
+    for(int j=0;j<4; j++)
+      vispMatrix[i][j] = vtkMatrix->GetElement(i,j);
+}
+
 #endif
