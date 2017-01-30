@@ -43,6 +43,8 @@
 
 #ifdef USTK_HAVE_VTK_QT
 
+#include <visp3/core/vpHomogeneousMatrix.h>
+
 // USTK includes
 #include <visp3/ustk_core/usImagePostScan3D.h>
 #include <visp3/ustk_core/usImagePreScan3D.h>
@@ -51,6 +53,7 @@
 #include <vtkSmartPointer.h>
 #include <vtkImageData.h>
 #include <vtkImageImport.h>
+#include <vtkMatrix4x4.h>
 
 /**
  * @class usVTKConverter
@@ -61,9 +64,13 @@
 class VISP_EXPORT usVTKConverter
 {
 public:
+  //image types
   static void convert(const usImagePostScan3D<unsigned char> &postScanImage, vtkSmartPointer<vtkImageData> &vtkPostScanImage, vtkSmartPointer<vtkImageImport> importer = NULL);
-  static void convert(const usImagePreScan3D<unsigned char> &preScanImage,vtkSmartPointer<vtkImageData> &vtkPreScanImage, vtkImageImport* importer);
+  static void convert(const usImagePreScan3D<unsigned char> &preScanImage, vtkSmartPointer<vtkImageData> &vtkPreScanImage, vtkSmartPointer<vtkImageImport> importer = NULL);
 
+  //matrix types
+  static void convert(const vpHomogeneousMatrix &, vtkMatrix4x4 *);
+  static void convert(vtkMatrix4x4 *, vpHomogeneousMatrix &);
 };
 #endif
 #endif // US_VTK_CONVERTER
