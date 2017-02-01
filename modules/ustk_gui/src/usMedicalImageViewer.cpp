@@ -132,6 +132,11 @@ public:
 */
       }
       //if(i==0)
+
+        //view plane normal
+        double vpn[3];
+        this->RIW[i]->GetRenderer()->GetActiveCamera()->GetViewPlaneNormal(vpn);
+        std::cout << "VPN : " << vpn[0] << ","<< vpn[1] << ","<< vpn[2] << std::endl;
         this->RIW[i]->Render();
 
     }
@@ -144,15 +149,15 @@ public:
     //widget3D->getPlane3()->Print(std::cout);
     widget3D->update();
     //std::cout << "3D view Plane 1 " << std::endl;
-    //double norm[3];
-    //widget3D->getPlane1()->GetNormal(norm);
-    //std::cout << "NORMAL : " << norm[0] << ","<< norm[1] << ","<< norm[2] << std::endl;
+    double norm[3];
+    widget3D->getPlane1()->GetNormal(norm);
+    std::cout << "NORMAL : " << norm[0] << ","<< norm[1] << ","<< norm[2] << std::endl;
   }
 
   vtkResliceCursorCallback() {}
   us3DSceneWidget* widget3D;
   //vtkResliceCursorWidget *RCW[3];
-  usResliceImageViewer* RIW[3];
+  vtkResliceImageViewer* RIW[3];
 };
 
 /**
@@ -174,7 +179,7 @@ usMedicalImageViewer::usMedicalImageViewer(std::string imageFileName )
 
   for (int i = 0; i < 3; i++)
   {
-    riw[i] = vtkSmartPointer< usResliceImageViewer >::New();
+    riw[i] = vtkSmartPointer< vtkResliceImageViewer >::New();
   }
 
   this->view1->SetRenderWindow(riw[0]->GetRenderWindow());

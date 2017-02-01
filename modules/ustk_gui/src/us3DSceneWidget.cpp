@@ -81,6 +81,9 @@ us3DSceneWidget::us3DSceneWidget(QWidget* parent, Qt::WindowFlags f) : usViewerW
 void us3DSceneWidget::paintEvent( QPaintEvent* event )
 {
   QVTKWidget::paintEvent( event );
+  std::cout << "us3DSceneWidget::paintEvent() plane1 : " <<std::endl;
+  plane1->Print(std::cout);
+
 }
 
 /**
@@ -95,6 +98,10 @@ vtkImageData* us3DSceneWidget::getImageData() {
 * Init method : setup vtk pipeline. Make sure imageData and planes are set before calling init().
 */
 void us3DSceneWidget::init() {
+
+  std::cout << "us3DSceneWidget::init() plane 1" << std::endl;
+  plane1->Print(std::cout);
+
   if(this->imageData == NULL)
     throw(vpException(vpException::fatalError, "no vtk image provided"));
 
@@ -117,8 +124,15 @@ void us3DSceneWidget::init() {
   imageSlice2->SetMapper(imageResliceMapper2);
   imageSlice3->SetMapper(imageResliceMapper3);
 
+  //add axes in scene
+  m_axesActor = vtkSmartPointer<vtkAxesActor>::New();
+  //arrows of 1cm
+  m_axesActor->SetTotalLength(0.01,0.01,0.01);
+
+
   // Setup renderers
   renderer = vtkRenderer::New();
+  renderer->AddActor(m_axesActor);
   renderer->AddActor(imageSlice1);
   renderer->AddActor(imageSlice2);
   renderer->AddActor(imageSlice3);
@@ -201,6 +215,7 @@ void us3DSceneWidget::setPlanes(vtkPlane* plane1,vtkPlane* plane2,vtkPlane* plan
   this->plane1 = plane1;
   this->plane2 = plane2;
   this->plane3 = plane3;
+
 }
 
 /**
@@ -233,6 +248,13 @@ vtkImageSlice* us3DSceneWidget::getActor2() {
 
 vtkImageSlice* us3DSceneWidget::getActor3() {
   return imageSlice3;
+}
+
+void us3DSceneWidget::updatePlane1() {
+  std::cout << "us3DSceneWidget::updatePlane1()" << std::endl;
+  plane1->Print(std::cout);
+
+  this->update();
 }
 
 #endif

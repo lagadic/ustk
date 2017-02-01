@@ -54,6 +54,7 @@
 #include <vtkImageData.h>
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
+#include <vtkAxesActor.h>
 
 // Qt includes
 #if defined(USTK_HAVE_VTK_QT4)
@@ -148,6 +149,7 @@ public:
 public slots:
   //
   void updateImageData(vtkImageData* imageData);
+  void updatePlane1();
 
 private:
   //image
@@ -167,6 +169,9 @@ private:
   vtkImageSlice* imageSlice1;
   vtkImageSlice* imageSlice2;
   vtkImageSlice* imageSlice3;
+
+  vtkSmartPointer<vtkAxesActor> m_axesActor;
+
 
   //vtk renderer
   vtkRenderer* renderer;

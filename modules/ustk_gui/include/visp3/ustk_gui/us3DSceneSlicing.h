@@ -31,13 +31,13 @@
  *****************************************************************************/
 
 /**
- * @file usMedicalImageViewer.h
- * @brief Graphical main window containing 4 vtk views.
+ * @file us3DSceneSlicing.h
+ * @brief Graphical main window
  */
 
 
-#ifndef __usMedicalImageViewer_h_
-#define __usMedicalImageViewer_h_
+#ifndef __us3DSceneSlicing_h_
+#define __us3DSceneSlicing_h_
 
 // VISP includes
 #include <visp3/ustk_gui/usGuiConfig.h>
@@ -47,8 +47,8 @@
 // USTK includes
 
 #include <visp3/ustk_io/usImageIo.h>
-#include <visp3/ustk_gui/usViewerWidget.h>
 #include <visp3/ustk_gui/us3DSceneWidget.h>
+#include <visp3/ustk_gui/usImage2DInteractionCallback.h>
 
 // VTK includes
 #include <vtkSmartPointer.h>
@@ -59,12 +59,14 @@
 #include <vtkResliceImageViewerMeasurements.h>
 #include <vtkImageMapper3D.h>
 
+
 // Qt includes
 #if defined(USTK_HAVE_VTK_QT4)
 #  include <QtGui/QApplication>
 #  include <QtGui/QMainWindow>
 #  include <QtGui/QGridLayout>
 #  include <QtGui/QPushButton>
+#  include <QtGui/QSlider>
 #elif defined(USTK_HAVE_VTK_QT4) //  QT 5 ?
 #  include <QtWidgets/QApplication>
 #  include <QtWidgets/QMainWindow>
@@ -72,74 +74,56 @@
 #  include <QtWidgets/QPushButton>
 #endif
 
-
 /**
- * @class usMedicalImageViewer
- * @brief Graphical main window containing 4 vtk views.
+ * @class us3DSceneSlicing
  * @ingroup module_ustk_gui
  */
 
-class VISP_EXPORT usMedicalImageViewer : public QMainWindow
+class VISP_EXPORT us3DSceneSlicing : public QMainWindow
 {
   Q_OBJECT
 public:
 
   // Constructor/Destructor
-  usMedicalImageViewer(std::string imageFileName);
-  ~usMedicalImageViewer() {}
+  us3DSceneSlicing(std::string imageFileName);
+  ~us3DSceneSlicing() {}
 
   void resizeEvent(QResizeEvent* event);
 
 public slots:
+  void updateX(int x);
+  void updateY(int y);
+  void updateZ(int z);
 
   virtual void ResetViews();
-  virtual void ResetColorMap();
   virtual void Render();
-  virtual void AddDistanceMeasurementToView1();
-  virtual void AddDistanceMeasurementToView( int );
   virtual void slotExit();
-
-protected:
-  vtkSmartPointer< vtkResliceImageViewer > riw[3];
-  vtkSmartPointer< vtkImagePlaneWidget > planeWidget[3];
-  vtkSmartPointer< vtkDistanceWidget > DistanceWidget[3];
-  vtkSmartPointer< vtkResliceImageViewerMeasurements > ResliceMeasurements[3];
-
-protected slots:
 
 private:
     void setupUi();
 
-    QAction *actionOpenFile;
-    QAction *actionExit;
-    QAction *actionPrint;
-    QAction *actionHelp;
-    QAction *actionSave;
     QWidget *centralwidget;
     QWidget *gridLayoutWidget;
     QGridLayout *gridLayout_2;
-    usViewerWidget *view2;
-    us3DSceneWidget *view4;
-    usViewerWidget *view3;
-    usViewerWidget *view1;
-    QPushButton *resetButton;
-    QPushButton *resetColorsButton;
-    QPushButton *AddDistance1Button;
+    us3DSceneWidget *view;
+
+    QSlider *sliderX;
+    QSlider *sliderY;
+    QSlider *sliderZ;
 
     //VTK planes
     vtkPlane *plane1;
     vtkPlane *plane2;
     vtkPlane *plane3;
 
-    //mappers (views2D)
-    vtkImageResliceMapper* imageMapper1;
-    vtkImageResliceMapper* imageMapper2;
-    vtkImageResliceMapper* imageMapper3;
-
+    //transformation
+    vtkMatrix4x4 *vtkMatrix1;
+    vtkMatrix4x4 *vtkMatrix2;
+    vtkMatrix4x4 *vtkMatrix3;
 
     //image
     usImagePostScan3D<unsigned char> postScanImage;
     vtkSmartPointer<vtkImageData> vtkImage;
 };
 #endif
-#endif // US_MEDICAL_IMAGE_VIEWER
+#endif // __us3DSceneSlicing_h_

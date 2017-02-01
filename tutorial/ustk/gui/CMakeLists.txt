@@ -8,7 +8,10 @@ set(tutorial_cpp
   usMedicalViewerExample.cpp
   usFullConverter.cpp
   usGrabber3DViewer.cpp
-  us3DViewer.cpp)
+  us3DViewer.cpp
+  us2DViewer.cpp
+  usResliceWorldExample.cpp
+  us3DViewerSlicing.cpp)
 
 foreach(cpp ${tutorial_cpp})
   visp_add_target(${cpp})
