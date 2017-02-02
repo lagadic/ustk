@@ -48,6 +48,7 @@
 #include <vtkRenderWindowInteractor.h>
 #include <vtkInteractorStyleTrackballCamera.h>
 #include <vtkImageResliceMapper.h>
+#include <vtkArrowSource.h>
 
 #include <QPainter>
 #include <QPaintEngine>
@@ -80,10 +81,9 @@ us3DSceneWidget::us3DSceneWidget(QWidget* parent, Qt::WindowFlags f) : usViewerW
 */
 void us3DSceneWidget::paintEvent( QPaintEvent* event )
 {
-  QVTKWidget::paintEvent( event );
+  usViewerWidget::paintEvent( event );
   std::cout << "us3DSceneWidget::paintEvent() plane1 : " <<std::endl;
   plane1->Print(std::cout);
-
 }
 
 /**
@@ -129,9 +129,21 @@ void us3DSceneWidget::init() {
   //arrows of 1cm
   m_axesActor->SetTotalLength(0.01,0.01,0.01);
 
+  //add plane 1 normal arrow
+  // Create an arrow.
+  /*vtkSmartPointer<vtkArrowSource> arrowSource =
+    vtkSmartPointer<vtkArrowSource>::New();
+  arrowSource->Update();
+
+  // Create a mapper and actor
+  arrowMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+  arrowMapper->SetInputConnection(arrowSource->GetOutputPort());
+  arrowActor = vtkSmartPointer<vtkActor>::New();
+  arrowActor->SetMapper(arrowMapper);*/
 
   // Setup renderers
   renderer = vtkRenderer::New();
+  //renderer->AddActor(arrowActor);
   renderer->AddActor(m_axesActor);
   renderer->AddActor(imageSlice1);
   renderer->AddActor(imageSlice2);
@@ -215,7 +227,6 @@ void us3DSceneWidget::setPlanes(vtkPlane* plane1,vtkPlane* plane2,vtkPlane* plan
   this->plane1 = plane1;
   this->plane2 = plane2;
   this->plane3 = plane3;
-
 }
 
 /**
@@ -234,7 +245,7 @@ vtkImageResliceMapper* us3DSceneWidget::getMapper2() {
   return this->imageResliceMapper2;
 }
 
-vtkImageResliceMapper* us3DSceneWidget::getMapper3(){
+vtkImageResliceMapper* us3DSceneWidget::getMapper3() {
   return this->imageResliceMapper3;
 }
 
@@ -250,10 +261,14 @@ vtkImageSlice* us3DSceneWidget::getActor3() {
   return imageSlice3;
 }
 
-void us3DSceneWidget::updatePlane1() {
-  std::cout << "us3DSceneWidget::updatePlane1()" << std::endl;
+void us3DSceneWidget::updatePlane1(double x,double y,double z) {
+  std::cout << "us3DSceneWidget::updatePlane1 " << x << "," << y << "," << z << std::endl;
+
+  plane1->SetOrigin(x,y,z);
   plane1->Print(std::cout);
 
+  //arrowActor->SetOrigin(plane1->GetOrigin());
+  //arrowActor->SetOrientation(plane1->GetNormal());
   this->update();
 }
 

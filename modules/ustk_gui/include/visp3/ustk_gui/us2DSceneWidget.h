@@ -132,7 +132,7 @@ public:
   void setImageData(vtkImageData* imageData);
 
   //Set planes
-  void setResliceMatrix(vtkMatrix4x4* matrix);
+  void setResliceMatrix(vtkMatrix4x4* matrix, vtkPlane *plane);
   //callback
   vtkSmartPointer<usImage2DInteractionCallback> m_callback;
 

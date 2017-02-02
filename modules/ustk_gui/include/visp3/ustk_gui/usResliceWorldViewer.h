@@ -115,8 +115,6 @@ private:
     us3DSceneWidget *view2;
 
     QPushButton *resetButton;
-    QPushButton *resetColorsButton;
-    QPushButton *AddDistance1Button;
     QPushButton *update3D;
 
     //VTK planes

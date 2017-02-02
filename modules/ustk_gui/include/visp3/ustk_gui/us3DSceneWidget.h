@@ -55,6 +55,7 @@
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
 #include <vtkAxesActor.h>
+#include <vtkPolyDataMapper.h>
 
 // Qt includes
 #if defined(USTK_HAVE_VTK_QT4)
@@ -149,7 +150,7 @@ public:
 public slots:
   //
   void updateImageData(vtkImageData* imageData);
-  void updatePlane1();
+  void updatePlane1(double x, double y, double z);
 
 private:
   //image
@@ -170,8 +171,12 @@ private:
   vtkImageSlice* imageSlice2;
   vtkImageSlice* imageSlice3;
 
+  //axes representation
   vtkSmartPointer<vtkAxesActor> m_axesActor;
 
+  // Plane 1 normal
+  vtkSmartPointer<vtkPolyDataMapper> arrowMapper;
+  vtkSmartPointer<vtkActor> arrowActor;
 
   //vtk renderer
   vtkRenderer* renderer;

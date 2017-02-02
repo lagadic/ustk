@@ -95,6 +95,10 @@ public slots:
   void updateY(int y);
   void updateZ(int z);
 
+  void updateRotX(int rx);
+  void updateRotY(int ry);
+  void updateRotZ(int rz);
+
   virtual void ResetViews();
   virtual void Render();
   virtual void slotExit();
@@ -107,9 +111,15 @@ private:
     QGridLayout *gridLayout_2;
     us3DSceneWidget *view;
 
-    QSlider *sliderX;
-    QSlider *sliderY;
-    QSlider *sliderZ;
+    //plane 1 modifiers
+    //translations
+    QSlider *sliderXplane1;
+    QSlider *sliderYplane1;
+    QSlider *sliderZplane1;
+    //rotations
+    QSlider *rotXplane1;
+    QSlider *rotYplane1;
+    QSlider *rotZplane1;
 
     //VTK planes
     vtkPlane *plane1;

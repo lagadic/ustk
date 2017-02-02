@@ -50,7 +50,7 @@ us2DSceneWidget::us2DSceneWidget(QWidget* parent, Qt::WindowFlags f) : usViewerW
   m_imageData = NULL;
   m_resliceMatrix = NULL;
 
-  m_reslicePlane = vtkPlane::New();
+  m_reslicePlane = NULL;
 
   m_reslice = vtkImageReslice::New();
 
@@ -134,15 +134,16 @@ void us2DSceneWidget::setImageData(vtkImageData* imageData) {
   m_imageData = imageData;
 }
 
-void us2DSceneWidget::setResliceMatrix(vtkMatrix4x4 *matrix) {
+void us2DSceneWidget::setResliceMatrix(vtkMatrix4x4 *matrix, vtkPlane* plane) {
   m_resliceMatrix = matrix;
 
   //update plane origin
   vpHomogeneousMatrix hMat;
   usVTKConverter::convert(m_resliceMatrix,hMat);
+  m_reslicePlane = plane;
   double origin[3];
-  /*m_reslicePlane->GetOrigin(origin);
-  std::cout << "old origin " << origin[0] << "," << origin[1] << "," << origin[2] << std::endl;*/
+  m_reslicePlane->GetOrigin(origin);
+  std::cout << "old origin " << origin[0] << "," << origin[1] << "," << origin[2] << std::endl;
   m_reslicePlane->SetOrigin(hMat.getTranslationVector()[0],hMat.getTranslationVector()[1],hMat.getTranslationVector()[2]);
   m_reslicePlane->GetOrigin(origin);
   std::cout << "new origin " << origin[0] << "," << origin[1] << "," << origin[2] << std::endl;
@@ -150,14 +151,14 @@ void us2DSceneWidget::setResliceMatrix(vtkMatrix4x4 *matrix) {
   //update plane normal (in test)
   vpThetaUVector rotationVector;
   m_reslicePlane->GetNormal(rotationVector.data);
-  //std::cout << "old normal " << rotationVector[0] << "," << rotationVector[1] << "," << rotationVector[2] << std::endl;
+  std::cout << "old normal " << rotationVector[0] << "," << rotationVector[1] << "," << rotationVector[2] << std::endl;
 
   //rotationVector = hMat.getThetaUVector();
 
-  //std::cout << "new normal " << rotationVector[0] << "," << rotationVector[1] << "," << rotationVector[2] << std::endl;
-  //std::cout << std::endl;
-
   m_reslicePlane->SetNormal(0,0.5,0.5);
+  m_reslicePlane->GetNormal(rotationVector.data);
+  std::cout << "new normal " << rotationVector[0] << "," << rotationVector[1] << "," << rotationVector[2] << std::endl;
+  std::cout << std::endl;
 }
 
 void us2DSceneWidget::updateImageData(vtkImageData* imageData) {

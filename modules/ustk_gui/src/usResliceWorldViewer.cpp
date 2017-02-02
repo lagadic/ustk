@@ -101,9 +101,9 @@ usResliceWorldViewer::usResliceWorldViewer(std::string imageFileName )
 
   plane1 = vtkPlane::New();
   //plane1->SetNormal(0,0,1);
-  plane1->SetOrigin(0,0,0);
+  //plane1->SetOrigin(0,0,0);
   //plane1->SetOrigin(imageDims[0]*spacing[0]/2,0,0);
-  plane1->SetNormal(1,0,0);
+  //plane1->SetNormal(1,0,0);
 
   plane2 = vtkPlane::New();
   //plane2->SetNormal(0,0,1);
@@ -176,25 +176,20 @@ usResliceWorldViewer::usResliceWorldViewer(std::string imageFileName )
 
 
   this->view1->setImageData(vtkImage);
-  this->view1->setResliceMatrix(vtkMatrix_RotX45_TransZHalfDim);
+  this->view1->setResliceMatrix(vtkMatrix_RotX45_TransZHalfDim,plane1);
   this->view1->init();
 
-
   std::cout << "plane of reslice view at init :" << std::endl;
-  this->view1->getReslicePlane()->Print(std::cout);
+  this->plane1->Print(std::cout);
 
   this->view2->setImageData(vtkImage);
-  this->view2->setPlanes(this->view1->getReslicePlane(),plane2,plane3);
+  this->view2->setPlanes(plane1,plane2,plane3);
   this->view2->init();
   this->view1->m_callback->widget3D = view2;
 
   // Set up action signals and slots
-  //connect(this->actionExit, SIGNAL(triggered()), this, SLOT(slotExit()));
   connect(this->resetButton, SIGNAL(pressed()), this, SLOT(ResetViews()));
-  connect(this->update3D, SIGNAL(pressed()), view2, SLOT(updatePlane1()));
-
-  //connect(this->resetColorsButton, SIGNAL(pressed()), this, SLOT(ResetColorMap()));
-  //connect(this->AddDistance1Button, SIGNAL(pressed()), this, SLOT(AddDistanceMeasurementToView1()));
+  //connect(this->update3D, SIGNAL(pressed()), view2, SLOT(updatePlane1()));
   ResetViews();
 }
 
@@ -268,21 +263,10 @@ void usResliceWorldViewer::setupUi() {
   resetButton->setText(QString::fromUtf8("Reset views"));
   resetButton->setGeometry(QRect(screenRect.width() - 180, 30, 160, 31));
 
-  resetColorsButton = new QPushButton(this);
-  resetColorsButton->setObjectName(QString::fromUtf8("resetColorsButton"));
-  resetColorsButton->setText(QString::fromUtf8("Reset colormap"));
-  resetColorsButton->setGeometry(QRect(screenRect.width() - 180, 80, 160, 31));
-
   update3D = new QPushButton(this);
   update3D->setObjectName(QString::fromUtf8("update3D"));
   update3D->setText(QString::fromUtf8("update3D"));
   update3D->setGeometry(QRect(screenRect.width() - 180, 130, 160, 31));
-
-  AddDistance1Button = new QPushButton(this);
-  AddDistance1Button->setObjectName(QString::fromUtf8("AddDistance1Button"));
-  AddDistance1Button->setText(QString::fromUtf8("Add distance 1"));
-  AddDistance1Button->setGeometry(QRect(screenRect.width() - 180, 180, 160, 31));
-
 }
 
 /**
@@ -295,9 +279,7 @@ void usResliceWorldViewer::resizeEvent(QResizeEvent* event)
     QMainWindow::resizeEvent(event);
     gridLayoutWidget->setGeometry(QRect(10, 10, event->size().width() - 220, event->size().height() - 20));
     resetButton->setGeometry(QRect(event->size().width() - 180, 30, 160, 31));
-    resetColorsButton->setGeometry(QRect(event->size().width() - 180, 80, 160, 31));
     update3D->setGeometry(QRect(event->size().width() - 180, 130, 160, 31));
-    AddDistance1Button->setGeometry(QRect(event->size().width() - 180, 180, 160, 31));
   }
 }
 #endif

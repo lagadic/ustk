@@ -60,7 +60,7 @@ int main(int argc, char** argv)
   //setup view widget
   us2DSceneWidget scene;
   scene.setImageData(vtkImage);
-  scene.setResliceMatrix(vtkMat);
+  scene.setResliceMatrix(vtkMat,NULL);
   scene.init();
   scene.show();
 

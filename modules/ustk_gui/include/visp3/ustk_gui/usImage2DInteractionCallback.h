@@ -53,8 +53,6 @@
 #include <vtkImageReslice.h>
 #include <vtkCommand.h>
 
-#include <QtCore/QObject>
-
 /**
  * @class usImage2DInteractionCallback
  * @brief Interaction callback for 2D slices
@@ -113,11 +111,14 @@ public:
         matrix->SetElement(0, 3, center[0]);
         matrix->SetElement(1, 3, center[1]);
         matrix->SetElement(2, 3, center[2]);
-        matrix->Print(std::cout);
+        //matrix->Print(std::cout);
+        //widget3D->updatePlane1(center[0],center[1],center[2]);
         interactor->Render();
+        std::cout << "callback updating plane origin : " << center[0] << "," << center[1] << "," << center[2] << std::endl;
         this->plane->SetOrigin(center[0],center[1],center[2]);
-        this->plane->Modified();
-        this->plane->Print(std::cout);
+        widget3D->update();
+        /*this->plane->Modified();
+        this->plane->Print(std::cout);*/
       }
       else if (event == vtkCommand::MouseWheelBackwardEvent)
       {
@@ -140,24 +141,24 @@ public:
         matrix->SetElement(0, 3, center[0]);
         matrix->SetElement(1, 3, center[1]);
         matrix->SetElement(2, 3, center[2]);
-        matrix->Print(std::cout);
+        //matrix->Print(std::cout);
+        //widget3D->updatePlane1(center[0],center[1],center[2]);
         interactor->Render();
+        std::cout << "callback updating plane origin : " << center[0] << "," << center[1] << "," << center[2] << std::endl;
         this->plane->SetOrigin(center[0],center[1],center[2]);
-        this->plane->Modified();
-        this->plane->Print(std::cout);
         widget3D->update();
+        /*this->plane->Modified();
+        this->plane->Print(std::cout);*/
       }
   }
 
   us3DSceneWidget* widget3D;
-
 private:
   // Pointer to vtkImageReslice
   vtkImageReslice *ImageReslice;
 
   //Pointer to vtkPlane representing the view in the 3D scene
   vtkPlane* plane;
-
 
   // Pointer to the interactor
   vtkRenderWindowInteractor *Interactor;

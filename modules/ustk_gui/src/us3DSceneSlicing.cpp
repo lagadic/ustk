@@ -114,15 +114,22 @@ us3DSceneSlicing::us3DSceneSlicing(std::string imageFileName )
   this->view->setPlanes(plane1,plane2,plane3);
   this->view->init();
 
+  sliderXplane1->setMaximum(imageDims[0]*spacing[0]*1000);
+  sliderXplane1->setSliderPosition(imageDims[0]*spacing[0]*1000/2);
+  sliderYplane1->setMaximum(imageDims[1]*spacing[1]*1000);
+  sliderYplane1->setSliderPosition(imageDims[1]*spacing[1]*1000/2);
+  sliderZplane1->setMaximum(imageDims[2]*spacing[2]*1000);
+  sliderZplane1->setSliderPosition(imageDims[2]*spacing[2]*1000/2);
 
-  sliderX->setMaximum(imageDims[0]*spacing[0]*1000);
-  sliderY->setMaximum(imageDims[1]*spacing[1]*1000);
-  sliderZ->setMaximum(imageDims[2]*spacing[2]*1000);
 
   // Set up action signals and slots
-  connect(this->sliderX, SIGNAL(valueChanged(int)), this, SLOT(updateX(int)));
-  connect(this->sliderY, SIGNAL(valueChanged(int)), this, SLOT(updateY(int)));
-  connect(this->sliderZ, SIGNAL(valueChanged(int)), this, SLOT(updateZ(int)));
+  connect(this->sliderXplane1, SIGNAL(valueChanged(int)), this, SLOT(updateX(int)));
+  connect(this->sliderYplane1, SIGNAL(valueChanged(int)), this, SLOT(updateY(int)));
+  connect(this->sliderZplane1, SIGNAL(valueChanged(int)), this, SLOT(updateZ(int)));
+
+  connect(this->rotXplane1, SIGNAL(valueChanged(int)), this, SLOT(updateRotX(int)));
+  connect(this->rotYplane1, SIGNAL(valueChanged(int)), this, SLOT(updateRotY(int)));
+  connect(this->rotZplane1, SIGNAL(valueChanged(int)), this, SLOT(updateRotZ(int)));
 
   ResetViews();
 }
@@ -173,24 +180,41 @@ void us3DSceneSlicing::setupUi() {
 
   gridLayout_2->addWidget(view, 0, 0, 1, 1);
 
-  sliderX =  new QSlider(this);
-  sliderX->setObjectName(QString::fromUtf8("sliderX"));
-  sliderX->setMinimum(0);
-  sliderX->setMaximum(100);
-  sliderX->setGeometry(QRect(screenRect.width() - 180, 30, 20, 300));
+  sliderXplane1 =  new QSlider(this);
+  sliderXplane1->setObjectName(QString::fromUtf8("sliderX"));
+  sliderXplane1->setMinimum(0);
+  sliderXplane1->setMaximum(100);
+  sliderXplane1->setGeometry(QRect(screenRect.width() - 180, 30, 20, 200));
 
-  sliderY =  new QSlider(this);
-  sliderY->setObjectName(QString::fromUtf8("sliderY"));
-  sliderY->setMinimum(0);
-  sliderY->setMaximum(100);
-  sliderY->setGeometry(QRect(screenRect.width() - 140, 30, 20, 300));
+  sliderYplane1 =  new QSlider(this);
+  sliderYplane1->setObjectName(QString::fromUtf8("sliderY"));
+  sliderYplane1->setMinimum(0);
+  sliderYplane1->setMaximum(100);
+  sliderYplane1->setGeometry(QRect(screenRect.width() - 140, 30, 20, 200));
 
-  sliderZ =  new QSlider(this);
-  sliderZ->setObjectName(QString::fromUtf8("sliderZ"));
-  sliderZ->setMinimum(0);
-  sliderZ->setMaximum(100);
-  sliderZ->setGeometry(QRect(screenRect.width() - 100, 30, 20, 300));
+  sliderZplane1 =  new QSlider(this);
+  sliderZplane1->setObjectName(QString::fromUtf8("sliderZ"));
+  sliderZplane1->setMinimum(0);
+  sliderZplane1->setMaximum(100);
+  sliderZplane1->setGeometry(QRect(screenRect.width() - 100, 30, 20, 200));
 
+  rotXplane1 =  new QSlider(this);
+  rotXplane1->setObjectName(QString::fromUtf8("rotX"));
+  rotXplane1->setMinimum(0);
+  rotXplane1->setMaximum(100);
+  rotXplane1->setGeometry(QRect(screenRect.width() - 180, 250, 20, 200));
+
+  rotYplane1 =  new QSlider(this);
+  rotYplane1->setObjectName(QString::fromUtf8("rotY"));
+  rotYplane1->setMinimum(0);
+  rotYplane1->setMaximum(100);
+  rotYplane1->setGeometry(QRect(screenRect.width() - 140, 250, 20, 200));
+
+  rotZplane1 =  new QSlider(this);
+  rotZplane1->setObjectName(QString::fromUtf8("rotZ"));
+  rotZplane1->setMinimum(0);
+  rotZplane1->setMaximum(100);
+  rotZplane1->setGeometry(QRect(screenRect.width() - 100, 250, 20, 200));
 }
 
 /**
@@ -202,9 +226,12 @@ void us3DSceneSlicing::resizeEvent(QResizeEvent* event)
   if(event->size().width() >= 640 && event->size().height() >= 480) {
     QMainWindow::resizeEvent(event);
     gridLayoutWidget->setGeometry(QRect(10, 10, event->size().width() - 220, event->size().height() - 20));
-    sliderX->setGeometry(QRect(event->size().width() - 180, 30, 20, 300));
-    sliderY->setGeometry(QRect(event->size().width() - 140, 30, 20, 300));
-    sliderZ->setGeometry(QRect(event->size().width() - 100, 30, 20, 300));
+    sliderXplane1->setGeometry(QRect(event->size().width() - 180, 30, 20, 200));
+    sliderYplane1->setGeometry(QRect(event->size().width() - 140, 30, 20, 200));
+    sliderZplane1->setGeometry(QRect(event->size().width() - 100, 30, 20, 200));
+    rotXplane1->setGeometry(QRect(event->size().width() - 180, 250, 20, 200));
+    rotYplane1->setGeometry(QRect(event->size().width() - 140, 250, 20, 200));
+    rotZplane1->setGeometry(QRect(event->size().width() - 100, 250, 20, 200));
   }
 }
 
@@ -219,17 +246,47 @@ void us3DSceneSlicing::updateX(int x) {
 
 void us3DSceneSlicing::updateY(int y) {
   double origin[3];
-  plane2->GetOrigin(origin);
+  plane1->GetOrigin(origin);
   origin[1] = y/1000.0;
-  plane2->SetOrigin(origin);
+  plane1->SetOrigin(origin);
   view->update();
 }
 
 void us3DSceneSlicing::updateZ(int z) {
   double origin[3];
-  plane3->GetOrigin(origin);
+  plane1->GetOrigin(origin);
   origin[2] = z/1000.0;
-  plane3->SetOrigin(origin);
+  plane1->SetOrigin(origin);
+  view->update();
+}
+
+void us3DSceneSlicing::updateRotX(int x) {
+  double normal[3];
+  plane1->GetNormal(normal);
+  normal[0] = x/100.0 - 0.5;
+  std::cout << "updateRotX : n = " << normal[0] << "," << normal[0] << "," << normal[0] << std::endl;
+  plane1->SetNormal(normal);
+  view->update();
+}
+
+void us3DSceneSlicing::updateRotY(int y) {
+  double normal[3];
+  plane1->GetNormal(normal);
+  normal[1] = y/100.0 - 0.50;
+  std::cout << "updateRotY : n = " << normal[0] << "," << normal[0] << "," << normal[0] << std::endl;
+  plane1->SetNormal(normal);
+  view->update();
+}
+
+void us3DSceneSlicing::updateRotZ(int z) {
+  double normal[3];
+  plane1->GetNormal(normal);
+  normal[2] = z/100.0 - 0.50;
+  std::cout << "updateRotZ : n = " << normal[0] << "," << normal[0] << "," << normal[0] << std::endl;
+  plane1->SetNormal(normal);
+  double origin[3];
+  plane1->GetOrigin(origin);
+  //view->updatePlane1(origin[0],origin[1],origin[2]);
   view->update();
 }
 
