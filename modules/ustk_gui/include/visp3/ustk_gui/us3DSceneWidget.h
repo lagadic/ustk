@@ -150,7 +150,7 @@ public:
 public slots:
   //
   void updateImageData(vtkImageData* imageData);
-  void updatePlane1(double x, double y, double z);
+  void updateMatrix(vtkMatrix4x4* matrix);
 
 private:
   //image

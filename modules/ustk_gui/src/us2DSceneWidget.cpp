@@ -50,7 +50,7 @@ us2DSceneWidget::us2DSceneWidget(QWidget* parent, Qt::WindowFlags f) : usViewerW
   m_imageData = NULL;
   m_resliceMatrix = NULL;
 
-  m_reslicePlane = NULL;
+  //m_reslicePlane = NULL;
 
   m_reslice = vtkImageReslice::New();
 
@@ -116,18 +116,19 @@ void us2DSceneWidget::init() {
 
   // Set up the interaction
   vtkSmartPointer<vtkInteractorStyleImage> imageStyle =
-    vtkSmartPointer<vtkInteractorStyleImage>::New();
-    imageStyle->SetInteractionModeToImageSlicing();
+      vtkSmartPointer<vtkInteractorStyleImage>::New();
+  imageStyle->SetInteractionModeToImageSlicing();
 
   renderWindow->GetInteractor()->SetInteractorStyle(imageStyle);
+  std::cout << "toto" << std::endl;
 
-  m_callback = vtkSmartPointer<usImage2DInteractionCallback>::New();
+  /*m_callback = vtkSmartPointer<usImage2DInteractionCallback>::New();
   m_callback->SetImageReslice(m_reslice);
   m_callback->SetInteractor(renderWindow->GetInteractor());
-  m_callback->SetPlane(m_reslicePlane);
+  m_callback->SetPlane(m_reslicePlane);*/
 
-  imageStyle->AddObserver(vtkCommand::MouseWheelForwardEvent, m_callback);
-  imageStyle->AddObserver(vtkCommand::MouseWheelBackwardEvent, m_callback);
+  //imageStyle->AddObserver(vtkCommand::MouseWheelForwardEvent, m_callback);
+  //imageStyle->AddObserver(vtkCommand::MouseWheelBackwardEvent, m_callback);
 }
 
 void us2DSceneWidget::setImageData(vtkImageData* imageData) {
@@ -140,23 +141,23 @@ void us2DSceneWidget::setResliceMatrix(vtkMatrix4x4 *matrix, vtkPlane* plane) {
   //update plane origin
   vpHomogeneousMatrix hMat;
   usVTKConverter::convert(m_resliceMatrix,hMat);
-  m_reslicePlane = plane;
+  //m_reslicePlane = plane;
   double origin[3];
-  m_reslicePlane->GetOrigin(origin);
+  //m_reslicePlane->GetOrigin(origin);
   std::cout << "old origin " << origin[0] << "," << origin[1] << "," << origin[2] << std::endl;
-  m_reslicePlane->SetOrigin(hMat.getTranslationVector()[0],hMat.getTranslationVector()[1],hMat.getTranslationVector()[2]);
-  m_reslicePlane->GetOrigin(origin);
+  //m_reslicePlane->SetOrigin(hMat.getTranslationVector()[0],hMat.getTranslationVector()[1],hMat.getTranslationVector()[2]);
+  //m_reslicePlane->GetOrigin(origin);
   std::cout << "new origin " << origin[0] << "," << origin[1] << "," << origin[2] << std::endl;
 
   //update plane normal (in test)
   vpThetaUVector rotationVector;
-  m_reslicePlane->GetNormal(rotationVector.data);
+  //m_reslicePlane->GetNormal(rotationVector.data);
   std::cout << "old normal " << rotationVector[0] << "," << rotationVector[1] << "," << rotationVector[2] << std::endl;
 
   //rotationVector = hMat.getThetaUVector();
 
-  m_reslicePlane->SetNormal(0,0.5,0.5);
-  m_reslicePlane->GetNormal(rotationVector.data);
+  //m_reslicePlane->SetNormal(0,0.5,0.5);
+  //m_reslicePlane->GetNormal(rotationVector.data);
   std::cout << "new normal " << rotationVector[0] << "," << rotationVector[1] << "," << rotationVector[2] << std::endl;
   std::cout << std::endl;
 }
@@ -172,5 +173,35 @@ void us2DSceneWidget::matrixChangedSlot(vtkMatrix4x4* matrix) {
 vtkPlane* us2DSceneWidget::getReslicePlane() {
   return m_reslicePlane;
 }
+
+void us2DSceneWidget::wheelEvent(QWheelEvent *event) {
+  int increment = event->delta() / 120;
+  std::cout << "wheel increment = " << increment << std::endl;
+
+
+  // move the center point that we are slicing through
+  double sliceSpacing = m_imageData->GetSpacing()[2];
+  double point[4];
+  double center[4];
+  point[0] = 0.0;
+  point[1] = 0.0;
+  point[2] = sliceSpacing * increment;
+  point[3] = 1.0;
+  m_resliceMatrix->MultiplyPoint(point, center);
+  m_resliceMatrix->SetElement(0, 3, center[0]);
+  m_resliceMatrix->SetElement(1, 3, center[1]);
+  m_resliceMatrix->SetElement(2, 3, center[2]);
+
+  //update this view
+  update();
+
+  //emit signal to inform other views the reslice matrix changed
+  emit(matrixChanged(m_resliceMatrix));
+
+  event->accept();
+}
+
+
+
 
 #endif //USTK_HAVE_VTK_QT

@@ -100,8 +100,8 @@ usResliceWorldViewer::usResliceWorldViewer(std::string imageFileName )
 
 
   plane1 = vtkPlane::New();
-  //plane1->SetNormal(0,0,1);
-  //plane1->SetOrigin(0,0,0);
+  plane1->SetNormal(0,0,1);
+  plane1->SetOrigin(0,0,0);
   //plane1->SetOrigin(imageDims[0]*spacing[0]/2,0,0);
   //plane1->SetNormal(1,0,0);
 
@@ -171,8 +171,8 @@ usResliceWorldViewer::usResliceWorldViewer(std::string imageFileName )
   vtkMatrix_RotX45_TransZHalfDim->Print(std::cout);
 
   //try to find corresponding normal for slice plane
-  //plane1->SetNormal(0,0.5,-0.5);
-  //plane1->SetOrigin(imageDims[0]*spacing[0]/2,imageDims[1]*spacing[1]/2,imageDims[2]*spacing[2]/2);
+  plane1->SetNormal(0,0.5,-0.5);
+  plane1->SetOrigin(imageDims[0]*spacing[0]/2,imageDims[1]*spacing[1]/2,imageDims[2]*spacing[2]/2);
 
 
   this->view1->setImageData(vtkImage);
@@ -185,10 +185,15 @@ usResliceWorldViewer::usResliceWorldViewer(std::string imageFileName )
   this->view2->setImageData(vtkImage);
   this->view2->setPlanes(plane1,plane2,plane3);
   this->view2->init();
-  this->view1->m_callback->widget3D = view2;
+  //this->view1->m_callback->widget3D = view2;
 
   // Set up action signals and slots
   connect(this->resetButton, SIGNAL(pressed()), this, SLOT(ResetViews()));
+
+
+  connect(view1,SIGNAL(matrixChanged(vtkMatrix4x4*)),view2,SLOT(updateMatrix(vtkMatrix4x4*)));
+
+
   //connect(this->update3D, SIGNAL(pressed()), view2, SLOT(updatePlane1()));
   ResetViews();
 }

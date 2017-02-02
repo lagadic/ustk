@@ -49,6 +49,7 @@
 #include <vtkInteractorStyleTrackballCamera.h>
 #include <vtkImageResliceMapper.h>
 #include <vtkArrowSource.h>
+#include <vtkMatrix4x4.h>
 
 #include <QPainter>
 #include <QPaintEngine>
@@ -160,6 +161,7 @@ void us3DSceneWidget::init() {
     vtkInteractorStyleTrackballCamera::New();
 
   renderWindow->GetInteractor()->SetInteractorStyle(style);
+  std::cout << "aaaaa" << std::endl;
 }
 
 /**
@@ -261,14 +263,17 @@ vtkImageSlice* us3DSceneWidget::getActor3() {
   return imageSlice3;
 }
 
-void us3DSceneWidget::updatePlane1(double x,double y,double z) {
-  std::cout << "us3DSceneWidget::updatePlane1 " << x << "," << y << "," << z << std::endl;
+void us3DSceneWidget::updateMatrix(vtkMatrix4x4* matrix) {
+  std::cout << "us3DSceneWidget::updateMatrix " << std::endl;
 
-  plane1->SetOrigin(x,y,z);
+  double origin[3];
+
+  origin[0] = matrix->Element[0][3];
+  origin[1] = matrix->Element[1][3];
+  origin[2] = matrix->Element[2][3];
+
+  plane1->SetOrigin(origin);
   plane1->Print(std::cout);
-
-  //arrowActor->SetOrigin(plane1->GetOrigin());
-  //arrowActor->SetOrientation(plane1->GetNormal());
   this->update();
 }
 

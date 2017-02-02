@@ -93,11 +93,13 @@
 #  include <QtGui/QMainWindow>
 #  include <QtGui/QGridLayout>
 #  include <QtGui/QPushButton>
+#  include <QtGui/QWheelEvent>
 #elif defined USTK_HAVE_VTK_QT5
 #  include <QApplication>
 #  include <QtWidgets/QMainWindow>
 #  include <QtWidgets/QGridLayout>
 #  include <QtWidgets/QPushButton>
+#  include <QtWidgets/QWheelEvent>
 #endif
 
 #include <QVTKWidget.h>
@@ -133,6 +135,10 @@ public:
 
   //Set planes
   void setResliceMatrix(vtkMatrix4x4* matrix, vtkPlane *plane);
+
+  //catch scroll events to slice in image
+  void wheelEvent(QWheelEvent *event);
+
   //callback
   vtkSmartPointer<usImage2DInteractionCallback> m_callback;
 
