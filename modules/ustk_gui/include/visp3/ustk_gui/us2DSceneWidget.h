@@ -83,6 +83,7 @@
 #include <vtkMetaImageReader.h>
 #include <vtkResliceCursor.h>
 #include <vtkResliceCursorWidget.h>
+#include <vtkAnnotatedCubeActor.h>
 
 
 
@@ -125,6 +126,14 @@ public:
   vtkPlane* getReslicePlane();
 
   void init();
+
+  //get key pressed/released (to make rotations of the plane)
+  void keyPressEvent(QKeyEvent *event);
+  void keyReleaseEvent(QKeyEvent *event);
+
+  void 	mouseMoveEvent(QMouseEvent * event);
+  /*void 	mousePressEvent(QMouseEvent * event);
+  void 	mouseReleaseEvent(QMouseEvent * event);*/
 
   //Catch paint events, in case we want to display some informations (writing in this widget) over the vtk scene
   void paintEvent( QPaintEvent* event );
@@ -169,8 +178,21 @@ private:
   //actor
   vtkImageActor* m_actor;
 
+  //orientation cube actor
+  vtkAnnotatedCubeActor * m_cubeActor;
+
   //vtk renderer
   vtkRenderer* m_renderer;
+
+  //to know if r key is currently pressed
+  bool m_rPressed;
+
+  //mouse button pressed
+  bool m_mousePressed;
+
+  //for rotations
+  int m_lastmouserPosX;
+  int m_lastmouserPosY;
 };
 #endif
 #endif // __us2DSceneWidget_h_

@@ -229,9 +229,11 @@ void us3DSceneWidget::updateImageData(vtkImageData* imageData) {
 */
 void us3DSceneWidget::updateMatrix1(vtkMatrix4x4* matrix) {
 
-  if(plane1 == NULL)
+  if(plane1 == NULL) {
     plane1 = vtkPlane::New();
-
+    //rotation (valid only for init at X normal)
+    plane1->SetNormal(1,0,0);
+  }
   //Translation
   double origin[3];
   origin[0] = matrix->Element[0][3];
@@ -239,8 +241,7 @@ void us3DSceneWidget::updateMatrix1(vtkMatrix4x4* matrix) {
   origin[2] = matrix->Element[2][3];
   plane1->SetOrigin(origin);
 
-  //rotation (valid only for init at X normal)
-  plane1->SetNormal(1,0,0);
+  //Rotation ?
 
   plane1->Print(std::cout);
   this->update();
@@ -252,9 +253,11 @@ void us3DSceneWidget::updateMatrix1(vtkMatrix4x4* matrix) {
 */
 void us3DSceneWidget::updateMatrix2(vtkMatrix4x4* matrix) {
 
-  if(plane2 == NULL)
+  if(plane2 == NULL) {
     plane2 = vtkPlane::New();
-
+    //rotation (valid only for init at Y normal)
+    plane2->SetNormal(0,1,0);
+  }
   //Translation
   double origin[3];
   origin[0] = matrix->Element[0][3];
@@ -262,8 +265,7 @@ void us3DSceneWidget::updateMatrix2(vtkMatrix4x4* matrix) {
   origin[2] = matrix->Element[2][3];
   plane2->SetOrigin(origin);
 
-  //rotation (valid only for init at Y normal)
-  plane2->SetNormal(0,1,0);
+  //Rotation ?
 
   plane2->Print(std::cout);
   this->update();
@@ -275,8 +277,11 @@ void us3DSceneWidget::updateMatrix2(vtkMatrix4x4* matrix) {
 */
 void us3DSceneWidget::updateMatrix3(vtkMatrix4x4* matrix) {
 
-  if(plane3 == NULL)
+  if(plane3 == NULL) {
     plane3 = vtkPlane::New();
+    //rotation (valid only for init at Z normal)
+    plane3->SetNormal(0,0,1);
+  }
 
   //Translation
   double origin[3];
@@ -285,8 +290,7 @@ void us3DSceneWidget::updateMatrix3(vtkMatrix4x4* matrix) {
   origin[2] = matrix->Element[2][3];
   plane3->SetOrigin(origin);
 
-  //rotation (valid only for init at Z normal)
-  plane3->SetNormal(0,0,1);
+  //Rotation ?
 
   plane3->Print(std::cout);
   this->update();

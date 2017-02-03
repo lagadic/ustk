@@ -62,7 +62,13 @@ us2DSceneWidget::us2DSceneWidget(QWidget* parent, Qt::WindowFlags f) : usViewerW
 
   m_actor = vtkImageActor::New();
 
-  //m_mapper = vtkImageMapper3D::New();
+  m_cubeActor = vtkAnnotatedCubeActor::New();
+
+  m_rPressed = false;
+  m_mousePressed = false;
+
+  //disable tracking to receive only mouse move events if a button is pressed
+  setMouseTracking(false);
 }
 
 void us2DSceneWidget::paintEvent( QPaintEvent* event ) {
@@ -108,7 +114,18 @@ void us2DSceneWidget::init() {
   // Display the image
   m_actor->GetMapper()->SetInputConnection(m_color->GetOutputPort());
 
+  //Create orientation box
+  /*m_cubeActor->SetUserMatrix(m_resliceMatrix);
+  m_cubeActor->VisibilityOn();
+  m_cubeActor->SetXMinusFaceText("x-");
+  m_cubeActor->SetXPlusFaceText("x+");
+  m_cubeActor->SetYMinusFaceText("y-");
+  m_cubeActor->SetYPlusFaceText("y+");
+  m_cubeActor->SetZMinusFaceText("z-");
+  m_cubeActor->SetZPlusFaceText("z+");*/
+
   m_renderer->AddActor(m_actor);
+  //m_renderer->AddActor(m_cubeActor);
 
   // Setup render window
   vtkRenderWindow* renderWindow = this->GetRenderWindow();
@@ -120,15 +137,6 @@ void us2DSceneWidget::init() {
   imageStyle->SetInteractionModeToImageSlicing();
 
   renderWindow->GetInteractor()->SetInteractorStyle(imageStyle);
-  std::cout << "toto" << std::endl;
-
-  /*m_callback = vtkSmartPointer<usImage2DInteractionCallback>::New();
-  m_callback->SetImageReslice(m_reslice);
-  m_callback->SetInteractor(renderWindow->GetInteractor());
-  m_callback->SetPlane(m_reslicePlane);*/
-
-  //imageStyle->AddObserver(vtkCommand::MouseWheelForwardEvent, m_callback);
-  //imageStyle->AddObserver(vtkCommand::MouseWheelBackwardEvent, m_callback);
 }
 
 void us2DSceneWidget::setImageData(vtkImageData* imageData) {
@@ -201,7 +209,72 @@ void us2DSceneWidget::wheelEvent(QWheelEvent *event) {
   event->accept();
 }
 
+void us2DSceneWidget::keyPressEvent(QKeyEvent *event) {
+  if(event->key() == Qt::Key_R) {
+    m_rPressed = true;
+  }
+  event->accept();
+}
 
+void us2DSceneWidget::keyReleaseEvent(QKeyEvent *event) {
+  if(event->key() == Qt::Key_R) {
+    m_rPressed = false;
+  }
+  event->accept();
+}
+/*
+void us2DSceneWidget::mousePressEvent(QMouseEvent * event) {
+  if(event->button() == Qt::LeftButton) {
+    m_mousePressed = true;
+  }
+  //event->accept();
+}
 
+void us2DSceneWidget::mouseReleaseEvent(QMouseEvent * event) {
+  if(event->button() == Qt::LeftButton) {
+    m_mousePressed = false;
+  }
+  //event->accept();
+}
+*/
+void 	us2DSceneWidget::mouseMoveEvent(QMouseEvent * event) {
+  if(m_rPressed) {
+    int dx = m_lastmouserPosX - event->pos().x();
+    int dy = m_lastmouserPosY - event->pos().y();
+    vpThetaUVector tuVec;
+    tuVec.data[0] = 0;
+    tuVec.data[1] = 0;
+    tuVec.data[2] = 0;
+    if(abs(dx) < 16) {
+      std::cout << "dx = " << dx << std::endl;
+      tuVec.data[0] = vpMath::rad(dx);
+    }
+    if(abs(dy) < 16) {
+      std::cout << "dy = " << dy << std::endl;
+      tuVec.data[1] = vpMath::rad(dy);
+    }
+    vpHomogeneousMatrix mat;
+    mat.eye();
+    mat.insert(tuVec);
+
+    vpHomogeneousMatrix currentMat;
+    usVTKConverter::convert(m_resliceMatrix, currentMat);
+
+    vpHomogeneousMatrix finalMat = mat * currentMat;
+
+    usVTKConverter::convert(finalMat, m_resliceMatrix);
+
+    emit(matrixChanged(m_resliceMatrix));
+    update();
+
+    m_lastmouserPosX = event->pos().x();
+    m_lastmouserPosY = event->pos().y();
+    event->accept();
+  }
+  else {
+    //propagate event to allow colormap change in vtk
+    usViewerWidget::mouseMoveEvent(event);
+  }
+}
 
 #endif //USTK_HAVE_VTK_QT
