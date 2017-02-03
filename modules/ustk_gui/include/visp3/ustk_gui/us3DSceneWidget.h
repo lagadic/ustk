@@ -119,15 +119,7 @@ public:
   us3DSceneWidget(QWidget* parent = NULL, Qt::WindowFlags f = 0);
   ~us3DSceneWidget() {}
 
-  vtkImageSlice* getActor1();
-  vtkImageSlice* getActor2();
-  vtkImageSlice* getActor3();
-
   vtkImageData* getImageData();
-
-  vtkImageResliceMapper* getMapper1();
-  vtkImageResliceMapper* getMapper2();
-  vtkImageResliceMapper* getMapper3();
 
   vtkPlane* getPlane1();
   vtkPlane* getPlane2();
@@ -150,7 +142,9 @@ public:
 public slots:
   //
   void updateImageData(vtkImageData* imageData);
-  void updateMatrix(vtkMatrix4x4* matrix);
+  void updateMatrix1(vtkMatrix4x4* matrix);
+  void updateMatrix2(vtkMatrix4x4* matrix);
+  void updateMatrix3(vtkMatrix4x4* matrix);
 
 private:
   //image
@@ -173,10 +167,6 @@ private:
 
   //axes representation
   vtkSmartPointer<vtkAxesActor> m_axesActor;
-
-  // Plane 1 normal
-  vtkSmartPointer<vtkPolyDataMapper> arrowMapper;
-  vtkSmartPointer<vtkActor> arrowActor;
 
   //vtk renderer
   vtkRenderer* renderer;

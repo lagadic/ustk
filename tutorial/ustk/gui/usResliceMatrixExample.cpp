@@ -3,7 +3,7 @@
 #ifdef USTK_HAVE_VTK_QT
 
 #include <visp3/ustk_core/us.h>
-#include <visp3/ustk_gui/usResliceWorldViewer.h>
+#include <visp3/ustk_gui/usResliceMatrixViewer.h>
 
 int main(int argc, char** argv)
 {
@@ -32,7 +32,7 @@ int main(int argc, char** argv)
   // QT application
   QApplication app( argc, argv );
 
-  usResliceWorldViewer viewer(mhd_filename);
+  usResliceMatrixViewer viewer(mhd_filename);
   viewer.show();
 
   return app.exec();

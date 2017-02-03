@@ -37,7 +37,7 @@
 
 #include <visp3/ustk_core/usImagePostScan3D.h>
 #include <visp3/ustk_gui/usVTKConverter.h>
-#include <visp3/ustk_gui/usResliceWorldViewer.h>
+#include <visp3/ustk_gui/usResliceMatrixViewer.h>
 
 #ifdef USTK_HAVE_VTK_QT
 
@@ -87,7 +87,7 @@
 * Constructor.
 * @param imageFileName the mhd file to read.
 */
-usResliceWorldViewer::usResliceWorldViewer(std::string imageFileName )
+usResliceMatrixViewer::usResliceMatrixViewer(std::string imageFileName )
 {
   this->setupUi();
   usImageIo::read(postScanImage,imageFileName);
@@ -97,24 +97,6 @@ usResliceWorldViewer::usResliceWorldViewer(std::string imageFileName )
   double spacing[3];
   vtkImage->GetDimensions(imageDims);
   vtkImage->GetSpacing(spacing);
-
-
-  plane1 = vtkPlane::New();
-  plane1->SetNormal(0,0,1);
-  plane1->SetOrigin(0,0,0);
-  //plane1->SetOrigin(imageDims[0]*spacing[0]/2,0,0);
-  //plane1->SetNormal(1,0,0);
-
-  plane2 = vtkPlane::New();
-  //plane2->SetNormal(0,0,1);
-  plane2->SetOrigin(0,0,0);
-  plane2->SetNormal(0,1,0);
-  //plane2->SetOrigin(0,imageDims[1]*spacing[1]/2,0);
-
-  plane3 = vtkPlane::New();
-  plane3->SetNormal(0,0,1);
-  plane3->SetOrigin(0,0,0);
-  //plane3->SetOrigin(0,0,imageDims[2]*spacing[2]/2);
 
   //matrix representing plane 3
   vpHomogeneousMatrix matrix3;
@@ -151,7 +133,7 @@ usResliceWorldViewer::usResliceWorldViewer(std::string imageFileName )
   usVTKConverter::convert(matrix1,vtkMatrix1);
 
   //Test RT matrix
-  vpHomogeneousMatrix matrix_RotX45_TransZHalfDim;
+  /*vpHomogeneousMatrix matrix_RotX45_TransZHalfDim;
   //rotation
   vpThetaUVector r;         // By default initialized to zero
   r[0] = vpMath::rad(45); // Rotation around x set to 45 degres converted in radians
@@ -168,40 +150,43 @@ usResliceWorldViewer::usResliceWorldViewer(std::string imageFileName )
   vtkMatrix4x4 * vtkMatrix_RotX45_TransZHalfDim = vtkMatrix4x4::New();
   usVTKConverter::convert(matrix_RotX45_TransZHalfDim,vtkMatrix_RotX45_TransZHalfDim);
 
-  vtkMatrix_RotX45_TransZHalfDim->Print(std::cout);
-
   //try to find corresponding normal for slice plane
   plane1->SetNormal(0,0.5,-0.5);
-  plane1->SetOrigin(imageDims[0]*spacing[0]/2,imageDims[1]*spacing[1]/2,imageDims[2]*spacing[2]/2);
+  plane1->SetOrigin(imageDims[0]*spacing[0]/2,imageDims[1]*spacing[1]/2,imageDims[2]*spacing[2]/2);*/
 
 
-  this->view1->setImageData(vtkImage);
-  this->view1->setResliceMatrix(vtkMatrix_RotX45_TransZHalfDim,plane1);
-  this->view1->init();
+  view1->setImageData(vtkImage);
+  view1->setResliceMatrix(vtkMatrix1);
+  view1->init();
 
-  std::cout << "plane of reslice view at init :" << std::endl;
-  this->plane1->Print(std::cout);
+  view2->setImageData(vtkImage);
+  view2->setResliceMatrix(vtkMatrix2);
+  view2->init();
 
-  this->view2->setImageData(vtkImage);
-  this->view2->setPlanes(plane1,plane2,plane3);
-  this->view2->init();
-  //this->view1->m_callback->widget3D = view2;
+  view3->setImageData(vtkImage);
+  view3->setResliceMatrix(vtkMatrix3);
+  view3->init();
+
+  view4->setImageData(vtkImage);
+  view4->updateMatrix1(vtkMatrix1);
+  view4->updateMatrix2(vtkMatrix2);
+  view4->updateMatrix3(vtkMatrix3);
+  view4->init();
 
   // Set up action signals and slots
   connect(this->resetButton, SIGNAL(pressed()), this, SLOT(ResetViews()));
 
+  connect(view1,SIGNAL(matrixChanged(vtkMatrix4x4*)),view4,SLOT(updateMatrix1(vtkMatrix4x4*)));
+  connect(view2,SIGNAL(matrixChanged(vtkMatrix4x4*)),view4,SLOT(updateMatrix2(vtkMatrix4x4*)));
+  connect(view3,SIGNAL(matrixChanged(vtkMatrix4x4*)),view4,SLOT(updateMatrix3(vtkMatrix4x4*)));
 
-  connect(view1,SIGNAL(matrixChanged(vtkMatrix4x4*)),view2,SLOT(updateMatrix(vtkMatrix4x4*)));
-
-
-  //connect(this->update3D, SIGNAL(pressed()), view2, SLOT(updatePlane1()));
   ResetViews();
 }
 
 /**
 * Exit slot, to exit the QApplication.
 */
-void usResliceWorldViewer::slotExit()
+void usResliceMatrixViewer::slotExit()
 {
   qApp->exit();
 }
@@ -209,20 +194,8 @@ void usResliceWorldViewer::slotExit()
 /**
 * Reset views slot : reset the planes positions at the middle of the volume.
 */
-void usResliceWorldViewer::ResetViews()
+void usResliceMatrixViewer::ResetViews()
 {
-  // Reset the reslice image views
-  for (int i = 0; i < 3; i++)
-  {
-    /*riw[i]->Reset();
-    riw[i]->SetResliceMode(1);
-    vi[i]->GetRenderer()->ResetCamera();
-    if(i==2)
-      riw[i]->GetRenderer()->GetActiveCamera()->SetRoll(180);*/
-  }
-  /*view1->GetRenderWindow()->GetRenderers()->GetFirstRenderer()->ResetCamera();
-  view2->GetRenderWindow()->GetRenderers()->GetFirstRenderer()->ResetCamera();
-  view3->GetRenderWindow()->GetRenderers()->GetFirstRenderer()->ResetCamera();*/
   this->Render();
 }
 
@@ -230,7 +203,7 @@ void usResliceWorldViewer::ResetViews()
 /**
 * Render slot, to recompute all the views.
 */
-void usResliceWorldViewer::Render()
+void usResliceMatrixViewer::Render()
 {
   this->view1->GetRenderWindow()->Render();
   this->view2->GetRenderWindow()->Render();
@@ -242,7 +215,7 @@ void usResliceWorldViewer::Render()
 /**
 * Setup all the widgets in the window.
 */
-void usResliceWorldViewer::setupUi() {
+void usResliceMatrixViewer::setupUi() {
   this->setMinimumSize(640,480);
   QRect screenRect = QApplication::desktop()->screenGeometry();
   this->resize(screenRect.size());
@@ -258,10 +231,20 @@ void usResliceWorldViewer::setupUi() {
 
   gridLayout_2->addWidget(view1, 0, 0, 1, 1);
 
-  view2 = new us3DSceneWidget(gridLayoutWidget);
-  view2->setObjectName(QString::fromUtf8("view2"));
+  view2 = new us2DSceneWidget(gridLayoutWidget);
+  view2->setObjectName(QString::fromUtf8("view1"));
 
-  gridLayout_2->addWidget(view2, 0, 1, 1, 1);
+  gridLayout_2->addWidget(view2, 1, 0, 1, 1);
+
+  view3 = new us2DSceneWidget(gridLayoutWidget);
+  view3->setObjectName(QString::fromUtf8("view1"));
+
+  gridLayout_2->addWidget(view3, 1, 1, 1, 1);
+
+  view4 = new us3DSceneWidget(gridLayoutWidget);
+  view4->setObjectName(QString::fromUtf8("view2"));
+
+  gridLayout_2->addWidget(view4, 0, 1, 1, 1);
 
   resetButton = new QPushButton(this);
   resetButton->setObjectName(QString::fromUtf8("resetButton"));
@@ -277,7 +260,7 @@ void usResliceWorldViewer::setupUi() {
 /**
 * Get the resize event of the window, to re-comute size and positions of all widgets/layouts.
 */
-void usResliceWorldViewer::resizeEvent(QResizeEvent* event)
+void usResliceMatrixViewer::resizeEvent(QResizeEvent* event)
 {
   //Min size : 640*480
   if(event->size().width() >= 640 && event->size().height() >= 480) {

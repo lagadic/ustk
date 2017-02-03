@@ -135,7 +135,7 @@ void us2DSceneWidget::setImageData(vtkImageData* imageData) {
   m_imageData = imageData;
 }
 
-void us2DSceneWidget::setResliceMatrix(vtkMatrix4x4 *matrix, vtkPlane* plane) {
+void us2DSceneWidget::setResliceMatrix(vtkMatrix4x4 *matrix) {
   m_resliceMatrix = matrix;
 
   //update plane origin

@@ -49,7 +49,6 @@
 
 #include <visp3/ustk_gui/usVTKConverter.h>
 #include <visp3/ustk_gui/usViewerWidget.h>
-#include <visp3/ustk_gui/usImage2DInteractionCallback.h>
 
 //VTK includes
 #include <vtkPlane.h>
@@ -134,18 +133,14 @@ public:
   void setImageData(vtkImageData* imageData);
 
   //Set planes
-  void setResliceMatrix(vtkMatrix4x4* matrix, vtkPlane *plane);
+  void setResliceMatrix(vtkMatrix4x4* matrix);
 
   //catch scroll events to slice in image
   void wheelEvent(QWheelEvent *event);
 
-  //callback
-  vtkSmartPointer<usImage2DInteractionCallback> m_callback;
-
 public slots:
   //
   void updateImageData(vtkImageData* imageData);
-
 
   void matrixChangedSlot(vtkMatrix4x4* matrix);
 
@@ -176,8 +171,6 @@ private:
 
   //vtk renderer
   vtkRenderer* m_renderer;
-
-
 };
 #endif
 #endif // __us2DSceneWidget_h_

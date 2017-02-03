@@ -59,7 +59,6 @@
 */
 us3DSceneWidget::us3DSceneWidget(QWidget* parent, Qt::WindowFlags f) : usViewerWidget(parent,f)
 {
-
   imageResliceMapper1 = vtkImageResliceMapper::New();
   imageResliceMapper2 = vtkImageResliceMapper::New();
   imageResliceMapper3 = vtkImageResliceMapper::New();
@@ -83,7 +82,6 @@ us3DSceneWidget::us3DSceneWidget(QWidget* parent, Qt::WindowFlags f) : usViewerW
 void us3DSceneWidget::paintEvent( QPaintEvent* event )
 {
   usViewerWidget::paintEvent( event );
-  std::cout << "us3DSceneWidget::paintEvent() plane1 : " <<std::endl;
   plane1->Print(std::cout);
 }
 
@@ -99,8 +97,6 @@ vtkImageData* us3DSceneWidget::getImageData() {
 * Init method : setup vtk pipeline. Make sure imageData and planes are set before calling init().
 */
 void us3DSceneWidget::init() {
-
-  std::cout << "us3DSceneWidget::init() plane 1" << std::endl;
   plane1->Print(std::cout);
 
   if(this->imageData == NULL)
@@ -130,18 +126,6 @@ void us3DSceneWidget::init() {
   //arrows of 1cm
   m_axesActor->SetTotalLength(0.01,0.01,0.01);
 
-  //add plane 1 normal arrow
-  // Create an arrow.
-  /*vtkSmartPointer<vtkArrowSource> arrowSource =
-    vtkSmartPointer<vtkArrowSource>::New();
-  arrowSource->Update();
-
-  // Create a mapper and actor
-  arrowMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-  arrowMapper->SetInputConnection(arrowSource->GetOutputPort());
-  arrowActor = vtkSmartPointer<vtkActor>::New();
-  arrowActor->SetMapper(arrowMapper);*/
-
   // Setup renderers
   renderer = vtkRenderer::New();
   //renderer->AddActor(arrowActor);
@@ -161,7 +145,6 @@ void us3DSceneWidget::init() {
     vtkInteractorStyleTrackballCamera::New();
 
   renderWindow->GetInteractor()->SetInteractorStyle(style);
-  std::cout << "aaaaa" << std::endl;
 }
 
 /**
@@ -233,47 +216,79 @@ void us3DSceneWidget::setPlanes(vtkPlane* plane1,vtkPlane* plane2,vtkPlane* plan
 
 /**
 * Slot called to update image to display
+* @param imageData Pointer to new image to display
 */
 void us3DSceneWidget::updateImageData(vtkImageData* imageData) {
   this->imageData = imageData;
   this->update();
 }
 
-vtkImageResliceMapper* us3DSceneWidget::getMapper1() {
-  return this->imageResliceMapper1;
-}
+/**
+* Slot called to update plane 1 with new RT matrix
+* @param matrix Pointer to new orientation matrix.
+*/
+void us3DSceneWidget::updateMatrix1(vtkMatrix4x4* matrix) {
 
-vtkImageResliceMapper* us3DSceneWidget::getMapper2() {
-  return this->imageResliceMapper2;
-}
+  if(plane1 == NULL)
+    plane1 = vtkPlane::New();
 
-vtkImageResliceMapper* us3DSceneWidget::getMapper3() {
-  return this->imageResliceMapper3;
-}
-
-vtkImageSlice* us3DSceneWidget::getActor1() {
-  return imageSlice1;
-}
-
-vtkImageSlice* us3DSceneWidget::getActor2() {
-  return imageSlice2;
-}
-
-vtkImageSlice* us3DSceneWidget::getActor3() {
-  return imageSlice3;
-}
-
-void us3DSceneWidget::updateMatrix(vtkMatrix4x4* matrix) {
-  std::cout << "us3DSceneWidget::updateMatrix " << std::endl;
-
+  //Translation
   double origin[3];
-
   origin[0] = matrix->Element[0][3];
   origin[1] = matrix->Element[1][3];
   origin[2] = matrix->Element[2][3];
-
   plane1->SetOrigin(origin);
+
+  //rotation (valid only for init at X normal)
+  plane1->SetNormal(1,0,0);
+
   plane1->Print(std::cout);
+  this->update();
+}
+
+/**
+* Slot called to update plane 2 with new RT matrix
+* @param matrix Pointer to new orientation matrix.
+*/
+void us3DSceneWidget::updateMatrix2(vtkMatrix4x4* matrix) {
+
+  if(plane2 == NULL)
+    plane2 = vtkPlane::New();
+
+  //Translation
+  double origin[3];
+  origin[0] = matrix->Element[0][3];
+  origin[1] = matrix->Element[1][3];
+  origin[2] = matrix->Element[2][3];
+  plane2->SetOrigin(origin);
+
+  //rotation (valid only for init at Y normal)
+  plane2->SetNormal(0,1,0);
+
+  plane2->Print(std::cout);
+  this->update();
+}
+
+/**
+* Slot called to update plane 3 with new RT matrix
+* @param matrix Pointer to new orientation matrix.
+*/
+void us3DSceneWidget::updateMatrix3(vtkMatrix4x4* matrix) {
+
+  if(plane3 == NULL)
+    plane3 = vtkPlane::New();
+
+  //Translation
+  double origin[3];
+  origin[0] = matrix->Element[0][3];
+  origin[1] = matrix->Element[1][3];
+  origin[2] = matrix->Element[2][3];
+  plane3->SetOrigin(origin);
+
+  //rotation (valid only for init at Z normal)
+  plane3->SetNormal(0,0,1);
+
+  plane3->Print(std::cout);
   this->update();
 }
 

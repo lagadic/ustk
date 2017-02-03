@@ -31,13 +31,13 @@
  *****************************************************************************/
 
 /**
- * @file usResliceWorldViewer.h
+ * @file usResliceMatrixViewer.h
  * @brief Graphical main window containing 2 vtk views : a 2D slice and the representation in 3D world.
  */
 
 
-#ifndef __usResliceWorldViewer_h_
-#define __usResliceWorldViewer_h_
+#ifndef __usResliceMatrixViewer_h_
+#define __usResliceMatrixViewer_h_
 
 // VISP includes
 #include <visp3/ustk_gui/usGuiConfig.h>
@@ -49,7 +49,6 @@
 #include <visp3/ustk_io/usImageIo.h>
 #include <visp3/ustk_gui/us2DSceneWidget.h>
 #include <visp3/ustk_gui/us3DSceneWidget.h>
-#include <visp3/ustk_gui/usImage2DInteractionCallback.h>
 
 // VTK includes
 #include <vtkSmartPointer.h>
@@ -75,29 +74,26 @@
 #endif
 
 /**
- * @class usResliceWorldViewer
+ * @class usResliceMatrixViewer
  * @brief Graphical main window containing 4 vtk views.
  * @ingroup module_ustk_gui
  */
 
-class VISP_EXPORT usResliceWorldViewer : public QMainWindow
+class VISP_EXPORT usResliceMatrixViewer : public QMainWindow
 {
   Q_OBJECT
 public:
 
   // Constructor/Destructor
-  usResliceWorldViewer(std::string imageFileName);
-  ~usResliceWorldViewer() {}
+  usResliceMatrixViewer(std::string imageFileName);
+  ~usResliceMatrixViewer() {}
 
   void resizeEvent(QResizeEvent* event);
 
 public slots:
 
   virtual void ResetViews();
-  //virtual void ResetColorMap();
   virtual void Render();
-  //virtual void AddDistanceMeasurementToView1();
-  //virtual void AddDistanceMeasurementToView( int );
   virtual void slotExit();
 
 private:
@@ -112,7 +108,9 @@ private:
     QWidget *gridLayoutWidget;
     QGridLayout *gridLayout_2;
     us2DSceneWidget *view1;
-    us3DSceneWidget *view2;
+    us2DSceneWidget *view2;
+    us2DSceneWidget *view3;
+    us3DSceneWidget *view4;
 
     QPushButton *resetButton;
     QPushButton *update3D;
@@ -132,4 +130,4 @@ private:
     vtkSmartPointer<vtkImageData> vtkImage;
 };
 #endif
-#endif // __usResliceWorldViewer_h_
+#endif // __usResliceMatrixViewer_h_

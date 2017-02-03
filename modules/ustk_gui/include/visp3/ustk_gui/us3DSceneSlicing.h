@@ -48,7 +48,6 @@
 
 #include <visp3/ustk_io/usImageIo.h>
 #include <visp3/ustk_gui/us3DSceneWidget.h>
-#include <visp3/ustk_gui/usImage2DInteractionCallback.h>
 
 // VTK includes
 #include <vtkSmartPointer.h>

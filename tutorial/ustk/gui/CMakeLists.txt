@@ -10,7 +10,7 @@ set(tutorial_cpp
   usGrabber3DViewer.cpp
   us3DViewer.cpp
   us2DViewer.cpp
-  usResliceWorldExample.cpp
+  usResliceMatrixExample.cpp
   us3DViewerSlicing.cpp)
 
 foreach(cpp ${tutorial_cpp})
