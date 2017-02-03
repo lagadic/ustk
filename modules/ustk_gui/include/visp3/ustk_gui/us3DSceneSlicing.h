@@ -66,11 +66,12 @@
 #  include <QtGui/QGridLayout>
 #  include <QtGui/QPushButton>
 #  include <QtGui/QSlider>
-#elif defined(USTK_HAVE_VTK_QT4) //  QT 5 ?
+#elif defined(USTK_HAVE_VTK_QT5)
 #  include <QtWidgets/QApplication>
 #  include <QtWidgets/QMainWindow>
 #  include <QtWidgets/QGridLayout>
 #  include <QtWidgets/QPushButton>
+#  include <QtWidgets/QSlider>
 #endif
 
 /**

@@ -98,7 +98,7 @@
 #  include <QtWidgets/QMainWindow>
 #  include <QtWidgets/QGridLayout>
 #  include <QtWidgets/QPushButton>
-#  include <QtWidgets/QWheelEvent>
+#  include <QWheelEvent>
 #endif
 
 #include <QVTKWidget.h>
