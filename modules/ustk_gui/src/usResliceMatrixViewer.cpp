@@ -102,6 +102,9 @@ usResliceMatrixViewer::usResliceMatrixViewer(std::string imageFileName )
   vpHomogeneousMatrix matrix3;
   matrix3.eye();
   matrix3[2][3] = imageDims[2]*spacing[2]/2;
+  matrix3[0][0] = -1;
+  matrix3[1][1] = -1;
+  matrix3[2][2] = -1;
   vtkMatrix3 = vtkMatrix4x4::New();
   usVTKConverter::convert(matrix3,vtkMatrix3);
 
@@ -109,11 +112,10 @@ usResliceMatrixViewer::usResliceMatrixViewer(std::string imageFileName )
   vpHomogeneousMatrix matrix2;
   matrix2.eye();
   matrix2[1][3] = imageDims[1]*spacing[1]/2;
-  matrix2[0][0] = 0;
-  matrix2[0][1] = 1;
+  matrix2[0][0] = -1;
+  matrix2[1][2] = -1;
   matrix2[1][1] = 0;
-  matrix2[1][2] = 1;
-  matrix2[2][0] = 1;
+  matrix2[2][1] = -1;
   matrix2[2][2] = 0;
 
   vtkMatrix2 = vtkMatrix4x4::New();
@@ -124,10 +126,9 @@ usResliceMatrixViewer::usResliceMatrixViewer(std::string imageFileName )
   matrix1.eye();
   matrix1[0][3] = imageDims[0]*spacing[0]/2;
   matrix1[0][0] = 0;
-  matrix1[0][2] = 1;
-  matrix1[1][1] = 0;
-  matrix1[1][0] = 1;
-  matrix1[2][1] = 1;
+  matrix1[0][2] = -1;
+  matrix1[1][1] = -1;
+  matrix1[2][0] = -1;
   matrix1[2][2] = 0;
   vtkMatrix1 = vtkMatrix4x4::New();
   usVTKConverter::convert(matrix1,vtkMatrix1);

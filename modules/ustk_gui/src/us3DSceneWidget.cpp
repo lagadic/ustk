@@ -36,8 +36,11 @@
 */
 #include <visp3/core/vpException.h>
 #include <visp3/ustk_gui/us3DSceneWidget.h>
+#include <visp3/core/vpRotationMatrix.h>
 
 #ifdef USTK_HAVE_VTK_QT
+
+#include <visp3/ustk_gui/usVTKConverter.h>
 
 // VTK includes
 #include <vtkSmartPointer.h>
@@ -242,6 +245,19 @@ void us3DSceneWidget::updateMatrix1(vtkMatrix4x4* matrix) {
   plane1->SetOrigin(origin);
 
   //Rotation ?
+  vpRotationMatrix rMat;
+  vpHomogeneousMatrix hMat;
+  usVTKConverter::convert(matrix,hMat);
+  hMat.extract(rMat);
+
+  vpColVector normal(3);
+  normal.data[0] = 0;
+  normal.data[1] = 0;
+  normal.data[2] = 1;
+
+  normal = rMat * normal;
+
+  plane1->SetNormal(normal.data[0], normal.data[1], normal.data[2]);
 
   plane1->Print(std::cout);
   this->update();
@@ -266,6 +282,19 @@ void us3DSceneWidget::updateMatrix2(vtkMatrix4x4* matrix) {
   plane2->SetOrigin(origin);
 
   //Rotation ?
+  vpRotationMatrix rMat;
+  vpHomogeneousMatrix hMat;
+  usVTKConverter::convert(matrix,hMat);
+  hMat.extract(rMat);
+
+  vpColVector normal(3);
+  normal.data[0] = 0;
+  normal.data[1] = 0;
+  normal.data[2] = 1;
+
+  normal = rMat * normal;
+
+  plane2->SetNormal(normal.data[0], normal.data[1], normal.data[2]);
 
   plane2->Print(std::cout);
   this->update();
@@ -291,6 +320,19 @@ void us3DSceneWidget::updateMatrix3(vtkMatrix4x4* matrix) {
   plane3->SetOrigin(origin);
 
   //Rotation ?
+  vpRotationMatrix rMat;
+  vpHomogeneousMatrix hMat;
+  usVTKConverter::convert(matrix,hMat);
+  hMat.extract(rMat);
+
+  vpColVector normal(3);
+  normal.data[0] = 0;
+  normal.data[1] = 0;
+  normal.data[2] = 1;
+
+  normal = rMat * normal;
+
+  plane3->SetNormal(normal.data[0], normal.data[1], normal.data[2]);
 
   plane3->Print(std::cout);
   this->update();

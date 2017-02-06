@@ -147,27 +147,27 @@ void us2DSceneWidget::setResliceMatrix(vtkMatrix4x4 *matrix) {
   m_resliceMatrix = matrix;
 
   //update plane origin
-  vpHomogeneousMatrix hMat;
-  usVTKConverter::convert(m_resliceMatrix,hMat);
+  //vpHomogeneousMatrix hMat;
+  //usVTKConverter::convert(m_resliceMatrix,hMat);
   //m_reslicePlane = plane;
-  double origin[3];
+  //double origin[3];
   //m_reslicePlane->GetOrigin(origin);
-  std::cout << "old origin " << origin[0] << "," << origin[1] << "," << origin[2] << std::endl;
+  //std::cout << "old origin " << origin[0] << "," << origin[1] << "," << origin[2] << std::endl;
   //m_reslicePlane->SetOrigin(hMat.getTranslationVector()[0],hMat.getTranslationVector()[1],hMat.getTranslationVector()[2]);
   //m_reslicePlane->GetOrigin(origin);
-  std::cout << "new origin " << origin[0] << "," << origin[1] << "," << origin[2] << std::endl;
+  //std::cout << "new origin " << origin[0] << "," << origin[1] << "," << origin[2] << std::endl;
 
   //update plane normal (in test)
-  vpThetaUVector rotationVector;
+ // vpThetaUVector rotationVector;
   //m_reslicePlane->GetNormal(rotationVector.data);
-  std::cout << "old normal " << rotationVector[0] << "," << rotationVector[1] << "," << rotationVector[2] << std::endl;
+  //std::cout << "old normal " << rotationVector[0] << "," << rotationVector[1] << "," << rotationVector[2] << std::endl;
 
   //rotationVector = hMat.getThetaUVector();
 
   //m_reslicePlane->SetNormal(0,0.5,0.5);
   //m_reslicePlane->GetNormal(rotationVector.data);
-  std::cout << "new normal " << rotationVector[0] << "," << rotationVector[1] << "," << rotationVector[2] << std::endl;
-  std::cout << std::endl;
+  //std::cout << "new normal " << rotationVector[0] << "," << rotationVector[1] << "," << rotationVector[2] << std::endl;
+  //std::cout << std::endl;
 }
 
 void us2DSceneWidget::updateImageData(vtkImageData* imageData) {
@@ -241,26 +241,59 @@ void 	us2DSceneWidget::mouseMoveEvent(QMouseEvent * event) {
   if(m_rPressed) {
     int dx = m_lastmouserPosX - event->pos().x();
     int dy = m_lastmouserPosY - event->pos().y();
-    vpThetaUVector tuVec;
-    tuVec.data[0] = 0;
-    tuVec.data[1] = 0;
-    tuVec.data[2] = 0;
-    if(abs(dx) < 16) {
-      std::cout << "dx = " << dx << std::endl;
-      tuVec.data[0] = vpMath::rad(dx);
-    }
-    if(abs(dy) < 16) {
-      std::cout << "dy = " << dy << std::endl;
-      tuVec.data[1] = vpMath::rad(dy);
-    }
-    vpHomogeneousMatrix mat;
-    mat.eye();
-    mat.insert(tuVec);
 
     vpHomogeneousMatrix currentMat;
     usVTKConverter::convert(m_resliceMatrix, currentMat);
 
-    vpHomogeneousMatrix finalMat = mat * currentMat;
+    //get rotations directions from plane orientation
+    vpColVector colVecX(4);
+    colVecX.data[0] = 0;
+    colVecX.data[1] = 0;
+    colVecX.data[2] = 0;
+    colVecX.data[3] = 0;
+
+    vpThetaUVector tuVecX;
+    tuVecX.data[0] = 0;
+    tuVecX.data[1] = 0;
+    tuVecX.data[2] = 0;
+    //when we move along x we rotate around y
+    if(abs(dy) < 16) {
+      colVecX.data[0] = vpMath::rad(dy*.1);
+      colVecX = currentMat*colVecX;
+      tuVecX.data[0] = colVecX.data[0];
+      tuVecX.data[1] = colVecX.data[1];
+      tuVecX.data[2] = colVecX.data[2];
+    }
+
+    vpColVector colVecY(4);
+    colVecY.data[0] = 0;
+    colVecY.data[1] = 0;
+    colVecY.data[2] = 0;
+    colVecX.data[3] = 0;
+    vpThetaUVector tuVecY;
+    tuVecY.data[0] = 0;
+    tuVecY.data[1] = 0;
+    tuVecY.data[2] = 0;
+
+    //when we move along y we rotate around x
+    if(abs(dx) < 16) {
+      colVecY.data[1] = vpMath::rad(dx*.1);
+      colVecY = currentMat*colVecY;
+
+      tuVecY.data[0] = colVecY.data[0];
+      tuVecY.data[1] = colVecY.data[1];
+      tuVecY.data[2] = colVecY.data[2];
+    }
+    vpRotationMatrix rotX(tuVecX);
+    vpHomogeneousMatrix hRotX;
+    hRotX.eye();
+    hRotX.buildFrom(vpTranslationVector(0,0,0),rotX);
+    vpRotationMatrix rotY(tuVecY);
+    vpHomogeneousMatrix hRotY;
+    hRotY.eye();
+    hRotY.buildFrom(vpTranslationVector(0,0,0),rotY);
+
+    vpHomogeneousMatrix finalMat = (currentMat * hRotX) * hRotY;
 
     usVTKConverter::convert(finalMat, m_resliceMatrix);
 
