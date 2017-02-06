@@ -163,9 +163,6 @@ private:
   // R T matrix
   vtkMatrix4x4 * m_resliceMatrix;
 
-  // Corresponding plane, used to display the frame in the 3D view
-  vtkPlane * m_reslicePlane;
-
   //image reslice
   vtkImageReslice * m_reslice;
 

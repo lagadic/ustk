@@ -32,7 +32,7 @@
 
 /**
  * @file us3DSceneSlicing.h
- * @brief Graphical main window
+ * @brief Graphical main window to move a plane in a 3D view using QSliders for origin and normal components.
  */
 
 
@@ -77,6 +77,7 @@
 /**
  * @class us3DSceneSlicing
  * @ingroup module_ustk_gui
+ * @brief Graphical main window to move a plane in a 3D view using QSliders for origin and normal components.
  */
 
 class VISP_EXPORT us3DSceneSlicing : public QMainWindow

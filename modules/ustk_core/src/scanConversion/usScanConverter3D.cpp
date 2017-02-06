@@ -17,8 +17,7 @@ usScanConverter3D::usScanConverter3D() :
 
 /**
  * Initialisation constructor.
- * @param V Pre-scan image to convert, with settings filled (transducer and motor).
- * @param [out] postScanImage Reference of post-scan image to write.
+ * @param preScanImage Pre-scan image to convert, with settings filled (transducer and motor).
  * @param down Downsampling factor (sample number divided by this number).
  */
 usScanConverter3D::usScanConverter3D(const usImagePreScan3D<unsigned char> &preScanImage, int down) :
@@ -33,7 +32,6 @@ usScanConverter3D::usScanConverter3D(const usImagePreScan3D<unsigned char> &preS
 /**
  * Initialisation method.
  * @param preScanImage Pre-scan image to convert, with settings filled (transducer and motor).
- * @param [out] postScanImage Reference of post-scan image to write.
  * @param down Down-sampling factor.
  */
 void usScanConverter3D::init(const usImagePreScan3D<unsigned char> &preScanImage,int down)
@@ -218,6 +216,8 @@ usImagePostScan3D<unsigned char> usScanConverter3D::getVolume()
 
 /**
  * Conversion method : compute the scan-conversion 3D and write the post-scan image settings.
+ * @param [out] postScanImage The result of the scan-conversion.
+ * @param dataPreScan
  */
 void usScanConverter3D::convert( usImagePostScan3D<unsigned char> &postScanImage, const unsigned char *dataPreScan)
 {

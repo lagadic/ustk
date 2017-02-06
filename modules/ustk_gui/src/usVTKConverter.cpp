@@ -32,7 +32,7 @@
 
 /**
 * @file usVTKConverter.cpp
-* @brief
+* @brief Class of static methods to convert data between ViSP and VTK (3D images, homogeneous matrices).
 */
 
 #include <visp3/ustk_gui/usVTKConverter.h>
@@ -43,6 +43,9 @@
 #include <vtkPointData.h>
 #include <vtkDataArray.h>
 
+/**
+* Converts a usImagePostScan3D to a vtkImageData.
+*/
 void usVTKConverter::convert(const usImagePostScan3D<unsigned char> &postScanImage, vtkSmartPointer<vtkImageData> &vtkPostScanImage, vtkSmartPointer<vtkImageImport> importer)
 {
   if(importer==NULL) {
@@ -62,6 +65,9 @@ void usVTKConverter::convert(const usImagePostScan3D<unsigned char> &postScanIma
   vtkPostScanImage->SetSpacing(postScanImage.getElementSpacingX(),postScanImage.getElementSpacingY(),postScanImage.getElementSpacingZ());
 }
 
+/**
+* Converts a vtkImageData to a usImagePostScan3D.
+*/
 void usVTKConverter::convert(const usImagePreScan3D<unsigned char> &preScanImage,vtkSmartPointer<vtkImageData> &vtkPreScanImage, vtkSmartPointer<vtkImageImport> importer)
 {
   if(importer==NULL) {
@@ -80,12 +86,18 @@ void usVTKConverter::convert(const usImagePreScan3D<unsigned char> &preScanImage
   vtkPreScanImage = importer->GetOutput();
 }
 
+/**
+* Converts a vpHomogeneousMatrix to a vtkMatrix4x4.
+*/
 void usVTKConverter::convert(const vpHomogeneousMatrix & vispMatrix, vtkMatrix4x4 * vtkMatrix) {
   for(int i=0; i<4; i++)
     for(int j=0;j<4; j++)
       vtkMatrix->SetElement(i,j,vispMatrix[i][j]);
 }
 
+/**
+* Converts a vtkMatrix4x4 to a vpHomogeneousMatrix.
+*/
 void usVTKConverter::convert(vtkMatrix4x4 * vtkMatrix, vpHomogeneousMatrix & vispMatrix) {
   for(int i=0; i<4; i++)
     for(int j=0;j<4; j++)

@@ -51,37 +51,6 @@ int main()
   if(vtkImage->GetScalarPointer(middleX,middleY,middleZ) != postScanImage.getData(middleX,middleY,middleZ))
     return 1;
 
-  /* MATRIX CONVERSION TEST
-  vtkMatrix4x4* matrix = vtkMatrix4x4::New();
-  matrix->SetElement(0,0,0);
-  matrix->SetElement(0,1,1);
-  matrix->SetElement(0,2,2);
-  matrix->SetElement(0,3,3);
-  matrix->SetElement(1,0,4);
-  matrix->SetElement(1,1,5);
-  matrix->SetElement(1,2,6);
-  matrix->SetElement(1,3,7);
-  matrix->SetElement(2,0,8);
-  matrix->SetElement(2,1,9);
-  matrix->SetElement(2,2,10);
-  matrix->SetElement(2,3,11);
-  matrix->SetElement(3,0,12);
-  matrix->SetElement(3,1,13);
-  matrix->SetElement(3,2,14);
-  matrix->SetElement(3,3,15);
-
-  vpHomogeneousMatrix vispMat;
-
-  usVTKConverter::convert(matrix,vispMat);
-  std::cout <<vispMat << std::endl;
-  matrix->Print(std::cout);
-  vispMat[2][2] = 0;
-
-  usVTKConverter::convert(vispMat,matrix);
-  std::cout <<vispMat << std::endl;
-  matrix->Print(std::cout);
-  */
-
   return 0;
 }
 #else

@@ -45,12 +45,16 @@
 //USTK includes
 #include <visp3/ustk_gui/us2DSceneWidget.h>
 
+
+/**
+* Constructor.
+* @param parent The QWidget parent.
+* @param f Qt window flags.
+*/
 us2DSceneWidget::us2DSceneWidget(QWidget* parent, Qt::WindowFlags f) : usViewerWidget(parent,f) {
 
   m_imageData = NULL;
   m_resliceMatrix = NULL;
-
-  //m_reslicePlane = NULL;
 
   m_reslice = vtkImageReslice::New();
 
@@ -71,18 +75,33 @@ us2DSceneWidget::us2DSceneWidget(QWidget* parent, Qt::WindowFlags f) : usViewerW
   setMouseTracking(false);
 }
 
+/**
+* Paint event catcher.
+* @param event The event caught.
+*/
 void us2DSceneWidget::paintEvent( QPaintEvent* event ) {
   usViewerWidget::paintEvent(event);
 }
 
+/**
+* Image data getter.
+* @return The vtkImageData in wich we are slicing.
+*/
 vtkImageData* us2DSceneWidget::getImageData() {
   return m_imageData;
 }
 
+/**
+* Homogeneous matrix getter.
+* @return The matrix defining the current slice (position and orientation).
+*/
 vtkMatrix4x4* us2DSceneWidget::getResliceMatrix() {
   return m_resliceMatrix;
 }
 
+/**
+* Init method, to call after image and matrix setters. Initializes the vtk workflow to display the image slice.
+*/
 void us2DSceneWidget::init() {
 
   //verify imageData and reslice matrix are set
@@ -114,18 +133,7 @@ void us2DSceneWidget::init() {
   // Display the image
   m_actor->GetMapper()->SetInputConnection(m_color->GetOutputPort());
 
-  //Create orientation box
-  /*m_cubeActor->SetUserMatrix(m_resliceMatrix);
-  m_cubeActor->VisibilityOn();
-  m_cubeActor->SetXMinusFaceText("x-");
-  m_cubeActor->SetXPlusFaceText("x+");
-  m_cubeActor->SetYMinusFaceText("y-");
-  m_cubeActor->SetYPlusFaceText("y+");
-  m_cubeActor->SetZMinusFaceText("z-");
-  m_cubeActor->SetZPlusFaceText("z+");*/
-
   m_renderer->AddActor(m_actor);
-  //m_renderer->AddActor(m_cubeActor);
 
   // Setup render window
   vtkRenderWindow* renderWindow = this->GetRenderWindow();
@@ -139,53 +147,44 @@ void us2DSceneWidget::init() {
   renderWindow->GetInteractor()->SetInteractorStyle(imageStyle);
 }
 
+/**
+* Image setter.
+* @param imageData The vtkImageData to display.
+*/
 void us2DSceneWidget::setImageData(vtkImageData* imageData) {
   m_imageData = imageData;
 }
 
+/**
+* Orientation matrix setter.
+* @param matrix The vtk matrix to place the reslice plane in the image coordinate system (rotation and translation).
+*/
 void us2DSceneWidget::setResliceMatrix(vtkMatrix4x4 *matrix) {
   m_resliceMatrix = matrix;
-
-  //update plane origin
-  //vpHomogeneousMatrix hMat;
-  //usVTKConverter::convert(m_resliceMatrix,hMat);
-  //m_reslicePlane = plane;
-  //double origin[3];
-  //m_reslicePlane->GetOrigin(origin);
-  //std::cout << "old origin " << origin[0] << "," << origin[1] << "," << origin[2] << std::endl;
-  //m_reslicePlane->SetOrigin(hMat.getTranslationVector()[0],hMat.getTranslationVector()[1],hMat.getTranslationVector()[2]);
-  //m_reslicePlane->GetOrigin(origin);
-  //std::cout << "new origin " << origin[0] << "," << origin[1] << "," << origin[2] << std::endl;
-
-  //update plane normal (in test)
- // vpThetaUVector rotationVector;
-  //m_reslicePlane->GetNormal(rotationVector.data);
-  //std::cout << "old normal " << rotationVector[0] << "," << rotationVector[1] << "," << rotationVector[2] << std::endl;
-
-  //rotationVector = hMat.getThetaUVector();
-
-  //m_reslicePlane->SetNormal(0,0.5,0.5);
-  //m_reslicePlane->GetNormal(rotationVector.data);
-  //std::cout << "new normal " << rotationVector[0] << "," << rotationVector[1] << "," << rotationVector[2] << std::endl;
-  //std::cout << std::endl;
 }
 
+/**
+* Image update slot.
+* @param imageData The new vtkImageData to display.
+*/
 void us2DSceneWidget::updateImageData(vtkImageData* imageData) {
   m_imageData = imageData;
 }
 
+/**
+* Orientation matrix update slot.
+* @param matrix The new vtk matrix defining rotation and translation in image coordinates system.
+*/
 void us2DSceneWidget::matrixChangedSlot(vtkMatrix4x4* matrix) {
   matrix->Print(std::cout);
 }
 
-vtkPlane* us2DSceneWidget::getReslicePlane() {
-  return m_reslicePlane;
-}
-
+/**
+* Mouse wheel event catcher. Updates the translation along the plane normal.
+*/
 void us2DSceneWidget::wheelEvent(QWheelEvent *event) {
   int increment = event->delta() / 120;
   std::cout << "wheel increment = " << increment << std::endl;
-
 
   // move the center point that we are slicing through
   double sliceSpacing = m_imageData->GetSpacing()[2];
@@ -209,6 +208,9 @@ void us2DSceneWidget::wheelEvent(QWheelEvent *event) {
   event->accept();
 }
 
+/**
+* Key press event catcher (R key), to enable rotation mode.
+*/
 void us2DSceneWidget::keyPressEvent(QKeyEvent *event) {
   if(event->key() == Qt::Key_R) {
     m_rPressed = true;
@@ -216,26 +218,18 @@ void us2DSceneWidget::keyPressEvent(QKeyEvent *event) {
   event->accept();
 }
 
+/**
+* Key press event catcher (R key), to disable rotation mode.
+*/
 void us2DSceneWidget::keyReleaseEvent(QKeyEvent *event) {
   if(event->key() == Qt::Key_R) {
     m_rPressed = false;
   }
   event->accept();
 }
-/*
-void us2DSceneWidget::mousePressEvent(QMouseEvent * event) {
-  if(event->button() == Qt::LeftButton) {
-    m_mousePressed = true;
-  }
-  //event->accept();
-}
 
-void us2DSceneWidget::mouseReleaseEvent(QMouseEvent * event) {
-  if(event->button() == Qt::LeftButton) {
-    m_mousePressed = false;
-  }
-  //event->accept();
-}
+/**
+* Mouse move event catcher, used to calculate the rotation to apply on reslice view plane.
 */
 void 	us2DSceneWidget::mouseMoveEvent(QMouseEvent * event) {
   if(m_rPressed) {
@@ -256,7 +250,7 @@ void 	us2DSceneWidget::mouseMoveEvent(QMouseEvent * event) {
     tuVecX.data[0] = 0;
     tuVecX.data[1] = 0;
     tuVecX.data[2] = 0;
-    //when we move along x we rotate around y
+    //when we move along x we rotate around y (z is normal to the view).
     if(abs(dy) < 16) {
       colVecX.data[0] = vpMath::rad(dy*.1);
       colVecX = currentMat*colVecX;
@@ -275,7 +269,7 @@ void 	us2DSceneWidget::mouseMoveEvent(QMouseEvent * event) {
     tuVecY.data[1] = 0;
     tuVecY.data[2] = 0;
 
-    //when we move along y we rotate around x
+    //when we move along y we rotate around x (z is normal to the view).
     if(abs(dx) < 16) {
       colVecY.data[1] = vpMath::rad(dx*.1);
       colVecY = currentMat*colVecY;

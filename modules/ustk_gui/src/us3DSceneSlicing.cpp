@@ -235,7 +235,9 @@ void us3DSceneSlicing::resizeEvent(QResizeEvent* event)
   }
 }
 
-
+/**
+* Updates X translation.
+*/
 void us3DSceneSlicing::updateX(int x) {
   double origin[3];
   plane1->GetOrigin(origin);
@@ -244,6 +246,9 @@ void us3DSceneSlicing::updateX(int x) {
   view->update();
 }
 
+/**
+* Updates Y translation.
+*/
 void us3DSceneSlicing::updateY(int y) {
   double origin[3];
   plane1->GetOrigin(origin);
@@ -252,6 +257,9 @@ void us3DSceneSlicing::updateY(int y) {
   view->update();
 }
 
+/**
+* Updates Z translation.
+*/
 void us3DSceneSlicing::updateZ(int z) {
   double origin[3];
   plane1->GetOrigin(origin);
@@ -260,6 +268,9 @@ void us3DSceneSlicing::updateZ(int z) {
   view->update();
 }
 
+/**
+* Updates X rotation.
+*/
 void us3DSceneSlicing::updateRotX(int x) {
   double normal[3];
   plane1->GetNormal(normal);
@@ -269,6 +280,9 @@ void us3DSceneSlicing::updateRotX(int x) {
   view->update();
 }
 
+/**
+* Updates Y rotation.
+*/
 void us3DSceneSlicing::updateRotY(int y) {
   double normal[3];
   plane1->GetNormal(normal);
@@ -278,6 +292,9 @@ void us3DSceneSlicing::updateRotY(int y) {
   view->update();
 }
 
+/**
+* Updates Y rotation.
+*/
 void us3DSceneSlicing::updateRotZ(int z) {
   double normal[3];
   plane1->GetNormal(normal);
@@ -286,7 +303,6 @@ void us3DSceneSlicing::updateRotZ(int z) {
   plane1->SetNormal(normal);
   double origin[3];
   plane1->GetOrigin(origin);
-  //view->updatePlane1(origin[0],origin[1],origin[2]);
   view->update();
 }
 

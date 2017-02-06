@@ -31,7 +31,7 @@
  *****************************************************************************/
 
 /**
-* @file usResliceWorldViewer.cpp
+* @file usResliceMatrixViewer.cpp
 * @brief Graphical main window containing 4 vtk views.
 */
 
