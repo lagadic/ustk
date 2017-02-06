@@ -113,7 +113,7 @@ short usNeedleDetectionTools::quantile(short *data, unsigned int num, unsigned i
   return idx+1;
 }
 
-#if defined USNEEDLEDETECTION_HAVE_VTK
+#if defined USTK_HAVE_VTK_QT
 short usNeedleDetectionTools::quantile(vtkDataSet *data, unsigned int num)
 {
   unsigned int n = data->GetNumberOfPoints();
@@ -193,12 +193,12 @@ void usNeedleDetectionTools::computeQuantile(const unsigned int *data, unsigned 
   delete[] hist;
 }
 
-#if defined USNEEDLEDETECTION_HAVE_VTK
+#if defined USTK_HAVE_VTK_QT
 int usNeedleDetectionTools::findTip(vtkDataArray *data, unsigned int dataSize, double gap)
 {
   int stop = -1;
   std::cerr << "Needle profile: ";
-  for (int i=1; i<dataSize; i++) {
+  for (unsigned int i=1; i<dataSize; i++) {
     std::cerr << data->GetTuple(i)[0] << " ";
     if (data->GetTuple(i-1)[0] - data->GetTuple(i)[0] > gap)
       stop = i-1;
@@ -300,7 +300,7 @@ bool usNeedleDetectionTools::findEntry(const vpMatrix &model, double *entry, uns
   return found;
 }
 
-#if defined USNEEDLEDETECTION_HAVE_VTK
+#if defined USTK_HAVE_VTK_QT
 bool usNeedleDetectionTools::findTip(vtkImageData *image, const vpMatrix &model, int *VOI, double *tip, unsigned int nPoints, double gap, double length)
 {
   bool found = 0;
@@ -420,7 +420,7 @@ bool usNeedleDetectionTools::inside(const vpColVector point, int *VOI) {
       && vpMath::round(point[2]) > (VOI[4] + 1) && vpMath::round(point[2]) < (VOI[5] - 1));
 }
 
-#if defined USNEEDLEDETECTION_HAVE_VTK
+#if defined USTK_HAVE_VTK_QT
 unsigned int usNeedleDetectionTools::findTip(vtkDataArray *data, unsigned int dataSize,
                                              double threshL, double threshU)
 {
@@ -459,10 +459,10 @@ unsigned int usNeedleDetectionTools::findTip(vtkDataArray *data, unsigned int da
 unsigned int usNeedleDetectionTools::findTip(vtkDataArray *data, unsigned int dataSize,
                                              double threshL, double threshU, int prediction)
 {
-  int idx;
+  unsigned int idx;
   int stop = -1;
   int *keep = new int[dataSize];
-  int error = dataSize;
+  unsigned int error = dataSize;
   if (threshL>threshU)
   {
     std::cerr << "Error in findTip: threshU should be greater than or equal to threshL."
@@ -566,7 +566,7 @@ double usNeedleDetectionTools::getThresholdedCoordinates(const usVolume<unsigned
   return q;
 }
 #endif
-#if defined USNEEDLEDETECTION_HAVE_VTK
+#if defined USTK_HAVE_VTK_QT
 double usNeedleDetectionTools::getThresholdedCoordinates(vtkImageData *image,
                                                          vpMatrix &points,
                                                          unsigned int nDesired)
@@ -596,7 +596,7 @@ double usNeedleDetectionTools::getThresholdedCoordinates(vtkImageData *image,
     points = vpMatrix(nThresholded, 3);
     unsigned int counter = 0;
     for (unsigned int i=0; i<npts; i++)
-      if (*(short_ptr+i) >= q)
+      if ((unsigned int)*(short_ptr+i) >= q)
       {
         points[counter][0] = image->GetPoint(i)[0];
         points[counter][1] = image->GetPoint(i)[1];

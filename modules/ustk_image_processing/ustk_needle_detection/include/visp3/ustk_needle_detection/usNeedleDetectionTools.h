@@ -48,9 +48,12 @@
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpList.h>
 
+//UsTK
+#include <visp3/ustk_gui/usGuiConfig.h>
+
 
 // VTK
-#if defined USNEEDLEDETECTION_HAVE_VTK
+#if defined USTK_HAVE_VTK_QT
 #include <vtkDataSet.h>
 #include <vtkDataArray.h>
 #include <vtkShortArray.h>
@@ -137,7 +140,7 @@ double dist3(double *x, double *y);
 bool findEntry(const vpMatrix &model, double *entry, unsigned int nPoints,
                const vpColVector &origin, const vpColVector &entryPlane, int VOI[6]);
 
-#if defined USNEEDLEDETECTION_HAVE_VTK
+#if defined USTK_HAVE_VTK_QT
 int findTip(vtkDataArray *data, unsigned int dataSize, double gap);
 bool findTip(vtkImageData *image, const vpMatrix &model, int *VOI, double *tip, unsigned int nPoints, double gap);
 bool findTip(vtkImageData *image, const vpMatrix &model, int *VOI, double *tip, unsigned int nPoints, double gap, double length);
@@ -154,7 +157,7 @@ bool findTipUsingMeanValues(vtkImageData *image, const vpMatrix &model, int *VOI
    */
 vpColVector geometricMedian(const vpMatrix points, unsigned int npts,
                             unsigned int d);
-#if defined USNEEDLEDETECTION_HAVE_VTK
+#if defined USTK_HAVE_VTK_QT
 /**
    * Get the coordinates of the points of highest intensity.
    *
@@ -181,7 +184,7 @@ double getThresholdedCoordinates(const usVolume<unsigned int> &V,
                                  vpMatrix &points,
                                  unsigned int nDesired);
 #endif
-#if defined USNEEDLEDETECTION_HAVE_VTK
+#if defined USTK_HAVE_VTK_QT
 /**
    * Get the coordinates of the points of highest intensity.
    *
@@ -195,7 +198,7 @@ double getThresholdedCoordinates(vtkImageData *image,
                                  vpMatrix &points,
                                  unsigned int nDesired);
 #endif
-#if defined USNEEDLEDETECTION_HAVE_VTK
+#if defined USTK_HAVE_VTK_QT
 vpList<double*> getThresholdedIds(vtkImageData *image, double threshold);
 #endif
 
@@ -216,7 +219,7 @@ void linearRegression(vpMatrix &points, double &a, double &b, double &u, double 
 
 short quantile(short *data, unsigned int num, unsigned int n);
 
-#if defined USNEEDLEDETECTION_HAVE_VTK
+#if defined USTK_HAVE_VTK_QT
 short quantile(vtkDataSet *data, unsigned int num);
 #endif
 
