@@ -49,6 +49,7 @@
 
 #include <visp3/ustk_gui/usVTKConverter.h>
 #include <visp3/ustk_gui/usViewerWidget.h>
+#include <visp3/ustk_core/us.h>
 
 //VTK includes
 #include <vtkPlane.h>
@@ -84,6 +85,7 @@
 #include <vtkResliceCursor.h>
 #include <vtkResliceCursorWidget.h>
 #include <vtkAnnotatedCubeActor.h>
+#include <vtkPNGWriter.h>
 
 
 
@@ -152,6 +154,8 @@ public slots:
   void updateImageData(vtkImageData* imageData);
 
   void matrixChangedSlot(vtkMatrix4x4* matrix);
+
+  void saveViewSlot();
 
 signals:
   void matrixChanged(vtkMatrix4x4* matrix);

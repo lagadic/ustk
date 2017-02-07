@@ -85,7 +85,7 @@ us3DSceneWidget::us3DSceneWidget(QWidget* parent, Qt::WindowFlags f) : usViewerW
 void us3DSceneWidget::paintEvent( QPaintEvent* event )
 {
   usViewerWidget::paintEvent( event );
-  plane1->Print(std::cout);
+  //plane1->Print(std::cout);
 }
 
 /**
@@ -100,7 +100,7 @@ vtkImageData* us3DSceneWidget::getImageData() {
 * Init method : setup vtk pipeline. Make sure imageData and planes are set before calling init().
 */
 void us3DSceneWidget::init() {
-  plane1->Print(std::cout);
+  //plane1->Print(std::cout);
 
   if(this->imageData == NULL)
     throw(vpException(vpException::fatalError, "no vtk image provided"));
@@ -259,7 +259,7 @@ void us3DSceneWidget::updateMatrix1(vtkMatrix4x4* matrix) {
 
   plane1->SetNormal(normal.data[0], normal.data[1], normal.data[2]);
 
-  plane1->Print(std::cout);
+  //plane1->Print(std::cout);
   this->update();
 }
 
@@ -296,7 +296,7 @@ void us3DSceneWidget::updateMatrix2(vtkMatrix4x4* matrix) {
 
   plane2->SetNormal(normal.data[0], normal.data[1], normal.data[2]);
 
-  plane2->Print(std::cout);
+  //plane2->Print(std::cout);
   this->update();
 }
 
@@ -334,7 +334,7 @@ void us3DSceneWidget::updateMatrix3(vtkMatrix4x4* matrix) {
 
   plane3->SetNormal(normal.data[0], normal.data[1], normal.data[2]);
 
-  plane3->Print(std::cout);
+  //plane3->Print(std::cout);
   this->update();
 }
 

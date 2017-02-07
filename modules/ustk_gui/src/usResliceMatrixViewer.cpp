@@ -101,6 +101,8 @@ usResliceMatrixViewer::usResliceMatrixViewer(std::string imageFileName )
   //matrix representing plane 3
   vpHomogeneousMatrix matrix3;
   matrix3.eye();
+  matrix3[0][3] = imageDims[0]*spacing[0]/2;
+  matrix3[1][3] = imageDims[1]*spacing[1]/2;
   matrix3[2][3] = imageDims[2]*spacing[2]/2;
   matrix3[0][0] = -1;
   matrix3[1][1] = -1;
@@ -111,7 +113,9 @@ usResliceMatrixViewer::usResliceMatrixViewer(std::string imageFileName )
   //matrix representing plane 2
   vpHomogeneousMatrix matrix2;
   matrix2.eye();
+  matrix2[0][3] = imageDims[0]*spacing[0]/2;
   matrix2[1][3] = imageDims[1]*spacing[1]/2;
+  matrix2[2][3] = imageDims[2]*spacing[2]/2;
   matrix2[0][0] = -1;
   matrix2[1][2] = -1;
   matrix2[1][1] = 0;
@@ -133,29 +137,6 @@ usResliceMatrixViewer::usResliceMatrixViewer(std::string imageFileName )
   vtkMatrix1 = vtkMatrix4x4::New();
   usVTKConverter::convert(matrix1,vtkMatrix1);
 
-  //Test RT matrix
-  /*vpHomogeneousMatrix matrix_RotX45_TransZHalfDim;
-  //rotation
-  vpThetaUVector r;         // By default initialized to zero
-  r[0] = vpMath::rad(45); // Rotation around x set to 45 degres converted in radians
-  r[1] = 0;            // Rotation around y set to 0 radians
-  r[2] = 0;               // Rotation around z set to 0 radians
-  //translation
-  vpTranslationVector t;
-  t[0] = imageDims[0]*spacing[0]/2;
-  t[1] = imageDims[1]*spacing[1]/2;
-  t[2] = imageDims[2]*spacing[2]/2; // half size in Z
-  matrix_RotX45_TransZHalfDim.insert(t);
-  matrix_RotX45_TransZHalfDim.insert(r);
-
-  vtkMatrix4x4 * vtkMatrix_RotX45_TransZHalfDim = vtkMatrix4x4::New();
-  usVTKConverter::convert(matrix_RotX45_TransZHalfDim,vtkMatrix_RotX45_TransZHalfDim);
-
-  //try to find corresponding normal for slice plane
-  plane1->SetNormal(0,0.5,-0.5);
-  plane1->SetOrigin(imageDims[0]*spacing[0]/2,imageDims[1]*spacing[1]/2,imageDims[2]*spacing[2]/2);*/
-
-
   view1->setImageData(vtkImage);
   view1->setResliceMatrix(vtkMatrix1);
   view1->init();
@@ -176,6 +157,7 @@ usResliceMatrixViewer::usResliceMatrixViewer(std::string imageFileName )
 
   // Set up action signals and slots
   connect(this->resetButton, SIGNAL(pressed()), this, SLOT(ResetViews()));
+  connect(this->saveView1Button, SIGNAL(pressed()), view1, SLOT(saveViewSlot()));
 
   connect(view1,SIGNAL(matrixChanged(vtkMatrix4x4*)),view4,SLOT(updateMatrix1(vtkMatrix4x4*)));
   connect(view2,SIGNAL(matrixChanged(vtkMatrix4x4*)),view4,SLOT(updateMatrix2(vtkMatrix4x4*)));
@@ -197,6 +179,56 @@ void usResliceMatrixViewer::slotExit()
 */
 void usResliceMatrixViewer::ResetViews()
 {
+  int imageDims[3];
+  double spacing[3];
+  vtkImage->GetDimensions(imageDims);
+  vtkImage->GetSpacing(spacing);
+
+  //matrix representing plane 3
+  vpHomogeneousMatrix matrix3;
+  matrix3.eye();
+  matrix3[0][3] = imageDims[0]*spacing[0]/2;
+  matrix3[1][3] = imageDims[1]*spacing[1]/2;
+  matrix3[2][3] = imageDims[2]*spacing[2]/2;
+  matrix3[0][0] = -1;
+  matrix3[1][1] = -1;
+  matrix3[2][2] = -1;
+  usVTKConverter::convert(matrix3,vtkMatrix3);
+
+  //matrix representing plane 2
+  vpHomogeneousMatrix matrix2;
+  matrix2.eye();
+  matrix2[0][3] = imageDims[0]*spacing[0]/2;
+  matrix2[1][3] = imageDims[1]*spacing[1]/2;
+  matrix2[2][3] = imageDims[2]*spacing[2]/2;
+  matrix2[0][0] = -1;
+  matrix2[1][2] = -1;
+  matrix2[1][1] = 0;
+  matrix2[2][1] = -1;
+  matrix2[2][2] = 0;
+  usVTKConverter::convert(matrix2,vtkMatrix2);
+
+  //matrix representing plane 1
+  vpHomogeneousMatrix matrix1;
+  matrix1.eye();
+  matrix1[0][3] = imageDims[0]*spacing[0]/2;
+  matrix1[1][3] = imageDims[1]*spacing[1]/2;
+  matrix1[2][3] = imageDims[2]*spacing[2]/2;
+  matrix1[0][0] = 0;
+  matrix1[0][2] = -1;
+  matrix1[1][1] = -1;
+  matrix1[2][0] = -1;
+  matrix1[2][2] = 0;
+  usVTKConverter::convert(matrix1,vtkMatrix1);
+
+  view1->setResliceMatrix(vtkMatrix1);
+  view2->setResliceMatrix(vtkMatrix2);
+  view3->setResliceMatrix(vtkMatrix3);
+
+  view4->updateMatrix1(vtkMatrix1);
+  view4->updateMatrix2(vtkMatrix2);
+  view4->updateMatrix3(vtkMatrix3);
+
   this->Render();
 }
 
@@ -208,9 +240,13 @@ void usResliceMatrixViewer::Render()
 {
   this->view1->GetRenderWindow()->Render();
   this->view2->GetRenderWindow()->Render();
+  this->view3->GetRenderWindow()->Render();
+  this->view4->GetRenderWindow()->Render();
 
   this->view1->update();
   this->view2->update();
+  this->view3->update();
+  this->view4->update();
 }
 
 /**
@@ -252,10 +288,10 @@ void usResliceMatrixViewer::setupUi() {
   resetButton->setText(QString::fromUtf8("Reset views"));
   resetButton->setGeometry(QRect(screenRect.width() - 180, 30, 160, 31));
 
-  update3D = new QPushButton(this);
-  update3D->setObjectName(QString::fromUtf8("update3D"));
-  update3D->setText(QString::fromUtf8("update3D"));
-  update3D->setGeometry(QRect(screenRect.width() - 180, 130, 160, 31));
+  saveView1Button = new QPushButton(this);
+  saveView1Button->setObjectName(QString::fromUtf8("saveView1Button"));
+  saveView1Button->setText(QString::fromUtf8("Save view 1"));
+  saveView1Button->setGeometry(QRect(screenRect.width() - 180, 80, 160, 31));
 }
 
 /**
@@ -268,7 +304,7 @@ void usResliceMatrixViewer::resizeEvent(QResizeEvent* event)
     QMainWindow::resizeEvent(event);
     gridLayoutWidget->setGeometry(QRect(10, 10, event->size().width() - 220, event->size().height() - 20));
     resetButton->setGeometry(QRect(event->size().width() - 180, 30, 160, 31));
-    update3D->setGeometry(QRect(event->size().width() - 180, 130, 160, 31));
+    saveView1Button->setGeometry(QRect(event->size().width() - 180, 80, 160, 31));
   }
 }
 #endif

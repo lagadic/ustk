@@ -113,7 +113,7 @@ private:
     us3DSceneWidget *view4;
 
     QPushButton *resetButton;
-    QPushButton *update3D;
+    QPushButton *saveView1Button;
 
     //VTK planes
     vtkPlane *plane1;

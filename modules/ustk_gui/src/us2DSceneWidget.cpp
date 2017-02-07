@@ -176,7 +176,7 @@ void us2DSceneWidget::updateImageData(vtkImageData* imageData) {
 * @param matrix The new vtk matrix defining rotation and translation in image coordinates system.
 */
 void us2DSceneWidget::matrixChangedSlot(vtkMatrix4x4* matrix) {
-  matrix->Print(std::cout);
+  m_resliceMatrix = matrix;
 }
 
 /**
@@ -192,9 +192,12 @@ void us2DSceneWidget::wheelEvent(QWheelEvent *event) {
   double center[4];
   point[0] = 0.0;
   point[1] = 0.0;
-  point[2] = sliceSpacing * increment;
+  point[2] = - sliceSpacing * increment;
   point[3] = 1.0;
+  std::cout << "wheel event new point : " << point[0] << "," << point[1] << "," << point[2] << std::endl;
   m_resliceMatrix->MultiplyPoint(point, center);
+
+  std::cout << "wheel event new center : " << center[0] << "," << center[1] << "," << center[2] << std::endl;
   m_resliceMatrix->SetElement(0, 3, center[0]);
   m_resliceMatrix->SetElement(1, 3, center[1]);
   m_resliceMatrix->SetElement(2, 3, center[2]);
@@ -302,6 +305,22 @@ void 	us2DSceneWidget::mouseMoveEvent(QMouseEvent * event) {
     //propagate event to allow colormap change in vtk
     usViewerWidget::mouseMoveEvent(event);
   }
+}
+
+
+/**
+* Slot to save the current image displayed in the view.
+* @param filename Image Filen name without extention (.png added in this method).
+*/
+void 	us2DSceneWidget::saveViewSlot() {
+  //m_reslice->GetOutput()->Print(std::cout);
+    vtkSmartPointer<vtkPNGWriter> writer =
+    vtkSmartPointer<vtkPNGWriter>::New();
+  std::string absFileName = us::getDataSetPath() + "/sceenshot.png";
+  std::cout << "saving slice in file : " << absFileName;
+  writer->SetFileName(absFileName.c_str());
+  writer->SetInputConnection(m_reslice->GetOutputPort());
+  writer->Write();
 }
 
 #endif //USTK_HAVE_VTK_QT
