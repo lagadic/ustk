@@ -108,9 +108,9 @@ private:
     QWidget *gridLayoutWidget;
     QGridLayout *gridLayout_2;
     us2DSceneWidget *view1;
-    us2DSceneWidget *view2;
+    us2DSceneWidget *view4;
     us2DSceneWidget *view3;
-    us3DSceneWidget *view4;
+    us3DSceneWidget *view2;
 
     QPushButton *resetButton;
     QPushButton *saveView1Button;

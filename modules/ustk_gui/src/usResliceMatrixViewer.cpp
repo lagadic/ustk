@@ -104,7 +104,7 @@ usResliceMatrixViewer::usResliceMatrixViewer(std::string imageFileName )
   matrix3[0][3] = imageDims[0]*spacing[0]/2;
   matrix3[1][3] = imageDims[1]*spacing[1]/2;
   matrix3[2][3] = imageDims[2]*spacing[2]/2;
-  matrix3[0][0] = -1;
+  matrix3[0][0] = 1;
   matrix3[1][1] = -1;
   matrix3[2][2] = -1;
   vtkMatrix3 = vtkMatrix4x4::New();
@@ -116,10 +116,10 @@ usResliceMatrixViewer::usResliceMatrixViewer(std::string imageFileName )
   matrix2[0][3] = imageDims[0]*spacing[0]/2;
   matrix2[1][3] = imageDims[1]*spacing[1]/2;
   matrix2[2][3] = imageDims[2]*spacing[2]/2;
-  matrix2[0][0] = -1;
-  matrix2[1][2] = -1;
+  matrix2[0][0] = 1;
+  matrix2[2][1] = 1;
   matrix2[1][1] = 0;
-  matrix2[2][1] = -1;
+  matrix2[1][2] = -1;
   matrix2[2][2] = 0;
 
   vtkMatrix2 = vtkMatrix4x4::New();
@@ -129,10 +129,12 @@ usResliceMatrixViewer::usResliceMatrixViewer(std::string imageFileName )
   vpHomogeneousMatrix matrix1;
   matrix1.eye();
   matrix1[0][3] = imageDims[0]*spacing[0]/2;
+  matrix1[1][3] = imageDims[1]*spacing[1]/2;
+  matrix1[2][3] = imageDims[2]*spacing[2]/2;
   matrix1[0][0] = 0;
-  matrix1[0][2] = -1;
+  matrix1[0][2] = 1;
   matrix1[1][1] = -1;
-  matrix1[2][0] = -1;
+  matrix1[2][0] = 1;
   matrix1[2][2] = 0;
   vtkMatrix1 = vtkMatrix4x4::New();
   usVTKConverter::convert(matrix1,vtkMatrix1);
@@ -141,27 +143,27 @@ usResliceMatrixViewer::usResliceMatrixViewer(std::string imageFileName )
   view1->setResliceMatrix(vtkMatrix1);
   view1->init();
 
-  view2->setImageData(vtkImage);
-  view2->setResliceMatrix(vtkMatrix2);
-  view2->init();
+  view4->setImageData(vtkImage);
+  view4->setResliceMatrix(vtkMatrix2);
+  view4->init();
 
   view3->setImageData(vtkImage);
   view3->setResliceMatrix(vtkMatrix3);
   view3->init();
 
-  view4->setImageData(vtkImage);
-  view4->updateMatrix1(vtkMatrix1);
-  view4->updateMatrix2(vtkMatrix2);
-  view4->updateMatrix3(vtkMatrix3);
-  view4->init();
+  view2->setImageData(vtkImage);
+  view2->updateMatrix1(vtkMatrix1);
+  view2->updateMatrix2(vtkMatrix2);
+  view2->updateMatrix3(vtkMatrix3);
+  view2->init();
 
   // Set up action signals and slots
   connect(this->resetButton, SIGNAL(pressed()), this, SLOT(ResetViews()));
   connect(this->saveView1Button, SIGNAL(pressed()), view1, SLOT(saveViewSlot()));
 
-  connect(view1,SIGNAL(matrixChanged(vtkMatrix4x4*)),view4,SLOT(updateMatrix1(vtkMatrix4x4*)));
-  connect(view2,SIGNAL(matrixChanged(vtkMatrix4x4*)),view4,SLOT(updateMatrix2(vtkMatrix4x4*)));
-  connect(view3,SIGNAL(matrixChanged(vtkMatrix4x4*)),view4,SLOT(updateMatrix3(vtkMatrix4x4*)));
+  connect(view1,SIGNAL(matrixChanged(vtkMatrix4x4*)),view2,SLOT(updateMatrix1(vtkMatrix4x4*)));
+  connect(view4,SIGNAL(matrixChanged(vtkMatrix4x4*)),view2,SLOT(updateMatrix2(vtkMatrix4x4*)));
+  connect(view3,SIGNAL(matrixChanged(vtkMatrix4x4*)),view2,SLOT(updateMatrix3(vtkMatrix4x4*)));
 
   ResetViews();
 }
@@ -190,7 +192,7 @@ void usResliceMatrixViewer::ResetViews()
   matrix3[0][3] = imageDims[0]*spacing[0]/2;
   matrix3[1][3] = imageDims[1]*spacing[1]/2;
   matrix3[2][3] = imageDims[2]*spacing[2]/2;
-  matrix3[0][0] = -1;
+  matrix3[0][0] = 1;
   matrix3[1][1] = -1;
   matrix3[2][2] = -1;
   usVTKConverter::convert(matrix3,vtkMatrix3);
@@ -201,10 +203,10 @@ void usResliceMatrixViewer::ResetViews()
   matrix2[0][3] = imageDims[0]*spacing[0]/2;
   matrix2[1][3] = imageDims[1]*spacing[1]/2;
   matrix2[2][3] = imageDims[2]*spacing[2]/2;
-  matrix2[0][0] = -1;
-  matrix2[1][2] = -1;
+  matrix2[0][0] = 1;
+  matrix2[2][1] = 1;
   matrix2[1][1] = 0;
-  matrix2[2][1] = -1;
+  matrix2[1][2] = -1;
   matrix2[2][2] = 0;
   usVTKConverter::convert(matrix2,vtkMatrix2);
 
@@ -215,19 +217,19 @@ void usResliceMatrixViewer::ResetViews()
   matrix1[1][3] = imageDims[1]*spacing[1]/2;
   matrix1[2][3] = imageDims[2]*spacing[2]/2;
   matrix1[0][0] = 0;
-  matrix1[0][2] = -1;
+  matrix1[0][2] = 1;
   matrix1[1][1] = -1;
-  matrix1[2][0] = -1;
+  matrix1[2][0] = 1;
   matrix1[2][2] = 0;
   usVTKConverter::convert(matrix1,vtkMatrix1);
 
   view1->setResliceMatrix(vtkMatrix1);
-  view2->setResliceMatrix(vtkMatrix2);
+  view4->setResliceMatrix(vtkMatrix2);
   view3->setResliceMatrix(vtkMatrix3);
 
-  view4->updateMatrix1(vtkMatrix1);
-  view4->updateMatrix2(vtkMatrix2);
-  view4->updateMatrix3(vtkMatrix3);
+  view2->updateMatrix1(vtkMatrix1);
+  view2->updateMatrix2(vtkMatrix2);
+  view2->updateMatrix3(vtkMatrix3);
 
   this->Render();
 }
@@ -268,7 +270,7 @@ void usResliceMatrixViewer::setupUi() {
 
   gridLayout_2->addWidget(view1, 0, 0, 1, 1);
 
-  view2 = new us2DSceneWidget(gridLayoutWidget);
+  view2 = new us3DSceneWidget(gridLayoutWidget);
   view2->setObjectName(QString::fromUtf8("view1"));
 
   gridLayout_2->addWidget(view2, 1, 0, 1, 1);
@@ -276,12 +278,12 @@ void usResliceMatrixViewer::setupUi() {
   view3 = new us2DSceneWidget(gridLayoutWidget);
   view3->setObjectName(QString::fromUtf8("view1"));
 
-  gridLayout_2->addWidget(view3, 1, 1, 1, 1);
+  gridLayout_2->addWidget(view3, 0, 1, 1, 1);
 
-  view4 = new us3DSceneWidget(gridLayoutWidget);
+  view4 = new us2DSceneWidget(gridLayoutWidget);
   view4->setObjectName(QString::fromUtf8("view2"));
 
-  gridLayout_2->addWidget(view4, 0, 1, 1, 1);
+  gridLayout_2->addWidget(view4, 1, 1, 1, 1);
 
   resetButton = new QPushButton(this);
   resetButton->setObjectName(QString::fromUtf8("resetButton"));
