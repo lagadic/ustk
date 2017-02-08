@@ -97,6 +97,7 @@
 #  include <QtGui/QPushButton>
 #  include <QtGui/QWheelEvent>
 # include <QtCore/QPoint>
+# include <QtGui/QPainter>
 #elif defined USTK_HAVE_VTK_QT5
 #  include <QApplication>
 #  include <QtWidgets/QMainWindow>
@@ -140,6 +141,9 @@ public:
 
   //Catch paint events, in case we want to display some informations (writing in this widget) over the vtk scene
   void paintEvent( QPaintEvent* event );
+
+  //Set view color
+  void setColor(double r,double g,double b);
 
   //Set image to display
   void setImageData(vtkImageData* imageData);

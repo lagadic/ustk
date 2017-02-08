@@ -55,6 +55,11 @@
 #include <vtkMatrix4x4.h>
 #include <vtkSphereSource.h>
 #include <vtkProperty.h>
+#include <vtkPointData.h>
+#include <vtkCubeSource.h>
+#include <vtkPolyLine.h>
+#include <vtkCellArray.h>
+#include <vtkCutter.h>
 
 #include <QPainter>
 #include <QPaintEngine>
@@ -115,6 +120,8 @@ void us3DSceneWidget::init() {
   if(this->imageData == NULL)
     throw(vpException(vpException::fatalError, "no vtk image provided"));
 
+  imageData->Print(std::cout);
+
   //show the widget
   imageResliceMapper1->SetInputData(this->imageData);
   imageResliceMapper2->SetInputData(this->imageData);
@@ -136,8 +143,69 @@ void us3DSceneWidget::init() {
 
   sphereActor->SetPosition(plane1->GetOrigin());
 
+  //Define image bounding box
+  double bounds[6];
+  imageData->GetBounds(bounds);
+    // Create a cube.
+  vtkSmartPointer<vtkCubeSource> cubeSource =
+    vtkSmartPointer<vtkCubeSource>::New();
+    cubeSource->SetBounds(bounds);
+
+  //find intersections between planes and bounding box to draw colored lines to identify each plane
+  //Plane border 1
+  vtkSmartPointer<vtkCutter> cutter1 =
+    vtkSmartPointer<vtkCutter>::New();
+  cutter1->SetCutFunction(plane1);
+  cutter1->SetInputConnection(cubeSource->GetOutputPort());
+  cutter1->Update();
+  vtkSmartPointer<vtkPolyDataMapper> cutterMapper1 =
+    vtkSmartPointer<vtkPolyDataMapper>::New();
+  cutterMapper1->SetInputConnection( cutter1->GetOutputPort());
+  vtkSmartPointer<vtkActor> planeBorder1 =
+    vtkSmartPointer<vtkActor>::New();
+  planeBorder1->GetProperty()->SetColor(1.0,0,0);
+  planeBorder1->GetProperty()->SetOpacity(1.0);
+  planeBorder1->GetProperty()->SetLighting(0);
+  planeBorder1->GetProperty()->SetLineWidth(3);
+  planeBorder1->SetMapper(cutterMapper1);
+
+  //Plane border 2
+  vtkSmartPointer<vtkCutter> cutter2 =
+    vtkSmartPointer<vtkCutter>::New();
+  cutter2->SetCutFunction(plane2);
+  cutter2->SetInputConnection(cubeSource->GetOutputPort());
+  cutter2->Update();
+  vtkSmartPointer<vtkPolyDataMapper> cutterMapper2 =
+    vtkSmartPointer<vtkPolyDataMapper>::New();
+  cutterMapper2->SetInputConnection( cutter2->GetOutputPort());
+  vtkSmartPointer<vtkActor> planeBorder2 =
+    vtkSmartPointer<vtkActor>::New();
+  planeBorder2->GetProperty()->SetColor(0,1.0,0);
+  planeBorder2->GetProperty()->SetOpacity(1.0);
+  planeBorder2->GetProperty()->SetLighting(0);
+  planeBorder2->GetProperty()->SetLineWidth(3);
+  planeBorder2->SetMapper(cutterMapper2);
+
+  //Plane border 3
+  vtkSmartPointer<vtkCutter> cutter3 =
+    vtkSmartPointer<vtkCutter>::New();
+  cutter3->SetCutFunction(plane3);
+  cutter3->SetInputConnection(cubeSource->GetOutputPort());
+  cutter3->Update();
+  vtkSmartPointer<vtkPolyDataMapper> cutterMapper3 =
+    vtkSmartPointer<vtkPolyDataMapper>::New();
+  cutterMapper3->SetInputConnection( cutter3->GetOutputPort());
+  vtkSmartPointer<vtkActor> planeBorder3 =
+    vtkSmartPointer<vtkActor>::New();
+  planeBorder3->GetProperty()->SetColor(0,0,1.0);
+  planeBorder3->GetProperty()->SetOpacity(1.0);
+  planeBorder3->GetProperty()->SetLighting(0);
+  planeBorder3->GetProperty()->SetLineWidth(3);
+  planeBorder3->SetMapper(cutterMapper3);
+
   //add axes in scene
   m_axesActor = vtkSmartPointer<vtkAxesActor>::New();
+
   //arrows of 1cm
   m_axesActor->SetXAxisLabelText("U");
   m_axesActor->SetYAxisLabelText("V");
@@ -146,12 +214,13 @@ void us3DSceneWidget::init() {
 
   // Setup renderers
   renderer = vtkRenderer::New();
-  //renderer->AddActor(arrowActor);
   renderer->AddActor(m_axesActor);
   renderer->AddActor(imageSlice1);
   renderer->AddActor(imageSlice2);
   renderer->AddActor(imageSlice3);
-  //renderer->AddActor(sphereActor);
+  renderer->AddActor(planeBorder1);
+  renderer->AddActor(planeBorder2);
+  renderer->AddActor(planeBorder3);
   renderer->SetBackground(0.5, 0.5, 0.5);
   renderer->ResetCamera();
 

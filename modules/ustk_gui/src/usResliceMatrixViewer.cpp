@@ -142,14 +142,17 @@ usResliceMatrixViewer::usResliceMatrixViewer(std::string imageFileName )
   view1->setImageData(vtkImage);
   view1->setResliceMatrix(vtkMatrix1);
   view1->init();
+  view1->setColor(1.0,0,0);
 
   view4->setImageData(vtkImage);
   view4->setResliceMatrix(vtkMatrix2);
   view4->init();
+  view4->setColor(0,1.0,0);
 
   view3->setImageData(vtkImage);
   view3->setResliceMatrix(vtkMatrix3);
   view3->init();
+  view3->setColor(0,0,1.0);
 
   view2->setImageData(vtkImage);
   view2->updateMatrix1(vtkMatrix1);

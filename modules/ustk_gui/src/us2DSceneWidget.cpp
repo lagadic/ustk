@@ -80,6 +80,7 @@ us2DSceneWidget::us2DSceneWidget(QWidget* parent, Qt::WindowFlags f) : usViewerW
 * @param event The event caught.
 */
 void us2DSceneWidget::paintEvent( QPaintEvent* event ) {
+
   usViewerWidget::paintEvent(event);
 }
 
@@ -243,9 +244,6 @@ void 	us2DSceneWidget::mouseMoveEvent(QMouseEvent * event) {
     usVTKConverter::convert(m_resliceMatrix, currentMat);
 
     vpThetaUVector tuVec;
-    tuVec.data[0] = 0;
-    tuVec.data[1] = 0;
-    tuVec.data[2] = 0;
 
     //when we move along x we rotate around y (z is normal to the view).
     if(abs(dx) < 16) {
@@ -309,4 +307,9 @@ if(event->button() == Qt::LeftButton) {
   usViewerWidget::mousePressEvent(event);
 }
 */
+
+void us2DSceneWidget::setColor(double r,double g,double b) {
+  m_renderer->SetBackground(r,g,b);
+}
+
 #endif //USTK_HAVE_VTK_QT
