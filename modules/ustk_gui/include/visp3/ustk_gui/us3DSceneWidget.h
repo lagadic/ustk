@@ -56,6 +56,7 @@
 #include <vtkRenderWindow.h>
 #include <vtkAxesActor.h>
 #include <vtkPolyDataMapper.h>
+#include <vtkImagePlaneWidget.h>
 
 // Qt includes
 #if defined(USTK_HAVE_VTK_QT4)
@@ -154,6 +155,8 @@ private:
   vtkPlane* plane1;
   vtkPlane* plane2;
   vtkPlane* plane3;
+
+  vtkActor* sphereActor;
 
   //vtk mappers
   vtkImageResliceMapper* imageResliceMapper1;

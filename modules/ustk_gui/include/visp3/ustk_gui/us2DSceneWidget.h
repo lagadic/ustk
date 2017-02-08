@@ -86,7 +86,7 @@
 #include <vtkResliceCursorWidget.h>
 #include <vtkAnnotatedCubeActor.h>
 #include <vtkPNGWriter.h>
-
+#include <vtkCoordinate.h>
 
 
 // Qt includes
@@ -96,6 +96,7 @@
 #  include <QtGui/QGridLayout>
 #  include <QtGui/QPushButton>
 #  include <QtGui/QWheelEvent>
+# include <QtCore/QPoint>
 #elif defined USTK_HAVE_VTK_QT5
 #  include <QApplication>
 #  include <QtWidgets/QMainWindow>
@@ -134,8 +135,8 @@ public:
   void keyReleaseEvent(QKeyEvent *event);
 
   void 	mouseMoveEvent(QMouseEvent * event);
-  /*void 	mousePressEvent(QMouseEvent * event);
-  void 	mouseReleaseEvent(QMouseEvent * event);*/
+  //void 	mousePressEvent(QMouseEvent * event);
+  //void 	mouseReleaseEvent(QMouseEvent * event);
 
   //Catch paint events, in case we want to display some informations (writing in this widget) over the vtk scene
   void paintEvent( QPaintEvent* event );

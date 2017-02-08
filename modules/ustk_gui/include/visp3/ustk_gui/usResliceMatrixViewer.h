@@ -114,6 +114,8 @@ private:
 
     QPushButton *resetButton;
     QPushButton *saveView1Button;
+    QPushButton *saveView4Button;
+    QPushButton *saveView3Button;
 
     //VTK planes
     vtkPlane *plane1;

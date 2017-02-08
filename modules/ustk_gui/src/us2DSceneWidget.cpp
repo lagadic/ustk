@@ -184,25 +184,25 @@ void us2DSceneWidget::matrixChangedSlot(vtkMatrix4x4* matrix) {
 */
 void us2DSceneWidget::wheelEvent(QWheelEvent *event) {
   int increment = event->delta() / 120;
-  std::cout << "wheel increment = " << increment << std::endl;
 
-  // move the center point that we are slicing through
+  // To improve : mean of the 3 spacings according to the plane orientation
   double sliceSpacing = m_imageData->GetSpacing()[2];
-  double point[4];
-  double center[4];
-  point[0] = 0.0;
-  point[1] = 0.0;
-  point[2] = - sliceSpacing * increment;
-  point[3] = 1.0;
-  std::cout << "wheel event new point : " << point[0] << "," << point[1] << "," << point[2] << std::endl;
-  m_resliceMatrix->MultiplyPoint(point, center);
 
-  std::cout << "wheel event new center : " << center[0] << "," << center[1] << "," << center[2] << std::endl;
-  m_resliceMatrix->SetElement(0, 3, center[0]);
-  m_resliceMatrix->SetElement(1, 3, center[1]);
-  m_resliceMatrix->SetElement(2, 3, center[2]);
+  vpTranslationVector tVec;
+  tVec.data[0] = 0;
+  tVec.data[1] = 0;
+  tVec.data[2] = sliceSpacing * increment;
 
-  //update this view
+  vpHomogeneousMatrix MTrans;
+  MTrans.buildFrom(tVec,vpThetaUVector(0,0,0));
+
+  vpHomogeneousMatrix MCurrrent;
+  usVTKConverter::convert(m_resliceMatrix, MCurrrent);
+
+  vpHomogeneousMatrix Mnew = MCurrrent * MTrans;
+
+  usVTKConverter::convert(Mnew,m_resliceMatrix);
+
   update();
 
   //emit signal to inform other views the reslice matrix changed
@@ -215,7 +215,7 @@ void us2DSceneWidget::wheelEvent(QWheelEvent *event) {
 * Key press event catcher (R key), to enable rotation mode.
 */
 void us2DSceneWidget::keyPressEvent(QKeyEvent *event) {
-  if(event->key() == Qt::Key_R) {
+  if(event->key() == Qt::Key_H) {
     m_rPressed = true;
   }
   event->accept();
@@ -225,7 +225,7 @@ void us2DSceneWidget::keyPressEvent(QKeyEvent *event) {
 * Key press event catcher (R key), to disable rotation mode.
 */
 void us2DSceneWidget::keyReleaseEvent(QKeyEvent *event) {
-  if(event->key() == Qt::Key_R) {
+  if(event->key() == Qt::Key_H) {
     m_rPressed = false;
   }
   event->accept();
@@ -242,55 +242,24 @@ void 	us2DSceneWidget::mouseMoveEvent(QMouseEvent * event) {
     vpHomogeneousMatrix currentMat;
     usVTKConverter::convert(m_resliceMatrix, currentMat);
 
-    //get rotations directions from plane orientation
-    vpColVector colVecX(4);
-    colVecX.data[0] = 0;
-    colVecX.data[1] = 0;
-    colVecX.data[2] = 0;
-    colVecX.data[3] = 0;
+    vpThetaUVector tuVec;
+    tuVec.data[0] = 0;
+    tuVec.data[1] = 0;
+    tuVec.data[2] = 0;
 
-    vpThetaUVector tuVecX;
-    tuVecX.data[0] = 0;
-    tuVecX.data[1] = 0;
-    tuVecX.data[2] = 0;
     //when we move along x we rotate around y (z is normal to the view).
-    if(abs(dy) < 16) {
-      colVecX.data[0] = vpMath::rad(dy*.1);
-      colVecX = currentMat*colVecX;
-      tuVecX.data[0] = colVecX.data[0];
-      tuVecX.data[1] = colVecX.data[1];
-      tuVecX.data[2] = colVecX.data[2];
-    }
-
-    vpColVector colVecY(4);
-    colVecY.data[0] = 0;
-    colVecY.data[1] = 0;
-    colVecY.data[2] = 0;
-    colVecX.data[3] = 0;
-    vpThetaUVector tuVecY;
-    tuVecY.data[0] = 0;
-    tuVecY.data[1] = 0;
-    tuVecY.data[2] = 0;
-
-    //when we move along y we rotate around x (z is normal to the view).
     if(abs(dx) < 16) {
-      colVecY.data[1] = vpMath::rad(dx*.1);
-      colVecY = currentMat*colVecY;
-
-      tuVecY.data[0] = colVecY.data[0];
-      tuVecY.data[1] = colVecY.data[1];
-      tuVecY.data[2] = colVecY.data[2];
+      tuVec.data[1] = vpMath::rad(dx*.1);
     }
-    vpRotationMatrix rotX(tuVecX);
-    vpHomogeneousMatrix hRotX;
-    hRotX.eye();
-    hRotX.buildFrom(vpTranslationVector(0,0,0),rotX);
-    vpRotationMatrix rotY(tuVecY);
-    vpHomogeneousMatrix hRotY;
-    hRotY.eye();
-    hRotY.buildFrom(vpTranslationVector(0,0,0),rotY);
+    //when we move along y we rotate around x.
+    if(abs(dy) < 16) {
+      tuVec.data[0] = vpMath::rad(dy*.1);
+    }
 
-    vpHomogeneousMatrix finalMat = (currentMat * hRotX) * hRotY;
+    vpHomogeneousMatrix MRot;
+    MRot.buildFrom(vpTranslationVector(0,0,0),tuVec);
+
+    vpHomogeneousMatrix finalMat = currentMat * MRot;
 
     usVTKConverter::convert(finalMat, m_resliceMatrix);
 
@@ -313,7 +282,6 @@ void 	us2DSceneWidget::mouseMoveEvent(QMouseEvent * event) {
 * @param filename Image Filen name without extention (.png added in this method).
 */
 void 	us2DSceneWidget::saveViewSlot() {
-  //m_reslice->GetOutput()->Print(std::cout);
     vtkSmartPointer<vtkPNGWriter> writer =
     vtkSmartPointer<vtkPNGWriter>::New();
   std::string absFileName = us::getDataSetPath() + "/sceenshot.png";
@@ -322,5 +290,23 @@ void 	us2DSceneWidget::saveViewSlot() {
   writer->SetInputConnection(m_reslice->GetOutputPort());
   writer->Write();
 }
+/*
+void us2DSceneWidget::mousePressEvent(QMouseEvent *event) {
+if(event->button() == Qt::LeftButton) {
+  std::cout << "Pressed left mouse button." << std::endl;
+  int x = event->pos().x();
+  int y = event->pos().y();
+  std::cout << "(x,y) = (" << x << "," << y << ")" << std::endl;
+  vtkSmartPointer<vtkCoordinate> coordinate =
+      vtkSmartPointer<vtkCoordinate>::New();
+  coordinate->SetCoordinateSystemToDisplay();
+  coordinate->SetValue(x,y,0);
 
+  // working if zoomed ???
+  double* world = coordinate->GetComputedWorldValue(m_renderer);
+  std::cout << "World coordinate: " << world[0] << ", " << world[1] << ", " << world[2] << std::endl;
+  }
+  usViewerWidget::mousePressEvent(event);
+}
+*/
 #endif //USTK_HAVE_VTK_QT

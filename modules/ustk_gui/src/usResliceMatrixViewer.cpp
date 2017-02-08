@@ -160,6 +160,8 @@ usResliceMatrixViewer::usResliceMatrixViewer(std::string imageFileName )
   // Set up action signals and slots
   connect(this->resetButton, SIGNAL(pressed()), this, SLOT(ResetViews()));
   connect(this->saveView1Button, SIGNAL(pressed()), view1, SLOT(saveViewSlot()));
+  connect(this->saveView4Button, SIGNAL(pressed()), view4, SLOT(saveViewSlot()));
+  connect(this->saveView3Button, SIGNAL(pressed()), view3, SLOT(saveViewSlot()));
 
   connect(view1,SIGNAL(matrixChanged(vtkMatrix4x4*)),view2,SLOT(updateMatrix1(vtkMatrix4x4*)));
   connect(view4,SIGNAL(matrixChanged(vtkMatrix4x4*)),view2,SLOT(updateMatrix2(vtkMatrix4x4*)));
@@ -294,6 +296,16 @@ void usResliceMatrixViewer::setupUi() {
   saveView1Button->setObjectName(QString::fromUtf8("saveView1Button"));
   saveView1Button->setText(QString::fromUtf8("Save view 1"));
   saveView1Button->setGeometry(QRect(screenRect.width() - 180, 80, 160, 31));
+
+  saveView4Button = new QPushButton(this);
+  saveView4Button->setObjectName(QString::fromUtf8("saveView4Button"));
+  saveView4Button->setText(QString::fromUtf8("Save view 4"));
+  saveView4Button->setGeometry(QRect(screenRect.width() - 180, 130, 160, 31));
+
+  saveView3Button = new QPushButton(this);
+  saveView3Button->setObjectName(QString::fromUtf8("saveView3Button"));
+  saveView3Button->setText(QString::fromUtf8("Save view 3"));
+  saveView3Button->setGeometry(QRect(screenRect.width() - 180, 180, 160, 31));
 }
 
 /**
@@ -307,6 +319,8 @@ void usResliceMatrixViewer::resizeEvent(QResizeEvent* event)
     gridLayoutWidget->setGeometry(QRect(10, 10, event->size().width() - 220, event->size().height() - 20));
     resetButton->setGeometry(QRect(event->size().width() - 180, 30, 160, 31));
     saveView1Button->setGeometry(QRect(event->size().width() - 180, 80, 160, 31));
+    saveView4Button->setGeometry(QRect(event->size().width() - 180, 130, 160, 31));
+    saveView3Button->setGeometry(QRect(event->size().width() - 180, 180, 160, 31));
   }
 }
 #endif

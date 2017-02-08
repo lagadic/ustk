@@ -53,6 +53,8 @@
 #include <vtkImageResliceMapper.h>
 #include <vtkArrowSource.h>
 #include <vtkMatrix4x4.h>
+#include <vtkSphereSource.h>
+#include <vtkProperty.h>
 
 #include <QPainter>
 #include <QPaintEngine>
@@ -76,6 +78,17 @@ us3DSceneWidget::us3DSceneWidget(QWidget* parent, Qt::WindowFlags f) : usViewerW
 
   renderer = vtkRenderer::New();
 
+  //add color spheres to planes
+  vtkSphereSource* sphereSource = vtkSphereSource::New();
+  sphereSource->SetRadius(0.01);
+  sphereSource->Update();
+
+  vtkPolyDataMapper* sphereMPapper = vtkPolyDataMapper::New();
+  sphereMPapper->SetInputConnection(sphereSource->GetOutputPort());
+  sphereActor = vtkActor::New();
+  sphereActor->SetMapper(sphereMPapper);
+  sphereActor->GetProperty()->SetColor(1.0, 0.0, 0.0);
+
 }
 
 /**
@@ -85,7 +98,6 @@ us3DSceneWidget::us3DSceneWidget(QWidget* parent, Qt::WindowFlags f) : usViewerW
 void us3DSceneWidget::paintEvent( QPaintEvent* event )
 {
   usViewerWidget::paintEvent( event );
-  //plane1->Print(std::cout);
 }
 
 /**
@@ -100,8 +112,6 @@ vtkImageData* us3DSceneWidget::getImageData() {
 * Init method : setup vtk pipeline. Make sure imageData and planes are set before calling init().
 */
 void us3DSceneWidget::init() {
-  //plane1->Print(std::cout);
-
   if(this->imageData == NULL)
     throw(vpException(vpException::fatalError, "no vtk image provided"));
 
@@ -124,9 +134,14 @@ void us3DSceneWidget::init() {
   imageSlice2->SetMapper(imageResliceMapper2);
   imageSlice3->SetMapper(imageResliceMapper3);
 
+  sphereActor->SetPosition(plane1->GetOrigin());
+
   //add axes in scene
   m_axesActor = vtkSmartPointer<vtkAxesActor>::New();
   //arrows of 1cm
+  m_axesActor->SetXAxisLabelText("U");
+  m_axesActor->SetYAxisLabelText("V");
+  m_axesActor->SetZAxisLabelText("W");
   m_axesActor->SetTotalLength(0.01,0.01,0.01);
 
   // Setup renderers
@@ -136,6 +151,7 @@ void us3DSceneWidget::init() {
   renderer->AddActor(imageSlice1);
   renderer->AddActor(imageSlice2);
   renderer->AddActor(imageSlice3);
+  //renderer->AddActor(sphereActor);
   renderer->SetBackground(0.5, 0.5, 0.5);
   renderer->ResetCamera();
 
@@ -244,7 +260,7 @@ void us3DSceneWidget::updateMatrix1(vtkMatrix4x4* matrix) {
   origin[2] = matrix->Element[2][3];
   plane1->SetOrigin(origin);
 
-  //Rotation ?
+  //Rotation
   vpRotationMatrix rMat;
   vpHomogeneousMatrix hMat;
   usVTKConverter::convert(matrix,hMat);
@@ -259,7 +275,10 @@ void us3DSceneWidget::updateMatrix1(vtkMatrix4x4* matrix) {
 
   plane1->SetNormal(normal.data[0], normal.data[1], normal.data[2]);
 
-  //plane1->Print(std::cout);
+  sphereActor->SetPosition(imageSlice1->GetMinXBound(),
+                           imageSlice1->GetMinYBound(),
+                           imageSlice1->GetMinZBound());
+
   this->update();
 }
 
@@ -281,7 +300,7 @@ void us3DSceneWidget::updateMatrix2(vtkMatrix4x4* matrix) {
   origin[2] = matrix->Element[2][3];
   plane2->SetOrigin(origin);
 
-  //Rotation ?
+  //Rotation
   vpRotationMatrix rMat;
   vpHomogeneousMatrix hMat;
   usVTKConverter::convert(matrix,hMat);
@@ -296,7 +315,6 @@ void us3DSceneWidget::updateMatrix2(vtkMatrix4x4* matrix) {
 
   plane2->SetNormal(normal.data[0], normal.data[1], normal.data[2]);
 
-  //plane2->Print(std::cout);
   this->update();
 }
 
@@ -319,7 +337,7 @@ void us3DSceneWidget::updateMatrix3(vtkMatrix4x4* matrix) {
   origin[2] = matrix->Element[2][3];
   plane3->SetOrigin(origin);
 
-  //Rotation ?
+  //Rotation
   vpRotationMatrix rMat;
   vpHomogeneousMatrix hMat;
   usVTKConverter::convert(matrix,hMat);
@@ -334,7 +352,6 @@ void us3DSceneWidget::updateMatrix3(vtkMatrix4x4* matrix) {
 
   plane3->SetNormal(normal.data[0], normal.data[1], normal.data[2]);
 
-  //plane3->Print(std::cout);
   this->update();
 }
 
