@@ -275,7 +275,6 @@ void us3DSceneSlicing::updateRotX(int x) {
   double normal[3];
   plane1->GetNormal(normal);
   normal[0] = x/100.0 - 0.5;
-  std::cout << "updateRotX : n = " << normal[0] << "," << normal[0] << "," << normal[0] << std::endl;
   plane1->SetNormal(normal);
   view->update();
 }
@@ -287,7 +286,6 @@ void us3DSceneSlicing::updateRotY(int y) {
   double normal[3];
   plane1->GetNormal(normal);
   normal[1] = y/100.0 - 0.50;
-  std::cout << "updateRotY : n = " << normal[0] << "," << normal[0] << "," << normal[0] << std::endl;
   plane1->SetNormal(normal);
   view->update();
 }
@@ -299,7 +297,6 @@ void us3DSceneSlicing::updateRotZ(int z) {
   double normal[3];
   plane1->GetNormal(normal);
   normal[2] = z/100.0 - 0.50;
-  std::cout << "updateRotZ : n = " << normal[0] << "," << normal[0] << "," << normal[0] << std::endl;
   plane1->SetNormal(normal);
   double origin[3];
   plane1->GetOrigin(origin);

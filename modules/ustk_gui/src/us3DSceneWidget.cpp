@@ -120,8 +120,6 @@ void us3DSceneWidget::init() {
   if(this->imageData == NULL)
     throw(vpException(vpException::fatalError, "no vtk image provided"));
 
-  imageData->Print(std::cout);
-
   //show the widget
   imageResliceMapper1->SetInputData(this->imageData);
   imageResliceMapper2->SetInputData(this->imageData);
