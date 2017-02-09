@@ -92,8 +92,11 @@ public:
   //@{
   unsigned int getFrameNumber() const;
   double getFramePitch() const;
+  double getMotorFieldOfView() const;
   double getMotorRadius() const;
   usMotorType getMotorType() const;
+
+  bool frameNumberIsSet() const;
 
   usMotorSettings& operator=(const usMotorSettings& other);
   bool operator==(const usMotorSettings& other);
@@ -101,6 +104,7 @@ public:
   // Settings from the 3D probe
   void setFrameNumber(unsigned int frameNumber);
   void setFramePitch(double framePitch);
+  void setMotorFieldOfView(double motorFieldOfView);
   void setMotorRadius(double motorRadius);
   void setMotorSettings(const usMotorSettings &other);
   void setMotorType(const usMotorType &motorType);
@@ -114,6 +118,7 @@ private:
   double m_motorRadius;
   double m_framePitch;
   unsigned int m_frameNumber;
+  bool m_frameNumberIsSet;
   usMotorType m_motorType;
 };
 
