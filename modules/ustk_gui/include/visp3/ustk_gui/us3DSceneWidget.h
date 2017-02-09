@@ -57,6 +57,7 @@
 #include <vtkAxesActor.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkImagePlaneWidget.h>
+#include <vtkCellPicker.h>
 
 // Qt includes
 #if defined(USTK_HAVE_VTK_QT4)
@@ -64,6 +65,7 @@
 #  include <QtGui/QMainWindow>
 #  include <QtGui/QGridLayout>
 #  include <QtGui/QPushButton>
+#  include <QtGui/QKeyEvent>
 #elif defined USTK_HAVE_VTK_QT5
 #  include <QApplication>
 #  include <QtWidgets/QMainWindow>
@@ -128,6 +130,11 @@ public:
 
   void init();
 
+  void keyPressEvent(QKeyEvent *event);
+  void keyReleaseEvent(QKeyEvent *event);
+
+  void mousePressEvent(QMouseEvent *event);
+
   //Catch paint events, in case we want to display some informations (writing in this widget) over the vtk scene
   void paintEvent( QPaintEvent* event );
 
@@ -173,6 +180,10 @@ private:
 
   //vtk renderer
   vtkRenderer* renderer;
+
+  //picker
+  vtkCellPicker* cellPicker;
+  bool m_pPressed;
 
 };
 #endif

@@ -94,6 +94,9 @@ us3DSceneWidget::us3DSceneWidget(QWidget* parent, Qt::WindowFlags f) : usViewerW
   sphereActor->SetMapper(sphereMPapper);
   sphereActor->GetProperty()->SetColor(1.0, 0.0, 0.0);
 
+  cellPicker = vtkCellPicker::New();
+  cellPicker->SetTolerance(0.0005);
+  m_pPressed = false;
 }
 
 /**
@@ -164,7 +167,7 @@ void us3DSceneWidget::init() {
   planeBorder1->GetProperty()->SetColor(1.0,0,0);
   planeBorder1->GetProperty()->SetOpacity(1.0);
   planeBorder1->GetProperty()->SetLighting(0);
-  planeBorder1->GetProperty()->SetLineWidth(3);
+  planeBorder1->GetProperty()->SetLineWidth(1);
   planeBorder1->SetMapper(cutterMapper1);
 
   //Plane border 2
@@ -422,4 +425,56 @@ void us3DSceneWidget::updateMatrix3(vtkMatrix4x4* matrix) {
   this->update();
 }
 
+/**
+* Key press event catcher. P key to pick a voxel in a plane displayed in the scene.
+*/
+void us3DSceneWidget::keyPressEvent(QKeyEvent *event) {
+  //for picking operations
+  if(event->key() == Qt::Key_P) {
+    m_pPressed = true;
+  }
+  event->accept();
+}
+
+/**
+* Key release event catcher, to disable key pressed booleans.
+*/
+void us3DSceneWidget::keyReleaseEvent(QKeyEvent *event) {
+  if(event->key() == Qt::Key_P) {
+    m_pPressed = false;
+  }
+  event->accept();
+}
+
+void us3DSceneWidget::mousePressEvent(QMouseEvent *event) {
+if(m_pPressed) {
+  int x = event->pos().x();
+  int y = event->pos().y();
+  std::cout << "Pick (x,y) = (" << x << "," << y << ")" << std::endl;
+
+  cellPicker->Pick(x,y,0,renderer);
+
+  double p[3];
+  cellPicker->GetPickPosition(p);
+  std::cout << "Picked in plane coords = " << p[0] << " " << p[1] << " " << p[2]  << std::endl;
+  /*vpTranslationVector picked;
+  picked.data[0] = p[0];
+  picked.data[1] = p[1];
+  picked.data[2] = p[2];
+
+  vpHomogeneousMatrix Mcurrent;
+  usVTKConverter::convert(m_resliceMatrix,Mcurrent);
+
+  vpTranslationVector tVec;
+  Mcurrent.extract(tVec);
+
+  //picked = picked - tVec;
+
+  //picked = Mcurrent.inverse() * picked;
+  //picked = Mcurrent * picked;
+
+  std::cout << "Picked value: " << picked[0] << " " << picked[1] << " " << picked[2] << std::endl;*/
+  }
+  usViewerWidget::mousePressEvent(event);
+}
 #endif

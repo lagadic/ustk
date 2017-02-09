@@ -68,7 +68,10 @@ us2DSceneWidget::us2DSceneWidget(QWidget* parent, Qt::WindowFlags f) : usViewerW
 
   m_cubeActor = vtkAnnotatedCubeActor::New();
 
+  m_pointPicker = vtkPointPicker::New();
+
   m_rPressed = false;
+  m_pPressed = false;
   m_mousePressed = false;
 
   //disable tracking to receive only mouse move events if a button is pressed
@@ -117,6 +120,7 @@ void us2DSceneWidget::init() {
   m_reslice->SetResliceAxes(m_resliceMatrix);
   m_reslice->SetInterpolationModeToLinear();
 
+
   //To ensure no part of the image will be cropped
   m_reslice->AutoCropOutputOn();
 
@@ -135,6 +139,7 @@ void us2DSceneWidget::init() {
   m_actor->GetMapper()->SetInputConnection(m_color->GetOutputPort());
 
   m_renderer->AddActor(m_actor);
+  //m_pointPicker->PickFromListOn();
 
   // Setup render window
   vtkRenderWindow* renderWindow = this->GetRenderWindow();
@@ -143,9 +148,9 @@ void us2DSceneWidget::init() {
   // Set up the interaction
   vtkSmartPointer<vtkInteractorStyleImage> imageStyle =
       vtkSmartPointer<vtkInteractorStyleImage>::New();
-  imageStyle->SetInteractionModeToImageSlicing();
 
   renderWindow->GetInteractor()->SetInteractorStyle(imageStyle);
+  imageStyle->EnabledOff();
 }
 
 /**
@@ -213,21 +218,27 @@ void us2DSceneWidget::wheelEvent(QWheelEvent *event) {
 }
 
 /**
-* Key press event catcher (R key), to enable rotation mode.
+* Key press event catcher. R key to enable rotation mode, P key to pick a voxel.
 */
 void us2DSceneWidget::keyPressEvent(QKeyEvent *event) {
   if(event->key() == Qt::Key_H) {
     m_rPressed = true;
   }
+  else if(event->key() == Qt::Key_P) {
+    m_pPressed = true;
+  }
   event->accept();
 }
 
 /**
-* Key press event catcher (R key), to disable rotation mode.
+* Key press event catcher. R key to enable rotation mode, P key to pick a voxel.
 */
 void us2DSceneWidget::keyReleaseEvent(QKeyEvent *event) {
   if(event->key() == Qt::Key_H) {
     m_rPressed = false;
+  }
+  else if(event->key() == Qt::Key_P) {
+    m_pPressed = false;
   }
   event->accept();
 }
@@ -270,7 +281,7 @@ void 	us2DSceneWidget::mouseMoveEvent(QMouseEvent * event) {
   }
   else {
     //propagate event to allow colormap change in vtk
-    usViewerWidget::mouseMoveEvent(event);
+    //usViewerWidget::mouseMoveEvent(event);
   }
 }
 
@@ -288,25 +299,44 @@ void 	us2DSceneWidget::saveViewSlot() {
   writer->SetInputConnection(m_reslice->GetOutputPort());
   writer->Write();
 }
-/*
+
 void us2DSceneWidget::mousePressEvent(QMouseEvent *event) {
-if(event->button() == Qt::LeftButton) {
-  std::cout << "Pressed left mouse button." << std::endl;
+if(m_pPressed) {
   int x = event->pos().x();
   int y = event->pos().y();
-  std::cout << "(x,y) = (" << x << "," << y << ")" << std::endl;
-  vtkSmartPointer<vtkCoordinate> coordinate =
-      vtkSmartPointer<vtkCoordinate>::New();
-  coordinate->SetCoordinateSystemToDisplay();
-  coordinate->SetValue(x,y,0);
+  std::cout << "Pick (x,y) = (" << x << "," << y << ")" << std::endl;
 
-  // working if zoomed ???
-  double* world = coordinate->GetComputedWorldValue(m_renderer);
-  std::cout << "World coordinate: " << world[0] << ", " << world[1] << ", " << world[2] << std::endl;
+
+
+
+  m_pointPicker->Pick(x,y,0,m_renderer);
+  std::cout << "vtk matrices for view zoom/translatons" << std::endl;
+  m_renderer->Print(std::cout);
+
+  double p[3];
+  m_pointPicker->GetPickPosition(p);
+  std::cout << "Picked in plane coords = " << p[0] << " " << p[1] << " " << p[2]  << std::endl;
+  vpTranslationVector picked;
+  picked.data[0] = p[0];
+  picked.data[1] = p[1];
+  picked.data[2] = p[2];
+
+  vpHomogeneousMatrix Mcurrent;
+  usVTKConverter::convert(m_resliceMatrix,Mcurrent);
+
+  vpTranslationVector tVec;
+  Mcurrent.extract(tVec);
+
+  //picked = picked - tVec;
+
+  picked = Mcurrent.inverse() * picked;
+  //picked = Mcurrent * picked;
+
+  std::cout << "Picked value: " << picked[0] << " " << picked[1] << " " << picked[2] << std::endl;
   }
-  usViewerWidget::mousePressEvent(event);
+  //usViewerWidget::mousePressEvent(event);
 }
-*/
+
 
 void us2DSceneWidget::setColor(double r,double g,double b) {
   m_renderer->SetBackground(r,g,b);

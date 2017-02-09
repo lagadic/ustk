@@ -87,6 +87,8 @@
 #include <vtkAnnotatedCubeActor.h>
 #include <vtkPNGWriter.h>
 #include <vtkCoordinate.h>
+#include <vtkPointPicker.h>
+#include <vtkPoints.h>
 
 
 // Qt includes
@@ -136,7 +138,7 @@ public:
   void keyReleaseEvent(QKeyEvent *event);
 
   void 	mouseMoveEvent(QMouseEvent * event);
-  //void 	mousePressEvent(QMouseEvent * event);
+  void 	mousePressEvent(QMouseEvent * event);
   //void 	mouseReleaseEvent(QMouseEvent * event);
 
   //Catch paint events, in case we want to display some informations (writing in this widget) over the vtk scene
@@ -190,8 +192,12 @@ private:
   //vtk renderer
   vtkRenderer* m_renderer;
 
+  //vtk renderer
+  vtkPointPicker* m_pointPicker;
+
   //to know if r key is currently pressed
   bool m_rPressed;
+  bool m_pPressed;
 
   //mouse button pressed
   bool m_mousePressed;
