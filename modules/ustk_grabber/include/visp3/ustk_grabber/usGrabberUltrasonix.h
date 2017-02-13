@@ -34,7 +34,6 @@
 /**
  * @file usGrabberUltrasonix.h
  * @brief Ultrasonix data grabber.
- * @author Pierre Chatelain
  */
 
 #ifndef __usGrabberUltrasonix_h_

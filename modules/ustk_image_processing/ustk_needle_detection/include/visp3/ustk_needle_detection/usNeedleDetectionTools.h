@@ -65,8 +65,7 @@
 /**
  * @namespace usNeedleDetectionTools
  * @brief Basic tools for needle detection.
- * @author Pierre Chatelain
- * @date 2013-09-09
+ * @ingroup module_ustk_needle_detection
  *
  * This class implements diverse tools for 3D point cloud processing.
  *
