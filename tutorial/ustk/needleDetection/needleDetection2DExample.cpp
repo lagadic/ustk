@@ -147,7 +147,6 @@ bool getOptions(int argc, const char **argv, std::string &opath, const std::stri
 int main(int argc, const char *argv[])
 {
   std::string opt_opath;
-  std::string ipath;
   std::string username;
 
   char *logFilename = new char [FILENAME_MAX];
@@ -188,10 +187,33 @@ int main(int argc, const char *argv[])
                 << "ERROR:" << std::endl;
       std::cerr << "  Cannot create " << dirname << std::endl;
       std::cerr << "  Check your -o " << opath << " option " << std::endl;
+      delete[] opath;
       exit(-1);
     }
   }
 
+
+  std::string xml_filename;
+
+  for (int i=0; i<argc; i++) {
+    if (std::string(argv[i]) == "--input")
+      xml_filename = std::string(argv[i+1]);
+    else if (std::string(argv[i]) == "--help") {
+      std::cout << "\nUsage: " << argv[0] << " [--input <needleSequence.xml>] [--help]\n" << std::endl;
+      return 0;
+    }
+  }
+
+  // Get the ustk-dataset package path or USTK_DATASET_PATH environment variable value
+  if (xml_filename.empty()) {
+    std::string env_ipath = us::getDataSetPath();
+    if (! env_ipath.empty())
+      xml_filename = env_ipath + "/needle/water_bath_minimal_noise_png/sequence.xml";
+    else {
+      std::cout << "You should set USTK_DATASET_PATH environment var to access to ustk dataset" << std::endl;
+      return 0;
+    }
+  }
 
 
 
@@ -202,7 +224,7 @@ int main(int argc, const char *argv[])
   ///////////////////////////////////////////////////////////////////////
 
   usSequenceReader<usImagePostScan2D<unsigned char> > reader;
-  reader.setSequenceFileName("/home/mpouliqu/Documents/usData/needle/water_bath_minimal_noise_png/sequence.xml");
+  reader.setSequenceFileName(xml_filename);
 
   // Read the first image
   usImagePostScan2D<unsigned char> I;
@@ -228,7 +250,7 @@ int main(int argc, const char *argv[])
   vpDisplay::flush(I);
 
   // Initialize the needle model
-  us2DNeedleModel needle(2);
+  usPolynomialCurve2D needle(2);
   vpMatrix controlPoints(2, 2);
   vpImagePoint P;
 

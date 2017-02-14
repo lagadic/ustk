@@ -1,28 +1,29 @@
 /****************************************************************************
  *
- * This file is part of the UsTk software.
- * Copyright (C) 2014 by Inria. All rights reserved.
+ * This file is part of the ustk software.
+ * Copyright (C) 2016 - 2017 by Inria. All rights reserved.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License ("GPL") as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * See the file COPYING at the root directory of this source
+ * This software is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * ("GPL") version 2 as published by the Free Software Foundation.
+ * See the file LICENSE.txt at the root directory of this source
  * distribution for additional information about the GNU GPL.
  *
+ * For using ustk with software that can not be combined with the GNU
+ * GPL, please contact Inria about acquiring a ViSP Professional
+ * Edition License.
+ *
  * This software was developed at:
- * INRIA Rennes - Bretagne Atlantique
+ * Inria Rennes - Bretagne Atlantique
  * Campus Universitaire de Beaulieu
  * 35042 Rennes Cedex
  * France
- * http://www.irisa.fr/lagadic
  *
- * If you have questions regarding the use of this file, please contact the
- * authors at Alexandre.Krupa@inria.fr
+ * If you have questions regarding the use of this file, please contact
+ * Inria at ustk@inria.fr
  *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
  *
  * Authors:
  * Pierre Chatelain
@@ -47,7 +48,7 @@
 * Basic Constructor, all settings set to default.
 */
 usMotorSettings::usMotorSettings()
-  : m_motorRadius(0.0), m_framePitch(0.0), m_motorType(LinearMotor)
+  : m_motorRadius(0.0), m_framePitch(0.0), m_frameNumberIsSet(false),m_motorType(LinearMotor)
 {}
 
 /**
@@ -59,7 +60,7 @@ usMotorSettings::usMotorSettings()
 */
 usMotorSettings::usMotorSettings(double motorRadius, double framePitch,
                                  unsigned int frameNumber, const usMotorType &motorType)
-  : m_motorRadius(motorRadius), m_framePitch(framePitch), m_frameNumber(frameNumber), m_motorType(motorType)
+  : m_motorRadius(motorRadius), m_framePitch(framePitch), m_frameNumber(frameNumber),m_frameNumberIsSet(true), m_motorType(motorType)
 {
 
 }
@@ -70,7 +71,7 @@ usMotorSettings::usMotorSettings(double motorRadius, double framePitch,
 */
 usMotorSettings::usMotorSettings(const usMotorSettings &other)
   : m_motorRadius(other.getMotorRadius()), m_framePitch(other.getFramePitch()),
-    m_frameNumber(other.getFrameNumber()), m_motorType(other.getMotorType())
+    m_frameNumber(other.getFrameNumber()), m_frameNumberIsSet(other.frameNumberIsSet()), m_motorType(other.getMotorType())
  {
 
  }
@@ -89,6 +90,7 @@ usMotorSettings& usMotorSettings::operator=(const usMotorSettings& other)
   m_motorRadius = other.getMotorRadius();
   m_framePitch = other.getFramePitch();
   m_frameNumber = other.getFrameNumber();
+  m_frameNumberIsSet= other.frameNumberIsSet();
   m_motorType = other.getMotorType();
   return *this;
 }
@@ -102,6 +104,7 @@ bool usMotorSettings::operator==(const usMotorSettings& other)
 {
   return (this->getFramePitch() == other.getFramePitch() &&
           this->getFrameNumber() == other.getFrameNumber() &&
+          this->frameNumberIsSet() == other.frameNumberIsSet() &&
           this->getMotorRadius() == other.getMotorRadius() &&
           this->getMotorType() == other.getMotorType());
 }
@@ -201,4 +204,42 @@ void usMotorSettings::setMotorSettings(const usMotorSettings &other)
 void usMotorSettings::setFrameNumber(unsigned int frameNumber)
 {
   m_frameNumber = frameNumber;
+  m_frameNumberIsSet = true;
+}
+
+/**
+* Getter to know if the scan frame is set (usefull in case of field of view setter call).
+* @return Boolean to know if the frame number is set or not.
+*/
+bool usMotorSettings::frameNumberIsSet() const {
+  return m_frameNumberIsSet;
+}
+
+/**
+* Getter for the motor field of view (based on frame number and pitch).
+* @return The motor field of view in radians if the probe is convex, in meters if it is linear.
+*/
+double usMotorSettings::getMotorFieldOfView() const {
+  if(!m_frameNumberIsSet)
+    throw vpException(vpException::notInitialized, "The frame number is not set, cannot determine the field of view");
+  return m_framePitch  * (double) (m_frameNumber -1);
+}
+
+/**
+  Setter for the motor field of view (updates the frame pitch).
+  @param fieldOfView The motor field of view in radians if the motor is convex, in meters
+  if the motor is linear.
+  @warning Be sure to use setFrameNumber() to update the frame number before the field of view
+  since this method computes the frame pitch from the field of view and the frame pitch.
+\code
+  usMotorSettings motorSettings;
+
+  motorSettings.setFrameNumber(128);
+  motorSettings.setMotorFieldOfView(vpMath::rad(57.0)); // field of view is 57 deg
+\endcode
+*/
+void usMotorSettings::setMotorFieldOfView(double motorFieldOfView) {
+  if(!m_frameNumberIsSet)
+    throw vpException(vpException::notInitialized, "The frame number is not set, cannot determine the pitch from the field of view");
+  m_framePitch = motorFieldOfView / (double) (m_frameNumber - 1);
 }

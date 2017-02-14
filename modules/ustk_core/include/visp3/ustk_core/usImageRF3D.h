@@ -1,41 +1,42 @@
 /****************************************************************************
-*
-* This file is part of the UsTk software.
-* Copyright (C) 2014 by Inria. All rights reserved.
-*
-* This program is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License ("GPL") as
-* published by the Free Software Foundation, either version 3 of the
-* License, or (at your option) any later version.
-* See the file COPYING at the root directory of this source
-* distribution for additional information about the GNU GPL.
-*
-* This software was developed at:
-* INRIA Rennes - Bretagne Atlantique
-* Campus Universitaire de Beaulieu
-* 35042 Rennes Cedex
-* France
-* http://www.irisa.fr/lagadic
-*
-* If you have questions regarding the use of this file, please contact the
-* authors at Alexandre.Krupa@inria.fr
-*
-* This file is provided AS IS with NO WARRRFSampleNumberTY OF RFSampleNumberY KIND, INCLUDING THE
-* WARRRFSampleNumberTY OF DESIGN, MERCHRFSampleNumberTABILITY RFSampleNumberD FITNESS FOR A PARTICULAR PURPOSE.
-*
-*
-* Authors:
-* Marc Pouliquen
-*
-*****************************************************************************/
+ *
+ * This file is part of the ustk software.
+ * Copyright (C) 2016 - 2017 by Inria. All rights reserved.
+ *
+ * This software is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * ("GPL") version 2 as published by the Free Software Foundation.
+ * See the file LICENSE.txt at the root directory of this source
+ * distribution for additional information about the GNU GPL.
+ *
+ * For using ustk with software that can not be combined with the GNU
+ * GPL, please contact Inria about acquiring a ViSP Professional
+ * Edition License.
+ *
+ * This software was developed at:
+ * Inria Rennes - Bretagne Atlantique
+ * Campus Universitaire de Beaulieu
+ * 35042 Rennes Cedex
+ * France
+ *
+ * If you have questions regarding the use of this file, please contact
+ * Inria at ustk@inria.fr
+ *
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * Authors:
+ * Marc Pouliquen
+ *
+ *****************************************************************************/
 
 /**
 * @file usImageRF3D.h
 * @brief 3D RF ultrasound image.
 */
 
-#ifndef US_IMAGE_RF_3D_H
-#define US_IMAGE_RF_3D_H
+#ifndef __usImageRF3D_h_
+#define __usImageRF3D_h_
 
 #include <cstring>
 
@@ -144,6 +145,8 @@ public:
   virtual ~usImageRF3D();
 
   unsigned int getRFSampleNumber() const ;
+
+  void insertFrame(vpImage<Type> frame, unsigned int index);
 
   usImageRF3D<Type>& operator=(const usImageRF3D<Type> &other);
   bool operator==(const usImageRF3D<Type> &other);
@@ -311,6 +314,33 @@ void usImageRF3D<Type>::resize(unsigned int dimX, unsigned int dimY, unsigned in
   usMotorSettings::setFrameNumber(dimZ);
   usTransducerSettings::setScanLineNumber(dimX);
   usImage3D<Type>::resize(dimX, dimY, dimZ);
+}
+
+/**
+ * Insert at a given index to update the volume while grabbing successive 2D frames.
+ * @param frame The 2D frame to insert.
+ * @param index Position to insert the frame in the volume.
+ */
+template<class Type>
+void usImageRF3D<Type>::insertFrame(vpImage<Type> frame, unsigned int index)
+{
+  //Dimentions checks
+  if(index > this->getDimZ())
+    throw(vpException(vpException::badValue,"usImage3D::insertFrame : frame index out of volume"));
+
+  if(frame.getHeight() != this->getDimY() || frame.getWidth() != this->getDimX())
+    throw(vpException(vpException::badValue,"usImage3D::insertFrame : frame size don't match volume size"));
+
+  //offset to access the frame in the volume
+  int offset = index * this->getDimY() * this->getDimX();
+  Type* frameBeginning = this->getData() + offset;
+
+  //copy
+  for(unsigned int i=0; i<this->getDimX(); i++) {
+    for(unsigned int j=0; j<this->getDimY(); j++) {
+      frameBeginning[i + this->getDimX() * j] = frame[j][i];
+    }
+  }
 }
 
 #endif // US_IMAGE_RF_3D_H

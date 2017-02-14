@@ -1,28 +1,29 @@
 /****************************************************************************
  *
- * This file is part of the UsTk software.
- * Copyright (C) 2014 by Inria. All rights reserved.
+ * This file is part of the ustk software.
+ * Copyright (C) 2016 - 2017 by Inria. All rights reserved.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License ("GPL") as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * See the file COPYING at the root directory of this source
+ * This software is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * ("GPL") version 2 as published by the Free Software Foundation.
+ * See the file LICENSE.txt at the root directory of this source
  * distribution for additional information about the GNU GPL.
  *
+ * For using ustk with software that can not be combined with the GNU
+ * GPL, please contact Inria about acquiring a ViSP Professional
+ * Edition License.
+ *
  * This software was developed at:
- * INRIA Rennes - Bretagne Atlantique
+ * Inria Rennes - Bretagne Atlantique
  * Campus Universitaire de Beaulieu
  * 35042 Rennes Cedex
  * France
- * http://www.irisa.fr/lagadic
  *
- * If you have questions regarding the use of this file, please contact the
- * authors at Alexandre.Krupa@inria.fr
+ * If you have questions regarding the use of this file, please contact
+ * Inria at ustk@inria.fr
  *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
  *
  * Authors:
  * Alexandre Krupa
@@ -33,11 +34,10 @@
 /**
  * @file usGrabberUltrasonix.h
  * @brief Ultrasonix data grabber.
- * @author Pierre Chatelain
  */
 
-#ifndef US_GRABBER_ULTRASONIX_H
-#define US_GRABBER_ULTRASONIX_H
+#ifndef __usGrabberUltrasonix_h_
+#define __usGrabberUltrasonix_h_
 
 #ifndef _WIN32
 
@@ -55,7 +55,7 @@
 
 #include <visp3/core/vpTime.h>
 
-
+#include <visp3/ustk_core/us.h>
 //usImages
 #include <visp3/ustk_core/usImagePostScan2D.h>
 #include <visp3/ustk_core/usImagePreScan2D.h>
@@ -87,32 +87,26 @@ class VISP_EXPORT usGrabberUltrasonix {
   struct SocketHeader3D
   {
     double startTime;
-    int type;
-    int volumes;
-    int fpv;
-    int w;
-    int h;
-    int ss;
-    int degPerFr;
-    int BSampleFreq; // hz
+    int imageType; // 0: prescan 1: postscan 2: rf
+    int volumeNumber; // Number of volumes in the sequence
+    int framesPerVolume; // Frames per volumes
+    int width; // Frame width (scan line number)
+    int height; // Frame height (sample number)
+    int sampleSize; // Sample size (in bits)
+    int degPerFr; // TO RENAME ! Frame pitch (check if the value is correct) (x 1000?)
+    int BSampleFreq; // Sampling frequency (Hz)
     int ProbeElementPitch; //micron
     int ProbeRadius; //micron
     int MotorRadius; //micron
-    int framerate;
+    int framerate; // Frames per second
   };
 #endif //DOXYGEN_SHOULD_SKIP_THIS
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
   struct usGrabberCommunicationInformations
   {
   int m_serv_fd;
   int m_cli_fd;
-#ifdef TCP
   socklen_t m_clilen;
-#endif // TCP
-#ifdef UDP
-  int m_clilen;
-#endif // UDP
   struct sockaddr_in m_serv_addr;
   struct sockaddr_in m_cli_addr;
   SocketHeader3D m_header;
@@ -130,16 +124,6 @@ class VISP_EXPORT usGrabberUltrasonix {
   int m_frmIdx;
   double m_frameRate;
   };
-#endif //DOXYGEN_SHOULD_SKIP_THIS
-
-  /*! Enum to return the grabbed image type
-  It's known only in start(), when we read the header sent from the ultrasound station.*/
-  typedef enum{
-    TYPE_UNKNOWN = -1,  /*!< Unkownn format. */
-    TYPE_RF,            /*!< Case of RF image. */
-    TYPE_PRESCAN,       /*!< Case of pre-scan image. */
-    TYPE_POSTSCAN       /*!< Case of post-scan image. */
-  } usGrabberUltrasonixImageType;
 
   /**
    * Constructor
@@ -153,7 +137,7 @@ class VISP_EXPORT usGrabberUltrasonix {
 
   usGrabberCommunicationInformations* getCommunicationsInformations(){return &m_communicationInormations;}
 
-  usGrabberUltrasonixImageType getImageType() const {return m_imageType;}
+  us::ImageType getImageType() const {return m_imageType;}
 
   /**
    * Get the frame rate.
@@ -184,6 +168,10 @@ class VISP_EXPORT usGrabberUltrasonix {
    */
   void start();
 
+  usMotorSettings getMotorSettings() const {return m_motorSettings;}
+
+  //void grabFrame( ImageType * imageToWrite);
+
   /**
    * Close input connection.
    */
@@ -196,7 +184,7 @@ class VISP_EXPORT usGrabberUltrasonix {
 
   usGrabberCommunicationInformations m_communicationInormations;
 
-  usGrabberUltrasonixImageType m_imageType;
+  us::ImageType m_imageType;
 };
 #endif // _WIN32
 #endif // US_GRABBER_ULTRASONIX_H

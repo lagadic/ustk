@@ -1,33 +1,34 @@
 /****************************************************************************
-*
-* This file is part of the UsTk software.
-* Copyright (C) 2014 by Inria. All rights reserved.
-*
-* This program is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License ("GPL") as
-* published by the Free Software Foundation, either version 3 of the
-* License, or (at your option) any later version.
-* See the file COPYING at the root directory of this source
-* distribution for additional information about the GNU GPL.
-*
-* This software was developed at:
-* INRIA Rennes - Bretagne Atlantique
-* Campus Universitaire de Beaulieu
-* 35042 Rennes Cedex
-* France
-* http://www.irisa.fr/lagadic
-*
-* If you have questions regarding the use of this file, please contact the
-* authors at Alexandre.Krupa@inria.fr
-*
-* This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-* WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-*
-*
-* Authors:
-* Marc Pouliquen
-*
-*****************************************************************************/
+ *
+ * This file is part of the ustk software.
+ * Copyright (C) 2016 - 2017 by Inria. All rights reserved.
+ *
+ * This software is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * ("GPL") version 2 as published by the Free Software Foundation.
+ * See the file LICENSE.txt at the root directory of this source
+ * distribution for additional information about the GNU GPL.
+ *
+ * For using ustk with software that can not be combined with the GNU
+ * GPL, please contact Inria about acquiring a ViSP Professional
+ * Edition License.
+ *
+ * This software was developed at:
+ * Inria Rennes - Bretagne Atlantique
+ * Campus Universitaire de Beaulieu
+ * 35042 Rennes Cedex
+ * France
+ *
+ * If you have questions regarding the use of this file, please contact
+ * Inria at ustk@inria.fr
+ *
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * Authors:
+ * Marc Pouliquen
+ *
+ *****************************************************************************/
 
 /**
 * @file usSequenceWriter.h
@@ -36,8 +37,8 @@
 * This class is used to write multiple ultrasound images.
 */
 
-#ifndef US_SEQUENCE_WRITER_H
-#define US_SEQUENCE_WRITER_H
+#ifndef __usSequenceWriter_h_
+#define __usSequenceWriter_h_
 
 #include <cstring>
 #include <iostream>
@@ -241,7 +242,7 @@ void usSequenceWriter< usImageRF2D < unsigned char > >::close()
     m_frame.getScanLinePitch(),
     m_frame.isTransducerConvex(),
     m_frame.getAxialResolution(),
-    usImageSettingsXmlParser::IMAGE_TYPE_RF);
+    us::RF_2D);
   xmlParser.setSequenceFrameRate(m_frameRate);
   xmlParser.setSequenceStartNumber(m_firstFrame);
   xmlParser.setSequenceStopNumber(m_frameCount-1);
@@ -262,8 +263,8 @@ void usSequenceWriter < usImagePreScan2D < unsigned char > >::close()
     m_frame.getScanLinePitch(),
     m_frame.isTransducerConvex(),
     m_frame.getAxialResolution(),
-    usImageSettingsXmlParser::IMAGE_TYPE_PRESCAN);
-  xmlParser.setImageType(usImageSettingsXmlParser::IMAGE_TYPE_PRESCAN);
+    us::PRESCAN_2D);
+  xmlParser.setImageType(us::PRESCAN_2D);
   xmlParser.setSequenceFrameRate(m_frameRate);
   xmlParser.setSequenceStartNumber(m_firstFrame);
   xmlParser.setSequenceStopNumber(m_frameCount-1);
@@ -287,7 +288,7 @@ void usSequenceWriter<usImagePostScan2D<unsigned char> >::close()
     m_frame.getWidthResolution(),
     m_frame.getHeightResolution());
 
-  xmlParser.setImageType(usImageSettingsXmlParser::IMAGE_TYPE_POSTSCAN);
+  xmlParser.setImageType(us::POSTSCAN_2D);
   xmlParser.setSequenceFrameRate(m_frameRate);
   xmlParser.setSequenceStartNumber(m_firstFrame);
   xmlParser.setSequenceStopNumber(m_frameCount-1);

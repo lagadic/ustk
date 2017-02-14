@@ -1,28 +1,29 @@
 /****************************************************************************
  *
- * This file is part of the UsTk software.
- * Copyright (C) 2014 by Inria. All rights reserved.
+ * This file is part of the ustk software.
+ * Copyright (C) 2016 - 2017 by Inria. All rights reserved.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License ("GPL") as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * See the file COPYING at the root directory of this source
+ * This software is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * ("GPL") version 2 as published by the Free Software Foundation.
+ * See the file LICENSE.txt at the root directory of this source
  * distribution for additional information about the GNU GPL.
  *
+ * For using ustk with software that can not be combined with the GNU
+ * GPL, please contact Inria about acquiring a ViSP Professional
+ * Edition License.
+ *
  * This software was developed at:
- * INRIA Rennes - Bretagne Atlantique
+ * Inria Rennes - Bretagne Atlantique
  * Campus Universitaire de Beaulieu
  * 35042 Rennes Cedex
  * France
- * http://www.irisa.fr/lagadic
  *
- * If you have questions regarding the use of this file, please contact the
- * authors at Alexandre.Krupa@inria.fr
+ * If you have questions regarding the use of this file, please contact
+ * Inria at ustk@inria.fr
  *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
  *
  * Authors:
  * Marc Pouliquen
@@ -44,7 +45,7 @@ usImageSettingsXmlParser::usImageSettingsXmlParser()
   : m_transducerSettings(usTransducerSettings()),
     m_spacingX(0.0), m_spacingY(0.0), m_spacingZ(0.0),
     m_motorSettings(usMotorSettings()), m_imageFileName(std::string("")),
-    m_image_type(usImageSettingsXmlParser::IMAGE_TYPE_UNKNOWN), m_is_3D(false), m_is_sequence(false)
+    m_image_type(us::UNKNOWN), m_is_3D(false), m_is_sequence(false)
 {
   nodeMap["settings"] = CODE_XML_SETTINGS;
   nodeMap["image_type"] = CODE_XML_IMAGE_TYPE;
@@ -114,27 +115,26 @@ usImageSettingsXmlParser::readMainClass (xmlDocPtr doc, xmlNodePtr node)
         case CODE_XML_IMAGE_TYPE:
           value = xmlReadStringChild(doc, dataNode);
           if (strcmp(value.c_str(), "postscan") == 0) {
-            this->m_image_type = usImageSettingsXmlParser::IMAGE_TYPE_POSTSCAN;
+            this->m_image_type = us::POSTSCAN_2D;
           }
           else if (strcmp(value.c_str(), "prescan") == 0) {
-            this->m_image_type = usImageSettingsXmlParser::IMAGE_TYPE_PRESCAN;
+            this->m_image_type = us::PRESCAN_2D;
           }
           else if (strcmp(value.c_str(), "rf") == 0) {
-            this->m_image_type = usImageSettingsXmlParser::IMAGE_TYPE_RF;
+            this->m_image_type = us::RF_2D;
           }
           else
             throw(vpException(vpException::fatalError, std::string("unknown image type in xml file")));
           break;
-          value = "";
         case CODE_XML_AXIAL_RESOLUTION:
-          if (this->m_image_type == IMAGE_TYPE_PRESCAN || this->m_image_type == IMAGE_TYPE_RF) {
+          if (this->m_image_type == us::PRESCAN_2D || this->m_image_type == us::RF_2D) {
             this->m_axialResolution =  xmlReadDoubleChild(doc, dataNode);
           }
           else 
             throw(vpException(vpException::fatalError, std::string("Trying to assign an axial resolution to a post-scan image !")));
           break;
         case CODE_XML_HEIGHT_RESOLUTION:
-          if (this->m_image_type == IMAGE_TYPE_RF || this->m_image_type == IMAGE_TYPE_PRESCAN) {
+          if (this->m_image_type == us::RF_2D || this->m_image_type == us::PRESCAN_2D) {
             throw(vpException(vpException::fatalError, std::string("Trying to assign an height resolution to a pre-scan image !")));
           }
           else if(this->m_is_3D) {
@@ -144,7 +144,7 @@ usImageSettingsXmlParser::readMainClass (xmlDocPtr doc, xmlNodePtr node)
             this->m_heightResolution = xmlReadDoubleChild(doc, dataNode);
           break;
         case CODE_XML_WIDTH_RESOLUTION :
-          if (this->m_image_type == IMAGE_TYPE_RF || this->m_image_type == IMAGE_TYPE_PRESCAN) {
+          if (this->m_image_type == us::RF_2D || this->m_image_type == us::PRESCAN_2D) {
             throw(vpException(vpException::fatalError, std::string("Trying to assign an width resolution to a pre-scan image !")));
           }
           else if(this->m_is_3D) {
@@ -154,7 +154,7 @@ usImageSettingsXmlParser::readMainClass (xmlDocPtr doc, xmlNodePtr node)
             this->m_widthResolution = xmlReadDoubleChild(doc, dataNode);
           break;
         case CODE_XML_SPACING_X :
-          if (this->m_image_type == IMAGE_TYPE_RF || this->m_image_type == IMAGE_TYPE_PRESCAN) {
+          if (this->m_image_type == us::RF_2D || this->m_image_type == us::PRESCAN_2D) {
             throw(vpException(vpException::fatalError, std::string("Trying to assign a spacing to a pre-scan image !")));
           }
           else if(!this->m_is_3D) {
@@ -164,7 +164,7 @@ usImageSettingsXmlParser::readMainClass (xmlDocPtr doc, xmlNodePtr node)
             this->m_widthResolution = xmlReadDoubleChild(doc, dataNode);
           break;
                case CODE_XML_SPACING_Y :
-          if (this->m_image_type == IMAGE_TYPE_RF || this->m_image_type == IMAGE_TYPE_PRESCAN) {
+          if (this->m_image_type == us::RF_2D || this->m_image_type == us::PRESCAN_2D) {
             throw(vpException(vpException::fatalError, std::string("Trying to assign a spacing to a pre-scan image !")));
           }
           else if(!this->m_is_3D) {
@@ -174,7 +174,7 @@ usImageSettingsXmlParser::readMainClass (xmlDocPtr doc, xmlNodePtr node)
             this->m_widthResolution = xmlReadDoubleChild(doc, dataNode);
           break;
                 case CODE_XML_SPACING_Z :
-          if (this->m_image_type == IMAGE_TYPE_RF || this->m_image_type == IMAGE_TYPE_PRESCAN) {
+          if (this->m_image_type == us::RF_2D || this->m_image_type == us::PRESCAN_2D) {
             throw(vpException(vpException::fatalError, std::string("Trying to assign a spacing to a pre-scan image !")));
           }
           else if(!this->m_is_3D) {
@@ -184,7 +184,7 @@ usImageSettingsXmlParser::readMainClass (xmlDocPtr doc, xmlNodePtr node)
             this->m_widthResolution = xmlReadDoubleChild(doc, dataNode);
           break;
         case CODE_XML_SCANLINE_NUMBER :
-          if (this->m_image_type == IMAGE_TYPE_RF || this->m_image_type == IMAGE_TYPE_PRESCAN) {
+          if (this->m_image_type == us::RF_2D || this->m_image_type == us::PRESCAN_2D) {
             throw(vpException(vpException::fatalError, std::string("Trying to assign a scan line number to a pre-scan image (for pre-scan images scan line number is the image width) !")));
           } else
             this->m_transducerSettings.setScanLineNumber(xmlReadIntChild(doc, dataNode));
@@ -255,21 +255,21 @@ usImageSettingsXmlParser::writeMainClass(xmlNodePtr node)
 {
   std::string imageFileName = m_imageFileName;
   xmlWriteStringChild(node, "image_file_name", imageFileName);
-  if (this->m_image_type == IMAGE_TYPE_RF) {
+  if (this->m_image_type == us::RF_2D) {
     xmlWriteStringChild(node, "image_type", std::string("rf"));
     xmlWriteDoubleChild(node, "scanline_pitch", m_transducerSettings.getScanLinePitch());
     xmlWriteDoubleChild(node, "probe_radius", m_transducerSettings.getTransducerRadius());
     xmlWriteBoolChild(node, "is_probe_convex", m_transducerSettings.isTransducerConvex());
     xmlWriteDoubleChild(node, "axial_resolution", m_axialResolution);
   }
-  if (this->m_image_type == IMAGE_TYPE_PRESCAN) {
+  if (this->m_image_type == us::PRESCAN_2D) {
     xmlWriteStringChild(node, "image_type", std::string("prescan"));
     xmlWriteDoubleChild(node, "scanline_pitch", m_transducerSettings.getScanLinePitch());
     xmlWriteDoubleChild(node, "probe_radius", m_transducerSettings.getTransducerRadius());
     xmlWriteBoolChild(node, "is_probe_convex", m_transducerSettings.isTransducerConvex());
     xmlWriteDoubleChild(node, "axial_resolution", m_axialResolution);
   }
-  else if (this->m_image_type == IMAGE_TYPE_POSTSCAN) {
+  else if (this->m_image_type == us::POSTSCAN_2D) {
     xmlWriteStringChild(node, "image_type", std::string("postscan"));
     xmlWriteDoubleChild(node, "scanline_pitch", m_transducerSettings.getScanLinePitch());
     xmlWriteDoubleChild(node, "probe_radius", m_transducerSettings.getTransducerRadius());
@@ -317,9 +317,9 @@ usImageSettingsXmlParser::writeMainClass(xmlNodePtr node)
 * @param image_type : image type (rf or pre-scan).
 */
 void usImageSettingsXmlParser::setImageSettings(double transducerRadius, double scanLinePitch, bool isTransducerConvex,
-                                                double axialResolution, usImageType image_type)
+                                                double axialResolution, us::ImageType image_type)
 {
-  if (image_type == usImageSettingsXmlParser::IMAGE_TYPE_PRESCAN || image_type == usImageSettingsXmlParser::IMAGE_TYPE_RF)
+  if (image_type == us::PRESCAN_2D || image_type == us::RF_2D)
   {
     m_transducerSettings.setTransducerConvexity(isTransducerConvex);
     m_transducerSettings.setTransducerRadius(transducerRadius);
@@ -350,7 +350,7 @@ void usImageSettingsXmlParser::setImageSettings(double transducerRadius, double 
   m_transducerSettings.setScanLineNumber(scanLineNumber);
   m_heightResolution = widthResolution;
   m_widthResolution = heightResolution;
-  m_image_type = usImageSettingsXmlParser::IMAGE_TYPE_POSTSCAN;
+  m_image_type = us::POSTSCAN_2D;
 }
 
 /**

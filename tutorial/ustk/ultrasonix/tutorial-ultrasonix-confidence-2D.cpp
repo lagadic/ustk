@@ -40,26 +40,15 @@ vpMutex s_mutex_capture;
 vpThread::Return captureFunction(vpThread::Args args)
 {
   usGrabberUltrasonix grabber = *((usGrabberUltrasonix *) args);
-  usImageRF2D<unsigned char> m_frame_rf;
   usImagePreScan2D<unsigned char> m_frame_prescan;
-  usImagePostScan2D<unsigned char> m_frame_postscan;
 
-  //resizing images and saving image type in s_imageType
-  if(grabber.getImageType() == usGrabberUltrasonix::TYPE_RF) {      
-    s_imageType = usGrabberUltrasonix::TYPE_RF;
-    std::cout << "Error : you must send pre-scan images for this example" << std::endl;
-  }
-  else if(grabber.getImageType() == usGrabberUltrasonix::TYPE_PRESCAN) {
-    s_imageType = usGrabberUltrasonix::TYPE_PRESCAN;
-    m_frame_prescan.resize(grabber.getCommunicationsInformations()->m_header.h,
-                           grabber.getCommunicationsInformations()->m_header.w);
-  }
-  else if(grabber.getImageType() == usGrabberUltrasonix::TYPE_POSTSCAN) {
-    s_imageType = usGrabberUltrasonix::TYPE_POSTSCAN;
-    std::cout << "Error : you must send pre-scan images for this example" << std::endl;
+  if(grabber.getImageType() == us::PRESCAN_2D) {
+    s_imageType = us::PRESCAN_2D;
+    m_frame_prescan.resize(grabber.getCommunicationsInformations()->m_header.height,
+                           grabber.getCommunicationsInformations()->m_header.width);
   }
   else
-    throw(vpException(vpException::badValue,"unknown type of grabbed image"));
+    throw(vpException(vpException::badValue,"Error : you must send pre-scan 2D images for this example"));
 
   s_mutex_imageType.unlock();
 
@@ -72,7 +61,7 @@ vpThread::Return captureFunction(vpThread::Args args)
 
   while (! stop_capture_) {
     // Capture in progress
-    if(grabber.getImageType() == usGrabberUltrasonix::TYPE_PRESCAN) {
+    if(grabber.getImageType() == us::PRESCAN_2D) {
       grabberFramePreScan.grabFrame(&m_frame_prescan);
     }
 
@@ -84,7 +73,7 @@ vpThread::Return captureFunction(vpThread::Args args)
       else
         s_capture_state = capture_started;
 
-      if(grabber.getImageType() == usGrabberUltrasonix::TYPE_PRESCAN) {
+      if(grabber.getImageType() == us::PRESCAN_2D) {
         s_frame_prescan = m_frame_prescan;
       }
     }
@@ -94,6 +83,7 @@ vpThread::Return captureFunction(vpThread::Args args)
     vpMutex::vpScopedLock lock(s_mutex_capture);
     s_capture_state = capture_stopped;
   }
+  std::cout << "End of capture thread" << std::endl;
   return 0;
 }
 //! [capture-multi-threaded captureFunction]
@@ -135,14 +125,13 @@ vpThread::Return displayFunction(vpThread::Args args)
       // Create a copy of the captured frame
       {
        vpMutex::vpScopedLock lock(s_mutex_capture);
-       if(m_imageType == usGrabberUltrasonix::TYPE_PRESCAN) {
+       if(m_imageType == us::PRESCAN_2D ) {
          preScan_ = s_frame_prescan;
        }
        else {
          std::cout << "You must send pre-scan data from ultrasonix station for this example" << std::endl;
        }
       }
-
 
       //Confidence map
       scanlineConfidence.run(preScanConfidence_,preScan_);
@@ -154,12 +143,11 @@ vpThread::Return displayFunction(vpThread::Args args)
       scanConverter.run(preScan_,postScan_);
       scanConverter.run(preScanConfidence_, postScanConfidence_);
 
-
       // Check if we need to initialize the display with the first frame
       if (! display_initialized_) {
         // Initialize the display
 #if defined(VISP_HAVE_X11)
-        if(m_imageType == usGrabberUltrasonix::TYPE_PRESCAN) {
+        if(m_imageType == us::PRESCAN_2D) {
           d_preScan = new vpDisplayX(preScan_);
           d_conf = new vpDisplayX(preScanConfidence_);
           d_postScan = new vpDisplayX(postScan_);
@@ -168,7 +156,7 @@ vpThread::Return displayFunction(vpThread::Args args)
         }
 #endif
       }
-      if(m_imageType == usGrabberUltrasonix::TYPE_PRESCAN) {
+      if(m_imageType == us::PRESCAN_2D) {
         vpDisplay::display(preScan_);
         // Trigger end of acquisition with a mouse click
         vpDisplay::displayText(preScan_, 10, 10, "Click to exit...", vpColor::red);

@@ -42,20 +42,20 @@ vpThread::Return captureFunction(vpThread::Args args)
   usImagePostScan2D<unsigned char> m_frame_postscan;
 
   //resizing images and saving image type in s_imageType
-  if(grabber.getImageType() == usGrabberUltrasonix::TYPE_RF) {      
-    s_imageType = usGrabberUltrasonix::TYPE_RF;
-    m_frame_rf.resize(grabber.getCommunicationsInformations()->m_header.h,
-                      grabber.getCommunicationsInformations()->m_header.w);
+  if(grabber.getImageType() == us::RF_2D) {
+    s_imageType = us::RF_2D;
+    m_frame_rf.resize(grabber.getCommunicationsInformations()->m_header.height,
+                      grabber.getCommunicationsInformations()->m_header.width);
   }
-  else if(grabber.getImageType() == usGrabberUltrasonix::TYPE_PRESCAN) {
-    s_imageType = usGrabberUltrasonix::TYPE_PRESCAN;
-    m_frame_prescan.resize(grabber.getCommunicationsInformations()->m_header.h,
-                           grabber.getCommunicationsInformations()->m_header.w);
+  else if(grabber.getImageType() == us::PRESCAN_2D) {
+    s_imageType = us::PRESCAN_2D;
+    m_frame_prescan.resize(grabber.getCommunicationsInformations()->m_header.height,
+                           grabber.getCommunicationsInformations()->m_header.width);
   }
-  else if(grabber.getImageType() == usGrabberUltrasonix::TYPE_POSTSCAN) {
-    s_imageType = usGrabberUltrasonix::TYPE_POSTSCAN;
-    m_frame_postscan.resize(grabber.getCommunicationsInformations()->m_header.h,
-                            grabber.getCommunicationsInformations()->m_header.w);
+  else if(grabber.getImageType() == us::POSTSCAN_2D) {
+    s_imageType = us::POSTSCAN_2D;
+    m_frame_postscan.resize(grabber.getCommunicationsInformations()->m_header.height,
+                            grabber.getCommunicationsInformations()->m_header.width);
   }
   else
     throw(vpException(vpException::badValue,"unknown type of grabbed image"));
@@ -78,13 +78,13 @@ vpThread::Return captureFunction(vpThread::Args args)
 
   while (! stop_capture_) {
     // Capture in progress
-    if(grabber.getImageType() == usGrabberUltrasonix::TYPE_RF) {
+    if(grabber.getImageType() == us::RF_2D) {
        grabberFrameRF.grabFrame(&m_frame_rf);
     }
-    else if(grabber.getImageType() == usGrabberUltrasonix::TYPE_PRESCAN) {
+    else if(grabber.getImageType() == us::PRESCAN_2D) {
       grabberFramePreScan.grabFrame(&m_frame_prescan);
     }
-    else if(grabber.getImageType() == usGrabberUltrasonix::TYPE_POSTSCAN) {
+    else if(grabber.getImageType() == us::POSTSCAN_2D) {
       grabberFramePostScan.grabFrame(&m_frame_postscan);
     }
 
@@ -97,13 +97,13 @@ vpThread::Return captureFunction(vpThread::Args args)
       else
         s_capture_state = capture_started;
 
-      if(grabber.getImageType() == usGrabberUltrasonix::TYPE_RF) {
+      if(grabber.getImageType() == us::RF_2D) {
         s_frame_rf = m_frame_rf;
       }
-      else if(grabber.getImageType() == usGrabberUltrasonix::TYPE_PRESCAN) {
+      else if(grabber.getImageType() == us::PRESCAN_2D) {
         s_frame_prescan = m_frame_prescan;
       }
-      else if(grabber.getImageType() == usGrabberUltrasonix::TYPE_POSTSCAN) {
+      else if(grabber.getImageType() == us::POSTSCAN_2D) {
         s_frame_postscan = m_frame_postscan;
       }
     }
@@ -147,13 +147,13 @@ vpThread::Return displayFunction(vpThread::Args args)
       // Create a copy of the captured frame
       {
         vpMutex::vpScopedLock lock(s_mutex_capture);
-       if(m_imageType == usGrabberUltrasonix::TYPE_RF) {
+       if(m_imageType == us::RF_2D) {
           rf_ = s_frame_rf;
        }
-       else if(m_imageType == usGrabberUltrasonix::TYPE_PRESCAN) {
+       else if(m_imageType == us::PRESCAN_2D) {
          preScan_ = s_frame_prescan;
        }
-       else if(m_imageType == usGrabberUltrasonix::TYPE_POSTSCAN) {
+       else if(m_imageType == us::POSTSCAN_2D) {
          postScan_ = s_frame_postscan;
        }
       }
@@ -163,21 +163,21 @@ vpThread::Return displayFunction(vpThread::Args args)
       if (! display_initialized_) {
         // Initialize the display
 #if defined(VISP_HAVE_X11)
-        if(m_imageType == usGrabberUltrasonix::TYPE_RF) {
+        if(m_imageType == us::RF_2D) {
           d_ = new vpDisplayX(rf_);
           display_initialized_ = true;
         }
-        else if(m_imageType == usGrabberUltrasonix::TYPE_PRESCAN) {
+        else if(m_imageType == us::PRESCAN_2D) {
           d_ = new vpDisplayX(preScan_);
           display_initialized_ = true;
         }
-        else if(m_imageType == usGrabberUltrasonix::TYPE_POSTSCAN) {
+        else if(m_imageType == us::POSTSCAN_2D) {
           d_ = new vpDisplayX(postScan_);
           display_initialized_ = true;
         }
 #endif
       }
-      if(m_imageType == usGrabberUltrasonix::TYPE_RF) {
+      if(m_imageType == us::RF_2D) {
         // Display the image
         vpDisplay::display(rf_);
         // Trigger end of acquisition with a mouse click
@@ -189,7 +189,7 @@ vpThread::Return displayFunction(vpThread::Args args)
         // Update the display
         vpDisplay::flush(rf_);
       }
-      else if(m_imageType == usGrabberUltrasonix::TYPE_PRESCAN) {
+      else if(m_imageType == us::PRESCAN_2D) {
         vpDisplay::display(preScan_);
         // Trigger end of acquisition with a mouse click
         vpDisplay::displayText(preScan_, 10, 10, "Click to exit...", vpColor::red);
@@ -200,7 +200,7 @@ vpThread::Return displayFunction(vpThread::Args args)
         // Update the display
         vpDisplay::flush(preScan_);
       }
-      else if(m_imageType == usGrabberUltrasonix::TYPE_POSTSCAN) {
+      else if(m_imageType == us::POSTSCAN_2D) {
         vpDisplay::display(postScan_);
         // Trigger end of acquisition with a mouse click
         vpDisplay::displayText(postScan_, 10, 10, "Click to exit...", vpColor::red);

@@ -1,28 +1,29 @@
 /****************************************************************************
  *
- * This file is part of the UsTk software.
- * Copyright (C) 2014 by Inria. All rights reserved.
+ * This file is part of the ustk software.
+ * Copyright (C) 2016 - 2017 by Inria. All rights reserved.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License ("GPL") as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * See the file COPYING at the root directory of this source
+ * This software is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * ("GPL") version 2 as published by the Free Software Foundation.
+ * See the file LICENSE.txt at the root directory of this source
  * distribution for additional information about the GNU GPL.
  *
+ * For using ustk with software that can not be combined with the GNU
+ * GPL, please contact Inria about acquiring a ViSP Professional
+ * Edition License.
+ *
  * This software was developed at:
- * INRIA Rennes - Bretagne Atlantique
+ * Inria Rennes - Bretagne Atlantique
  * Campus Universitaire de Beaulieu
  * 35042 Rennes Cedex
  * France
- * http://www.irisa.fr/lagadic
  *
- * If you have questions regarding the use of this file, please contact the
- * authors at Alexandre.Krupa@inria.fr
+ * If you have questions regarding the use of this file, please contact
+ * Inria at ustk@inria.fr
  *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
  *
  * Authors:
  * Marc Pouliquen
@@ -35,8 +36,8 @@
  * (containing usTransducerSettings, usMotorSettings, and pre-scan or post-scan info).
  */
 
-#ifndef US_IMAGE_IO_H
-#define US_IMAGE_IO_H
+#ifndef __usImageIo_h_
+#define __usImageIo_h_
 
 #include <string>
 
@@ -47,6 +48,7 @@
 #include <visp3/ustk_core/usImagePostScan2D.h>
 #include <visp3/ustk_core/usImagePostScan3D.h>
 #include <visp3/ustk_io/usMetaHeaderParser.h>
+#include <visp3/ustk_io/usImageSettingsXmlParser.h>
 
 
 /**
@@ -59,14 +61,6 @@ class VISP_EXPORT usImageIo
 {
 private:
 
-  typedef enum
-  {
-    FORMAT_XML,
-    FORMAT_MHD,
-    HEADER_FORMAT_UNKNOWN
-  } usHeaderFormatType;
-
-  static usHeaderFormatType getHeaderFormat(const std::string &headerfilename);
   static std::string getExtension(const std::string &filename);
 
 public:
@@ -123,6 +117,29 @@ public:
                     const std::string &imageExtension2D);
   static void write(const usImagePostScan3D<unsigned char> &postScanImage3D, const std::string &headerFileName);
   //@}
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+  struct VolHeader
+  {
+    int type;     // Data type(0: prescan B, 1 : postscan B, 2 : rf, 3 : vel / var, 5 = B + flow RGB)
+    int volumes;  // Number of volumes in the file
+    int fpv;      // Number of frames per volumes
+    int w;        // frame width
+    int h;        // frame height
+    int ss;       // sample size in bits
+    int degPerFr; // degree step between frames
+  };
+#endif //DOXYGEN_SHOULD_SKIP_THIS
+
+  typedef enum
+  {
+    FORMAT_XML,
+    FORMAT_MHD,
+    FORMAT_VOL,
+    HEADER_FORMAT_UNKNOWN
+  } usHeaderFormatType;
+
+  static usHeaderFormatType getHeaderFormat(const std::string &headerfilename);
 };
 
 #endif //US_IMAGE_IO_H

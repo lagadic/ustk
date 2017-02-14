@@ -1,34 +1,35 @@
 /****************************************************************************
-*
-* This file is part of the UsTk software.
-* Copyright (C) 2014 by Inria. All rights reserved.
-*
-* This program is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License ("GPL") as
-* published by the Free Software Foundation, either version 3 of the
-* License, or (at your option) any later version.
-* See the file COPYING at the root directory of this source
-* distribution for additional information about the GNU GPL.
-*
-* This software was developed at:
-* INRIA Rennes - Bretagne Atlantique
-* Campus Universitaire de Beaulieu
-* 35042 Rennes Cedex
-* France
-* http://www.irisa.fr/lagadic
-*
-* If you have questions regarding the use of this file, please contact the
-* authors at Alexandre.Krupa@inria.fr
-*
-* This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-* WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-*
-*
-* Authors:
-* Pierre Chatelain
-* Marc Pouliquen
-*
-*****************************************************************************/
+ *
+ * This file is part of the ustk software.
+ * Copyright (C) 2016 - 2017 by Inria. All rights reserved.
+ *
+ * This software is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * ("GPL") version 2 as published by the Free Software Foundation.
+ * See the file LICENSE.txt at the root directory of this source
+ * distribution for additional information about the GNU GPL.
+ *
+ * For using ustk with software that can not be combined with the GNU
+ * GPL, please contact Inria about acquiring a ViSP Professional
+ * Edition License.
+ *
+ * This software was developed at:
+ * Inria Rennes - Bretagne Atlantique
+ * Campus Universitaire de Beaulieu
+ * 35042 Rennes Cedex
+ * France
+ *
+ * If you have questions regarding the use of this file, please contact
+ * Inria at ustk@inria.fr
+ *
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * Authors:
+ * Pierre Chatelain
+ * Marc Pouliquen
+ *
+ *****************************************************************************/
 
 /**
 * @file usImage3D.h
@@ -37,14 +38,15 @@
 * This class is used to represent 3D data.
 */
 
-#ifndef US_IMAGE_3D_H
-#define US_IMAGE_3D_H
+#ifndef __usImage3D_h_
+#define __usImage3D_h_
 
 #include <cstring>
 #include <iostream>
 #include <vector>
 #include <algorithm>
 
+#include <visp3/core/vpImage.h>
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpException.h>
 
@@ -100,6 +102,15 @@ public:
   Type* getData() { return bitmap; }
 
   /**
+  * Get the pointer to the data container for specified position in the volume.
+  * @param indexX Index on x-axis to acess
+  * @param indexY Index on y-axis to acess
+  * @param indexZ Index on z-axis to acess
+  * @return The pointer to the voxel specified indexes.
+  */
+  Type* getData(unsigned int indexX, unsigned int indexY, unsigned int indexZ) { return bitmap + (m_dimX * m_dimY)*indexZ + m_dimX*indexY + indexX;}
+
+  /**
   * Get the volume width.
   * @return The volume width, in number of voxels.
   */
@@ -122,7 +133,6 @@ public:
   * @return The number of voxels in the volume.
   */
   unsigned int getSize() const { return m_size; }
-
 
   /**
   * Initialize the data container with the specified value.
@@ -311,8 +321,8 @@ usImage3D<Type>::usImage3D() : m_dimX(0), m_dimY(0), m_dimZ(0),
 
 template<class Type>
 usImage3D<Type>::usImage3D(unsigned int dimX, unsigned int dimY, unsigned int dimZ)
-: m_dimX(dimX), m_dimY(dimY), m_dimZ(dimZ), m_size(dimX * dimY * dimZ),
-  bitmap(NULL), planesIndex(NULL)
+  : m_dimX(dimX), m_dimY(dimY), m_dimZ(dimZ), m_size(dimX * dimY * dimZ),
+    bitmap(NULL), planesIndex(NULL)
 {
   init(dimX, dimY, dimZ);
   initData(0);
@@ -377,14 +387,16 @@ bool usImage3D<Type>::operator==(const usImage3D<Type> &other)
         return false;
     }
   }
+  else
+    return false;
   return true;
 }
 
 template<class Type> std::ostream& operator<<(std::ostream& out, const usImage3D<Type> &other)
 {
-  return out << "number of A-samples in a scan line : " << other.getDimX() << std::endl
-             << "number of scan lines in a frame : " << other.getDimY() << std::endl
-             << "number of frames : " << other.getDimZ() << std::endl;
+  return out << "dim x: " << other.getDimX() << std::endl
+             << "dim y: " << other.getDimY() << std::endl
+             << "dim z: " << other.getDimZ() << std::endl;
 }
 
 template<class Type>
@@ -418,5 +430,4 @@ void usImage3D<Type>::resize(unsigned int dimx,unsigned int dimy,unsigned int di
 {
   init(dimx,dimy,dimz);
 }
-
 #endif //US_IMAGE_3D_H

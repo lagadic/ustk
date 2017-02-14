@@ -164,9 +164,9 @@ double usScanConverter2D::interpolateLinear(const vpImage<unsigned char>& I, dou
   int x2 = (int)ceil(x);
   int y1 = (int)floor(y);
   int y2 = (int)ceil(y);
-  double val1, val2;
 
   if ((0 <= x) && (x < I.getHeight()) && (0 <= y) && (y < I.getWidth())) {
+    double val1, val2;
     // Check whether the indices are within the image extent
     if (x1 < 0) ++x1;
     if (y1 < 0) ++y1;

@@ -45,3 +45,19 @@
   \defgroup module_ustk_template_tracking ustk_template_tracking: UsTK template tracking module
   Ultrasound tool kit tracking module content. It implements different algorithms to compute the tracking of a region of interest from an ultrasound post-scan image.
 */
+/*******************************************
+ * Module ustk_grabber
+ *******************************************/
+/*!
+  \ingroup module_ustk
+  \defgroup module_ustk_grabber ustk_grabber: UsTK grabber module
+  Ultrasound tool kit grabber module content. It contains diferents classes to grab images on the network from ultrasound station.
+*/
+/*******************************************
+ * Module ustk_needle_detection
+ *******************************************/
+/*!
+  \ingroup module_ustk
+  \defgroup module_ustk_needle_detection ustk_needle_detection: UsTK needle detection module
+  Ultrasound tool kit needle detection module content. It contains diferents algorithms to track a needle in 2D or 3D ultrasound images.
+*/

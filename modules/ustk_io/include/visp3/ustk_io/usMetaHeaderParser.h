@@ -1,44 +1,45 @@
 /****************************************************************************
-*
-* This file is part of the UsTk software.
-* Copyright (C) 2014 by Inria. All rights reserved.
-*
-* This program is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License ("GPL") as
-* published by the Free Software Foundation, either version 3 of the
-* License, or (at your option) any later version.
-* See the file COPYING at the root directory of this source
-* distribution for additional information about the GNU GPL.
-*
-* This software was developed at:
-* INRIA Rennes - Bretagne Atlantique
-* Campus Universitaire de Beaulieu
-* 35042 Rennes Cedex
-* France
-* http://www.irisa.fr/lagadic
-*
-* If you have questions regarding the use of this file, please contact the
-* authors at Alexandre.Krupa@inria.fr
-*
-* This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-* WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-*
-*
-* Authors:
-* Marc Pouliquen
-*
-*****************************************************************************/
+ *
+ * This file is part of the ustk software.
+ * Copyright (C) 2016 - 2017 by Inria. All rights reserved.
+ *
+ * This software is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * ("GPL") version 2 as published by the Free Software Foundation.
+ * See the file LICENSE.txt at the root directory of this source
+ * distribution for additional information about the GNU GPL.
+ *
+ * For using ustk with software that can not be combined with the GNU
+ * GPL, please contact Inria about acquiring a ViSP Professional
+ * Edition License.
+ *
+ * This software was developed at:
+ * Inria Rennes - Bretagne Atlantique
+ * Campus Universitaire de Beaulieu
+ * 35042 Rennes Cedex
+ * France
+ *
+ * If you have questions regarding the use of this file, please contact
+ * Inria at ustk@inria.fr
+ *
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * Authors:
+ * Marc Pouliquen
+ *
+ *****************************************************************************/
 
 /**
 * @file usMetaHeaderParser.h
 * @brief Input/output operations between ultrasound image settings and the assiciated mhd files.
 */
 
-#ifndef US_META_HEADER_PARSER_H
-#define US_META_HEADER_PARSER_H
+#ifndef __usMetaHeaderParser_h_
+#define __usMetaHeaderParser_h_
 
-#include<string>
-#include<map>
+#include <string>
+#include <map>
 #include <cstdlib>
 #include <string>
 #include <ios>
@@ -47,6 +48,7 @@
 #include <sstream>
 
 #include <visp3/core/vpConfig.h>
+#include <visp3/ustk_core/us.h>
 #include <visp3/ustk_core/usImagePostScan2D.h>
 #include <visp3/ustk_core/usImagePostScan3D.h>
 #include <visp3/ustk_core/usImagePreScan2D.h>
@@ -70,17 +72,6 @@ public:
     MET_DOUBLE,
   }ElementType;
 
-  typedef enum {
-    UNKNOWN = -1,
-    NOT_SET,
-    RF_2D,
-    RF_3D,
-    PRESCAN_2D,
-    PRESCAN_3D,
-    POSTSCAN_2D,
-    POSTSCAN_3D,
-  }ImageType;
-
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
   struct MHDHeader
   {
@@ -94,7 +85,7 @@ public:
     double position[4];
     int headerSize;
     bool msb;
-    ImageType imageType;
+    us::ImageType imageType;
     bool isTransducerConvex;
     usMotorSettings::usMotorType motorType;
     double transducerRadius;
@@ -116,7 +107,7 @@ public:
   double getAxialResolution() const { return m_axialResolution; }
   ElementType getElementType() const { return header.elementType; }
   double getHeightResolution() const { return m_heightResolution; }
-  ImageType getImageType() const { return header.imageType; }
+  us::ImageType getImageType() const { return header.imageType; }
   MHDHeader getMHDHeader() const { return header; }
   usMotorSettings getMotorSettings() const {return m_motorSettings;}
   std::string getRawFileName() const {return header.rawFileName;}
