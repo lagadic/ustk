@@ -27,11 +27,7 @@ if(USE_VTK)
 endif()
 
 if(USE_VTK)
-  if(VTK_VERSION VERSION_LESS "7.1.0")
-    set(USTK_HAVE_VTK_VERSION "(${VTK_VERSION_MAJOR}<<16 | ${VTK_VERSION_MINOR}<<8 | ${VTK_VERSION_PATCH})") # for vpConfig.h
-  else()
-    set(USTK_HAVE_VTK_VERSION "(${VTK_VERSION_MAJOR}<<16 | ${VTK_VERSION_MINOR}<<8 | ${VTK_VERSION_BUILD})") # since 7.1.0 for vpConfig.h
-  endif()
+  set(USTK_HAVE_VTK_VERSION "(${VTK_VERSION_MAJOR}<<16 | ${VTK_VERSION_MINOR}<<8 | ${VTK_VERSION_PATCH})") # for vpConfig.h
 
   include(${VTK_USE_FILE})
 
@@ -162,10 +158,15 @@ if(USE_VTK)
   vp_add_config_file("cmake/templates/usGuiConfig.h.in")
 
   # Add specific build flag to turn off warnings coming from VTK 3rd party
+  vp_set_source_file_compile_flag(src/us2DSceneWidget.cpp -Wno-inconsistent-missing-override)
+  vp_set_source_file_compile_flag(src/us3DSceneSlicing.cpp -Wno-inconsistent-missing-override)
   vp_set_source_file_compile_flag(src/us3DSceneWidget.cpp -Wno-inconsistent-missing-override)
   vp_set_source_file_compile_flag(src/usMedicalImageViewer.cpp -Wno-inconsistent-missing-override)
-  vp_set_source_file_compile_flag(src/usResliceImageViewer.cpp -Wno-inconsistent-missing-override)
+  vp_set_source_file_compile_flag(src/usResliceMatrixViewer.cpp -Wno-inconsistent-missing-override)
   vp_set_source_file_compile_flag(src/usViewerWidget.cpp -Wno-inconsistent-missing-override)
   vp_set_source_file_compile_flag(src/usVTKConverter.cpp -Wno-inconsistent-missing-override)
+
+  # next line doesn't work. Using set_target_properties() may be a potential solution.
+  # See https://cmake.org/cmake/help/v3.0/prop_tgt/AUTOMOC.html
   vp_set_source_file_compile_flag(${VISP_BINARY_DIR}/modules/ustk_gui/visp_ustk_gui_automoc.cpp -Wno-inconsistent-missing-override)
 endif()

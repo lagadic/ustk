@@ -39,9 +39,11 @@
 #include <visp3/ustk_needle_detection/usNeedleDetectionTools.h>
 
 /**
- * This class represents a needle modeled as a 2D polynomial curve.
- *
+ * @class usPolynomialCurve2D
  * @brief 2D needle model
+ * @ingroup module_ustk_needle_detection
+ *
+ * This class represents a needle modeled as a 2D polynomial curve.
  *
  */
 class VISP_EXPORT usPolynomialCurve2D {

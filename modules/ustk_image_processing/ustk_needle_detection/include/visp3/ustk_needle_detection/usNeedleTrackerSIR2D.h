@@ -42,7 +42,9 @@
 #include <visp3/ustk_needle_detection/usPolynomialCurve2D.h>
 
 /**
+ * @class usNeedleTrackerSIR2D
  * @brief Needle detection in 2D images based on particle filtering.
+ * @ingroup module_ustk_needle_detection
  *
  * This class defines the particle-based needle detection pipeline for 2D images.
  */

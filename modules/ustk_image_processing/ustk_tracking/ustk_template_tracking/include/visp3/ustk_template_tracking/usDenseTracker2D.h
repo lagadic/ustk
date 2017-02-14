@@ -47,7 +47,6 @@
 /**
  * @class usDenseTracker2D
  * @brief 2D region tracker
- * @author Pierre Chatelain
  * @ingroup module_ustk_template_tracking
  *
  * Class to perform a 2D tracking of a region of interest.

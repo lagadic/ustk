@@ -334,7 +334,7 @@ bool usNeedleDetectionTools::findTip(vtkImageData *image, const vpMatrix &model,
       a[i] = a[i-1] * t;
     p = model * a;
     double intensity2 = image->GetScalarComponentAsDouble(vpMath::round(p[0]), vpMath::round(p[1]), vpMath::round(p[2]), 0);
-    lengthError = abs((p-p0).euclideanNorm() - length);
+    lengthError = std::abs((p-p0).euclideanNorm() - length);
     //std::cerr << "("<< p[0] << "," << p[1] << "," << p[2] << "): I=" << intensity2 << " dL=" << lengthError << std::endl;
     if (intensity1 - intensity2 > gap && lengthError < minLengthError) {
       found = true;
@@ -350,25 +350,25 @@ bool usNeedleDetectionTools::findTip(vtkImageData *image, const vpMatrix &model,
 bool usNeedleDetectionTools::findTipUsingMeanValues(vtkImageData *image, const vpMatrix &model, int *VOI, double *tip, unsigned int nPoints, double gap, double length)
 {
   //std::cerr << "Finding tip..." << std::endl;
-  vpColVector a(nPoints);
+  vpColVector a(nPoints, 0.);
   vpColVector p0(3);
   vpColVector p(3);
   double t = 0.0;
-  a[0] = 1;
-  for (unsigned int i=1; i<nPoints; ++i)
-    a[i] = a[i-1] * t;
+  a[0] = 1.;
+//  for (unsigned int i=1; i<nPoints; ++i)
+//    a[i] = a[i-1] * t;
   p0 = model * a;
-  t = 1.0;
-  a[0] = 1;
-  for (unsigned int i=1; i<nPoints; ++i)
-    a[i] = a[i-1] * t;
+//  t = 1.0;
+//  a[0] = 1;
+//  for (unsigned int i=1; i<nPoints; ++i)
+//    a[i] = a[i-1] * t;
   p = model * a;
   double l = (p-p0).euclideanNorm();
   double minLengthError = DBL_MAX;
-  t = 0.0;
-  a[0] = 1;
-  for (unsigned int i=1; i<nPoints; ++i)
-    a[i] = a[i-1] * t;
+//  t = 0.0;
+//  a[0] = 1;
+//  for (unsigned int i=1; i<nPoints; ++i)
+//    a[i] = a[i-1] * t;
   p = model * a;
   if (inside(p,VOI)) {
     bool found = 0;
@@ -382,7 +382,7 @@ bool usNeedleDetectionTools::findTipUsingMeanValues(vtkImageData *image, const v
     intensity1 += image->GetScalarComponentAsDouble(p[0], p[1], p[2]-1.0, 0);
     intensity1 /= 7.0;
     while (inside(p,VOI)) {
-      t += 1.0 / l;
+      t += 1.0 / l; // There is no check if l = 0 !!!!
       a[0] = 1;
       for (unsigned int i=1; i<nPoints; ++i)
         a[i] = a[i-1] * t;
@@ -396,7 +396,7 @@ bool usNeedleDetectionTools::findTipUsingMeanValues(vtkImageData *image, const v
       intensity2 += image->GetScalarComponentAsDouble(vpMath::round(p[0]), vpMath::round(p[1])-1.0, vpMath::round(p[2]), 0);
       intensity2 += image->GetScalarComponentAsDouble(vpMath::round(p[0]), vpMath::round(p[1]), vpMath::round(p[2])-1.0, 0);
       intensity2 /= 7.0;
-      double lengthError = abs((p-p0).euclideanNorm() - length);
+      double lengthError = std::abs((p-p0).euclideanNorm() - length);
       //std::cerr << "("<< p[0] << "," << p[1] << "," << p[2] << "): I=" << intensity2 << " dL=" << lengthError << std::endl;
       if (intensity1 - intensity2 > gap && lengthError < minLengthError) {
         found = true;
