@@ -59,7 +59,6 @@
 #include <vtkCubeSource.h>
 #include <vtkPolyLine.h>
 #include <vtkCellArray.h>
-#include <vtkCutter.h>
 
 #include <QPainter>
 #include <QPaintEngine>
@@ -151,8 +150,7 @@ void us3DSceneWidget::init() {
 
   //find intersections between planes and bounding box to draw colored lines to identify each plane
   //Plane border 1
-  vtkSmartPointer<vtkCutter> cutter1 =
-    vtkSmartPointer<vtkCutter>::New();
+  cutter1 = vtkSmartPointer<vtkCutter>::New();
   cutter1->SetCutFunction(plane1);
   cutter1->SetInputConnection(cubeSource->GetOutputPort());
   cutter1->Update();
@@ -168,8 +166,7 @@ void us3DSceneWidget::init() {
   planeBorder1->SetMapper(cutterMapper1);
 
   //Plane border 2
-  vtkSmartPointer<vtkCutter> cutter2 =
-    vtkSmartPointer<vtkCutter>::New();
+  cutter2 = vtkSmartPointer<vtkCutter>::New();
   cutter2->SetCutFunction(plane2);
   cutter2->SetInputConnection(cubeSource->GetOutputPort());
   cutter2->Update();
@@ -185,8 +182,7 @@ void us3DSceneWidget::init() {
   planeBorder2->SetMapper(cutterMapper2);
 
   //Plane border 3
-  vtkSmartPointer<vtkCutter> cutter3 =
-    vtkSmartPointer<vtkCutter>::New();
+  cutter3 = vtkSmartPointer<vtkCutter>::New();
   cutter3->SetCutFunction(plane3);
   cutter3->SetInputConnection(cubeSource->GetOutputPort());
   cutter3->Update();
@@ -286,6 +282,30 @@ vtkPlane* us3DSceneWidget::getPlane2() {
 */
 vtkPlane* us3DSceneWidget::getPlane3() {
   return this->plane3;
+}
+
+/**
+* Contour 1 getter.
+* @return  Pointer on polydata of plane 1 contour.
+*/
+vtkPolyData* us3DSceneWidget::getContour1() {
+  return this->cutter1->GetOutput();
+}
+
+/**
+* Contour 2 getter.
+* @return  Pointer on polydata of plane 2 contour.
+*/
+vtkPolyData* us3DSceneWidget::getContour2() {
+  return this->cutter2->GetOutput();
+}
+
+/**
+* Contour 3 getter.
+* @return  Pointer on polydata of plane 3 contour.
+*/
+vtkPolyData* us3DSceneWidget::getContour3() {
+  return this->cutter3->GetOutput();
 }
 
 /**

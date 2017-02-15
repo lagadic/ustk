@@ -87,6 +87,9 @@
 #include <vtkAnnotatedCubeActor.h>
 #include <vtkPNGWriter.h>
 #include <vtkCoordinate.h>
+#include <vtkPolyData.h>
+#include <vtkPolyDataMapper.h>
+#include <vtkProperty.h>
 
 
 // Qt includes
@@ -136,8 +139,6 @@ public:
   void keyReleaseEvent(QKeyEvent *event);
 
   void 	mouseMoveEvent(QMouseEvent * event);
-  //void 	mousePressEvent(QMouseEvent * event);
-  //void 	mouseReleaseEvent(QMouseEvent * event);
 
   //Catch paint events, in case we want to display some informations (writing in this widget) over the vtk scene
   void paintEvent( QPaintEvent* event );
@@ -151,14 +152,17 @@ public:
   //Set planes
   void setResliceMatrix(vtkMatrix4x4* matrix);
 
+  void setPolyData(vtkPolyData *polyData);
+
   //catch scroll events to slice in image
   void wheelEvent(QWheelEvent *event);
 
+  void getCurrentSlice(usImagePostScan2D<unsigned char> &image2D);
+
 public slots:
-  //
   void updateImageData(vtkImageData* imageData);
 
-  void matrixChangedSlot(vtkMatrix4x4* matrix);
+  void changeMatrix(vpHomogeneousMatrix matrix);
 
   void saveViewSlot();
 
@@ -184,11 +188,13 @@ private:
   //actor
   vtkImageActor* m_actor;
 
-  //orientation cube actor
-  vtkAnnotatedCubeActor * m_cubeActor;
-
   //vtk renderer
   vtkRenderer* m_renderer;
+
+  //polydata contour
+  vtkPolyData* m_polydata;
+  vtkPolyDataMapper * m_polyDataMapper;
+  vtkActor * m_polydataActor;
 
   //to know if r key is currently pressed
   bool m_rPressed;

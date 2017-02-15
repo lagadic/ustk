@@ -57,6 +57,7 @@
 #include <vtkAxesActor.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkImagePlaneWidget.h>
+#include <vtkCutter.h>
 
 // Qt includes
 #if defined(USTK_HAVE_VTK_QT4)
@@ -120,6 +121,10 @@ public:
   us3DSceneWidget(QWidget* parent = NULL, Qt::WindowFlags f = 0);
   ~us3DSceneWidget() {}
 
+  vtkPolyData* getContour1();
+  vtkPolyData* getContour2();
+  vtkPolyData* getContour3();
+
   vtkImageData* getImageData();
 
   vtkPlane* getPlane1();
@@ -167,6 +172,11 @@ private:
   vtkImageSlice* imageSlice1;
   vtkImageSlice* imageSlice2;
   vtkImageSlice* imageSlice3;
+
+  // Cutter for intersections between plane and volume borders
+  vtkSmartPointer<vtkCutter> cutter1;
+  vtkSmartPointer<vtkCutter> cutter2;
+  vtkSmartPointer<vtkCutter> cutter3;
 
   //axes representation
   vtkSmartPointer<vtkAxesActor> m_axesActor;

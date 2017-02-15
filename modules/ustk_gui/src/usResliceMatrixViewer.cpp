@@ -139,30 +139,41 @@ usResliceMatrixViewer::usResliceMatrixViewer(std::string imageFileName )
   vtkMatrix1 = vtkMatrix4x4::New();
   usVTKConverter::convert(matrix1,vtkMatrix1);
 
-  view1->setImageData(vtkImage);
-  view1->setResliceMatrix(vtkMatrix1);
-  view1->init();
-  view1->setColor(1.0,0,0);
-
-  view4->setImageData(vtkImage);
-  view4->setResliceMatrix(vtkMatrix2);
-  view4->init();
-  view4->setColor(0,1.0,0);
-
-  view3->setImageData(vtkImage);
-  view3->setResliceMatrix(vtkMatrix3);
-  view3->init();
-  view3->setColor(0,0,1.0);
-
   view2->setImageData(vtkImage);
   view2->updateMatrix1(vtkMatrix1);
   view2->updateMatrix2(vtkMatrix2);
   view2->updateMatrix3(vtkMatrix3);
   view2->init();
 
+  view1->setImageData(vtkImage);
+  view1->setResliceMatrix(vtkMatrix1);
+  view1->setPolyData(view2->getContour1());
+  view1->init();
+  view1->setColor(1.0,0,0);
+
+  view4->setImageData(vtkImage);
+  view4->setResliceMatrix(vtkMatrix2);
+  view4->setPolyData(view2->getContour2());
+  view4->init();
+  view4->setColor(0,1.0,0);
+
+  view3->setImageData(vtkImage);
+  view3->setResliceMatrix(vtkMatrix3);
+  view3->setPolyData(view2->getContour3());
+  view3->init();
+  view3->setColor(0,0,1.0);
+
+
+
+
+//  view1->update();
+//  view4->update();
+//  view3->update();
+
   // Set up action signals and slots
   connect(this->resetButton, SIGNAL(pressed()), this, SLOT(ResetViews()));
-  connect(this->saveView1Button, SIGNAL(pressed()), view1, SLOT(saveViewSlot()));
+  //connect(this->saveView1Button, SIGNAL(pressed()), view1, SLOT(saveViewSlot()));
+  connect(this->saveView1Button, SIGNAL(pressed()), this, SLOT(getView1Slice()));
   connect(this->saveView4Button, SIGNAL(pressed()), view4, SLOT(saveViewSlot()));
   connect(this->saveView3Button, SIGNAL(pressed()), view3, SLOT(saveViewSlot()));
 
@@ -325,5 +336,15 @@ void usResliceMatrixViewer::resizeEvent(QResizeEvent* event)
     saveView4Button->setGeometry(QRect(event->size().width() - 180, 130, 160, 31));
     saveView3Button->setGeometry(QRect(event->size().width() - 180, 180, 160, 31));
   }
+}
+
+/**
+* Getter of view 1 current slice.
+*/
+void usResliceMatrixViewer::getView1Slice()
+{
+  usImagePostScan2D<unsigned char> postScanSlice;
+  view1->getCurrentSlice(postScanSlice);
+  usImageIo::write(postScanSlice,"sliceView1.xml");
 }
 #endif

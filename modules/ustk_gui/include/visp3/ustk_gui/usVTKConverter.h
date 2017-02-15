@@ -47,6 +47,7 @@
 
 // USTK includes
 #include <visp3/ustk_core/usImagePostScan3D.h>
+#include <visp3/ustk_core/usImagePostScan2D.h>
 #include <visp3/ustk_core/usImagePreScan3D.h>
 
 // VTK includes
@@ -67,6 +68,8 @@ public:
   //image types
   static void convert(const usImagePostScan3D<unsigned char> &postScanImage, vtkSmartPointer<vtkImageData> &vtkPostScanImage, vtkSmartPointer<vtkImageImport> importer = NULL);
   static void convert(const usImagePreScan3D<unsigned char> &preScanImage, vtkSmartPointer<vtkImageData> &vtkPreScanImage, vtkSmartPointer<vtkImageImport> importer = NULL);
+
+  static void convert(vtkSmartPointer<vtkImageData> &vtkPostScanImage, usImagePostScan2D<unsigned char> &postScanImage);
 
   //matrix types
   static void convert(const vpHomogeneousMatrix &, vtkMatrix4x4 *);

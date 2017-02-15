@@ -44,6 +44,7 @@
 
 //USTK includes
 #include <visp3/ustk_gui/us2DSceneWidget.h>
+#include <visp3/ustk_core/usImagePostScan2D.h>
 
 
 /**
@@ -66,7 +67,9 @@ us2DSceneWidget::us2DSceneWidget(QWidget* parent, Qt::WindowFlags f) : usViewerW
 
   m_actor = vtkImageActor::New();
 
-  m_cubeActor = vtkAnnotatedCubeActor::New();
+  m_polydata = vtkPolyData::New();
+  m_polyDataMapper = vtkPolyDataMapper::New();
+  m_polydataActor= vtkActor::New();
 
   m_rPressed = false;
   m_mousePressed = false;
@@ -146,6 +149,8 @@ void us2DSceneWidget::init() {
   imageStyle->SetInteractionModeToImageSlicing();
 
   renderWindow->GetInteractor()->SetInteractorStyle(imageStyle);
+
+  m_reslice->GetOutput()->Print(std::cout);
 }
 
 /**
@@ -165,6 +170,36 @@ void us2DSceneWidget::setResliceMatrix(vtkMatrix4x4 *matrix) {
 }
 
 /**
+* Polydata setter.
+* @param matrix The vtk matrix to place the reslice plane in the image coordinate system (rotation and translation).
+*/
+void us2DSceneWidget::setPolyData(vtkPolyData *polyData) {
+  m_polydata = polyData;
+
+  //add polygon in scene
+
+  m_polyDataMapper->SetInputData(m_polydata);
+  m_polyDataMapper->SetScalarRange(m_polydata->GetScalarRange());
+
+  m_polydataActor->GetProperty()->SetOpacity(1.0);
+  m_polydataActor->GetProperty()->SetLighting(0);
+  m_polydataActor->GetProperty()->SetLineWidth(3);
+
+
+  vpHomogeneousMatrix mat;
+  usVTKConverter::convert(m_resliceMatrix,mat);
+  usVTKConverter::convert(mat.inverse(),m_resliceMatrix);
+  m_polydataActor->SetUserMatrix(m_resliceMatrix);
+
+
+  m_polydataActor->SetMapper(m_polyDataMapper);
+
+  m_renderer->AddActor(m_polydataActor);
+
+  update();
+}
+
+/**
 * Image update slot.
 * @param imageData The new vtkImageData to display.
 */
@@ -173,11 +208,13 @@ void us2DSceneWidget::updateImageData(vtkImageData* imageData) {
 }
 
 /**
-* Orientation matrix update slot.
-* @param matrix The new vtk matrix defining rotation and translation in image coordinates system.
+* Orientation matrix update slot for vpMatrix.
+* @param matrix The new matrix defining rotation and translation in image coordinates system.
 */
-void us2DSceneWidget::matrixChangedSlot(vtkMatrix4x4* matrix) {
-  m_resliceMatrix = matrix;
+void us2DSceneWidget::changeMatrix(vpHomogeneousMatrix matrix) {
+  usVTKConverter::convert(matrix,m_resliceMatrix);
+  update();
+  emit(matrixChanged(m_resliceMatrix));
 }
 
 /**
@@ -204,16 +241,22 @@ void us2DSceneWidget::wheelEvent(QWheelEvent *event) {
 
   usVTKConverter::convert(Mnew,m_resliceMatrix);
 
+  //update contour polydata
+  vtkMatrix4x4* vtkMat = vtkMatrix4x4::New();
+  usVTKConverter::convert(Mnew.inverse(),vtkMat);
+  m_polydataActor->SetUserMatrix(vtkMat);
+
   update();
 
   //emit signal to inform other views the reslice matrix changed
   emit(matrixChanged(m_resliceMatrix));
 
+
   event->accept();
 }
 
 /**
-* Key press event catcher (R key), to enable rotation mode.
+* Key press event catcher (H key), to enable rotation mode.
 */
 void us2DSceneWidget::keyPressEvent(QKeyEvent *event) {
   if(event->key() == Qt::Key_H) {
@@ -223,7 +266,7 @@ void us2DSceneWidget::keyPressEvent(QKeyEvent *event) {
 }
 
 /**
-* Key press event catcher (R key), to disable rotation mode.
+* Key press event catcher (H key), to disable rotation mode.
 */
 void us2DSceneWidget::keyReleaseEvent(QKeyEvent *event) {
   if(event->key() == Qt::Key_H) {
@@ -261,6 +304,11 @@ void 	us2DSceneWidget::mouseMoveEvent(QMouseEvent * event) {
 
     usVTKConverter::convert(finalMat, m_resliceMatrix);
 
+    //update contour polydata
+    vtkMatrix4x4* vtkMat = vtkMatrix4x4::New();
+    usVTKConverter::convert(finalMat.inverse(),vtkMat);
+    m_polydataActor->SetUserMatrix(vtkMat);
+
     emit(matrixChanged(m_resliceMatrix));
     update();
 
@@ -274,42 +322,33 @@ void 	us2DSceneWidget::mouseMoveEvent(QMouseEvent * event) {
   }
 }
 
-
 /**
 * Slot to save the current image displayed in the view.
-* @param filename Image Filen name without extention (.png added in this method).
 */
 void 	us2DSceneWidget::saveViewSlot() {
     vtkSmartPointer<vtkPNGWriter> writer =
     vtkSmartPointer<vtkPNGWriter>::New();
   std::string absFileName = us::getDataSetPath() + "/sceenshot.png";
-  std::cout << "saving slice in file : " << absFileName;
+  std::cout << "saving slice in file : " << absFileName << std::endl;
   writer->SetFileName(absFileName.c_str());
   writer->SetInputConnection(m_reslice->GetOutputPort());
   writer->Write();
 }
-/*
-void us2DSceneWidget::mousePressEvent(QMouseEvent *event) {
-if(event->button() == Qt::LeftButton) {
-  std::cout << "Pressed left mouse button." << std::endl;
-  int x = event->pos().x();
-  int y = event->pos().y();
-  std::cout << "(x,y) = (" << x << "," << y << ")" << std::endl;
-  vtkSmartPointer<vtkCoordinate> coordinate =
-      vtkSmartPointer<vtkCoordinate>::New();
-  coordinate->SetCoordinateSystemToDisplay();
-  coordinate->SetValue(x,y,0);
 
-  // working if zoomed ???
-  double* world = coordinate->GetComputedWorldValue(m_renderer);
-  std::cout << "World coordinate: " << world[0] << ", " << world[1] << ", " << world[2] << std::endl;
-  }
-  usViewerWidget::mousePressEvent(event);
-}
+/**
+* Getter for current 2D slice.
 */
+void 	us2DSceneWidget::getCurrentSlice(usImagePostScan2D<unsigned char> & image2D) {
+  //convert current VTK slice to a usImagePostScan2D
+  vtkSmartPointer<vtkImageData> vtkImage2D;
+  vtkImage2D = m_reslice->GetOutput();
+
+  usVTKConverter::convert(vtkImage2D,image2D);
+}
 
 void us2DSceneWidget::setColor(double r,double g,double b) {
-  m_renderer->SetBackground(r,g,b);
+  //m_renderer->SetBackground(r,g,b);
+  m_polydataActor->GetProperty()->SetColor(r,g,b);
 }
 
 #endif //USTK_HAVE_VTK_QT

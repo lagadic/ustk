@@ -96,6 +96,8 @@ public slots:
   virtual void Render();
   virtual void slotExit();
 
+  void getView1Slice();
+
 private:
     void setupUi();
 

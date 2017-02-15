@@ -53,17 +53,32 @@ int main(int argc, char** argv)
   //set reslice matrix
   vpHomogeneousMatrix mat;
   mat.eye();
+  mat.buildFrom(0,0,0.05,0,0,0);
 
-  vtkSmartPointer<vtkMatrix4x4> vtkMat = vtkSmartPointer<vtkMatrix4x4>::New();
+  vtkMatrix4x4* vtkMat = vtkMatrix4x4::New();
   usVTKConverter::convert(mat,vtkMat);
 
   //setup view widget
-  us2DSceneWidget scene;
-  scene.setImageData(vtkImage);
-  scene.setResliceMatrix(vtkMat);
-  scene.init();
-  scene.show();
+  us2DSceneWidget * scene = new us2DSceneWidget();
+  scene->setImageData(vtkImage);
+  scene->setResliceMatrix(vtkMat);
+  scene->init();
+  scene->show();
 
+  //update Matrix : translate of 0.05 m along W
+  //mat.buildFrom(0,0,0.10,0,0,0);
+  //scene.changeMatrix(mat);
+
+  //extract 2D slice
+  usImagePostScan2D<unsigned char> image2D;
+  scene->getCurrentSlice(image2D);
+  // We have only the pixel values and pixel size. Transducer settings are not set when we extract a post-scan 2D slice.
+
+  // We write it
+  usImageIo::write(image2D,"slice.xml");
+
+
+  //wait until user closes the window
   return app.exec();
 }
 #else
