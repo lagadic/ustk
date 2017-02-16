@@ -60,6 +60,10 @@ us2DSceneWidget::us2DSceneWidget(QWidget* parent, Qt::WindowFlags f) : usViewerW
   m_reslice = vtkImageReslice::New();
 
   m_renderer = vtkRenderer::New();
+  //m_renderer->SetLayer(0);
+  /*m_polyDataRenderer = vtkRenderer::New();
+  m_polyDataRenderer->PreserveDepthBufferOn();
+  m_polyDataRenderer->SetLayer(0);*/
 
   m_table = vtkLookupTable::New();
 
@@ -67,9 +71,13 @@ us2DSceneWidget::us2DSceneWidget(QWidget* parent, Qt::WindowFlags f) : usViewerW
 
   m_actor = vtkImageActor::New();
 
-  m_polydata = vtkPolyData::New();
-  m_polyDataMapper = vtkPolyDataMapper::New();
-  m_polydataActor= vtkActor::New();
+  m_polydataPlaneContour = vtkPolyData::New();
+  m_polyDataPlaneContourMapper = vtkPolyDataMapper::New();
+  m_polydataPlaneContourActor= vtkActor::New();
+
+  m_polydataMeshContour = vtkPolyData::New();
+  m_polyDataMeshContourMapper = vtkPolyDataMapper::New();
+  m_polydataMeshContourActor= vtkActor::New();
 
   m_rPressed = false;
   m_mousePressed = false;
@@ -143,14 +151,13 @@ void us2DSceneWidget::init() {
   vtkRenderWindow* renderWindow = this->GetRenderWindow();
   renderWindow->AddRenderer(m_renderer);
 
+
   // Set up the interaction
   vtkSmartPointer<vtkInteractorStyleImage> imageStyle =
       vtkSmartPointer<vtkInteractorStyleImage>::New();
   imageStyle->SetInteractionModeToImageSlicing();
 
   renderWindow->GetInteractor()->SetInteractorStyle(imageStyle);
-
-  m_reslice->GetOutput()->Print(std::cout);
 }
 
 /**
@@ -170,33 +177,59 @@ void us2DSceneWidget::setResliceMatrix(vtkMatrix4x4 *matrix) {
 }
 
 /**
-* Polydata setter.
-* @param matrix The vtk matrix to place the reslice plane in the image coordinate system (rotation and translation).
+* Polydata plane contour setter.
+* @param polyData The vtk polydata representing the plane contour (image bounds).
 */
-void us2DSceneWidget::setPolyData(vtkPolyData *polyData) {
-  m_polydata = polyData;
+void us2DSceneWidget::setPolyDataPlaneContour(vtkPolyData *polyData) {
+  m_polydataPlaneContour = polyData;
 
   //add polygon in scene
 
-  m_polyDataMapper->SetInputData(m_polydata);
-  m_polyDataMapper->SetScalarRange(m_polydata->GetScalarRange());
+  m_polyDataPlaneContourMapper->SetInputData(m_polydataPlaneContour);
+  m_polyDataPlaneContourMapper->SetScalarRange(m_polydataPlaneContour->GetScalarRange());
 
-  m_polydataActor->GetProperty()->SetOpacity(1.0);
-  m_polydataActor->GetProperty()->SetLighting(0);
-  m_polydataActor->GetProperty()->SetLineWidth(3);
-
+  m_polydataPlaneContourActor->GetProperty()->SetOpacity(1.0);
+  m_polydataPlaneContourActor->GetProperty()->SetLighting(0);
+  m_polydataPlaneContourActor->GetProperty()->SetLineWidth(1);
 
   vpHomogeneousMatrix mat;
   usVTKConverter::convert(m_resliceMatrix,mat);
   usVTKConverter::convert(mat.inverse(),m_resliceMatrix);
-  m_polydataActor->SetUserMatrix(m_resliceMatrix);
+  m_polydataPlaneContourActor->SetUserMatrix(m_resliceMatrix);
 
 
-  m_polydataActor->SetMapper(m_polyDataMapper);
+  m_polydataPlaneContourActor->SetMapper(m_polyDataPlaneContourMapper);
 
-  m_renderer->AddActor(m_polydataActor);
+  m_renderer->AddActor(m_polydataPlaneContourActor);
 
-  update();
+}
+
+/**
+* Polydata mesh contour setter.
+* @param polyData The vtk polydata representing the mesh contour in the plane.
+*/
+void us2DSceneWidget::setPolyDataMeshContour(vtkPolyData *polyData) {
+  m_polydataMeshContour = polyData;
+
+
+  //add polygon in scene
+
+  m_polyDataMeshContourMapper->SetInputData(m_polydataMeshContour);
+  m_polyDataMeshContourMapper->SetScalarRange(m_polydataMeshContour->GetScalarRange());
+
+  m_polydataMeshContourActor->GetProperty()->SetOpacity(1.0);
+  m_polydataMeshContourActor->GetProperty()->SetLighting(0);
+  m_polydataMeshContourActor->GetProperty()->SetLineWidth(1);
+  m_polydataMeshContourActor->GetProperty()->SetColor(1.0,1.0,0.0);
+
+  vpHomogeneousMatrix mat;
+  usVTKConverter::convert(m_resliceMatrix,mat);
+  usVTKConverter::convert(mat.inverse(),m_resliceMatrix);
+  m_polydataMeshContourActor->SetUserMatrix(m_resliceMatrix);
+
+  m_polydataMeshContourActor->SetMapper(m_polyDataMeshContourMapper);
+
+  m_renderer->AddActor(m_polydataMeshContourActor);
 }
 
 /**
@@ -244,9 +277,14 @@ void us2DSceneWidget::wheelEvent(QWheelEvent *event) {
   //update contour polydata
   vtkMatrix4x4* vtkMat = vtkMatrix4x4::New();
   usVTKConverter::convert(Mnew.inverse(),vtkMat);
-  m_polydataActor->SetUserMatrix(vtkMat);
+  m_polydataPlaneContourActor->SetUserMatrix(vtkMat);
+  m_polydataMeshContourActor->SetUserMatrix(vtkMat);
 
   update();
+  m_renderer->Render();
+
+  //m_polyDataRenderer->Render();
+
 
   //emit signal to inform other views the reslice matrix changed
   emit(matrixChanged(m_resliceMatrix));
@@ -307,10 +345,15 @@ void 	us2DSceneWidget::mouseMoveEvent(QMouseEvent * event) {
     //update contour polydata
     vtkMatrix4x4* vtkMat = vtkMatrix4x4::New();
     usVTKConverter::convert(finalMat.inverse(),vtkMat);
-    m_polydataActor->SetUserMatrix(vtkMat);
+    m_polydataPlaneContourActor->SetUserMatrix(vtkMat);
+  m_polydataMeshContourActor->SetUserMatrix(vtkMat);
 
     emit(matrixChanged(m_resliceMatrix));
     update();
+    m_renderer->Render();
+
+
+  //m_polyDataRenderer->Render();
 
     m_lastmouserPosX = event->pos().x();
     m_lastmouserPosY = event->pos().y();
@@ -348,7 +391,7 @@ void 	us2DSceneWidget::getCurrentSlice(usImagePostScan2D<unsigned char> & image2
 
 void us2DSceneWidget::setColor(double r,double g,double b) {
   //m_renderer->SetBackground(r,g,b);
-  m_polydataActor->GetProperty()->SetColor(r,g,b);
+  m_polydataPlaneContourActor->GetProperty()->SetColor(r,g,b);
 }
 
 #endif //USTK_HAVE_VTK_QT

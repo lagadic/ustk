@@ -127,6 +127,10 @@ public:
 
   vtkImageData* getImageData();
 
+  vtkPolyData* getMeshInPlane1();
+  vtkPolyData* getMeshInPlane2();
+  vtkPolyData* getMeshInPlane3();
+
   vtkPlane* getPlane1();
   vtkPlane* getPlane2();
   vtkPlane* getPlane3();
@@ -163,6 +167,9 @@ private:
 
   vtkActor* sphereActor;
 
+  //mesh polydata
+  vtkPolyData* meshPolyData;
+
   //vtk mappers
   vtkImageResliceMapper* imageResliceMapper1;
   vtkImageResliceMapper* imageResliceMapper2;
@@ -173,10 +180,15 @@ private:
   vtkImageSlice* imageSlice2;
   vtkImageSlice* imageSlice3;
 
-  // Cutter for intersections between plane and volume borders
+  // Cutters for intersections between plane and volume borders
   vtkSmartPointer<vtkCutter> cutter1;
   vtkSmartPointer<vtkCutter> cutter2;
   vtkSmartPointer<vtkCutter> cutter3;
+
+  //Cutters for intersections between planes and mesh
+  vtkSmartPointer<vtkCutter> cutterPolyDataPlane1;
+  vtkSmartPointer<vtkCutter> cutterPolyDataPlane2;
+  vtkSmartPointer<vtkCutter> cutterPolyDataPlane3;
 
   //axes representation
   vtkSmartPointer<vtkAxesActor> m_axesActor;

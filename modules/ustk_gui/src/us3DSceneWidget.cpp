@@ -59,6 +59,8 @@
 #include <vtkCubeSource.h>
 #include <vtkPolyLine.h>
 #include <vtkCellArray.h>
+#include <vtkCylinderSource.h>
+#include <vtkSTLReader.h>
 
 #include <QPainter>
 #include <QPaintEngine>
@@ -162,7 +164,7 @@ void us3DSceneWidget::init() {
   planeBorder1->GetProperty()->SetColor(1.0,0,0);
   planeBorder1->GetProperty()->SetOpacity(1.0);
   planeBorder1->GetProperty()->SetLighting(0);
-  planeBorder1->GetProperty()->SetLineWidth(3);
+  planeBorder1->GetProperty()->SetLineWidth(1);
   planeBorder1->SetMapper(cutterMapper1);
 
   //Plane border 2
@@ -178,7 +180,7 @@ void us3DSceneWidget::init() {
   planeBorder2->GetProperty()->SetColor(0,1.0,0);
   planeBorder2->GetProperty()->SetOpacity(1.0);
   planeBorder2->GetProperty()->SetLighting(0);
-  planeBorder2->GetProperty()->SetLineWidth(3);
+  planeBorder2->GetProperty()->SetLineWidth(1);
   planeBorder2->SetMapper(cutterMapper2);
 
   //Plane border 3
@@ -194,7 +196,7 @@ void us3DSceneWidget::init() {
   planeBorder3->GetProperty()->SetColor(0,0,1.0);
   planeBorder3->GetProperty()->SetOpacity(1.0);
   planeBorder3->GetProperty()->SetLighting(0);
-  planeBorder3->GetProperty()->SetLineWidth(3);
+  planeBorder3->GetProperty()->SetLineWidth(1);
   planeBorder3->SetMapper(cutterMapper3);
 
   //add axes in scene
@@ -206,7 +208,83 @@ void us3DSceneWidget::init() {
   m_axesActor->SetZAxisLabelText("W");
   m_axesActor->SetTotalLength(0.01,0.01,0.01);
 
-  // Setup renderers
+  // Create a cylinder (polydata)
+  vtkSmartPointer<vtkCylinderSource> cylinderSource =
+    vtkSmartPointer<vtkCylinderSource>::New();
+  cylinderSource->SetCenter(plane1->GetOrigin());
+  cylinderSource->SetRadius(0.005);
+  cylinderSource->SetHeight(0.01);
+  cylinderSource->SetResolution(100);
+  cylinderSource->Update();
+  meshPolyData = cylinderSource->GetOutput();
+
+  /*std::string inputFilename = "/home/mpouliqu/Documents/models/eiffel_tower_mini.stl";
+
+  vtkSmartPointer<vtkSTLReader> reader =
+    vtkSmartPointer<vtkSTLReader>::New();
+  reader->SetFileName(inputFilename.c_str());
+  reader->Update();*/
+
+  // Create a mapper and actor for the polydata
+  vtkSmartPointer<vtkPolyDataMapper> meshMapper =
+    vtkSmartPointer<vtkPolyDataMapper>::New();
+  meshMapper->SetInputConnection(cylinderSource->GetOutputPort());
+  meshMapper->Update();
+  vtkSmartPointer<vtkActor> meshActor =
+    vtkSmartPointer<vtkActor>::New();
+    meshActor->GetProperty()->SetColor(1.0,1.0,0);
+  meshActor->SetMapper(meshMapper);
+
+  //polydata intersections with each reslice plane
+  cutterPolyDataPlane1 = vtkSmartPointer<vtkCutter>::New();
+  cutterPolyDataPlane1->SetCutFunction(plane1);
+  cutterPolyDataPlane1->SetInputConnection(cylinderSource->GetOutputPort());
+  cutterPolyDataPlane1->Update();
+
+  vtkSmartPointer<vtkPolyDataMapper> cutterMeshMapper1 =
+    vtkSmartPointer<vtkPolyDataMapper>::New();
+  cutterMeshMapper1->SetInputConnection( cutterPolyDataPlane1->GetOutputPort());
+  vtkSmartPointer<vtkActor> meshBorder1 =
+    vtkSmartPointer<vtkActor>::New();
+  meshBorder1->GetProperty()->SetColor(1.0,1.0,0);
+  meshBorder1->GetProperty()->SetOpacity(1.0);
+  meshBorder1->GetProperty()->SetLighting(0);
+  meshBorder1->GetProperty()->SetLineWidth(1);
+  meshBorder1->SetMapper(cutterMeshMapper1);
+
+  cutterPolyDataPlane2 = vtkSmartPointer<vtkCutter>::New();
+  cutterPolyDataPlane2->SetCutFunction(plane2);
+  cutterPolyDataPlane2->SetInputConnection(cylinderSource->GetOutputPort());
+  cutterPolyDataPlane2->Update();
+
+  vtkSmartPointer<vtkPolyDataMapper> cutterMeshMapper2 =
+    vtkSmartPointer<vtkPolyDataMapper>::New();
+  cutterMeshMapper2->SetInputConnection( cutterPolyDataPlane2->GetOutputPort());
+  vtkSmartPointer<vtkActor> meshBorder2 =
+    vtkSmartPointer<vtkActor>::New();
+  meshBorder2->GetProperty()->SetColor(1.0,1.0,0);
+  meshBorder2->GetProperty()->SetOpacity(1.0);
+  meshBorder2->GetProperty()->SetLighting(0);
+  meshBorder2->GetProperty()->SetLineWidth(1);
+  meshBorder2->SetMapper(cutterMeshMapper2);
+
+  cutterPolyDataPlane3 = vtkSmartPointer<vtkCutter>::New();
+  cutterPolyDataPlane3->SetCutFunction(plane3);
+  cutterPolyDataPlane3->SetInputConnection(cylinderSource->GetOutputPort());
+  cutterPolyDataPlane3->Update();
+
+  vtkSmartPointer<vtkPolyDataMapper> cutterMeshMapper3 =
+    vtkSmartPointer<vtkPolyDataMapper>::New();
+  cutterMeshMapper3->SetInputConnection( cutterPolyDataPlane3->GetOutputPort());
+  vtkSmartPointer<vtkActor> meshBorder3 =
+    vtkSmartPointer<vtkActor>::New();
+  meshBorder3->GetProperty()->SetColor(1.0,1.0,0);
+  meshBorder3->GetProperty()->SetOpacity(1.0);
+  meshBorder3->GetProperty()->SetLighting(0);
+  meshBorder3->GetProperty()->SetLineWidth(1);
+  meshBorder3->SetMapper(cutterMeshMapper3);
+
+  // Setup renderer
   renderer = vtkRenderer::New();
   renderer->AddActor(m_axesActor);
   renderer->AddActor(imageSlice1);
@@ -215,6 +293,10 @@ void us3DSceneWidget::init() {
   renderer->AddActor(planeBorder1);
   renderer->AddActor(planeBorder2);
   renderer->AddActor(planeBorder3);
+  renderer->AddActor(meshActor);
+  renderer->AddActor(meshBorder1);
+  renderer->AddActor(meshBorder2);
+  renderer->AddActor(meshBorder3);
   renderer->SetBackground(0.5, 0.5, 0.5);
   renderer->ResetCamera();
 
@@ -285,7 +367,7 @@ vtkPlane* us3DSceneWidget::getPlane3() {
 }
 
 /**
-* Contour 1 getter.
+* Contour plane 1 getter.
 * @return  Pointer on polydata of plane 1 contour.
 */
 vtkPolyData* us3DSceneWidget::getContour1() {
@@ -293,7 +375,7 @@ vtkPolyData* us3DSceneWidget::getContour1() {
 }
 
 /**
-* Contour 2 getter.
+* Contour plane 2 getter.
 * @return  Pointer on polydata of plane 2 contour.
 */
 vtkPolyData* us3DSceneWidget::getContour2() {
@@ -301,11 +383,35 @@ vtkPolyData* us3DSceneWidget::getContour2() {
 }
 
 /**
-* Contour 3 getter.
+* Contour plane 3 getter.
 * @return  Pointer on polydata of plane 3 contour.
 */
 vtkPolyData* us3DSceneWidget::getContour3() {
   return this->cutter3->GetOutput();
+}
+
+/**
+* Intersection between plane 1 and mesh.
+* @return  Pointer on polydata of 2D mesh represenetation in plane 1.
+*/
+vtkPolyData* us3DSceneWidget::getMeshInPlane1() {
+  return this->cutterPolyDataPlane1->GetOutput();
+}
+
+/**
+* Intersection between plane 2 and mesh.
+* @return  Pointer on polydata of 2D mesh represenetation in plane 2.
+*/
+vtkPolyData* us3DSceneWidget::getMeshInPlane2() {
+  return this->cutterPolyDataPlane2->GetOutput();
+}
+
+/**
+* Intersection between plane 3 and mesh.
+* @return  Pointer on polydata of 2D mesh represenetation in plane 3.
+*/
+vtkPolyData* us3DSceneWidget::getMeshInPlane3() {
+  return this->cutterPolyDataPlane3->GetOutput();
 }
 
 /**

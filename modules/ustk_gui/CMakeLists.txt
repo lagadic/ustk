@@ -4,7 +4,7 @@
 # TODO: find how to suppress include(${VTK_USE_FILE}). For the moment, if not used on OSX, produces a segfault
 # TODO: find a way to remove all the warnings due to vtk headers
 
-VP_OPTION(USE_VTK "VTK;COMPONENTS;vtkCommonCore;vtkFiltersSources;vtkIOImage;vtkIOExport;vtkInteractionImage;vtkGUISupportQt;vtkRenderingImage" "" "Include vtk support" "" ON)
+VP_OPTION(USE_VTK "VTK;COMPONENTS;vtkCommonCore;vtkFiltersSources;vtkIOImage;vtkIOGeometry;vtkIOExport;vtkInteractionImage;vtkGUISupportQt;vtkRenderingImage" "" "Include vtk support" "" ON)
 
 if(USE_VTK)
   if(NOT VTK_VERSION)

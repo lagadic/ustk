@@ -147,19 +147,22 @@ usResliceMatrixViewer::usResliceMatrixViewer(std::string imageFileName )
 
   view1->setImageData(vtkImage);
   view1->setResliceMatrix(vtkMatrix1);
-  view1->setPolyData(view2->getContour1());
+  view1->setPolyDataPlaneContour(view2->getContour1());
+  view1->setPolyDataMeshContour(view2->getMeshInPlane1());
   view1->init();
   view1->setColor(1.0,0,0);
 
   view4->setImageData(vtkImage);
   view4->setResliceMatrix(vtkMatrix2);
-  view4->setPolyData(view2->getContour2());
+  view4->setPolyDataPlaneContour(view2->getContour2());
+  view4->setPolyDataMeshContour(view2->getMeshInPlane2());
   view4->init();
   view4->setColor(0,1.0,0);
 
   view3->setImageData(vtkImage);
   view3->setResliceMatrix(vtkMatrix3);
-  view3->setPolyData(view2->getContour3());
+  view3->setPolyDataPlaneContour(view2->getContour3());
+  view3->setPolyDataMeshContour(view2->getMeshInPlane3());
   view3->init();
   view3->setColor(0,0,1.0);
 
@@ -261,10 +264,10 @@ void usResliceMatrixViewer::Render()
   this->view3->GetRenderWindow()->Render();
   this->view4->GetRenderWindow()->Render();
 
-  this->view1->update();
+  /*this->view1->update();
   this->view2->update();
   this->view3->update();
-  this->view4->update();
+  this->view4->update();*/
 }
 
 /**

@@ -152,7 +152,8 @@ public:
   //Set planes
   void setResliceMatrix(vtkMatrix4x4* matrix);
 
-  void setPolyData(vtkPolyData *polyData);
+  void setPolyDataPlaneContour(vtkPolyData *polyData);
+  void setPolyDataMeshContour(vtkPolyData *polyData);
 
   //catch scroll events to slice in image
   void wheelEvent(QWheelEvent *event);
@@ -190,11 +191,17 @@ private:
 
   //vtk renderer
   vtkRenderer* m_renderer;
+  vtkRenderer* m_polyDataRenderer;
 
-  //polydata contour
-  vtkPolyData* m_polydata;
-  vtkPolyDataMapper * m_polyDataMapper;
-  vtkActor * m_polydataActor;
+  //polydata of plane contour
+  vtkPolyData* m_polydataPlaneContour;
+  vtkPolyDataMapper * m_polyDataPlaneContourMapper;
+  vtkActor * m_polydataPlaneContourActor;
+
+  //polydata of mesh contour in the plane
+  vtkPolyData* m_polydataMeshContour;
+  vtkPolyDataMapper * m_polyDataMeshContourMapper;
+  vtkActor * m_polydataMeshContourActor;
 
   //to know if r key is currently pressed
   bool m_rPressed;
