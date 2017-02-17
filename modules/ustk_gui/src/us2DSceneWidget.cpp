@@ -144,6 +144,7 @@ void us2DSceneWidget::init() {
 
   // Display the image
   m_actor->GetMapper()->SetInputConnection(m_color->GetOutputPort());
+  m_actor->SetOpacity(0.7);
 
   m_renderer->AddActor(m_actor);
 
@@ -191,6 +192,7 @@ void us2DSceneWidget::setPolyDataPlaneContour(vtkPolyData *polyData) {
   m_polydataPlaneContourActor->GetProperty()->SetOpacity(1.0);
   m_polydataPlaneContourActor->GetProperty()->SetLighting(0);
   m_polydataPlaneContourActor->GetProperty()->SetLineWidth(1);
+  m_polydataPlaneContourActor->GetProperty()->SetOpacity(1.0);
 
   vpHomogeneousMatrix mat;
   usVTKConverter::convert(m_resliceMatrix,mat);
@@ -221,6 +223,7 @@ void us2DSceneWidget::setPolyDataMeshContour(vtkPolyData *polyData) {
   m_polydataMeshContourActor->GetProperty()->SetLighting(0);
   m_polydataMeshContourActor->GetProperty()->SetLineWidth(1);
   m_polydataMeshContourActor->GetProperty()->SetColor(1.0,1.0,0.0);
+  m_polydataMeshContourActor->GetProperty()->SetOpacity(1.0);
 
   vpHomogeneousMatrix mat;
   usVTKConverter::convert(m_resliceMatrix,mat);
