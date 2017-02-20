@@ -61,6 +61,7 @@
 #include <vtkCellArray.h>
 #include <vtkCylinderSource.h>
 #include <vtkSTLReader.h>
+#include <vtkSTLWriter.h>
 
 #include <QPainter>
 #include <QPaintEngine>
@@ -83,17 +84,6 @@ us3DSceneWidget::us3DSceneWidget(QWidget* parent, Qt::WindowFlags f) : usViewerW
   imageSlice3 = vtkImageSlice::New();
 
   renderer = vtkRenderer::New();
-
-  //add color spheres to planes
-  vtkSphereSource* sphereSource = vtkSphereSource::New();
-  sphereSource->SetRadius(0.01);
-  sphereSource->Update();
-
-  vtkPolyDataMapper* sphereMPapper = vtkPolyDataMapper::New();
-  sphereMPapper->SetInputConnection(sphereSource->GetOutputPort());
-  sphereActor = vtkActor::New();
-  sphereActor->SetMapper(sphereMPapper);
-  sphereActor->GetProperty()->SetColor(1.0, 0.0, 0.0);
 }
 
 /**
@@ -138,8 +128,6 @@ void us3DSceneWidget::init() {
   imageSlice1->SetMapper(imageResliceMapper1);
   imageSlice2->SetMapper(imageResliceMapper2);
   imageSlice3->SetMapper(imageResliceMapper3);
-
-  sphereActor->SetPosition(plane1->GetOrigin());
 
   //Define image bounding box
   double bounds[6];
@@ -466,10 +454,6 @@ void us3DSceneWidget::updateMatrix1(vtkMatrix4x4* matrix) {
   normal = rMat * normal;
 
   plane1->SetNormal(normal.data[0], normal.data[1], normal.data[2]);
-
-  sphereActor->SetPosition(imageSlice1->GetMinXBound(),
-                           imageSlice1->GetMinYBound(),
-                           imageSlice1->GetMinZBound());
 
   this->update();
 }

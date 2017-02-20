@@ -434,6 +434,7 @@ if(m_pPressed) {
 
     vector = MCurrrent * vector;
     std::cout << "Picked value = " << vector.data[0] << " " << vector.data[1] << " " << vector.data[2]  << std::endl;
+    emit (voxelPicked(vector));
   }
   else
     std::cout << "Pick out of image" << std::endl;

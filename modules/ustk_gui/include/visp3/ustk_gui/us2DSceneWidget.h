@@ -172,6 +172,7 @@ public slots:
 
 signals:
   void matrixChanged(vtkMatrix4x4* matrix);
+  void voxelPicked(vpColVector vector);
 
 private:
   //image

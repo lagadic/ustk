@@ -165,8 +165,6 @@ private:
   vtkPlane* plane2;
   vtkPlane* plane3;
 
-  vtkActor* sphereActor;
-
   //mesh polydata
   vtkPolyData* meshPolyData;
 
