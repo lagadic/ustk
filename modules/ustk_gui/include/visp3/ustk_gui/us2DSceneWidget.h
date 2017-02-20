@@ -90,7 +90,9 @@
 #include <vtkPolyData.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkProperty.h>
-
+#include <vtkPointPicker.h>
+#include <vtkPoints.h>
+#include <vtkPropPicker.h>
 
 // Qt includes
 #if defined(USTK_HAVE_VTK_QT4)
@@ -139,6 +141,7 @@ public:
   void keyReleaseEvent(QKeyEvent *event);
 
   void 	mouseMoveEvent(QMouseEvent * event);
+  void 	mousePressEvent(QMouseEvent * event);
 
   //Catch paint events, in case we want to display some informations (writing in this widget) over the vtk scene
   void paintEvent( QPaintEvent* event );
@@ -203,8 +206,12 @@ private:
   vtkPolyDataMapper * m_polyDataMeshContourMapper;
   vtkActor * m_polydataMeshContourActor;
 
+  //vtk picker
+  vtkPropPicker* m_propPicker;
+
   //to know if r key is currently pressed
   bool m_rPressed;
+  bool m_pPressed;
 
   //mouse button pressed
   bool m_mousePressed;

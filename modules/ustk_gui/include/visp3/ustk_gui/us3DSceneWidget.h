@@ -195,7 +195,6 @@ private:
 
   //vtk renderer
   vtkRenderer* renderer;
-
 };
 #endif
 #endif // __us3DSceneWidget_h_

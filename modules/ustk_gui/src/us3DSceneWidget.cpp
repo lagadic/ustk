@@ -94,7 +94,6 @@ us3DSceneWidget::us3DSceneWidget(QWidget* parent, Qt::WindowFlags f) : usViewerW
   sphereActor = vtkActor::New();
   sphereActor->SetMapper(sphereMPapper);
   sphereActor->GetProperty()->SetColor(1.0, 0.0, 0.0);
-
 }
 
 /**
@@ -547,5 +546,4 @@ void us3DSceneWidget::updateMatrix3(vtkMatrix4x4* matrix) {
 
   this->update();
 }
-
 #endif

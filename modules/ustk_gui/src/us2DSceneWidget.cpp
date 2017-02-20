@@ -79,7 +79,11 @@ us2DSceneWidget::us2DSceneWidget(QWidget* parent, Qt::WindowFlags f) : usViewerW
   m_polyDataMeshContourMapper = vtkPolyDataMapper::New();
   m_polydataMeshContourActor= vtkActor::New();
 
+  // Picker to pick pixels
+  m_propPicker = vtkPropPicker::New();
+
   m_rPressed = false;
+  m_pPressed = false;
   m_mousePressed = false;
 
   //disable tracking to receive only mouse move events if a button is pressed
@@ -128,6 +132,7 @@ void us2DSceneWidget::init() {
   m_reslice->SetResliceAxes(m_resliceMatrix);
   m_reslice->SetInterpolationModeToLinear();
 
+
   //To ensure no part of the image will be cropped
   m_reslice->AutoCropOutputOn();
 
@@ -157,8 +162,14 @@ void us2DSceneWidget::init() {
   vtkSmartPointer<vtkInteractorStyleImage> imageStyle =
       vtkSmartPointer<vtkInteractorStyleImage>::New();
   imageStyle->SetInteractionModeToImageSlicing();
-
   renderWindow->GetInteractor()->SetInteractorStyle(imageStyle);
+  //imageStyle->EnabledOff();
+
+  //picker
+  m_propPicker->PickFromListOn();
+
+  // Give the picker a prop to pick
+  m_propPicker->AddPickList( m_actor );
 }
 
 /**
@@ -297,21 +308,27 @@ void us2DSceneWidget::wheelEvent(QWheelEvent *event) {
 }
 
 /**
-* Key press event catcher (H key), to enable rotation mode.
+* Key press event catcher. H key to enable rotation mode, P key to pick a voxel.
 */
 void us2DSceneWidget::keyPressEvent(QKeyEvent *event) {
   if(event->key() == Qt::Key_H) {
     m_rPressed = true;
   }
+  else if(event->key() == Qt::Key_P) {
+    m_pPressed = true;
+  }
   event->accept();
 }
 
 /**
-* Key press event catcher (H key), to disable rotation mode.
+* Key press event catcher. H key to enable rotation mode, P key to pick a voxel.
 */
 void us2DSceneWidget::keyReleaseEvent(QKeyEvent *event) {
   if(event->key() == Qt::Key_H) {
     m_rPressed = false;
+  }
+  else if(event->key() == Qt::Key_P) {
+    m_pPressed = false;
   }
   event->accept();
 }
@@ -390,6 +407,38 @@ void 	us2DSceneWidget::getCurrentSlice(usImagePostScan2D<unsigned char> & image2
   vtkImage2D = m_reslice->GetOutput();
 
   usVTKConverter::convert(vtkImage2D,image2D);
+}
+
+void us2DSceneWidget::mousePressEvent(QMouseEvent *event) {
+if(m_pPressed) {
+  int x = event->pos().x();
+  int y = this->height() - event->pos().y(); // change for VTK window coordinate system, Y axis is inverted
+
+  std::cout << "Qt coords = " << x << ", " << y << std::endl;
+  m_propPicker->Pick( x, y, 0.0,  m_renderer);
+
+  if(m_propPicker->GetPath()) {
+    double p[3];
+    m_propPicker->GetPickPosition(p);
+    std::cout << "Picked value = " << p[0] << " " << p[1] << " " << p[2]  << std::endl;
+
+    //transform in 3D image coordinate system
+    vpHomogeneousMatrix MCurrrent;
+    usVTKConverter::convert(m_resliceMatrix, MCurrrent);
+
+    vpColVector vector(4);
+    vector.data[0] = p[0];
+    vector.data[1] = p[1];
+    vector.data[2] = p[2];
+    vector.data[3] = 1;
+
+    vector = MCurrrent * vector;
+    std::cout << "Picked value = " << vector.data[0] << " " << vector.data[1] << " " << vector.data[2]  << std::endl;
+  }
+  else
+    std::cout << "Pick out of image" << std::endl;
+  }
+  usViewerWidget::mousePressEvent(event);
 }
 
 void us2DSceneWidget::setColor(double r,double g,double b) {
