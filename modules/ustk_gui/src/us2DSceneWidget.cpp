@@ -37,9 +37,7 @@
 
 // VISP includes
 #include <visp3/ustk_gui/usGuiConfig.h>
-
 #ifdef USTK_HAVE_VTK_QT
-
 #include <visp3/ustk_gui/usViewerWidget.h>
 
 //USTK includes
@@ -60,10 +58,6 @@ us2DSceneWidget::us2DSceneWidget(QWidget* parent, Qt::WindowFlags f) : usViewerW
   m_reslice = vtkImageReslice::New();
 
   m_renderer = vtkRenderer::New();
-  //m_renderer->SetLayer(0);
-  /*m_polyDataRenderer = vtkRenderer::New();
-  m_polyDataRenderer->PreserveDepthBufferOn();
-  m_polyDataRenderer->SetLayer(0);*/
 
   m_table = vtkLookupTable::New();
 
@@ -297,9 +291,6 @@ void us2DSceneWidget::wheelEvent(QWheelEvent *event) {
   update();
   m_renderer->Render();
 
-  //m_polyDataRenderer->Render();
-
-
   //emit signal to inform other views the reslice matrix changed
   emit(matrixChanged(m_resliceMatrix));
 
@@ -371,9 +362,6 @@ void 	us2DSceneWidget::mouseMoveEvent(QMouseEvent * event) {
     emit(matrixChanged(m_resliceMatrix));
     update();
     m_renderer->Render();
-
-
-  //m_polyDataRenderer->Render();
 
     m_lastmouserPosX = event->pos().x();
     m_lastmouserPosY = event->pos().y();

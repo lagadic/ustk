@@ -101,7 +101,7 @@ void usVTKConverter::convert(vtkSmartPointer<vtkImageData> &vtkPostScanImage, us
 
   for (int i = 0; i < imageDims[0]; i++) {
     for (int j= 0; j< imageDims[1]; j++) {
-      postScanImage[j][i] = (unsigned char) (vtkPostScanImage->GetScalarComponentAsDouble(i,j,0,0));
+      postScanImage[j][i] = (unsigned char) (vtkPostScanImage->GetScalarComponentAsDouble(i,imageDims[1]-j-1,0,0));
     }
   }
 

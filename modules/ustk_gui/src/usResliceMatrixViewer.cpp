@@ -35,21 +35,17 @@
 * @brief Graphical main window containing 4 vtk views.
 */
 
-#include <visp3/ustk_core/usImagePostScan3D.h>
-#include <visp3/ustk_gui/usVTKConverter.h>
 #include <visp3/ustk_gui/usResliceMatrixViewer.h>
 
 #ifdef USTK_HAVE_VTK_QT
 
+#include <visp3/ustk_core/usImagePostScan3D.h>
+#include <visp3/ustk_gui/usVTKConverter.h>
+
+
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
 #include <vtkResliceImageViewer.h>
-#include <vtkResliceCursorLineRepresentation.h>
-#include <vtkResliceCursorThickLineRepresentation.h>
-#include <vtkResliceCursorWidget.h>
-#include <vtkResliceCursorActor.h>
-#include <vtkResliceCursorPolyDataAlgorithm.h>
-#include <vtkResliceCursor.h>
 #include <vtkMetaImageReader.h>
 #include <vtkCellPicker.h>
 #include <vtkProperty.h>
@@ -67,8 +63,6 @@
 #include <vtkHandleRepresentation.h>
 #include <vtkResliceImageViewerMeasurements.h>
 #include <vtkDistanceRepresentation2D.h>
-#include <vtkPointHandleRepresentation3D.h>
-#include <vtkPointHandleRepresentation2D.h>
 #include <vtkCamera.h>
 #include <vtkRendererCollection.h>
 #include <vtkMatrix4x4.h>
