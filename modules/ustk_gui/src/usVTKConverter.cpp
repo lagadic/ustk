@@ -97,8 +97,6 @@ void usVTKConverter::convert(vtkSmartPointer<vtkImageData> &vtkPostScanImage, us
   double spacing[3];
   vtkPostScanImage->GetSpacing(spacing);
 
-  std::cout << "slice size = " << imageDims[1] << "," << imageDims[0] << std::endl;
-
   postScanImage.resize(imageDims[1],imageDims[0]);
 
   for (int i = 0; i < imageDims[0]; i++) {

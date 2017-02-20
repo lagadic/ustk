@@ -402,10 +402,12 @@ void 	us2DSceneWidget::saveViewSlot() {
 * Getter for current 2D slice.
 */
 void 	us2DSceneWidget::getCurrentSlice(usImagePostScan2D<unsigned char> & image2D) {
+  //Render to update the view and avoid getting an empty 2D image at reslice output
+  this->GetRenderWindow()->Render();
+
   //convert current VTK slice to a usImagePostScan2D
   vtkSmartPointer<vtkImageData> vtkImage2D;
   vtkImage2D = m_reslice->GetOutput();
-
   usVTKConverter::convert(vtkImage2D,image2D);
 }
 
@@ -414,13 +416,11 @@ if(m_pPressed) {
   int x = event->pos().x();
   int y = this->height() - event->pos().y(); // change for VTK window coordinate system, Y axis is inverted
 
-  std::cout << "Qt coords = " << x << ", " << y << std::endl;
   m_propPicker->Pick( x, y, 0.0,  m_renderer);
 
   if(m_propPicker->GetPath()) {
     double p[3];
     m_propPicker->GetPickPosition(p);
-    std::cout << "Picked value = " << p[0] << " " << p[1] << " " << p[2]  << std::endl;
 
     //transform in 3D image coordinate system
     vpHomogeneousMatrix MCurrrent;
