@@ -162,7 +162,7 @@ vpColVector geometricMedian(const vpMatrix points, unsigned int npts,
    *
    * @param image The image.
    * @param points [out] The points of intensity higher than the threshold.
-   * @param nDesired The desired number of points.
+   * @param threshold Threshold.
    *
    * @return The threshold.
    */
