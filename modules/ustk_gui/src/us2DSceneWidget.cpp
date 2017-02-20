@@ -68,7 +68,8 @@ us2DSceneWidget::us2DSceneWidget(QWidget* parent, Qt::WindowFlags f) : usViewerW
 
   m_cubeActor = vtkAnnotatedCubeActor::New();
 
-  m_pointPicker = vtkPointPicker::New();
+  // Picker to pick pixels
+  m_propPicker = vtkPropPicker::New();
 
   m_rPressed = false;
   m_pPressed = false;
@@ -139,7 +140,6 @@ void us2DSceneWidget::init() {
   m_actor->GetMapper()->SetInputConnection(m_color->GetOutputPort());
 
   m_renderer->AddActor(m_actor);
-  //m_pointPicker->PickFromListOn();
 
   // Setup render window
   vtkRenderWindow* renderWindow = this->GetRenderWindow();
@@ -148,9 +148,15 @@ void us2DSceneWidget::init() {
   // Set up the interaction
   vtkSmartPointer<vtkInteractorStyleImage> imageStyle =
       vtkSmartPointer<vtkInteractorStyleImage>::New();
-
+  imageStyle->SetInteractionModeToImageSlicing();
   renderWindow->GetInteractor()->SetInteractorStyle(imageStyle);
-  imageStyle->EnabledOff();
+  //imageStyle->EnabledOff();
+
+  //picker
+  m_propPicker->PickFromListOn();
+
+  // Give the picker a prop to pick
+  m_propPicker->AddPickList( m_actor );
 }
 
 /**
@@ -281,7 +287,7 @@ void 	us2DSceneWidget::mouseMoveEvent(QMouseEvent * event) {
   }
   else {
     //propagate event to allow colormap change in vtk
-    //usViewerWidget::mouseMoveEvent(event);
+    usViewerWidget::mouseMoveEvent(event);
   }
 }
 
@@ -303,38 +309,33 @@ void 	us2DSceneWidget::saveViewSlot() {
 void us2DSceneWidget::mousePressEvent(QMouseEvent *event) {
 if(m_pPressed) {
   int x = event->pos().x();
-  int y = event->pos().y();
-  std::cout << "Pick (x,y) = (" << x << "," << y << ")" << std::endl;
+  int y = this->height() - event->pos().y(); // change for VTK window coordinate system, Y axis is inverted
 
+  std::cout << "Qt coords = " << x << ", " << y << std::endl;
+  m_propPicker->Pick( x, y, 0.0,  m_renderer);
 
+  if(m_propPicker->GetPath()) {
+    double p[3];
+    m_propPicker->GetPickPosition(p);
+    std::cout << "Picked value = " << p[0] << " " << p[1] << " " << p[2]  << std::endl;
 
+    //transform in 3D image coordinate system
+    vpHomogeneousMatrix MCurrrent;
+    usVTKConverter::convert(m_resliceMatrix, MCurrrent);
 
-  m_pointPicker->Pick(x,y,0,m_renderer);
-  std::cout << "vtk matrices for view zoom/translatons" << std::endl;
-  m_renderer->Print(std::cout);
+    vpColVector vector(4);
+    vector.data[0] = p[0];
+    vector.data[1] = p[1];
+    vector.data[2] = p[2];
+    vector.data[3] = 1;
 
-  double p[3];
-  m_pointPicker->GetPickPosition(p);
-  std::cout << "Picked in plane coords = " << p[0] << " " << p[1] << " " << p[2]  << std::endl;
-  vpTranslationVector picked;
-  picked.data[0] = p[0];
-  picked.data[1] = p[1];
-  picked.data[2] = p[2];
-
-  vpHomogeneousMatrix Mcurrent;
-  usVTKConverter::convert(m_resliceMatrix,Mcurrent);
-
-  vpTranslationVector tVec;
-  Mcurrent.extract(tVec);
-
-  //picked = picked - tVec;
-
-  picked = Mcurrent.inverse() * picked;
-  //picked = Mcurrent * picked;
-
-  std::cout << "Picked value: " << picked[0] << " " << picked[1] << " " << picked[2] << std::endl;
+    vector = MCurrrent * vector;
+    std::cout << "Picked value = " << vector.data[0] << " " << vector.data[1] << " " << vector.data[2]  << std::endl;
   }
-  //usViewerWidget::mousePressEvent(event);
+  else
+    std::cout << "Pick out of image" << std::endl;
+  }
+  usViewerWidget::mousePressEvent(event);
 }
 
 

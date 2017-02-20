@@ -89,7 +89,7 @@
 #include <vtkCoordinate.h>
 #include <vtkPointPicker.h>
 #include <vtkPoints.h>
-
+#include <vtkPropPicker.h>
 
 // Qt includes
 #if defined(USTK_HAVE_VTK_QT4)
@@ -192,8 +192,8 @@ private:
   //vtk renderer
   vtkRenderer* m_renderer;
 
-  //vtk renderer
-  vtkPointPicker* m_pointPicker;
+  //vtk picker
+  vtkPropPicker* m_propPicker;
 
   //to know if r key is currently pressed
   bool m_rPressed;
