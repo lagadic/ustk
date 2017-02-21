@@ -10,6 +10,7 @@ set(tutorial_cpp
   usGrabber3DViewer.cpp
   us3DViewer.cpp
   us2DViewer.cpp
+  us2DViewerDrawing.cpp
   usResliceMatrixExample.cpp
   us3DViewerSlicing.cpp)
 

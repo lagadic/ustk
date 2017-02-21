@@ -201,8 +201,9 @@ void us2DSceneWidget::setPolyDataPlaneContour(vtkPolyData *polyData) {
 
   vpHomogeneousMatrix mat;
   usVTKConverter::convert(m_resliceMatrix,mat);
-  usVTKConverter::convert(mat.inverse(),m_resliceMatrix);
-  m_polydataPlaneContourActor->SetUserMatrix(m_resliceMatrix);
+  vtkMatrix4x4* matrix = vtkMatrix4x4::New();
+  usVTKConverter::convert(mat.inverse(),matrix);
+  m_polydataPlaneContourActor->SetUserMatrix(matrix);
 
 
   m_polydataPlaneContourActor->SetMapper(m_polyDataPlaneContourMapper);
@@ -218,9 +219,7 @@ void us2DSceneWidget::setPolyDataPlaneContour(vtkPolyData *polyData) {
 void us2DSceneWidget::setPolyDataMeshContour(vtkPolyData *polyData) {
   m_polydataMeshContour = polyData;
 
-
   //add polygon in scene
-
   m_polyDataMeshContourMapper->SetInputData(m_polydataMeshContour);
   m_polyDataMeshContourMapper->SetScalarRange(m_polydataMeshContour->GetScalarRange());
 
@@ -232,8 +231,9 @@ void us2DSceneWidget::setPolyDataMeshContour(vtkPolyData *polyData) {
 
   vpHomogeneousMatrix mat;
   usVTKConverter::convert(m_resliceMatrix,mat);
-  usVTKConverter::convert(mat.inverse(),m_resliceMatrix);
-  m_polydataMeshContourActor->SetUserMatrix(m_resliceMatrix);
+  vtkMatrix4x4* matrix = vtkMatrix4x4::New();
+  usVTKConverter::convert(mat.inverse(),matrix);
+  m_polydataMeshContourActor->SetUserMatrix(matrix);
 
   m_polydataMeshContourActor->SetMapper(m_polyDataMeshContourMapper);
 
@@ -388,6 +388,7 @@ void 	us2DSceneWidget::saveViewSlot() {
 
 /**
 * Getter for current 2D slice.
+* @param [out] image2D Slice to extract.
 */
 void 	us2DSceneWidget::getCurrentSlice(usImagePostScan2D<unsigned char> & image2D) {
   //Render to update the view and avoid getting an empty 2D image at reslice output
@@ -399,6 +400,9 @@ void 	us2DSceneWidget::getCurrentSlice(usImagePostScan2D<unsigned char> & image2
   usVTKConverter::convert(vtkImage2D,image2D);
 }
 
+/**
+* Mouse press event filter. Used to pick voxels.
+*/
 void us2DSceneWidget::mousePressEvent(QMouseEvent *event) {
 if(m_pPressed) {
   int x = event->pos().x();
@@ -434,5 +438,59 @@ void us2DSceneWidget::setColor(double r,double g,double b) {
   //m_renderer->SetBackground(r,g,b);
   m_polydataPlaneContourActor->GetProperty()->SetColor(r,g,b);
 }
+
+/**
+* Draw a red line between (u1,v1,w1) and (u2,v2,w2) over the image.
+*/
+void us2DSceneWidget::drawLine(double u1, double v1, double w1, double u2, double v2, double w2) {
+  // Setup points
+  vtkSmartPointer<vtkPoints> points =
+    vtkSmartPointer<vtkPoints>::New();
+  points->InsertNextPoint(u1,v1,w1);
+  points->InsertNextPoint(u2,v2,w2);
+
+  //create a line between each pair of points
+  vtkSmartPointer<vtkLine> line0 = vtkSmartPointer<vtkLine>::New();
+  line0->GetPointIds()->SetId ( 0,0 );
+  line0->GetPointIds()->SetId ( 1,1 );
+
+  //create a cell array to store the line in
+  vtkSmartPointer<vtkCellArray> lines = vtkSmartPointer<vtkCellArray>::New();
+  lines->InsertNextCell ( line0 );
+
+  //create a polydata to store everything in
+  vtkSmartPointer<vtkPolyData> polydata = vtkSmartPointer<vtkPolyData>::New();
+
+  //add the points and lines to the polydata
+  polydata->SetPoints ( points );
+  polydata->SetLines ( lines );
+
+
+
+  //add polygon in scene
+  vtkSmartPointer<vtkPolyDataMapper> lineMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+  lineMapper->SetInputData(polydata);
+  lineMapper->SetScalarRange(polydata->GetScalarRange());
+
+  vtkSmartPointer<vtkActor> lineActor = vtkSmartPointer<vtkActor>::New();
+  lineActor->GetProperty()->SetOpacity(1.0);
+  lineActor->GetProperty()->SetLighting(0);
+  lineActor->GetProperty()->SetLineWidth(1);
+  lineActor->GetProperty()->SetColor(1.0,0.0,0.0);
+  lineActor->GetProperty()->SetOpacity(1.0);
+  lineActor->SetMapper(lineMapper);
+
+
+  vpHomogeneousMatrix mat;
+  usVTKConverter::convert(m_resliceMatrix,mat);
+  vtkMatrix4x4* matrix = vtkMatrix4x4::New();
+  usVTKConverter::convert(mat.inverse(),matrix);
+  lineActor->SetUserMatrix(matrix);
+
+
+  m_renderer->AddActor(lineActor);
+  GetRenderWindow()->Render();
+}
+
 
 #endif //USTK_HAVE_VTK_QT

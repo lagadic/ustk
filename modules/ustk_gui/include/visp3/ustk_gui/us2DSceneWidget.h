@@ -93,6 +93,10 @@
 #include <vtkPointPicker.h>
 #include <vtkPoints.h>
 #include <vtkPropPicker.h>
+#include <vtkPolygon.h>
+#include <vtkCellArray.h>
+#include <vtkLine.h>
+#include <vtkSTLReader.h>
 
 // Qt includes
 #if defined(USTK_HAVE_VTK_QT4)
@@ -128,6 +132,10 @@ public:
   us2DSceneWidget(QWidget* parent = NULL, Qt::WindowFlags f = 0);
   ~us2DSceneWidget() {}
 
+  void drawLine(double u1,double v1,double w1,double u2,double v2,double w2);
+
+  void getCurrentSlice(usImagePostScan2D<unsigned char> &image2D);
+
   vtkImageData * getImageData();
 
   vtkMatrix4x4 * getResliceMatrix();
@@ -160,8 +168,6 @@ public:
 
   //catch scroll events to slice in image
   void wheelEvent(QWheelEvent *event);
-
-  void getCurrentSlice(usImagePostScan2D<unsigned char> &image2D);
 
 public slots:
   void updateImageData(vtkImageData* imageData);
