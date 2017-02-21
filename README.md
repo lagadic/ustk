@@ -73,10 +73,10 @@ There are two ways to build UsTK documentation.
 
 #### How to use UsTK data set
 
-Some examples or tutorials are working with ultrasound medical images. We propose a data set that contains 2D or 3D ultrasound data in <https://gitlab.inria.fr/lagadic/ustk-dataset>. To use this data set you may set the USTK_DATASET_PATH environment variable like:
+Some examples or tutorials are working with ultrasound medical images. We propose a data set that contains 2D or 3D ultrasound data in <https://github.com/lagadic/ustk-dataset>. To use this data set you may set the USTK_DATASET_PATH environment variable like:
 
 	$ cd <workspace>
-	$ git clone https://gitlab.inria.fr/lagadic/ustk-dataset
+	$ git clone https://github.com/lagadic/ustk-dataset
 	$ export USTK_DATASET_PATH=<workspace>/ustk-dataset
 
 
