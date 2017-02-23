@@ -23,6 +23,7 @@ int main(int argc, char** argv)
     std::string env_ipath = us::getDataSetPath();
     if (! env_ipath.empty())
       mhd_filename = env_ipath + "/post-scan/3D_mhd/volume.mhd";
+      //mhd_filename = env_ipath + "/needle/postScanMHDNeedleInsertion/postscan-vol0.mhd";
     else {
       std::cout << "You should set USTK_DATASET_PATH environment var to access to ustk dataset" << std::endl;
       return 0;

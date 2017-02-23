@@ -56,7 +56,6 @@
 #include <vtkSphereSource.h>
 #include <vtkProperty.h>
 #include <vtkPointData.h>
-#include <vtkCubeSource.h>
 #include <vtkPolyLine.h>
 #include <vtkCellArray.h>
 #include <vtkCylinderSource.h>
@@ -132,16 +131,15 @@ void us3DSceneWidget::init() {
   //Define image bounding box
   double bounds[6];
   imageData->GetBounds(bounds);
-    // Create a cube.
-  vtkSmartPointer<vtkCubeSource> cubeSource =
-    vtkSmartPointer<vtkCubeSource>::New();
-    cubeSource->SetBounds(bounds);
+  // Create a cube.
+  imageBoundsCube = vtkSmartPointer<vtkCubeSource>::New();
+  imageBoundsCube->SetBounds(bounds);
 
   //find intersections between planes and bounding box to draw colored lines to identify each plane
   //Plane border 1
   cutter1 = vtkSmartPointer<vtkCutter>::New();
   cutter1->SetCutFunction(plane1);
-  cutter1->SetInputConnection(cubeSource->GetOutputPort());
+  cutter1->SetInputConnection(imageBoundsCube->GetOutputPort());
   cutter1->Update();
   vtkSmartPointer<vtkPolyDataMapper> cutterMapper1 =
     vtkSmartPointer<vtkPolyDataMapper>::New();
@@ -157,7 +155,7 @@ void us3DSceneWidget::init() {
   //Plane border 2
   cutter2 = vtkSmartPointer<vtkCutter>::New();
   cutter2->SetCutFunction(plane2);
-  cutter2->SetInputConnection(cubeSource->GetOutputPort());
+  cutter2->SetInputConnection(imageBoundsCube->GetOutputPort());
   cutter2->Update();
   vtkSmartPointer<vtkPolyDataMapper> cutterMapper2 =
     vtkSmartPointer<vtkPolyDataMapper>::New();
@@ -173,7 +171,7 @@ void us3DSceneWidget::init() {
   //Plane border 3
   cutter3 = vtkSmartPointer<vtkCutter>::New();
   cutter3->SetCutFunction(plane3);
-  cutter3->SetInputConnection(cubeSource->GetOutputPort());
+  cutter3->SetInputConnection(imageBoundsCube->GetOutputPort());
   cutter3->Update();
   vtkSmartPointer<vtkPolyDataMapper> cutterMapper3 =
     vtkSmartPointer<vtkPolyDataMapper>::New();
@@ -204,13 +202,6 @@ void us3DSceneWidget::init() {
   cylinderSource->SetResolution(100);
   cylinderSource->Update();
   meshPolyData = cylinderSource->GetOutput();
-
-  /*std::string inputFilename = "/home/mpouliqu/Documents/models/eiffel_tower_mini.stl";
-
-  vtkSmartPointer<vtkSTLReader> reader =
-    vtkSmartPointer<vtkSTLReader>::New();
-  reader->SetFileName(inputFilename.c_str());
-  reader->Update();*/
 
   // Create a mapper and actor for the polydata
   vtkSmartPointer<vtkPolyDataMapper> meshMapper =
@@ -418,8 +409,26 @@ void us3DSceneWidget::setPlanes(vtkPlane* plane1,vtkPlane* plane2,vtkPlane* plan
 * @param imageData Pointer to new image to display
 */
 void us3DSceneWidget::updateImageData(vtkImageData* imageData) {
+  //removing all actors taking the old image data as input to avoir render errors
+  renderer->RemoveActor(imageSlice1);
+  renderer->RemoveActor(imageSlice2);
+  renderer->RemoveActor(imageSlice3);
+
+  //update image bounds actors (in case new image size is different from last)
+  imageBoundsCube->SetBounds(imageData->GetBounds());
+
+  //updating imageData everywhere
   this->imageData = imageData;
-  this->update();
+  imageResliceMapper1->SetInputData(imageData);
+  imageResliceMapper2->SetInputData(imageData);
+  imageResliceMapper3->SetInputData(imageData);
+
+  //adding back actors re-computed in the view
+  renderer->AddActor(imageSlice1);
+  renderer->AddActor(imageSlice2);
+  renderer->AddActor(imageSlice3);
+
+  GetRenderWindow()->Render();
 }
 
 /**
@@ -456,6 +465,7 @@ void us3DSceneWidget::updateMatrix1(vtkMatrix4x4* matrix) {
   plane1->SetNormal(normal.data[0], normal.data[1], normal.data[2]);
 
   this->update();
+  emit(plane1Changed());
 }
 
 /**
@@ -492,6 +502,7 @@ void us3DSceneWidget::updateMatrix2(vtkMatrix4x4* matrix) {
   plane2->SetNormal(normal.data[0], normal.data[1], normal.data[2]);
 
   this->update();
+  emit(plane2Changed());
 }
 
 /**
@@ -529,5 +540,6 @@ void us3DSceneWidget::updateMatrix3(vtkMatrix4x4* matrix) {
   plane3->SetNormal(normal.data[0], normal.data[1], normal.data[2]);
 
   this->update();
+  emit(plane3Changed());
 }
 #endif

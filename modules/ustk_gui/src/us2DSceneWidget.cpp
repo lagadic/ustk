@@ -245,7 +245,20 @@ void us2DSceneWidget::setPolyDataMeshContour(vtkPolyData *polyData) {
 * @param imageData The new vtkImageData to display.
 */
 void us2DSceneWidget::updateImageData(vtkImageData* imageData) {
+
+  //remove actor from view to avoid rendering errors during data switch
+  m_renderer->RemoveActor(m_actor);
+
+  //update internal pointer
   m_imageData = imageData;
+  //update image reslice with the new image data
+  m_reslice->SetInputData(imageData);
+
+  //add the actor (modified with vtk because m_reslice input data has changed)
+  m_renderer->AddActor(m_actor);
+
+  //render the view with the new actor
+  GetRenderWindow()->Render();
 }
 
 /**
@@ -493,4 +506,10 @@ void us2DSceneWidget::drawLine(double u1, double v1, double w1, double u2, doubl
 }
 
 
+/**
+* Slot used to recompute the view (if something shared changed in another view)
+*/
+void us2DSceneWidget::updateView(){
+  GetRenderWindow()->Render();
+}
 #endif //USTK_HAVE_VTK_QT

@@ -175,6 +175,7 @@ public slots:
   void changeMatrix(vpHomogeneousMatrix matrix);
 
   void saveViewSlot();
+  void updateView();
 
 signals:
   void matrixChanged(vtkMatrix4x4* matrix);

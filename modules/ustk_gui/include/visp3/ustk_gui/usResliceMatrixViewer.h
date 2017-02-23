@@ -97,6 +97,7 @@ public slots:
   virtual void slotExit();
 
   void getView1Slice();
+  void openPostScan3D();
 
 private:
     void setupUi();
@@ -115,6 +116,7 @@ private:
     us3DSceneWidget *view2;
 
     QPushButton *resetButton;
+    QPushButton *openImageButton;
     QPushButton *saveView1Button;
     QPushButton *saveView4Button;
     QPushButton *saveView3Button;

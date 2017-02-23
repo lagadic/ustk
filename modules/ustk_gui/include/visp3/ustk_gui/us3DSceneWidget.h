@@ -58,6 +58,7 @@
 #include <vtkPolyDataMapper.h>
 #include <vtkImagePlaneWidget.h>
 #include <vtkCutter.h>
+#include <vtkCubeSource.h>
 
 // Qt includes
 #if defined(USTK_HAVE_VTK_QT4)
@@ -156,9 +157,17 @@ public slots:
   void updateMatrix2(vtkMatrix4x4* matrix);
   void updateMatrix3(vtkMatrix4x4* matrix);
 
+signals:
+  void plane1Changed();
+  void plane2Changed();
+  void plane3Changed();
+
 private:
   //image
   vtkImageData* imageData;
+
+  //Cube for image bounds
+  vtkSmartPointer<vtkCubeSource> imageBoundsCube;
 
   //planes (containing geometrical informations)
   vtkPlane* plane1;

@@ -76,6 +76,7 @@
 
 #include <QDesktopWidget>
 #include <QResizeEvent>
+#include <QFileDialog>
 
 /**
 * Constructor.
@@ -170,13 +171,20 @@ usResliceMatrixViewer::usResliceMatrixViewer(std::string imageFileName )
   // Set up action signals and slots
   connect(this->resetButton, SIGNAL(pressed()), this, SLOT(ResetViews()));
   //connect(this->saveView1Button, SIGNAL(pressed()), view1, SLOT(saveViewSlot()));
+  connect(this->openImageButton, SIGNAL(pressed()), this, SLOT(openPostScan3D()));
   connect(this->saveView1Button, SIGNAL(pressed()), this, SLOT(getView1Slice()));
   connect(this->saveView4Button, SIGNAL(pressed()), view4, SLOT(saveViewSlot()));
   connect(this->saveView3Button, SIGNAL(pressed()), view3, SLOT(saveViewSlot()));
 
+  //updates of planes in 3D scene
   connect(view1,SIGNAL(matrixChanged(vtkMatrix4x4*)),view2,SLOT(updateMatrix1(vtkMatrix4x4*)));
   connect(view4,SIGNAL(matrixChanged(vtkMatrix4x4*)),view2,SLOT(updateMatrix2(vtkMatrix4x4*)));
   connect(view3,SIGNAL(matrixChanged(vtkMatrix4x4*)),view2,SLOT(updateMatrix3(vtkMatrix4x4*)));
+  //update back 2D views (for polydata intersections)
+  connect(view2,SIGNAL(plane2Changed()),view1,SLOT(updateView()));
+  connect(view2,SIGNAL(plane2Changed()),view4,SLOT(updateView()));
+  connect(view2,SIGNAL(plane2Changed()),view3,SLOT(updateView()));
+
 
   ResetViews();
 }
@@ -257,11 +265,6 @@ void usResliceMatrixViewer::Render()
   this->view2->GetRenderWindow()->Render();
   this->view3->GetRenderWindow()->Render();
   this->view4->GetRenderWindow()->Render();
-
-  /*this->view1->update();
-  this->view2->update();
-  this->view3->update();
-  this->view4->update();*/
 }
 
 /**
@@ -303,20 +306,25 @@ void usResliceMatrixViewer::setupUi() {
   resetButton->setText(QString::fromUtf8("Reset views"));
   resetButton->setGeometry(QRect(screenRect.width() - 180, 30, 160, 31));
 
+  openImageButton = new QPushButton(this);
+  openImageButton->setObjectName(QString::fromUtf8("openImageButton"));
+  openImageButton->setText(QString::fromUtf8("Open new image"));
+  openImageButton->setGeometry(QRect(screenRect.width() - 180, 80, 160, 31));
+
   saveView1Button = new QPushButton(this);
   saveView1Button->setObjectName(QString::fromUtf8("saveView1Button"));
   saveView1Button->setText(QString::fromUtf8("Save view 1"));
-  saveView1Button->setGeometry(QRect(screenRect.width() - 180, 80, 160, 31));
+  saveView1Button->setGeometry(QRect(screenRect.width() - 180, 130, 160, 31));
 
   saveView4Button = new QPushButton(this);
   saveView4Button->setObjectName(QString::fromUtf8("saveView4Button"));
   saveView4Button->setText(QString::fromUtf8("Save view 4"));
-  saveView4Button->setGeometry(QRect(screenRect.width() - 180, 130, 160, 31));
+  saveView4Button->setGeometry(QRect(screenRect.width() - 180, 180, 160, 31));
 
   saveView3Button = new QPushButton(this);
   saveView3Button->setObjectName(QString::fromUtf8("saveView3Button"));
   saveView3Button->setText(QString::fromUtf8("Save view 3"));
-  saveView3Button->setGeometry(QRect(screenRect.width() - 180, 180, 160, 31));
+  saveView3Button->setGeometry(QRect(screenRect.width() - 180, 230, 160, 31));
 }
 
 /**
@@ -329,9 +337,10 @@ void usResliceMatrixViewer::resizeEvent(QResizeEvent* event)
     QMainWindow::resizeEvent(event);
     gridLayoutWidget->setGeometry(QRect(10, 10, event->size().width() - 220, event->size().height() - 20));
     resetButton->setGeometry(QRect(event->size().width() - 180, 30, 160, 31));
-    saveView1Button->setGeometry(QRect(event->size().width() - 180, 80, 160, 31));
-    saveView4Button->setGeometry(QRect(event->size().width() - 180, 130, 160, 31));
-    saveView3Button->setGeometry(QRect(event->size().width() - 180, 180, 160, 31));
+    openImageButton->setGeometry(QRect(event->size().width() - 180, 80, 160, 31));
+    saveView1Button->setGeometry(QRect(event->size().width() - 180, 130, 160, 31));
+    saveView4Button->setGeometry(QRect(event->size().width() - 180, 180, 160, 31));
+    saveView3Button->setGeometry(QRect(event->size().width() - 180, 230, 160, 31));
   }
 }
 
@@ -343,5 +352,32 @@ void usResliceMatrixViewer::getView1Slice()
   usImagePostScan2D<unsigned char> postScanSlice;
   view1->getCurrentSlice(postScanSlice);
   usImageIo::write(postScanSlice,"sliceView1.xml");
+}
+
+/**
+* Open new image slot.
+*/
+void usResliceMatrixViewer::openPostScan3D()
+{
+  //open file dialog to let the user select the new mhd file to display
+  QString fileName = QFileDialog::getOpenFileName(this,
+    tr("Open Image"), us::getDataSetPath().c_str(), tr("Meta header files (*.mhd)"));
+
+  if(fileName.size() == 0)
+    return;
+
+  double t0 = vpTime::measureTimeMs();
+
+  //read the image and convert it to vtkImageData
+  usImageIo::read(postScanImage,fileName.toStdString());
+  usVTKConverter::convert(postScanImage,vtkImage);
+
+  //update the views
+  view2->updateImageData(vtkImage);
+  view1->updateImageData(vtkImage);
+  view3->updateImageData(vtkImage);
+  view4->updateImageData(vtkImage);
+
+  std::cout << "update image time (ms) = " << vpTime::measureTimeMs() - t0 << std::endl;
 }
 #endif
