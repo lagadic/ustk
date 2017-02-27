@@ -368,6 +368,5 @@ int main(int argc, const char *argv[])
   delete display;
 #endif
   ofile.close();
-  exit(0);
   return 0;
 }
