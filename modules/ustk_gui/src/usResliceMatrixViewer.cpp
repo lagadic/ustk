@@ -161,13 +161,6 @@ usResliceMatrixViewer::usResliceMatrixViewer(std::string imageFileName )
   view3->init();
   view3->setColor(0,0,1.0);
 
-
-
-
-//  view1->update();
-//  view4->update();
-//  view3->update();
-
   // Set up action signals and slots
   connect(this->resetButton, SIGNAL(pressed()), this, SLOT(ResetViews()));
   //connect(this->saveView1Button, SIGNAL(pressed()), view1, SLOT(saveViewSlot()));
@@ -370,6 +363,8 @@ void usResliceMatrixViewer::openPostScan3D()
 
   //read the image and convert it to vtkImageData
   usImageIo::read(postScanImage,fileName.toStdString());
+  double t1 = vpTime::measureTimeMs();
+  std::cout << "read image time (ms) = " << t1 - t0 << std::endl;
   usVTKConverter::convert(postScanImage,vtkImage);
 
   //update the views
@@ -378,6 +373,6 @@ void usResliceMatrixViewer::openPostScan3D()
   view3->updateImageData(vtkImage);
   view4->updateImageData(vtkImage);
 
-  std::cout << "update image time (ms) = " << vpTime::measureTimeMs() - t0 << std::endl;
+  std::cout << "convert/update image time (ms) = " << vpTime::measureTimeMs() - t1 << std::endl;
 }
 #endif

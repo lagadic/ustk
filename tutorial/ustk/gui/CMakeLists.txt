@@ -11,6 +11,7 @@ set(tutorial_cpp
   us3DViewer.cpp
   us2DViewer.cpp
   us2DViewerDrawing.cpp
+  us2DViewerPicker.cpp
   usResliceMatrixExample.cpp
   us3DViewerSlicing.cpp)
 

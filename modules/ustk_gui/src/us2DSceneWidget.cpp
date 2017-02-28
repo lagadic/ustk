@@ -82,6 +82,8 @@ us2DSceneWidget::us2DSceneWidget(QWidget* parent, Qt::WindowFlags f) : usViewerW
 
   //disable tracking to receive only mouse move events if a button is pressed
   setMouseTracking(false);
+
+  m_pickingState = false;
 }
 
 /**
@@ -417,7 +419,7 @@ void 	us2DSceneWidget::getCurrentSlice(usImagePostScan2D<unsigned char> & image2
 * Mouse press event filter. Used to pick voxels.
 */
 void us2DSceneWidget::mousePressEvent(QMouseEvent *event) {
-if(m_pPressed) {
+if(m_pPressed|| m_pickingState) {
   int x = event->pos().x();
   int y = this->height() - event->pos().y(); // change for VTK window coordinate system, Y axis is inverted
 
@@ -439,6 +441,7 @@ if(m_pPressed) {
 
     vector = MCurrrent * vector;
     std::cout << "Picked value = " << vector.data[0] << " " << vector.data[1] << " " << vector.data[2]  << std::endl;
+    m_pickedVoxel = vector;
     emit (voxelPicked(vector));
   }
   else
@@ -512,4 +515,18 @@ void us2DSceneWidget::drawLine(double u1, double v1, double w1, double u2, doubl
 void us2DSceneWidget::updateView(){
   GetRenderWindow()->Render();
 }
+
+/**
+* Blocking getClick method : waits for user to pick a voxel, and return the voxel coordinates in (u,v,w) coordinates system.
+*/
+void us2DSceneWidget::getClick(vpColVector & vec) {
+  m_pickingState = true;
+  QEventLoop loop;
+  connect(this,  SIGNAL(voxelPicked(vpColVector)), &loop, SLOT(quit()));
+  loop.exec();
+
+  vec = m_pickedVoxel;
+  m_pickingState = false;
+}
+
 #endif //USTK_HAVE_VTK_QT

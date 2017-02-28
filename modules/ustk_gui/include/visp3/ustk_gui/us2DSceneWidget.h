@@ -134,6 +134,8 @@ public:
 
   void drawLine(double u1,double v1,double w1,double u2,double v2,double w2);
 
+  void getClick(vpColVector & vec);
+
   void getCurrentSlice(usImagePostScan2D<unsigned char> &image2D);
 
   vtkImageData * getImageData();
@@ -227,6 +229,10 @@ private:
   //for rotations
   int m_lastmouserPosX;
   int m_lastmouserPosY;
+
+  //for getClick blocking
+  bool m_pickingState;
+  vpColVector m_pickedVoxel;
 };
 #endif
 #endif // __us2DSceneWidget_h_
