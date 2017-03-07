@@ -41,7 +41,7 @@
 
 #include <visp3/ustk_grabber/usGrabberConfig.h>
 
-#ifdef USTK_HAVE_QT4
+#if defined(USTK_HAVE_QT4) || defined(USTK_HAVE_QT5)
 
 #include <QThread>
 #include <QMessageBox>
@@ -88,4 +88,5 @@ private:
 	std::string m_ip;
 };
 
-#endif // USRFDATA_H
+#endif // USTK_HAVE_QT4
+#endif // __usNetworkGrabber_h_

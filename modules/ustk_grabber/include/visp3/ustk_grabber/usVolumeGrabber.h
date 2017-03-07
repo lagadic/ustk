@@ -39,6 +39,13 @@
 #ifndef __usVolumeGrabber_h_
 #define __usVolumeGrabber_h_
 
+#if 0
+
+#include <visp3/ustk_grabber/usGrabberConfig.h>
+
+#if defined(USTK_HAVE_QT4) || defined(USTK_HAVE_QT5)
+
+//Qt includes
 #include <QThread>
 #include <QMutex>
 #include <QSemaphore>
@@ -49,6 +56,10 @@
 
 #include <memory>
 
+//USTK includes
+#include <visp3/ustk_core/usImagePreScan3D.h>
+
+
 #define Hsize 7
 
 class usVolumeGrabber : public QObject
@@ -57,7 +68,7 @@ class usVolumeGrabber : public QObject
 public:
     explicit usVolumeGrabber(QObject *parent = 0);
     virtual ~usVolumeGrabber();
-	void SetSharedBuff(std::shared_ptr<RFData> t_sBuff);
+  void SetSharedBuff(std::shared_ptr<usImagePreScan3D<unsigned char> > t_sBuff);
 signals:
     void mem_update();
 	void changeForce();
@@ -74,10 +85,12 @@ private:
     int *header;
 	long int m_nv;
 	
-	std::shared_ptr<RFData> sBuff3d;
+  std::shared_ptr<usImagePreScan3D<unsigned char> > sBuff3d;
 	
     int m_size;
     void addHeader();
 };
 
+#endif // Qt
+#endif
 #endif // __usVolumeGrabber_h_

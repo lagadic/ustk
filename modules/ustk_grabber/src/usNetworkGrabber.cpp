@@ -33,33 +33,37 @@
 
 #include <visp3/ustk_grabber/usNetworkGrabber.h>
 
-#ifdef USTK_HAVE_QT4 || USTK_HAVE_QT5
+#if defined(USTK_HAVE_QT4) || defined(USTK_HAVE_QT5)
+
+#include <iostream>
+#include <fstream>
+using namespace std;
 
 usNetworkGrabber::usNetworkGrabber(QWidget *parent) :
-    QObject(parent)
+  QObject(parent)
 {
-    m_ip = "192.168.100.2";
-	initialize();
+  m_ip = "192.168.100.2";
+  initialize();
 }
 
 usNetworkGrabber::~usNetworkGrabber()
 {
-    if(tcpSocket->isOpen())
-        tcpSocket->close();
+  if(tcpSocket->isOpen())
+    tcpSocket->close();
 }
 
 void usNetworkGrabber::useSimulator(bool t_state)
 {
-	m_ip = (t_state)?"127.0.0.1":"192.168.100.2";
+  m_ip = (t_state)?"127.0.0.1":"192.168.100.2";
 }
 
 
 void usNetworkGrabber::initialize()
 {
-    tcpSocket = new QTcpSocket(this);
+  tcpSocket = new QTcpSocket(this);
 
-    connect(tcpSocket ,SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(handleError(QAbstractSocket::SocketError)));
-    connect(tcpSocket ,SIGNAL(readyRead()),this, SLOT(dataArrived()));
+  connect(tcpSocket ,SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(handleError(QAbstractSocket::SocketError)));
+  connect(tcpSocket ,SIGNAL(readyRead()),this, SLOT(dataArrived()));
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -68,106 +72,116 @@ void usNetworkGrabber::initialize()
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 void usNetworkGrabber::setConnection(bool a)
 {
-    currentIdx = 0;
-    oldIdx = -1;
-    mSizeData = 0;
-    m_start = false;
+  currentIdx = 0;
+  oldIdx = -1;
+  mSizeData = 0;
+  m_start = false;
 
-    m_connect = a;
-    this->ActionConnect();
+  m_connect = a;
+  this->ActionConnect();
 }
 
 void usNetworkGrabber::ActionConnect()
 {
-    if(m_connect)
-    {
-        QHostAddress addr(m_ip.c_str());
-        tcpSocket->setSocketOption(QAbstractSocket::LowDelayOption, 1);
-        tcpSocket->connectToHost(addr, 8080);
-        this->sendEnabled();
-    }
-    else
-        tcpSocket->close();
+  if(m_connect)
+  {
+    QHostAddress addr(m_ip.c_str());
+    tcpSocket->setSocketOption(QAbstractSocket::LowDelayOption, 1);
+    tcpSocket->connectToHost(addr, 8080);
+    this->sendEnabled();
+  }
+  else
+    tcpSocket->close();
 }
 
 
 // This function is called if there is an error (or disruption) in the connection
 void usNetworkGrabber::handleError(QAbstractSocket::SocketError err)
 {
-    Q_UNUSED(err);
-    // Pop-up to notify an error. tcpSocket.errorString() automatically gets an error message (in english).
-    QMessageBox::critical(NULL,"Error", tcpSocket->errorString());
+  Q_UNUSED(err);
+  // Pop-up to notify an error. tcpSocket.errorString() automatically gets an error message (in english).
+  QMessageBox::critical(NULL,"Error", tcpSocket->errorString());
 
-    // Formally close the connection
-    tcpSocket->close();
+  // Formally close the connection
+  tcpSocket->close();
 }
 
 
 // This function is called when the data is fully arrived from the server to the client
 void usNetworkGrabber::dataArrived()
 {
-    QDataStream ds(tcpSocket);
-    ds.setVersion(QDataStream::Qt_5_2);
+  QDataStream ds(tcpSocket);
+  ds.setVersion(QDataStream::Qt_4_8);
 
-    // before each packet we are expected the size of the data to be received
-   if (mSizeData == 0)
-   {
-     if (tcpSocket->bytesAvailable() < (quint64)sizeof(quint64))
-     {
-       return; // not received enough data to fill the data size
-     }
-     ds >> mSizeData;
-   }
+  // before each packet we are expected the size of the data to be received
+  if (mSizeData == 0)
+  {
+    if (tcpSocket->bytesAvailable() < (quint64)sizeof(quint64))
+    {
+      return; // not received enough data to fill the data size
+    }
+    ds >> mSizeData;
+  }
 
-   // Buffer data until the whole init packet is received
-   if (tcpSocket->bytesAvailable() < mSizeData)
-     return;
+  // Buffer data until the whole init packet is received
+  if (tcpSocket->bytesAvailable() < mSizeData)
+    return;
 
-   // Getting buffer data
-   // 0. Index
-   int t_idx;
-   ds >> t_idx;
-   if(t_idx == 0)
-       m_start = true;
-   currentIdx = t_idx;
-   // 1. Get the header
-   char *t_hdr;
-   uint len;
-   ds.readBytes(t_hdr, len);
-   int *hdrx = (int*)malloc(len);
-   memcpy(hdrx, t_hdr, len);
-   // 2. Get the data
-   char *t_data;
-   uint lenD;
-   ds.readBytes(t_data, lenD);
-   short *dData = (short*)malloc(lenD);
-   memcpy(dData, t_data, lenD);
+  // Getting buffer data
+  // 0. Index
+  int t_idx;
+  ds >> t_idx;
+  if(t_idx == 0)
+    m_start = true;
+  currentIdx = t_idx;
+  // 1. Get the header
+  char *t_hdr;
+  uint len;
+  ds.readBytes(t_hdr, len);
+  int *hdrx = (int*)malloc(len);
+  memcpy(hdrx, t_hdr, len);
+  // 2. Get the data
+  char *t_data;
+  uint lenD;
+  ds.readBytes(t_data, lenD);
+  short *dData = (short*)malloc(lenD);
+  memcpy(dData, t_data, lenD);
 
-   // Emiting data
-   if((currentIdx != oldIdx) && m_start)
-   {
-        emit sendBuffer(dData, currentIdx);
-   }
-   // 3. No more data
-   mSizeData=0;
-   // 4. New data requested
-   oldIdx = currentIdx;
+  // Emiting data
+  if((currentIdx != oldIdx) && m_start)
+  {
+    emit sendBuffer(dData, currentIdx);
 
-   free(hdrx);
-   free(dData);
-   free(t_hdr);
-   free(t_data);
+    ////////// TEST writing data
+    ofstream outputFile;
 
-   sendEnabled();
+    outputFile.open("data.dat");
 
-   tcpSocket->flush();
+    outputFile.write((char*)dData, lenD);
+
+    outputFile.close();
+    //////////
+  }
+  // 3. No more data
+  mSizeData=0;
+  // 4. New data requested
+  oldIdx = currentIdx;
+
+  free(hdrx);
+  free(dData);
+  free(t_hdr);
+  free(t_data);
+
+  sendEnabled();
+
+  tcpSocket->flush();
 }
 
 
 void usNetworkGrabber::sendEnabled()
 {
-    QString str = QString::number(1);
-    tcpSocket->write(str.toUtf8());
+  QString str = QString::number(1);
+  tcpSocket->write(str.toUtf8());
 }
 
 #endif

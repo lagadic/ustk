@@ -30,7 +30,7 @@
  * Marc Pouliquen
  *
  *****************************************************************************/
-
+#if 0
 #include <visp3/ustk_grabber/usVolumeGrabber.h>
 
 
@@ -50,9 +50,9 @@ usVolumeGrabber::~usVolumeGrabber()
     delete header;
 }
 
-void usVolumeGrabber::SetSharedBuff(std::shared_ptr<RFData> t_sBuff)
+void usVolumeGrabber::SetSharedBuff(std::shared_ptr<usImagePreScan3D<unsigned char> > t_sBuff)
 {
-    sBuff3d = std::shared_ptr<RFData>(t_sBuff);
+    sBuff3d = std::shared_ptr<usImagePreScan3D<unsigned char> >(t_sBuff);
 	header = (int*)malloc(Hsize*sizeof(int));
 	addHeader();
 	m_size = sizeof(short)*header[3]*header[4];
@@ -61,27 +61,25 @@ void usVolumeGrabber::SetSharedBuff(std::shared_ptr<RFData> t_sBuff)
 
 void usVolumeGrabber::receivedArray(short *buffer, int t_Idx)
 {
-    //Vector to store the rf signals
+  //Vector to store the rf signals
 	if(m_nv%2 == 0)
-		memcpy(sBuff3d.get()->getDat()+(t_Idx*header[3]*header[4]), buffer, m_size);
+    memcpy(sBuff3d.get()->getData()+(t_Idx*header[3]*header[4]), buffer, m_size);
 	else
-		memcpy(sBuff3d.get()->getDat()+
+    memcpy(sBuff3d.get()->getData()+
 		((2*header[2]-1-t_Idx)*header[3]*header[4]), buffer, m_size);
-	if((m_nv+1)%3 == 0)
-	{
-		emit changeForce();
-		m_nv = 0;
-	}
+
+  //If we reach the end of the volume
 	if((t_Idx+1)%header[2] == 0)//t_Idx == (header[2]-1))
 	{
 		m_nv++;
 		emit mem_update();
-	}
+  }
 }
 
 void usVolumeGrabber::addHeader()
 {
-	int size = sBuff3d.get()->getSizeHdr()*sizeof(int);
+  int size = 7*sizeof(int);
 	memcpy(header, sBuff3d.get()->getHdr(), size);
 	qDebug()<<"size" << size;
 }
+#endif
