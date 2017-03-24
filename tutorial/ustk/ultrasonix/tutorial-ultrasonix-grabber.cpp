@@ -8,6 +8,7 @@
 #include <visp3/core/vpTime.h>
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/sensor/vpV4l2Grabber.h>
+#include <visp3/io/vpImageIo.h>
 
 #include <visp3/ustk_core/usImageRF2D.h>
 #include <visp3/ustk_core/usImagePreScan2D.h>
@@ -31,6 +32,7 @@ usImageRF2D<unsigned char> s_frame_rf;
 usImagePreScan2D<unsigned char> s_frame_prescan;
 usImagePostScan2D<unsigned char> s_frame_postscan;
 vpMutex s_mutex_capture;
+int s_frameIdx;
 //! [capture-multi-threaded declaration]
 
 //! [capture-multi-threaded captureFunction]
@@ -75,7 +77,6 @@ vpThread::Return captureFunction(vpThread::Args args)
   grabberFramePostScan.setCommunicationInformation(grabber.getCommunicationsInformations());
   grabberFramePostScan.setTransducerSettings(grabber.getTransducerSettings());
 
-
   while (! stop_capture_) {
     // Capture in progress
     if(grabber.getImageType() == us::RF_2D) {
@@ -96,7 +97,7 @@ vpThread::Return captureFunction(vpThread::Args args)
         stop_capture_ = true;
       else
         s_capture_state = capture_started;
-
+      s_frameIdx = grabber.getCommunicationsInformations()->m_totFrmIdx;
       if(grabber.getImageType() == us::RF_2D) {
         s_frame_rf = m_frame_rf;
       }
@@ -131,7 +132,9 @@ vpThread::Return displayFunction(vpThread::Args args)
 #if defined(VISP_HAVE_X11)
   vpDisplayX *d_ = NULL;
 #endif
-
+  int frameIdx = 0;
+  char buffer[300];
+  std::string base = "saved2/frame%d.png";
   do {
     s_mutex_capture.lock();
     capture_state_ = s_capture_state;
@@ -147,6 +150,7 @@ vpThread::Return displayFunction(vpThread::Args args)
       // Create a copy of the captured frame
       {
         vpMutex::vpScopedLock lock(s_mutex_capture);
+        frameIdx = s_frameIdx;
        if(m_imageType == us::RF_2D) {
           rf_ = s_frame_rf;
        }
@@ -191,6 +195,12 @@ vpThread::Return displayFunction(vpThread::Args args)
       }
       else if(m_imageType == us::PRESCAN_2D) {
         vpDisplay::display(preScan_);
+
+        //save the image
+
+        sprintf(buffer, base.c_str(), frameIdx);
+        vpImageIo::write(preScan_, buffer);
+
         // Trigger end of acquisition with a mouse click
         vpDisplay::displayText(preScan_, 10, 10, "Click to exit...", vpColor::red);
         if (vpDisplay::getClick(preScan_, false)) {

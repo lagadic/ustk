@@ -37,13 +37,18 @@
 
 #include <iostream>
 #include <fstream>
+#include <visp3/io/vpImageIo.h>
 using namespace std;
 
-usNetworkGrabber::usNetworkGrabber(QWidget *parent) :
+usNetworkGrabber::usNetworkGrabber(QObject *parent) :
   QObject(parent)
 {
   m_ip = "192.168.100.2";
   initialize();
+
+  m_grabbedImage.init(128,448);
+
+  bytesLeftToRead = 0;
 }
 
 usNetworkGrabber::~usNetworkGrabber()
@@ -62,8 +67,6 @@ void usNetworkGrabber::initialize()
 {
   tcpSocket = new QTcpSocket(this);
 
-  connect(tcpSocket ,SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(handleError(QAbstractSocket::SocketError)));
-  connect(tcpSocket ,SIGNAL(readyRead()),this, SLOT(dataArrived()));
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -74,26 +77,55 @@ void usNetworkGrabber::setConnection(bool a)
 {
   currentIdx = 0;
   oldIdx = -1;
-  mSizeData = 0;
   m_start = false;
 
   m_connect = a;
-  this->ActionConnect();
+  if(a)
+    this->ActionConnect();
+  else
+    tcpSocket->disconnect();
 }
 
 void usNetworkGrabber::ActionConnect()
 {
   if(m_connect)
   {
+    std::cout << "ip listening : " << m_ip.c_str() << std::endl;
     QHostAddress addr(m_ip.c_str());
-    tcpSocket->setSocketOption(QAbstractSocket::LowDelayOption, 1);
+    //tcpSocket->setSocketOption(QAbstractSocket::LowDelayOption, 1);
     tcpSocket->connectToHost(addr, 8080);
-    this->sendEnabled();
+
+    connect(tcpSocket,SIGNAL(connected()),this,SLOT(connected()));
+    connect(tcpSocket,SIGNAL(disconnected()),this,SLOT(disconnected()));
+    connect(tcpSocket ,SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(handleError(QAbstractSocket::SocketError)));
+    connect(tcpSocket ,SIGNAL(readyRead()),this, SLOT(dataArrived()));
+
+    if (tcpSocket->isOpen ())
+      std::cout << "socket is open." << std::endl;
+    else
+      std::cout << "socket not is open." << std::endl;
+
+    if ( tcpSocket->isReadable())
+      std::cout << "socket is readable." << std::endl;
   }
   else
     tcpSocket->close();
 }
 
+void usNetworkGrabber::connected()
+{
+  std::cout << "connected to server" << std::endl;
+  std::cout << "local port : " << tcpSocket->localPort() << std::endl;
+  std::cout << "local addr : " << tcpSocket->localAddress().toString().toStdString() << std::endl;
+  std::cout << "peer port : " << tcpSocket->peerPort() << std::endl;
+  std::cout << "peer addr : " << tcpSocket->peerAddress().toString().toStdString() << std::endl;
+}
+
+void usNetworkGrabber::disconnected()
+{
+  std::cout <<"Disconnected .... \n";
+  tcpSocket->close();
+}
 
 // This function is called if there is an error (or disruption) in the connection
 void usNetworkGrabber::handleError(QAbstractSocket::SocketError err)
@@ -110,78 +142,97 @@ void usNetworkGrabber::handleError(QAbstractSocket::SocketError err)
 // This function is called when the data is fully arrived from the server to the client
 void usNetworkGrabber::dataArrived()
 {
-  QDataStream ds(tcpSocket);
-  ds.setVersion(QDataStream::Qt_4_8);
+  std::cout << "dataArrived" << std::endl;
 
-  // before each packet we are expected the size of the data to be received
-  if (mSizeData == 0)
-  {
-    if (tcpSocket->bytesAvailable() < (quint64)sizeof(quint64))
-    {
-      return; // not received enough data to fill the data size
+
+  ////////////////// HEADER READING //////////////////
+  QDataStream in;
+  in.setDevice(tcpSocket);
+  in.setVersion(QDataStream::Qt_5_0);
+  int headerType;
+  if(bytesLeftToRead == 0 ) { // do not read a header if last frame was not complete
+    in >> headerType;
+    std::cout << "header received, type = " << headerType << std::endl;
+  }
+  else {
+    headerType = 0;
+  }
+  //init confirm header received
+  if(headerType == confirmHeader.headerId) {
+    //read whole header
+    in >> confirmHeader.initOk;
+    in >> confirmHeader.probeId;
+
+    if(confirmHeader.initOk == 0) {
+      tcpSocket->close();
+      throw(vpException(vpException::fatalError, "porta initialisation error, closing connection."));
     }
-    ds >> mSizeData;
+
+    std::cout << "porta init sucess, detected probe id = " << confirmHeader.probeId << std::endl;
+
   }
 
-  // Buffer data until the whole init packet is received
-  if (tcpSocket->bytesAvailable() < mSizeData)
-    return;
+  //image header received
+  else if(headerType == imageHeader.headerId) {
+    //read whole header
+    in >> imageHeader.frameCount;
+    in >> imageHeader.heightPx;
+    in >> imageHeader.heightMeters;
+    in >> imageHeader.widthPx;
+    in >> imageHeader.widthtMeters;
+    in >> imageHeader.timeStamp;
+    in >> imageHeader.dataLength;
 
-  // Getting buffer data
-  // 0. Index
-  int t_idx;
-  ds >> t_idx;
-  if(t_idx == 0)
-    m_start = true;
-  currentIdx = t_idx;
-  // 1. Get the header
-  char *t_hdr;
-  uint len;
-  ds.readBytes(t_hdr, len);
-  int *hdrx = (int*)malloc(len);
-  memcpy(hdrx, t_hdr, len);
-  // 2. Get the data
-  char *t_data;
-  uint lenD;
-  ds.readBytes(t_data, lenD);
-  short *dData = (short*)malloc(lenD);
-  memcpy(dData, t_data, lenD);
+    std::cout << "frameCount = " <<  imageHeader.frameCount << std::endl;
+    std::cout << "heightPx = " <<  imageHeader.heightPx << std::endl;
+    std::cout << "heightMeters = " <<  imageHeader.heightMeters << std::endl;
+    std::cout << "widthPx = " <<  imageHeader.widthPx << std::endl;
+    std::cout << "widthtMeters = " <<  imageHeader.widthtMeters << std::endl;
+    std::cout << "timeStamp = " <<  imageHeader.timeStamp << std::endl;
+    std::cout << "dataLength = " <<  imageHeader.dataLength << std::endl;
 
-  // Emiting data
-  if((currentIdx != oldIdx) && m_start)
-  {
-    emit sendBuffer(dData, currentIdx);
+    m_grabbedImage.resize(imageHeader.widthPx,imageHeader.heightPx);
 
-    ////////// TEST writing data
-    ofstream outputFile;
+    bytesLeftToRead = imageHeader.dataLength;
 
-    outputFile.open("data.dat");
+    bytesLeftToRead -= in.readRawData((char*)m_grabbedImage.bitmap,imageHeader.dataLength);
 
-    outputFile.write((char*)dData, lenD);
+    if(bytesLeftToRead == 0 ) { // we've read all the frame
+      QString str = QString("test") + QString::number(imageHeader.frameCount) + QString(".png");
+      vpImageIo::write(m_grabbedImage,str.toStdString());
+    }
 
-    outputFile.close();
-    //////////
+    std::cout << "left to read= " << bytesLeftToRead << std::endl;
+
   }
-  // 3. No more data
-  mSizeData=0;
-  // 4. New data requested
-  oldIdx = currentIdx;
+  //we have a part of the image still not read (arrived with next tcp packet)
+  else {
+    bytesLeftToRead -= in.readRawData((char*)m_grabbedImage.bitmap+(m_grabbedImage.getSize()-bytesLeftToRead),bytesLeftToRead);
 
-  free(hdrx);
-  free(dData);
-  free(t_hdr);
-  free(t_data);
-
-  sendEnabled();
-
-  tcpSocket->flush();
+    if(bytesLeftToRead==0) {
+      QString str = QString("test") + QString::number(imageHeader.frameCount) + QString(".png");
+      vpImageIo::write(m_grabbedImage,str.toStdString());
+       }
+    /*tcpSocket->close();
+    throw(vpException(vpException::fatalError, "unknown data received, closing connection."));*/
+  }
 }
 
+void usNetworkGrabber::initAcquisition(usNetworkGrabber::usInitHeaderSent header) {
+  std::cout << "init acquisition" << std::endl;
 
-void usNetworkGrabber::sendEnabled()
-{
-  QString str = QString::number(1);
-  tcpSocket->write(str.toUtf8());
+  QByteArray block;
+  QDataStream out(&block, QIODevice::WriteOnly);
+  out.setVersion(QDataStream::Qt_5_0);
+
+  // Writing on the stream. Warning : order matters ! (must be the same as on server side when reading)
+  out << header.imagingMode;
+  out << header.imageHeight;
+  out << header.frequency;
+  tcpSocket->write(block);
 }
 
+void usNetworkGrabber::stopAcquisition() {
+  tcpSocket->disconnect();
+}
 #endif

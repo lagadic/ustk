@@ -22,13 +22,14 @@ endif()
 
 if(USE_VTK)
   include(${VTK_USE_FILE})
+  set(config_ "NONE" "RELEASE" "DEBUG" "RELEASEWITHDEBINFO" "RELWITHDEBINFO")
 
   # Instruct CMake to run moc automatically when needed.
   set(CMAKE_AUTOMOC ON)
 
   # Find Qt version corresponding to the Qt version used to compile VTK (4 or 5)
   if(VTK_QT_VERSION VERSION_EQUAL "5") # Qt5 not working yet
-    find_package(Qt5 COMPONENTS Widgets REQUIRED QUIET)
+    find_package(Qt5 COMPONENTS Widgets Network REQUIRED QUIET)
     qt5_wrap_ui(UI_Srcs ${UIs})
 
     list(APPEND opt_incs "${Qt5Core_INCLUDE_DIRS}")
@@ -40,7 +41,7 @@ if(USE_VTK)
     # but not tutorials when they are build outside ViSP as they are stand alone CMake projects that use
     # ViSP as a 3rd party.
 
-    foreach(lib_ ${Qt5Widgets_LIBRARIES})
+    foreach(lib_ ${Qt5Network_LIBRARIES})
       foreach(imp_config_ ${config_})
         get_target_property(lib_property_${imp_config_}_ ${lib_} IMPORTED_LOCATION_${imp_config_})
         # Under Unix, there is no specific suffix for PCL/VTK libraries.         # Under Windows, we add the "optimized", "debug" specific keywords
@@ -70,10 +71,11 @@ if(USE_VTK)
 
       endforeach()
     endforeach()
+
     set(USTK_HAVE_QT5 TRUE)
 
   elseif(VTK_QT_VERSION VERSION_EQUAL "4")
-    find_package(Qt4 REQUIRED QtGui QtCore)
+    find_package(Qt4 REQUIRED QtGui QtCore QtNetwork)
     # Use what VTK built with
     set(QT_QMAKE_EXECUTABLE ${VTK_QT_QMAKE_EXECUTABLE} CACHE FILEPATH "")
     set(QT_MOC_EXECUTABLE ${VTK_QT_MOC_EXECUTABLE} CACHE FILEPATH "")
@@ -93,7 +95,7 @@ endif()
 
 # Create ustk_gui module, only if vtk found
 
-vp_add_module(ustk_grabber visp_ustk_io)
+vp_add_module(ustk_grabber visp_gui visp_ustk_io )
 vp_glob_module_sources()
 vp_module_include_directories(${opt_incs})
 vp_create_module(${opt_libs})
