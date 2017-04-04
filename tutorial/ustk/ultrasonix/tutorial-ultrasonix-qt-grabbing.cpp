@@ -1,6 +1,7 @@
 //! \example tutorial-ultrasonix-qt-grabbing.cpp
 
 #include <visp3/ustk_grabber/usNetworkGrabber.h>
+#include <visp3/core/vpException.h>
 
 #if defined(USTK_HAVE_QT4) || defined(USTK_HAVE_QT5)
 
