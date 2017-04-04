@@ -8,7 +8,7 @@ set(tutorial_ultrasonix_cpp
   tutorial-ultrasonix-grabber.cpp
   tutorial-ultrasonix-confidence-2D.cpp
   tutorial-ultrasonix-servo-confidence-3D.cpp
-  tutorial-ultrasonix-qt-grabbing.cpp)
+  tutorial-ultrasonix-qt-grabbing-pre-scan.cpp)
 
 foreach(cpp ${tutorial_ultrasonix_cpp})
   visp_add_target(${cpp})

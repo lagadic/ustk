@@ -33,7 +33,7 @@
 
 /**
  * @file usNetworkGrabber.h
- * @brief Grabber used to grab frames from ultrasonix station, using a tcp connection.
+ * @brief Virtual class providing network tools to grab frames from ultrasonix station, using a tcp connection.
  */
 
 #ifndef __usNetworkGrabber_h_
@@ -62,75 +62,71 @@
 #include <QtNetwork/QHostAddress>
 #endif
 
-#include <visp3/ustk_core/usImagePreScan2D.h>
-
 class VISP_EXPORT usNetworkGrabber : public QObject
 {
-    Q_OBJECT
+  Q_OBJECT
 public:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-  // Following headers must be the same in the client grabber !
+  // Following headers must be the same in the server (ultrasound station) !
 
-    //header sent by the client to init porta
-    struct usInitHeaderSent{
-      int imagingMode; // see ImagingModes.h
-      int imageHeight; //in px
-      int frequency;
-    };
+  //header sent by the client to init porta
+  struct usInitHeaderSent{
+    int imagingMode; // see ImagingModes.h
+    int imageHeight; //in px
+    int frequency;
+  };
 
-    //header sent by the server to confirm porta is initialized
-    struct usInitHeaderConfirmation{
-      usInitHeaderConfirmation() : headerId(1) {} // set header Id to 1 by default
-      int headerId; //to differenciate usInitHeaderConfirmation (=1) / usImageHeader (=2)
+  //header sent by the server to confirm porta is initialized
+  struct usInitHeaderConfirmation{
+    usInitHeaderConfirmation() : headerId(1) {} // set header Id to 1 by default
+    int headerId; //to differenciate usInitHeaderConfirmation (=1) / usImageHeader (=2)
 
-      int initOk; // 1 if init ok, 0 otherwise
-      int probeId; // unique code for each probe (4DC7 = 15, C 50-62 = ?)
-    };
+    int initOk; // 1 if init ok, 0 otherwise
+    int probeId; // unique code for each probe (4DC7 = 15, C 50-62 = ?)
+  };
 
-    // Header coming before every frame
-    struct usImageHeader{
-      usImageHeader() : headerId(2) {} //set header Id to 2 by default
-      int headerId; //to differenciate usInitHeaderConfirmation (=1) / usImageHeader (=2)
+  // Header coming before every frame
+  struct usImageHeader{
+    usImageHeader() : headerId(2) {} //set header Id to 2 by default
+    int headerId; //to differenciate usInitHeaderConfirmation (=1) / usImageHeader (=2)
 
-      quint32 frameCount;
-      int heightPx; //px
-      float heightMeters; //meters
-      int widthPx; //px
-      float widthtMeters; //meters
+    quint32 frameCount;
+    int heightPx; //px
+    float heightMeters; //meters
+    int widthPx; //px
+    float widthtMeters; //meters
 
-      double timeStamp;
+    double timeStamp;
 
-      int dataLength; //in bytes
+    int dataLength; //in bytes
 
-    };
+  };
 #endif //DOXYGEN_SHOULD_SKIP_THIS
 
-    explicit usNetworkGrabber(QObject *parent = 0);
-    ~usNetworkGrabber();
+  explicit usNetworkGrabber(QObject *parent = 0);
+  ~usNetworkGrabber();
+
   void SetIPAddress(std::string s_ip){m_ip = s_ip;}
 
   void initAcquisition(usNetworkGrabber::usInitHeaderSent header);
   void stopAcquisition();
 
+
+
 public slots:
-    /// Network
-    void initialize(void);
-    void setConnection(bool a);
-    void ActionConnect();
-    void handleError(QAbstractSocket::SocketError err);
-    void dataArrived();
+  /// Network
+  void setConnection(bool a);
+  void ActionConnect();
+  void handleError(QAbstractSocket::SocketError err);
+  virtual void dataArrived() = 0;
   void useSimulator(bool t_state);
   void connected();
   void disconnected();
-private:
-    bool f_loaded;
-    int currentIdx;
-    int oldIdx;
-    bool m_start;
-    // Network
-    QTcpSocket *tcpSocket;
-    bool m_connect;
-	std::string m_ip;
+protected:
+  // Network
+  QTcpSocket *tcpSocket;
+  bool m_connect;
+  std::string m_ip;
 
   //bytes to read again until image end
   int bytesLeftToRead;
@@ -139,10 +135,7 @@ private:
   usInitHeaderConfirmation confirmHeader;
   usImageHeader imageHeader;
 
-
-  usImagePreScan2D<unsigned char> m_grabbedImage;
-
 };
 
-#endif // USTK_HAVE_QT4
+#endif // QT4 || QT5
 #endif // __usNetworkGrabber_h_
