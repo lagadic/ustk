@@ -148,7 +148,14 @@ void usNetworkGrabber::dataArrived()
   ////////////////// HEADER READING //////////////////
   QDataStream in;
   in.setDevice(tcpSocket);
-  in.setVersion(QDataStream::Qt_5_0);
+  #if (defined(USTK_HAVE_QT5))
+    in.setVersion(QDataStream::Qt_5_0);
+  #elif (defined(USTK_HAVE_QT4))
+    in.setVersion(QDataStream::Qt_4_8);
+  #else
+    throw(vpException(vpException::fatalError,"your Qt version is not managed in ustk"));
+  #endif
+
   int headerType;
   if(bytesLeftToRead == 0 ) { // do not read a header if last frame was not complete
     in >> headerType;
@@ -223,7 +230,13 @@ void usNetworkGrabber::initAcquisition(usNetworkGrabber::usInitHeaderSent header
 
   QByteArray block;
   QDataStream out(&block, QIODevice::WriteOnly);
-  out.setVersion(QDataStream::Qt_5_0);
+  #if (defined(USTK_HAVE_QT5))
+    out.setVersion(QDataStream::Qt_5_0);
+  #elif (defined(USTK_HAVE_QT4))
+    out.setVersion(QDataStream::Qt_4_8);
+  #else
+    throw(vpException(vpException::fatalError,"your Qt version is not managed in ustk"));
+  #endif
 
   // Writing on the stream. Warning : order matters ! (must be the same as on server side when reading)
   out << header.imagingMode;

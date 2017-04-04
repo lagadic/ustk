@@ -37,7 +37,7 @@ int main(int argc, char** argv)
 #else
 int main()
 {
-  std::cout << "You should intall Qt4 or Qt5 to run this tutorial" << std::endl;
+  throw(vpException(vpException::fatalError, "You should intall Qt4 or Qt5 to run this tutorial"));
 }
 
 #endif
