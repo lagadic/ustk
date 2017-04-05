@@ -44,7 +44,6 @@
 #if defined(USTK_HAVE_QT4) || defined(USTK_HAVE_QT5)
 
 #include <QThread>
-#include <QMessageBox>
 #include <cassert>
 #include <QObject>
 #include <QScopedPointer>

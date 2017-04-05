@@ -36,6 +36,11 @@
 #if defined(USTK_HAVE_QT4) || defined(USTK_HAVE_QT5)
 
 #include<visp3/io/vpImageIo.h>
+
+#if defined(USTK_HAVE_QT5)
+#include <QDataStream>
+#endif
+
 usNetworkGrabberPreScan::usNetworkGrabberPreScan(usNetworkGrabber *parent) :
   usNetworkGrabber(parent)
 {
