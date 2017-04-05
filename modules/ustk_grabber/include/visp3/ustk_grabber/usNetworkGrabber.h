@@ -117,7 +117,7 @@ public:
   //header sent by the server to confirm porta is initialized
   struct usInitHeaderConfirmation{
     usInitHeaderConfirmation() : headerId(1) {} // set header Id to 1 by default
-    int headerId; //to differenciate usInitHeaderConfirmation (=1) / usImageHeader (=2)
+    int headerId; // Never change this value ! It is used to differenciate usInitHeaderConfirmation (=1) / usImageHeader (=2)
 
     int initOk; // 1 if init ok, 0 otherwise
     int probeId; // unique code for each probe (4DC7 = 15, C 50-62 = 10)
@@ -126,7 +126,7 @@ public:
   // Header coming before every frame
   struct usImageHeader{
     usImageHeader() : headerId(2) {} //set header Id to 2 by default
-    int headerId; //to differenciate usInitHeaderConfirmation (=1) / usImageHeader (=2)
+    int headerId; // Never change this value ! It is used to differenciate usInitHeaderConfirmation (=1) / usImageHeader (=2)
 
     quint32 frameCount; //from the beginning of last acquisition
     quint64 timeStamp; //msecs since epoch (on ultrasond machine)

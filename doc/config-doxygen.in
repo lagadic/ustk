@@ -1597,7 +1597,8 @@ PREDEFINED             = DOXYGEN_SHOULD_SKIP_THIS \
                          VP_TRACE \
                          __APPLE__ \
                          __MACH__ \
-                         USTK_HAVE_VTK_QT
+                         USTK_HAVE_VTK_QT \
+			 USTK_GRABBER_HAVE_QT5
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then
 # this tag can be used to specify a list of macro names that should be expanded.
