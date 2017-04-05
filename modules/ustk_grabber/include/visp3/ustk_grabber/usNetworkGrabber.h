@@ -75,6 +75,25 @@ public:
 
   //header sent by the client to init porta
   struct usInitHeaderSent{
+    usInitHeaderSent() : headerId(1) {} // set header Id to 1 by default
+    int headerId; //to differenciate usInitHeaderSent (=1) / usUpdateHeaderSent (=2)
+
+    int probeId;
+    int slotId;
+
+    int transmitFrequency;
+    int samplingFrequency;
+
+    int imagingMode; // see ImagingModes.h
+
+    int imageDepth; //in mm
+  };
+
+  //header sent by the client to update porta config
+  struct usUpdateHeaderSent{
+    usUpdateHeaderSent() : headerId(2) {} // set header Id to 2 by default
+    int headerId; //to differenciate usInitHeaderSent (=1) / usUpdateHeaderSent (=2)
+
     int imagingMode; // see ImagingModes.h
     int imageHeight; //in px
     int frequency;

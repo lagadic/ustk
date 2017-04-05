@@ -28,9 +28,13 @@ int main(int argc, char** argv)
 
 
   usNetworkGrabber::usInitHeaderSent header;
+
+  header.probeId = 0;
+  header.slotId = 0;
+  header.transmitFrequency = 0;
+  header.samplingFrequency = 0;
   header.imagingMode = 0; //B-mode = 0
-  header.imageHeight = 224;
-  header.frequency = 0; //not used for now
+  header.imageDepth = 140; //in mm
 
   qtGrabber->initAcquisition(header);
 

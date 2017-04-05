@@ -169,9 +169,14 @@ void usNetworkGrabber::initAcquisition(usNetworkGrabber::usInitHeaderSent header
 #endif
 
   // Writing on the stream. Warning : order matters ! (must be the same as on server side when reading)
+
+  out << header.headerId;
+  out << header.probeId;
+  out << header.slotId;
+  out << header.transmitFrequency;
+  out << header.samplingFrequency;
   out << header.imagingMode;
-  out << header.imageHeight;
-  out << header.frequency;
+  out << header.imageDepth;
   tcpSocket->write(block);
 }
 
