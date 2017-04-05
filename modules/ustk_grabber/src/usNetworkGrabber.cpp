@@ -33,15 +33,13 @@
 
 #include <visp3/ustk_grabber/usNetworkGrabber.h>
 
-#if defined(USTK_HAVE_QT4) || defined(USTK_HAVE_QT5)
+#if defined(USTK_GRABBER_HAVE_QT5)
 
 #include <iostream>
 #include <fstream>
 #include <visp3/io/vpImageIo.h>
 
-#if defined(USTK_HAVE_QT5)
 #include <QDataStream>
-#endif
 
 using namespace std;
 
@@ -132,7 +130,7 @@ void usNetworkGrabber::initAcquisition(usNetworkGrabber::usInitHeaderSent header
 
   QByteArray block;
   QDataStream out(&block, QIODevice::WriteOnly);
-#if (defined(USTK_HAVE_QT5))
+#if (defined(USTK_GRABBER_HAVE_QT5))
   out.setVersion(QDataStream::Qt_5_0);
 #elif (defined(USTK_HAVE_QT4))
   out.setVersion(QDataStream::Qt_4_8);

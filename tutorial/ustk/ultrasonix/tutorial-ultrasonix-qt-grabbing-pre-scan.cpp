@@ -3,13 +3,14 @@
 #include <iostream>
 #include <visp3/ustk_grabber/usGrabberConfig.h>
 
-#if defined(USTK_HAVE_QT4) || defined(USTK_HAVE_QT5)
+#if defined(USTK_GRABBER_HAVE_QT5) & defined(USTK_GRABBER_HAVE_QT5_WIDGETS)
 
 #include <QThread>
 #include <QApplication>
 
 #include <visp3/ustk_grabber/usNetworkGrabberPreScan.h>
 #include <visp3/ustk_grabber/usNetworkViewerPreScan.h>
+
 int main(int argc, char** argv)
 {
   // QT application
@@ -42,7 +43,7 @@ int main(int argc, char** argv)
 #else
 int main()
 {
-  std::cout << "You should intall Qt4 or Qt5 to run this tutorial" << std::endl;
+  std::cout << "You should intall Qt5 (with wigdets module) to run this tutorial" << std::endl;
   return 0;
 }
 

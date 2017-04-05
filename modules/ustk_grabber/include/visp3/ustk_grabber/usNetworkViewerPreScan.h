@@ -40,7 +40,7 @@
 
 #include <visp3/ustk_grabber/usGrabberConfig.h>
 
-#if defined(USTK_HAVE_QT4) || defined(USTK_HAVE_QT5)
+#if defined(USTK_GRABBER_HAVE_QT5)
 
 #include <visp3/ustk_grabber/usNetworkGrabberPreScan.h>
 #include <visp3/ustk_core/usImagePreScan2D.h>

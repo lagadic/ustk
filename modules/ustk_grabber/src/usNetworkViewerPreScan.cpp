@@ -32,7 +32,7 @@
 
 #include <visp3/ustk_grabber/usNetworkViewerPreScan.h>
 
-#if defined(USTK_HAVE_QT4) || defined(USTK_HAVE_QT5)
+#if defined(USTK_GRABBER_HAVE_QT5)
 
 usNetworkViewerPreScan::usNetworkViewerPreScan(QObject *parent) :
   QObject(parent)

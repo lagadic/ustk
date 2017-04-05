@@ -41,7 +41,7 @@
 
 #include <visp3/ustk_grabber/usGrabberConfig.h>
 
-#if defined(USTK_HAVE_QT4) || defined(USTK_HAVE_QT5)
+#if defined(USTK_GRABBER_HAVE_QT5)
 
 #include <QThread>
 #include <cassert>
@@ -55,7 +55,7 @@
 #include <QTcpSocket>
 #include <QAbstractSocket>
 #include <QHostAddress>
-#elif defined( USTK_HAVE_QT5)
+#elif defined( USTK_GRABBER_HAVE_QT5)
 #include <QtNetwork/QTcpSocket>
 #include <QtNetwork/QAbstractSocket>
 #include <QtNetwork/QHostAddress>

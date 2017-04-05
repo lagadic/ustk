@@ -33,11 +33,11 @@
 
 #include <visp3/ustk_grabber/usNetworkGrabberPreScan.h>
 
-#if defined(USTK_HAVE_QT4) || defined(USTK_HAVE_QT5)
+#if defined(USTK_GRABBER_HAVE_QT5)
 
 #include<visp3/io/vpImageIo.h>
 
-#if defined(USTK_HAVE_QT5)
+#if defined(USTK_GRABBER_HAVE_QT5)
 #include <QDataStream>
 #endif
 
@@ -61,7 +61,7 @@ void usNetworkGrabberPreScan::dataArrived()
   ////////////////// HEADER READING //////////////////
   QDataStream in;
   in.setDevice(tcpSocket);
-#if (defined(USTK_HAVE_QT5))
+#if (defined(USTK_GRABBER_HAVE_QT5))
   in.setVersion(QDataStream::Qt_5_0);
 #elif (defined(USTK_HAVE_QT4))
   in.setVersion(QDataStream::Qt_4_8);

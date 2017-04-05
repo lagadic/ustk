@@ -4,14 +4,20 @@ VP_OPTION(USE_VTK "VTK;COMPONENTS;vtkGUISupportQt;" "" "Include vtk support" "" 
 set(CMAKE_AUTOMOC ON)
 
 #find Qt5
-find_package(Qt5 COMPONENTS Core Network)
+find_package(Qt5 COMPONENTS Core Network Widgets)
 
 list(APPEND opt_incs "${Qt5Core_INCLUDE_DIRS}")
 list(APPEND opt_incs "${Qt5Network_INCLUDE_DIRS}")
+list(APPEND opt_incs "${Qt5Widgets_INCLUDE_DIRS}")
 
 if(${Qt5Network_FOUND})
   list(APPEND opt_libs Qt5::Core Qt5::Network)
-  set(USTK_HAVE_QT5 TRUE)
+  set(USTK_GRABBER_HAVE_QT5 TRUE)
+endif()
+
+if(${Qt5Widgets_FOUND})
+  list(APPEND opt_libs Qt5::Widgets)
+  set(USTK_GRABBER_HAVE_QT5_WIDGETS TRUE)
 endif()
 
 vp_add_module(ustk_grabber visp_gui visp_ustk_io )

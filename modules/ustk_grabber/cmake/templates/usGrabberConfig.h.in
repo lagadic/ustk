@@ -40,15 +40,10 @@
 
 #include <visp3/core/vpConfig.h>
 
-// Defined if VTK with Qt4 support available
-#cmakedefine USTK_HAVE_QT4
+// Defined if Qt5 minimum support available (modules core and network)
+#cmakedefine USTK_GRABBER_HAVE_QT5
 
-// Defined if VTK with Qt5 support available
-#cmakedefine USTK_HAVE_QT5
-
-// VTK version in hexadecimal (for example 5.8.0 gives 0x050800).
-#ifdef USTK_HAVE_VTK_QT
-#  define USTK_HAVE_VTK_VERSION ${USTK_HAVE_VTK_VERSION}
-#endif
+// Defined if Qt5 widgets available (used in tutorials)
+#cmakedefine USTK_GRABBER_HAVE_QT5_WIDGETS
 
 #endif
