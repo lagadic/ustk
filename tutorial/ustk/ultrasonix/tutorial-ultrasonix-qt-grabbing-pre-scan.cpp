@@ -22,13 +22,13 @@ int main(int argc, char** argv)
   qtGrabber->setConnection(true);
   //qtGrabber->moveToThread(thread);
 
-  usNetworkViewerPreScan * viewer = new usNetworkViewerPreScan();
+  usNetworkViewerPreScan * viewer = new usNetworkViewerPreScan(128,160);
 
   viewer->setGrabber(qtGrabber);
 
 
   usNetworkGrabber::usInitHeaderSent header;
-  header.imagingMode = 0; //B-mode
+  header.imagingMode = 0; //B-mode = 0
   header.imageHeight = 224;
   header.frequency = 0; //not used for now
 
@@ -43,7 +43,7 @@ int main(int argc, char** argv)
 #else
 int main()
 {
-  std::cout << "You should intall Qt5 (with wigdets module) to run this tutorial" << std::endl;
+  std::cout << "You should intall Qt5 (with wigdets and network modules) to run this tutorial" << std::endl;
   return 0;
 }
 

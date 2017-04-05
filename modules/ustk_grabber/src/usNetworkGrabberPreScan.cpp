@@ -35,12 +35,11 @@
 
 #if defined(USTK_GRABBER_HAVE_QT5)
 
-#include<visp3/io/vpImageIo.h>
-
-#if defined(USTK_GRABBER_HAVE_QT5)
 #include <QDataStream>
-#endif
 
+/**
+* Constructor. Inititializes the image, and manages Qt signal.
+*/
 usNetworkGrabberPreScan::usNetworkGrabberPreScan(usNetworkGrabber *parent) :
   usNetworkGrabber(parent)
 {
@@ -48,16 +47,22 @@ usNetworkGrabberPreScan::usNetworkGrabberPreScan(usNetworkGrabber *parent) :
   connect(tcpSocket ,SIGNAL(readyRead()),this, SLOT(dataArrived()));
 }
 
+
+/**
+* Destructor.
+*/
 usNetworkGrabberPreScan::~usNetworkGrabberPreScan()
 {
 
 }
 
+/**
+* Slot called when data is coming on the network.
+* Manages the type of data is coming and read it. Emits newFrameArrived signal when a whole frame is available.
+*/
 // This function is called when the data is fully arrived from the server to the client
 void usNetworkGrabberPreScan::dataArrived()
 {
-  std::cout << "dataArrived" << std::endl;
-
   ////////////////// HEADER READING //////////////////
   QDataStream in;
   in.setDevice(tcpSocket);
@@ -87,9 +92,7 @@ void usNetworkGrabberPreScan::dataArrived()
       tcpSocket->close();
       throw(vpException(vpException::fatalError, "porta initialisation error, closing connection."));
     }
-
     std::cout << "porta init sucess, detected probe id = " << confirmHeader.probeId << std::endl;
-
   }
 
   //image header received
@@ -117,23 +120,19 @@ void usNetworkGrabberPreScan::dataArrived()
 
     bytesLeftToRead -= in.readRawData((char*)m_grabbedImage.bitmap,imageHeader.dataLength);
 
-    if(bytesLeftToRead == 0 ) { // we've read all the frame
-      //QString str = QString("test") + QString::number(imageHeader.frameCount) + QString(".png");
-      //vpImageIo::write(m_grabbedImage,str.toStdString());
+    if(bytesLeftToRead == 0 ) { // we've read all the frame in 1 packet.
       emit newFrameArrived(&m_grabbedImage);
     }
-
-    std::cout << "left to read= " << bytesLeftToRead << std::endl;
+    std::cout << "Bytes left to read for whole frame = " << bytesLeftToRead << std::endl;
 
   }
+
   //we have a part of the image still not read (arrived with next tcp packet)
   else {
     bytesLeftToRead -= in.readRawData((char*)m_grabbedImage.bitmap+(m_grabbedImage.getSize()-bytesLeftToRead),bytesLeftToRead);
 
-    if(bytesLeftToRead==0) {
+    if(bytesLeftToRead==0) { // we've read the last part of the frame.
       emit newFrameArrived(&m_grabbedImage);
-      //QString str = QString("test") + QString::number(imageHeader.frameCount) + QString(".png");
-      //vpImageIo::write(m_grabbedImage,str.toStdString());
     }
   }
 }

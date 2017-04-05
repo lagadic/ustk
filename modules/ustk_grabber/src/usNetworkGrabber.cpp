@@ -43,6 +43,10 @@
 
 using namespace std;
 
+/**
+* Constructor.
+* @param parent Parent QObject.
+*/
 usNetworkGrabber::usNetworkGrabber(QObject *parent) :
   QObject(parent)
 {
@@ -53,17 +57,27 @@ usNetworkGrabber::usNetworkGrabber(QObject *parent) :
   bytesLeftToRead = 0;
 }
 
+/**
+* Destructor.
+*/
 usNetworkGrabber::~usNetworkGrabber()
 {
   if(tcpSocket->isOpen())
     tcpSocket->close();
 }
 
+/**
+* Selection of the server ip adress : local loop (if simulation) or 192.168.100.2.
+*/
 void usNetworkGrabber::useSimulator(bool t_state)
 {
   m_ip = (t_state)?"127.0.0.1":"192.168.100.2";
 }
 
+/**
+* Method used to initialize / stop the grabber.
+* @param a Boolean to initialize (if true) or stop (if false) the grabber.
+*/
 void usNetworkGrabber::setConnection(bool a)
 {
   m_connect = a;
@@ -73,6 +87,9 @@ void usNetworkGrabber::setConnection(bool a)
     tcpSocket->disconnect();
 }
 
+/**
+* Method used to connect / disconnect to the server and manage signals/slots communication.
+*/
 void usNetworkGrabber::ActionConnect()
 {
   if(m_connect)
@@ -99,6 +116,9 @@ void usNetworkGrabber::ActionConnect()
     tcpSocket->close();
 }
 
+/**
+* Slot called when the grabber is connected to the server. Prints connection informations.
+*/
 void usNetworkGrabber::connected()
 {
   std::cout << "connected to server" << std::endl;
@@ -108,13 +128,18 @@ void usNetworkGrabber::connected()
   std::cout << "peer addr : " << tcpSocket->peerAddress().toString().toStdString() << std::endl;
 }
 
+/**
+* Slot called when the grabber is disconnected from the server. Prints information, and closes socket.
+*/
 void usNetworkGrabber::disconnected()
 {
   std::cout <<"Disconnected .... \n";
   tcpSocket->close();
 }
 
-// This function is called if there is an error (or disruption) in the connection
+/**
+* Slot called if there is an error (or disruption) in the connection. Throws an exception and prints the error.
+*/
 void usNetworkGrabber::handleError(QAbstractSocket::SocketError err)
 {
   Q_UNUSED(err);
@@ -125,6 +150,11 @@ void usNetworkGrabber::handleError(QAbstractSocket::SocketError err)
   tcpSocket->close();
 }
 
+/**
+* Method called to init the ultrasonix station, by passing acquisition parameters.
+* @param header Contains acquisition parameters to set up for the acquisition.
+* @see usNetworkGrabber::usInitHeaderSent
+*/
 void usNetworkGrabber::initAcquisition(usNetworkGrabber::usInitHeaderSent header) {
   std::cout << "init acquisition" << std::endl;
 
@@ -145,7 +175,10 @@ void usNetworkGrabber::initAcquisition(usNetworkGrabber::usInitHeaderSent header
   tcpSocket->write(block);
 }
 
-void usNetworkGrabber::stopAcquisition() {
+/**
+* Method to close the connection.
+*/
+void usNetworkGrabber::disconnect() {
   tcpSocket->disconnect();
 }
 #endif

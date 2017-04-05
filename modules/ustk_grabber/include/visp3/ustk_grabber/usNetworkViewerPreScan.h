@@ -40,18 +40,27 @@
 
 #include <visp3/ustk_grabber/usGrabberConfig.h>
 
-#if defined(USTK_GRABBER_HAVE_QT5)
+#if defined(USTK_GRABBER_HAVE_QT5) && defined(VISP_HAVE_DISPLAY)
 
 #include <visp3/ustk_grabber/usNetworkGrabberPreScan.h>
 #include <visp3/ustk_core/usImagePreScan2D.h>
-#include <visp3/gui/vpDisplayX.h>
 
+#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayGTK.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
+
+/**
+ * @class usNetworkViewerPreScan
+ * @brief Specific class to display pre-scan frames using Qt signals when a new frame is arrived on the network.
+ * @ingroup module_ustk_grabber
+ */
 class VISP_EXPORT usNetworkViewerPreScan : public QObject
 {
   Q_OBJECT
 public:
 
-  explicit usNetworkViewerPreScan(QObject *parent = 0);
+  explicit usNetworkViewerPreScan(int frameWith, int frameHeight, QObject *parent = 0);
   ~usNetworkViewerPreScan();
 
   void setGrabber(usNetworkGrabberPreScan* grabber);
@@ -62,8 +71,18 @@ public slots :
 private:
   //grabbed image
   usImagePreScan2D<unsigned char> m_grabbedImage;
+
+  //vpDisplay
+#if defined(VISP_HAVE_X11)
   vpDisplayX display;
+#elif defined(VISP_HAVE_GDI)
+  vpDisplayX display;
+#elif defined(VISP_HAVE_GTK)
+  vpDisplayGTK display;
+#elif defined(VISP_HAVE_OPENCV)
+  vpDisplayOpenCV display;
+#endif
 };
 
-#endif // QT4 || QT5
+#endif // QT5 && X11
 #endif // __usNetworkGrabberPreScan_h_

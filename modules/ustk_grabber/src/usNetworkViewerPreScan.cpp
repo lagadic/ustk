@@ -32,24 +32,36 @@
 
 #include <visp3/ustk_grabber/usNetworkViewerPreScan.h>
 
-#if defined(USTK_GRABBER_HAVE_QT5)
+#if defined(USTK_GRABBER_HAVE_QT5) && defined(VISP_HAVE_DISPLAY)
 
-usNetworkViewerPreScan::usNetworkViewerPreScan(QObject *parent) :
+/**
+* Constructor. Inititializes the image, and the vpDisplay.
+*/
+usNetworkViewerPreScan::usNetworkViewerPreScan(int frameWith, int frameHeight, QObject *parent) :
   QObject(parent)
 {
-  m_grabbedImage.init(128,160);
+  m_grabbedImage.init(frameWith,frameHeight);
   display.init(m_grabbedImage);
 }
 
+/**
+* Destructor.
+*/
 usNetworkViewerPreScan::~usNetworkViewerPreScan()
 {
 
 }
 
+/**
+* Method to connect this viewer to a grabber. Used to call updateDisplay method only when a new frame is available.
+*/
 void usNetworkViewerPreScan::setGrabber(usNetworkGrabberPreScan* grabber) {
   connect(grabber,SIGNAL(newFrameArrived(usImagePreScan2D<unsigned char>*)),this,SLOT(updateDisplay(usImagePreScan2D<unsigned char>*)));
 }
 
+/**
+* Slot to copy the image, and update the display, called when a new frame is available on the network.
+*/
 void usNetworkViewerPreScan::updateDisplay(usImagePreScan2D<unsigned char>* newFrame) {
   m_grabbedImage.resize(newFrame->getHeight(),newFrame->getWidth());
   memcpy(m_grabbedImage.bitmap,newFrame->bitmap,newFrame->getSize());

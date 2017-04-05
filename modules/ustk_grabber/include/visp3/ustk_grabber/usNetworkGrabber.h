@@ -61,6 +61,11 @@
 #include <QtNetwork/QHostAddress>
 #endif
 
+/**
+ * @class usNetworkGrabber
+ * @brief Generic abstract class to manage tcp connection to grab ultrasound frames.
+ * @ingroup module_ustk_grabber
+ */
 class VISP_EXPORT usNetworkGrabber : public QObject
 {
   Q_OBJECT
@@ -108,9 +113,8 @@ public:
   void SetIPAddress(std::string s_ip){m_ip = s_ip;}
 
   void initAcquisition(usNetworkGrabber::usInitHeaderSent header);
-  void stopAcquisition();
 
-
+  void disconnect();
 
 public slots:
   /// Network

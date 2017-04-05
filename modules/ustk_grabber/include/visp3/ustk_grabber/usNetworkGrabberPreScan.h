@@ -45,6 +45,11 @@
 #include <visp3/ustk_grabber/usNetworkGrabber.h>
 #include <visp3/ustk_core/usImagePreScan2D.h>
 
+/**
+ * @class usNetworkGrabberPreScan
+ * @brief Specific class to grab pre-scan frames on the network.
+ * @ingroup module_ustk_grabber
+ */
 class VISP_EXPORT usNetworkGrabberPreScan : public usNetworkGrabber
 {
   Q_OBJECT
