@@ -155,7 +155,8 @@ void usNetworkGrabber::handleError(QAbstractSocket::SocketError err)
 * @param header Contains acquisition parameters to set up for the acquisition.
 * @see usNetworkGrabber::usInitHeaderSent
 */
-void usNetworkGrabber::initAcquisition(usNetworkGrabber::usInitHeaderSent header) {
+void usNetworkGrabber::initAcquisition(usNetworkGrabber::
+                                       usInitHeaderSent header) {
   std::cout << "init acquisition" << std::endl;
 
   QByteArray block;
@@ -176,7 +177,12 @@ void usNetworkGrabber::initAcquisition(usNetworkGrabber::usInitHeaderSent header
   out << header.transmitFrequency;
   out << header.samplingFrequency;
   out << header.imagingMode;
+  out << header.postScanMode;
   out << header.imageDepth;
+  out << header.activateMotor;
+  out << header.motorPosition;
+  out << header.framesPerVolume;
+  out << header.degreesPerFrame;
   tcpSocket->write(block);
 }
 

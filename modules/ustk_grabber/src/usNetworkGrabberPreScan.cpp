@@ -80,7 +80,7 @@ void usNetworkGrabberPreScan::dataArrived()
     std::cout << "header received, type = " << headerType << std::endl;
   }
   else {
-    headerType = 0;
+    headerType = 0; // not a header received, but a part of a frame
   }
   //init confirm header received
   if(headerType == confirmHeader.headerId) {
@@ -99,22 +99,33 @@ void usNetworkGrabberPreScan::dataArrived()
   else if(headerType == imageHeader.headerId) {
     //read whole header
     in >> imageHeader.frameCount;
-    in >> imageHeader.heightPx;
-    in >> imageHeader.heightMeters;
-    in >> imageHeader.widthPx;
-    in >> imageHeader.widthtMeters;
     in >> imageHeader.timeStamp;
     in >> imageHeader.dataLength;
+    in >> imageHeader.ss;
+    in >> imageHeader.imageType;
+    in >> imageHeader.frameWidth;
+    in >> imageHeader.frameHeight;
+    in >> imageHeader.transducerRadius;
+    in >> imageHeader.scanLinePitch;
+    in >> imageHeader.scanLineNumber;
+    in >> imageHeader.degPerFr;
+    in >> imageHeader.framesPerVolume;
+
 
     std::cout << "frameCount = " <<  imageHeader.frameCount << std::endl;
-    std::cout << "heightPx = " <<  imageHeader.heightPx << std::endl;
-    std::cout << "heightMeters = " <<  imageHeader.heightMeters << std::endl;
-    std::cout << "widthPx = " <<  imageHeader.widthPx << std::endl;
-    std::cout << "widthtMeters = " <<  imageHeader.widthtMeters << std::endl;
     std::cout << "timeStamp = " <<  imageHeader.timeStamp << std::endl;
     std::cout << "dataLength = " <<  imageHeader.dataLength << std::endl;
+    std::cout << "ss = " <<  imageHeader.ss << std::endl;
+    std::cout << "imageType = " <<  imageHeader.imageType << std::endl;
+    std::cout << "frameWidth = " <<  imageHeader.frameWidth << std::endl;
+    std::cout << "frameHeight = " <<  imageHeader.frameHeight << std::endl;
+    std::cout << "transducerRadius = " <<  imageHeader.transducerRadius << std::endl;
+    std::cout << "scanLinePitch = " <<  imageHeader.scanLinePitch << std::endl;
+    std::cout << "scanLineNumber = " <<  imageHeader.scanLineNumber << std::endl;
+    std::cout << "degPerFr = " <<  imageHeader.degPerFr << std::endl;
+    std::cout << "framesPerVolume = " <<  imageHeader.framesPerVolume << std::endl;
 
-    m_grabbedImage.resize(imageHeader.widthPx,imageHeader.heightPx);
+    m_grabbedImage.resize(imageHeader.frameWidth,imageHeader.frameHeight);
 
     bytesLeftToRead = imageHeader.dataLength;
 
@@ -129,6 +140,9 @@ void usNetworkGrabberPreScan::dataArrived()
 
   //we have a part of the image still not read (arrived with next tcp packet)
   else {
+    std::cout << "reading following part of the frame" << std::endl;
+    std::cout << "local image size = " << m_grabbedImage.getSize() << std::endl;
+
     bytesLeftToRead -= in.readRawData((char*)m_grabbedImage.bitmap+(m_grabbedImage.getSize()-bytesLeftToRead),bytesLeftToRead);
 
     if(bytesLeftToRead==0) { // we've read the last part of the frame.

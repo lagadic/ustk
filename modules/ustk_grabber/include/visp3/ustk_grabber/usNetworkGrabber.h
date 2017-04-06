@@ -78,15 +78,30 @@ public:
     usInitHeaderSent() : headerId(1) {} // set header Id to 1 by default
     int headerId; //to differenciate usInitHeaderSent (=1) / usUpdateHeaderSent (=2)
 
+    //probe / slot selection
     int probeId;
     int slotId;
 
+    //frequencies
     int transmitFrequency;
     int samplingFrequency;
 
+    //image type
     int imagingMode; // see ImagingModes.h
+    bool postScanMode; //performs scan conversion on ultrasound station if true
 
     int imageDepth; //in mm
+
+    //motor settings
+    bool activateMotor; //to sweep the motor permanently
+
+    // position of the motor in degrees : 0° = side of the fixation system for 4DC7 probe
+    int motorPosition; // (used if activateMotor = false)
+
+    // motor movement parameters
+    int framesPerVolume; // (must be odd : always a central frame)
+    int degreesPerFrame; // angle between two frames in degrees
+
   };
 
   //header sent by the client to update porta config
@@ -105,7 +120,7 @@ public:
     int headerId; //to differenciate usInitHeaderConfirmation (=1) / usImageHeader (=2)
 
     int initOk; // 1 if init ok, 0 otherwise
-    int probeId; // unique code for each probe (4DC7 = 15, C 50-62 = ?)
+    int probeId; // unique code for each probe (4DC7 = 15, C 50-62 = 10)
   };
 
   // Header coming before every frame
@@ -113,15 +128,26 @@ public:
     usImageHeader() : headerId(2) {} //set header Id to 2 by default
     int headerId; //to differenciate usInitHeaderConfirmation (=1) / usImageHeader (=2)
 
-    quint32 frameCount;
-    int heightPx; //px
-    float heightMeters; //meters
-    int widthPx; //px
-    float widthtMeters; //meters
+    quint32 frameCount; //from the beginning of last acquisition
+    quint64 timeStamp; //msecs since epoch (on ultrasond machine)
 
-    double timeStamp;
+    int dataLength; //frame size in bytes, used to read on the network
+    int ss;	// sample size in bits
 
-    int dataLength; //in bytes
+    int imageType;	 	// type of data (0 = pre-scan, 1 = post-scan, 2 = rf)
+
+    int frameWidth; // width of a frame (pixels for post-scan, scanlines for pre-scan or rf data)
+    int frameHeight; // height of frame (pixels for post-scan, samples for pre-scan or rf data)
+
+    //transducer settings
+    int transducerRadius;
+    double scanLinePitch;
+    unsigned int scanLineNumber;
+
+    // motor settings
+    int degPerFr; // degree step between frames
+    int framesPerVolume; //number of frames in a volume
+
 
   };
 #endif //DOXYGEN_SHOULD_SKIP_THIS
@@ -150,7 +176,7 @@ protected:
   bool m_connect;
   std::string m_ip;
 
-  //bytes to read again until image end
+  //bytes to read until image end
   int bytesLeftToRead;
 
   //received headers
