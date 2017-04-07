@@ -7,7 +7,7 @@
 #include <visp3/core/vpThread.h>
 #include <visp3/core/vpTime.h>
 #include <visp3/gui/vpDisplayX.h>
-//#include <visp3/sensor/vpV4l2Grabber.h>
+#include <visp3/sensor/vpV4l2Grabber.h>
 
 #include <visp3/ustk_core/usImageRF2D.h>
 #include <visp3/ustk_core/usImagePreScan2D.h>

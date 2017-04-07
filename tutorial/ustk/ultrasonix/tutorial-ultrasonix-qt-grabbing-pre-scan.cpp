@@ -16,17 +16,16 @@ int main(int argc, char** argv)
   // QT application
   QApplication app( argc, argv );
 
-  usNetworkGrabberPreScan * qtGrabber = new usNetworkGrabberPreScan();
+  QThread * grabbingThread = new QThread();
 
-  //QThread * thread = new QThread();
+  usNetworkGrabberPreScan * qtGrabber = new usNetworkGrabberPreScan();
   qtGrabber->setConnection(true);
-  //qtGrabber->moveToThread(thread);
 
   //connect the viewer to the grabber, to update it at each new frame grabbed
   usNetworkViewerPreScan * viewer = new usNetworkViewerPreScan(128,448);
   viewer->setGrabber(qtGrabber);
 
-  // sending acquisition parameters
+  // setting acquisition parameters
   usNetworkGrabber::usInitHeaderSent header;
   header.probeId = 15; // 4DC7 id = 15
   header.slotId = 0; //top slot id = 0
@@ -36,6 +35,7 @@ int main(int argc, char** argv)
   header.postScanMode = false;
   header.imageDepth = 140; //in mm
 
+  // 2D acquisition
   header.activateMotor = false; //to sweep the motor permanently
   header.motorPosition = 40; // motor in the middle
 
@@ -43,12 +43,14 @@ int main(int argc, char** argv)
   header.framesPerVolume = 10;
   header.degreesPerFrame = 3;*/
 
+  // sending acquisition parameters
   qtGrabber->initAcquisition(header);
 
-  app.exec();
+  // Move the grabber object to another thread
+  qtGrabber->moveToThread(grabbingThread);
+  grabbingThread->start();
 
-  std::cout << "ending application" << std::endl;
-  return 0;
+  return app.exec();
 }
 
 #else

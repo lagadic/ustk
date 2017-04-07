@@ -63,9 +63,13 @@ public:
 signals:
   void newFrameArrived(usImagePreScan2D<unsigned char>*);
 
+protected:
+  void invertRowsCols();
+
 private:
   //grabbed image
   usImagePreScan2D<unsigned char> m_grabbedImage;
+  usImagePreScan2D<unsigned char> m_outputImage; //we have to invert (i-j) in the image grabbed
 };
 
 #endif // QT4 || QT5

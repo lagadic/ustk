@@ -2,7 +2,7 @@ project(tutorial-ultrasonix)
 
 cmake_minimum_required(VERSION 2.6)
 
-find_package(VISP REQUIRED visp_ustk_grabber)
+find_package(VISP REQUIRED visp_ustk_grabber visp_sensor visp_robot)
 
 set(tutorial_ultrasonix_cpp
   tutorial-ultrasonix-grabber.cpp

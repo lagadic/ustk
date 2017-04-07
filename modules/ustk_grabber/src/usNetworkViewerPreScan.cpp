@@ -64,6 +64,10 @@ void usNetworkViewerPreScan::setGrabber(usNetworkGrabberPreScan* grabber) {
 */
 void usNetworkViewerPreScan::updateDisplay(usImagePreScan2D<unsigned char>* newFrame) {
   m_grabbedImage.resize(newFrame->getHeight(),newFrame->getWidth());
+  if(display.getHeight() != m_grabbedImage.getHeight() || display.getWidth() != m_grabbedImage.getWidth()) {
+    display.close(m_grabbedImage);
+    display.init(m_grabbedImage);
+  }
   memcpy(m_grabbedImage.bitmap,newFrame->bitmap,newFrame->getSize());
 
   vpDisplay::display(m_grabbedImage);

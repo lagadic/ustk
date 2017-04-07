@@ -132,7 +132,8 @@ void usNetworkGrabberPreScan::dataArrived()
     bytesLeftToRead -= in.readRawData((char*)m_grabbedImage.bitmap,imageHeader.dataLength);
 
     if(bytesLeftToRead == 0 ) { // we've read all the frame in 1 packet.
-      emit newFrameArrived(&m_grabbedImage);
+      invertRowsCols();
+      emit newFrameArrived(&m_outputImage);
     }
     std::cout << "Bytes left to read for whole frame = " << bytesLeftToRead << std::endl;
 
@@ -146,9 +147,21 @@ void usNetworkGrabberPreScan::dataArrived()
     bytesLeftToRead -= in.readRawData((char*)m_grabbedImage.bitmap+(m_grabbedImage.getSize()-bytesLeftToRead),bytesLeftToRead);
 
     if(bytesLeftToRead==0) { // we've read the last part of the frame.
-      emit newFrameArrived(&m_grabbedImage);
+      invertRowsCols();
+      emit newFrameArrived(&m_outputImage);
     }
   }
+}
+
+/**
+* Method to invert rows and columns in the image.
+*/
+void usNetworkGrabberPreScan::invertRowsCols() {
+  m_outputImage.resize(m_grabbedImage.getWidth(),m_grabbedImage.getHeight());
+
+  for(unsigned int i=0; i<m_grabbedImage.getHeight(); i++)
+    for (unsigned int j=0; j<m_grabbedImage.getWidth(); j++)
+      m_outputImage(j,i,m_grabbedImage(i,j));
 }
 
 #endif
