@@ -60,10 +60,8 @@ class VISP_EXPORT usNetworkViewerPreScan : public QObject
   Q_OBJECT
 public:
 
-  explicit usNetworkViewerPreScan(int frameWith, int frameHeight, QObject *parent = 0);
+  explicit usNetworkViewerPreScan(int frameWith=1, int frameHeight=1, QObject *parent = 0);
   ~usNetworkViewerPreScan();
-
-  void setGrabber(usNetworkGrabberPreScan* grabber);
 
 public slots :
   void updateDisplay(usImagePreScan2D<unsigned char>* newFrame);

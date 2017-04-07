@@ -53,13 +53,6 @@ usNetworkViewerPreScan::~usNetworkViewerPreScan()
 }
 
 /**
-* Method to connect this viewer to a grabber. Used to call updateDisplay method only when a new frame is available.
-*/
-void usNetworkViewerPreScan::setGrabber(usNetworkGrabberPreScan* grabber) {
-  connect(grabber,SIGNAL(newFrameArrived(usImagePreScan2D<unsigned char>*)),this,SLOT(updateDisplay(usImagePreScan2D<unsigned char>*)));
-}
-
-/**
 * Slot to copy the image, and update the display, called when a new frame is available on the network.
 */
 void usNetworkViewerPreScan::updateDisplay(usImagePreScan2D<unsigned char>* newFrame) {

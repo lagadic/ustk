@@ -22,8 +22,8 @@ int main(int argc, char** argv)
   qtGrabber->setConnection(true);
 
   //connect the viewer to the grabber, to update it at each new frame grabbed
-  usNetworkViewerPreScan * viewer = new usNetworkViewerPreScan(128,448);
-  viewer->setGrabber(qtGrabber);
+  usNetworkViewerPreScan * viewer = new usNetworkViewerPreScan(448,128);
+  QObject::connect(qtGrabber,SIGNAL(newFrameArrived(usImagePreScan2D<unsigned char>*)),viewer,SLOT(updateDisplay(usImagePreScan2D<unsigned char>*)));
 
   // setting acquisition parameters
   usNetworkGrabber::usInitHeaderSent header;
@@ -40,6 +40,7 @@ int main(int argc, char** argv)
   header.motorPosition = 40; // motor in the middle
 
   /*IF 3D
+  header.activateMotor = true;
   header.framesPerVolume = 10;
   header.degreesPerFrame = 3;*/
 
