@@ -155,33 +155,38 @@ public:
   explicit usNetworkGrabber(QObject *parent = 0);
   ~usNetworkGrabber();
 
-  void SetIPAddress(std::string s_ip){m_ip = s_ip;}
-
-  void initAcquisition(usNetworkGrabber::usInitHeaderSent header);
-
   void disconnect();
+
+  void initAcquisition(const usNetworkGrabber::usInitHeaderSent &header);
+
+  void setIPAddress(std::string s_ip){m_ip = s_ip;}
+
+  void setVerbose(bool verbose) {m_verbose = verbose;}
 
 public slots:
   /// Network
-  void setConnection(bool a);
-  void ActionConnect();
-  void handleError(QAbstractSocket::SocketError err);
-  virtual void dataArrived() = 0;
-  void useSimulator(bool t_state);
   void connected();
+  void connectToServer();
+  virtual void dataArrived() = 0;
   void disconnected();
+  void handleError(QAbstractSocket::SocketError err);
+  void setConnection(bool actionConnect);
+  void useSimulator(bool t_state);
 protected:
+
+  bool m_verbose; //to print connection infos if true
+
   // Network
-  QTcpSocket *tcpSocket;
+  QTcpSocket *m_tcpSocket;
   bool m_connect;
   std::string m_ip;
 
   //bytes to read until image end
-  int bytesLeftToRead;
+  int m_bytesLeftToRead;
 
   //received headers
-  usInitHeaderConfirmation confirmHeader;
-  usImageHeader imageHeader;
+  usInitHeaderConfirmation m_confirmHeader;
+  usImageHeader m_imageHeader;
 
 };
 

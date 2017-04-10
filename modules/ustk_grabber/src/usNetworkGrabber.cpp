@@ -52,9 +52,11 @@ usNetworkGrabber::usNetworkGrabber(QObject *parent) :
 {
   m_ip = "192.168.100.2";
 
-  tcpSocket = new QTcpSocket(this);
+  m_tcpSocket = new QTcpSocket(this);
 
-  bytesLeftToRead = 0;
+  m_bytesLeftToRead = 0;
+
+  m_verbose = false;
 }
 
 /**
@@ -62,8 +64,8 @@ usNetworkGrabber::usNetworkGrabber(QObject *parent) :
 */
 usNetworkGrabber::~usNetworkGrabber()
 {
-  if(tcpSocket->isOpen())
-    tcpSocket->close();
+  if(m_tcpSocket->isOpen())
+    m_tcpSocket->close();
 }
 
 /**
@@ -78,42 +80,45 @@ void usNetworkGrabber::useSimulator(bool t_state)
 * Method used to initialize / stop the grabber.
 * @param a Boolean to initialize (if true) or stop (if false) the grabber.
 */
-void usNetworkGrabber::setConnection(bool a)
+void usNetworkGrabber::setConnection(bool actionConnect)
 {
-  m_connect = a;
-  if(a)
-    this->ActionConnect();
+  m_connect = actionConnect;
+  if(actionConnect)
+    this->connectToServer();
   else
-    tcpSocket->disconnect();
+    m_tcpSocket->disconnect();
 }
 
 /**
 * Method used to connect / disconnect to the server and manage signals/slots communication.
 */
-void usNetworkGrabber::ActionConnect()
+void usNetworkGrabber::connectToServer()
 {
   if(m_connect)
   {
-    std::cout << "ip listening : " << m_ip.c_str() << std::endl;
+    if(m_verbose)
+      std::cout << "ip listening : " << m_ip.c_str() << std::endl;
     QHostAddress addr(m_ip.c_str());
-    //tcpSocket->setSocketOption(QAbstractSocket::LowDelayOption, 1);
-    tcpSocket->connectToHost(addr, 8080);
+    m_tcpSocket->connectToHost(addr, 8080);
 
-    connect(tcpSocket,SIGNAL(connected()),this,SLOT(connected()));
-    connect(tcpSocket,SIGNAL(disconnected()),this,SLOT(disconnected()));
-    connect(tcpSocket ,SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(handleError(QAbstractSocket::SocketError)));
+    connect(m_tcpSocket, SIGNAL(connected()), this, SLOT(connected()));
+    connect(m_tcpSocket, SIGNAL(disconnected()), this, SLOT(disconnected()));
+    connect(m_tcpSocket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(handleError(QAbstractSocket::SocketError)));
 
 
-    if (tcpSocket->isOpen ())
-      std::cout << "socket is open." << std::endl;
-    else
-      std::cout << "socket not is open." << std::endl;
+    if (m_tcpSocket->isOpen ()) {
+      if(m_verbose) {
+        std::cout << "socket is open." << std::endl;}}
+    else {
+      if(m_verbose) {
+        std::cout << "socket not is open." << std::endl;}}
 
-    if ( tcpSocket->isReadable())
-      std::cout << "socket is readable." << std::endl;
+    if ( m_tcpSocket->isReadable()) {
+      if(m_verbose) {
+        std::cout << "socket is readable." << std::endl;}}
   }
   else
-    tcpSocket->close();
+    m_tcpSocket->close();
 }
 
 /**
@@ -121,11 +126,13 @@ void usNetworkGrabber::ActionConnect()
 */
 void usNetworkGrabber::connected()
 {
-  std::cout << "connected to server" << std::endl;
-  std::cout << "local port : " << tcpSocket->localPort() << std::endl;
-  std::cout << "local addr : " << tcpSocket->localAddress().toString().toStdString() << std::endl;
-  std::cout << "peer port : " << tcpSocket->peerPort() << std::endl;
-  std::cout << "peer addr : " << tcpSocket->peerAddress().toString().toStdString() << std::endl;
+  if(m_verbose) {
+    std::cout << "connected to server" << std::endl;
+    std::cout << "local port : " << m_tcpSocket->localPort() << std::endl;
+    std::cout << "local addr : " << m_tcpSocket->localAddress().toString().toStdString() << std::endl;
+    std::cout << "peer port : " << m_tcpSocket->peerPort() << std::endl;
+    std::cout << "peer addr : " << m_tcpSocket->peerAddress().toString().toStdString() << std::endl;
+  }
 }
 
 /**
@@ -133,8 +140,9 @@ void usNetworkGrabber::connected()
 */
 void usNetworkGrabber::disconnected()
 {
-  std::cout <<"Disconnected .... \n";
-  tcpSocket->close();
+  if(m_verbose)
+    std::cout <<"Disconnected .... \n";
+  m_tcpSocket->close();
 }
 
 /**
@@ -144,10 +152,10 @@ void usNetworkGrabber::handleError(QAbstractSocket::SocketError err)
 {
   Q_UNUSED(err);
   // Notify an error. tcpSocket.errorString() automatically gets an error message (in english).
-  throw(vpException(vpException::fatalError,tcpSocket->errorString().toStdString()));
+  throw(vpException(vpException::fatalError,m_tcpSocket->errorString().toStdString()));
 
   // Formally close the connection
-  tcpSocket->close();
+  m_tcpSocket->close();
 }
 
 /**
@@ -155,9 +163,7 @@ void usNetworkGrabber::handleError(QAbstractSocket::SocketError err)
 * @param header Contains acquisition parameters to set up for the acquisition.
 * @see usNetworkGrabber::usInitHeaderSent
 */
-void usNetworkGrabber::initAcquisition(usNetworkGrabber::
-                                       usInitHeaderSent header) {
-  std::cout << "init acquisition" << std::endl;
+void usNetworkGrabber::initAcquisition(const usNetworkGrabber::usInitHeaderSent &header) {
 
   QByteArray block;
   QDataStream out(&block, QIODevice::WriteOnly);
@@ -183,13 +189,13 @@ void usNetworkGrabber::initAcquisition(usNetworkGrabber::
   out << header.motorPosition;
   out << header.framesPerVolume;
   out << header.degreesPerFrame;
-  tcpSocket->write(block);
+  m_tcpSocket->write(block);
 }
 
 /**
 * Method to close the connection.
 */
 void usNetworkGrabber::disconnect() {
-  tcpSocket->disconnect();
+  m_tcpSocket->disconnect();
 }
 #endif

@@ -44,7 +44,7 @@ usNetworkGrabberPreScan::usNetworkGrabberPreScan(usNetworkGrabber *parent) :
   usNetworkGrabber(parent)
 {
   m_grabbedImage.init(0,0);
-  connect(tcpSocket ,SIGNAL(readyRead()),this, SLOT(dataArrived()));
+  connect(m_tcpSocket ,SIGNAL(readyRead()),this, SLOT(dataArrived()));
 }
 
 
@@ -65,7 +65,7 @@ void usNetworkGrabberPreScan::dataArrived()
 {
   ////////////////// HEADER READING //////////////////
   QDataStream in;
-  in.setDevice(tcpSocket);
+  in.setDevice(m_tcpSocket);
 #if (defined(USTK_GRABBER_HAVE_QT5))
   in.setVersion(QDataStream::Qt_5_0);
 #elif (defined(USTK_HAVE_QT4))
@@ -75,78 +75,83 @@ void usNetworkGrabberPreScan::dataArrived()
 #endif
 
   int headerType;
-  if(bytesLeftToRead == 0 ) { // do not try to read a header if last frame was not complete
+  if(m_bytesLeftToRead == 0 ) { // do not try to read a header if last frame was not complete
     in >> headerType;
-    std::cout << "header received, type = " << headerType << std::endl;
+    if(m_verbose)
+      std::cout << "header received, type = " << headerType << std::endl;
   }
   else {
     headerType = 0; // not a header received, but a part of a frame
   }
   //init confirm header received
-  if(headerType == confirmHeader.headerId) {
+  if(headerType == m_confirmHeader.headerId) {
     //read whole header
-    in >> confirmHeader.initOk;
-    in >> confirmHeader.probeId;
+    in >> m_confirmHeader.initOk;
+    in >> m_confirmHeader.probeId;
 
-    if(confirmHeader.initOk == 0) {
-      tcpSocket->close();
+    if(m_confirmHeader.initOk == 0) {
+      m_tcpSocket->close();
       throw(vpException(vpException::fatalError, "porta initialisation error, closing connection."));
     }
-    std::cout << "porta init sucess, detected probe id = " << confirmHeader.probeId << std::endl;
+    if(m_verbose)
+      std::cout << "porta init sucess, detected probe id = " << m_confirmHeader.probeId << std::endl;
   }
 
   //image header received
-  else if(headerType == imageHeader.headerId) {
+  else if(headerType == m_confirmHeader.headerId) {
     //read whole header
-    in >> imageHeader.frameCount;
-    in >> imageHeader.timeStamp;
-    in >> imageHeader.dataLength;
-    in >> imageHeader.ss;
-    in >> imageHeader.imageType;
-    in >> imageHeader.frameWidth;
-    in >> imageHeader.frameHeight;
-    in >> imageHeader.transducerRadius;
-    in >> imageHeader.scanLinePitch;
-    in >> imageHeader.scanLineNumber;
-    in >> imageHeader.degPerFr;
-    in >> imageHeader.framesPerVolume;
+    in >> m_imageHeader.frameCount;
+    in >> m_imageHeader.timeStamp;
+    in >> m_imageHeader.dataLength;
+    in >> m_imageHeader.ss;
+    in >> m_imageHeader.imageType;
+    in >> m_imageHeader.frameWidth;
+    in >> m_imageHeader.frameHeight;
+    in >> m_imageHeader.transducerRadius;
+    in >> m_imageHeader.scanLinePitch;
+    in >> m_imageHeader.scanLineNumber;
+    in >> m_imageHeader.degPerFr;
+    in >> m_imageHeader.framesPerVolume;
 
+    if(m_verbose) {
+      std::cout << "frameCount = " <<  m_imageHeader.frameCount << std::endl;
+      std::cout << "timeStamp = " <<  m_imageHeader.timeStamp << std::endl;
+      std::cout << "dataLength = " <<  m_imageHeader.dataLength << std::endl;
+      std::cout << "ss = " <<  m_imageHeader.ss << std::endl;
+      std::cout << "imageType = " <<  m_imageHeader.imageType << std::endl;
+      std::cout << "frameWidth = " <<  m_imageHeader.frameWidth << std::endl;
+      std::cout << "frameHeight = " <<  m_imageHeader.frameHeight << std::endl;
+      std::cout << "transducerRadius = " <<  m_imageHeader.transducerRadius << std::endl;
+      std::cout << "scanLinePitch = " <<  m_imageHeader.scanLinePitch << std::endl;
+      std::cout << "scanLineNumber = " <<  m_imageHeader.scanLineNumber << std::endl;
+      std::cout << "degPerFr = " <<  m_imageHeader.degPerFr << std::endl;
+      std::cout << "framesPerVolume = " <<  m_imageHeader.framesPerVolume << std::endl;
+    }
 
-    std::cout << "frameCount = " <<  imageHeader.frameCount << std::endl;
-    std::cout << "timeStamp = " <<  imageHeader.timeStamp << std::endl;
-    std::cout << "dataLength = " <<  imageHeader.dataLength << std::endl;
-    std::cout << "ss = " <<  imageHeader.ss << std::endl;
-    std::cout << "imageType = " <<  imageHeader.imageType << std::endl;
-    std::cout << "frameWidth = " <<  imageHeader.frameWidth << std::endl;
-    std::cout << "frameHeight = " <<  imageHeader.frameHeight << std::endl;
-    std::cout << "transducerRadius = " <<  imageHeader.transducerRadius << std::endl;
-    std::cout << "scanLinePitch = " <<  imageHeader.scanLinePitch << std::endl;
-    std::cout << "scanLineNumber = " <<  imageHeader.scanLineNumber << std::endl;
-    std::cout << "degPerFr = " <<  imageHeader.degPerFr << std::endl;
-    std::cout << "framesPerVolume = " <<  imageHeader.framesPerVolume << std::endl;
+    m_grabbedImage.resize(m_imageHeader.frameWidth,m_imageHeader.frameHeight);
 
-    m_grabbedImage.resize(imageHeader.frameWidth,imageHeader.frameHeight);
+    m_bytesLeftToRead = m_imageHeader.dataLength;
 
-    bytesLeftToRead = imageHeader.dataLength;
+    m_bytesLeftToRead -= in.readRawData((char*)m_grabbedImage.bitmap,m_imageHeader.dataLength);
 
-    bytesLeftToRead -= in.readRawData((char*)m_grabbedImage.bitmap,imageHeader.dataLength);
-
-    if(bytesLeftToRead == 0 ) { // we've read all the frame in 1 packet.
+    if(m_bytesLeftToRead == 0 ) { // we've read all the frame in 1 packet.
       invertRowsCols();
       emit newFrameArrived(&m_outputImage);
     }
-    std::cout << "Bytes left to read for whole frame = " << bytesLeftToRead << std::endl;
+    if(m_verbose)
+      std::cout << "Bytes left to read for whole frame = " << m_bytesLeftToRead << std::endl;
 
   }
 
   //we have a part of the image still not read (arrived with next tcp packet)
   else {
-    std::cout << "reading following part of the frame" << std::endl;
-    std::cout << "local image size = " << m_grabbedImage.getSize() << std::endl;
+    if(m_verbose) {
+      std::cout << "reading following part of the frame" << std::endl;
+      std::cout << "local image size = " << m_grabbedImage.getSize() << std::endl;
+    }
+    m_bytesLeftToRead -= in.readRawData((char*)m_grabbedImage.bitmap+(m_grabbedImage.getSize()-m_bytesLeftToRead),m_bytesLeftToRead);
 
-    bytesLeftToRead -= in.readRawData((char*)m_grabbedImage.bitmap+(m_grabbedImage.getSize()-bytesLeftToRead),bytesLeftToRead);
-
-    if(bytesLeftToRead==0) { // we've read the last part of the frame.
+    if(m_bytesLeftToRead==0) { // we've read the last part of the frame.
       invertRowsCols();
       emit newFrameArrived(&m_outputImage);
     }
