@@ -78,7 +78,7 @@ void usNetworkGrabber::useSimulator(bool t_state)
 
 /**
 * Method used to initialize / stop the grabber.
-* @param a Boolean to initialize (if true) or stop (if false) the grabber.
+* @param actionConnect Boolean to initialize (if true) or stop (if false) the grabber.
 */
 void usNetworkGrabber::setConnection(bool actionConnect)
 {
