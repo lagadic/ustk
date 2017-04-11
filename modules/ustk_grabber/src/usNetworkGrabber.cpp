@@ -185,6 +185,7 @@ void usNetworkGrabber::initAcquisition(const usNetworkGrabber::usInitHeaderSent 
   out << header.imagingMode;
   out << header.postScanMode;
   out << header.imageDepth;
+  out << header.sector;
   out << header.activateMotor;
   out << header.motorPosition;
   out << header.framesPerVolume;

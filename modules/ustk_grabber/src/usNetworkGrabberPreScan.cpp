@@ -98,7 +98,7 @@ void usNetworkGrabberPreScan::dataArrived()
   }
 
   //image header received
-  else if(headerType == m_confirmHeader.headerId) {
+  else if(headerType == m_imageHeader.headerId) {
     //read whole header
     in >> m_imageHeader.frameCount;
     in >> m_imageHeader.timeStamp;
@@ -107,6 +107,9 @@ void usNetworkGrabberPreScan::dataArrived()
     in >> m_imageHeader.imageType;
     in >> m_imageHeader.frameWidth;
     in >> m_imageHeader.frameHeight;
+    in >> m_imageHeader.transmitFrequency;
+    in >> m_imageHeader.samplingFrequency;
+
     in >> m_imageHeader.transducerRadius;
     in >> m_imageHeader.scanLinePitch;
     in >> m_imageHeader.scanLineNumber;
@@ -121,6 +124,8 @@ void usNetworkGrabberPreScan::dataArrived()
       std::cout << "imageType = " <<  m_imageHeader.imageType << std::endl;
       std::cout << "frameWidth = " <<  m_imageHeader.frameWidth << std::endl;
       std::cout << "frameHeight = " <<  m_imageHeader.frameHeight << std::endl;
+      std::cout << "transmitFrequency = " <<  m_imageHeader.transmitFrequency << std::endl;
+      std::cout << "samplingFrequency = " <<  m_imageHeader.samplingFrequency << std::endl;
       std::cout << "transducerRadius = " <<  m_imageHeader.transducerRadius << std::endl;
       std::cout << "scanLinePitch = " <<  m_imageHeader.scanLinePitch << std::endl;
       std::cout << "scanLineNumber = " <<  m_imageHeader.scanLineNumber << std::endl;

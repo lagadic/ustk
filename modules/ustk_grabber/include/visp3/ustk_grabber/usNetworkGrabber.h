@@ -91,6 +91,7 @@ public:
     bool postScanMode; //performs scan conversion on ultrasound station if true
 
     int imageDepth; //in mm
+    int sector; // in %
 
     //motor settings
     bool activateMotor; //to sweep the motor permanently
@@ -138,6 +139,9 @@ public:
 
     int frameWidth; // width of a frame (pixels for post-scan, scanlines for pre-scan or rf data)
     int frameHeight; // height of frame (pixels for post-scan, samples for pre-scan or rf data)
+
+    int transmitFrequency; // in Hz
+    int samplingFrequency; // in Hz
 
     //transducer settings
     int transducerRadius;

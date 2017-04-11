@@ -34,6 +34,7 @@ int main(int argc, char** argv)
   header.imagingMode = 0; //B-mode = 0
   header.postScanMode = false;
   header.imageDepth = 140; //in mm
+  header.sector = 100; //in %
 
   // 2D acquisition
   header.activateMotor = false; //to sweep the motor permanently
@@ -43,7 +44,7 @@ int main(int argc, char** argv)
   header.activateMotor = true;
   header.framesPerVolume = 10;
   header.degreesPerFrame = 3;*/
-
+  qtGrabber->setVerbose(true);
   // sending acquisition parameters
   qtGrabber->initAcquisition(header);
 
