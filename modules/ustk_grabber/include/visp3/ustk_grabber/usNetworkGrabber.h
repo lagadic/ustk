@@ -144,7 +144,7 @@ public:
     int samplingFrequency; // in Hz
 
     //transducer settings
-    int transducerRadius;
+    double transducerRadius;
     double scanLinePitch;
     unsigned int scanLineNumber;
 

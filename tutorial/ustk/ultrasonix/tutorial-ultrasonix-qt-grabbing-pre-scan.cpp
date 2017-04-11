@@ -29,8 +29,8 @@ int main(int argc, char** argv)
   usNetworkGrabber::usInitHeaderSent header;
   header.probeId = 15; // 4DC7 id = 15
   header.slotId = 0; //top slot id = 0
-  header.transmitFrequency = 0;
-  header.samplingFrequency = 0;
+  header.transmitFrequency = 4000000;
+  header.samplingFrequency = 2500000;
   header.imagingMode = 0; //B-mode = 0
   header.postScanMode = false;
   header.imageDepth = 140; //in mm
