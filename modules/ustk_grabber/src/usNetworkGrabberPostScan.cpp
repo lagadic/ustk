@@ -31,7 +31,7 @@
  *
  *****************************************************************************/
 
-#include <visp3/ustk_grabber/usNetworkGrabberPreScan.h>
+#include <visp3/ustk_grabber/usNetworkGrabberPostScan.h>
 
 #if defined(USTK_GRABBER_HAVE_QT5)
 
@@ -40,7 +40,7 @@
 /**
 * Constructor. Inititializes the image, and manages Qt signal.
 */
-usNetworkGrabberPreScan::usNetworkGrabberPreScan(usNetworkGrabber *parent) :
+usNetworkGrabberPostScan::usNetworkGrabberPostScan(usNetworkGrabber *parent) :
   usNetworkGrabber(parent)
 {
   m_grabbedImage.init(0,0);
@@ -51,7 +51,7 @@ usNetworkGrabberPreScan::usNetworkGrabberPreScan(usNetworkGrabber *parent) :
 /**
 * Destructor.
 */
-usNetworkGrabberPreScan::~usNetworkGrabberPreScan()
+usNetworkGrabberPostScan::~usNetworkGrabberPostScan()
 {
 
 }
@@ -61,7 +61,7 @@ usNetworkGrabberPreScan::~usNetworkGrabberPreScan()
 * Manages the type of data is coming and read it. Emits newFrameArrived signal when a whole frame is available.
 */
 // This function is called when the data is fully arrived from the server to the client
-void usNetworkGrabberPreScan::dataArrived()
+void usNetworkGrabberPostScan::dataArrived()
 {
   ////////////////// HEADER READING //////////////////
   QDataStream in;
@@ -137,15 +137,14 @@ void usNetworkGrabberPreScan::dataArrived()
     m_grabbedImage.setTransducerRadius(m_imageHeader.transducerRadius);
     m_grabbedImage.setScanLinePitch(m_imageHeader.scanLinePitch);
 
-    m_grabbedImage.resize(m_imageHeader.frameWidth,m_imageHeader.frameHeight);
+    m_grabbedImage.resize(m_imageHeader.frameHeight,m_imageHeader.frameWidth);
 
     m_bytesLeftToRead = m_imageHeader.dataLength;
 
     m_bytesLeftToRead -= in.readRawData((char*)m_grabbedImage.bitmap,m_imageHeader.dataLength);
 
     if(m_bytesLeftToRead == 0 ) { // we've read all the frame in 1 packet.
-      invertRowsCols();
-      emit newFrameArrived(&m_outputImage);
+      emit newFrameArrived(&m_grabbedImage);
     }
     if(m_verbose)
       std::cout << "Bytes left to read for whole frame = " << m_bytesLeftToRead << std::endl;
@@ -155,27 +154,14 @@ void usNetworkGrabberPreScan::dataArrived()
   //we have a part of the image still not read (arrived with next tcp packet)
   else {
     if(m_verbose) {
-      std::cout << "reading following part of the frame" << std::endl;
+      std::cout << "reading following part of the frame, left to read = " << m_bytesLeftToRead << std::endl;
       std::cout << "local image size = " << m_grabbedImage.getSize() << std::endl;
     }
     m_bytesLeftToRead -= in.readRawData((char*)m_grabbedImage.bitmap+(m_grabbedImage.getSize()-m_bytesLeftToRead),m_bytesLeftToRead);
 
     if(m_bytesLeftToRead==0) { // we've read the last part of the frame.
-      invertRowsCols();
-      emit newFrameArrived(&m_outputImage);
+      emit newFrameArrived(&m_grabbedImage);
     }
   }
 }
-
-/**
-* Method to invert rows and columns in the image.
-*/
-void usNetworkGrabberPreScan::invertRowsCols() {
-  m_outputImage.resize(m_grabbedImage.getWidth(),m_grabbedImage.getHeight());
-
-  for(unsigned int i=0; i<m_grabbedImage.getHeight(); i++)
-    for (unsigned int j=0; j<m_grabbedImage.getWidth(); j++)
-      m_outputImage(j,i,m_grabbedImage(i,j));
-}
-
 #endif

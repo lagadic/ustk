@@ -8,8 +8,8 @@
 #include <QThread>
 #include <QApplication>
 
-#include <visp3/ustk_grabber/usNetworkGrabberPreScan.h>
-#include <visp3/ustk_grabber/usNetworkViewerPreScan.h>
+#include <visp3/ustk_grabber/usNetworkGrabberPostScan.h>
+#include <visp3/ustk_grabber/usNetworkViewerPostScan.h>
 
 int main(int argc, char** argv)
 {
@@ -18,12 +18,12 @@ int main(int argc, char** argv)
 
   QThread * grabbingThread = new QThread();
 
-  usNetworkGrabberPreScan * qtGrabber = new usNetworkGrabberPreScan();
+  usNetworkGrabberPostScan * qtGrabber = new usNetworkGrabberPostScan();
   qtGrabber->setConnection(true);
 
   //connect the viewer to the grabber, to update it at each new frame grabbed
-  usNetworkViewerPreScan * viewer = new usNetworkViewerPreScan();
-  QObject::connect(qtGrabber,SIGNAL(newFrameArrived(usImagePreScan2D<unsigned char>*)),viewer,SLOT(updateDisplay(usImagePreScan2D<unsigned char>*)));
+  usNetworkViewerPostScan * viewer = new usNetworkViewerPostScan();
+  QObject::connect(qtGrabber,SIGNAL(newFrameArrived(usImagePostScan2D<unsigned char>*)),viewer,SLOT(updateDisplay(usImagePostScan2D<unsigned char>*)));
 
   // setting acquisition parameters
   usNetworkGrabber::usInitHeaderSent header;
@@ -32,7 +32,9 @@ int main(int argc, char** argv)
   header.transmitFrequency = 4000000;
   header.samplingFrequency = 2500000;
   header.imagingMode = 0; //B-mode = 0
-  header.postScanMode = false;
+  header.postScanMode = true;
+  header.postScanHeigh = 480;
+  header.postScanWidth = 640;
   header.imageDepth = 140; //in mm
   header.sector = 100; //in %
 

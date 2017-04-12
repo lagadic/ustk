@@ -89,6 +89,8 @@ public:
     //image type
     int imagingMode; // see ImagingModes.h
     bool postScanMode; //performs scan conversion on ultrasound station if true
+    int postScanHeigh; // if post-scan mode, height of the frame (px)
+    int postScanWidth; // if post-scan mode, width of the frame (px)
 
     int imageDepth; //in mm
     int sector; // in %
