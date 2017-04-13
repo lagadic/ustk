@@ -43,7 +43,10 @@
 #if defined(USTK_GRABBER_HAVE_QT5)
 
 #include <visp3/ustk_grabber/usNetworkGrabber.h>
-#include <visp3/ustk_core/usImagePreScan2D.h>
+#include <visp3/ustk_grabber/usDataGrabbed.h>
+
+#include <vector>
+#include <visp3/gui/vpDisplayX.h>
 
 /**
  * @class usNetworkGrabberPreScan
@@ -52,24 +55,36 @@
  */
 class VISP_EXPORT usNetworkGrabberPreScan : public usNetworkGrabber
 {
+  typedef enum {
+    OUTPUT_FRAME_POSITION_IN_VEC = 0,
+    MOST_RECENT_FRAME_POSITION_IN_VEC = 1,
+    CURRENT_FILLED_FRAME_POSITION_IN_VEC = 2,
+  }DataPositionInBuffer;
   Q_OBJECT
 public:
 
   explicit usNetworkGrabberPreScan(usNetworkGrabber *parent = 0);
   ~usNetworkGrabberPreScan();
 
+  usDataGrabbed<usImagePreScan2D<unsigned char> > * acquire();
+
   void dataArrived();
 
-signals:
-  void newFrameArrived(usImagePreScan2D<unsigned char>*);
+  bool isFirstFrameAvailable() {return m_firstFrameAvailable;}
 
 protected:
   void invertRowsCols();
 
 private:
   //grabbed image
-  usImagePreScan2D<unsigned char> m_grabbedImage;
-  usImagePreScan2D<unsigned char> m_outputImage; //we have to invert (i-j) in the image grabbed
+  usDataGrabbed<usImagePreScan2D<unsigned char> > m_grabbedImage;
+
+  // Output images : we have to invert (i <-> j) in the image grabbed
+  std::vector<usDataGrabbed<usImagePreScan2D<unsigned char> > *> m_outputBuffer;
+  bool m_firstFrameAvailable;
+
+  //to manage ptrs switch init
+  bool swichOutputInit;
 };
 
 #endif // QT4 || QT5

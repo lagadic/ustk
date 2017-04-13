@@ -55,9 +55,8 @@
  * @ingroup module_ustk_grabber
  */
 template<class Type>
-class VISP_EXPORT usDataGrabbed<Type> : public Type
+class VISP_EXPORT usDataGrabbed : public Type
 {
-  Q_OBJECT
 public:
 
   explicit usDataGrabbed();
@@ -84,7 +83,7 @@ private:
 */
 template<class Type>
 usDataGrabbed<Type>::usDataGrabbed() :
-  Type(), mutex(), m_frameCount(), m_timeStamp(), m_framesPerVolume()
+  Type(), mutex(), m_frameCount(0), m_timeStamp(0), m_framesPerVolume(0)
 {
 
 }
@@ -99,16 +98,17 @@ usDataGrabbed<Type>::~usDataGrabbed()
 }
 
 /**
-* Destructor.
+* Frame count getter.
+* @return The frame number since beginning of acquisition.
 */
 template<class Type>
 quint32 usDataGrabbed<Type>::getFrameCount(){
   return m_frameCount;
 }
 
-
 /**
-* Destructor.
+* Frame per volume getter.
+* @return The number of frames per volume acquired. Used to reconstruct 3D volumes.
 */
 template<class Type>
 int usDataGrabbed<Type>::getFramesPerVolume(){
@@ -116,7 +116,8 @@ int usDataGrabbed<Type>::getFramesPerVolume(){
 }
 
 /**
-* Destructor.
+* Time stamp getter.
+* @return The time stamp of ultrasound station when the frame was acquired.
 */
 template<class Type>
 quint64 usDataGrabbed<Type>::getTimeStamp(){
@@ -124,15 +125,17 @@ quint64 usDataGrabbed<Type>::getTimeStamp(){
 }
 
 /**
-* Destructor.
+* Frame count setter.
+* @param frameCount The frame number since beginning of acquisition.
 */
 template<class Type>
-void usDataGrabbed<Type>::setFrameCount(quint32 m_frameCount){
-  m_frameCount = m_frameCount;
+void usDataGrabbed<Type>::setFrameCount(quint32 frameCount){
+  m_frameCount = frameCount;
 }
 
 /**
-* Destructor.
+* Frame per volume setter.
+* @param framesPerVolume The number of frames per volume acquired. Used to reconstruct 3D volumes.
 */
 template<class Type>
 void usDataGrabbed<Type>::setFramesPerVolume(int framesPerVolume){
@@ -140,13 +143,13 @@ void usDataGrabbed<Type>::setFramesPerVolume(int framesPerVolume){
 }
 
 /**
-* Destructor.
+* Time stamp setter.
+* @param timeStamp The time stamp of ultrasound station when the frame was acquired.
 */
 template<class Type>
 void usDataGrabbed<Type>::setTimeStamp(quint64 timeStamp){
-  m_framesPerVolume = framesPerVolume;
+  m_timeStamp = timeStamp;
 }
-
 
 #endif // QT4 || QT5
 #endif // __usDataGrabbed_h_

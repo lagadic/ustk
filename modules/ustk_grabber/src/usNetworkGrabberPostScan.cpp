@@ -43,8 +43,8 @@
 usNetworkGrabberPostScan::usNetworkGrabberPostScan(usNetworkGrabber *parent) :
   usNetworkGrabber(parent)
 {
-  m_grabbedImage.init(0,0);
-  connect(m_tcpSocket ,SIGNAL(readyRead()),this, SLOT(dataArrived()));
+  m_grabbedImage.init(0, 0);
+  connect(m_tcpSocket, SIGNAL(readyRead()), this, SLOT(dataArrived()));
 }
 
 
@@ -60,7 +60,6 @@ usNetworkGrabberPostScan::~usNetworkGrabberPostScan()
 * Slot called when data is coming on the network.
 * Manages the type of data is coming and read it. Emits newFrameArrived signal when a whole frame is available.
 */
-// This function is called when the data is fully arrived from the server to the client
 void usNetworkGrabberPostScan::dataArrived()
 {
   ////////////////// HEADER READING //////////////////
@@ -137,11 +136,11 @@ void usNetworkGrabberPostScan::dataArrived()
     m_grabbedImage.setTransducerRadius(m_imageHeader.transducerRadius);
     m_grabbedImage.setScanLinePitch(m_imageHeader.scanLinePitch);
 
-    m_grabbedImage.resize(m_imageHeader.frameHeight,m_imageHeader.frameWidth);
+    m_grabbedImage.resize(m_imageHeader.frameHeight, m_imageHeader.frameWidth);
 
     m_bytesLeftToRead = m_imageHeader.dataLength;
 
-    m_bytesLeftToRead -= in.readRawData((char*)m_grabbedImage.bitmap,m_imageHeader.dataLength);
+    m_bytesLeftToRead -= in.readRawData((char*)m_grabbedImage.bitmap, m_imageHeader.dataLength);
 
     if(m_bytesLeftToRead == 0 ) { // we've read all the frame in 1 packet.
       emit newFrameArrived(&m_grabbedImage);
@@ -157,7 +156,7 @@ void usNetworkGrabberPostScan::dataArrived()
       std::cout << "reading following part of the frame, left to read = " << m_bytesLeftToRead << std::endl;
       std::cout << "local image size = " << m_grabbedImage.getSize() << std::endl;
     }
-    m_bytesLeftToRead -= in.readRawData((char*)m_grabbedImage.bitmap+(m_grabbedImage.getSize()-m_bytesLeftToRead),m_bytesLeftToRead);
+    m_bytesLeftToRead -= in.readRawData((char*)m_grabbedImage.bitmap+(m_grabbedImage.getSize()-m_bytesLeftToRead), m_bytesLeftToRead);
 
     if(m_bytesLeftToRead==0) { // we've read the last part of the frame.
       emit newFrameArrived(&m_grabbedImage);

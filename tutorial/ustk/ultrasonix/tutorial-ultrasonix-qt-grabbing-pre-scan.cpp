@@ -3,13 +3,16 @@
 #include <iostream>
 #include <visp3/ustk_grabber/usGrabberConfig.h>
 
-#if defined(USTK_GRABBER_HAVE_QT5) & defined(USTK_GRABBER_HAVE_QT5_WIDGETS)
+#if defined(USTK_GRABBER_HAVE_QT5) && defined(USTK_GRABBER_HAVE_QT5_WIDGETS) && defined(VISP_HAVE_X11)
 
 #include <QThread>
 #include <QApplication>
 
+
 #include <visp3/ustk_grabber/usNetworkGrabberPreScan.h>
 #include <visp3/ustk_grabber/usNetworkViewerPreScan.h>
+
+#include <visp3/gui/vpDisplayX.h>
 
 int main(int argc, char** argv)
 {
@@ -22,8 +25,8 @@ int main(int argc, char** argv)
   qtGrabber->setConnection(true);
 
   //connect the viewer to the grabber, to update it at each new frame grabbed
-  usNetworkViewerPreScan * viewer = new usNetworkViewerPreScan();
-  QObject::connect(qtGrabber,SIGNAL(newFrameArrived(usImagePreScan2D<unsigned char>*)),viewer,SLOT(updateDisplay(usImagePreScan2D<unsigned char>*)));
+  /*usNetworkViewerPreScan * viewer = new usNetworkViewerPreScan();
+  QObject::connect(qtGrabber,SIGNAL(newFrameArrived(usImagePreScan2D<unsigned char>*)),viewer,SLOT(updateDisplay(usImagePreScan2D<unsigned char>*)));*/
 
   // setting acquisition parameters
   usNetworkGrabber::usInitHeaderSent header;
@@ -44,7 +47,19 @@ int main(int argc, char** argv)
   header.activateMotor = true;
   header.framesPerVolume = 10;
   header.degreesPerFrame = 3;*/
-  qtGrabber->setVerbose(true);
+
+
+  //prepare image;
+  usDataGrabbed<usImagePreScan2D<unsigned char> >* grabbedFrame;
+  usDataGrabbed<usImagePreScan2D<unsigned char> > localFrame;
+
+  //Prepare display
+  vpDisplayX * displayX = NULL;
+  bool displayInit = false;
+
+  bool captureRunning = true;
+
+  //qtGrabber->setVerbose(true);
   // sending acquisition parameters
   qtGrabber->initAcquisition(header);
 
@@ -52,13 +67,39 @@ int main(int argc, char** argv)
   qtGrabber->moveToThread(grabbingThread);
   grabbingThread->start();
 
+  do {
+    if(qtGrabber->isFirstFrameAvailable()) {
+      grabbedFrame = qtGrabber->acquire();
+      //local copy for vpDisplay
+      localFrame = *grabbedFrame;
+
+      std::cout <<"MAIN THREAD received frame No : " << localFrame.getFrameCount() << std::endl;
+
+      if(!displayInit && localFrame.getHeight() !=0 && localFrame.getHeight() !=0) {
+        displayX = new vpDisplayX(localFrame);
+        displayInit = true;
+      }
+
+      if(displayInit) {
+      vpDisplay::display(localFrame);
+      vpDisplay::flush(localFrame);
+      vpTime::wait(1000);
+      }
+    }
+    else {
+      std::cout << "waiting ultrasound initialisation..." << std::endl;
+      vpTime::wait(1000);
+    }
+  }while(captureRunning);
+
+
   return app.exec();
 }
 
 #else
 int main()
 {
-  std::cout << "You should intall Qt5 (with wigdets and network modules) to run this tutorial" << std::endl;
+  std::cout << "You should intall Qt5 (with wigdets and network modules), and display X to run this tutorial" << std::endl;
   return 0;
 }
 

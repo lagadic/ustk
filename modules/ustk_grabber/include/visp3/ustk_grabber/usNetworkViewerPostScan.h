@@ -32,7 +32,7 @@
 
 /**
  * @file usNetworkGrabberPostScan.h
- * @brief Grabber used to grab pre-scan frames from ultrasonix station, using a tcp connection.
+ * @brief Grabber used to grab post-scan frames from ultrasonix station, using a tcp connection.
  */
 
 #ifndef __usNetworkViewerPostScan_h_
@@ -52,7 +52,7 @@
 
 /**
  * @class usNetworkViewerPostScan
- * @brief Specific class to display pre-scan frames using Qt signals when a new frame is arrived on the network.
+ * @brief Specific class to display post-scan frames using Qt signals when a new frame is arrived on the network.
  * @ingroup module_ustk_grabber
  */
 class VISP_EXPORT usNetworkViewerPostScan : public QObject

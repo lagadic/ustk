@@ -3,7 +3,7 @@
 #include <iostream>
 #include <visp3/ustk_grabber/usGrabberConfig.h>
 
-#if defined(USTK_GRABBER_HAVE_QT5) & defined(USTK_GRABBER_HAVE_QT5_WIDGETS)
+#if defined(USTK_GRABBER_HAVE_QT5) && defined(USTK_GRABBER_HAVE_QT5_WIDGETS)
 
 #include <QThread>
 #include <QApplication>
@@ -23,7 +23,7 @@ int main(int argc, char** argv)
 
   //connect the viewer to the grabber, to update it at each new frame grabbed
   usNetworkViewerPostScan * viewer = new usNetworkViewerPostScan();
-  QObject::connect(qtGrabber,SIGNAL(newFrameArrived(usImagePostScan2D<unsigned char>*)),viewer,SLOT(updateDisplay(usImagePostScan2D<unsigned char>*)));
+  QObject::connect(qtGrabber, SIGNAL(newFrameArrived(usImagePostScan2D<unsigned char>*)), viewer, SLOT(updateDisplay(usImagePostScan2D<unsigned char>*)));
 
   // setting acquisition parameters
   usNetworkGrabber::usInitHeaderSent header;
