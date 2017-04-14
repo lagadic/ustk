@@ -10,6 +10,8 @@
 
 #include <visp3/ustk_grabber/usNetworkGrabberPreScan.h>
 
+#include <visp3/ustk_confidence_map/usScanlineConfidence2D.h>
+
 #include <visp3/gui/vpDisplayX.h>
 
 int main(int argc, char** argv)
@@ -45,10 +47,15 @@ int main(int argc, char** argv)
   //prepare image;
   usDataGrabbed<usImagePreScan2D<unsigned char> >* grabbedFrame;
   usDataGrabbed<usImagePreScan2D<unsigned char> > localFrame;
+  usImagePreScan2D<unsigned char> confidence;
 
   //Prepare display
   vpDisplayX * displayX = NULL;
+  vpDisplayX * displayXConf = NULL;
   bool displayInit = false;
+
+  //prepare confidence
+  usScanlineConfidence2D confidenceProcessor;
 
   bool captureRunning = true;
 
@@ -64,28 +71,31 @@ int main(int argc, char** argv)
   do {
     if(qtGrabber->isFirstFrameAvailable()) {
       grabbedFrame = qtGrabber->acquire();
-
+      confidenceProcessor.run(confidence,*grabbedFrame);
       //local copy for vpDisplay
-      localFrame = *grabbedFrame;
+      //localFrame = *grabbedFrame;
 
-      std::cout <<"MAIN THREAD received frame No : " << localFrame.getFrameCount() << std::endl;
+      std::cout <<"MAIN THREAD received frame No : " << grabbedFrame->getFrameCount() << std::endl;
 
       //init display
-      if(!displayInit && localFrame.getHeight() !=0 && localFrame.getHeight() !=0) {
-        displayX = new vpDisplayX(localFrame);
+      if(!displayInit && grabbedFrame->getHeight() !=0 && grabbedFrame->getHeight() !=0) {
+        displayX = new vpDisplayX(*grabbedFrame);
+        displayXConf = new vpDisplayX(confidence);
         displayInit = true;
       }
 
       // processing display
       if(displayInit) {
-        vpDisplay::display(localFrame);
-        vpDisplay::flush(localFrame);
-        vpTime::wait(1000); // wait to simulate a local process running on last frame frabbed
+        vpDisplay::display(*grabbedFrame);
+        vpDisplay::flush(*grabbedFrame);
+        vpDisplay::display(confidence);
+        vpDisplay::flush(confidence);
+        //vpTime::wait(10); // wait to simulate a local process running on last frame frabbed
       }
     }
     else {
       std::cout << "waiting ultrasound initialisation..." << std::endl;
-      vpTime::wait(1000);
+      vpTime::wait(100);
     }
   }while(captureRunning);
 
