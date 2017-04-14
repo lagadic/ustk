@@ -8,9 +8,7 @@
 #include <QThread>
 #include <QApplication>
 
-
 #include <visp3/ustk_grabber/usNetworkGrabberPreScan.h>
-#include <visp3/ustk_grabber/usNetworkViewerPreScan.h>
 
 #include <visp3/gui/vpDisplayX.h>
 
@@ -23,10 +21,6 @@ int main(int argc, char** argv)
 
   usNetworkGrabberPreScan * qtGrabber = new usNetworkGrabberPreScan();
   qtGrabber->setConnection(true);
-
-  //connect the viewer to the grabber, to update it at each new frame grabbed
-  /*usNetworkViewerPreScan * viewer = new usNetworkViewerPreScan();
-  QObject::connect(qtGrabber,SIGNAL(newFrameArrived(usImagePreScan2D<unsigned char>*)),viewer,SLOT(updateDisplay(usImagePreScan2D<unsigned char>*)));*/
 
   // setting acquisition parameters
   usNetworkGrabber::usInitHeaderSent header;
@@ -48,7 +42,6 @@ int main(int argc, char** argv)
   header.framesPerVolume = 10;
   header.degreesPerFrame = 3;*/
 
-
   //prepare image;
   usDataGrabbed<usImagePreScan2D<unsigned char> >* grabbedFrame;
   usDataGrabbed<usImagePreScan2D<unsigned char> > localFrame;
@@ -63,27 +56,31 @@ int main(int argc, char** argv)
   // sending acquisition parameters
   qtGrabber->initAcquisition(header);
 
-  // Move the grabber object to another thread
+  // Move the grabber object to another thread, and run it
   qtGrabber->moveToThread(grabbingThread);
   grabbingThread->start();
 
+  //our local grabbing loop
   do {
     if(qtGrabber->isFirstFrameAvailable()) {
       grabbedFrame = qtGrabber->acquire();
+
       //local copy for vpDisplay
       localFrame = *grabbedFrame;
 
       std::cout <<"MAIN THREAD received frame No : " << localFrame.getFrameCount() << std::endl;
 
+      //init display
       if(!displayInit && localFrame.getHeight() !=0 && localFrame.getHeight() !=0) {
         displayX = new vpDisplayX(localFrame);
         displayInit = true;
       }
 
+      // processing display
       if(displayInit) {
-      vpDisplay::display(localFrame);
-      vpDisplay::flush(localFrame);
-      vpTime::wait(1000);
+        vpDisplay::display(localFrame);
+        vpDisplay::flush(localFrame);
+        vpTime::wait(1000); // wait to simulate a local process running on last frame grabbed
       }
     }
     else {

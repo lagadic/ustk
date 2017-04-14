@@ -42,11 +42,11 @@
 
 #if defined(USTK_GRABBER_HAVE_QT5)
 
-#include <visp3/ustk_grabber/usNetworkGrabber.h>
-#include <visp3/ustk_grabber/usDataGrabbed.h>
-
 #include <vector>
-#include <visp3/gui/vpDisplayX.h>
+
+#include <visp3/ustk_grabber/usNetworkGrabber.h>
+#include <visp3/ustk_core/usImagePreScan2D.h>
+#include <visp3/ustk_grabber/usDataGrabbed.h>
 
 /**
  * @class usNetworkGrabberPreScan
@@ -84,7 +84,7 @@ private:
   bool m_firstFrameAvailable;
 
   //to manage ptrs switch init
-  bool swichOutputInit;
+  bool m_swichOutputInit;
 };
 
 #endif // QT4 || QT5

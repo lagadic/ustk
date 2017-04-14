@@ -44,6 +44,7 @@ usNetworkGrabberPreScan::usNetworkGrabberPreScan(usNetworkGrabber *parent) :
   usNetworkGrabber(parent)
 {
   m_grabbedImage.init(0,0);
+
   //buffer of size 3
   m_outputBuffer.push_back(new usDataGrabbed<usImagePreScan2D<unsigned char> >);
   m_outputBuffer.push_back(new usDataGrabbed<usImagePreScan2D<unsigned char> >);
@@ -51,7 +52,7 @@ usNetworkGrabberPreScan::usNetworkGrabberPreScan(usNetworkGrabber *parent) :
 
   m_firstFrameAvailable = false;
 
-  swichOutputInit = false;
+  m_swichOutputInit = false;
 
   connect(m_tcpSocket ,SIGNAL(readyRead()),this, SLOT(dataArrived()));
 }
@@ -69,7 +70,6 @@ usNetworkGrabberPreScan::~usNetworkGrabberPreScan()
 * Slot called when data is coming on the network.
 * Manages the type of data which is coming and read it. Emits newFrameArrived signal when a whole frame is available.
 */
-// This function is called when the data is fully arrived from the server to the client
 void usNetworkGrabberPreScan::dataArrived()
 {
   ////////////////// HEADER READING //////////////////
@@ -211,7 +211,7 @@ void usNetworkGrabberPreScan::invertRowsCols() {
 
 /**
 * Method to get the last frame received. The grabber is designed to avoid data copy (it is why you get a pointer on the data).
-* @note This method is designed to be thread-safe, ou can call it from another thread.
+* @note This method is designed to be thread-safe, you can call it from another thread.
 * @warning Make sure to lock the usDataGrabbed::mutex when you access/modify usDataGrabbed::frameCount attribute, wich is acessed in this method.
 * @return Pointer to the last frame acquired.
 */
@@ -231,12 +231,12 @@ usDataGrabbed<usImagePreScan2D<unsigned char> >* usNetworkGrabberPreScan::acquir
 
     // if more recent frame available
     if(m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC)->getFrameCount() < m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getFrameCount() ||
-       !swichOutputInit) {
+       !m_swichOutputInit) {
       //switch pointers (output <-> mostRecentFilled)
       usDataGrabbed<usImagePreScan2D<unsigned char> >* savePtr = m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC);
       m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
       m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
-      swichOutputInit = true;
+      m_swichOutputInit = true;
     }
   }
   return m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC);

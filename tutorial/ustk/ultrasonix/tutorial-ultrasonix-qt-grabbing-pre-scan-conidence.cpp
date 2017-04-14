@@ -3,12 +3,12 @@
 #include <iostream>
 #include <visp3/ustk_grabber/usGrabberConfig.h>
 
-#if defined(USTK_GRABBER_HAVE_QT5) && defined(USTK_GRABBER_HAVE_QT5_WIDGETS)
+#if defined(USTK_GRABBER_HAVE_QT5) && defined(USTK_GRABBER_HAVE_QT5_WIDGETS) && defined(VISP_HAVE_X11)
 
 #include <QThread>
 #include <QApplication>
 
-#include <visp3/ustk_grabber/usNetworkGrabberPostScan.h>
+#include <visp3/ustk_grabber/usNetworkGrabberPreScan.h>
 
 #include <visp3/gui/vpDisplayX.h>
 
@@ -19,7 +19,7 @@ int main(int argc, char** argv)
 
   QThread * grabbingThread = new QThread();
 
-  usNetworkGrabberPostScan * qtGrabber = new usNetworkGrabberPostScan();
+  usNetworkGrabberPreScan * qtGrabber = new usNetworkGrabberPreScan();
   qtGrabber->setConnection(true);
 
   // setting acquisition parameters
@@ -29,9 +29,7 @@ int main(int argc, char** argv)
   header.transmitFrequency = 4000000;
   header.samplingFrequency = 2500000;
   header.imagingMode = 0; //B-mode = 0
-  header.postScanMode = true;
-  header.postScanHeigh = 480;
-  header.postScanWidth = 640;
+  header.postScanMode = false;
   header.imageDepth = 140; //in mm
   header.sector = 100; //in %
 
@@ -45,8 +43,8 @@ int main(int argc, char** argv)
   header.degreesPerFrame = 3;*/
 
   //prepare image;
-  usDataGrabbed<usImagePostScan2D<unsigned char> >* grabbedFrame;
-  usDataGrabbed<usImagePostScan2D<unsigned char> > localFrame;
+  usDataGrabbed<usImagePreScan2D<unsigned char> >* grabbedFrame;
+  usDataGrabbed<usImagePreScan2D<unsigned char> > localFrame;
 
   //Prepare display
   vpDisplayX * displayX = NULL;
@@ -58,7 +56,7 @@ int main(int argc, char** argv)
   // sending acquisition parameters
   qtGrabber->initAcquisition(header);
 
-  // Move the grabber object to another thread
+  // Move the grabber object to another thread, and run it
   qtGrabber->moveToThread(grabbingThread);
   grabbingThread->start();
 
@@ -82,12 +80,12 @@ int main(int argc, char** argv)
       if(displayInit) {
         vpDisplay::display(localFrame);
         vpDisplay::flush(localFrame);
-        vpTime::wait(10);// wait to simulate a local process running on last frame frabbed
+        vpTime::wait(1000); // wait to simulate a local process running on last frame frabbed
       }
     }
     else {
       std::cout << "waiting ultrasound initialisation..." << std::endl;
-      vpTime::wait(10);
+      vpTime::wait(1000);
     }
   }while(captureRunning);
 
@@ -98,7 +96,7 @@ int main(int argc, char** argv)
 #else
 int main()
 {
-  std::cout << "You should intall Qt5 (with wigdets and network modules), and display X  to run this tutorial" << std::endl;
+  std::cout << "You should intall Qt5 (with wigdets and network modules), and display X to run this tutorial" << std::endl;
   return 0;
 }
 

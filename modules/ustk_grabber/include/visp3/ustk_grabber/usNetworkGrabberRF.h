@@ -31,56 +31,61 @@
  *****************************************************************************/
 
 /**
- * @file usNetworkGrabberPreScan.h
+ * @file usNetworkGrabberRF.h
  * @brief Grabber used to grab pre-scan frames from ultrasonix station, using a tcp connection.
  */
 
-#ifndef __usNetworkViewerPreScan_h_
-#define __usNetworkViewerPreScan_h_
+#ifndef __usNetworkGrabberRF_h_
+#define __usNetworkGrabberRF_h_
 
 #include <visp3/ustk_grabber/usGrabberConfig.h>
 
-#if defined(USTK_GRABBER_HAVE_QT5) && defined(VISP_HAVE_DISPLAY)
+#if defined(USTK_GRABBER_HAVE_QT5)
 
-#include <visp3/ustk_grabber/usNetworkGrabberPreScan.h>
-#include <visp3/ustk_core/usImagePreScan2D.h>
+#include <vector>
 
-#include <visp3/gui/vpDisplayX.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/ustk_grabber/usNetworkGrabber.h>
+#include <visp3/ustk_core/usImageRF2D.h>
+#include <visp3/ustk_grabber/usDataGrabbed.h>
 
 /**
- * @class usNetworkViewerPreScan
- * @brief Specific class to display pre-scan frames using Qt signals when a new frame is arrived on the network.
+ * @class usNetworkGrabberRF
+ * @brief Specific class to grab pre-scan frames on the network.
  * @ingroup module_ustk_grabber
  */
-class VISP_EXPORT usNetworkViewerPreScan : public QObject
+class VISP_EXPORT usNetworkGrabberRF : public usNetworkGrabber
 {
+  typedef enum {
+    OUTPUT_FRAME_POSITION_IN_VEC = 0,
+    MOST_RECENT_FRAME_POSITION_IN_VEC = 1,
+    CURRENT_FILLED_FRAME_POSITION_IN_VEC = 2,
+  }DataPositionInBuffer;
   Q_OBJECT
 public:
 
-  explicit usNetworkViewerPreScan(int frameWith=1, int frameHeight=1, QObject *parent = 0);
-  ~usNetworkViewerPreScan();
+  explicit usNetworkGrabberRF(usNetworkGrabber *parent = 0);
+  ~usNetworkGrabberRF();
 
-public slots :
-  void updateDisplay(usImagePreScan2D<unsigned char>* newFrame);
+  usDataGrabbed<usImageRF2D<unsigned char> > * acquire();
+
+  void dataArrived();
+
+  bool isFirstFrameAvailable() {return m_firstFrameAvailable;}
+
+protected:
+  void invertRowsCols();
 
 private:
   //grabbed image
-  usImagePreScan2D<unsigned char> m_grabbedImage;
+  usDataGrabbed<usImageRF2D<unsigned char> > m_grabbedImage;
 
-  //vpDisplay
-#if defined(VISP_HAVE_X11)
-  vpDisplayX display;
-#elif defined(VISP_HAVE_GDI)
-  vpDisplayX display;
-#elif defined(VISP_HAVE_GTK)
-  vpDisplayGTK display;
-#elif defined(VISP_HAVE_OPENCV)
-  vpDisplayOpenCV display;
-#endif
+  // Output images : we have to invert (i <-> j) in the image grabbed
+  std::vector<usDataGrabbed<usImageRF2D<unsigned char> > *> m_outputBuffer;
+  bool m_firstFrameAvailable;
+
+  //to manage ptrs switch init
+  bool m_swichOutputInit;
 };
 
-#endif // QT5 && X11
-#endif // __usNetworkGrabberPreScan_h_
+#endif // QT4 || QT5
+#endif // __usNetworkGrabberRF_h_

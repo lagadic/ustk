@@ -10,7 +10,8 @@ set(tutorial_ultrasonix_cpp
   tutorial-ultrasonix-servo-confidence-3D.cpp
   tutorial-ultrasonix-qt-grabbing-pre-scan.cpp
   tutorial-ultrasonix-qt-grabbing-post-scan.cpp
-  tutorial-ultrasonix-qt-grabbing-RF.cpp)
+  tutorial-ultrasonix-qt-grabbing-RF.cpp
+  tutorial-ultrasonix-qt-grabbing-pre-scan-conidence.cpp)
 
 foreach(cpp ${tutorial_ultrasonix_cpp})
   visp_add_target(${cpp})

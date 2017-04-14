@@ -3,14 +3,12 @@
 #include <iostream>
 #include <visp3/ustk_grabber/usGrabberConfig.h>
 
-#if defined(USTK_GRABBER_HAVE_QT5) && defined(USTK_GRABBER_HAVE_QT5_WIDGETS)
+#if defined(USTK_GRABBER_HAVE_QT5) & defined(USTK_GRABBER_HAVE_QT5_WIDGETS)
 
 #include <QThread>
 #include <QApplication>
 
-#include <visp3/ustk_grabber/usNetworkGrabberPostScan.h>
-
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/ustk_grabber/usNetworkGrabberRF.h>
 
 int main(int argc, char** argv)
 {
@@ -19,7 +17,7 @@ int main(int argc, char** argv)
 
   QThread * grabbingThread = new QThread();
 
-  usNetworkGrabberPostScan * qtGrabber = new usNetworkGrabberPostScan();
+  usNetworkGrabberRF * qtGrabber = new usNetworkGrabberRF();
   qtGrabber->setConnection(true);
 
   // setting acquisition parameters
@@ -28,10 +26,8 @@ int main(int argc, char** argv)
   header.slotId = 0; //top slot id = 0
   header.transmitFrequency = 4000000;
   header.samplingFrequency = 2500000;
-  header.imagingMode = 0; //B-mode = 0
-  header.postScanMode = true;
-  header.postScanHeigh = 480;
-  header.postScanWidth = 640;
+  header.imagingMode = 12; //B-mode = 0, RF = 12
+  header.postScanMode = false;
   header.imageDepth = 140; //in mm
   header.sector = 100; //in %
 
@@ -45,16 +41,12 @@ int main(int argc, char** argv)
   header.degreesPerFrame = 3;*/
 
   //prepare image;
-  usDataGrabbed<usImagePostScan2D<unsigned char> >* grabbedFrame;
-  usDataGrabbed<usImagePostScan2D<unsigned char> > localFrame;
-
-  //Prepare display
-  vpDisplayX * displayX = NULL;
-  bool displayInit = false;
+  usDataGrabbed<usImageRF2D<unsigned char> >* grabbedFrame;
+  usDataGrabbed<usImageRF2D<unsigned char> > localFrame;
 
   bool captureRunning = true;
 
-  //qtGrabber->setVerbose(true);
+  qtGrabber->setVerbose(true);
   // sending acquisition parameters
   qtGrabber->initAcquisition(header);
 
@@ -70,35 +62,25 @@ int main(int argc, char** argv)
       //local copy for vpDisplay
       localFrame = *grabbedFrame;
 
-      std::cout <<"MAIN THREAD received frame No : " << localFrame.getFrameCount() << std::endl;
+      std::cout <<"MAIN THREAD received RF frame No : " << localFrame.getFrameCount() << std::endl;
 
-      //init display
-      if(!displayInit && localFrame.getHeight() !=0 && localFrame.getHeight() !=0) {
-        displayX = new vpDisplayX(localFrame);
-        displayInit = true;
-      }
+      //TO DO : convert RF to pre-scan to display something ...
 
-      // processing display
-      if(displayInit) {
-        vpDisplay::display(localFrame);
-        vpDisplay::flush(localFrame);
-        vpTime::wait(10);// wait to simulate a local process running on last frame frabbed
-      }
+
+      vpTime::wait(20);
     }
     else {
       std::cout << "waiting ultrasound initialisation..." << std::endl;
-      vpTime::wait(10);
+      vpTime::wait(1000);
     }
   }while(captureRunning);
-
-
   return app.exec();
 }
 
 #else
 int main()
 {
-  std::cout << "You should intall Qt5 (with wigdets and network modules), and display X  to run this tutorial" << std::endl;
+  std::cout << "You should intall Qt5 (with wigdets and network modules) to run this tutorial" << std::endl;
   return 0;
 }
 
