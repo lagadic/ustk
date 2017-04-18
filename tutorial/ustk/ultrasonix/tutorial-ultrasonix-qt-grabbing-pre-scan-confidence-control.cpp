@@ -1,4 +1,4 @@
-//! \example tutorial-ultrasonix-qt-grabbing-pre-scan.cpp
+//! \example tutorial-ultrasonix-qt-grabbing-pre-scan-confidence-control.cpp
 
 #include <iostream>
 #include <visp3/ustk_grabber/usGrabberConfig.h>

@@ -11,8 +11,8 @@ set(tutorial_ultrasonix_cpp
   tutorial-ultrasonix-qt-grabbing-pre-scan.cpp
   tutorial-ultrasonix-qt-grabbing-post-scan.cpp
   tutorial-ultrasonix-qt-grabbing-RF.cpp
-  tutorial-ultrasonix-qt-grabbing-pre-scan-conidence.cpp
-  tutorial-ultrasonix-qt-grabbing-pre-scan-conidence-control.cpp)
+  tutorial-ultrasonix-qt-grabbing-pre-scan-confidence.cpp
+  tutorial-ultrasonix-qt-grabbing-pre-scan-confidence-control.cpp)
 
 foreach(cpp ${tutorial_ultrasonix_cpp})
   visp_add_target(${cpp})
