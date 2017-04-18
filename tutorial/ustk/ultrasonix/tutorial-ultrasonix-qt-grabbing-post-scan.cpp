@@ -82,7 +82,7 @@ int main(int argc, char** argv)
       if(displayInit) {
         vpDisplay::display(localFrame);
         vpDisplay::flush(localFrame);
-        vpTime::wait(10);// wait to simulate a local process running on last frame frabbed
+        //vpTime::wait(100);// wait to simulate a local process running on last frame frabbed
       }
     }
     else {

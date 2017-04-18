@@ -36,6 +36,7 @@
 #if defined(USTK_GRABBER_HAVE_QT5)
 
 #include <QDataStream>
+#include <QEventLoop>
 
 /**
 * Constructor. Inititializes the image, and manages Qt signal.
@@ -167,6 +168,7 @@ void usNetworkGrabberPostScan::dataArrived()
         m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
       }
       m_firstFrameAvailable = true;
+      emit(newFrameAvailable());
     }
     if(m_verbose)
       std::cout << "Bytes left to read for whole frame = " << m_bytesLeftToRead << std::endl;
@@ -193,6 +195,7 @@ void usNetworkGrabberPostScan::dataArrived()
         m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
       }
       m_firstFrameAvailable = true;
+      emit(newFrameAvailable());
     }
   }
 }
@@ -209,23 +212,27 @@ usDataGrabbed<usImagePostScan2D<unsigned char> >* usNetworkGrabberPostScan::acqu
     throw(vpException(vpException::fatalError, "first frame not yet grabbed, cannot acquire"));
   }
 
-  // check if we have a more recent frame available
-  {
-    // lock because we acess frame count at OUTPUT_FRAME_POSITION_IN_VEC, which may be used in concurrent thread
-    vpMutex::vpScopedLock lock(m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC)->mutex);
+  //user grabs too fast
+  if(m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC)->getFrameCount() == m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getFrameCount() + 1) {
+    //we wait until a new frame is available
+    QEventLoop loop;
+    loop.connect(this, SIGNAL(newFrameAvailable()), SLOT(quit()));
+    loop.exec();
 
-    // security lock data at MOST_RECENT_FRAME_POSITION_IN_VEC, wich may be used in dataArrived()
-    vpMutex::vpScopedLock lock2(m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->mutex);
+    //switch pointers
+    usDataGrabbed<usImagePostScan2D<unsigned char> >* savePtr = m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC);
+    m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
+    m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
+    m_swichOutputInit = true;
+  }
 
-    // if more recent frame available
-    if(m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC)->getFrameCount() < m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getFrameCount() ||
-       !m_swichOutputInit) {
-      //switch pointers (output <-> mostRecentFilled)
-      usDataGrabbed<usImagePostScan2D<unsigned char> >* savePtr = m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC);
-      m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
-      m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
-      m_swichOutputInit = true;
-    }
+  // if more recent frame available
+  else if(m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC)->getFrameCount() < m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getFrameCount() || !m_swichOutputInit) {
+    //switch pointers (output <-> mostRecentFilled)
+    usDataGrabbed<usImagePostScan2D<unsigned char> >* savePtr = m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC);
+    m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
+    m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
+    m_swichOutputInit = true;
   }
   return m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC);
 }

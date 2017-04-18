@@ -46,7 +46,6 @@ int main(int argc, char** argv)
 
   //prepare image;
   usDataGrabbed<usImagePreScan2D<unsigned char> >* grabbedFrame;
-  usDataGrabbed<usImagePreScan2D<unsigned char> > localFrame;
   usImagePreScan2D<unsigned char> confidence;
 
   //Prepare display

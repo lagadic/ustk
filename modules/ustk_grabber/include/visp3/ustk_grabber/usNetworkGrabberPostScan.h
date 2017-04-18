@@ -42,6 +42,8 @@
 
 #if defined(USTK_GRABBER_HAVE_QT5)
 
+#include <vector>
+
 #include <visp3/ustk_grabber/usNetworkGrabber.h>
 #include <visp3/ustk_core/usImagePostScan2D.h>
 #include <visp3/ustk_grabber/usDataGrabbed.h>
@@ -69,6 +71,9 @@ public:
   void dataArrived();
 
   bool isFirstFrameAvailable() {return m_firstFrameAvailable;}
+
+signals:
+  void newFrameAvailable();
 
 private:
   //grabbed image

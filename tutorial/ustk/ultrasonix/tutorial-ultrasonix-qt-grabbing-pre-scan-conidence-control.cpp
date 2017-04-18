@@ -312,7 +312,7 @@ int main(int argc, char** argv)
       s_capture_state = capture_started;
       s_mutex_capture.unlock();
 
-      //std::cout <<"MAIN THREAD received frame No : " << grabbedFrame->getFrameCount() << std::endl;
+      std::cout <<"MAIN THREAD received frame No : " << grabbedFrame->getFrameCount() << std::endl;
 
       //init display
       if(!displayInit && grabbedFrame->getHeight() !=0 && grabbedFrame->getHeight() !=0) {
@@ -326,8 +326,20 @@ int main(int argc, char** argv)
         vpDisplay::display(*grabbedFrame);
         vpDisplay::flush(*grabbedFrame);
         vpDisplay::display(confidence);
+
+        //display target barycenter (image center)
+        vpDisplay::displayLine(confidence,
+                               0, confidence.getWidth()/2-1,
+                               confidence.getHeight()-1, confidence.getWidth()/2-1,
+                               vpColor::green);
+
+        //dispay current confidence barycenter
+        vpDisplay::displayLine(confidence,
+                               0, static_cast<int>(yc),
+                               confidence.getHeight()-1, static_cast<int>(yc),
+                               vpColor::red);
         vpDisplay::flush(confidence);
-        //vpTime::wait(10); // wait to simulate a local process running on last frame frabbed
+        vpTime::wait(10); // wait to simulate a local process running on last frame frabbed
       }
     }
     else {

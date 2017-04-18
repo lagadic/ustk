@@ -72,6 +72,9 @@ public:
 
   bool isFirstFrameAvailable() {return m_firstFrameAvailable;}
 
+signals:
+  void newFrameAvailable();
+
 protected:
   void invertRowsCols();
 
