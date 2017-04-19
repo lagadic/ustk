@@ -79,8 +79,8 @@ public:
     int headerId; //to differenciate usInitHeaderSent (=1) / usUpdateHeaderSent (=2)
 
     //probe / slot selection
-    int probeId;
-    int slotId;
+    int probeId; // available probes : 4DC7 (id = 15) , C5-2 (id = 10)
+    int slotId; // 3 slots on ultrasonix station (0 : top, 2 : middle, 1 : botom)
 
     //frequencies
     int transmitFrequency;
