@@ -112,6 +112,7 @@ void usNetworkGrabberRF::dataArrived()
     //read whole header
     in >> m_imageHeader.frameCount;
     in >> m_imageHeader.timeStamp;
+    in >> m_imageHeader.dataRate;
     in >> m_imageHeader.dataLength;
     in >> m_imageHeader.ss;
     in >> m_imageHeader.imageType;
@@ -129,6 +130,7 @@ void usNetworkGrabberRF::dataArrived()
     if(m_verbose) {
       std::cout << "frameCount = " <<  m_imageHeader.frameCount << std::endl;
       std::cout << "timeStamp = " <<  m_imageHeader.timeStamp << std::endl;
+      std::cout << "dataRate = " <<  m_imageHeader.dataRate << std::endl;
       std::cout << "dataLength = " <<  m_imageHeader.dataLength << std::endl;
       std::cout << "ss = " <<  m_imageHeader.ss << std::endl;
       std::cout << "imageType = " <<  m_imageHeader.imageType << std::endl;

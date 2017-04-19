@@ -134,6 +134,8 @@ public:
     quint32 frameCount; //from the beginning of last acquisition
     quint64 timeStamp; //msecs since epoch (on ultrasond machine)
 
+    double dataRate; // in FPS
+
     int dataLength; //frame size in bytes, used to read on the network
     int ss;	// sample size in bits
 
