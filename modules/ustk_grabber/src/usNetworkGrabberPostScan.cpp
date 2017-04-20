@@ -148,7 +148,10 @@ void usNetworkGrabberPostScan::dataArrived()
     //update transducer settings with image header received
     m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setTransducerRadius(m_imageHeader.transducerRadius);
     m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setScanLinePitch(m_imageHeader.scanLinePitch);
+    m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setScanLineNumber(m_imageHeader.scanLineNumber);
     m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setDepth(m_imageHeader.imageDepth / 1000.0);
+
+
 
     //set data info
     m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setFrameCount(m_imageHeader.frameCount);
@@ -157,6 +160,18 @@ void usNetworkGrabberPostScan::dataArrived()
 
     m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->resize(m_imageHeader.frameHeight, m_imageHeader.frameWidth);
 
+    //pixel size
+    m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setWidthResolution(
+          (2.0*(m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getTransducerRadius() + m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getDepth())
+           * sin(m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getFieldOfView() / 2.0)) / m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getWidth());
+
+    m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setHeightResolution(
+          (m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getTransducerRadius() + m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getDepth() -
+          (m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getTransducerRadius() * cos(m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getFieldOfView() / 2.0)))
+          / m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getHeight());
+
+
+    //read image content
     m_bytesLeftToRead = m_imageHeader.dataLength;
 
     m_bytesLeftToRead -= in.readRawData((char*)m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->bitmap, m_imageHeader.dataLength);

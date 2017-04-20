@@ -97,29 +97,32 @@ vpThread::Return displayFunction(vpThread::Args args)
         I_ = s_frame;
       }
 
-      // To check/improve:
-      // - adding depth in usTransducerSettings ?
-      // - in usBackScanConverter2D, rename AN into BModeSampleNumber
-      // - in usTransducerSettings add getFov() and modify the example to use this function
-
       // Convert image into post-scan image
       postScan_.setData(I_);
       postScan_.setProbeName("Sonosite C60");
       postScan_.setTransducerRadius(0.060);
       postScan_.setTransducerConvexity(true);
       postScan_.setScanLineNumber(128);
-      postScan_.setScanLinePitch(vpMath::rad(57.0/127.0)); // field of view is 57 deg
+      postScan_.setDepth(0.12);
+      postScan_.setFieldOfView(vpMath::rad(57.0)); // field of view of C60 is 57 deg
+      postScan_.setHeightResolution((postScan_.getTransducerRadius() + postScan_.getDepth() -
+                                     (postScan_.getTransducerRadius() * cos(postScan_.getFieldOfView() / 2.0)))
+                                    / postScan_.getHeight());
+
+      postScan_.setWidthResolution((2.0*(postScan_.getTransducerRadius() + postScan_.getDepth())
+                                    * sin(postScan_.getFieldOfView() / 2.0)) / postScan_.getWidth());
+
 
       // Convert post-scan to pre-scan image
       usBackScanConverter2D backConverter_;
-      backConverter_.init(usTransducerSettings(postScan_), 480, 128, 0.0005,0.0005);
+      backConverter_.init(postScan_, 480, 128);
       backConverter_.run(postScan_,preScan_);
 
       //Compute confidence map on pre-scan image
       //initialisations
       //settings for sonosite probe
       usScanConverter2D converter_;
-      converter_.init(preScan_, 480,128,0.0005,0.0005);
+      converter_.init(postScan_, 480,128);
 
       //computing pre-scan confidence map
       confidencePreScan_.setImagePreScanSettings(preScan_);

@@ -74,6 +74,8 @@ int main(int argc, char** argv)
 
       std::cout <<"MAIN THREAD received frame No : " << localFrame.getFrameCount() << std::endl;
 
+      std::cout << *grabbedFrame << std::endl;
+
       //init display
       if(!displayInit && localFrame.getHeight() !=0 && localFrame.getHeight() !=0) {
         displayX = new vpDisplayX(localFrame);

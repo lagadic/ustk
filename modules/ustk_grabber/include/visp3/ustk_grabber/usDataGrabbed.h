@@ -69,9 +69,6 @@ public:
   void setFramesPerVolume(int framesPerVolume);
   void setTimeStamp(quint64 timeStamp);
 
-
-  friend VISP_EXPORT std::ostream& operator<<(std::ostream& out, const usTransducerSettings &other);
-
   vpMutex mutex; // security to access the usImage grabbed from different threads
 
 private:
