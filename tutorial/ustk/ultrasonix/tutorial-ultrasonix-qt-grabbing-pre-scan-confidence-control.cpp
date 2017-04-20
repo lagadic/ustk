@@ -279,6 +279,8 @@ int main(int argc, char** argv)
   //start robot control thread
   vpThread thread_control((vpThread::Fn)controlFunction);
 
+  std::cout << "waiting ultrasound initialisation..." << std::endl;
+
   //our local grabbing loop
   do {
     if(qtGrabber->isFirstFrameAvailable()) {
@@ -343,7 +345,6 @@ int main(int argc, char** argv)
       }
     }
     else {
-      std::cout << "waiting ultrasound initialisation..." << std::endl;
       vpTime::wait(100);
     }
   }while(captureRunning);

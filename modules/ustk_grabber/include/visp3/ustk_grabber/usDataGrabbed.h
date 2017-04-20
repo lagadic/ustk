@@ -61,13 +61,16 @@ public:
   explicit usDataGrabbed();
   ~usDataGrabbed();
 
-  quint32 getFrameCount();
-  int getFramesPerVolume();
-  quint64 getTimeStamp();
+  quint32 getFrameCount() const;
+  int getFramesPerVolume() const;
+  quint64 getTimeStamp() const;
 
   void setFrameCount(quint32 frameCount);
   void setFramesPerVolume(int framesPerVolume);
   void setTimeStamp(quint64 timeStamp);
+
+
+  friend VISP_EXPORT std::ostream& operator<<(std::ostream& out, const usTransducerSettings &other);
 
   vpMutex mutex; // security to access the usImage grabbed from different threads
 
@@ -101,7 +104,7 @@ usDataGrabbed<Type>::~usDataGrabbed()
 * @return The frame number since beginning of acquisition.
 */
 template<class Type>
-quint32 usDataGrabbed<Type>::getFrameCount(){
+quint32 usDataGrabbed<Type>::getFrameCount() const {
   return m_frameCount;
 }
 
@@ -110,7 +113,7 @@ quint32 usDataGrabbed<Type>::getFrameCount(){
 * @return The number of frames per volume acquired. Used to reconstruct 3D volumes.
 */
 template<class Type>
-int usDataGrabbed<Type>::getFramesPerVolume(){
+int usDataGrabbed<Type>::getFramesPerVolume() const{
   return m_framesPerVolume;
 }
 
@@ -119,7 +122,7 @@ int usDataGrabbed<Type>::getFramesPerVolume(){
 * @return The time stamp of ultrasound station when the frame was acquired.
 */
 template<class Type>
-quint64 usDataGrabbed<Type>::getTimeStamp(){
+quint64 usDataGrabbed<Type>::getTimeStamp() const{
   return m_timeStamp;
 }
 
@@ -128,7 +131,7 @@ quint64 usDataGrabbed<Type>::getTimeStamp(){
 * @param frameCount The frame number since beginning of acquisition.
 */
 template<class Type>
-void usDataGrabbed<Type>::setFrameCount(quint32 frameCount){
+void usDataGrabbed<Type>::setFrameCount(quint32 frameCount) {
   m_frameCount = frameCount;
 }
 
@@ -148,6 +151,25 @@ void usDataGrabbed<Type>::setFramesPerVolume(int framesPerVolume){
 template<class Type>
 void usDataGrabbed<Type>::setTimeStamp(quint64 timeStamp){
   m_timeStamp = timeStamp;
+}
+
+/*!
+  Print data grabbed information in a ostream.
+  Usage example:
+  \code
+  usDataGrabbed<Type> myDataGrabbed;
+  std::cout << myDataGrabbed << std::endl;
+  \endcode
+*/
+template<class Type>
+VISP_EXPORT std::ostream& operator<<(std::ostream& out, const usDataGrabbed<Type> &other)
+{
+  out << "timestamp : " << other.getTimeStamp() << std::endl
+      << "frameCount : " << other.getFrameCount() << std::endl
+      << "frames per volume : " << other.getFramesPerVolume() << std::endl
+      << (Type)other << std::endl;
+
+  return out;
 }
 
 #endif // QT4 || QT5

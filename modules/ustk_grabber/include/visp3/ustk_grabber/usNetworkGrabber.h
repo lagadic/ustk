@@ -151,6 +151,7 @@ public:
     double transducerRadius;
     double scanLinePitch;
     unsigned int scanLineNumber;
+    int imageDepth; //in mm
 
     // motor settings
     int degPerFr; // degree step between frames

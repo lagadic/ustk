@@ -66,6 +66,8 @@ int main(int argc, char** argv)
   qtGrabber->moveToThread(grabbingThread);
   grabbingThread->start();
 
+  std::cout << "waiting ultrasound initialisation..." << std::endl;
+
   //our local grabbing loop
   do {
     if(qtGrabber->isFirstFrameAvailable()) {
@@ -75,6 +77,8 @@ int main(int argc, char** argv)
       //localFrame = *grabbedFrame;
 
       std::cout <<"MAIN THREAD received frame No : " << grabbedFrame->getFrameCount() << std::endl;
+
+      std::cout << *grabbedFrame << std::endl;
 
       //init display
       if(!displayInit && grabbedFrame->getHeight() !=0 && grabbedFrame->getHeight() !=0) {
@@ -93,8 +97,7 @@ int main(int argc, char** argv)
       }
     }
     else {
-      std::cout << "waiting ultrasound initialisation..." << std::endl;
-      vpTime::wait(100);
+      vpTime::wait(10);
     }
   }while(captureRunning);
 

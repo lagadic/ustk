@@ -62,6 +62,8 @@ int main(int argc, char** argv)
   qtGrabber->moveToThread(grabbingThread);
   grabbingThread->start();
 
+  std::cout << "waiting ultrasound initialisation..." << std::endl;
+
   //our local grabbing loop
   do {
     if(qtGrabber->isFirstFrameAvailable()) {
@@ -86,7 +88,6 @@ int main(int argc, char** argv)
       }
     }
     else {
-      std::cout << "waiting ultrasound initialisation..." << std::endl;
       vpTime::wait(10);
     }
   }while(captureRunning);

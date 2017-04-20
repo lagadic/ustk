@@ -122,6 +122,7 @@ void usNetworkGrabberPostScan::dataArrived()
     in >> m_imageHeader.transducerRadius;
     in >> m_imageHeader.scanLinePitch;
     in >> m_imageHeader.scanLineNumber;
+    in >> m_imageHeader.imageDepth;
     in >> m_imageHeader.degPerFr;
     in >> m_imageHeader.framesPerVolume;
 
@@ -139,6 +140,7 @@ void usNetworkGrabberPostScan::dataArrived()
       std::cout << "transducerRadius = " <<  m_imageHeader.transducerRadius << std::endl;
       std::cout << "scanLinePitch = " <<  m_imageHeader.scanLinePitch << std::endl;
       std::cout << "scanLineNumber = " <<  m_imageHeader.scanLineNumber << std::endl;
+      std::cout << "imageDepth = " <<  m_imageHeader.imageDepth << std::endl;
       std::cout << "degPerFr = " <<  m_imageHeader.degPerFr << std::endl;
       std::cout << "framesPerVolume = " <<  m_imageHeader.framesPerVolume << std::endl;
     }
@@ -146,6 +148,7 @@ void usNetworkGrabberPostScan::dataArrived()
     //update transducer settings with image header received
     m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setTransducerRadius(m_imageHeader.transducerRadius);
     m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setScanLinePitch(m_imageHeader.scanLinePitch);
+    m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setDepth(m_imageHeader.imageDepth / 1000.0);
 
     //set data info
     m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setFrameCount(m_imageHeader.frameCount);
