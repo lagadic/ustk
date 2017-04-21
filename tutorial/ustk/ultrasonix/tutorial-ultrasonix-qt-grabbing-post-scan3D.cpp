@@ -35,9 +35,10 @@ int main(int argc, char** argv)
   header.imageDepth = 140; //in mm
   header.sector = 100; //in %
 
-  // 2D acquisition
-  header.activateMotor = false; //to sweep the motor permanently
-  header.motorPosition = 40; // motor in the middle
+  // 3D acquisition
+  header.activateMotor = true;
+  header.framesPerVolume = 3;
+  header.degreesPerFrame = 35;
 
   //prepare image;
   usDataGrabbed<usImagePostScan2D<unsigned char> >* grabbedFrame;
@@ -63,9 +64,11 @@ int main(int argc, char** argv)
     if(qtGrabber->isFirstFrameAvailable()) {
       grabbedFrame = qtGrabber->acquire();
 
-      std::cout <<"MAIN THREAD received frame No : " << grabbedFrame->getFrameCount() << std::endl;
-
       std::cout << *grabbedFrame << std::endl;
+
+      if(grabbedFrame->getFrameCount()%header.framesPerVolume == 0) {
+        std::cout << "total vol ,frame " << grabbedFrame->getFrameCount() << std::endl;
+      }
 
       //init display
       if(!displayInit && grabbedFrame->getHeight() !=0 && grabbedFrame->getHeight() !=0) {
@@ -77,7 +80,6 @@ int main(int argc, char** argv)
       if(displayInit) {
         vpDisplay::display(*grabbedFrame);
         vpDisplay::flush(*grabbedFrame);
-        //vpTime::wait(100);// wait to simulate a local process running on last frame frabbed
       }
     }
     else {
