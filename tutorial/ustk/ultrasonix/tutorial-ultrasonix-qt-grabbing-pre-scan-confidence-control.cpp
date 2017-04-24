@@ -3,7 +3,7 @@
 #include <iostream>
 #include <visp3/ustk_grabber/usGrabberConfig.h>
 
-#if defined(USTK_GRABBER_HAVE_QT5) && defined(USTK_GRABBER_HAVE_QT5_WIDGETS) && defined(VISP_HAVE_X11) && defined(VISP_HAVE_VIPER850)
+#if defined(USTK_GRABBER_HAVE_QT5) && defined(USTK_GRABBER_HAVE_QT5_WIDGETS) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(VISP_HAVE_VIPER850)
 
 #include <QThread>
 #include <QApplication>
@@ -74,10 +74,10 @@ vpThread::Return controlFunction(vpThread::Args args)
   // Initialized the force gain
   lambda = 0;
   for (int i=0; i< 3; i++)
-    lambda[i][i] = 0.02/6;
+    lambda[i][i] = 0.05/6;
   // Initialized the torque gain
   for (int i=3; i< 6; i++)
-    lambda[i][i] = 1./2;
+    lambda[i][i] = 1.2/2;
 
   // Initialize the desired force/torque values
   pHp_star = 0;
@@ -186,7 +186,6 @@ vpThread::Return controlFunction(vpThread::Args args)
 
       v_p[0] = 0;
       v_p[1] = 0;
-      v_p[2] = 0;
       v_p[4] = 0;
       v_p[5] = 0;
 
@@ -259,8 +258,8 @@ int main(int argc, char** argv)
   usImagePreScan2D<unsigned char> confidence;
 
   //Prepare display
-  vpDisplayX * displayX = NULL;
-  vpDisplayX * displayXConf = NULL;
+  vpDisplay * display = NULL;
+  vpDisplay * displayConf = NULL;
   bool displayInit = false;
 
   //prepare confidence
@@ -285,7 +284,7 @@ int main(int argc, char** argv)
   do {
     if(qtGrabber->isFirstFrameAvailable()) {
       grabbedFrame = qtGrabber->acquire();
-      confidenceProcessor.run(confidence,*grabbedFrame);
+      confidenceProcessor.run(confidence, *grabbedFrame);
 
       // Confidence barycenter computation
 
@@ -318,28 +317,40 @@ int main(int argc, char** argv)
 
       //init display
       if(!displayInit && grabbedFrame->getHeight() !=0 && grabbedFrame->getHeight() !=0) {
-        displayX = new vpDisplayX(*grabbedFrame);
-        displayXConf = new vpDisplayX(confidence);
+#ifdef VISP_HAVE_X11
+        display = new vpDisplayX(*grabbedFrame);
+        displayConf = new vpDisplayX(confidence, (*grabbedFrame).getWidth()+60, 10);
+#elif defined(VISP_HAVE_GDI)
+        display = new vpDisplayGDI(*grabbedFrame);
+        displayConf = new vpDisplayGDI(confidence, (*grabbedFrame).getWidth()+60, 10);
+#endif
         displayInit = true;
       }
 
       // processing display
       if(displayInit) {
         vpDisplay::display(*grabbedFrame);
-        vpDisplay::flush(*grabbedFrame);
         vpDisplay::display(confidence);
 
         //display target barycenter (image center)
+        vpDisplay::displayText(confidence, 10, 10, "target", vpColor::green);
         vpDisplay::displayLine(confidence,
                                0, confidence.getWidth()/2-1,
                                confidence.getHeight()-1, confidence.getWidth()/2-1,
                                vpColor::green);
 
         //dispay current confidence barycenter
+        vpDisplay::displayText(confidence, 25, 10, "current", vpColor::red);
         vpDisplay::displayLine(confidence,
                                0, static_cast<int>(yc),
                                confidence.getHeight()-1, static_cast<int>(yc),
                                vpColor::red);
+        if(vpDisplay::getClick(confidence, false))
+          captureRunning = false;
+        if(vpDisplay::getClick(*grabbedFrame, false))
+          captureRunning = false;
+
+        vpDisplay::flush(*grabbedFrame);
         vpDisplay::flush(confidence);
         vpTime::wait(10); // wait to simulate a local process running on last frame frabbed
       }
@@ -347,11 +358,43 @@ int main(int argc, char** argv)
     else {
       vpTime::wait(100);
     }
-  }while(captureRunning);
+  } while(captureRunning);
 
+  std::cout << "stop capture" << std::endl;
+  if(displayInit) {
+    if (display)
+      delete display;
+
+    if (displayConf)
+      delete displayConf;
+  }
+
+  // move up the robot arm
+  {
+    vpMutex::vpScopedLock lock(s_mutex_control_velocity);
+    s_controlVelocity = 0.0;
+    s_controlVelocity[2] = -0.05; //move up in probe frame
+  }
+  vpTime::wait(500);
+  {
+    vpMutex::vpScopedLock lock(s_mutex_control_velocity);
+    s_controlVelocity = 0.0;
+  }
+
+  s_mutex_capture.lock();
+  s_capture_state = capture_stopped;
+  s_mutex_capture.unlock();
   thread_control.join();
 
-  return app.exec();
+  // end grabber
+  qtGrabber->disconnect();
+  grabbingThread->exit();
+  app.quit();
+
+  std::cout << "end main thread" << std::endl;
+
+
+  return 0;
 }
 
 #else
