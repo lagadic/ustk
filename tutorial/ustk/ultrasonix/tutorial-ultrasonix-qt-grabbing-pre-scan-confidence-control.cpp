@@ -236,21 +236,7 @@ int main(int argc, char** argv)
   usNetworkGrabber::usInitHeaderSent header;
   header.probeId = 15; // 4DC7 id = 15
   header.slotId = 0; //top slot id = 0
-  header.transmitFrequency = 4000000;
-  header.samplingFrequency = 2500000;
   header.imagingMode = 0; //B-mode = 0
-  header.postScanMode = false;
-  header.imageDepth = 140; //in mm
-  header.sector = 100; //in %
-
-  // 2D acquisition
-  header.activateMotor = false; //to sweep the motor permanently
-  header.motorPosition = 40; // motor in the middle
-
-  /*IF 3D
-  header.activateMotor = true;
-  header.framesPerVolume = 10;
-  header.degreesPerFrame = 3;*/
 
   //prepare image;
   usDataGrabbed<usImagePreScan2D<unsigned char> >* grabbedFrame;
@@ -270,6 +256,13 @@ int main(int argc, char** argv)
   //qtGrabber->setVerbose(true);
   // sending acquisition parameters
   qtGrabber->initAcquisition(header);
+
+
+
+  qtGrabber->setMotorPosition(32); //middle
+  qtGrabber->updateAcquisitionParameters();
+
+  qtGrabber->runAcquisition();
 
   // Move the grabber object to another thread, and run it
   qtGrabber->moveToThread(grabbingThread);

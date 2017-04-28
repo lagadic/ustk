@@ -103,6 +103,11 @@ void usNetworkGrabberPostScan::dataArrived()
     }
     if(m_verbose)
       std::cout << "porta init sucess, detected probe id = " << m_confirmHeader.probeId << std::endl;
+
+    //read all acquisition parameters received
+    readAcquisitionParameters(in);
+
+    emit(serverUpdateEnded(m_confirmHeader.initOk));
   }
 
   //image header received

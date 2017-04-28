@@ -101,10 +101,16 @@ void usNetworkGrabberPreScan::dataArrived()
 
     if(m_confirmHeader.initOk == 0) {
       m_tcpSocket->close();
-      throw(vpException(vpException::fatalError, "porta initialisation error, closing connection."));
+      throw(vpException(vpException::fatalError, "porta initialisation error closing connection."));
     }
     if(m_verbose)
       std::cout << "porta init sucess, detected probe id = " << m_confirmHeader.probeId << std::endl;
+
+    //read all acquisition parameters received
+    readAcquisitionParameters(in);
+
+
+    emit(serverUpdateEnded(m_confirmHeader.initOk));
   }
 
   //image header received

@@ -31,12 +31,18 @@
  *****************************************************************************/
 
 #include <visp3/ustk_grabber/usAcquisitionParameters.h>
+#include <visp3/core/vpException.h>
 
 
 /**
 * Constructor.
 */
-usAcquisitionParameters::usAcquisitionParameters()
+usAcquisitionParameters::usAcquisitionParameters() :
+  m_transmitFrequency(0), m_samplingFrequency(0), m_imagingMode(0),m_postScanMode(false), m_postScanHeigh(0), m_postScanWidth(0),
+  m_imageDepth(0), m_sector(0), m_activateMotor(false), m_motorPosition(0),m_framesPerVolume(0), m_degreesPerFrame(0),
+  m_transmitFrequencyMin(0), m_samplingFrequencyMin(0), m_imagingModeMin(0), m_imageDepthMin(0), m_sectorMin(0),
+  m_motorPositionMin(0), m_framesPerVolumeMin(0), m_degreesPerFrameMin(0), m_transmitFrequencyMax(0), m_samplingFrequencyMax(0),
+  m_imagingModeMax(0), m_imageDepthMax(0), m_sectorMax(0), m_motorPositionMax(0), m_framesPerVolumeMax(0), m_degreesPerFrameMax(0)
 {
 
 }
@@ -50,576 +56,227 @@ usAcquisitionParameters::~usAcquisitionParameters()
 }
 
 /**
-*
-* @param
+* Setter for motor activation.
+* @param activateMotor Boolean to activate the motor sweep (true) or not (false).
 */
-void usAcquisitionParameters::setAcousticPower(int acousticPower)
-{
-  m_acousticPower = acousticPower;
+void usAcquisitionParameters::setActivateMotor(bool activateMotor) {
+  m_activateMotor =  activateMotor;
 }
 
 /**
-*
-* @param
+* Setter for degrees per frame.
+* @param degreesPerFrame Angle in degrees between 2 sucessive frames.
 */
-void usAcquisitionParameters::setBImageDepth(int bImageDepth)
-{
-  m_bImageDepth = bImageDepth;
+void usAcquisitionParameters::setDegreesPerFrame(int degreesPerFrame) {
+  m_degreesPerFrame =  degreesPerFrame;
 }
 
 /**
-*
-* @param
+* Setter for degreesPerFrame max.
+* @param degreesPerFrameMax Max angle in degrees between 2 sucessive frames.
 */
-void usAcquisitionParameters::setBBImageDepth (int bBImageDepth)
-{
-  m_bBImageDepth = bBImageDepth;
+void usAcquisitionParameters::setDegreesPerFrameMax(int degreesPerFrameMax) {
+  m_degreesPerFrameMax =  degreesPerFrameMax;
 }
 
 /**
-*
-* @param
+* Setter for degreesPerFrameMin.
+* @param degreesPerFrameMin Min angle in degrees between 2 sucessive frames.
 */
-void usAcquisitionParameters::setBImageDepthA (int bImageDepthA)
-{
-  m_bImageDepthA = bImageDepthA;
+void usAcquisitionParameters::setDegreesPerFrameMin(int degreesPerFrameMin) {
+  m_degreesPerFrameMin =  degreesPerFrameMin;
 }
 
 /**
-*
-* @param
+* Setter for framesPerVolume.
+* @param framesPerVolume Number of frames in a volume acquisition.
 */
-void usAcquisitionParameters::setBImageDepthB(int bImageDepthB)
-{
-  m_bImageDepthB = bImageDepthB;
+void usAcquisitionParameters::setFramesPerVolume(int framesPerVolume) {
+  m_framesPerVolume =  framesPerVolume;
 }
 
 /**
-*
-* @param
+* Setter for framesPerVolume.
+* @param framesPerVolumeMax Maximum number of frames in a volume acquisition.
 */
-void usAcquisitionParameters::setZoom(int zoom)
-{
-  m_zoom = zoom;
+void usAcquisitionParameters::setFramesPerVolumeMax(int framesPerVolumeMax) {
+  m_framesPerVolumeMax =  framesPerVolumeMax;
 }
 
 /**
-*
-* @param
+* Setter for framesPerVolumeMin.
+* @param framesPerVolumeMin Minimum number of frames in a volume acquisition.
 */
-void usAcquisitionParameters::setTGC(int TGC)
-{
-  m_tGC = TGC;
+void usAcquisitionParameters::setFramesPerVolumeMin(int framesPerVolumeMin) {
+  m_framesPerVolumeMin =  framesPerVolumeMin;
 }
 
 /**
-*
-* @param
+* Setter for imageDepth.
+* @param imageDepth Depth of the echo image, in millimeters.
 */
-void usAcquisitionParameters::setBrightness(int brightness)
-{
-  m_brightness = brightness;
+void usAcquisitionParameters::setImageDepth(int imageDepth) {
+  m_imageDepth =  imageDepth;
 }
 
 /**
-*
-* @param
+* Setter for imageDepthMax.
+* @param imageDepthMax Max depth of the probe for the echo image, in millimeters.
 */
-void usAcquisitionParameters::setContrast(int contrast)
-{
-  m_contrast = contrast;
+void usAcquisitionParameters::setImageDepthMax(int imageDepthMax) {
+  m_imageDepthMax =  imageDepthMax;
 }
 
 /**
-*
-* @param
+* Setter for imageDepthMin.
+* @param imageDepthMin Min depth of the probe for the echo image, in millimeters.
 */
-void usAcquisitionParameters::setGamma(int gamma)
-{
-  m_gamma = gamma;
+void usAcquisitionParameters::setImageDepthMin(int imageDepthMin) {
+  m_imageDepthMin =  imageDepthMin;
 }
 
 /**
-*
-* @param
+* Setter for imagingMode.
+* @param imagingMode Code for imaging mode (0 = pre-scan B-MODE, RF mode = 12)
 */
-void usAcquisitionParameters::setBMap(int bMap)
-{
-  m_bMap = bMap;
+void usAcquisitionParameters::setImagingMode(int imagingMode) {
+  m_imagingMode =  imagingMode;
 }
 
 /**
-*
-* @param
+* Setter for imagingModeMax.
+* @param imagingModeMax Code for imaging mode max.
 */
-void usAcquisitionParameters::setBSector(int bSector)
-{
-  m_bSector = bSector;
+void usAcquisitionParameters::setImagingModeMax(int imagingModeMax) {
+  m_imagingModeMax =  imagingModeMax;
 }
 
 /**
-*
+* Setter for imagingModeMin.
+* @param imagingModeMin Code for imaging mode min.
 */
-void usAcquisitionParameters::setBBSector(int bBSector)
-{
-  m_bBSector = bBSector;
+void usAcquisitionParameters::setImagingModeMin(int imagingModeMin) {
+  m_imagingModeMin =  imagingModeMin;
 }
 
 /**
-*
-* @param
+* Setter for motorPosition, to set a fixed motor position.
+* @param motorPosition Motor position in degrees.
 */
-void usAcquisitionParameters::setBSectorA(int bSectorA)
-{
-  m_bSectorA = bSectorA;
+void usAcquisitionParameters::setMotorPosition(int motorPosition) {
+  m_motorPosition =  motorPosition;
 }
 
 /**
-*
-* @param
+* Setter for motorPositionMax.
+* @param motorPosition Max motor position in degrees of the current probe.
 */
-void usAcquisitionParameters::setBSectorB(int bSectorB)
-{
-  m_bSectorB = bSectorB;
+void usAcquisitionParameters::setMotorPositionMax(int motorPositionMax) {
+  m_motorPositionMax =  motorPositionMax;
 }
 
 /**
-*
-* @param
+* Setter for motorPositionMin.
+* @param motorPositionMin Min motor position in degrees of the current probe.
 */
-void usAcquisitionParameters::setBPersist(int bPersist)
-{
-  m_bPersist = bPersist;
+void usAcquisitionParameters::setMotorPositionMin(int motorPositionMin) {
+  m_motorPositionMin =  motorPositionMin;
 }
 
 /**
-*
-* @param
+* Setter for postScanHeigh.
+* @param postScanHeigh Height of the post-scan image in px.
 */
-void usAcquisitionParameters::setBDynRange(int bDynRange)
-{
-  m_bDynRange = bDynRange;
+void usAcquisitionParameters::setPostScanHeigh(int postScanHeigh) {
+  m_postScanHeigh =  postScanHeigh;
 }
 
 /**
-*
-* @param
+* Setter for postScanMode.
+* @param postScanMode Boolean to acquire scan-converted images (true), or not (false).
 */
-void usAcquisitionParameters::setBSteer(int bSteer)
-{
-  m_bSteer = bSteer;
+void usAcquisitionParameters::setPostScanMode(bool postScanMode) {
+  m_postScanMode =  postScanMode;
 }
 
 /**
-*
-* @param
+* Setter for postScanWidth.
+* @param postScanWidth Width of the post-scan image in px.
 */
-void usAcquisitionParameters::setBGain(int bGain)
-{
-  m_bGain = bGain;
+void usAcquisitionParameters::setPostScanWidth(int postScanWidth) {
+  m_postScanWidth =  postScanWidth;
 }
 
 /**
-*
-* @param
+* Setter for samplingFrequency.
+* @param samplingFrequency Sampling frequency of the acquisition (Hz).
 */
-void usAcquisitionParameters::setBTxFreq(int bTxFreq)
-{
-  m_bTxFreq = bTxFreq;
+void usAcquisitionParameters::setSamplingFrequency(int samplingFrequency) {
+  m_samplingFrequency =  samplingFrequency;
 }
 
 /**
-*
-* @param
+* Setter for samplingFrequencyMax.
+* @param samplingFrequencyMax Max sampling frequency of the acquisition (Hz).
 */
-void usAcquisitionParameters::setBFocusDepth(int bFocusDepth)
-{
-  m_bFocusDepth = bFocusDepth;
+void usAcquisitionParameters::setSamplingFrequencyMax(int samplingFrequencyMax) {
+  m_samplingFrequencyMax =  samplingFrequencyMax;
 }
 
 /**
-*
-* @param
+* Setter for samplingFrequencyMin.
+* @param samplingFrequencyMin Min sampling frequency of the acquisition (Hz).
 */
-void usAcquisitionParameters::setBFocusCount(int bFocusCount)
-{
-  m_bFocusCount = bFocusCount;
+void usAcquisitionParameters::setSamplingFrequencyMin(int samplingFrequencyMin) {
+  m_samplingFrequencyMin =  samplingFrequencyMin;
 }
 
 /**
-*
-* @param
+* Setter for sector.
+* @param sector Percentage of the total width of the transducers used to acquire an image.
 */
-void usAcquisitionParameters::setBFocusSpacing(int bFocusSpacing)
-{
-  m_bFocusSpacing = bFocusSpacing;
+void usAcquisitionParameters::setSector(int sector) {
+  m_sector =  sector;
 }
 
 /**
-*
-* @param
+* Setter for sectorMax.
+* @param sectorMax Max percentage of the width of the transducers used to acquire an image.
 */
-void usAcquisitionParameters::setBImageOpt(int bImageOpt)
-{
-  m_bImageOpt = bImageOpt;
+void usAcquisitionParameters::setSectorMax(int sectorMax) {
+  m_sectorMax =  sectorMax;
 }
 
 /**
-*
-* @param
+* Setter for sectorMin.
+* @param sectorMax Min percentage of the width of the transducers used to acquire an image.
 */
-void usAcquisitionParameters::setBMru(int bMru)
-{
-  m_bMru = bMru;
+void usAcquisitionParameters::setSectorMin(int sectorMin) {
+  m_sectorMin =  sectorMin;
 }
 
 /**
-*
-* @param
+* Setter for transmitFrequency.
+* @param transmitFrequency Acoustic frequency sent with the transducers (Hz).
 */
-void usAcquisitionParameters::setDualActiveDisplay(int dualActiveDisplay)
-{
-  m_dualActiveDisplay = dualActiveDisplay;
+void usAcquisitionParameters::setTransmitFrequency(int transmitFrequency) {
+  m_transmitFrequency =  transmitFrequency;
 }
 
 /**
-*
-* @param
+* Setter for transmitFrequencyMax.
+* @param transmitFrequency Max acoustic frequency sent with the transducers (Hz).
 */
-void usAcquisitionParameters::setQuadActiveDisplay(int quadActiveDisplay)
-{
-  m_quadActiveDisplay = quadActiveDisplay;
+void usAcquisitionParameters::setTransmitFrequencyMax(int transmitFrequencyMax) {
+  m_transmitFrequencyMax =  transmitFrequencyMax;
 }
 
 /**
-*
-* @param
+* Setter for transmitFrequencyMin.
+* @param transmitFrequency Max acoustic frequency sent with the transducers (Hz).
 */
-void usAcquisitionParameters::setMMode(int mMode)
-{
-  m_mMode = mMode;
+void usAcquisitionParameters::setTransmitFrequencyMin(int transmitFrequencyMin) {
+  m_transmitFrequencyMin =  transmitFrequencyMin;
 }
 
-/**
-*
-* @param
-*/
-void usAcquisitionParameters::setMZoom(int mZoom)
-{
-  m_mZoom = mZoom;
-}
 
-/**
-*
-* @param
-*/
-void usAcquisitionParameters::setMPos(int mPos)
-{
-  m_mPos = mPos;
-}
-
-/**
-*
-* @param
-*/
-void usAcquisitionParameters::setMDepth(int mDepth)
-{
-  m_mDepth = mDepth;
-}
-
-/**
-*
-* @param
-*/
-void usAcquisitionParameters::setMSweep(int mSweep)
-{
-  m_mSweep = mSweep;
-}
-
-/**
-*
-* @param
-*/
-void usAcquisitionParameters::setMSteer(int mSteer)
-{
-  m_mSteer = mSteer;
-}
-
-/**
-*
-* @param
-*/
-void usAcquisitionParameters::setPwActiveDisplay(int pwActiveDisplay)
-{
-  m_pwActiveDisplay = pwActiveDisplay;
-}
-
-/**
-*
-* @param
-*/
-void usAcquisitionParameters::setPwGatePos(int pwGatePos)
-{
-  m_pwGatePos = pwGatePos;
-}
-
-/**
-*
-* @param
-*/
-void usAcquisitionParameters::setPwGateDepth(int pwGateDepth)
-{
-  m_pwGateDepth = pwGateDepth;
-}
-
-/**
-*
-* @param
-*/
-void usAcquisitionParameters::setPwGateSize(int pwGateSize)
-{
-  m_pwGateSize = pwGateSize;
-}
-
-/**
-*
-* @param
-*/
-void usAcquisitionParameters::setPwGain(int pwGain)
-{
-  m_pwGain = pwGain;
-}
-
-/**
-*
-* @param
-*/
-void usAcquisitionParameters::setPwInvert(int pwInvert)
-{
-  m_pwInvert = pwInvert;
-}
-
-/**
-*
-* @param
-*/
-void usAcquisitionParameters::setPWSteer(int pWSteer)
-{
-  m_pWSteer = pWSteer;
-}
-
-/**
-*
-* @param
-*/
-void usAcquisitionParameters::setPwSweep(int pwSweep)
-{
-  m_pwSweep = pwSweep;
-}
-
-/**
-*
-* @param
-*/
-void usAcquisitionParameters::setPwTxFreq(int pwTxFreq)
-{
-  m_pwTxFreq = pwTxFreq;
-}
-
-/**
-*
-* @param
-*/
-void usAcquisitionParameters::setPwBaseline(int pwBaseline)
-{
-  m_pwBaseline = pwBaseline;
-}
-
-/**
-*
-* @param
-*/
-void usAcquisitionParameters::setPwPrp(int pwPrp)
-{
-  m_pwPrp = pwPrp;
-}
-
-/**
-*
-* @param
-*/
-void usAcquisitionParameters::setColorBox(int colorBox)
-{
-  m_colorBox = colorBox;
-}
-
-/**
-*
-* @param
-*/
-void usAcquisitionParameters::setColorSteer(int colorSteer)
-{
-  m_colorSteer = colorSteer;
-}
-
-/**
-*
-* @param
-*/
-void usAcquisitionParameters::setColorPersist(int colorPersist)
-{
-  m_colorPersist = colorPersist;
-}
-
-/**
-*
-* @param
-*/
-void usAcquisitionParameters::setColorGain(int colorGain)
-{
-  m_colorGain = colorGain;
-}
-
-/**
-*
-* @param
-*/
-void usAcquisitionParameters::setColorInvert(int colorInvert)
-{
-  m_colorInvert = colorInvert;
-}
-
-/**
-*
-* @param
-*/
-void usAcquisitionParameters::setColorTxFreq(int colorTxFreq)
-{
-  m_colorTxFreq = colorTxFreq;
-}
-
-/**
-*
-* @param
-*/
-void usAcquisitionParameters::setColorEnsemble(int colorEnsemble)
-{
-  m_colorEnsemble = colorEnsemble;
-}
-
-/**
-*
-* @param
-*/
-void usAcquisitionParameters::setColorMode(int colorMode)
-{
-  m_colorMode = colorMode;
-}
-
-/**
-*
-* @param
-*/
-void usAcquisitionParameters::setColorPrp(int colorPrp)
-{
-  m_colorPrp = colorPrp;
-}
-
-/**
-*
-* @param
-*/
-void usAcquisitionParameters::setTriplexActiveDisplay(int triplexActiveDisplay)
-{
-  m_triplexActiveDisplay = triplexActiveDisplay;
-}
-
-/**
-*
-* @param
-*/
-void usAcquisitionParameters::setBSamplingFreq(int bSamplingFreq)
-{
-  m_bSamplingFreq = bSamplingFreq;
-}
-
-/**
-*
-* @param
-*/
-void usAcquisitionParameters::setBLineDensity(int bLineDensity)
-{
-  m_bLineDensity = bLineDensity;
-}
-
-/**
-*
-* @param
-*/
-void usAcquisitionParameters::setPowerPositive(int powerPositive)
-{
-  m_powerPositive = powerPositive;
-}
-
-/**
-*
-* @param
-*/
-void usAcquisitionParameters::setPowerNegative(int powerNegative)
-{
-  m_powerNegative = powerNegative;
-}
-
-/**
-*
-* @param
-*/
-void usAcquisitionParameters::setBSampleSize(int bSampleSize)
-{
-  m_bSampleSize = bSampleSize;
-}
-
-/**
-*
-* @param
-*/
-void usAcquisitionParameters::setRfMode(int rfMode)
-{
-  m_rfMode = rfMode;
-}
-
-/**
-*
-* @param
-*/
-void usAcquisitionParameters::setRfDecim(int rfDecim)
-{
-  m_rfDecim = rfDecim;
-}
-
-/**
-*
-* @param
-*/
-void usAcquisitionParameters::setMotorFrames(int motorFrames)
-{
-  m_motorFrames = motorFrames;
-}
-
-/**
-*
-* @param
-*/
-void usAcquisitionParameters::setMotorSteps(int motorSteps)
-{
-  m_motorSteps = motorSteps;
-}
-
-/**
-*
-* @param
-*/
-void usAcquisitionParameters::setMotorStatus(int motorStatus)
-{
-  m_motorStatus = motorStatus;
-}

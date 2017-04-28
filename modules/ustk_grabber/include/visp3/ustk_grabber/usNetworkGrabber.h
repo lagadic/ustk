@@ -40,6 +40,7 @@
 #define __usNetworkGrabber_h_
 
 #include <visp3/ustk_grabber/usGrabberConfig.h>
+#include <visp3/ustk_grabber/usAcquisitionParameters.h>
 
 #if defined(USTK_GRABBER_HAVE_QT5)
 
@@ -76,50 +77,26 @@ public:
   //header sent by the client to init porta
   struct usInitHeaderSent{
     usInitHeaderSent() : headerId(1) {} // set header Id to 1 by default
-    int headerId; //to differenciate usInitHeaderSent (=1) / usUpdateHeaderSent (=2)
+    int headerId; //to differenciate usInitHeaderSent (=1) / usAcquisitionParameters (=2) / usRunControlHeaderSent(=3)
 
     //probe / slot selection
     int probeId; // available probes : 4DC7 (id = 15) , C5-2 (id = 10)
     int slotId; // 3 slots on ultrasonix station (0 : top, 2 : middle, 1 : botom)
 
-    //frequencies
-    int transmitFrequency;
-    int samplingFrequency;
-
-    //image type
     int imagingMode; // see ImagingModes.h
-    bool postScanMode; //performs scan conversion on ultrasound station if true
-    int postScanHeigh; // if post-scan mode, height of the frame (px)
-    int postScanWidth; // if post-scan mode, width of the frame (px)
-
-    int imageDepth; //in mm
-    int sector; // in %
-
-    //motor settings
-    bool activateMotor; //to sweep the motor permanently
-
-    // position of the motor in degrees : 0° = side of the fixation system for 4DC7 probe
-    int motorPosition; // (used if activateMotor = false)
-
-    // motor movement parameters
-    int framesPerVolume; // (must be odd : always a central frame)
-    int degreesPerFrame; // angle between two frames in degrees
-
   };
 
-  //header sent by the client to update porta config
-  struct usUpdateHeaderSent{
-    usUpdateHeaderSent() : headerId(2) {} // set header Id to 2 by default
-    int headerId; //to differenciate usInitHeaderSent (=1) / usUpdateHeaderSent (=2)
+  //header sent by the client to run/stop the acquisition
+  struct usRunControlHeaderSent{
+    usRunControlHeaderSent() : headerId(3), run(false) {} // set header Id to 1 by default
+    int headerId; //to differenciate usInitHeaderSent (=1) / usAcquisitionParameters (=2) / usRunControlHeaderSent(=3)
 
-    int imagingMode; // see ImagingModes.h
-    int imageHeight; //in px
-    int frequency;
+    bool run; // run an acquisition if true, stop it if false
   };
 
   //header sent by the server to confirm porta is initialized
   struct usInitHeaderConfirmation{
-    usInitHeaderConfirmation() : headerId(1) {} // set header Id to 1 by default
+    usInitHeaderConfirmation() : headerId(1), initOk(0), probeId(0) {} // set header Id to 1 by default
     int headerId; // Never change this value ! It is used to differenciate usInitHeaderConfirmation (=1) / usImageHeader (=2)
 
     int initOk; // 1 if init ok, 0 otherwise
@@ -166,11 +143,37 @@ public:
 
   void disconnect();
 
-  void initAcquisition(const usNetworkGrabber::usInitHeaderSent &header);
+  bool initAcquisition(const usNetworkGrabber::usInitHeaderSent &header);
+
+  void readAcquisitionParameters(QDataStream &stream);
+
+  void runAcquisition();
 
   void setIPAddress(std::string s_ip){m_ip = s_ip;}
 
+  void setActivateMotor(bool activateMotor);
+  void setDegreesPerFrame(int degreesPerFrame);
+  void setFramesPerVolume(int framesPerVolume);
+  void setImageDepth(int imageDepth);
+  void setImagingMode(int imagingMode) ;
+  void setMotorPosition(int motorPosition);
+  void setPostScanHeigh(int postScanHeigh);
+  void setPostScanMode(bool postScanMode);
+  void setPostScanWidth(int postScanWidth);
+  void setSamplingFrequency(int samplingFrequency);
+  void setSector(int sector);
+  void setTransmitFrequency(int transmitFrequency);
+
   void setVerbose(bool verbose) {m_verbose = verbose;}
+
+  void stopAcquisition();
+
+  bool updateAcquisitionParameters();
+
+signals:
+  void serverUpdateEnded(bool success);
+  void endBlockingLoop();
+
 
 public slots:
   /// Network
@@ -181,6 +184,10 @@ public slots:
   void handleError(QAbstractSocket::SocketError err);
   void setConnection(bool actionConnect);
   void useSimulator(bool t_state);
+
+protected slots:
+  void serverUpdated(bool sucess);
+
 protected:
 
   bool m_verbose; //to print connection infos if true
@@ -192,6 +199,12 @@ protected:
 
   //bytes to read until image end
   int m_bytesLeftToRead;
+
+  //acquisition parameters
+  usAcquisitionParameters m_acquisitionParamters;
+
+  //To know if the update was sucessfull on server side
+  bool m_updateParametersSucess;
 
   //received headers
   usInitHeaderConfirmation m_confirmHeader;
