@@ -260,7 +260,7 @@ int main(int argc, char** argv)
 
 
   qtGrabber->setMotorPosition(32); //middle
-  qtGrabber->updateAcquisitionParameters();
+  qtGrabber->sendAcquisitionParameters();
 
   qtGrabber->runAcquisition();
 
