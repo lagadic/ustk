@@ -168,7 +168,7 @@ public:
 
   void stopAcquisition();
 
-  bool updateAcquisitionParameters();
+  bool sendAcquisitionParameters();
 
 signals:
   void serverUpdateEnded(bool success);

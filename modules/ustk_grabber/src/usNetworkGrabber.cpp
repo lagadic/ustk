@@ -217,7 +217,7 @@ void usNetworkGrabber::disconnect() {
 * Method to send to the server the new acquisition parameters.
 * @param header To set the probe, slot and imaging mode
 */
-bool usNetworkGrabber::updateAcquisitionParameters() {
+bool usNetworkGrabber::sendAcquisitionParameters() {
   QByteArray block;
   QDataStream stream(&block, QIODevice::WriteOnly);
 #if (defined(USTK_GRABBER_HAVE_QT5))

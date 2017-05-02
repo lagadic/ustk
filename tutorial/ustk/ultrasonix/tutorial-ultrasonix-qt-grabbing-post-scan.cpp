@@ -45,7 +45,7 @@ int main(int argc, char** argv)
   qtGrabber->setPostScanWidth(640);
 
   std::cout << "send update" << std::endl;
-  qtGrabber->updateAcquisitionParameters();
+  qtGrabber->sendAcquisitionParameters();
   std::cout << "end update" << std::endl;
   qtGrabber->runAcquisition();
 

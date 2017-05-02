@@ -42,7 +42,7 @@ int main(int argc, char** argv)
   // sending acquisition parameters
   qtGrabber->initAcquisition(header);
 
-  qtGrabber->updateAcquisitionParameters();
+  qtGrabber->sendAcquisitionParameters();
   qtGrabber->runAcquisition();
 
   // Move the grabber object to another thread, and run it
