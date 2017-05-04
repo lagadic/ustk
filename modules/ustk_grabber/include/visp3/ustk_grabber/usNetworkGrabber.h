@@ -66,6 +66,12 @@
  * @class usNetworkGrabber
  * @brief Generic abstract class to manage tcp connection to grab ultrasound frames.
  * @ingroup module_ustk_grabber
+
+
+ This class contains all the network process to manage the remote control 
+
+ The following figure summarize the steps to follow to acquire ultrasound image :
+ \image html img-usNetworkGrabber.png
  */
 class VISP_EXPORT usNetworkGrabber : public QObject
 {

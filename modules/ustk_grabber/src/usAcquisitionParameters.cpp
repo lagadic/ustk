@@ -169,7 +169,7 @@ void usAcquisitionParameters::setMotorPosition(int motorPosition) {
 
 /**
 * Setter for motorPositionMax.
-* @param motorPosition Max motor position in degrees of the current probe.
+* @param motorPositionMax Max motor position in degrees of the current probe.
 */
 void usAcquisitionParameters::setMotorPositionMax(int motorPositionMax) {
   m_motorPositionMax =  motorPositionMax;
@@ -249,7 +249,7 @@ void usAcquisitionParameters::setSectorMax(int sectorMax) {
 
 /**
 * Setter for sectorMin.
-* @param sectorMax Min percentage of the width of the transducers used to acquire an image.
+* @param sectorMin Min percentage of the width of the transducers used to acquire an image.
 */
 void usAcquisitionParameters::setSectorMin(int sectorMin) {
   m_sectorMin =  sectorMin;
@@ -265,7 +265,7 @@ void usAcquisitionParameters::setTransmitFrequency(int transmitFrequency) {
 
 /**
 * Setter for transmitFrequencyMax.
-* @param transmitFrequency Max acoustic frequency sent with the transducers (Hz).
+* @param transmitFrequencyMax Max acoustic frequency sent with the transducers (Hz).
 */
 void usAcquisitionParameters::setTransmitFrequencyMax(int transmitFrequencyMax) {
   m_transmitFrequencyMax =  transmitFrequencyMax;
@@ -273,7 +273,7 @@ void usAcquisitionParameters::setTransmitFrequencyMax(int transmitFrequencyMax) 
 
 /**
 * Setter for transmitFrequencyMin.
-* @param transmitFrequency Max acoustic frequency sent with the transducers (Hz).
+* @param transmitFrequencyMin Min acoustic frequency sent with the transducers (Hz).
 */
 void usAcquisitionParameters::setTransmitFrequencyMin(int transmitFrequencyMin) {
   m_transmitFrequencyMin =  transmitFrequencyMin;
