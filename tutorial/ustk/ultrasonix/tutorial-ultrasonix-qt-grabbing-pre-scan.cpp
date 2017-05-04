@@ -79,6 +79,10 @@ int main(int argc, char** argv)
     }
   }while(captureRunning);
 
+  if(displayInit) {
+    delete displayX;
+  }
+
 
   return app.exec();
 }

@@ -50,8 +50,14 @@
 
 /**
  * @class usNetworkGrabberPreScan
- * @brief Specific class to grab pre-scan frames on the network.
+ * @brief Specific class to grab pre-scan frames from the ultrasound station on the network.
  * @ingroup module_ustk_grabber
+ *
+ * This grabber manages a buffer system to avoid multiple copy of the frames.
+ * The acquire() method returns you a pointer on a new frame, you can acess and modify the frame (it is thread-safe).
+ * Acquire() can be blocking, the behaviour depends on how often you call it :
+ * - If you call acquire() faster than the frames are arriving on the network, it is blocking to wait next frame coming.
+ * - If you call it slower you will loose frames, but you will get the last frame available.
  */
 class VISP_EXPORT usNetworkGrabberPreScan : public usNetworkGrabber
 {

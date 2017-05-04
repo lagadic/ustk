@@ -215,7 +215,6 @@ void usNetworkGrabber::disconnect() {
 
 /**
 * Method to send to the server the new acquisition parameters.
-* @param header To set the probe, slot and imaging mode
 */
 bool usNetworkGrabber::sendAcquisitionParameters() {
   QByteArray block;
@@ -409,14 +408,14 @@ void usNetworkGrabber::readAcquisitionParameters(QDataStream &stream) {
 }
 
 /**
-* Setter for motor activation.
+* Setter for motor activation : true to sweep the motor the motor during the acquisition, false to let it static.
 */
 void usNetworkGrabber::setActivateMotor(bool activateMotor) {
   m_acquisitionParamters.setActivateMotor(activateMotor);
 }
 
 /**
-* Setter for degrees per frame.
+* Setter for angle between two sucessive frames (degrees).
 */
 void usNetworkGrabber::setDegreesPerFrame(int degreesPerFrame) {
   if(degreesPerFrame < m_acquisitionParamters.getDegreesPerFrameMin() ||
@@ -427,7 +426,7 @@ void usNetworkGrabber::setDegreesPerFrame(int degreesPerFrame) {
 
 
 /**
-* Setter for framesPerVolume
+* Setter for the number of frames per volume, in 3D acquisition.
 */
 void usNetworkGrabber::setFramesPerVolume(int framesPerVolume) {
   if(framesPerVolume < m_acquisitionParamters.getFramesPerVolumeMin() ||
@@ -437,7 +436,7 @@ void usNetworkGrabber::setFramesPerVolume(int framesPerVolume) {
 }
 
 /**
-* Setter for imageDepth
+* Setter for image depth (meters).
 */
 void usNetworkGrabber::setImageDepth(int imageDepth) {
   if(imageDepth < m_acquisitionParamters.getImageDepthMin() ||
@@ -447,7 +446,7 @@ void usNetworkGrabber::setImageDepth(int imageDepth) {
 }
 
 /**
-* Setter for imagingMode
+* Setter for imaging mode (0 : B-Mode, 12 : RF).
 */
 void usNetworkGrabber::setImagingMode(int imagingMode) {
   if(imagingMode < m_acquisitionParamters.getImagingModeMin() ||
@@ -457,7 +456,7 @@ void usNetworkGrabber::setImagingMode(int imagingMode) {
 }
 
 /**
-* Setter for motorPosition
+* Setter for a static motor position (in degrees from the beginning position).
 */
 void usNetworkGrabber::setMotorPosition(int motorPosition) {
   if(motorPosition < m_acquisitionParamters.getMotorPositionMin() ||
@@ -467,28 +466,28 @@ void usNetworkGrabber::setMotorPosition(int motorPosition) {
 }
 
 /**
-* Setter for postScanHeigh
+* Setter for post-scan image height.
 */
 void usNetworkGrabber::setPostScanHeigh(int postScanHeigh) {
   m_acquisitionParamters.setPostScanHeigh(postScanHeigh);
 }
 
 /**
-* Setter for postScanMode
+* Setter for post-scan mode : true for post-scan, false for pre-scan.
 */
 void usNetworkGrabber::setPostScanMode(bool postScanMode) {
   m_acquisitionParamters.setPostScanMode(postScanMode);
 }
 
 /**
-* Setter for postScanWidth
+* Setter for post-scan image width.
 */
 void usNetworkGrabber::setPostScanWidth(int postScanWidth) {
   m_acquisitionParamters.setPostScanWidth(postScanWidth);
 }
 
 /**
-* Setter for samplingFrequency
+* Setter for samplingFrequency (Hz).
 */
 void usNetworkGrabber::setSamplingFrequency(int samplingFrequency) {
   if(samplingFrequency < m_acquisitionParamters.getSamplingFrequencyMin() ||
@@ -498,7 +497,7 @@ void usNetworkGrabber::setSamplingFrequency(int samplingFrequency) {
 }
 
 /**
-* Setter for sector
+* Setter for sector (percentage of the number of transducers to use).
 */
 void usNetworkGrabber::setSector(int sector) {
   if(sector < m_acquisitionParamters.getSectorMin() ||
@@ -508,7 +507,7 @@ void usNetworkGrabber::setSector(int sector) {
 }
 
 /**
-* Setter for
+* Setter for transmitFrequency (Hz).
 */
 void usNetworkGrabber::setTransmitFrequency(int transmitFrequency) {
   if(transmitFrequency < m_acquisitionParamters.getTransmitFrequencyMin() ||

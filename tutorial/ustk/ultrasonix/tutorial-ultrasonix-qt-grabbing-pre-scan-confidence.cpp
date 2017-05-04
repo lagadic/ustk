@@ -89,6 +89,10 @@ int main(int argc, char** argv)
     }
   }while(captureRunning);
 
+  if(displayInit) {
+    delete displayX;
+    delete displayXConf;
+  }
 
   return app.exec();
 }

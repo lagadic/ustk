@@ -56,7 +56,7 @@
 #include <QTcpSocket>
 #include <QAbstractSocket>
 #include <QHostAddress>
-#elif defined( USTK_GRABBER_HAVE_QT5)
+#elif defined(USTK_GRABBER_HAVE_QT5)
 #include <QtNetwork/QTcpSocket>
 #include <QtNetwork/QAbstractSocket>
 #include <QtNetwork/QHostAddress>
@@ -68,9 +68,9 @@
  * @ingroup module_ustk_grabber
 
 
- This class contains all the network process to manage the remote control 
+ This class contains all the network process to manage the remote control the acquisition (the code for server side is on lagadic gitlab).
 
- The following figure summarize the steps to follow to acquire ultrasound image :
+ The following figure details the network communication process and summarizes the steps to follow to acquire ultrasound image :
  \image html img-usNetworkGrabber.png
  */
 class VISP_EXPORT usNetworkGrabber : public QObject

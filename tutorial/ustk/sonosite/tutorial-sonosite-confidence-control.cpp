@@ -90,8 +90,6 @@ vpThread::Return displayFunction(vpThread::Args args)
   transducerSettings.setFieldOfView(vpMath::rad(57.0)); // field of view is 57 deg
   transducerSettings.setDepth(0.12);
 
-  double resolution;
-
   t_CaptureState capture_state_;
   bool display_initialized_ = false;
 
