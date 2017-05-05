@@ -37,6 +37,7 @@ If you want to remotely change the acquisition parameters, here is a code showin
 Some details about this code :
 
 - To change a parameter from its default value, you have to use first the setters of the usNetworkGrabber class. This will update the parameters locally.
-- Once you're done with setting the new parameters, you have to send them to the ultrasound machine using sendAcquisitionParameters()
+- Once you're done with setting the new parameters, you have to send them to the ultrasound machine using usNetworkGrabber::sendAcquisitionParameters()
+- And finally you can run the acquisition using usNetworkGrabber::runAcquisition(), you are then going to receive the images.
 
 */
