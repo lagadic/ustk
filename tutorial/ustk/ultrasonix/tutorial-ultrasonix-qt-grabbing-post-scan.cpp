@@ -40,9 +40,16 @@ int main(int argc, char** argv)
   // sending acquisition parameters
   qtGrabber->initAcquisition(header);
 
+  // grab a 640*480 post-scan image
   qtGrabber->setPostScanMode(true);
   qtGrabber->setPostScanHeigh(480);
   qtGrabber->setPostScanWidth(640);
+
+  // set the ultrsound depth to 140 mm
+  qtGrabber->setImageDepth(140);
+
+  // set the 4DC7 motor on the middle frame
+  qtGrabber->setMotorPosition(32);
 
   std::cout << "send update" << std::endl;
   qtGrabber->sendAcquisitionParameters();

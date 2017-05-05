@@ -30,7 +30,6 @@ int main(int argc, char** argv)
 
   //prepare image;
   usDataGrabbed<usImagePreScan2D<unsigned char> >* grabbedFrame;
-  usDataGrabbed<usImagePreScan2D<unsigned char> > localFrame;
 
   //Prepare display
   vpDisplayX * displayX = NULL;
@@ -38,51 +37,46 @@ int main(int argc, char** argv)
 
   bool captureRunning = true;
 
+  //if you want debug informations
   //qtGrabber->setVerbose(true);
+
   // sending acquisition parameters
   qtGrabber->initAcquisition(header);
 
-  qtGrabber->sendAcquisitionParameters();
+  // Send the command to run the acquisition
   qtGrabber->runAcquisition();
 
   // Move the grabber object to another thread, and run it
   qtGrabber->moveToThread(grabbingThread);
   grabbingThread->start();
 
-
-  //our local grabbing loop
+  //our grabbing loop
   do {
     if(qtGrabber->isFirstFrameAvailable()) {
       grabbedFrame = qtGrabber->acquire();
 
-      //local copy for vpDisplay
-      localFrame = *grabbedFrame;
-
-      std::cout <<"MAIN THREAD received frame No : " << localFrame.getFrameCount() << std::endl;
+      std::cout <<"MAIN THREAD received frame No : " << grabbedFrame->getFrameCount() << std::endl;
 
       //init display
-      if(!displayInit && localFrame.getHeight() !=0 && localFrame.getHeight() !=0) {
-        displayX = new vpDisplayX(localFrame);
+      if(!displayInit && grabbedFrame->getHeight() !=0 && grabbedFrame->getHeight() !=0) {
+        displayX = new vpDisplayX(*grabbedFrame);
         displayInit = true;
       }
 
       // processing display
       if(displayInit) {
-        vpDisplay::display(localFrame);
-        vpDisplay::flush(localFrame);
-        //vpTime::wait(10); // wait to simulate a local process running on last frame grabbed
+        vpDisplay::display(*grabbedFrame);
+        vpDisplay::flush(*grabbedFrame);
       }
     }
     else {
       vpTime::wait(10);
-      //std::cout << "wait new frame" << std::endl;
     }
-  }while(captureRunning);
+  } while(captureRunning);
 
   if(displayInit) {
     delete displayX;
   }
-
 
   return app.exec();
 }
