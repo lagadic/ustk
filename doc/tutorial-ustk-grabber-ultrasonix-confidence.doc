@@ -1,0 +1,33 @@
+/**
+
+\page tutorial-ustk-grabber-ultrasonix-confidence Tutorial: UsTk grabber tutorial for ultrasonix station with computation of confidence map of the image
+\tableofcontents
+
+
+\section intro_ustk_grabber_confidence Introduction
+
+This tutorial expains how to apply a confidence map algorithm in real-time on frames grabbed from ultrasonix station.
+
+Note that the source code used in this tutorial can be downloaded using the following command :
+
+\code
+$ svn export https://github.com/lagadic/uskt.git/trunk/tutorial/ustk/ultrasonix/
+\endcode
+
+\section ustk_grabber_confidence_example Apply the confidence map on pre-scan images
+
+The following code shows how to apply a confidence map algorithm on a pre-scan image grabbed in real-time, and display the result.
+
+The confidence map is produced using \ref usScanlineConfidence2D class.
+ 
+Note that the code runs in 2 separate threads :
+  - The grabbing thread wich reads frames arriving on the network
+  - The main thread wich computes the confidence map algorithm on each new frame, and displays the result.
+
+You will need Qt and X11 to run the following code.
+
+\include tutorial-ultrasonix-qt-grabbing-pre-scan-confidence.cpp
+
+\section ustk_grabber_change_confidence_next Next tutorial
+You are now ready to see the next \ref tutorial-ustk-grabber-ultrasonix-confidence-servoing.
+*/

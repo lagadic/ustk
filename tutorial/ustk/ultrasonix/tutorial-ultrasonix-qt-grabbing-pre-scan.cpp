@@ -37,9 +37,6 @@ int main(int argc, char** argv)
 
   bool captureRunning = true;
 
-  //if you want debug informations
-  //qtGrabber->setVerbose(true);
-
   // sending acquisition parameters
   qtGrabber->initAcquisition(header);
 

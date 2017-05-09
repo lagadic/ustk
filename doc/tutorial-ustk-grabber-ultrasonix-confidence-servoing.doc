@@ -1,0 +1,40 @@
+/**
+
+\page tutorial-ustk-grabber-ultrasonix-confidence-servoing Tutorial: UsTk grabber tutorial to perform visual servoing on a 2D confidence map.
+\tableofcontents
+
+
+\section intro_ustk_grabber_confidence_servoing Introduction
+
+This tutorial expains how to perform a visual servoing task based on a 2D confidence map, using Viper 850 robot and ultrasonix station. 
+
+Note that the source code used in this tutorial can be downloaded using the following command :
+
+\code
+$ svn export https://github.com/lagadic/uskt.git/trunk/tutorial/ustk/ultrasonix/
+\endcode
+
+\section ustk_grabber_confidence_servoing Visual servoing on confidence map
+
+The following code shows how to perform a visual servoing task on a 2D confidence map in real-time, using the 6-DOF robot Viper850 (holding the ultrasound probe).
+The code is splitted in 3 threads :
+  - The grabber to acquire images on the network runs in a separate thread (based on QTread)
+  - The robot control loop is performed in a separate thread (first part of the following code)
+  - The main thread performs the confidence map algorithm on the received frame. And based on the barycenter of this map, it sets the robot control velocity to apply in the probe frame.
+
+\include tutorial-ultrasonix-qt-grabbing-pre-scan-confidence-control.cpp
+
+Some details about this code :
+
+- You will need Qt to use the grabber
+- You will need X11 to display the images
+- You will need a Viper 850 robot with a system to attach the ultrasound probe
+- Some parameters are set :
+  - For the geometry of the robot and the probe
+    - 62 mm between the force/torque sensor and the bottom of the tool changer
+    - 262 mm between the force/torque sensor and the contact point of the ultrasound probe
+  - For the physical catacteristics of the system :
+    - Mass of the probe + tool changer : 0.696+0.476 Kg
+    - Contact force we want to apply with the robot on the phantom : 3 N
+
+*/

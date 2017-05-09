@@ -9,4 +9,8 @@ This page references all the tutorials related to Ultrasound TK.
 
 - \subpage tutorial-ustk-grabber-ultrasonix <br>This tutorial gives examples to use ultrasonix grabber
 
+- \subpage tutorial-ustk-grabber-ultrasonix-confidence <br>This tutorial gives examples to run a confidence map using ultrasonix grabber
+
+- \subpage tutorial-ustk-grabber-ultrasonix-confidence-servoing <br>This tutorial shows how to perform a simple visual servoing task on a confidence map
+
 */

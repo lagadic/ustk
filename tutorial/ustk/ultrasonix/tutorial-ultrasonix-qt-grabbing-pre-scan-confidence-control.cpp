@@ -253,11 +253,8 @@ int main(int argc, char** argv)
 
   bool captureRunning = true;
 
-  //qtGrabber->setVerbose(true);
   // sending acquisition parameters
   qtGrabber->initAcquisition(header);
-
-
 
   qtGrabber->setMotorPosition(32); //middle
   qtGrabber->sendAcquisitionParameters();

@@ -53,6 +53,9 @@
  * @brief Specific class to grab RF frames from the ultrasound station on the network.
  * @ingroup module_ustk_grabber
  *
+ * The following figure details the network communication process and summarizes the steps to follow to acquire ultrasound images :
+ * \image html img-usNetworkGrabber.png
+ *
  * This grabber manages a buffer system to avoid multiple copy of the frames.
  * The acquire() method returns you a pointer on a new frame, you can acess and modify the frame (it is thread-safe).
  * Acquire() can be blocking, the behaviour depends on how often you call it :
