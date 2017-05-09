@@ -1,6 +1,6 @@
 /**
 
-\page tutorial-ustk-grabber Tutorial: UsTk io tutorial
+\page tutorial-ustk-grabber-ultrasonix Tutorial: UsTk grabber tutorial for ultrasonix station
 \tableofcontents
 
 
@@ -8,8 +8,11 @@
 
 This tutorial expains how to grab ultrasound images using a TCP connection between the ultrasound station and a client, and to remote-control the station to change acquisition parameters.
 
-The source code used is available in ustk repository, in the tutorial folder.
+Note that the source code used in this tutorial can be downloaded using the following command :
 
+\code
+$ svn export https://github.com/lagadic/uskt.git/trunk/tutorial/ustk/ultrasonix/
+\endcode
 
 \section ustk_grabber_basic Simple grabbing
 

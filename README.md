@@ -55,7 +55,7 @@ This UsTK project needs [ViSP](https://visp.inria.fr) and [VTK](http://www.vtk.o
 		$ make -j4
 
 #### How to build UsTK documentation
- 
+
 To build UsTK documentation as a stand alone documentation create a new build folder `ustk-build-doc` to host the stand alone documentation and make `ustk_doc` target:
 
 	$ cd <workspace>
@@ -63,6 +63,7 @@ To build UsTK documentation as a stand alone documentation create a new build fo
 	$ cd ustk-build-doc
 	$ cmake ../ustk
 	$ make -j4 ustk_doc
+
 
 #### How to use UsTK data set
 

@@ -5,6 +5,8 @@ This page references all the tutorials related to Ultrasound TK.
 
 - \subpage tutorial-ustk-io <br>This tutorial gives an overview of ustk_io module
 
-- \subpage tutorial-ustk-grabber <br>This tutorial gives an overview of ustk_grabber module
+- \subpage tutorial-ustk-grabber-sonosite <br>This tutorial gives examples to use sonosite grabber
+
+- \subpage tutorial-ustk-grabber-ultrasonix <br>This tutorial gives examples to use ultrasonix grabber
 
 */
