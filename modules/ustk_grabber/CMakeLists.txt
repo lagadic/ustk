@@ -109,11 +109,13 @@ if(USE_VTK)
     #list(APPEND opt_incs "${QT_INCLUDE_DIR}/QtCore") # seems not useful
     list(APPEND opt_libs ${QT_QTGUI_LIBRARIES})
     list(APPEND opt_libs ${QT_QTCORE_LIBRARIES})
+    list(APPEND opt_libs ${QT_QTNETWORK_LIBRARIES})
 
   endif()
 endif()
 
 if(USE_QT5 OR USE_VTK)
+  message("opt_libs : ${opt_libs}")
   vp_add_module(ustk_grabber visp_gui visp_ustk_io )
   vp_glob_module_sources()
   vp_module_include_directories(${opt_incs})

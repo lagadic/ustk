@@ -33,14 +33,14 @@
 
 #include <visp3/ustk_grabber/usNetworkGrabber.h>
 
-#if defined(USTK_GRABBER_HAVE_QT5)
+#if defined(USTK_HAVE_QT5) || defined(USTK_HAVE_VTK_QT)
 
 #include <iostream>
 #include <fstream>
 #include <visp3/io/vpImageIo.h>
 
-#include <QDataStream>
-#include <QEventLoop>
+#include <QtCore/QDataStream>
+#include <QtCore/QEventLoop>
 
 using namespace std;
 
@@ -177,9 +177,9 @@ bool usNetworkGrabber::initAcquisition(const usNetworkGrabber::usInitHeaderSent 
 
   QByteArray block;
   QDataStream out(&block, QIODevice::WriteOnly);
-#if (defined(USTK_GRABBER_HAVE_QT5))
+#if (defined(USTK_HAVE_QT5) || defined(USTK_HAVE_VTK_QT5))
   out.setVersion(QDataStream::Qt_5_0);
-#elif (defined(USTK_HAVE_QT4))
+#elif defined(USTK_HAVE_VTK_QT4)
   out.setVersion(QDataStream::Qt_4_8);
 #else
   throw(vpException(vpException::fatalError,"your Qt version is not managed in ustk"));
@@ -219,12 +219,14 @@ void usNetworkGrabber::disconnect() {
 bool usNetworkGrabber::sendAcquisitionParameters() {
   QByteArray block;
   QDataStream stream(&block, QIODevice::WriteOnly);
-#if (defined(USTK_GRABBER_HAVE_QT5))
+#if (defined(USTK_HAVE_QT5) || defined(USTK_HAVE_VTK_QT5))
   stream.setVersion(QDataStream::Qt_5_0);
-#elif (defined(USTK_HAVE_QT4))
-  stream#else
-      throw(vpException(vpException::fatalError,"your Qt version is not managed in ustk"));
+#elif defined(USTK_HAVE_VTK_QT4)
+  stream.setVersion(QDataStream::Qt_4_8);
+#else
+  throw(vpException(vpException::fatalError,"your Qt version is not managed in ustk"));
 #endif
+
 
   // Writing on the stream. Warning : order matters ! (must be the same as on server side when reading)
 
@@ -527,14 +529,13 @@ void usNetworkGrabber::runAcquisition() {
 
   QByteArray block;
   QDataStream out(&block, QIODevice::WriteOnly);
-#if (defined(USTK_GRABBER_HAVE_QT5))
+#if (defined(USTK_HAVE_QT5) || defined(USTK_HAVE_VTK_QT5))
   out.setVersion(QDataStream::Qt_5_0);
-#elif (defined(USTK_HAVE_QT4))
+#elif defined(USTK_HAVE_VTK_QT4)
   out.setVersion(QDataStream::Qt_4_8);
 #else
   throw(vpException(vpException::fatalError,"your Qt version is not managed in ustk"));
 #endif
-
   // Writing on the stream. Warning : order matters ! (must be the same as on server side when reading)
   out << header.headerId;
   out << header.run;
@@ -552,9 +553,9 @@ void usNetworkGrabber::stopAcquisition() {
 
   QByteArray block;
   QDataStream out(&block, QIODevice::WriteOnly);
-#if (defined(USTK_GRABBER_HAVE_QT5))
+#if (defined(USTK_HAVE_QT5) || defined(USTK_HAVE_VTK_QT5))
   out.setVersion(QDataStream::Qt_5_0);
-#elif (defined(USTK_HAVE_QT4))
+#elif defined(USTK_HAVE_VTK_QT4)
   out.setVersion(QDataStream::Qt_4_8);
 #else
   throw(vpException(vpException::fatalError,"your Qt version is not managed in ustk"));

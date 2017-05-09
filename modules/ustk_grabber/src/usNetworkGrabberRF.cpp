@@ -33,10 +33,10 @@
 
 #include <visp3/ustk_grabber/usNetworkGrabberRF.h>
 
-#if defined(USTK_GRABBER_HAVE_QT5)
+#if defined(USTK_HAVE_QT5) || defined(USTK_HAVE_VTK_QT)
 
-#include <QDataStream>
-#include <QEventLoop>
+#include <QtCore/QDataStream>
+#include <QtCore/QEventLoop>
 
 /**
 * Constructor. Inititializes the image, and manages Qt signal.
@@ -77,9 +77,9 @@ void usNetworkGrabberRF::dataArrived()
   ////////////////// HEADER READING //////////////////
   QDataStream in;
   in.setDevice(m_tcpSocket);
-#if (defined(USTK_GRABBER_HAVE_QT5))
+#if (defined(USTK_HAVE_QT5) || defined(USTK_HAVE_VTK_QT5))
   in.setVersion(QDataStream::Qt_5_0);
-#elif (defined(USTK_HAVE_QT4))
+#elif defined(USTK_HAVE_VTK_QT4)
   in.setVersion(QDataStream::Qt_4_8);
 #else
   throw(vpException(vpException::fatalError,"your Qt version is not managed in ustk"));

@@ -41,11 +41,13 @@
 
 #include <visp3/ustk_core/usConfig.h>
 
-#if defined(USTK_GRABBER_HAVE_QT5)
+#if defined(USTK_HAVE_QT5) || defined(USTK_HAVE_VTK_QT)
 
 #include <visp3/ustk_grabber/usNetworkGrabber.h>
 
 #include <visp3/core/vpMutex.h>
+
+#include <QtCore/QTypeInfo>
 
 /**
  * @class usDataGrabbed

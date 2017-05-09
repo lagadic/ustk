@@ -42,25 +42,18 @@
 #include <visp3/ustk_core/usConfig.h>
 #include <visp3/ustk_grabber/usAcquisitionParameters.h>
 
-#if defined(USTK_GRABBER_HAVE_QT5)
+#if defined(USTK_HAVE_QT5) || defined(USTK_HAVE_VTK_QT)
 
-#include <QThread>
 #include <cassert>
-#include <QObject>
-#include <QScopedPointer>
 #include <iostream>
 #include <cstring>
 
 //Qt Network
-#if defined(USTK_HAVE_QT4)
-#include <QTcpSocket>
-#include <QAbstractSocket>
-#include <QHostAddress>
-#elif defined(USTK_GRABBER_HAVE_QT5)
+#include <QtCore/QThread>
+#include <QtCore/QObject>
+#include <QtCore/QThread>
 #include <QtNetwork/QTcpSocket>
-#include <QtNetwork/QAbstractSocket>
 #include <QtNetwork/QHostAddress>
-#endif
 
 /**
  * @class usNetworkGrabber

@@ -3,9 +3,9 @@
 #include <iostream>
 #include <visp3/ustk_core/usConfig.h>
 
-#if defined(USTK_GRABBER_HAVE_QT5) && defined(USTK_GRABBER_HAVE_QT5_WIDGETS) && defined(VISP_HAVE_X11)
+#if (defined(USTK_HAVE_QT5) || defined(USTK_HAVE_VTK_QT)) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(VISP_HAVE_VIPER850)
 
-#include <QThread>
+#include <QtCore/QThread>
 #include <QApplication>
 
 #include <visp3/ustk_grabber/usNetworkGrabberPreScan.h>
