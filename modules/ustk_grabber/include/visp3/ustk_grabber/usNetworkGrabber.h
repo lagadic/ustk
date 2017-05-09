@@ -39,7 +39,7 @@
 #ifndef __usNetworkGrabber_h_
 #define __usNetworkGrabber_h_
 
-#include <visp3/ustk_grabber/usGrabberConfig.h>
+#include <visp3/ustk_core/usConfig.h>
 #include <visp3/ustk_grabber/usAcquisitionParameters.h>
 
 #if defined(USTK_GRABBER_HAVE_QT5)

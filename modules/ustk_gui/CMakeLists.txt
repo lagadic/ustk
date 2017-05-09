@@ -1,34 +1,4 @@
-# TODO: Check if vtkGUISupportQt found
-# TODO: Check if ${QT_LIBRARIES} for Qt4 sould be imported using IMPORTED_LOCATION_
-# TODO: Check if VTK_VERSION_BUILD or VTK_VERSION_PATH on vtk-6.x and vtk-5.x
-# TODO: find how to suppress include(${VTK_USE_FILE}). For the moment, if not used on OSX, produces a segfault
-# TODO: find a way to remove all the warnings due to vtk headers
-
-VP_OPTION(USE_VTK "VTK;COMPONENTS;vtkCommonCore;vtkFiltersSources;vtkIOImage;vtkIOGeometry;vtkIOExport;vtkInteractionImage;vtkGUISupportQt;vtkRenderingImage" "" "Include vtk support" "" ON)
-
 if(USE_VTK)
-  if(NOT VTK_VERSION)
-    set(VTK_VERSION "${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}.${VTK_BUILD_VERSION}")
-  endif()
-  if(${VTK_VERSION} VERSION_LESS "6.0.0")
-    message("vtk-${VTK_VERSION} detected but too old to be used by ustk. You should install at least vtk-6.0.0 to use ustk_gui module.")
-    set(USE_VTK OFF CACHE BOOL "Enables vtk usage" FORCE)
-  endif()
-endif()
-
-#message("VTK_LIBRARIES: ${VTK_LIBRARIES}")
-if(USE_VTK)
-  if("${VTK_QT_VERSION}" STREQUAL "")
-    message("vtk found, but turned off since vtk was not built with Qt")
-    set(USE_VTK OFF CACHE BOOL "Turn vtk support off" FORCE)
-#  elseif(VTK_QT_VERSION VERSION_GREATER "4")
-#    find_package(VTK QUIET COMPONENTS vtkGUISupportQt)
-  endif()
-endif()
-
-if(USE_VTK)
-  set(USTK_HAVE_VTK_VERSION "(${VTK_VERSION_MAJOR}<<16 | ${VTK_VERSION_MINOR}<<8 | ${VTK_VERSION_PATCH})") # for vpConfig.h
-
   include(${VTK_USE_FILE})
 
   list(APPEND opt_incs ${VTK_INCLUDE_DIRS})
@@ -42,8 +12,8 @@ if(USE_VTK)
       endif()
     endif()
   endforeach()
-  list(APPEND VTK_LIBRARIES ${vtk_opt_libs_deps_})
   vp_list_unique(vtk_opt_libs_deps_)
+  list(APPEND VTK_LIBRARIES ${vtk_opt_libs_deps_})
 
   # list(APPEND opt_libs ${VTK_LIBRARIES})
   # Using VTK_LIBRARIES works to build visp/ustk library, examples, demos and test thanks to the components,
@@ -64,6 +34,7 @@ if(USE_VTK)
   foreach(lib_ ${VTK_LIBRARIES})
     if(${lib_} MATCHES "^(vtk.*)")
       foreach(imp_config_ ${config_})
+        # next line seems not useful. TODO: check if calling IMPORTED_LOCATION_ is enough
         get_target_property(lib_property_${imp_config_}_ ${lib_} IMPORTED_IMPLIB_${imp_config_})
         if(NOT EXISTS ${lib_property_${imp_config_}_})
           get_target_property(lib_property_${imp_config_}_ ${lib_} IMPORTED_LOCATION_${imp_config_})
@@ -127,7 +98,6 @@ if(USE_VTK)
 
       endforeach()
     endforeach()
-    set(USTK_HAVE_VTK_QT5 TRUE)
 
   elseif(VTK_QT_VERSION VERSION_EQUAL "4")
     find_package(Qt4 REQUIRED QtGui QtCore)
@@ -140,9 +110,6 @@ if(USE_VTK)
     #list(APPEND opt_incs "${QT_INCLUDE_DIR}/QtCore") # seems not useful
     list(APPEND opt_libs ${QT_QTGUI_LIBRARIES})
     list(APPEND opt_libs ${QT_QTCORE_LIBRARIES})
-
-    set(USTK_HAVE_VTK_QT4 TRUE)
-
   endif()
 
   # Create ustk_gui module, only if vtk found
@@ -152,10 +119,6 @@ if(USE_VTK)
   vp_create_module(${opt_libs})
 
   vp_add_tests()
-  
-  set(USTK_HAVE_VTK_QT TRUE)
-
-  vp_add_config_file("cmake/templates/usGuiConfig.h.in")
 
   # Add specific build flag to turn off warnings coming from VTK 3rd party
   vp_set_source_file_compile_flag(src/us2DSceneWidget.cpp -Wno-inconsistent-missing-override)
@@ -166,7 +129,5 @@ if(USE_VTK)
   vp_set_source_file_compile_flag(src/usViewerWidget.cpp -Wno-inconsistent-missing-override)
   vp_set_source_file_compile_flag(src/usVTKConverter.cpp -Wno-inconsistent-missing-override)
 
-  # next line doesn't work. Using set_target_properties() may be a potential solution.
-  # See https://cmake.org/cmake/help/v3.0/prop_tgt/AUTOMOC.html
-  vp_set_source_file_compile_flag(${VISP_BINARY_DIR}/modules/ustk_gui/visp_ustk_gui_automoc.cpp -Wno-inconsistent-missing-override)
+  vp_set_source_file_compile_flag(test/testUsVTKconverter.cpp -Wno-inconsistent-missing-override)
 endif()

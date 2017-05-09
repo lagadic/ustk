@@ -1,6 +1,6 @@
 ### Ultrasound Tool Kit - UsTK
 
-Copyright (C) 2016 by Inria.
+Copyright (C) 201§-2017 by Inria.
 
 [![Build Status](https://travis-ci.org/lagadic/ustk.png)](https://travis-ci.org/lagadic/ustk)
 
@@ -56,20 +56,13 @@ This UsTK project needs [ViSP](https://visp.inria.fr) and [VTK](http://www.vtk.o
 
 #### How to build UsTK documentation
  
-There are two ways to build UsTK documentation.
+To build UsTK documentation as a stand alone documentation create a new build folder `ustk-build-doc` to host the stand alone documentation and make `ustk_doc` target:
 
-- If UsTK was build as an external contrib module (see previous section), UsTK documentation is part of ViSP documentation. To build UsTK documentation that will be part of ViSP documentation, run
-
-		$ cd visp-ustk-build
-		$ make -j4 visp_doc
-
-- It is also possible to build UsTK documentation as a stand alone documentation, meaning without embedding ViSP documentation. To this end create a new build folder `ustk-build-doc` to host the stand alone documentation and make `ustk_doc` target:
-
-		$ cd <workspace>
-		$ mkdir ustk-build-doc
-		$ cd ustk-build-doc
-		$ cmake ../ustk
-		$ make -j4 ustk_doc
+	$ cd <workspace>
+	$ mkdir ustk-build-doc
+	$ cd ustk-build-doc
+	$ cmake ../ustk
+	$ make -j4 ustk_doc
 
 #### How to use UsTK data set
 

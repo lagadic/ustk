@@ -1,7 +1,7 @@
 //! \example tutorial-ultrasonix-qt-grabbing-pre-scan-confidence-control.cpp
 
 #include <iostream>
-#include <visp3/ustk_grabber/usGrabberConfig.h>
+#include <visp3/ustk_core/usConfig.h>
 
 #if defined(USTK_GRABBER_HAVE_QT5) && defined(USTK_GRABBER_HAVE_QT5_WIDGETS) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(VISP_HAVE_VIPER850)
 

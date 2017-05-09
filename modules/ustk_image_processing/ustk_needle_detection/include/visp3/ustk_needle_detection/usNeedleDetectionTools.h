@@ -49,7 +49,7 @@
 #include <visp3/core/vpList.h>
 
 //UsTK
-#include <visp3/ustk_gui/usGuiConfig.h>
+#include <visp3/ustk_core/usConfig.h>
 
 
 // VTK

@@ -38,7 +38,7 @@
 #ifndef __usNetworkGrabberPostScan_h_
 #define __usNetworkGrabberPostScan_h_
 
-#include <visp3/ustk_grabber/usGrabberConfig.h>
+#include <visp3/ustk_core/usConfig.h>
 
 #if defined(USTK_GRABBER_HAVE_QT5)
 

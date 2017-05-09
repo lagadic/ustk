@@ -40,7 +40,7 @@
 #define __usResliceMatrixViewer_h_
 
 // VISP includes
-#include <visp3/ustk_gui/usGuiConfig.h>
+#include <visp3/ustk_core/usConfig.h>
 
 #ifdef USTK_HAVE_VTK_QT
 
