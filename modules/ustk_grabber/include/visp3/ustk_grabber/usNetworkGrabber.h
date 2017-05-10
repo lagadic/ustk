@@ -120,6 +120,9 @@ public:
     int frameWidth; // width of a frame (pixels for post-scan, scanlines for pre-scan or rf data)
     int frameHeight; // height of frame (pixels for post-scan, samples for pre-scan or rf data)
 
+    double pixelWidth; // width of post-scan pixel
+    double pixelHeight; // height of post-scan pixel
+
     int transmitFrequency; // in Hz
     int samplingFrequency; // in Hz
 

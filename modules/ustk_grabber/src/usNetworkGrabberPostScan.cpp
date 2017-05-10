@@ -121,6 +121,8 @@ void usNetworkGrabberPostScan::dataArrived()
     in >> m_imageHeader.imageType;
     in >> m_imageHeader.frameWidth;
     in >> m_imageHeader.frameHeight;
+    in >> m_imageHeader.pixelWidth;
+    in >> m_imageHeader.pixelHeight;
     in >> m_imageHeader.transmitFrequency;
     in >> m_imageHeader.samplingFrequency;
 
@@ -140,6 +142,8 @@ void usNetworkGrabberPostScan::dataArrived()
       std::cout << "imageType = " <<  m_imageHeader.imageType << std::endl;
       std::cout << "frameWidth = " <<  m_imageHeader.frameWidth << std::endl;
       std::cout << "frameHeight = " <<  m_imageHeader.frameHeight << std::endl;
+      std::cout << "pixelWidth = " <<  m_imageHeader.pixelWidth << std::endl;
+      std::cout << "pixelHeight = " <<  m_imageHeader.pixelHeight << std::endl;
       std::cout << "transmitFrequency = " <<  m_imageHeader.transmitFrequency << std::endl;
       std::cout << "samplingFrequency = " <<  m_imageHeader.samplingFrequency << std::endl;
       std::cout << "transducerRadius = " <<  m_imageHeader.transducerRadius << std::endl;
@@ -165,14 +169,9 @@ void usNetworkGrabberPostScan::dataArrived()
 
     //pixel size
     if(m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getTransducerRadius() > 0) { //convex probe
-      m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setWidthResolution(
-            (2.0*(m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getTransducerRadius() + m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getDepth())
-             * sin(m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getFieldOfView() / 2.0)) / m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getWidth());
+      m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setWidthResolution(m_imageHeader.pixelWidth);
 
-      m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setHeightResolution(
-            (m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getTransducerRadius() + m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getDepth() -
-             (m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getTransducerRadius() * cos(m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getFieldOfView() / 2.0)))
-            / m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getHeight());
+      m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setHeightResolution(m_imageHeader.pixelHeight);
 
     }
     else { //linear probe

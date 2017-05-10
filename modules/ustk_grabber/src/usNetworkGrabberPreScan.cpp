@@ -124,6 +124,8 @@ void usNetworkGrabberPreScan::dataArrived()
     in >> m_imageHeader.imageType;
     in >> m_imageHeader.frameWidth;
     in >> m_imageHeader.frameHeight;
+    in >> m_imageHeader.pixelWidth;
+    in >> m_imageHeader.pixelHeight;
     in >> m_imageHeader.transmitFrequency;
     in >> m_imageHeader.samplingFrequency;
 
@@ -143,6 +145,8 @@ void usNetworkGrabberPreScan::dataArrived()
       std::cout << "imageType = " <<  m_imageHeader.imageType << std::endl;
       std::cout << "frameWidth = " <<  m_imageHeader.frameWidth << std::endl;
       std::cout << "frameHeight = " <<  m_imageHeader.frameHeight << std::endl;
+      std::cout << "pixelWidth = " <<  m_imageHeader.pixelWidth << std::endl;
+      std::cout << "pixelHeight = " <<  m_imageHeader.pixelHeight << std::endl;
       std::cout << "transmitFrequency = " <<  m_imageHeader.transmitFrequency << std::endl;
       std::cout << "samplingFrequency = " <<  m_imageHeader.samplingFrequency << std::endl;
       std::cout << "transducerRadius = " <<  m_imageHeader.transducerRadius << std::endl;
