@@ -8,6 +8,11 @@
 
 This tutorial expains how to grab ultrasound images using a TCP connection between the ultrasound station and a client, and to remote-control the station to change acquisition parameters.
 
+In the lagadic team, we are using a ultrasonix station on which we developped a tcp server application to remotely control the acquisitions. Please contact us if you want to acess the server software (you will need an acess to the ultrasonix research SDK to make it work). 
+Additionnal informations about the station we use :
+- Station type : Sonix touch
+- Sdk version : Sonix RP 5.6.0
+
 Note that the source code used in this tutorial can be downloaded using the following command :
 
 \code

@@ -5,7 +5,7 @@
 
 \section intro_ustk_grabber_sonosite Introduction
 
-This tutorial expains how to grab ultrasound images from the sonosite using v4l2 grabber.
+This tutorial expains how to grab ultrasound images from the sonosite using Visp v4l2 grabber.
 
 Note that the source code used in this tutorial can be downloaded using the following command :
 
