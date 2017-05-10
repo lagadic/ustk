@@ -3,7 +3,7 @@
 #include <iostream>
 #include <visp3/ustk_core/usConfig.h>
 
-#if defined(USTK_HAVE_QT5) || defined(USTK_HAVE_VTK_QT)
+#if (defined(USTK_HAVE_QT5) || defined(USTK_HAVE_VTK_QT)) && defined(VISP_HAVE_X11)
 
 #include <QtCore/QThread>
 #include <QApplication>

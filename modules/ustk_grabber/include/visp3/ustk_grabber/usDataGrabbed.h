@@ -56,7 +56,7 @@
  * @ingroup module_ustk_grabber
  */
 template<class Type>
-class VISP_EXPORT usDataGrabbed : public Type
+class usDataGrabbed : public Type
 {
 public:
 
@@ -161,7 +161,7 @@ void usDataGrabbed<Type>::setTimeStamp(quint64 timeStamp){
   \endcode
 */
 template<class Type>
-VISP_EXPORT std::ostream& operator<<(std::ostream& out, const usDataGrabbed<Type> &other)
+std::ostream& operator<<(std::ostream& out, const usDataGrabbed<Type> &other)
 {
   out << "timestamp : " << other.getTimeStamp() << std::endl
       << "frameCount : " << other.getFrameCount() << std::endl
