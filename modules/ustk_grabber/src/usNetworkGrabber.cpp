@@ -426,7 +426,6 @@ void usNetworkGrabber::setDegreesPerFrame(int degreesPerFrame) {
   m_acquisitionParamters.setDegreesPerFrame(degreesPerFrame);
 }
 
-
 /**
 * Setter for the number of frames per volume, in 3D acquisition.
 */

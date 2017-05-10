@@ -56,7 +56,6 @@ usNetworkGrabberPostScan::usNetworkGrabberPostScan(usNetworkGrabber *parent) :
   connect(m_tcpSocket, SIGNAL(readyRead()), this, SLOT(dataArrived()));
 }
 
-
 /**
 * Destructor.
 */
@@ -165,6 +164,12 @@ void usNetworkGrabberPostScan::dataArrived()
     m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setFramesPerVolume(m_imageHeader.framesPerVolume);
     m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setTimeStamp(m_imageHeader.timeStamp);
 
+    //warning if timestamps are close (< 1 ms)
+    if (m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getTimeStamp() -
+        m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getTimeStamp() < 1) {
+          std::cout << "WARNING : new image received with an acquisition timestamp close to previous image" << std::endl;
+        }
+
     m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->resize(m_imageHeader.frameHeight, m_imageHeader.frameWidth);
 
     //pixel size
@@ -172,7 +177,6 @@ void usNetworkGrabberPostScan::dataArrived()
       m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setWidthResolution(m_imageHeader.pixelWidth);
 
       m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setHeightResolution(m_imageHeader.pixelHeight);
-
     }
     else { //linear probe
       m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setWidthResolution(
@@ -182,7 +186,6 @@ void usNetworkGrabberPostScan::dataArrived()
       m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setHeightResolution(
             m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getDepth() /
             m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getHeight());
-
     }
     //read image content
     m_bytesLeftToRead = m_imageHeader.dataLength;
