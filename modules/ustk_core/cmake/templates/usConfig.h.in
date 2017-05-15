@@ -54,4 +54,7 @@
 #  define USTK_HAVE_VTK_VERSION ${USTK_HAVE_VTK_VERSION}
 #endif
 
+// Defined if Qt5 support available
+#cmakedefine USTK_HAVE_QT5
+
 #endif

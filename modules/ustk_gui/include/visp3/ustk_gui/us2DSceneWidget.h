@@ -40,7 +40,7 @@
 #define __us2DSceneWidget_h_
 
 // VISP includes
-#include <visp3/ustk_gui/usGuiConfig.h>
+#include <visp3/ustk_core/usConfig.h>
 
 #ifdef USTK_HAVE_VTK_QT
 
@@ -87,7 +87,16 @@
 #include <vtkAnnotatedCubeActor.h>
 #include <vtkPNGWriter.h>
 #include <vtkCoordinate.h>
-
+#include <vtkPolyData.h>
+#include <vtkPolyDataMapper.h>
+#include <vtkProperty.h>
+#include <vtkPointPicker.h>
+#include <vtkPoints.h>
+#include <vtkPropPicker.h>
+#include <vtkPolygon.h>
+#include <vtkCellArray.h>
+#include <vtkLine.h>
+#include <vtkSTLReader.h>
 
 // Qt includes
 #if defined(USTK_HAVE_VTK_QT4)
@@ -123,6 +132,12 @@ public:
   us2DSceneWidget(QWidget* parent = NULL, Qt::WindowFlags f = 0);
   ~us2DSceneWidget() {}
 
+  void drawLine(double u1,double v1,double w1,double u2,double v2,double w2);
+
+  void getClick(vpColVector & vec);
+
+  void getCurrentSlice(usImagePostScan2D<unsigned char> &image2D);
+
   vtkImageData * getImageData();
 
   vtkMatrix4x4 * getResliceMatrix();
@@ -136,8 +151,7 @@ public:
   void keyReleaseEvent(QKeyEvent *event);
 
   void 	mouseMoveEvent(QMouseEvent * event);
-  //void 	mousePressEvent(QMouseEvent * event);
-  //void 	mouseReleaseEvent(QMouseEvent * event);
+  void 	mousePressEvent(QMouseEvent * event);
 
   //Catch paint events, in case we want to display some informations (writing in this widget) over the vtk scene
   void paintEvent( QPaintEvent* event );
@@ -151,19 +165,23 @@ public:
   //Set planes
   void setResliceMatrix(vtkMatrix4x4* matrix);
 
+  void setPolyDataPlaneContour(vtkPolyData *polyData);
+  void setPolyDataMeshContour(vtkPolyData *polyData);
+
   //catch scroll events to slice in image
   void wheelEvent(QWheelEvent *event);
 
 public slots:
-  //
   void updateImageData(vtkImageData* imageData);
 
-  void matrixChangedSlot(vtkMatrix4x4* matrix);
+  void changeMatrix(vpHomogeneousMatrix matrix);
 
   void saveViewSlot();
+  void updateView();
 
 signals:
   void matrixChanged(vtkMatrix4x4* matrix);
+  void voxelPicked(vpColVector vector);
 
 private:
   //image
@@ -184,14 +202,26 @@ private:
   //actor
   vtkImageActor* m_actor;
 
-  //orientation cube actor
-  vtkAnnotatedCubeActor * m_cubeActor;
-
   //vtk renderer
   vtkRenderer* m_renderer;
+  vtkRenderer* m_polyDataRenderer;
+
+  //polydata of plane contour
+  vtkPolyData* m_polydataPlaneContour;
+  vtkPolyDataMapper * m_polyDataPlaneContourMapper;
+  vtkActor * m_polydataPlaneContourActor;
+
+  //polydata of mesh contour in the plane
+  vtkPolyData* m_polydataMeshContour;
+  vtkPolyDataMapper * m_polyDataMeshContourMapper;
+  vtkActor * m_polydataMeshContourActor;
+
+  //vtk picker
+  vtkPropPicker* m_propPicker;
 
   //to know if r key is currently pressed
   bool m_rPressed;
+  bool m_pPressed;
 
   //mouse button pressed
   bool m_mousePressed;
@@ -199,6 +229,10 @@ private:
   //for rotations
   int m_lastmouserPosX;
   int m_lastmouserPosY;
+
+  //for getClick blocking
+  bool m_pickingState;
+  vpColVector m_pickedVoxel;
 };
 #endif
 #endif // __us2DSceneWidget_h_

@@ -40,7 +40,7 @@
 #define __us3DSceneWidget_h_
 
 // VISP includes
-#include <visp3/ustk_gui/usGuiConfig.h>
+#include <visp3/ustk_core/usConfig.h>
 
 #ifdef USTK_HAVE_VTK_QT
 
@@ -57,6 +57,8 @@
 #include <vtkAxesActor.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkImagePlaneWidget.h>
+#include <vtkCutter.h>
+#include <vtkCubeSource.h>
 
 // Qt includes
 #if defined(USTK_HAVE_VTK_QT4)
@@ -120,7 +122,15 @@ public:
   us3DSceneWidget(QWidget* parent = NULL, Qt::WindowFlags f = 0);
   ~us3DSceneWidget() {}
 
+  vtkPolyData* getContour1();
+  vtkPolyData* getContour2();
+  vtkPolyData* getContour3();
+
   vtkImageData* getImageData();
+
+  vtkPolyData* getMeshInPlane1();
+  vtkPolyData* getMeshInPlane2();
+  vtkPolyData* getMeshInPlane3();
 
   vtkPlane* getPlane1();
   vtkPlane* getPlane2();
@@ -147,16 +157,25 @@ public slots:
   void updateMatrix2(vtkMatrix4x4* matrix);
   void updateMatrix3(vtkMatrix4x4* matrix);
 
+signals:
+  void plane1Changed();
+  void plane2Changed();
+  void plane3Changed();
+
 private:
   //image
   vtkImageData* imageData;
+
+  //Cube for image bounds
+  vtkSmartPointer<vtkCubeSource> imageBoundsCube;
 
   //planes (containing geometrical informations)
   vtkPlane* plane1;
   vtkPlane* plane2;
   vtkPlane* plane3;
 
-  vtkActor* sphereActor;
+  //mesh polydata
+  vtkPolyData* meshPolyData;
 
   //vtk mappers
   vtkImageResliceMapper* imageResliceMapper1;
@@ -168,12 +187,21 @@ private:
   vtkImageSlice* imageSlice2;
   vtkImageSlice* imageSlice3;
 
+  // Cutters for intersections between plane and volume borders
+  vtkSmartPointer<vtkCutter> cutter1;
+  vtkSmartPointer<vtkCutter> cutter2;
+  vtkSmartPointer<vtkCutter> cutter3;
+
+  //Cutters for intersections between planes and mesh
+  vtkSmartPointer<vtkCutter> cutterPolyDataPlane1;
+  vtkSmartPointer<vtkCutter> cutterPolyDataPlane2;
+  vtkSmartPointer<vtkCutter> cutterPolyDataPlane3;
+
   //axes representation
   vtkSmartPointer<vtkAxesActor> m_axesActor;
 
   //vtk renderer
   vtkRenderer* renderer;
-
 };
 #endif
 #endif // __us3DSceneWidget_h_

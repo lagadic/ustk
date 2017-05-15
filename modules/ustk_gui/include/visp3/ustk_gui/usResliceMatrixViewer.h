@@ -40,7 +40,7 @@
 #define __usResliceMatrixViewer_h_
 
 // VISP includes
-#include <visp3/ustk_gui/usGuiConfig.h>
+#include <visp3/ustk_core/usConfig.h>
 
 #ifdef USTK_HAVE_VTK_QT
 
@@ -96,6 +96,9 @@ public slots:
   virtual void Render();
   virtual void slotExit();
 
+  void getView1Slice();
+  void openPostScan3D();
+
 private:
     void setupUi();
 
@@ -113,6 +116,7 @@ private:
     us3DSceneWidget *view2;
 
     QPushButton *resetButton;
+    QPushButton *openImageButton;
     QPushButton *saveView1Button;
     QPushButton *saveView4Button;
     QPushButton *saveView3Button;

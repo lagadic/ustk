@@ -90,8 +90,6 @@ vpThread::Return displayFunction(vpThread::Args args)
   transducerSettings.setFieldOfView(vpMath::rad(57.0)); // field of view is 57 deg
   transducerSettings.setDepth(0.12);
 
-  double resolution;
-
   t_CaptureState capture_state_;
   bool display_initialized_ = false;
 
@@ -135,12 +133,18 @@ vpThread::Return displayFunction(vpThread::Args args)
       postScan_.setFieldOfView(vpMath::rad(57.0)); // field of view is 57 deg for sonosite
       postScan_.setDepth(0.12);
 
-      resolution = (postScan_.getDepth()+postScan_.getTransducerRadius()*(1-cos(postScan_.getFieldOfView()/2.0)))/postScan_.getHeight();
+      //pixel size
+      postScan_.setHeightResolution((postScan_.getTransducerRadius() + postScan_.getDepth() -
+                                     (postScan_.getTransducerRadius() * cos(postScan_.getFieldOfView() / 2.0)))
+                                    / postScan_.getHeight());
+
+      postScan_.setWidthResolution((2.0*(postScan_.getTransducerRadius() + postScan_.getDepth())
+                                    * sin(postScan_.getFieldOfView() / 2.0)) / postScan_.getWidth());
 
       // Convert post-scan to pre-scan image
       if(firstLoopCycle) {
-        backConverter_.init(transducerSettings, 480,128,resolution,resolution);
-        converter_.init(transducerSettings,480,128,resolution,resolution);
+        backConverter_.init(postScan_, 480,128);
+        converter_.init(postScan_,480,128);
       }
 
       backConverter_.run(postScan_,preScan_);

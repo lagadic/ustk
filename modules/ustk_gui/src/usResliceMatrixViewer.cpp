@@ -35,21 +35,17 @@
 * @brief Graphical main window containing 4 vtk views.
 */
 
-#include <visp3/ustk_core/usImagePostScan3D.h>
-#include <visp3/ustk_gui/usVTKConverter.h>
 #include <visp3/ustk_gui/usResliceMatrixViewer.h>
 
 #ifdef USTK_HAVE_VTK_QT
 
+#include <visp3/ustk_core/usImagePostScan3D.h>
+#include <visp3/ustk_gui/usVTKConverter.h>
+
+
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
 #include <vtkResliceImageViewer.h>
-#include <vtkResliceCursorLineRepresentation.h>
-#include <vtkResliceCursorThickLineRepresentation.h>
-#include <vtkResliceCursorWidget.h>
-#include <vtkResliceCursorActor.h>
-#include <vtkResliceCursorPolyDataAlgorithm.h>
-#include <vtkResliceCursor.h>
 #include <vtkMetaImageReader.h>
 #include <vtkCellPicker.h>
 #include <vtkProperty.h>
@@ -67,8 +63,6 @@
 #include <vtkHandleRepresentation.h>
 #include <vtkResliceImageViewerMeasurements.h>
 #include <vtkDistanceRepresentation2D.h>
-#include <vtkPointHandleRepresentation3D.h>
-#include <vtkPointHandleRepresentation2D.h>
 #include <vtkCamera.h>
 #include <vtkRendererCollection.h>
 #include <vtkMatrix4x4.h>
@@ -82,6 +76,7 @@
 
 #include <QDesktopWidget>
 #include <QResizeEvent>
+#include <QFileDialog>
 
 /**
 * Constructor.
@@ -139,36 +134,50 @@ usResliceMatrixViewer::usResliceMatrixViewer(std::string imageFileName )
   vtkMatrix1 = vtkMatrix4x4::New();
   usVTKConverter::convert(matrix1,vtkMatrix1);
 
-  view1->setImageData(vtkImage);
-  view1->setResliceMatrix(vtkMatrix1);
-  view1->init();
-  view1->setColor(1.0,0,0);
-
-  view4->setImageData(vtkImage);
-  view4->setResliceMatrix(vtkMatrix2);
-  view4->init();
-  view4->setColor(0,1.0,0);
-
-  view3->setImageData(vtkImage);
-  view3->setResliceMatrix(vtkMatrix3);
-  view3->init();
-  view3->setColor(0,0,1.0);
-
   view2->setImageData(vtkImage);
   view2->updateMatrix1(vtkMatrix1);
   view2->updateMatrix2(vtkMatrix2);
   view2->updateMatrix3(vtkMatrix3);
   view2->init();
 
+  view1->setImageData(vtkImage);
+  view1->setResliceMatrix(vtkMatrix1);
+  view1->setPolyDataPlaneContour(view2->getContour1());
+  view1->setPolyDataMeshContour(view2->getMeshInPlane1());
+  view1->init();
+  view1->setColor(1.0,0,0);
+
+  view4->setImageData(vtkImage);
+  view4->setResliceMatrix(vtkMatrix2);
+  view4->setPolyDataPlaneContour(view2->getContour2());
+  view4->setPolyDataMeshContour(view2->getMeshInPlane2());
+  view4->init();
+  view4->setColor(0,1.0,0);
+
+  view3->setImageData(vtkImage);
+  view3->setResliceMatrix(vtkMatrix3);
+  view3->setPolyDataPlaneContour(view2->getContour3());
+  view3->setPolyDataMeshContour(view2->getMeshInPlane3());
+  view3->init();
+  view3->setColor(0,0,1.0);
+
   // Set up action signals and slots
   connect(this->resetButton, SIGNAL(pressed()), this, SLOT(ResetViews()));
-  connect(this->saveView1Button, SIGNAL(pressed()), view1, SLOT(saveViewSlot()));
+  //connect(this->saveView1Button, SIGNAL(pressed()), view1, SLOT(saveViewSlot()));
+  connect(this->openImageButton, SIGNAL(pressed()), this, SLOT(openPostScan3D()));
+  connect(this->saveView1Button, SIGNAL(pressed()), this, SLOT(getView1Slice()));
   connect(this->saveView4Button, SIGNAL(pressed()), view4, SLOT(saveViewSlot()));
   connect(this->saveView3Button, SIGNAL(pressed()), view3, SLOT(saveViewSlot()));
 
+  //updates of planes in 3D scene
   connect(view1,SIGNAL(matrixChanged(vtkMatrix4x4*)),view2,SLOT(updateMatrix1(vtkMatrix4x4*)));
   connect(view4,SIGNAL(matrixChanged(vtkMatrix4x4*)),view2,SLOT(updateMatrix2(vtkMatrix4x4*)));
   connect(view3,SIGNAL(matrixChanged(vtkMatrix4x4*)),view2,SLOT(updateMatrix3(vtkMatrix4x4*)));
+  //update back 2D views (for polydata intersections)
+  connect(view2,SIGNAL(plane2Changed()),view1,SLOT(updateView()));
+  connect(view2,SIGNAL(plane2Changed()),view4,SLOT(updateView()));
+  connect(view2,SIGNAL(plane2Changed()),view3,SLOT(updateView()));
+
 
   ResetViews();
 }
@@ -249,11 +258,6 @@ void usResliceMatrixViewer::Render()
   this->view2->GetRenderWindow()->Render();
   this->view3->GetRenderWindow()->Render();
   this->view4->GetRenderWindow()->Render();
-
-  this->view1->update();
-  this->view2->update();
-  this->view3->update();
-  this->view4->update();
 }
 
 /**
@@ -295,20 +299,25 @@ void usResliceMatrixViewer::setupUi() {
   resetButton->setText(QString::fromUtf8("Reset views"));
   resetButton->setGeometry(QRect(screenRect.width() - 180, 30, 160, 31));
 
+  openImageButton = new QPushButton(this);
+  openImageButton->setObjectName(QString::fromUtf8("openImageButton"));
+  openImageButton->setText(QString::fromUtf8("Open new image"));
+  openImageButton->setGeometry(QRect(screenRect.width() - 180, 80, 160, 31));
+
   saveView1Button = new QPushButton(this);
   saveView1Button->setObjectName(QString::fromUtf8("saveView1Button"));
   saveView1Button->setText(QString::fromUtf8("Save view 1"));
-  saveView1Button->setGeometry(QRect(screenRect.width() - 180, 80, 160, 31));
+  saveView1Button->setGeometry(QRect(screenRect.width() - 180, 130, 160, 31));
 
   saveView4Button = new QPushButton(this);
   saveView4Button->setObjectName(QString::fromUtf8("saveView4Button"));
   saveView4Button->setText(QString::fromUtf8("Save view 4"));
-  saveView4Button->setGeometry(QRect(screenRect.width() - 180, 130, 160, 31));
+  saveView4Button->setGeometry(QRect(screenRect.width() - 180, 180, 160, 31));
 
   saveView3Button = new QPushButton(this);
   saveView3Button->setObjectName(QString::fromUtf8("saveView3Button"));
   saveView3Button->setText(QString::fromUtf8("Save view 3"));
-  saveView3Button->setGeometry(QRect(screenRect.width() - 180, 180, 160, 31));
+  saveView3Button->setGeometry(QRect(screenRect.width() - 180, 230, 160, 31));
 }
 
 /**
@@ -321,9 +330,49 @@ void usResliceMatrixViewer::resizeEvent(QResizeEvent* event)
     QMainWindow::resizeEvent(event);
     gridLayoutWidget->setGeometry(QRect(10, 10, event->size().width() - 220, event->size().height() - 20));
     resetButton->setGeometry(QRect(event->size().width() - 180, 30, 160, 31));
-    saveView1Button->setGeometry(QRect(event->size().width() - 180, 80, 160, 31));
-    saveView4Button->setGeometry(QRect(event->size().width() - 180, 130, 160, 31));
-    saveView3Button->setGeometry(QRect(event->size().width() - 180, 180, 160, 31));
+    openImageButton->setGeometry(QRect(event->size().width() - 180, 80, 160, 31));
+    saveView1Button->setGeometry(QRect(event->size().width() - 180, 130, 160, 31));
+    saveView4Button->setGeometry(QRect(event->size().width() - 180, 180, 160, 31));
+    saveView3Button->setGeometry(QRect(event->size().width() - 180, 230, 160, 31));
   }
+}
+
+/**
+* Getter of view 1 current slice.
+*/
+void usResliceMatrixViewer::getView1Slice()
+{
+  usImagePostScan2D<unsigned char> postScanSlice;
+  view1->getCurrentSlice(postScanSlice);
+  usImageIo::write(postScanSlice,"sliceView1.xml");
+}
+
+/**
+* Open new image slot.
+*/
+void usResliceMatrixViewer::openPostScan3D()
+{
+  //open file dialog to let the user select the new mhd file to display
+  QString fileName = QFileDialog::getOpenFileName(this,
+    tr("Open Image"), us::getDataSetPath().c_str(), tr("Meta header files (*.mhd)"));
+
+  if(fileName.size() == 0)
+    return;
+
+  double t0 = vpTime::measureTimeMs();
+
+  //read the image and convert it to vtkImageData
+  usImageIo::read(postScanImage,fileName.toStdString());
+  double t1 = vpTime::measureTimeMs();
+  std::cout << "read image time (ms) = " << t1 - t0 << std::endl;
+  usVTKConverter::convert(postScanImage,vtkImage);
+
+  //update the views
+  view2->updateImageData(vtkImage);
+  view1->updateImageData(vtkImage);
+  view3->updateImageData(vtkImage);
+  view4->updateImageData(vtkImage);
+
+  std::cout << "convert/update image time (ms) = " << vpTime::measureTimeMs() - t1 << std::endl;
 }
 #endif

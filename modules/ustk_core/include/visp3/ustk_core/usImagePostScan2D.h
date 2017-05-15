@@ -214,7 +214,7 @@ std::ostream& operator<<(std::ostream& out, const usImagePostScan2D<Type> &other
   return out << static_cast<const usTransducerSettings &>(other)
              << "image width : " << other.getWidth() << std::endl
              << "image height : " << other.getHeight() << std::endl
-             << "image width resolution : " << other.getWidthResolution()
+             << "image width resolution : " << other.getWidthResolution() << std::endl
              << "image height resolution : " << other.getHeightResolution() << std::endl;
 }
 
@@ -267,5 +267,4 @@ void usImagePostScan2D<Type>::setWidthResolution(double widthResolution)
 {
   m_widthResolution = widthResolution;
 }
-
 #endif // US_IMAGE_POSTSCAN_2D_H

@@ -39,7 +39,7 @@
 #ifndef __usGrabberFrame_h_
 #define __usGrabberFrame_h_
 
-#ifndef _WIN32
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
 
 #include <visp3/ustk_grabber/usGrabberUltrasonix.h>
 
@@ -213,5 +213,5 @@ void usGrabberFrame<ImageType>::grabFrame(ImageType* imageToWrite) const {
   m_informations->m_iter++;
 }
 
-#endif // _WIN32
+#endif // UNIX
 #endif // US_GRABBER_FRAME_H

@@ -56,10 +56,11 @@
 #include <vtkSphereSource.h>
 #include <vtkProperty.h>
 #include <vtkPointData.h>
-#include <vtkCubeSource.h>
 #include <vtkPolyLine.h>
 #include <vtkCellArray.h>
-#include <vtkCutter.h>
+#include <vtkCylinderSource.h>
+#include <vtkSTLReader.h>
+#include <vtkSTLWriter.h>
 
 #include <QPainter>
 #include <QPaintEngine>
@@ -82,18 +83,6 @@ us3DSceneWidget::us3DSceneWidget(QWidget* parent, Qt::WindowFlags f) : usViewerW
   imageSlice3 = vtkImageSlice::New();
 
   renderer = vtkRenderer::New();
-
-  //add color spheres to planes
-  vtkSphereSource* sphereSource = vtkSphereSource::New();
-  sphereSource->SetRadius(0.01);
-  sphereSource->Update();
-
-  vtkPolyDataMapper* sphereMPapper = vtkPolyDataMapper::New();
-  sphereMPapper->SetInputConnection(sphereSource->GetOutputPort());
-  sphereActor = vtkActor::New();
-  sphereActor->SetMapper(sphereMPapper);
-  sphereActor->GetProperty()->SetColor(1.0, 0.0, 0.0);
-
 }
 
 /**
@@ -139,22 +128,18 @@ void us3DSceneWidget::init() {
   imageSlice2->SetMapper(imageResliceMapper2);
   imageSlice3->SetMapper(imageResliceMapper3);
 
-  sphereActor->SetPosition(plane1->GetOrigin());
-
   //Define image bounding box
   double bounds[6];
   imageData->GetBounds(bounds);
-    // Create a cube.
-  vtkSmartPointer<vtkCubeSource> cubeSource =
-    vtkSmartPointer<vtkCubeSource>::New();
-    cubeSource->SetBounds(bounds);
+  // Create a cube.
+  imageBoundsCube = vtkSmartPointer<vtkCubeSource>::New();
+  imageBoundsCube->SetBounds(bounds);
 
   //find intersections between planes and bounding box to draw colored lines to identify each plane
   //Plane border 1
-  vtkSmartPointer<vtkCutter> cutter1 =
-    vtkSmartPointer<vtkCutter>::New();
+  cutter1 = vtkSmartPointer<vtkCutter>::New();
   cutter1->SetCutFunction(plane1);
-  cutter1->SetInputConnection(cubeSource->GetOutputPort());
+  cutter1->SetInputConnection(imageBoundsCube->GetOutputPort());
   cutter1->Update();
   vtkSmartPointer<vtkPolyDataMapper> cutterMapper1 =
     vtkSmartPointer<vtkPolyDataMapper>::New();
@@ -164,14 +149,13 @@ void us3DSceneWidget::init() {
   planeBorder1->GetProperty()->SetColor(1.0,0,0);
   planeBorder1->GetProperty()->SetOpacity(1.0);
   planeBorder1->GetProperty()->SetLighting(0);
-  planeBorder1->GetProperty()->SetLineWidth(3);
+  planeBorder1->GetProperty()->SetLineWidth(1);
   planeBorder1->SetMapper(cutterMapper1);
 
   //Plane border 2
-  vtkSmartPointer<vtkCutter> cutter2 =
-    vtkSmartPointer<vtkCutter>::New();
+  cutter2 = vtkSmartPointer<vtkCutter>::New();
   cutter2->SetCutFunction(plane2);
-  cutter2->SetInputConnection(cubeSource->GetOutputPort());
+  cutter2->SetInputConnection(imageBoundsCube->GetOutputPort());
   cutter2->Update();
   vtkSmartPointer<vtkPolyDataMapper> cutterMapper2 =
     vtkSmartPointer<vtkPolyDataMapper>::New();
@@ -181,14 +165,13 @@ void us3DSceneWidget::init() {
   planeBorder2->GetProperty()->SetColor(0,1.0,0);
   planeBorder2->GetProperty()->SetOpacity(1.0);
   planeBorder2->GetProperty()->SetLighting(0);
-  planeBorder2->GetProperty()->SetLineWidth(3);
+  planeBorder2->GetProperty()->SetLineWidth(1);
   planeBorder2->SetMapper(cutterMapper2);
 
   //Plane border 3
-  vtkSmartPointer<vtkCutter> cutter3 =
-    vtkSmartPointer<vtkCutter>::New();
+  cutter3 = vtkSmartPointer<vtkCutter>::New();
   cutter3->SetCutFunction(plane3);
-  cutter3->SetInputConnection(cubeSource->GetOutputPort());
+  cutter3->SetInputConnection(imageBoundsCube->GetOutputPort());
   cutter3->Update();
   vtkSmartPointer<vtkPolyDataMapper> cutterMapper3 =
     vtkSmartPointer<vtkPolyDataMapper>::New();
@@ -198,7 +181,7 @@ void us3DSceneWidget::init() {
   planeBorder3->GetProperty()->SetColor(0,0,1.0);
   planeBorder3->GetProperty()->SetOpacity(1.0);
   planeBorder3->GetProperty()->SetLighting(0);
-  planeBorder3->GetProperty()->SetLineWidth(3);
+  planeBorder3->GetProperty()->SetLineWidth(1);
   planeBorder3->SetMapper(cutterMapper3);
 
   //add axes in scene
@@ -210,7 +193,76 @@ void us3DSceneWidget::init() {
   m_axesActor->SetZAxisLabelText("W");
   m_axesActor->SetTotalLength(0.01,0.01,0.01);
 
-  // Setup renderers
+  // Create a cylinder (polydata)
+  vtkSmartPointer<vtkCylinderSource> cylinderSource =
+    vtkSmartPointer<vtkCylinderSource>::New();
+  cylinderSource->SetCenter(plane1->GetOrigin());
+  cylinderSource->SetRadius(0.005);
+  cylinderSource->SetHeight(0.01);
+  cylinderSource->SetResolution(100);
+  cylinderSource->Update();
+  meshPolyData = cylinderSource->GetOutput();
+
+  // Create a mapper and actor for the polydata
+  vtkSmartPointer<vtkPolyDataMapper> meshMapper =
+    vtkSmartPointer<vtkPolyDataMapper>::New();
+  meshMapper->SetInputConnection(cylinderSource->GetOutputPort());
+  meshMapper->Update();
+  vtkSmartPointer<vtkActor> meshActor =
+    vtkSmartPointer<vtkActor>::New();
+    meshActor->GetProperty()->SetColor(1.0,1.0,0);
+  meshActor->SetMapper(meshMapper);
+
+  //polydata intersections with each reslice plane
+  cutterPolyDataPlane1 = vtkSmartPointer<vtkCutter>::New();
+  cutterPolyDataPlane1->SetCutFunction(plane1);
+  cutterPolyDataPlane1->SetInputConnection(cylinderSource->GetOutputPort());
+  cutterPolyDataPlane1->Update();
+
+  vtkSmartPointer<vtkPolyDataMapper> cutterMeshMapper1 =
+    vtkSmartPointer<vtkPolyDataMapper>::New();
+  cutterMeshMapper1->SetInputConnection( cutterPolyDataPlane1->GetOutputPort());
+  vtkSmartPointer<vtkActor> meshBorder1 =
+    vtkSmartPointer<vtkActor>::New();
+  meshBorder1->GetProperty()->SetColor(1.0,1.0,0);
+  meshBorder1->GetProperty()->SetOpacity(1.0);
+  meshBorder1->GetProperty()->SetLighting(0);
+  meshBorder1->GetProperty()->SetLineWidth(1);
+  meshBorder1->SetMapper(cutterMeshMapper1);
+
+  cutterPolyDataPlane2 = vtkSmartPointer<vtkCutter>::New();
+  cutterPolyDataPlane2->SetCutFunction(plane2);
+  cutterPolyDataPlane2->SetInputConnection(cylinderSource->GetOutputPort());
+  cutterPolyDataPlane2->Update();
+
+  vtkSmartPointer<vtkPolyDataMapper> cutterMeshMapper2 =
+    vtkSmartPointer<vtkPolyDataMapper>::New();
+  cutterMeshMapper2->SetInputConnection( cutterPolyDataPlane2->GetOutputPort());
+  vtkSmartPointer<vtkActor> meshBorder2 =
+    vtkSmartPointer<vtkActor>::New();
+  meshBorder2->GetProperty()->SetColor(1.0,1.0,0);
+  meshBorder2->GetProperty()->SetOpacity(1.0);
+  meshBorder2->GetProperty()->SetLighting(0);
+  meshBorder2->GetProperty()->SetLineWidth(1);
+  meshBorder2->SetMapper(cutterMeshMapper2);
+
+  cutterPolyDataPlane3 = vtkSmartPointer<vtkCutter>::New();
+  cutterPolyDataPlane3->SetCutFunction(plane3);
+  cutterPolyDataPlane3->SetInputConnection(cylinderSource->GetOutputPort());
+  cutterPolyDataPlane3->Update();
+
+  vtkSmartPointer<vtkPolyDataMapper> cutterMeshMapper3 =
+    vtkSmartPointer<vtkPolyDataMapper>::New();
+  cutterMeshMapper3->SetInputConnection( cutterPolyDataPlane3->GetOutputPort());
+  vtkSmartPointer<vtkActor> meshBorder3 =
+    vtkSmartPointer<vtkActor>::New();
+  meshBorder3->GetProperty()->SetColor(1.0,1.0,0);
+  meshBorder3->GetProperty()->SetOpacity(1.0);
+  meshBorder3->GetProperty()->SetLighting(0);
+  meshBorder3->GetProperty()->SetLineWidth(1);
+  meshBorder3->SetMapper(cutterMeshMapper3);
+
+  // Setup renderer
   renderer = vtkRenderer::New();
   renderer->AddActor(m_axesActor);
   renderer->AddActor(imageSlice1);
@@ -219,6 +271,10 @@ void us3DSceneWidget::init() {
   renderer->AddActor(planeBorder1);
   renderer->AddActor(planeBorder2);
   renderer->AddActor(planeBorder3);
+  renderer->AddActor(meshActor);
+  renderer->AddActor(meshBorder1);
+  renderer->AddActor(meshBorder2);
+  renderer->AddActor(meshBorder3);
   renderer->SetBackground(0.5, 0.5, 0.5);
   renderer->ResetCamera();
 
@@ -289,6 +345,54 @@ vtkPlane* us3DSceneWidget::getPlane3() {
 }
 
 /**
+* Contour plane 1 getter.
+* @return  Pointer on polydata of plane 1 contour.
+*/
+vtkPolyData* us3DSceneWidget::getContour1() {
+  return this->cutter1->GetOutput();
+}
+
+/**
+* Contour plane 2 getter.
+* @return  Pointer on polydata of plane 2 contour.
+*/
+vtkPolyData* us3DSceneWidget::getContour2() {
+  return this->cutter2->GetOutput();
+}
+
+/**
+* Contour plane 3 getter.
+* @return  Pointer on polydata of plane 3 contour.
+*/
+vtkPolyData* us3DSceneWidget::getContour3() {
+  return this->cutter3->GetOutput();
+}
+
+/**
+* Intersection between plane 1 and mesh.
+* @return  Pointer on polydata of 2D mesh represenetation in plane 1.
+*/
+vtkPolyData* us3DSceneWidget::getMeshInPlane1() {
+  return this->cutterPolyDataPlane1->GetOutput();
+}
+
+/**
+* Intersection between plane 2 and mesh.
+* @return  Pointer on polydata of 2D mesh represenetation in plane 2.
+*/
+vtkPolyData* us3DSceneWidget::getMeshInPlane2() {
+  return this->cutterPolyDataPlane2->GetOutput();
+}
+
+/**
+* Intersection between plane 3 and mesh.
+* @return  Pointer on polydata of 2D mesh represenetation in plane 3.
+*/
+vtkPolyData* us3DSceneWidget::getMeshInPlane3() {
+  return this->cutterPolyDataPlane3->GetOutput();
+}
+
+/**
 * All planes setter.
 * @param plane1 Pointer on first vtkPlane.
 * @param plane2 Pointer on second vtkPlane.
@@ -305,8 +409,26 @@ void us3DSceneWidget::setPlanes(vtkPlane* plane1,vtkPlane* plane2,vtkPlane* plan
 * @param imageData Pointer to new image to display
 */
 void us3DSceneWidget::updateImageData(vtkImageData* imageData) {
+  //removing all actors taking the old image data as input to avoir render errors
+  renderer->RemoveActor(imageSlice1);
+  renderer->RemoveActor(imageSlice2);
+  renderer->RemoveActor(imageSlice3);
+
+  //update image bounds actors (in case new image size is different from last)
+  imageBoundsCube->SetBounds(imageData->GetBounds());
+
+  //updating imageData everywhere
   this->imageData = imageData;
-  this->update();
+  imageResliceMapper1->SetInputData(imageData);
+  imageResliceMapper2->SetInputData(imageData);
+  imageResliceMapper3->SetInputData(imageData);
+
+  //adding back actors re-computed in the view
+  renderer->AddActor(imageSlice1);
+  renderer->AddActor(imageSlice2);
+  renderer->AddActor(imageSlice3);
+
+  GetRenderWindow()->Render();
 }
 
 /**
@@ -342,11 +464,8 @@ void us3DSceneWidget::updateMatrix1(vtkMatrix4x4* matrix) {
 
   plane1->SetNormal(normal.data[0], normal.data[1], normal.data[2]);
 
-  sphereActor->SetPosition(imageSlice1->GetMinXBound(),
-                           imageSlice1->GetMinYBound(),
-                           imageSlice1->GetMinZBound());
-
   this->update();
+  emit(plane1Changed());
 }
 
 /**
@@ -383,6 +502,7 @@ void us3DSceneWidget::updateMatrix2(vtkMatrix4x4* matrix) {
   plane2->SetNormal(normal.data[0], normal.data[1], normal.data[2]);
 
   this->update();
+  emit(plane2Changed());
 }
 
 /**
@@ -420,6 +540,6 @@ void us3DSceneWidget::updateMatrix3(vtkMatrix4x4* matrix) {
   plane3->SetNormal(normal.data[0], normal.data[1], normal.data[2]);
 
   this->update();
+  emit(plane3Changed());
 }
-
 #endif

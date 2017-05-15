@@ -1,0 +1,23 @@
+/**
+
+\page tutorial-ustk-grabber-sonosite Tutorial: UsTk grabber tutorial for sonosite
+\tableofcontents
+
+\section intro_ustk_grabber_sonosite Introduction
+
+This tutorial expains how to grab ultrasound images from the sonosite using Visp v4l2 grabber.
+
+Note that the source code used in this tutorial can be downloaded using the following command :
+
+\code
+$ svn export https://github.com/lagadic/uskt.git/trunk/tutorial/ustk/sonosite/
+\endcode
+
+\section ustk_grabber_sonosite_basic Simple grabbing and display
+
+To grab ultrasound images from the sonosite and display them, you will need to use the ViSP v4l2 grabber, vpDisplay and multi-threading. Here is some example code :
+
+\include tutorial-sonosite-grabber.cpp
+
+Note that filling the probe settings (raduis, depth, fov) is important if you want to apply some processes on the image (back-scan conversion, visual servoing ...).
+*/

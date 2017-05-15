@@ -141,7 +141,6 @@ void usBackScanConverter2D::init(const usTransducerSettings &transducerSettings,
     //double x_max = r_max;
     double y_min = r_max * sin(t_min);
     //double y_max = r_max * sin(t_max);
-
     m_iMap.resize(BModeSampleNumber, scanLineNumber);
     m_jMap.resize(BModeSampleNumber, scanLineNumber);
 

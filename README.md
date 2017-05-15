@@ -1,6 +1,6 @@
 ### Ultrasound Tool Kit - UsTK
 
-Copyright (C) 2016 by Inria.
+Copyright (C) 201§-2017 by Inria.
 
 [![Build Status](https://travis-ci.org/lagadic/ustk.png)](https://travis-ci.org/lagadic/ustk)
 
@@ -55,28 +55,22 @@ This UsTK project needs [ViSP](https://visp.inria.fr) and [VTK](http://www.vtk.o
 		$ make -j4
 
 #### How to build UsTK documentation
- 
-There are two ways to build UsTK documentation.
 
-- If UsTK was build as an external contrib module (see previous section), UsTK documentation is part of ViSP documentation. To build UsTK documentation that will be part of ViSP documentation, run
+To build UsTK documentation as a stand alone documentation create a new build folder `ustk-build-doc` to host the stand alone documentation and make `ustk_doc` target:
 
-		$ cd visp-ustk-build
-		$ make -j4 visp_doc
+	$ cd <workspace>
+	$ mkdir ustk-build-doc
+	$ cd ustk-build-doc
+	$ cmake ../ustk
+	$ make -j4 ustk_doc
 
-- It is also possible to build UsTK documentation as a stand alone documentation, meaning without embedding ViSP documentation. To this end create a new build folder `ustk-build-doc` to host the stand alone documentation and make `ustk_doc` target:
-
-		$ cd <workspace>
-		$ mkdir ustk-build-doc
-		$ cd ustk-build-doc
-		$ cmake ../ustk
-		$ make -j4 ustk_doc
 
 #### How to use UsTK data set
 
-Some examples or tutorials are working with ultrasound medical images. We propose a data set that contains 2D or 3D ultrasound data in <https://gitlab.inria.fr/lagadic/ustk-dataset>. To use this data set you may set the USTK_DATASET_PATH environment variable like:
+Some examples or tutorials are working with ultrasound medical images. We propose a data set that contains 2D or 3D ultrasound data in <https://github.com/lagadic/ustk-dataset>. To use this data set you may set the USTK_DATASET_PATH environment variable like:
 
 	$ cd <workspace>
-	$ git clone https://gitlab.inria.fr/lagadic/ustk-dataset
+	$ git clone https://github.com/lagadic/ustk-dataset
 	$ export USTK_DATASET_PATH=<workspace>/ustk-dataset
 
 

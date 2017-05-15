@@ -66,7 +66,7 @@ void usVTKConverter::convert(const usImagePostScan3D<unsigned char> &postScanIma
 }
 
 /**
-* Converts a vtkImageData to a usImagePostScan3D.
+* Converts a usImagePreScan3D to a vtkImageData.
 */
 void usVTKConverter::convert(const usImagePreScan3D<unsigned char> &preScanImage,vtkSmartPointer<vtkImageData> &vtkPreScanImage, vtkSmartPointer<vtkImageImport> importer)
 {
@@ -84,6 +84,29 @@ void usVTKConverter::convert(const usImagePreScan3D<unsigned char> &preScanImage
   importer->Update();
 
   vtkPreScanImage = importer->GetOutput();
+}
+
+/**
+* Converts a vtkImageData to a usImagePostScan2D. Usefull to extract a slice from a volume. Performs a deep copy.
+*/
+void usVTKConverter::convert(vtkSmartPointer<vtkImageData> &vtkPostScanImage, usImagePostScan2D<unsigned char> &postScanImage)
+{
+  //get dimentions/spacing of the 3D image.
+  int imageDims[3];
+  vtkPostScanImage->GetDimensions(imageDims);
+  double spacing[3];
+  vtkPostScanImage->GetSpacing(spacing);
+
+  postScanImage.resize(imageDims[1],imageDims[0]);
+
+  for (int i = 0; i < imageDims[0]; i++) {
+    for (int j= 0; j< imageDims[1]; j++) {
+      postScanImage[j][i] = (unsigned char) (vtkPostScanImage->GetScalarComponentAsDouble(i,imageDims[1]-j-1,0,0));
+    }
+  }
+
+  postScanImage.setWidthResolution(spacing[0]);
+  postScanImage.setHeightResolution(spacing[1]);
 }
 
 /**

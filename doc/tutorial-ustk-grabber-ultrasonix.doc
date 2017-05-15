@@ -1,0 +1,53 @@
+/**
+
+\page tutorial-ustk-grabber-ultrasonix Tutorial: UsTk grabber tutorial for ultrasonix station
+\tableofcontents
+
+
+\section intro_ustk_grabber Introduction
+
+This tutorial expains how to grab ultrasound images using a TCP connection between the ultrasound station and a client, and to remote-control the station to change acquisition parameters.
+
+In the lagadic team, we are using a ultrasonix station on which we developped a tcp server application to remotely control the acquisitions. Please contact us if you want to acess the server software (you will need an acess to the ultrasonix research SDK to make it work). 
+Additionnal informations about the station we use :
+- Station type : Sonix touch
+- Sdk version : Sonix RP 5.6.0
+
+Note that the source code used in this tutorial can be downloaded using the following command :
+
+\code
+$ svn export https://github.com/lagadic/uskt.git/trunk/tutorial/ustk/ultrasonix/
+\endcode
+
+\section ustk_grabber_basic Simple grabbing
+
+The easiest way to grab images using the ustk grabber is to let the acquisition parameters to default. Here is the code to simply grab pre-scan images : 
+
+\include tutorial-ultrasonix-qt-grabbing-pre-scan.cpp
+
+Some details about this code :
+
+- You will need Qt to use the grabber (it is based on QTcpSocket)
+- You will need X11 to display the images
+- This code sets some parameters :
+  - Probe id : the id of the ultrasound probe you mant to use. Here we selected the 4DC7(15).
+  - Slot id : there is 3 slots on the station to connect probes. The top one has the id 0, the middle one 2, and the bottom ont 1.
+  - Imaging mode : we selected B-mode (pre-scan) images using the id 0.
+
+Note that the acquire() method can be blocking, to prevent grabbing 2 times the same frame (if you call it faster than the frames are arriving). But if you call it slower, you will loose frames.
+
+\section ustk_grabber_change_params Grabbing with selection of acquisition parameters
+
+If you want to remotely change the acquisition parameters, here is a code showing how to proceed :
+
+\include tutorial-ultrasonix-qt-grabbing-post-scan.cpp
+
+Some details about this code :
+
+- To change a parameter from its default value, you have to use first the setters of the usNetworkGrabber class. This will update the parameters locally.
+- Once you're done with setting the new parameters, you have to send them to the ultrasound machine using usNetworkGrabber::sendAcquisitionParameters()
+- And finally you can run the acquisition using usNetworkGrabber::runAcquisition(), you are then going to receive the images.
+
+\section ustk_grabber_change_next Next tutorial
+You are now ready to see the next \ref tutorial-ustk-grabber-ultrasonix-confidence.
+*/

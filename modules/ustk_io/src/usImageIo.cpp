@@ -255,7 +255,7 @@ void usImageIo::write(const usImageRF3D<unsigned char> &imageRf3D, const std::st
   //checking header type
   usImageIo::usHeaderFormatType headerFormat = getHeaderFormat(headerFileName);
   if (headerFormat == FORMAT_XML) {
-    std::string imageFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(imageExtension2D);
+    //std::string imageFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(imageExtension2D);
 #ifdef VISP_HAVE_XML2
     //case of a set of successive 2D frames, to do
 #else
@@ -541,7 +541,7 @@ void usImageIo::write(const usImagePreScan3D<unsigned char> &preScanImage, const
   //checking header type
   usImageIo::usHeaderFormatType headerFormat = getHeaderFormat(headerFileName);
   if (headerFormat == FORMAT_XML) {
-    std::string imageFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(imageExtension2D);
+    //std::string imageFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(imageExtension2D);
 #ifdef VISP_HAVE_XML2
     //case of a set of successive 2D frames, not implemented
     throw(vpException(vpException::notImplementedError, "Reading a 3D image as a set of 2D frames is not implemented"));

@@ -39,7 +39,7 @@
 #ifndef __usGrabberUltrasonix_h_
 #define __usGrabberUltrasonix_h_
 
-#ifndef _WIN32
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
 
 #include <cmath>
 #include <sys/socket.h>

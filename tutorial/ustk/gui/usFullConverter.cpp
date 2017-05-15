@@ -1,4 +1,4 @@
-#include <visp3/ustk_gui/usGuiConfig.h>
+#include <visp3/ustk_core/usConfig.h>
 
 #ifdef USTK_HAVE_VTK_QT
 
@@ -94,40 +94,6 @@ int main(int argc, char** argv)
     std::cout << "full convert time (ms) = " << t2-t1 << std::endl;
     std::cout << "vtk image @ : " << vtkImage->GetScalarPointer() << std::endl;
   }
-  //picking random voxels to compare pointers
-  /*std::cout << "us ptr = " << (void*)postScanImage.getConstData() << std::endl;
-  std::cout << "vtk ptr = " << vtkImage->GetScalarPointer(0,0,0) << std::endl;
-
-  unsigned char *ptr = postScanImage.getConstData();
-  ptr += (postScanImage.getDimX() * postScanImage.getDimY()) * 10 + postScanImage.getDimX()*10 + 10;
-  std::cout << "us ptr (10,10,10) = " << (void*)ptr << std::endl;
-  std::cout << "vtk ptr (10,10,10) = " << vtkImage->GetScalarPointer(10,10,10) << std::endl;*/
-
-  // Set the default output path
-  std::string username;
-#if defined(_WIN32)
-  std::string opath = "C:/temp";
-#else
-  std::string opath = "/tmp";
-#endif
-  /*
-  // Get the user login name
-  vpIoTools::getUserName(username);
-
-  // Append to the output path string, the login name of the user
-  std::string dirname = vpIoTools::createFilePath(opath, username);
-
-  // Test if the output path exist. If no try to create it
-  if (vpIoTools::checkDirectory(dirname) == false) {
-    vpIoTools::makeDirectory(dirname);
-  }
-  std::string ofilename = dirname + "/volumeTestWritingVTK.mhd";
-  //write mhd using VTK
-  vtkSmartPointer<vtkMetaImageWriter> writer = vtkSmartPointer<vtkMetaImageWriter>::New();
-  writer->SetFileName(ofilename.c_str());
-  writer->SetInputData(vtkImage);
-  writer->Write();
-*/
   return 0;
 }
 #else

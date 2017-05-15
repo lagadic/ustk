@@ -227,7 +227,7 @@ double usMotorSettings::getMotorFieldOfView() const {
 
 /**
   Setter for the motor field of view (updates the frame pitch).
-  @param fieldOfView The motor field of view in radians if the motor is convex, in meters
+  @param motorFieldOfView The motor field of view in radians if the motor is convex, in meters
   if the motor is linear.
   @warning Be sure to use setFrameNumber() to update the frame number before the field of view
   since this method computes the frame pitch from the field of view and the frame pitch.

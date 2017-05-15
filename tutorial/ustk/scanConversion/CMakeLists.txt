@@ -2,10 +2,11 @@ project(tutorial-scan-conversion)
 
 cmake_minimum_required(VERSION 2.6)
 
-find_package(VISP REQUIRED visp_ustk_core visp_ustk_io)
+find_package(VISP REQUIRED visp_ustk_io)
 
 set(tutorial_cpp
-  scanConversion3D.cpp)
+  scanConversion3D.cpp
+  scanConversion2D.cpp)
 
 foreach(cpp ${tutorial_cpp})
   visp_add_target(${cpp})
