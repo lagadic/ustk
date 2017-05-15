@@ -6,11 +6,11 @@ Copyright (C) 201§-2017 by Inria.
 
 #### Dependencies
 
-This UsTK project needs [ViSP](https://visp.inria.fr) and [VTK](http://www.vtk.org/) with Qt4 or Qt5 support as third-party.
+This UsTK project requires the following libraries :
 
-- ViSP: UsTK is considered as a set of ViSP external modules. Thus ViSP and UsTK have to be compiled together. It means that you should get ViSP source code as explained in the next section.
+- [ViSP](https://visp.inria.fr) : UsTK is considered as a set of ViSP external modules. Thus ViSP and UsTK have to be compiled together. It means that you should get ViSP source code as explained in the next section.
 
-- VTK: Should be installed from pre-build packages
+- [VTK](http://www.vtk.org/) with Qt4 or Qt5 support : Should be installed from pre-build packages
 
 
   - How to install VTK OS X
@@ -26,7 +26,22 @@ This UsTK project needs [ViSP](https://visp.inria.fr) and [VTK](http://www.vtk.o
 
 			$ sudo yum install vtk-devel vtk-qt
  		 
+- [FFTW](http://www.fftw.org/) : Can be installed from pre-build package 
 
+
+  - How to install FFTW OS X
+
+			$ brew update
+			$ brew install fftw
+		
+  - How to install VTK on Ubuntu 16.04 LTS
+  
+			$ sudo apt-get install libfftw3-dev
+			
+  - How to install VTK on Fedora 23
+
+			$ sudo yum install fftw
+ 		 
 #### How to build UsTK libraries
 
 - Create a workspace folder and enter in this folder

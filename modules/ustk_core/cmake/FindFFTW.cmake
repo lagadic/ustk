@@ -13,9 +13,6 @@ endif (FFTW_INCLUDES)
 find_path (FFTW_INCLUDES fftw3.h)
 find_library (FFTW_LIBRARIES NAMES fftw3 fftw3_omp)
 
-message(STATUS "FFTW_INCLUDES : ${FFTW_INCLUDES}")
-message(STATUS "FFTW_LIBRARIES : ${FFTW_LIBRARIES}")
-
 # handle the QUIETLY and REQUIRED arguments and set FFTW_FOUND to TRUE if
 # all listed variables are TRUE
 include (FindPackageHandleStandardArgs)
