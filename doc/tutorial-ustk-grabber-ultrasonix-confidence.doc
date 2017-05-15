@@ -11,7 +11,7 @@ This tutorial expains how to apply a confidence map algorithm in real-time on fr
 Note that the source code used in this tutorial can be downloaded using the following command :
 
 \code
-$ svn export https://github.com/lagadic/uskt.git/trunk/tutorial/ustk/ultrasonix/
+$ svn export https://github.com/lagadic/ustk.git/trunk/tutorial/ustk/ultrasonix
 \endcode
 
 \section ustk_grabber_confidence_example Apply the confidence map on pre-scan images

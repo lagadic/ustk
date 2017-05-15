@@ -10,7 +10,7 @@ This tutorial expains how to grab ultrasound images from the sonosite using Visp
 Note that the source code used in this tutorial can be downloaded using the following command :
 
 \code
-$ svn export https://github.com/lagadic/uskt.git/trunk/tutorial/ustk/sonosite/
+$ svn export https://github.com/lagadic/ustk.git/trunk/tutorial/ustk/sonosite
 \endcode
 
 \section ustk_grabber_sonosite_basic Simple grabbing and display

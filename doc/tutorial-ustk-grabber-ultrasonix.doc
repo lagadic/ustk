@@ -16,7 +16,7 @@ Additionnal informations about the station we use :
 Note that the source code used in this tutorial can be downloaded using the following command :
 
 \code
-$ svn export https://github.com/lagadic/uskt.git/trunk/tutorial/ustk/ultrasonix/
+$ svn export https://github.com/lagadic/ustk.git/trunk/tutorial/ustk/ultrasonix
 \endcode
 
 \section ustk_grabber_basic Simple grabbing
