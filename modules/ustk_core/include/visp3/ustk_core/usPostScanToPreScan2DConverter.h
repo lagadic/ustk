@@ -31,57 +31,55 @@
  *****************************************************************************/
 
 /**
- * @file usScanConverter2D.h
+ * @file usPostScanToPreScan2DConverter.h
  * @brief 2D scan-converter
  */
 
-#ifndef __usScanConverter2D_h_
-#define __usScanConverter2D_h_
+#ifndef __usPostScanToPreScan2DConverter_h_
+#define __usPostScanToPreScan2DConverter_h_
 
-#include <visp3/ustk_core/usScanConverter2D.h>
-#include <visp3/ustk_core/usImagePostScan2D.h>
 #include <visp3/ustk_core/usImagePreScan2D.h>
+#include <visp3/ustk_core/usImagePostScan2D.h>
+
 
 /**
- * @class usScanConverter2D
- * @brief 2D scan-converter
+ * @class usPostScanToPreScan2DConverter
+ * @brief 2D back-scan converter
  * @ingroup module_ustk_core
  *
- * This class allows to convert 2D pre-scan ultrasound images to post-scan.
+ * This class allows to convert 2D post-scan ultrasound images to pre-scan.
  * The converter should be initialized through init() and then applied through run().
  */
-class VISP_EXPORT usScanConverter2D
+class VISP_EXPORT usPostScanToPreScan2DConverter
 {
  public:
 
-  usScanConverter2D();
+  usPostScanToPreScan2DConverter();
 
-  ~usScanConverter2D();
+  //initialisations constructors
+  usPostScanToPreScan2DConverter(const usImagePostScan2D<unsigned char> &inputSettings,
+  const int BModeSampleNumber, const int scanLineNumber);
+  usPostScanToPreScan2DConverter(const usTransducerSettings &transducerSettings,
+  const int BModeSampleNumber, const int scanLineNumber,const double xResolution, const double yResolution);
 
-  void init(const usImagePostScan2D<unsigned char> &inputSettings, const int BModeSampleNumber,
-            const int scanLineNumber);
+  ~usPostScanToPreScan2DConverter();
 
+  void init(const usImagePostScan2D<unsigned char> &inputSettings, const int BModeSampleNumber, const int scanLineNumber);
   void init(const usTransducerSettings &inputSettings, const int BModeSampleNumber,
-            const int scanLineNumber, const double xResolution, const double yResolution);
+            const int scanLineNumber,const double xResolution, const double yResolution);
 
-  void run(const usImagePreScan2D<unsigned char> &preScanImage, usImagePostScan2D<unsigned char> &postScanImage);
+  void run(const usImagePostScan2D<unsigned char> &imageToConvert, usImagePreScan2D<unsigned char> &imageConverted);
 
  private:
-  double interpolateLinear(const vpImage<unsigned char>& I, double x, double y);
-
-  vpMatrix m_rMap;
-  vpMatrix m_tMap;
-
+  vpMatrix m_iMap;
+  vpMatrix m_jMap;
   double m_xResolution;
   double m_yResolution;
   int m_scanLineNumber;
   int m_BModeSampleNumber;
+  usTransducerSettings m_initSettings;
 
-  usTransducerSettings m_settings;
-
-  unsigned int m_height;
-  unsigned int m_width;
-
+  double interpolateLinear(const vpImage<unsigned char>& I, double x, double y);
 };
 
-#endif // US_SCAN_CONVERTER_2D_H
+#endif // US_BACK_SCAN_CONVERTER_2D_H

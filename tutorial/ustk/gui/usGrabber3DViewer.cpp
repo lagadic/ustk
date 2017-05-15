@@ -7,7 +7,7 @@
 #include <visp3/ustk_io/usImageIo.h>
 #include <visp3/ustk_gui/us3DSceneWidget.h>
 #include <visp3/ustk_gui/usVTKConverter.h>
-#include <visp3/ustk_core/usScanConverter3D.h>
+#include <visp3/ustk_core/usPreScanToPostScan3DConverter.h>
 
 int main(int argc, char** argv)
 {
@@ -49,7 +49,7 @@ int main(int argc, char** argv)
   usImageIo::read(preScanImage2, mhd_filename);
 
   //scan-conversion
-  usScanConverter3D converter;
+  usPreScanToPostScan3DConverter converter;
   double startTime = vpTime::measureTimeMs();
   std::cout << "init converter..." << std::endl;
   converter.init(preScanImage);

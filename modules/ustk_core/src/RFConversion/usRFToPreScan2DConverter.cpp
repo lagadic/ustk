@@ -32,11 +32,19 @@
  *****************************************************************************/
 
 /**
- * @file usRFtoPreScanConverter.cpp
+ * @file usRFToPreScan2DConverter.cpp
  * @brief 2D scan-converter
  */
 
-#include <visp3/ustk_core/usRFtoPreScanConverter.h>
+#include <visp3/ustk_core/usRFToPreScan2DConverter.h>
+
+usRFToPreScan2DConverter::usRFToPreScan2DConverter() {
+
+}
+
+usRFToPreScan2DConverter::~usRFToPreScan2DConverter() {
+
+}
 
 /*!
  * \brief SProcessing::m_Hilbert
@@ -44,7 +52,7 @@
  * \param s: Signal of 16-bit values
  * \return std::vector<std::complex<double> > that contains the Hilbert transform
  */
-std::vector<std::complex<double> > usRFtoPreScanConverter::HilbertTransform(const short int *s, int size)
+std::vector<std::complex<double> > usRFToPreScan2DConverter::HilbertTransform(const short int *s, int size)
 {
   ///time of Hilbert transform
   //const clock_t begin_time = clock();
@@ -108,7 +116,7 @@ std::vector<std::complex<double> > usRFtoPreScanConverter::HilbertTransform(cons
   return sa;
 }
 
-std::vector<double> usRFtoPreScanConverter::sqrtAbsv(std::vector<std::complex<double> > cv)
+std::vector<double> usRFToPreScan2DConverter::sqrtAbsv(std::vector<std::complex<double> > cv)
 {
   std::vector<double> out;
   for(unsigned int i = 0; i < cv.size(); i++)
@@ -118,13 +126,18 @@ std::vector<double> usRFtoPreScanConverter::sqrtAbsv(std::vector<std::complex<do
   return out;
 }
 
-void usRFtoPreScanConverter::convert(const usImageRF2D<short int> &rfImage, usImagePreScan2D<unsigned char> &preScanImage) {
+void usRFToPreScan2DConverter::convert(const usImageRF2D<short int> &rfImage, usImagePreScan2D<unsigned char> &preScanImage) {
 
+  std::cout << "1" << std::endl;
   preScanImage.resize(rfImage.getHeight(),rfImage.getWidth());
 
+  std::cout << "2" << std::endl;
   // First we copy the transducer settings
   preScanImage.setImagePreScanSettings(rfImage);
 
+  std::cout << "3" << std::endl;
+
+  std::cout << "rd LN = " << rfImage.getScanLineNumber() << std::endl;
   for(unsigned int i = 0; i < rfImage.getScanLineNumber(); i++) {
     // computing square root of Hilbert transform norm for each scanline's signal
     std::vector<double> data = sqrtAbsv(HilbertTransform(rfImage[i],rfImage.getRFSampleNumber()));
@@ -138,5 +151,9 @@ void usRFtoPreScanConverter::convert(const usImageRF2D<short int> &rfImage, usIm
       m = nearbyint(m);
       preScanImage[j][i] = (unsigned char)m;
     }
+
+    std::cout << "scanline " << i << "converted" << std::endl;
   }
+
+    std::cout << "end convert" << std::endl;
 }

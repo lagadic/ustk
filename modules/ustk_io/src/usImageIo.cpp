@@ -62,6 +62,10 @@ usImageIo::getHeaderFormat(const std::string &headerFileName)
     return FORMAT_VOL;
   else if (ext.compare(".VOL") == 0)
     return FORMAT_VOL;
+  else if (ext.compare(".rf") == 0)
+    return FORMAT_RF;
+  else if (ext.compare(".RF") == 0)
+    return FORMAT_RF;
   else
     return HEADER_FORMAT_UNKNOWN;
 }

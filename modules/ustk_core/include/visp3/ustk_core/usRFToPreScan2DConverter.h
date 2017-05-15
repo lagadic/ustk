@@ -32,12 +32,12 @@
  *****************************************************************************/
 
 /**
- * @file usRFtoPreScanConverter.h
+ * @file usRFToPreScan2DConverter.h
  * @brief 2D scan-converter
  */
 
-#ifndef __usRFtoPreScanConverter_h_
-#define __usRFtoPreScanConverter_h_
+#ifndef __usRFToPreScan2DConverter_h_
+#define __usRFToPreScan2DConverter_h_
 
 #include <visp3/ustk_core/usConfig.h>
 
@@ -52,25 +52,25 @@
 #include <complex>
 
 // visp/ustk includes
-#include <visp3/ustk_core/usRFtoPreScanConverter.h>
+#include <visp3/ustk_core/usRFToPreScan2DConverter.h>
 #include <visp3/ustk_core/usImageRF2D.h>
 #include <visp3/ustk_core/usImagePreScan2D.h>
 
 /**
- * @class usRFtoPreScanConverter
+ * @class usRFToPreScan2DConverter
  * @brief 2D conversion from RF signal to pre-scan image
  * @ingroup module_ustk_core
  *
  * This class allows to convert 2D RF ultrasound images to pre-scan.
  *
  */
-class VISP_EXPORT usRFtoPreScanConverter
+class VISP_EXPORT usRFToPreScan2DConverter
 {
  public:
 
-  usRFtoPreScanConverter();
+  usRFToPreScan2DConverter();
 
-  ~usRFtoPreScanConverter();
+  ~usRFToPreScan2DConverter();
 
   void convert(const usImageRF2D<short int> &rfImage, usImagePreScan2D<unsigned char> &preScanImage);
 
@@ -80,4 +80,4 @@ private:
 };
 
 #endif // USTK_HAVE_FFTW
-#endif // __usRFtoPreScanConverter_h_
+#endif // __usRFToPreScan2DConverter_h_

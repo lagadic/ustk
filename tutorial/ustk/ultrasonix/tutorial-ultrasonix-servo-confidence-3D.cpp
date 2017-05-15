@@ -14,7 +14,7 @@
 #include <visp3/ustk_core/usImageRF2D.h>
 #include <visp3/ustk_core/usImagePreScan2D.h>
 #include <visp3/ustk_core/usImagePostScan2D.h>
-#include <visp3/ustk_core/usScanConverter2D.h>
+#include <visp3/ustk_core/usPreScanToPostScan2DConverter.h>
 
 #include <visp3/ustk_confidence_map/usScanlineConfidence2D.h>
 
