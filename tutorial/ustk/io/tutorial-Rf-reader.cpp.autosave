@@ -36,6 +36,7 @@ int main(int argc, char** argv)
   reader.setFileName(rf_filename);
   reader.open(rfImage);
 
+  // 
   std::cout << rfImage;
 
   usImagePreScan2D<unsigned char> preScanImage;

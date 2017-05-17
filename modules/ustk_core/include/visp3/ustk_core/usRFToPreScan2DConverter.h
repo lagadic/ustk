@@ -52,9 +52,9 @@
 #include <complex>
 
 // visp/ustk includes
-#include <visp3/ustk_core/usRFToPreScan2DConverter.h>
 #include <visp3/ustk_core/usImageRF2D.h>
 #include <visp3/ustk_core/usImagePreScan2D.h>
+#include <visp3/ustk_core/usLogCompressor.h>
 
 /**
  * @class usRFToPreScan2DConverter
@@ -76,7 +76,9 @@ class VISP_EXPORT usRFToPreScan2DConverter
 
 private:
   std::vector<std::complex<double> > HilbertTransform(const short *s, int size);
-  std::vector<double> sqrtAbsv(std::vector<std::complex<double> > cv);
+  void sqrtAbsv(std::vector<std::complex<double> > cv, double* out);
+
+  usLogCompressor m_logCompressor;
 };
 
 #endif // USTK_HAVE_FFTW

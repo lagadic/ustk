@@ -32,9 +32,9 @@
 
 /**
 * @file usDataFrameReader.h
-* @brief Reading of sequences of ultrasound 3D images
+* @brief Reading rf data.
 *
-* This class is used to read ultrasound images from a sequence of volumes.
+* This class is used to read ultrasound signal as rf data.
 */
 
 #ifndef __usDataFrameReader_h_
@@ -55,27 +55,18 @@
 * @brief Reading of sequences of ultrasound images
 * @ingroup module_ustk_io
 *
-* This class is used to grab ultrasound volumes from a sequence.
+* This class is used to read ultrasound signal as rf data.
 *
-* @warning This class reads .vol files which don't contain transducer/motor informations. If yout want
-* to use the volumes grabbed by this class make sure to complete them by yourself.
+* @warning This class reads .rf files which don't contain transducer/motor informations. If yout want
+* to use the data grabbed by this class make sure to complete them by yourself.
 */
 template <class ImageType>
 class usDataFrameReader
 {
 private:
-
-
-  /** Count the frame number when the class is used as a grabber (from 0 to volume number - 1).
-   * Incremented directly after grabbing an image (contains next index) */
-  long m_frameCount;
-
-  /** file name of sequence settings file (ex : sequence.xml), images files names are deduced from information contained in it.*/
+  /** data file name (ex : signal.rf).*/
   std::string m_fileName;
   bool m_fileNameIsSet;
-
-  /** Top know if the sequence is already open (m_header have already been filled)*/
-  bool is_open;
 
   /** Header info */
   usImageIo::frameDataHeader m_header;
@@ -102,8 +93,7 @@ public:
 * Default constructor.
 */
 template<class ImageType>
-usDataFrameReader<ImageType>::usDataFrameReader() : m_frameCount(0),
-  m_fileName(""), m_fileNameIsSet(false), is_open(false), m_header()
+usDataFrameReader<ImageType>::usDataFrameReader() : m_fileName(""), m_fileNameIsSet(false), m_header()
 {
 
 }
@@ -164,28 +154,6 @@ void usDataFrameReader<usImageRF2D<short int> >::open(usImageRF2D<short int> &im
     n++;
   }
 
-  std::cout << "Header Read !" << std::endl;
-
-  std::cout << "type " << m_header.type << std::endl;
-  std::cout << "frames " << m_header.frames << std::endl;
-  std::cout << "w " << m_header.w << std::endl;
-  std::cout << "h " << m_header.h << std::endl;
-  std::cout << "ss " << m_header.ss << std::endl;
-  std::cout << "ulx " << m_header.ulx << std::endl;
-  std::cout << "uly " << m_header.uly << std::endl;
-  std::cout << "urx " << m_header.urx << std::endl;
-  std::cout << "ury " << m_header.ury << std::endl;
-  std::cout << "brx " << m_header.brx << std::endl;
-  std::cout << "bry " << m_header.frames << std::endl;
-  std::cout << "blx " << m_header.blx << std::endl;
-  std::cout << "bly " << m_header.bly << std::endl;
-  std::cout << "probe " << m_header.probe << std::endl;
-  std::cout << "txf " << m_header.txf << std::endl;
-  std::cout << "sf " << m_header.sf << std::endl;
-  std::cout << "dr " << m_header.dr << std::endl;
-  std::cout << "ld " << m_header.ld << std::endl;
-  std::cout << "extra " << m_header.extra << std::endl;
-
   //CHECK IMAGE TYPE
   if (m_header.type != 16)
     throw(vpException(vpException::badValue, "trying to read non-rf data in .rf file"));
@@ -194,13 +162,12 @@ void usDataFrameReader<usImageRF2D<short int> >::open(usImageRF2D<short int> &im
   if (m_header.ss != 16)
     throw(vpException(vpException::badValue, ".vol file doesn't contain short data"));
 
-  image.resize( m_header.h, m_header.w + 1);
+  image.resize( m_header.h, m_header.w);
   short sample;
   for (int i = 0; i < m_header.h; i++) {
     for (int j = 0; j < m_header.w; j++) {
       m_dataFile.read((char *)&sample, sizeof(short));
-      std::cout << "read : " << sample << std::endl;
-      image(j, i, sample);
+      image(i, j, sample);
     }
   }
   m_dataFile.close();

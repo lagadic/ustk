@@ -38,7 +38,7 @@
 
 #include <visp3/ustk_core/usRFToPreScan2DConverter.h>
 
-usRFToPreScan2DConverter::usRFToPreScan2DConverter() {
+usRFToPreScan2DConverter::usRFToPreScan2DConverter() : m_logCompressor() {
 
 }
 
@@ -109,53 +109,60 @@ std::vector<std::complex<double> > usRFToPreScan2DConverter::HilbertTransform(co
   for(int i = 0; i < N; i++)
   {
     sa.push_back(std::complex<double> (in[i][0], -out_inv[i][0]/(double)N));
-    //cout << real(sa.at(i)) <<"," << imag(sa.at(i)) <<" i" <<endl ;
-    //std::cin.ignore();
   }
   fftw_free(in); fftw_free(out); fftw_free(conv); fftw_free(out_inv);
   return sa;
 }
 
-std::vector<double> usRFToPreScan2DConverter::sqrtAbsv(std::vector<std::complex<double> > cv)
+void usRFToPreScan2DConverter::sqrtAbsv(std::vector<std::complex<double> > cv, double* out)
 {
-  std::vector<double> out;
   for(unsigned int i = 0; i < cv.size(); i++)
   {
-    out.push_back(sqrt(abs(cv.at(i))));
+    out[i] = sqrt(abs(cv.at(i)));
   }
-  return out;
 }
 
 void usRFToPreScan2DConverter::convert(const usImageRF2D<short int> &rfImage, usImagePreScan2D<unsigned char> &preScanImage) {
 
-  std::cout << "1" << std::endl;
-  preScanImage.resize(rfImage.getHeight(),rfImage.getWidth());
+  preScanImage.resize(round(rfImage.getHeight() / 4.0),rfImage.getWidth());
 
-  std::cout << "2" << std::endl;
   // First we copy the transducer settings
   preScanImage.setImagePreScanSettings(rfImage);
 
-  std::cout << "3" << std::endl;
+  int w = rfImage.getWidth();
+  int h = rfImage.getHeight();
+  int decimation = 4;
 
-  std::cout << "rd LN = " << rfImage.getScanLineNumber() << std::endl;
-  for(unsigned int i = 0; i < rfImage.getScanLineNumber(); i++) {
-    // computing square root of Hilbert transform norm for each scanline's signal
-    std::vector<double> data = sqrtAbsv(HilbertTransform(rfImage[i],rfImage.getRFSampleNumber()));
+  uint frameSize = w*h;
+  double *env = new double[frameSize];
 
-    // now we normalize each sample between [0;254]
-    double max = (double)* std::max_element(data.begin(),data.end());
-    double min = (double)* std::min_element(data.begin(),data.end());
-    for (unsigned int j=0;j<data.size();j++) {
-      double m = data.at(j);
-      //std::cout << "m[" << j << "] = " << m << std::endl;
-      m /= max;
-      m *= 255;
-      m = nearbyint(m);
-      preScanImage[j][i] = (unsigned char)m;
-    }
+  unsigned char *comp = new unsigned char[frameSize];
 
-    std::cout << "scanline " << i << "converted" << std::endl;
+  // Run envelope detector
+  for (int i = 0; i < w; ++i) {
+    sqrtAbsv(HilbertTransform(rfImage.bitmap + i*h , h), env + i * h);
   }
 
-    std::cout << "end convert" << std::endl;
+  // Log-compress
+  m_logCompressor.run(comp, env, frameSize);
+
+  //find min & max values
+  double min = 1e8;
+  double max = -1e8;
+  for (unsigned int i = 0; i < frameSize; ++i) {
+    if (comp[i] < min)
+      min = comp[i];
+    if (comp[i] > max)
+      max = comp[i];
+  }
+
+  //Decimate and normalize
+  int k = 0;
+  for (int i = 0; i < h; i+=decimation) {
+    for (int j = 0; j < w ; ++j) {
+      uint  vcol = ((comp[i + h * j] - min) / (max - min)) * 255;
+      preScanImage[k][j] = (vcol>255)?255:vcol;
+    }
+    k++;
+  }
 }
