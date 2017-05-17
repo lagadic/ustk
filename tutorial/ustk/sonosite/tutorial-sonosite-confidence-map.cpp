@@ -11,8 +11,8 @@
 
 #include <visp3/ustk_core/usImagePostScan2D.h>
 #include <visp3/ustk_core/usImagePreScan2D.h>
-#include <visp3/ustk_core/usBackScanConverter2D.h>
-#include <visp3/ustk_core/usScanConverter2D.h>
+#include <visp3/ustk_core/usPostScanToPreScan2DConverter.h>
+#include <visp3/ustk_core/usPreScanToPostScan2DConverter.h>
 #include <visp3/ustk_confidence_map/usScanlineConfidence2D.h>
 
 #if defined(VISP_HAVE_V4L2) && defined(VISP_HAVE_PTHREAD)
@@ -114,14 +114,14 @@ vpThread::Return displayFunction(vpThread::Args args)
 
 
       // Convert post-scan to pre-scan image
-      usBackScanConverter2D backConverter_;
+      usPostScanToPreScan2DConverter backConverter_;
       backConverter_.init(postScan_, 480, 128);
       backConverter_.run(postScan_,preScan_);
 
       //Compute confidence map on pre-scan image
       //initialisations
       //settings for sonosite probe
-      usScanConverter2D converter_;
+      usPreScanToPostScan2DConverter converter_;
       converter_.init(postScan_, 480,128);
 
       //computing pre-scan confidence map

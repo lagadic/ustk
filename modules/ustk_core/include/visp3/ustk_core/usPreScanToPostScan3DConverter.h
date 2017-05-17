@@ -32,12 +32,12 @@
  *****************************************************************************/
 
 /**
- * @file usScanConverter3D.h
+ * @file usPreScanToPostScan3DConverter.h
  * @brief 3D scan-converter
  */
 
-#ifndef __usScanConverter3D_h_
-#define __usScanConverter3D_h_
+#ifndef __usPreScanToPostScan3DConverter_h_
+#define __usPreScanToPostScan3DConverter_h_
 
 #include <cmath>
 #include <vector>
@@ -47,7 +47,7 @@
 
 
 /**
- * @class usScanConverter3D
+ * @class usPreScanToPostScan3DConverter
  * @brief 3D scan converter
  * @ingroup module_ustk_core
  *
@@ -57,12 +57,12 @@
  *
  * @warning Converting with this class uses a lot of RAM when computing the LUTs in init().
  */
-class VISP_EXPORT usScanConverter3D
+class VISP_EXPORT usPreScanToPostScan3DConverter
 {
 protected:
     class VoxelWeightAndIndex
     {
-        friend class usScanConverter3D;
+        friend class usPreScanToPostScan3DConverter;
         unsigned int _outputIndex;
         unsigned int _inputIndex[8];
         double _W[8];
@@ -83,9 +83,9 @@ protected:
 
 public:
 
-    usScanConverter3D();
-    usScanConverter3D(const usImagePreScan3D<unsigned char> &preScanImage, int down);
-    virtual ~usScanConverter3D();
+    usPreScanToPostScan3DConverter();
+    usPreScanToPostScan3DConverter(const usImagePreScan3D<unsigned char> &preScanImage, int down);
+    virtual ~usPreScanToPostScan3DConverter();
 
     void init(const usImagePreScan3D<unsigned char> &preScanImage, int down = 1);
 

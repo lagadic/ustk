@@ -13,8 +13,8 @@
 
 #include <visp3/ustk_core/usImagePostScan2D.h>
 #include <visp3/ustk_core/usImagePreScan2D.h>
-#include <visp3/ustk_core/usBackScanConverter2D.h>
-#include <visp3/ustk_core/usScanConverter2D.h>
+#include <visp3/ustk_core/usPostScanToPreScan2DConverter.h>
+#include <visp3/ustk_core/usPreScanToPostScan2DConverter.h>
 #include <visp3/ustk_core/usPixelMeterConversion.h>
 
 #include <visp3/ustk_confidence_map/usScanlineConfidence2D.h>
@@ -90,8 +90,8 @@ vpThread::Return displayFunction(vpThread::Args args)
   usImagePreScan2D<unsigned char> preScan_;
   usImagePostScan2D<unsigned char> confidencePostScan_;
   usImagePreScan2D<unsigned char> confidencePreScan_;
-  usBackScanConverter2D backConverter_;
-  usScanConverter2D converter_;
+  usPostScanToPreScan2DConverter backConverter_;
+  usPreScanToPostScan2DConverter converter_;
       usScanlineConfidence2D confidenceMapProcessor_;
   usDenseTracker2D tracker;
   usRectangle rectangle;

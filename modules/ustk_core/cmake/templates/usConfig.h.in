@@ -57,4 +57,7 @@
 // Defined if Qt5 support available
 #cmakedefine USTK_HAVE_QT5
 
+// Defined if FFTW support available
+#cmakedefine USTK_HAVE_FFTW
+
 #endif

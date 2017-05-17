@@ -13,8 +13,8 @@
 
 #include <visp3/ustk_core/usImagePostScan2D.h>
 #include <visp3/ustk_core/usImagePreScan2D.h>
-#include <visp3/ustk_core/usBackScanConverter2D.h>
-#include <visp3/ustk_core/usScanConverter2D.h>
+#include <visp3/ustk_core/usPostScanToPreScan2DConverter.h>
+#include <visp3/ustk_core/usPreScanToPostScan2DConverter.h>
 #include <visp3/ustk_confidence_map/usScanlineConfidence2D.h>
 
 #if defined(VISP_HAVE_V4L2) && defined(VISP_HAVE_PTHREAD) && defined(VISP_HAVE_VIPER850)
@@ -80,8 +80,8 @@ vpThread::Return displayFunction(vpThread::Args args)
   usImagePostScan2D<unsigned char> confidencePostScan_;
   usImagePreScan2D<unsigned char> confidencePreScan_;
   usScanlineConfidence2D confidenceMapProcessor_;
-  usBackScanConverter2D backConverter_;
-  usScanConverter2D converter_;
+  usPostScanToPreScan2DConverter backConverter_;
+  usPreScanToPostScan2DConverter converter_;
   usTransducerSettings transducerSettings;
 
   transducerSettings.setTransducerRadius(0.060);

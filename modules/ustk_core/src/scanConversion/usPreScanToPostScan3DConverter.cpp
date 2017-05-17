@@ -1,4 +1,4 @@
-#include<visp3/ustk_core/usScanConverter3D.h>
+#include<visp3/ustk_core/usPreScanToPostScan3DConverter.h>
 
 #ifdef VISP_HAVE_OPENMP
 #include <omp.h>
@@ -7,7 +7,7 @@
 /**
  * Default constructor.
  */
-usScanConverter3D::usScanConverter3D() :
+usPreScanToPostScan3DConverter::usPreScanToPostScan3DConverter() :
   _VpreScan(),
   _VpostScan(),
   _resolution(),
@@ -20,7 +20,7 @@ usScanConverter3D::usScanConverter3D() :
  * @param preScanImage Pre-scan image to convert, with settings filled (transducer and motor).
  * @param down Downsampling factor (sample number divided by this number).
  */
-usScanConverter3D::usScanConverter3D(const usImagePreScan3D<unsigned char> &preScanImage, int down) :
+usPreScanToPostScan3DConverter::usPreScanToPostScan3DConverter(const usImagePreScan3D<unsigned char> &preScanImage, int down) :
   _VpreScan(),
   _VpostScan(),
   _resolution(),
@@ -34,7 +34,7 @@ usScanConverter3D::usScanConverter3D(const usImagePreScan3D<unsigned char> &preS
  * @param preScanImage Pre-scan image to convert, with settings filled (transducer and motor).
  * @param down Down-sampling factor.
  */
-void usScanConverter3D::init(const usImagePreScan3D<unsigned char> &preScanImage,int down)
+void usPreScanToPostScan3DConverter::init(const usImagePreScan3D<unsigned char> &preScanImage,int down)
 {
   if(!preScanImage.isTransducerConvex() || !(preScanImage.getMotorType() == usMotorSettings::TiltingMotor))
     throw(vpException(vpException::functionNotImplementedError, "3D scan-conversion available only for convex transducer and tilting motor"));
@@ -51,10 +51,10 @@ void usScanConverter3D::init(const usImagePreScan3D<unsigned char> &preScanImage
   double ymax;
   double zmax;
 
-  usScanConverter3D::convertPreScanCoordToPostScanCoord(X, 0.0, Z, NULL , &ymin, NULL);
-  usScanConverter3D::convertPreScanCoordToPostScanCoord(X/2.0, (double)Y, Z/2.0, NULL , &ymax, NULL);
-  usScanConverter3D::convertPreScanCoordToPostScanCoord((double)X, (double)Y, Z/2.0, &xmax, NULL, NULL);
-  usScanConverter3D::convertPreScanCoordToPostScanCoord(X/2.0, (double)Y, Z, NULL, NULL, &zmax);
+  usPreScanToPostScan3DConverter::convertPreScanCoordToPostScanCoord(X, 0.0, Z, NULL , &ymin, NULL);
+  usPreScanToPostScan3DConverter::convertPreScanCoordToPostScanCoord(X/2.0, (double)Y, Z/2.0, NULL , &ymax, NULL);
+  usPreScanToPostScan3DConverter::convertPreScanCoordToPostScanCoord((double)X, (double)Y, Z/2.0, &xmax, NULL, NULL);
+  usPreScanToPostScan3DConverter::convertPreScanCoordToPostScanCoord(X/2.0, (double)Y, Z, NULL, NULL, &zmax);
 
   m_nbX = ceil(2*xmax/_resolution);
   m_nbY = ceil((ymax-ymin)/_resolution);
@@ -79,7 +79,7 @@ void usScanConverter3D::init(const usImagePreScan3D<unsigned char> &preScanImage
       {
         double zz = _resolution*z-zmax;
         double i,j,k;
-        usScanConverter3D::convertPostScanCoordToPreScanCoord(xx,yy,zz,&i,&j,&k,true);
+        usPreScanToPostScan3DConverter::convertPostScanCoordToPreScanCoord(xx,yy,zz,&i,&j,&k,true);
 
         double ii = floor(i);
         double jj = floor(j);
@@ -129,7 +129,7 @@ void usScanConverter3D::init(const usImagePreScan3D<unsigned char> &preScanImage
           _lookupTable1.push_back(m);
         }
 
-        usScanConverter3D::convertPostScanCoordToPreScanCoord(xx,yy,zz,&i,&j,&k,false);
+        usPreScanToPostScan3DConverter::convertPostScanCoordToPreScanCoord(xx,yy,zz,&i,&j,&k,false);
 
         ii = floor(i);
         jj = floor(j);
@@ -191,7 +191,7 @@ void usScanConverter3D::init(const usImagePreScan3D<unsigned char> &preScanImage
 /**
  * Destructor.
  */
-usScanConverter3D::~usScanConverter3D()
+usPreScanToPostScan3DConverter::~usPreScanToPostScan3DConverter()
 {
 
 }
@@ -200,7 +200,7 @@ usScanConverter3D::~usScanConverter3D()
  * Get post-scan volume.
  * @param V post-scan image converted.
  */
-void usScanConverter3D::getVolume(usImagePostScan3D<unsigned char> &V)
+void usPreScanToPostScan3DConverter::getVolume(usImagePostScan3D<unsigned char> &V)
 {
   V = _VpostScan;
 }
@@ -209,7 +209,7 @@ void usScanConverter3D::getVolume(usImagePostScan3D<unsigned char> &V)
  * Get post-scan volume.
  * @return Post-scan image converted.
  */
-usImagePostScan3D<unsigned char> usScanConverter3D::getVolume()
+usImagePostScan3D<unsigned char> usPreScanToPostScan3DConverter::getVolume()
 {
   return _VpostScan;
 }
@@ -219,7 +219,7 @@ usImagePostScan3D<unsigned char> usScanConverter3D::getVolume()
  * @param [out] postScanImage The result of the scan-conversion.
  * @param dataPreScan
  */
-void usScanConverter3D::convert( usImagePostScan3D<unsigned char> &postScanImage, const unsigned char *dataPreScan)
+void usPreScanToPostScan3DConverter::convert( usImagePostScan3D<unsigned char> &postScanImage, const unsigned char *dataPreScan)
 {
   postScanImage.resize(m_nbX,m_nbY,m_nbZ);
   unsigned char *dataPost = postScanImage.getData();
@@ -275,7 +275,7 @@ void usScanConverter3D::convert( usImagePostScan3D<unsigned char> &postScanImage
  * @param sweepInZdirection Motor direction.
  * @todo check sweepInZdirection parameter
  */
-void usScanConverter3D::convertPreScanCoordToPostScanCoord(double i, double j, double k, double *x, double *y, double *z, bool sweepInZdirection)
+void usPreScanToPostScan3DConverter::convertPreScanCoordToPostScanCoord(double i, double j, double k, double *x, double *y, double *z, bool sweepInZdirection)
 {
   const double Nframe = _VpreScan.getFrameNumber();
   const double Nline = _VpreScan.getScanLineNumber();
@@ -306,7 +306,7 @@ void usScanConverter3D::convertPreScanCoordToPostScanCoord(double i, double j, d
  * @param sweepInZdirection Motor direction.
  * @todo check sweepInZdirection parameter
  */
-void usScanConverter3D::convertPostScanCoordToPreScanCoord(double x, double y, double z, double *i, double *j, double *k, bool sweepInZdirection)
+void usPreScanToPostScan3DConverter::convertPostScanCoordToPreScanCoord(double x, double y, double z, double *i, double *j, double *k, bool sweepInZdirection)
 {
   const double Nframe = _VpreScan.getFrameNumber();
   const double Nline = _VpreScan.getScanLineNumber();
