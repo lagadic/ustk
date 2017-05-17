@@ -143,9 +143,11 @@ void usRFToPreScan2DConverter::convert(const usImageRF2D<short int> &rfImage, us
     std::vector<double> data = sqrtAbsv(HilbertTransform(rfImage[i],rfImage.getRFSampleNumber()));
 
     // now we normalize each sample between [0;254]
-    double max = (double)*std::max_element(data.begin(),data.end());
+    double max = (double)* std::max_element(data.begin(),data.end());
+    double min = (double)* std::min_element(data.begin(),data.end());
     for (unsigned int j=0;j<data.size();j++) {
-      double m = data[i];
+      double m = data.at(j);
+      //std::cout << "m[" << j << "] = " << m << std::endl;
       m /= max;
       m *= 255;
       m = nearbyint(m);

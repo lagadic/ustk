@@ -65,7 +65,6 @@ class usDataFrameReader
 {
 private:
 
-  void open(ImageType &image);
 
   /** Count the frame number when the class is used as a grabber (from 0 to volume number - 1).
    * Incremented directly after grabbing an image (contains next index) */
@@ -90,8 +89,7 @@ public:
 
   virtual ~usDataFrameReader();
 
-  //get images in grabber style
-  void acquire(ImageType &image);
+  void open(ImageType &image);
 
   void setFileName(const std::string &sequenceFileName);
 };
@@ -196,33 +194,16 @@ void usDataFrameReader<usImageRF2D<short int> >::open(usImageRF2D<short int> &im
   if (m_header.ss != 16)
     throw(vpException(vpException::badValue, ".vol file doesn't contain short data"));
 
-  //READING DATA
   image.resize( m_header.h, m_header.w + 1);
-  m_dataFile.read((char *)image.bitmap, 2* image.getSize());
-  m_dataFile.close();
-  is_open = true;
-}
-
-/**
-* Sequence image acquisition (grabber-style : an internal counter is incremented to open next image at the next call).
-* @param image Image of the sequence to read.
-*/
-template<>
-void usDataFrameReader<usImageRF2D<short int> >::acquire(usImageRF2D<short int> &image)
-{
-  if (!is_open) {
-    this->open(image);
-    return;
-  }
-  //READING DATA
-  image.resize( m_header.h, m_header.w);
-  unsigned char voxel;
+  short sample;
   for (int i = 0; i < m_header.h; i++) {
     for (int j = 0; j < m_header.w; j++) {
-      //m_dataFile.read((short int *)&voxel, 1);
-      image(j, i, voxel);
+      m_dataFile.read((char *)&sample, sizeof(short));
+      std::cout << "read : " << sample << std::endl;
+      image(j, i, sample);
     }
   }
+  m_dataFile.close();
 }
 
 #endif // US_SEQUENCE_READER_3D_H
