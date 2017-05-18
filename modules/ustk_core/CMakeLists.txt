@@ -1,6 +1,6 @@
 if(USE_FFTW)
+  list(APPEND opt_incs ${FFTW_INCLUDE_DIRS})
   list(APPEND opt_libs ${FFTW_LIBRARIES})
-  list(APPEND opt_incs ${FFTW_INCLUDES})
 endif()
 
 vp_add_module(ustk_core visp_core)
