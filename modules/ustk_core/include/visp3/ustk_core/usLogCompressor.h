@@ -32,11 +32,14 @@
 /**
  * @file usLogCompressor.h
  * @brief Log-compression filter.
- * @author Pierre Chatelain
  */
 
-#ifndef US_LOG_COMPRESSOR_H
-#define US_LOG_COMPRESSOR_H
+#ifndef __usLogCompressor_h_
+#define __usLogCompressor_h_
+
+#include <visp3/ustk_core/usConfig.h>
+
+#if defined(USTK_HAVE_FFTW)
 
 #include <fftw3.h>
 
@@ -79,4 +82,5 @@ class usLogCompressor
   
 };
 
-#endif // US_LOG_COMPRESSOR_H
+#endif // have fftw
+#endif // __usLogCompressor_h_

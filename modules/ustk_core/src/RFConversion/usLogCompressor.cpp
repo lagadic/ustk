@@ -30,6 +30,9 @@
  *****************************************************************************/
 
 #include <visp3/ustk_core/usLogCompressor.h>
+
+#if defined(USTK_HAVE_FFTW)
+
 #include <visp/vpMath.h>
 
 usLogCompressor::usLogCompressor()
@@ -64,3 +67,5 @@ void usLogCompressor::run(unsigned char *dst, const double *src, unsigned int si
   for (unsigned int i = 0; i < size; ++i)
     dst[i] = m_compressionTable[vpMath::round(src[i])];
 }
+
+#endif
