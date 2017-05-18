@@ -34,14 +34,20 @@ This UsTK project requires the following libraries :
 			$ brew update
 			$ brew install fftw
 		
-  - How to install VTK on Ubuntu 16.04 LTS
+  - How to install FFTW on Ubuntu 16.04 LTS
   
 			$ sudo apt-get install libfftw3-dev
 			
-  - How to install VTK on Fedora 23
+  - How to install FFTW on Fedora 23
 
 			$ sudo yum install fftw
- 		 
+		
+  - How to use FFTW on Windows 
+  
+    Windows installation instructions can be found [here](http://www.fftw.org/install/windows.html). 
+	You will have to download the binaries, and create the .lib files from the .def files. Then don't forget to add the folder to your PATH.
+	Tested on Windows 10, using visual studio 2015.
+	  
 #### How to build UsTK libraries
 
 - Create a workspace folder and enter in this folder

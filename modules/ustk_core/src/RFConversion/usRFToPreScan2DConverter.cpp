@@ -126,7 +126,7 @@ void usRFToPreScan2DConverter::sqrtAbsv(std::vector<std::complex<double> > cv, d
 
 void usRFToPreScan2DConverter::convert(const usImageRF2D<short int> &rfImage, usImagePreScan2D<unsigned char> &preScanImage) {
 
-  preScanImage.resize(round(rfImage.getHeight() / 4.0),rfImage.getWidth());
+  preScanImage.resize(rfImage.getHeight() / 4,rfImage.getWidth());
 
   // First we copy the transducer settings
   preScanImage.setImagePreScanSettings(rfImage);
@@ -135,7 +135,7 @@ void usRFToPreScan2DConverter::convert(const usImageRF2D<short int> &rfImage, us
   int h = rfImage.getHeight();
   int decimation = 4;
 
-  uint frameSize = w*h;
+  unsigned int frameSize = w*h;
   double *env = new double[frameSize];
 
   unsigned char *comp = new unsigned char[frameSize];
@@ -162,7 +162,7 @@ void usRFToPreScan2DConverter::convert(const usImageRF2D<short int> &rfImage, us
   int k = 0;
   for (int i = 0; i < h; i+=decimation) {
     for (int j = 0; j < w ; ++j) {
-      uint  vcol = ((comp[i + h * j] - min) / (max - min)) * 255;
+	  unsigned int  vcol = ((comp[i + h * j] - min) / (max - min)) * 255;
       preScanImage[k][j] = (vcol>255)?255:vcol;
     }
     k++;

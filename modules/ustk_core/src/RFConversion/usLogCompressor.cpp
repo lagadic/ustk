@@ -41,7 +41,7 @@ usLogCompressor::usLogCompressor()
   m_compressionTable = new unsigned char[65536];
   double denom = exp(m_alpha * log(65535.0)) / 255.0;
   for (unsigned int i = 0; i < 65536; ++i)
-    m_compressionTable[i] = exp(m_alpha * log(i)) / denom;
+    m_compressionTable[i] = (unsigned char) (exp(m_alpha * log(i)) / denom);
 }
 
 usLogCompressor::~usLogCompressor()
@@ -58,7 +58,7 @@ void usLogCompressor::init(double alpha)
     m_alpha = alpha;
     double denom = exp(m_alpha * log(65535.0)) / 255.0;
     for (unsigned int i = 0; i < 65536; ++i)
-      m_compressionTable[i] = exp(m_alpha * log(i)) / denom;
+      m_compressionTable[i] = (unsigned char) exp(m_alpha * log(i)) / denom;
   }
 }
 
