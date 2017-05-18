@@ -1,5 +1,7 @@
 #include <visp3/ustk_core/usConfig.h>
 
+#if defined(USTK_HAVE_FFTW)
+
 #include <visp3/ustk_core/usImageRF2D.h>
 #include <visp3/ustk_core/usImagePreScan2D.h>
 #include <visp3/ustk_core/usRFToPreScan2DConverter.h>
@@ -47,3 +49,10 @@ int main(int argc, char** argv)
   //wait until user closes the window
   return 0;
 }
+#else
+#include <iostream>
+int main(int argc, char** argv)
+{
+  std::cout << "You should install fftw to run the Rf to pre-scan conversion" << std::endl;
+}
+#endif
