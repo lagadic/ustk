@@ -51,8 +51,8 @@ int main(int argc, char** argv)
 }
 #else
 #include <iostream>
-int main(int argc, char** argv)
+int main()
 {
-  std::cout << "You should install fftw to run the Rf to pre-scan conversion" << std::endl;
+  std::cout << "You should install libfftw to run the Rf to pre-scan conversion" << std::endl;
 }
 #endif
