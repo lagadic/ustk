@@ -38,6 +38,8 @@
 
 #include <visp3/ustk_core/usRFToPreScan2DConverter.h>
 
+#if defined(USTK_HAVE_FFTW)
+
 usRFToPreScan2DConverter::usRFToPreScan2DConverter() : m_logCompressor() {
 
 }
@@ -166,3 +168,5 @@ void usRFToPreScan2DConverter::convert(const usImageRF2D<short int> &rfImage, us
     k++;
   }
 }
+
+#endif
