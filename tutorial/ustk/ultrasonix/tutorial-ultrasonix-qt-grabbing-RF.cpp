@@ -3,12 +3,15 @@
 #include <iostream>
 #include <visp3/ustk_core/usConfig.h>
 
-#if defined(USTK_HAVE_QT5) || defined(USTK_HAVE_VTK_QT)
+#if (defined(USTK_HAVE_QT5) || defined(USTK_HAVE_VTK_QT)) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(USTK_HAVE_FFTW)
 
 #include <QtCore/QThread>
 #include <QApplication>
 
+#include <visp3/ustk_core/usRFToPreScan2DConverter.h>
 #include <visp3/ustk_grabber/usNetworkGrabberRF.h>
+
+#include <visp3/gui/vpDisplayX.h>
 
 int main(int argc, char** argv)
 {
@@ -27,8 +30,15 @@ int main(int argc, char** argv)
   header.imagingMode = 12; //B-mode = 0, RF = 12
 
   //prepare image;
-  usDataGrabbed<usImageRF2D<unsigned char> >* grabbedFrame;
-  usDataGrabbed<usImageRF2D<unsigned char> > localFrame;
+  usDataGrabbed<usImageRF2D<short int> >* grabbedFrame;
+
+  //prepare converter
+  usImagePreScan2D<unsigned char> preScanImage;
+  usRFToPreScan2DConverter converter;
+
+  //Prepare display
+  vpDisplayX * displayX = NULL;
+  bool displayInit = false;
 
   bool captureRunning = true;
 
@@ -48,20 +58,32 @@ int main(int argc, char** argv)
     if(qtGrabber->isFirstFrameAvailable()) {
       grabbedFrame = qtGrabber->acquire();
 
-      //local copy for vpDisplay
-      localFrame = *grabbedFrame;
+      std::cout << *grabbedFrame << std::endl;
 
-      std::cout <<"MAIN THREAD received RF frame No : " << localFrame.getFrameCount() << std::endl;
+      //convert RF to pre-scan to display something ...
+      converter.convert(*grabbedFrame,preScanImage);
 
-      //TO DO : convert RF to pre-scan to display something ...
+      //init display
+      if(!displayInit && preScanImage.getHeight() !=0 && preScanImage.getHeight() !=0) {
+        displayX = new vpDisplayX(preScanImage);
+        displayInit = true;
+      }
 
-
-      vpTime::wait(20);
+      // processing display
+      if(displayInit) {
+        vpDisplay::display(preScanImage);
+        vpDisplay::flush(preScanImage);
+      }
     }
     else {
       vpTime::wait(10);
     }
-  }while(captureRunning);
+  } while(captureRunning);
+
+  if(displayInit) {
+    delete displayX;
+  }
+
   return app.exec();
 }
 
