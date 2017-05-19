@@ -40,11 +40,18 @@
 
 #if defined(USTK_HAVE_FFTW)
 
+/**
+* Constructor.
+* @param decimationFactor Decimation factor : keep only 1 pre-scan sample every N sample (N = decimationFactor)
+*/
 usRFToPreScan2DConverter::usRFToPreScan2DConverter(int decimationFactor) : m_logCompressor(),
   m_decimationFactor(decimationFactor) {
 
 }
 
+/**
+* Destructor.
+*/
 usRFToPreScan2DConverter::~usRFToPreScan2DConverter() {
 
 }
@@ -125,6 +132,15 @@ void usRFToPreScan2DConverter::sqrtAbsv(std::vector<std::complex<double> > cv, d
   }
 }
 
+/**
+* Convert method : performs the conversion from RF frame to a pre-scan frame using the following processes :
+* - Enveloppe detector
+* - Logarithmic compression
+* - Decimation
+*
+* @param rfImage RF frame to convert
+* @param preScanImage pre-scan image : result of convertion
+*/
 void usRFToPreScan2DConverter::convert(const usImageRF2D<short int> &rfImage, usImagePreScan2D<unsigned char> &preScanImage) {
 
   preScanImage.resize(rfImage.getHeight() / m_decimationFactor,rfImage.getWidth());
@@ -167,6 +183,22 @@ void usRFToPreScan2DConverter::convert(const usImageRF2D<short int> &rfImage, us
     }
     k++;
   }
+}
+
+/**
+* Decimation factor getter.
+* @return Decimation factor : keep only 1 pre-scan sample every N sample (N = decimationFactor)
+*/
+int usRFToPreScan2DConverter::getDecimationFactor() {
+  return m_decimationFactor;
+}
+
+/**
+* Decimation factor setter.
+* @param  decimationFactor : keep only 1 pre-scan sample every N sample (N = decimationFactor)
+*/
+void usRFToPreScan2DConverter::setDecimationFactor(int decimationFactor) {
+  m_decimationFactor = decimationFactor;
 }
 
 #endif

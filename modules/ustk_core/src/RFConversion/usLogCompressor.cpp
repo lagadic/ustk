@@ -33,8 +33,11 @@
 
 #if defined(USTK_HAVE_FFTW)
 
-#include <visp/vpMath.h>
+#include <visp3/core/vpMath.h>
 
+/**
+* Constructor.
+*/
 usLogCompressor::usLogCompressor()
 {
   m_alpha = 0.5;
@@ -44,6 +47,9 @@ usLogCompressor::usLogCompressor()
     m_compressionTable[i] = (unsigned char) (exp(m_alpha * log(i)) / denom);
 }
 
+/**
+* Destructor.
+*/
 usLogCompressor::~usLogCompressor()
 {
   if (m_compressionTable) {
@@ -52,6 +58,10 @@ usLogCompressor::~usLogCompressor()
   }
 }
 
+/**
+* Initialize the log-compression filter.
+* @param alpha The contrast parameter.
+*/
 void usLogCompressor::init(double alpha)
 {
   if (alpha != m_alpha) {
@@ -62,6 +72,14 @@ void usLogCompressor::init(double alpha)
   }
 }
 
+/**
+* Run the log-compression filter.
+* @param[out] dst Pointer to the destination data array.
+* @param[in] src Pointer to the source data array.
+* @param[in] size The size of the data array.
+*
+* Both \e dst and \e src must point to an array of size \e size.
+*/
 void usLogCompressor::run(unsigned char *dst, const double *src, unsigned int size)
 {
   for (unsigned int i = 0; i < size; ++i)

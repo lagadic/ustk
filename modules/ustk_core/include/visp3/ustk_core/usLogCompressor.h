@@ -60,20 +60,8 @@ class usLogCompressor
   /// Destructor
   ~usLogCompressor();
 
-  /**
-   * Initialize the log-compression filter.
-   * @param alpha The contrast parameter.
-   */
   void init(double alpha);
 
-  /**
-   * Run the log-compression filter.
-   * @param[out] dst Pointer to the destination data array.
-   * @param[in] src Pointer to the source data array.
-   * @param[in] size The size of the data array.
-   *
-   * Both \e dst and \e src must point to an array of size \e size.
-   */
   void run(unsigned char *dst, const double *src, unsigned int size);
 
  private:
