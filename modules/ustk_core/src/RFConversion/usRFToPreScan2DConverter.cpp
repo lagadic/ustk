@@ -40,7 +40,8 @@
 
 #if defined(USTK_HAVE_FFTW)
 
-usRFToPreScan2DConverter::usRFToPreScan2DConverter() : m_logCompressor() {
+usRFToPreScan2DConverter::usRFToPreScan2DConverter(int decimationFactor) : m_logCompressor(),
+  m_decimationFactor(decimationFactor) {
 
 }
 
@@ -126,14 +127,13 @@ void usRFToPreScan2DConverter::sqrtAbsv(std::vector<std::complex<double> > cv, d
 
 void usRFToPreScan2DConverter::convert(const usImageRF2D<short int> &rfImage, usImagePreScan2D<unsigned char> &preScanImage) {
 
-  preScanImage.resize(rfImage.getHeight() / 4,rfImage.getWidth());
+  preScanImage.resize(rfImage.getHeight() / m_decimationFactor,rfImage.getWidth());
 
   // First we copy the transducer settings
   preScanImage.setImagePreScanSettings(rfImage);
 
   int w = rfImage.getWidth();
   int h = rfImage.getHeight();
-  int decimation = 4;
 
   unsigned int frameSize = w*h;
   double *env = new double[frameSize];
@@ -160,7 +160,7 @@ void usRFToPreScan2DConverter::convert(const usImageRF2D<short int> &rfImage, us
 
   //Decimate and normalize
   int k = 0;
-  for (int i = 0; i < h; i+=decimation) {
+  for (int i = 0; i < h; i+=m_decimationFactor) {
     for (int j = 0; j < w ; ++j) {
 	  unsigned int  vcol = ((comp[i + h * j] - min) / (max - min)) * 255;
       preScanImage[k][j] = (vcol>255)?255:vcol;

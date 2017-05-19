@@ -11,6 +11,7 @@ set(tutorial_ultrasonix_cpp
   tutorial-ultrasonix-qt-grabbing-pre-scan.cpp
   tutorial-ultrasonix-qt-grabbing-post-scan.cpp
   tutorial-ultrasonix-qt-grabbing-RF.cpp
+  tutorial-ultrasonix-qt-grabbing-RF-scan-conversion.cpp
   tutorial-ultrasonix-qt-grabbing-pre-scan-confidence.cpp
   tutorial-ultrasonix-qt-grabbing-pre-scan-confidence-control.cpp)
 
