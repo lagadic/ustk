@@ -40,6 +40,23 @@
 
 #include <visp3/core/vpConfig.h>
 
+// ustk major version.
+#define USTK_VERSION_MAJOR ${USTK_VERSION_MAJOR}
+
+// ustk minor version.
+#define USTK_VERSION_MINOR ${USTK_VERSION_MINOR}
+
+// ustk patch version.
+#define USTK_VERSION_PATCH ${USTK_VERSION_PATCH}
+
+// ustk version with dots "${USTK_VERSION_MAJOR}.${USTK_VERSION_MINOR}.${USTK_VERSION_PATCH}".
+#cmakedefine USTK_VERSION ${USTK_VERSION}
+
+// ustk version as an integer
+#define USTK_VERSION_INT VP_VERSION_INT(USTK_VERSION_MAJOR, \
+                                        USTK_VERSION_MINOR, \
+                                        USTK_VERSION_PATCH)
+
 // Defined if VTK with Qt4 or Qt5 support available
 #cmakedefine USTK_HAVE_VTK_QT
 

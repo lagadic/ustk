@@ -77,12 +77,8 @@ This UsTK project requires the following libraries :
 
 #### How to build UsTK documentation
 
-To build UsTK documentation as a stand alone documentation create a new build folder `ustk-build-doc` to host the stand alone documentation and make `ustk_doc` target:
+To build UsTK documentation as a stand alone documentation (i.e.. without all ViSP classes prefixed by "vp"):
 
-	$ cd <workspace>
-	$ mkdir ustk-build-doc
-	$ cd ustk-build-doc
-	$ cmake ../ustk
 	$ make -j4 ustk_doc
 
 
