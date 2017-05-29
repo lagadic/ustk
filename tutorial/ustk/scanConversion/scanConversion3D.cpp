@@ -1,4 +1,4 @@
-#include <visp3/ustk_core/usScanConverter3D.h>
+#include <visp3/ustk_core/usPreScanToPostScan3DConverter.h>
 #include <visp3/ustk_io/usImageIo.h>
 #include <visp3/ustk_io/usSequenceReader.h>
 #include <visp3/core/vpTime.h>
@@ -71,7 +71,7 @@ int main(int argc, char** argv)
   std::cout << "end reading" << std::endl;
 
   //scan-conversion
-  usScanConverter3D converter;
+  usPreScanToPostScan3DConverter converter;
 
   double startTime = vpTime::measureTimeMs();
   std::cout << "init converter..." << std::endl;

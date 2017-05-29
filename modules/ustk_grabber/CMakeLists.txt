@@ -27,46 +27,8 @@ if(USE_VTK)
     qt5_wrap_ui(UI_Srcs ${UIs})
 
     list(APPEND opt_incs "${Qt5Widgets_INCLUDE_DIRS}")
-    list(APPEND opt_incs "${Qt5Network_INCLUDE_DIRS}")
+    list(APPEND opt_libs Qt5::Widgets Qt5::Network)
 
-    # list(APPEND opt_libs "${Qt5Widgets_LIBRARIES}")
-    # Using Qt5Widgets_LIBRARIES works to build visp/ustk library, examples, demos and test thanks to the components,
-    # but not tutorials when they are build outside ViSP as they are stand alone CMake projects that use
-    # ViSP as a 3rd party.
-
-    set(config_ "NONE" "RELEASE" "DEBUG" "RELEASEWITHDEBINFO" "RELWITHDEBINFO")
-    foreach(lib_ ${Qt5Widgets_LIBRARIES})
-      foreach(imp_config_ ${config_})
-        get_target_property(lib_property_${imp_config_}_ ${lib_} IMPORTED_LOCATION_${imp_config_})
-        # Under Unix, there is no specific suffix for PCL/VTK libraries.         # Under Windows, we add the "optimized", "debug" specific keywords
-        if(WIN32 AND EXISTS "${lib_property_${imp_config_}_}" AND "${imp_config_}" MATCHES "RELEASE") # also valid for RELEASEWITHDEBINFO
-          list(APPEND opt_libs optimized "${component_property_${imp_config_}_}")
-        elseif(WIN32 AND EXISTS "${lib_property_${imp_config_}_}" AND "${imp_config_}" MATCHES "DEBUG")
-          list(APPEND opt_libs debug     "${lib_property_${imp_config_}_}")
-        elseif(EXISTS "${lib_property_${imp_config_}_}")
-          list(APPEND opt_libs "${lib_property_${imp_config_}_}")
-        endif()
-        get_target_property(lib_deps_${imp_config_}_ ${lib_} IMPORTED_LINK_INTERFACE_LIBRARIES_${imp_config_})
-
-        if(lib_deps_${imp_config_}_)
-          foreach(deps_ ${lib_deps_${imp_config_}_})
-            get_target_property(deps_location_ ${deps_} IMPORTED_LOCATION_${imp_config_})
-            if(EXISTS "${deps_location_}")
-              if(WIN32 AND "${imp_config_}" MATCHES "RELEASE")
-                list(APPEND opt_libs optimized ${deps_location_})
-              elseif(WIN32 AND "${imp_config_}" MATCHES "DEBUG")
-                list(APPEND opt_libs debug ${deps_location_})
-              else()
-                list(APPEND opt_libs ${deps_location_})
-              endif()
-            endif()
-          endforeach()
-        endif()
-
-      endforeach()
-    endforeach()
-
-    # TODO FABIEN : fuse previous and next foreach loop
     foreach(lib_ ${Qt5Network_LIBRARIES})
       foreach(imp_config_ ${config_})
         get_target_property(lib_property_${imp_config_}_ ${lib_} IMPORTED_LOCATION_${imp_config_})

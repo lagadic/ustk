@@ -75,7 +75,7 @@ public:
   explicit usNetworkGrabberRF(usNetworkGrabber *parent = 0);
   ~usNetworkGrabberRF();
 
-  usDataGrabbed<usImageRF2D<unsigned char> > * acquire();
+  usDataGrabbed<usImageRF2D<short int> > * acquire();
 
   void dataArrived();
 
@@ -84,15 +84,9 @@ public:
 signals:
   void newFrameAvailable();
 
-protected:
-  void invertRowsCols();
-
 private:
-  //grabbed image
-  usDataGrabbed<usImageRF2D<unsigned char> > m_grabbedImage;
-
-  // Output images : we have to invert (i <-> j) in the image grabbed
-  std::vector<usDataGrabbed<usImageRF2D<unsigned char> > *> m_outputBuffer;
+  // Image buffer
+  std::vector<usDataGrabbed<usImageRF2D<short int> > *> m_outputBuffer;
   bool m_firstFrameAvailable;
 
   //to manage ptrs switch init

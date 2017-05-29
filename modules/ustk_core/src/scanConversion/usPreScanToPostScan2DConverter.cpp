@@ -29,12 +29,12 @@
  *
  *****************************************************************************/
 
-#include <visp3/ustk_core/usScanConverter2D.h>
+#include <visp3/ustk_core/usPreScanToPostScan2DConverter.h>
 #include <visp/vpMath.h>
 
-usScanConverter2D::usScanConverter2D() {}
+usPreScanToPostScan2DConverter::usPreScanToPostScan2DConverter() {}
 
-usScanConverter2D::~usScanConverter2D() {}
+usPreScanToPostScan2DConverter::~usPreScanToPostScan2DConverter() {}
 
 /**
 * Initialize the scan-converter.
@@ -43,7 +43,7 @@ usScanConverter2D::~usScanConverter2D() {}
 * @param scanLineNumber Number of scan lines : width of the pre-scan image to convert.
 */
 
-void usScanConverter2D::init(const usImagePostScan2D<unsigned char> &inputSettings, const int BModeSampleNumber,
+void usPreScanToPostScan2DConverter::init(const usImagePostScan2D<unsigned char> &inputSettings, const int BModeSampleNumber,
             const int scanLineNumber)
 {
 
@@ -95,7 +95,7 @@ void usScanConverter2D::init(const usImagePostScan2D<unsigned char> &inputSettin
 * @param yResolution Size of a pixel in y direction of the post scan image built.
 */
 
-void usScanConverter2D::init(const usTransducerSettings &inputSettings, const int BModeSampleNumber,
+void usPreScanToPostScan2DConverter::init(const usTransducerSettings &inputSettings, const int BModeSampleNumber,
                              const int scanLineNumber, const double xResolution, const double yResolution)
 {
   m_scanLineNumber = scanLineNumber;
@@ -138,7 +138,7 @@ void usScanConverter2D::init(const usTransducerSettings &inputSettings, const in
 * @param [out] postScanImage Post-scan image : result of the scan conversion.
 * @param [in] preScanImage Pre-scan image to convert.
 */
-void usScanConverter2D::run(const usImagePreScan2D<unsigned char> &preScanImage, usImagePostScan2D<unsigned char> &postScanImage)
+void usPreScanToPostScan2DConverter::run(const usImagePreScan2D<unsigned char> &preScanImage, usImagePostScan2D<unsigned char> &postScanImage)
 {
   postScanImage.resize(m_height, m_width);
   for (unsigned int i = 0; i < m_height; ++i)
@@ -158,7 +158,7 @@ void usScanConverter2D::run(const usImagePreScan2D<unsigned char> &preScanImage,
 }
 
 
-double usScanConverter2D::interpolateLinear(const vpImage<unsigned char>& I, double x, double y)
+double usPreScanToPostScan2DConverter::interpolateLinear(const vpImage<unsigned char>& I, double x, double y)
 {
   int x1 = (int)floor(x);
   int x2 = (int)ceil(x);

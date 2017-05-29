@@ -129,6 +129,29 @@ public:
     int ss;       // sample size in bits
     int degPerFr; // degree step between frames
   };
+
+  struct frameDataHeader
+  {
+    int type;	// data type
+    int frames;	// number of frames in file
+    int w;		// width (number of scanlines or pixels)
+    int h;		// height (number of samples or pixels)
+    int ss;		// sample size in bits
+    int ulx;	// roi - upper left (x) (unused in Propello)
+    int uly;	// roi - upper left (y) (unused in Propello)
+    int urx;	// roi - upper right (x) (unused in Propello)
+    int ury;	// roi - upper right (y) (unused in Propello)
+    int brx;	// roi - bottom right (x) (unused in Propello)
+    int bry;	// roi - bottom right (y) (unused in Propello)
+    int blx;	// roi - bottom left (x) (unused in Propello)
+    int bly;	// roi - bottom left (y) (unused in Propello)
+    int probe;	// probe identifier
+    int txf;	// transmit frequency in Hz
+    int sf;    	// sampling frequency in Hz
+    int dr;		// data rate (always fps)
+    int ld;		// line density (number of scanlines at 100% sector)
+    int extra; 	// extra information (always 0 in Propello)
+  };
 #endif //DOXYGEN_SHOULD_SKIP_THIS
 
   typedef enum
@@ -136,6 +159,7 @@ public:
     FORMAT_XML,
     FORMAT_MHD,
     FORMAT_VOL,
+    FORMAT_RF,
     HEADER_FORMAT_UNKNOWN
   } usHeaderFormatType;
 

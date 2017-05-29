@@ -26,62 +26,66 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Authors:
- * Pierre Chatelain
+ * Pedro Patlan
+ * Marc Pouliquen
  *
  *****************************************************************************/
 
 /**
- * @file usScanConverter2D.h
+ * @file usRFToPreScan2DConverter.h
  * @brief 2D scan-converter
  */
 
-#ifndef __usScanConverter2D_h_
-#define __usScanConverter2D_h_
+#ifndef __usRFToPreScan2DConverter_h_
+#define __usRFToPreScan2DConverter_h_
 
-#include <visp3/ustk_core/usScanConverter2D.h>
-#include <visp3/ustk_core/usImagePostScan2D.h>
+#include <visp3/ustk_core/usConfig.h>
+
+#if defined(USTK_HAVE_FFTW)
+
+//external includes
+#include <fftw3.h>
+
+// std includes
+#include <vector>
+#include <cmath>
+#include <complex>
+
+// visp/ustk includes
+#include <visp3/ustk_core/usImageRF2D.h>
 #include <visp3/ustk_core/usImagePreScan2D.h>
+#include <visp3/ustk_core/usLogCompressor.h>
 
 /**
- * @class usScanConverter2D
- * @brief 2D scan-converter
+ * @class usRFToPreScan2DConverter
+ * @brief 2D conversion from RF signal to pre-scan image
  * @ingroup module_ustk_core
  *
- * This class allows to convert 2D pre-scan ultrasound images to post-scan.
- * The converter should be initialized through init() and then applied through run().
+ * This class allows to convert 2D RF ultrasound images to pre-scan.
+ *
  */
-class VISP_EXPORT usScanConverter2D
+class VISP_EXPORT usRFToPreScan2DConverter
 {
  public:
 
-  usScanConverter2D();
+  usRFToPreScan2DConverter(int decimationFactor=10);
 
-  ~usScanConverter2D();
+  ~usRFToPreScan2DConverter();
 
-  void init(const usImagePostScan2D<unsigned char> &inputSettings, const int BModeSampleNumber,
-            const int scanLineNumber);
+  void convert(const usImageRF2D<short int> &rfImage, usImagePreScan2D<unsigned char> &preScanImage);
 
-  void init(const usTransducerSettings &inputSettings, const int BModeSampleNumber,
-            const int scanLineNumber, const double xResolution, const double yResolution);
+  int getDecimationFactor();
 
-  void run(const usImagePreScan2D<unsigned char> &preScanImage, usImagePostScan2D<unsigned char> &postScanImage);
+  void setDecimationFactor(int decimationFactor);
 
- private:
-  double interpolateLinear(const vpImage<unsigned char>& I, double x, double y);
+private:
+  std::vector<std::complex<double> > HilbertTransform(const short *s, int size);
+  void sqrtAbsv(std::vector<std::complex<double> > cv, double* out);
 
-  vpMatrix m_rMap;
-  vpMatrix m_tMap;
+  usLogCompressor m_logCompressor;
 
-  double m_xResolution;
-  double m_yResolution;
-  int m_scanLineNumber;
-  int m_BModeSampleNumber;
-
-  usTransducerSettings m_settings;
-
-  unsigned int m_height;
-  unsigned int m_width;
-
+  int m_decimationFactor;
 };
 
-#endif // US_SCAN_CONVERTER_2D_H
+#endif // USTK_HAVE_FFTW
+#endif // __usRFToPreScan2DConverter_h_

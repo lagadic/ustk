@@ -1,4 +1,4 @@
-//! \example tutorial-ultrasonix-qt-grabbing-RF.cpp
+//! \example tutorial-ultrasonix-qt-grabbing-RF-scan-conversion.cpp
 
 #include <iostream>
 #include <visp3/ustk_core/usConfig.h>
@@ -9,6 +9,7 @@
 #include <QApplication>
 
 #include <visp3/ustk_core/usRFToPreScan2DConverter.h>
+#include <visp3/ustk_core/usPreScanToPostScan2DConverter.h>
 #include <visp3/ustk_grabber/usNetworkGrabberRF.h>
 
 #include <visp3/gui/vpDisplayX.h>
@@ -32,9 +33,33 @@ int main(int argc, char** argv)
   //prepare image;
   usDataGrabbed<usImageRF2D<short int> >* grabbedFrame;
 
-  //prepare converter
+  //prepare converters
   usImagePreScan2D<unsigned char> preScanImage;
-  usRFToPreScan2DConverter converter;
+  usImagePostScan2D<unsigned char> postscanImage;
+  postscanImage.setHeightResolution(0.0005);
+  postscanImage.setWidthResolution(0.0005);
+
+  //ultrasonix 4DC7 probe settings
+  postscanImage.setTransducerConvexity(true);
+  postscanImage.setTransducerRadius(0.04);
+  postscanImage.setScanLineNumber(128);
+  postscanImage.setScanLinePitch(0.010625);
+  postscanImage.setDepth(0.15);
+  preScanImage.setTransducerSettings(postscanImage);
+
+  usRFToPreScan2DConverter converterRF;
+  usPreScanToPostScan2DConverter scanConverter;
+
+
+  scanConverter.init(postscanImage,384,128);
+
+
+
+
+
+
+
+
 
   //Prepare display
   vpDisplayX * displayX = NULL;
@@ -60,19 +85,28 @@ int main(int argc, char** argv)
 
       std::cout <<"MAIN THREAD received frame No : " << grabbedFrame->getFrameCount() << std::endl;
 
+      double startTime = vpTime::measureTimeMs();
       //convert RF to pre-scan to display something ...
-      converter.convert(*grabbedFrame,preScanImage);
+      converterRF.convert(*grabbedFrame,preScanImage);
+
+      double endRFConvertTime = vpTime::measureTimeMs();
+      std::cout << "RF conversion time (sec) = " << (endRFConvertTime - startTime) / 1000.0 << std::endl;
+
+      scanConverter.run(preScanImage,postscanImage);
+
+      double endScanConvertTime = vpTime::measureTimeMs();
+      std::cout << "scan-conversion time (sec) = " << (endScanConvertTime - endRFConvertTime) / 1000.0 << std::endl;
 
       //init display
-      if(!displayInit && preScanImage.getHeight() !=0 && preScanImage.getHeight() !=0) {
-        displayX = new vpDisplayX(preScanImage);
+      if(!displayInit && postscanImage.getHeight() !=0 && postscanImage.getHeight() !=0) {
+        displayX = new vpDisplayX(postscanImage);
         displayInit = true;
       }
 
       // processing display
       if(displayInit) {
-        vpDisplay::display(preScanImage);
-        vpDisplay::flush(preScanImage);
+        vpDisplay::display(postscanImage);
+        vpDisplay::flush(postscanImage);
       }
     }
     else {

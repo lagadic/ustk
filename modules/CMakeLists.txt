@@ -2,7 +2,11 @@
 # TODO: Check if VTK_VERSION_BUILD or VTK_VERSION_PATH on vtk-6.x and vtk-5.x
 # TODO: find how to suppress include(${VTK_USE_FILE}). For the moment, if not used on OSX, produces a segfault
 
-VP_OPTION(USE_VTK "VTK" "" "Include vtk support" "" ON)
+# To include FindFFTW.cmake
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/ustk_core/cmake")
+
+VP_OPTION(USE_FFTW "FFTW" "" "Include fftw support" "" ON)
+VP_OPTION(USE_VTK  "VTK"  "" "Include vtk support"  "" ON)
 
 if(USE_VTK)
   if(NOT VTK_VERSION)
@@ -38,4 +42,5 @@ if(USE_VTK)
   endif()
 endif()
 
-VP_SET(USTK_HAVE_QT5         TRUE IF (BUILD_MODULE_visp_ustk_core AND USE_QT5))
+VP_SET(USTK_HAVE_QT5  TRUE IF (BUILD_MODULE_visp_ustk_core AND USE_QT5))
+VP_SET(USTK_HAVE_FFTW TRUE IF (BUILD_MODULE_visp_ustk_core AND USE_FFTW))

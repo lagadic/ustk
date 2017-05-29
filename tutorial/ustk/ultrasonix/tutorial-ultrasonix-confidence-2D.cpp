@@ -12,7 +12,7 @@
 #include <visp3/ustk_core/usImageRF2D.h>
 #include <visp3/ustk_core/usImagePreScan2D.h>
 #include <visp3/ustk_core/usImagePostScan2D.h>
-#include <visp3/ustk_core/usScanConverter2D.h>
+#include <visp3/ustk_core/usPreScanToPostScan2DConverter.h>
 
 #include <visp3/ustk_confidence_map/usScanlineConfidence2D.h>
 
@@ -98,7 +98,7 @@ vpThread::Return displayFunction(vpThread::Args args)
   usImagePreScan2D<unsigned char> preScanConfidence_;
   usImagePostScan2D<unsigned char> postScanConfidence_;
   usScanlineConfidence2D scanlineConfidence;
-  usScanConverter2D scanConverter;
+  usPreScanToPostScan2DConverter scanConverter;
   bool firstIteration = true;
 
   t_CaptureState capture_state_;

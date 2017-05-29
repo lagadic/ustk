@@ -29,14 +29,14 @@
  *
  *****************************************************************************/
 
-#include <visp3/ustk_core/usBackScanConverter2D.h>
+#include <visp3/ustk_core/usPostScanToPreScan2DConverter.h>
 
 //#include <visp/vpMath.h>
 
 /**
  * Default constructor.
  */
-usBackScanConverter2D::usBackScanConverter2D() {}
+usPostScanToPreScan2DConverter::usPostScanToPreScan2DConverter() {}
 
 /**
  * Initialisation constructor.
@@ -44,7 +44,7 @@ usBackScanConverter2D::usBackScanConverter2D() {}
 * @param BModeSampleNumber Number of samples along a scan line : height of the pre-scan image built by run().
 * @param scanLineNumber Number of scan lines : width of the pre-scan image built by run().
  */
-usBackScanConverter2D::usBackScanConverter2D(const usImagePostScan2D<unsigned char> &inputSettings,
+usPostScanToPreScan2DConverter::usPostScanToPreScan2DConverter(const usImagePostScan2D<unsigned char> &inputSettings,
  const int BModeSampleNumber, const int scanLineNumber)
  {
  init(inputSettings,BModeSampleNumber,scanLineNumber);
@@ -53,7 +53,7 @@ usBackScanConverter2D::usBackScanConverter2D(const usImagePostScan2D<unsigned ch
 /**
  * Default constructor.
  */
-usBackScanConverter2D::usBackScanConverter2D(const usTransducerSettings &transducerSettings,
+usPostScanToPreScan2DConverter::usPostScanToPreScan2DConverter(const usTransducerSettings &transducerSettings,
  const int BModeSampleNumber, const int scanLineNumber,const double xResolution, const double yResolution)
 {
 init(transducerSettings, BModeSampleNumber, scanLineNumber, xResolution, yResolution);
@@ -62,7 +62,7 @@ init(transducerSettings, BModeSampleNumber, scanLineNumber, xResolution, yResolu
 /**
  * Destructor.
  */
-usBackScanConverter2D::~usBackScanConverter2D() {}
+usPostScanToPreScan2DConverter::~usPostScanToPreScan2DConverter() {}
 
 /**
 * Initialize the back-scan converter.
@@ -70,7 +70,7 @@ usBackScanConverter2D::~usBackScanConverter2D() {}
 * @param BModeSampleNumber Number of samples along a scan line : height of the pre-scan image built by run().
 * @param scanLineNumber Number of scan lines : width of the pre-scan image built by run().
 */
-void usBackScanConverter2D::init(const usImagePostScan2D<unsigned char> &inputSettings, const int BModeSampleNumber,
+void usPostScanToPreScan2DConverter::init(const usImagePostScan2D<unsigned char> &inputSettings, const int BModeSampleNumber,
                                  const int scanLineNumber)
 {
   //check resolution to avoir errors
@@ -125,7 +125,7 @@ void usBackScanConverter2D::init(const usImagePostScan2D<unsigned char> &inputSe
 * @param BModeSampleNumber Number of pre-scan samples you want in output of back conversion.
 * @param scanLineNumber Number of scan lines you want in output of back conversion.
 */
-void usBackScanConverter2D::init(const usTransducerSettings &transducerSettings, const int BModeSampleNumber,
+void usPostScanToPreScan2DConverter::init(const usTransducerSettings &transducerSettings, const int BModeSampleNumber,
  const int scanLineNumber,const double xResolution, const double yResolution)
 {
   //convex transducer scan conversion
@@ -171,7 +171,7 @@ void usBackScanConverter2D::init(const usTransducerSettings &transducerSettings,
 * @param [in] imageToConvert Post-scan image to convert back.
 * @param [out] imageConverted Pre-scan image obtained after back conversion.
 */
-void usBackScanConverter2D::run(const usImagePostScan2D<unsigned char> &imageToConvert, usImagePreScan2D<unsigned char> &imageConverted)
+void usPostScanToPreScan2DConverter::run(const usImagePostScan2D<unsigned char> &imageToConvert, usImagePreScan2D<unsigned char> &imageConverted)
 {
   imageConverted.setImagePreScanSettings(usImagePreScanSettings(m_initSettings, m_yResolution));
 
@@ -192,7 +192,7 @@ void usBackScanConverter2D::run(const usImagePostScan2D<unsigned char> &imageToC
     }
 }
 
-double usBackScanConverter2D::interpolateLinear(const vpImage<unsigned char>& I, double x, double y)
+double usPostScanToPreScan2DConverter::interpolateLinear(const vpImage<unsigned char>& I, double x, double y)
 {
   int x1 = (int)floor(x);
   int x2 = (int)ceil(x);

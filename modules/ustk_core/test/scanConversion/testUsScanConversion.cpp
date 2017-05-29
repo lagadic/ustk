@@ -37,8 +37,8 @@
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpIoTools.h>
 
-#include <visp3/ustk_core/usScanConverter2D.h>
-#include <visp3/ustk_core/usBackScanConverter2D.h>
+#include <visp3/ustk_core/usPreScanToPostScan2DConverter.h>
+#include <visp3/ustk_core/usPostScanToPreScan2DConverter.h>
 
 #include <string>
 #include <vector>
@@ -76,7 +76,7 @@ int main(int argc, const char** argv)
     usImageIo::read(prescanReference, argv[1]);
     prescanReference.setDepth(0.14784);
 
-    usScanConverter2D scanConverter;
+    usPreScanToPostScan2DConverter scanConverter;
     scanConverter.init(prescanReference.getBModeSampleNumber(),prescanReference.getScanLineNumber(),
                        ustk::defaultSpeedOfSound, 0.0005,prescanReference.getTransducerRadius(),2500000.0,0.00042168,128);
     scanConverter.run(postscanReference,prescanReference);*/
@@ -99,7 +99,7 @@ LN 128
     usImageIo::write(postscanReference,vpIoTools::getParent(argv[1]).append("/aaa.xml"));
 
 
-    usBackScanConverter2D backScanConverter;
+    usPostScanToPreScan2DConverter backScanConverter;
     backScanConverter.init(postscanReference,480,128);
     backScanConverter.run(postscanReference,prescanBack);
 
