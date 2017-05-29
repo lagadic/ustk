@@ -605,7 +605,7 @@ LAYOUT_FILE            =
 # feature you need bibtex and perl available in the search path. Do not use
 # file names with spaces, bibtex cannot handle them.
 
-CITE_BIB_FILES         = 
+CITE_BIB_FILES         = "@USTK_SOURCE_DIR@/doc/biblio/references.bib"
 
 #---------------------------------------------------------------------------
 # configuration options related to warning and progress messages

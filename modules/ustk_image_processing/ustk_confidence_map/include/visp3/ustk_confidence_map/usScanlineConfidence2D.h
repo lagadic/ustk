@@ -43,6 +43,8 @@
 * @class usScanlineConfidence2D
 * @brief Process a pre-scan image to determine the confidence map.
 * @ingroup module_ustk_confidence_map
+*
+* See \cite Chatelain15a for more details.
 */
 class VISP_EXPORT usScanlineConfidence2D {
 
