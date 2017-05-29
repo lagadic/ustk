@@ -52,7 +52,7 @@ PROJECT_LOGO           =
 # If a relative path is entered, it will be relative to the location
 # where doxygen was started. If left blank the current directory will be used.
 
-OUTPUT_DIRECTORY       = doc
+OUTPUT_DIRECTORY       = "@USTK_BINARY_DIR@/doc-ustk"
 
 # If the CREATE_SUBDIRS tag is set to YES, then doxygen will create
 # 4096 sub-directories (in 2 levels) under the output directory of each output
@@ -656,7 +656,7 @@ WARN_FORMAT            = "$file:$line: $text"
 # and error messages should be written. If left blank the output is written
 # to stderr.
 
-WARN_LOGFILE           = warning.log
+WARN_LOGFILE           = "@USTK_BINARY_DIR@/warning.log"
 
 #---------------------------------------------------------------------------
 # configuration options related to the input files
@@ -668,7 +668,7 @@ WARN_LOGFILE           = warning.log
 # with spaces.
 
 INPUT                  = "@USTK_SOURCE_DIR@" \
-                         "@USTK_BINARY_DIR@/doc"
+                         "@USTK_BINARY_DIR@/doc-ustk"
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is
@@ -1598,8 +1598,7 @@ PREDEFINED             = DOXYGEN_SHOULD_SKIP_THIS \
                          __APPLE__ \
                          __MACH__ \
                          USTK_HAVE_VTK_QT \
-			 USTK_GRABBER_HAVE_QT5 \
-			 USTK_HAVE_QT4 \
+			 USTK_HAVE_QT5 \
 			 USTK_HAVE_FFTW	
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then
