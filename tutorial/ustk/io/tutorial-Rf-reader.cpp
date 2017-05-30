@@ -6,7 +6,7 @@
 #include <visp3/ustk_core/usImagePreScan2D.h>
 #include <visp3/ustk_core/usRFToPreScan2DConverter.h>
 #include <visp3/ustk_io/usImageIo.h>
-#include <visp3/ustk_io/usDataFrameReader.h>
+#include <visp3/ustk_io/usRfReader.h>
 
 int main(int argc, char** argv)
 {
@@ -33,10 +33,7 @@ int main(int argc, char** argv)
   }
   //read us image
   usImageRF2D<short int> rfImage;
-  usDataFrameReader<usImageRF2D<short int> > reader;
-
-  reader.setFileName(rf_filename);
-  reader.open(rfImage);
+  usImageIo::read(rfImage,rf_filename);
 
   std::cout << rfImage;
 

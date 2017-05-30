@@ -174,11 +174,14 @@ void usRFToPreScan2DConverter::convert(const usImageRF2D<short int> &rfImage, us
       max = comp[i];
   }
 
+  //max-min computation
+  double maxMinDiff = max - min;
+
   //Decimate and normalize
   int k = 0;
   for (int i = 0; i < h; i+=m_decimationFactor) {
     for (int j = 0; j < w ; ++j) {
-	  unsigned int  vcol = ((comp[i + h * j] - min) / (max - min)) * 255;
+      unsigned int  vcol = ((comp[i + h * j] - min) / maxMinDiff) * 255;
       preScanImage[k][j] = (vcol>255)?255:vcol;
     }
     k++;

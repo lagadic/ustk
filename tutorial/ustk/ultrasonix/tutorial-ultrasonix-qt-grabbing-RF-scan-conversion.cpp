@@ -54,13 +54,6 @@ int main(int argc, char** argv)
   scanConverter.init(postscanImage,384,128);
 
 
-
-
-
-
-
-
-
   //Prepare display
   vpDisplayX * displayX = NULL;
   bool displayInit = false;

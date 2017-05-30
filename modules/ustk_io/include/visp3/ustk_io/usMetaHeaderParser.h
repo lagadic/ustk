@@ -30,6 +30,7 @@
  *
  *****************************************************************************/
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 /**
 * @file usMetaHeaderParser.h
 * @brief Input/output operations between ultrasound image settings and the assiciated mhd files.
@@ -145,4 +146,5 @@ private :
   std::map<int ,std::string> imageTypeReverseMap;
   std::map<int ,std::string> elementTypeReverseMap;
 };
-#endif //US_META_HEADER_PARSER_H
+#endif // US_META_HEADER_PARSER_H
+#endif // DOXYGEN_SHOULD_SKIP_THIS

@@ -50,7 +50,6 @@
 #include <visp3/ustk_io/usMetaHeaderParser.h>
 #include <visp3/ustk_io/usImageSettingsXmlParser.h>
 
-
 /**
  * @class usImageIo
  * @brief Input/output operations between ultrasound data and files (header + image file).
@@ -67,15 +66,15 @@ public:
 
   /** @name RF io */
   //@{
-  static void read(usImageRF2D<unsigned char> &rfImage,const std::string &headerFileName);
-  static void read(usImageRF3D<unsigned char> &rfImage3D, const std::string &headerFileName);
+  static void read(usImageRF2D<short> &rfImage, const std::string &headerFileName);
+  static void read(usImageRF3D<short> &rfImage3D, const std::string &headerFileName);
 
-  static void write(const usImageRF2D<unsigned char> &rfImage, const std::string &headerFileName,
+  static void write(const usImageRF2D<short> &rfImage, const std::string &headerFileName,
                     const std::string &imageExtension2D);
-  static void write(const usImageRF2D<unsigned char> &rfImage, const std::string &headerFileName);
-  static void write(const usImageRF3D<unsigned char> &rfImage3D, const std::string &headerFileName,
+  static void write(const usImageRF2D<short> &rfImage, const std::string &headerFileName);
+  static void write(const usImageRF3D<short> &rfImage3D, const std::string &headerFileName,
                     const std::string &imageExtension2D);
-  static void write(const usImageRF3D<unsigned char> &rfImage3D, const std::string &headerFileName);
+  static void write(const usImageRF3D<short> &rfImage3D, const std::string &headerFileName);
 
   //@}
 
@@ -130,7 +129,7 @@ public:
     int degPerFr; // degree step between frames
   };
 
-  struct frameDataHeader
+  struct FrameHeader
   {
     int type;	// data type
     int frames;	// number of frames in file

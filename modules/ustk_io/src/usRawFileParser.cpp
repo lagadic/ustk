@@ -41,7 +41,7 @@
 #include <iostream>
 
 /**
-* Reading method for 3D images.
+* Reading method for unisgned char 3D images.
 * @param[out] image3D 3D-image to fill.
 * @param[in] rawFilename File name of the image to read (with .raw extension).
 */
@@ -59,7 +59,7 @@ void usRawFileParser::read(usImage3D<unsigned char> &image3D, const std::string 
 }
 
 /**
-* Writing method for 3D images.
+* Writing method for unisgned char 3D images.
 * @param image3D 3D-image to write.
 * @param rawFilename File name of the image to write (with .raw extension).
 */
@@ -75,7 +75,41 @@ void usRawFileParser::write(const usImage3D<unsigned char> &image3D, const std::
 }
 
 /**
-* Reading method for 2D images.
+* Reading method for short 3D images.
+* @param[out] image3D 3D-image to fill.
+* @param[in] rawFilename File name of the image to read (with .raw extension).
+*/
+void usRawFileParser::read(usImage3D<short> &image3D, const std::string &rawFilename)
+{
+  std::ifstream fileStream(rawFilename.c_str(), std::ios::in | std::ios::binary);
+  unsigned int i = 0;
+  while (i<image3D.getSize() * sizeof(short)){
+    char c;
+    fileStream.get(c);
+    image3D[i] = c;
+    i++;
+  }
+  fileStream.close();
+}
+
+/**
+* Writing method for short 3D images.
+* @param image3D 3D-image to write.
+* @param rawFilename File name of the image to write (with .raw extension).
+*/
+void usRawFileParser::write(const usImage3D<short> &image3D, const std::string &rawFilename)
+{
+  std::fstream fileStream(rawFilename.c_str(), std::ios::out | std::ios::binary);
+  unsigned int i = 0;
+  while (i<image3D.getSize() * sizeof(short)){
+    fileStream.put(image3D[i]);
+    i++;
+  }
+  fileStream.close();
+}
+
+/**
+* Reading method for unsigned char 2D images.
 * @param[out] image2D 2D-image to fill.
 * @param[in] rawFilename File name of the image to read (with .raw extension).
 */
@@ -87,7 +121,7 @@ void usRawFileParser::read(vpImage<unsigned char> &image2D, const std::string &r
 }
 
 /**
-* Writing method for 2D images.
+* Writing method for unsigned char 2D images.
 * @param image2D 2D-image to write.
 * @param rawFilename File name of the image to write (with .raw extension).
 */
@@ -95,6 +129,30 @@ void usRawFileParser::write(const vpImage<unsigned char> &image2D, const std::st
 {
   std::fstream fileStream(rawFilename.c_str(), std::ios::out | std::ios::binary);
   fileStream.write((char *)image2D.bitmap, image2D.getSize());
+  fileStream.close();
+}
+
+/**
+* Reading method for short 2D images.
+* @param[out] image2D 2D-image to fill.
+* @param[in] rawFilename File name of the image to read (with .raw extension).
+*/
+void usRawFileParser::read(vpImage<short> &image2D, const std::string &rawFilename)
+{
+  std::fstream fileStream(rawFilename.c_str(), std::ios::in | std::ios::binary);
+  fileStream.read((char *)image2D.bitmap, image2D.getSize() * sizeof(short));
+  fileStream.close();
+}
+
+/**
+* Writing method for short 2D images.
+* @param image2D 2D-image to write.
+* @param rawFilename File name of the image to write (with .raw extension).
+*/
+void usRawFileParser::write(const vpImage<short> &image2D, const std::string &rawFilename)
+{
+  std::fstream fileStream(rawFilename.c_str(), std::ios::out | std::ios::binary);
+  fileStream.write((char *)image2D.bitmap, image2D.getSize() * sizeof(short));
   fileStream.close();
 }
 #endif //DOXYGEN_SHOULD_SKIP_THIS
