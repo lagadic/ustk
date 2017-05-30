@@ -56,9 +56,9 @@ void usPreScanToPostScan3DConverter::init(const usImagePreScan3D<unsigned char> 
   usPreScanToPostScan3DConverter::convertPreScanCoordToPostScanCoord((double)X, (double)Y, Z/2.0, &xmax, NULL, NULL);
   usPreScanToPostScan3DConverter::convertPreScanCoordToPostScanCoord(X/2.0, (double)Y, Z, NULL, NULL, &zmax);
 
-  m_nbX = ceil(2*xmax/_resolution);
-  m_nbY = ceil((ymax-ymin)/_resolution);
-  m_nbZ = ceil(2*zmax/_resolution);
+  m_nbX = (unsigned int) ceil(2*xmax/_resolution);
+  m_nbY = (unsigned int) ceil((ymax-ymin)/_resolution);
+  m_nbZ = (unsigned int) ceil(2*zmax/_resolution);
 
   unsigned int nbXY = m_nbX*m_nbY;
   unsigned int XY = X*Y;
@@ -115,14 +115,14 @@ void usPreScanToPostScan3DConverter::init(const usImagePreScan3D<unsigned char> 
           double XYKK = XY * kk;
           double XYKK1 = XY * (kk + 1);
 
-          m._inputIndex[0] = ii   + Xjj  + XYKK;
-          m._inputIndex[1] = ii+1 + Xjj  + XYKK;
-          m._inputIndex[2] = ii   + Xjj1 + XYKK;
-          m._inputIndex[3] = ii+1 + Xjj1 + XYKK;
-          m._inputIndex[4] = ii   + Xjj  + XYKK1;
-          m._inputIndex[5] = ii+1 + Xjj  + XYKK1;
-          m._inputIndex[6] = ii   + Xjj1 + XYKK1;
-          m._inputIndex[7] = ii+1 + Xjj1 + XYKK1;
+          m._inputIndex[0] = (unsigned int) (ii   + Xjj  + XYKK);
+          m._inputIndex[1] = (unsigned int)(ii+1 + Xjj  + XYKK);
+          m._inputIndex[2] = (unsigned int)(ii   + Xjj1 + XYKK);
+          m._inputIndex[3] = (unsigned int)(ii+1 + Xjj1 + XYKK);
+          m._inputIndex[4] = (unsigned int)(ii   + Xjj  + XYKK1);
+          m._inputIndex[5] = (unsigned int)(ii+1 + Xjj  + XYKK1);
+          m._inputIndex[6] = (unsigned int)(ii   + Xjj1 + XYKK1);
+          m._inputIndex[7] = (unsigned int)(ii+1 + Xjj1 + XYKK1);
 /*#ifdef VISP_HAVE_OPENMP
 #pragma omp critical
 #endif*/
@@ -167,14 +167,14 @@ void usPreScanToPostScan3DConverter::init(const usImagePreScan3D<unsigned char> 
           double XYKK = XY * kk;
           double XYKK1 = XY * (kk + 1);
 
-          m._inputIndex[0] = ii   + Xjj  + XYKK;
-          m._inputIndex[1] = ii+1 + Xjj  + XYKK;
-          m._inputIndex[2] = ii   + Xjj1 + XYKK;
-          m._inputIndex[3] = ii+1 + Xjj1 + XYKK;
-          m._inputIndex[4] = ii   + Xjj  + XYKK1;
-          m._inputIndex[5] = ii+1 + Xjj  + XYKK1;
-          m._inputIndex[6] = ii   + Xjj1 + XYKK1;
-          m._inputIndex[7] = ii+1 + Xjj1 + XYKK1;
+          m._inputIndex[0] = (unsigned int)(ii   + Xjj  + XYKK);
+          m._inputIndex[1] = (unsigned int)(ii+1 + Xjj  + XYKK);
+          m._inputIndex[2] = (unsigned int)(ii   + Xjj1 + XYKK);
+          m._inputIndex[3] = (unsigned int)(ii+1 + Xjj1 + XYKK);
+          m._inputIndex[4] = (unsigned int)(ii   + Xjj  + XYKK1);
+          m._inputIndex[5] = (unsigned int)(ii+1 + Xjj  + XYKK1);
+          m._inputIndex[6] = (unsigned int)(ii   + Xjj1 + XYKK1);
+          m._inputIndex[7] = (unsigned int)(ii+1 + Xjj1 + XYKK1);
 /*#ifdef VISP_HAVE_OPENMP
 #pragma omp critical
 #endif*/
@@ -234,11 +234,11 @@ void usPreScanToPostScan3DConverter::convert( usImagePostScan3D<unsigned char> &
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
-    for(int i=_lookupTable1.size()-1 ; i>=0 ; i--)
+    for(int i=(int)_lookupTable1.size()-1 ; i>=0 ; i--)
     {
       double v = 0;
       for(int j=0 ; j<8 ; j++) v += _lookupTable1[i]._W[j] * dataPre[_lookupTable1[i]._inputIndex[j]];
-      dataPost[_lookupTable1[i]._outputIndex] = v;
+      dataPost[_lookupTable1[i]._outputIndex] = (unsigned char) v;
 
     }
   }
@@ -247,11 +247,11 @@ void usPreScanToPostScan3DConverter::convert( usImagePostScan3D<unsigned char> &
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
-    for(int i=_lookupTable2.size()-1 ; i>=0 ; i--)
+    for(int i= (int)_lookupTable2.size()-1 ; i>=0 ; i--)
     {
       double v = 0;
       for(int j=0 ; j<8 ; j++) v += _lookupTable2[i]._W[j] * dataPre[_lookupTable2[i]._inputIndex[j]];
-      dataPost[_lookupTable2[i]._outputIndex] = v;
+      dataPost[_lookupTable2[i]._outputIndex] = (unsigned char) v;
     }
   }
 
