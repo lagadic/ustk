@@ -45,6 +45,7 @@
 #include <visp3/ustk_core/usImagePreScanSettings.h>
 #include <visp3/ustk_io/usRawFileParser.h>
 #include <visp3/ustk_io/usSequenceReader.h>
+#include <visp3/ustk_io/usRfReader.h>
 
 usImageIo::usHeaderFormatType
 usImageIo::getHeaderFormat(const std::string &headerFileName)
@@ -84,7 +85,7 @@ std::string usImageIo::getExtension(const std::string &filename)
 * @param imageRf2D The RF image to write.
 * @param headerFileName The header file name to write.
 */
-void usImageIo::write(const usImageRF2D<unsigned char> &imageRf2D, const std::string &headerFileName)
+void usImageIo::write(const usImageRF2D<short> &imageRf2D, const std::string &headerFileName)
 {
   //checking header type
   usImageIo::usHeaderFormatType headerFormat = getHeaderFormat(headerFileName);
@@ -102,40 +103,12 @@ void usImageIo::write(const usImageRF2D<unsigned char> &imageRf2D, const std::st
 * @param headerFileName The header file name to write.
 * @param imageExtension2D The 2D image extension.
 */
-void usImageIo::write(const usImageRF2D<unsigned char> &imageRf2D, const std::string &headerFileName,
+void usImageIo::write(const usImageRF2D<short> &imageRf2D, const std::string &headerFileName,
                       const std::string &imageExtension2D)
 {
   //checking header type
   usImageIo::usHeaderFormatType headerFormat = getHeaderFormat(headerFileName);
-  if (headerFormat == FORMAT_XML) {
-    std::string imageFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(imageExtension2D);
-#ifdef VISP_HAVE_XML2
-    try {
-      //writing image
-      vpImageIo::write(imageRf2D, imageFileName);
-      //writing xml
-      usImageSettingsXmlParser xmlSettings;
-      xmlSettings.setImageType(us::RF_2D);
-      xmlSettings.setImageSettings(imageRf2D.getTransducerRadius(),
-                                   imageRf2D.getScanLinePitch(),
-                                   imageRf2D.isTransducerConvex(),
-                                   imageRf2D.getAxialResolution(),
-                                   us::RF_2D);
-      //just writing the image file name without parents directories (header and image are in the same directory).
-      imageFileName = vpIoTools::getName(imageFileName);
-      xmlSettings.setImageFileName(imageFileName);
-      //write xml
-      xmlSettings.save(headerFileName);
-    }
-    catch (std::exception &e) {
-      std::cout << "Error writing rf image : " << std::endl;
-      std::cout << e.what() << std::endl;
-    }
-#else
-    throw(vpException(vpException::fatalError, "Requires xml2"));
-#endif
-  }
-  else if (headerFormat == FORMAT_MHD) {
+  if (headerFormat == FORMAT_MHD) {
     if (imageExtension2D != ".raw") {
       throw(vpException(vpException::fatalError, "mhd files goes with .raw image extension"));
     }
@@ -168,7 +141,7 @@ void usImageIo::write(const usImageRF2D<unsigned char> &imageRf2D, const std::st
     rawParser.write(imageRf2D, imageFileName);
   }
   else {
-    throw(vpException(vpException::fatalError, "Unknown extension."));
+    throw(vpException(vpException::fatalError, "Only mdh/raw files types are allowed to write 3D RF images."));
   }
 }
 
@@ -176,27 +149,15 @@ void usImageIo::write(const usImageRF2D<unsigned char> &imageRf2D, const std::st
 * Read 2D rf ultrasound image.
 * @param [out] imageRf2D The RF image to read.
 * @param [in] headerFileName The header file name to read.
+* @warning If you read .rf files, transducer settings are not available. You will have to set them by yourself.
 */
-void usImageIo::read(usImageRF2D<unsigned char> &imageRf2D, const std::string &headerFileName)
+void usImageIo::read(usImageRF2D<short int> &imageRf2D, const std::string &headerFileName)
 {
   usImageIo::usHeaderFormatType headerFormat = getHeaderFormat(headerFileName);
-  if (headerFormat == FORMAT_XML) {
-#ifdef VISP_HAVE_XML2
-    //parsing xml file
-    usImageSettingsXmlParser xmlSettings;
-    xmlSettings.parse(headerFileName);
-    std::string fullImageFileName = vpIoTools::getParent(headerFileName) + vpIoTools::path("/") + xmlSettings.getImageFileName();
-    vpImageIo::read(imageRf2D, fullImageFileName);
-
-    imageRf2D.setTransducerRadius(xmlSettings.getTransducerSettings().getTransducerRadius());
-    imageRf2D.setScanLinePitch(xmlSettings.getTransducerSettings().getScanLinePitch());
-    imageRf2D.setTransducerConvexity(xmlSettings.getTransducerSettings().isTransducerConvex());
-    imageRf2D.setAxialResolution(xmlSettings.getAxialResolution());
-    imageRf2D.setScanLineNumber(imageRf2D.getWidth());
-    imageRf2D.setDepth(imageRf2D.getAxialResolution()*imageRf2D.getHeight());
-#else
-    throw(vpException(vpException::fatalEtrror, "Requires xml2 library"));
-#endif //VISP_HAVE_XML2
+  if (headerFormat == FORMAT_RF) {
+    usRfReader reader;
+    reader.setFileName(headerFileName);
+    reader.open(imageRf2D);
   }
   else if (headerFormat == FORMAT_MHD) {
     //header parsing
@@ -236,7 +197,7 @@ void usImageIo::read(usImageRF2D<unsigned char> &imageRf2D, const std::string &h
 * @param imageRf3D The RF image to write.
 * @param headerFileName The header file name to write.
 */
-void usImageIo::write(const usImageRF3D<unsigned char> &imageRf3D, const std::string &headerFileName)
+void usImageIo::write(const usImageRF3D<short> &imageRf3D, const std::string &headerFileName)
 {
   //checking header type
   usImageIo::usHeaderFormatType headerFormat = getHeaderFormat(headerFileName);
@@ -254,7 +215,7 @@ void usImageIo::write(const usImageRF3D<unsigned char> &imageRf3D, const std::st
 * @param headerFileName The header file name to write.
 * @param imageExtension2D The 2D image extension.
 */
-void usImageIo::write(const usImageRF3D<unsigned char> &imageRf3D, const std::string &headerFileName, const std::string &imageExtension2D)
+void usImageIo::write(const usImageRF3D<short> &imageRf3D, const std::string &headerFileName, const std::string &imageExtension2D)
 {
   //checking header type
   usImageIo::usHeaderFormatType headerFormat = getHeaderFormat(headerFileName);
@@ -312,17 +273,10 @@ void usImageIo::write(const usImageRF3D<unsigned char> &imageRf3D, const std::st
 * @param [out] imageRf3 The RF image to read.
 * @param [in] headerFileName The header file name to read.
 */
-void usImageIo::read(usImageRF3D<unsigned char> &imageRf3, const std::string &headerFileName)
+void usImageIo::read(usImageRF3D<short> &imageRf3, const std::string &headerFileName)
 {
   usImageIo::usHeaderFormatType headerFormat = getHeaderFormat(headerFileName);
-  if (headerFormat == FORMAT_XML) {
-#ifdef VISP_HAVE_XML2
-    //case of a set of sucessive 2D frames
-#else
-    throw(vpException(vpException::fatalEtrror, "Requires xml2 library"));
-#endif //VISP_HAVE_XML2
-  }
-  else if (headerFormat == FORMAT_MHD) {
+  if (headerFormat == FORMAT_MHD) {
     //header parsing
     usMetaHeaderParser mhdParser;
     mhdParser.read(headerFileName);
@@ -359,7 +313,7 @@ void usImageIo::read(usImageRF3D<unsigned char> &imageRf3, const std::string &he
     rawParser.read(imageRf3, fullImageFileName);
   }
   else
-    throw(vpException(vpException::fatalError, "Unknown header format."));
+    throw(vpException(vpException::fatalError, "Only mdh type is allowed for RF 3D."));
 }
 
 /**

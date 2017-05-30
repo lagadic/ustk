@@ -30,6 +30,7 @@
  *
  *****************************************************************************/
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 /**
 * @file usRawFileParser.h
 * @brief Input/output operations between ultrasound images and the assiciated raw files.
@@ -64,12 +65,17 @@ public:
   //@{
   void read(vpImage<unsigned char> &image2D, const std::string &mhdFileName);
   void write(const vpImage<unsigned char> &image2D, const std::string &rawFileName);
+  void read(vpImage<short> &image2D, const std::string &mhdFileName);
+  void write(const vpImage<short> &image2D, const std::string &rawFileName);
   //@}
 
   /** @name 3D io */
   //@{
   void read(usImage3D<unsigned char> &image3D, const std::string &mhdFileName);
   void write(const usImage3D<unsigned char> &image3D, const std::string &rawFileName);
+  void read(usImage3D<short> &image3D, const std::string &mhdFileName);
+  void write(const usImage3D<short> &image3D, const std::string &rawFileName);
   //@}
 };
 #endif //US_RAW_FILE_PARSER_H
+#endif //DOXYGEN_SHOULD_SKIP_THIS

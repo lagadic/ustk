@@ -29,7 +29,7 @@
  * Marc Pouliquen
  *
  *****************************************************************************/
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 /**
 * @file usMetaHeaderParser.cpp
 * @brief Input/output operations between ultrasound settings and mhd files.
@@ -556,3 +556,4 @@ void usMetaHeaderParser::setMHDHeader(const MHDHeader header)
 {
   this->header = header;
 }
+#endif //DOXYGEN_SHOULD_SKIP_THIS

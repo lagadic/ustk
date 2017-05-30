@@ -30,15 +30,16 @@
  *
  *****************************************************************************/
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 /**
-* @file usDataFrameReader.h
+* @file usRfReader.h
 * @brief Reading rf data.
 *
 * This class is used to read ultrasound signal as rf data.
 */
 
-#ifndef __usDataFrameReader_h_
-#define __usDataFrameReader_h_
+#ifndef __usRfReader_h_
+#define __usRfReader_h_
 
 #include <cstring>
 #include <iostream>
@@ -51,7 +52,7 @@
 #include <visp3/ustk_io/usImageIo.h>
 
 /**
-* @class usDataFrameReader
+* @class usRfReader
 * @brief Reading of sequences of ultrasound images
 * @ingroup module_ustk_io
 *
@@ -60,29 +61,28 @@
 * @warning This class reads .rf files which don't contain transducer/motor informations. If yout want
 * to use the data grabbed by this class make sure to complete them by yourself.
 */
-template <class ImageType>
-class usDataFrameReader
+class usRfReader
 {
+public:
+
+  usRfReader();
+
+  virtual ~usRfReader();
+
+  void open(usImageRF2D<short int> &image);
+
+  void setFileName(const std::string &sequenceFileName);
+
 private:
   /** data file name (ex : signal.rf).*/
   std::string m_fileName;
   bool m_fileNameIsSet;
 
   /** Header info */
-  usImageIo::frameDataHeader m_header;
+  usImageIo::FrameHeader m_header;
 
   /** file stream */
   std::ifstream m_dataFile;
-
-public:
-
-  usDataFrameReader();
-
-  virtual ~usDataFrameReader();
-
-  void open(ImageType &image);
-
-  void setFileName(const std::string &sequenceFileName);
 };
 
 /****************************************************************************
@@ -92,8 +92,7 @@ public:
 /**
 * Default constructor.
 */
-template<class ImageType>
-usDataFrameReader<ImageType>::usDataFrameReader() : m_fileName(""), m_fileNameIsSet(false), m_header()
+usRfReader::usRfReader() : m_fileName(""), m_fileNameIsSet(false), m_header()
 {
 
 }
@@ -101,8 +100,7 @@ usDataFrameReader<ImageType>::usDataFrameReader() : m_fileName(""), m_fileNameIs
 /**
 * Destructor.
 */
-template<class ImageType>
-usDataFrameReader<ImageType>::~usDataFrameReader()
+usRfReader::~usRfReader()
 {
 
 }
@@ -111,8 +109,7 @@ usDataFrameReader<ImageType>::~usDataFrameReader()
 * FileName setter.
 * @param fileName Name of the .vol file.
 */
-template<class ImageType>
-void usDataFrameReader<ImageType>::setFileName(const std::string &fileName)
+void usRfReader::setFileName(const std::string &fileName)
 {
   m_fileName = fileName;
   m_fileNameIsSet = true;
@@ -122,15 +119,7 @@ void usDataFrameReader<ImageType>::setFileName(const std::string &fileName)
 * Sequence opening.
 * @param image First image of the sequence to read.
 */
-template<class ImageType>
-void usDataFrameReader<ImageType>::open(ImageType &image)
-{
-  (void) image;
-  throw(vpException(vpException::notImplementedError));
-}
-
-template<>
-void usDataFrameReader<usImageRF2D<short int> >::open(usImageRF2D<short int> &image)
+void usRfReader::open(usImageRF2D<short int> &image)
 {
   if(!m_fileNameIsSet) {
     throw(vpException(vpException::badValue, "Sequence settings file name not set"));
@@ -140,7 +129,7 @@ void usDataFrameReader<usImageRF2D<short int> >::open(usImageRF2D<short int> &im
     throw(vpException(vpException::ioError, "only .rf files are supported"));
 
   //INIT
-  int szHeader = sizeof(usImageIo::frameDataHeader);
+  int szHeader = sizeof(usImageIo::FrameHeader);
   int n = 0;
   char byte;
 
@@ -174,3 +163,4 @@ void usDataFrameReader<usImageRF2D<short int> >::open(usImageRF2D<short int> &im
 }
 
 #endif // US_SEQUENCE_READER_3D_H
+#endif // DOXYGEN_SHOULD_SKIP_THIS
