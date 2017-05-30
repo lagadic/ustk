@@ -64,7 +64,7 @@ int main(int argc, char** argv)
       converter.convert(*grabbedFrame,preScanImage);
 
       //init display
-      if(!displayInit && preScanImage.getHeight() !=0 && preScanImage.getHeight() !=0) {
+      if(!displayInit && preScanImage.getHeight() !=0 && preScanImage.getWidth() !=0) {
         displayX = new vpDisplayX(preScanImage);
         displayInit = true;
       }

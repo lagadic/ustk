@@ -101,7 +101,7 @@ public:
     widget3D->update();
   }
 
-  vtkResliceCursorCallback() {}
+  vtkResliceCursorCallback() : widget3D(),RIW() {}
   us3DSceneWidget* widget3D;
   vtkResliceImageViewer* RIW[3];
 };

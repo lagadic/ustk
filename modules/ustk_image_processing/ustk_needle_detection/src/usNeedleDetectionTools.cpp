@@ -117,7 +117,7 @@ short usNeedleDetectionTools::quantile(short *data, unsigned int num, unsigned i
 short usNeedleDetectionTools::quantile(vtkDataSet *data, unsigned int num)
 {
   unsigned int n = data->GetNumberOfPoints();
-  unsigned int *hist = new unsigned int[512];
+  unsigned int hist[512] = {};
   for (unsigned int i=0; i<n; i++)
     hist[((vtkShortArray*)data->GetPointData()->GetScalars())->GetValue(i)]++;
   unsigned int counter = 0;
@@ -127,7 +127,6 @@ short usNeedleDetectionTools::quantile(vtkDataSet *data, unsigned int num)
     counter += hist[idx];
     idx--;
   }
-  delete[] hist;
   return idx+1;
 }
 #endif

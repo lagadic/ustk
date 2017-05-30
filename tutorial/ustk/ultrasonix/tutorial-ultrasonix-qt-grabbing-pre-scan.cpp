@@ -55,7 +55,7 @@ int main(int argc, char** argv)
       std::cout <<"MAIN THREAD received frame No : " << grabbedFrame->getFrameCount() << std::endl;
 
       //init display
-      if(!displayInit && grabbedFrame->getHeight() !=0 && grabbedFrame->getHeight() !=0) {
+      if(!displayInit && grabbedFrame->getHeight() !=0 && grabbedFrame->getWidth() !=0) {
         displayX = new vpDisplayX(*grabbedFrame);
         displayInit = true;
       }

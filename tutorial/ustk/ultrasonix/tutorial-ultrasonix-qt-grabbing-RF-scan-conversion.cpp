@@ -91,7 +91,7 @@ int main(int argc, char** argv)
       std::cout << "scan-conversion time (sec) = " << (endScanConvertTime - endRFConvertTime) / 1000.0 << std::endl;
 
       //init display
-      if(!displayInit && postscanImage.getHeight() !=0 && postscanImage.getHeight() !=0) {
+      if(!displayInit && postscanImage.getHeight() !=0 && postscanImage.getWidth() !=0) {
         displayX = new vpDisplayX(postscanImage);
         displayInit = true;
       }
