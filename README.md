@@ -45,7 +45,12 @@ This UsTK project requires the following libraries :
   - How to use FFTW on Windows 
   
     Windows installation instructions can be found [here](http://www.fftw.org/install/windows.html). 
-	You will have to download the binaries, and create the .lib files from the .def files. Then don't forget to add the folder to your PATH.
+	You will have to download the binaries, and create the .lib files from the .def files. 
+	To detect automatically fftw with CMake you have to set the environment variable : FFTW_HOME, pointing on your fftw binary directory. You can use the following command :
+	
+			$ setx FFTW_HOME C:/path/to/fftw
+	
+	Then don't forget to add the folder to your PATH.
 	Tested on Windows 10, using visual studio 2015.
 	  
 #### How to build UsTK libraries
