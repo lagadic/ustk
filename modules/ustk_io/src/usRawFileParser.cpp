@@ -83,10 +83,8 @@ void usRawFileParser::read(usImage3D<short> &image3D, const std::string &rawFile
 {
   std::ifstream fileStream(rawFilename.c_str(), std::ios::in | std::ios::binary);
   unsigned int i = 0;
-  while (i<image3D.getSize() * sizeof(short)){
-    char c;
-    fileStream.get(c);
-    image3D[i] = c;
+  while (i<image3D.getSize()){
+    fileStream.read((char*) (image3D.getData() + i),sizeof(short));
     i++;
   }
   fileStream.close();
@@ -101,8 +99,8 @@ void usRawFileParser::write(const usImage3D<short> &image3D, const std::string &
 {
   std::fstream fileStream(rawFilename.c_str(), std::ios::out | std::ios::binary);
   unsigned int i = 0;
-  while (i<image3D.getSize() * sizeof(short)){
-    fileStream.put(image3D[i]);
+  while (i<image3D.getSize()){
+    fileStream.write((char*) (image3D.getConstData() + i),sizeof(short));
     i++;
   }
   fileStream.close();

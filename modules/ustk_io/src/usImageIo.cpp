@@ -213,22 +213,14 @@ void usImageIo::write(const usImageRF3D<short> &imageRf3D, const std::string &he
 * Write 3D rf ultrasound image.
 * @param imageRf3D The RF image to write.
 * @param headerFileName The header file name to write.
-* @param imageExtension2D The 2D image extension.
+* @param imageExtension3D The 3D image extension.
 */
-void usImageIo::write(const usImageRF3D<short> &imageRf3D, const std::string &headerFileName, const std::string &imageExtension2D)
+void usImageIo::write(const usImageRF3D<short> &imageRf3D, const std::string &headerFileName, const std::string &imageExtension3D)
 {
   //checking header type
   usImageIo::usHeaderFormatType headerFormat = getHeaderFormat(headerFileName);
-  if (headerFormat == FORMAT_XML) {
-    //std::string imageFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(imageExtension2D);
-#ifdef VISP_HAVE_XML2
-    //case of a set of successive 2D frames, to do
-#else
-    throw(vpException(vpException::fatalError, "Requires xml2"));
-#endif
-  }
-  else if (headerFormat == FORMAT_MHD) {
-    if (imageExtension2D != ".raw") {
+  if (headerFormat == FORMAT_MHD) {
+    if (imageExtension3D != ".raw") {
       throw(vpException(vpException::fatalError, "mhd files goes with .raw image extension"));
     }
     std::string imageFileName = vpIoTools::splitChain(headerFileName, ".")[0].append(".raw");
@@ -264,7 +256,7 @@ void usImageIo::write(const usImageRF3D<short> &imageRf3D, const std::string &he
     rawParser.write(imageRf3D, imageFileName);
   }
   else {
-    throw(vpException(vpException::fatalError, "Unknown extension."));
+    throw(vpException(vpException::fatalError, "Unknown extension, only mdh allowed for 3D RF images."));
   }
 }
 
@@ -298,6 +290,7 @@ void usImageIo::read(usImageRF3D<short> &imageRf3, const std::string &headerFile
     settings.setTransducerConvexity(mhdHeader.isTransducerConvex);
     settings.setScanLineNumber(mhdHeader.dim[0]);
     settings.setAxialResolution(mhdParser.getAxialResolution());
+    settings.setDepth(mhdParser.getAxialResolution() * mhdHeader.dim[1]);
     imageRf3.setImagePreScanSettings(settings);
 
     usMotorSettings motorSettings;
