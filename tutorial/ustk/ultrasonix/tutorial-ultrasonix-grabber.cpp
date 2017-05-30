@@ -28,7 +28,6 @@ typedef enum {
 t_CaptureState s_capture_state = capture_waiting;
 int s_imageType;
 vpMutex s_mutex_imageType;
-usImageRF2D<unsigned char> s_frame_rf;
 usImagePreScan2D<unsigned char> s_frame_prescan;
 usImagePostScan2D<unsigned char> s_frame_postscan;
 vpMutex s_mutex_capture;
@@ -39,17 +38,11 @@ int s_frameIdx;
 vpThread::Return captureFunction(vpThread::Args args)
 {
   usGrabberUltrasonix grabber = *((usGrabberUltrasonix *) args);
-  usImageRF2D<unsigned char> m_frame_rf;
   usImagePreScan2D<unsigned char> m_frame_prescan;
   usImagePostScan2D<unsigned char> m_frame_postscan;
 
   //resizing images and saving image type in s_imageType
-  if(grabber.getImageType() == us::RF_2D) {
-    s_imageType = us::RF_2D;
-    m_frame_rf.resize(grabber.getCommunicationsInformations()->m_header.height,
-                      grabber.getCommunicationsInformations()->m_header.width);
-  }
-  else if(grabber.getImageType() == us::PRESCAN_2D) {
+  if(grabber.getImageType() == us::PRESCAN_2D) {
     s_imageType = us::PRESCAN_2D;
     m_frame_prescan.resize(grabber.getCommunicationsInformations()->m_header.height,
                            grabber.getCommunicationsInformations()->m_header.width);
@@ -67,9 +60,6 @@ vpThread::Return captureFunction(vpThread::Args args)
   bool stop_capture_ = false;
 
   //init grabbers (only one used but they have to be defined at global scope)
-  usGrabberFrame<usImageRF2D<unsigned char> > grabberFrameRF;
-  grabberFrameRF.setCommunicationInformation(grabber.getCommunicationsInformations());
-  grabberFrameRF.setTransducerSettings(grabber.getTransducerSettings());
   usGrabberFrame<usImagePreScan2D<unsigned char> > grabberFramePreScan;
   grabberFramePreScan.setCommunicationInformation(grabber.getCommunicationsInformations());
   grabberFramePreScan.setTransducerSettings(grabber.getTransducerSettings());
@@ -79,10 +69,7 @@ vpThread::Return captureFunction(vpThread::Args args)
 
   while (! stop_capture_) {
     // Capture in progress
-    if(grabber.getImageType() == us::RF_2D) {
-       grabberFrameRF.grabFrame(&m_frame_rf);
-    }
-    else if(grabber.getImageType() == us::PRESCAN_2D) {
+    if(grabber.getImageType() == us::PRESCAN_2D) {
       grabberFramePreScan.grabFrame(&m_frame_prescan);
     }
     else if(grabber.getImageType() == us::POSTSCAN_2D) {
@@ -98,10 +85,7 @@ vpThread::Return captureFunction(vpThread::Args args)
       else
         s_capture_state = capture_started;
       s_frameIdx = grabber.getCommunicationsInformations()->m_totFrmIdx;
-      if(grabber.getImageType() == us::RF_2D) {
-        s_frame_rf = m_frame_rf;
-      }
-      else if(grabber.getImageType() == us::PRESCAN_2D) {
+      if(grabber.getImageType() == us::PRESCAN_2D) {
         s_frame_prescan = m_frame_prescan;
       }
       else if(grabber.getImageType() == us::POSTSCAN_2D) {
@@ -123,7 +107,6 @@ vpThread::Return displayFunction(vpThread::Args args)
 {
   (void)args; // Avoid warning: unused parameter args
   int m_imageType;
-  usImageRF2D<unsigned char> rf_;
   usImagePreScan2D<unsigned char> preScan_;
   usImagePostScan2D<unsigned char> postScan_;
 
@@ -151,10 +134,7 @@ vpThread::Return displayFunction(vpThread::Args args)
       {
         vpMutex::vpScopedLock lock(s_mutex_capture);
         frameIdx = s_frameIdx;
-       if(m_imageType == us::RF_2D) {
-          rf_ = s_frame_rf;
-       }
-       else if(m_imageType == us::PRESCAN_2D) {
+       if(m_imageType == us::PRESCAN_2D) {
          preScan_ = s_frame_prescan;
        }
        else if(m_imageType == us::POSTSCAN_2D) {
@@ -167,11 +147,7 @@ vpThread::Return displayFunction(vpThread::Args args)
       if (! display_initialized_) {
         // Initialize the display
 #if defined(VISP_HAVE_X11)
-        if(m_imageType == us::RF_2D) {
-          d_ = new vpDisplayX(rf_);
-          display_initialized_ = true;
-        }
-        else if(m_imageType == us::PRESCAN_2D) {
+        if(m_imageType == us::PRESCAN_2D) {
           d_ = new vpDisplayX(preScan_);
           display_initialized_ = true;
         }
@@ -181,19 +157,7 @@ vpThread::Return displayFunction(vpThread::Args args)
         }
 #endif
       }
-      if(m_imageType == us::RF_2D) {
-        // Display the image
-        vpDisplay::display(rf_);
-        // Trigger end of acquisition with a mouse click
-        vpDisplay::displayText(rf_, 10, 10, "Click to exit...", vpColor::red);
-        if (vpDisplay::getClick(rf_, false)) {
-          vpMutex::vpScopedLock lock(s_mutex_capture);
-          s_capture_state = capture_stopped;
-        }
-        // Update the display
-        vpDisplay::flush(rf_);
-      }
-      else if(m_imageType == us::PRESCAN_2D) {
+      if(m_imageType == us::PRESCAN_2D) {
         vpDisplay::display(preScan_);
 
         //save the image

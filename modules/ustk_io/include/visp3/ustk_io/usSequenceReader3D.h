@@ -161,7 +161,7 @@ void usSequenceReader3D<ImageType>::open(ImageType &image)
 }
 /*
 template<>
-void usSequenceReader3D<usImageRF2D<unsigned char> >::open(usImageRF2D<unsigned char> &image)
+void usSequenceReader3D<usImageRF2D<short> >::open(usImageRF2D<short> &image)
 {
   if(!m_fileNameIsSet) {
     throw(vpException(vpException::badValue, "Sequence settings file name not set"));

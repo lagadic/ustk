@@ -192,7 +192,7 @@ int main(int argc, const char** argv)
     filename = dirname + vpIoTools::path("/") + "sequenceRF2D.xml";
 
     //Init values in reference image
-    usImageRF2D<unsigned char> rf2DReference;
+    usImagePreScan2D<unsigned char> rf2DReference;
     //init image
     vpImage<unsigned char> image;
     image.resize(320,128,123);
@@ -203,12 +203,12 @@ int main(int argc, const char** argv)
     rf2DReference.setTransducerConvexity(true);
     rf2DReference.setData(image);
 
-    std::vector<usImageRF2D<unsigned char> > ImageBufferRef;
+    std::vector<usImagePreScan2D<unsigned char> > ImageBufferRef;
     for(int i=0;i<4;i++) {
       ImageBufferRef.push_back(rf2DReference);
     }
 
-    usSequenceWriter<usImageRF2D<unsigned char> > writer;
+    usSequenceWriter<usImagePreScan2D<unsigned char> > writer;
     writer.setSequenceFileName(filename);
     writer.setImageFileName(std::string("mysubdir/sequenceRF2D%04d.png"));
     writer.setFrameRate(15);
@@ -225,14 +225,14 @@ int main(int argc, const char** argv)
     std::cout << "height resolution : " << rf2DReference.getAxialResolution() << std::endl;
 
     //read the image we just wrote    
-    usSequenceReader<usImageRF2D<unsigned char> > reader;
+    usSequenceReader<usImagePreScan2D<unsigned char> > reader;
 
-    std::vector<usImageRF2D<unsigned char> > ImageBuffer;
+    std::vector<usImagePreScan2D<unsigned char> > ImageBuffer;
 
     reader.setSequenceFileName(filename);
     i = 0;
     while(!reader.end()) {
-      usImageRF2D<unsigned char> rf2D;
+      usImagePreScan2D<unsigned char> rf2D;
       reader.acquire(rf2D);
       ImageBuffer.push_back(rf2D);
       i++;
@@ -263,9 +263,9 @@ int main(int argc, const char** argv)
     //-----------------Testing loop cycling-----------------
 
     //read the image we just wrote
-    usSequenceReader<usImageRF2D<unsigned char> > readerCycling;
+    usSequenceReader<usImagePreScan2D<unsigned char> > readerCycling;
 
-    //std::vector<usImageRF2D<unsigned char> > ImageBufferCycling;
+    //std::vector<usImagePreScan2D<unsigned char> > ImageBufferCycling;
 
     //ref timer
     time_t refTimer;
@@ -275,7 +275,7 @@ int main(int argc, const char** argv)
     readerCycling.setLoopCycling(true);
     i = 0;
     while(!readerCycling.end()) {
-      usImageRF2D<unsigned char> rf2D;
+      usImagePreScan2D<unsigned char> rf2D;
       readerCycling.acquire(rf2D);
       time_t testTimer;
       time(&testTimer);

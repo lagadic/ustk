@@ -232,41 +232,6 @@ void usSequenceReader<ImageType>::open(ImageType &image)
 }
 
 template<>
-void usSequenceReader<usImageRF2D<unsigned char> >::open(usImageRF2D<unsigned char> &image)
-{
-  if(!m_fileNameIsSet) {
-    throw(vpException(vpException::badValue, "Sequence settings file name not set"));
-  }
-  m_xmlParser.parse(m_sequenceFileName);
-
-  setFirstFrameIndex(m_xmlParser.getSequenceStartNumber());
-  setLastFrameIndex(m_xmlParser.getSequenceStopNumber());
-  m_frameRate = m_xmlParser.getSequenceFrameRate();
-  m_genericImageFileName = m_xmlParser.getImageFileName();
-
-  //saving the settings for all the rf sequence
-  m_frame.setTransducerRadius(m_xmlParser.getTransducerSettings().getTransducerRadius());
-  m_frame.setScanLinePitch(m_xmlParser.getTransducerSettings().getScanLinePitch());
-  m_frame.setScanLineNumber(m_xmlParser.getTransducerSettings().getScanLineNumber());
-  m_frame.setTransducerConvexity(m_xmlParser.getTransducerSettings().isTransducerConvex());
-  m_frame.setAxialResolution(m_xmlParser.getAxialResolution());
-
-  //Reading image
-  char buffer[FILENAME_MAX];
-  sprintf(buffer, m_genericImageFileName.c_str(),m_firstFrame);
-  std::string parentName = vpIoTools::getParent(m_sequenceFileName);
-  if(!parentName.empty()) {
-    parentName = parentName + vpIoTools::path("/");
-  }
-  std::string imageFileName =  parentName + buffer;
-  vpImageIo::read(image,imageFileName);
-  image.setImagePreScanSettings(m_frame);
-
-  m_frameCount = m_firstFrame + 1;
-  is_open = true;
-}
-
-template<>
 void usSequenceReader<usImagePreScan2D<unsigned char> >::open(usImagePreScan2D<unsigned char> &image)
 {
   if(!m_fileNameIsSet) {

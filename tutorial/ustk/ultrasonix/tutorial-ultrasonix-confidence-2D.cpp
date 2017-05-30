@@ -30,7 +30,7 @@ typedef enum {
 t_CaptureState s_capture_state = capture_waiting;
 int s_imageType;
 vpMutex s_mutex_imageType;
-usImageRF2D<unsigned char> s_frame_rf;
+usImageRF2D<short> s_frame_rf;
 usImagePreScan2D<unsigned char> s_frame_prescan;
 usImagePostScan2D<unsigned char> s_frame_postscan;
 vpMutex s_mutex_capture;
