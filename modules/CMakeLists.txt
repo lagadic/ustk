@@ -70,12 +70,11 @@ if(DOXYGEN_FOUND)
   # set vars used in mainpage.doc.in
   # - VISP_MAINPAGE_EXTENSION
   set(VISP_MAINPAGE_EXTENSION "")
-  set(mainpage_ext_file_ "${CMAKE_CURRENT_SOURCE_DIR}/../doc/mainpage_extension.doc")
+  set(mainpage_ext_file_ "${USTK_SOURCE_DIR}/doc/mainpage_extension.doc")
   if(EXISTS ${mainpage_ext_file_})
     file(READ ${mainpage_ext_file_} mainpage_ext_content_)
     set(VISP_MAINPAGE_EXTENSION "${VISP_MAINPAGE_EXTENSION}\n${mainpage_ext_content_}")
   endif()
-
   configure_file(${USTK_SOURCE_DIR}/doc/mainpage.doc.in
     ${USTK_DOC_DIR}/mainpage.doc
     @ONLY )
