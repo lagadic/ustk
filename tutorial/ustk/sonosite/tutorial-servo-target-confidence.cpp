@@ -194,14 +194,11 @@ vpThread::Return displayFunction(vpThread::Args args)
           for (unsigned int j = 0; j < width; ++j)
             I_sum += static_cast<double>(confidencePreScan_[i][j]);
 
-        double xc = 0.0;
         double yc = 0.0;
         for (unsigned int x = 0; x < height; ++x)
           for (unsigned int y = 0; y < width; ++y) {
-            xc += x * confidencePreScan_[x][y];
             yc += y * confidencePreScan_[x][y];
           }
-        xc /= I_sum;
         yc /= I_sum;
 
         double tc = yc * confidencePreScan_.getScanLinePitch() - confidencePreScan_.getFieldOfView() / 2.0;

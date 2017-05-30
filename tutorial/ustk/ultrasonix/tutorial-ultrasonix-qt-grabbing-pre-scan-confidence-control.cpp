@@ -306,7 +306,7 @@ int main(int argc, char** argv)
       std::cout <<"MAIN THREAD received frame No : " << grabbedFrame->getFrameCount() << std::endl;
 
       //init display
-      if(!displayInit && grabbedFrame->getHeight() !=0 && grabbedFrame->getHeight() !=0) {
+      if(!displayInit && grabbedFrame->getHeight() !=0 && grabbedFrame->getWidth() !=0) {
 #ifdef VISP_HAVE_X11
         display = new vpDisplayX(*grabbedFrame);
         displayConf = new vpDisplayX(confidence, (*grabbedFrame).getWidth()+60, 10);

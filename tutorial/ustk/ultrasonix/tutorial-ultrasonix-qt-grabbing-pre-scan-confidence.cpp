@@ -68,7 +68,7 @@ int main(int argc, char** argv)
       std::cout << *grabbedFrame << std::endl;
 
       //init display
-      if(!displayInit && grabbedFrame->getHeight() !=0 && grabbedFrame->getHeight() !=0) {
+      if(!displayInit && grabbedFrame->getHeight() !=0 && grabbedFrame->getWidth() !=0) {
         displayX = new vpDisplayX(*grabbedFrame);
         displayXConf = new vpDisplayX(confidence);
         displayInit = true;

@@ -66,7 +66,7 @@ std::vector<std::complex<double> > usRFToPreScan2DConverter::HilbertTransform(co
 {
   ///time of Hilbert transform
   //const clock_t begin_time = clock();
-  std::vector<std::complex<double> > a, b, sa;
+  std::vector<std::complex<double> > sa;
   fftw_complex *in, *out, *conv, *out_inv;
   fftw_plan p, pinv;
   int N = size;
@@ -85,7 +85,6 @@ std::vector<std::complex<double> > usRFToPreScan2DConverter::HilbertTransform(co
   // Obtain the FFT
   fftw_execute(p);
 
-  double z;
   for(int i= 0; i < N; i++)
   {
 
@@ -104,7 +103,7 @@ std::vector<std::complex<double> > usRFToPreScan2DConverter::HilbertTransform(co
       out[i][1]=0;
     }
 
-    z=out[i][1];
+    double z=out[i][1];
     out[i][1]=out[i][0];
     out[i][0]=z;
   }
