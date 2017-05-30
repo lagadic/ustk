@@ -11,6 +11,7 @@
 #include <visp3/ustk_grabber/usNetworkGrabberPreScan.h>
 
 #include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayGDI.h>
 
 int main(int argc, char** argv)
 {
@@ -32,7 +33,11 @@ int main(int argc, char** argv)
   usDataGrabbed<usImagePreScan2D<unsigned char> >* grabbedFrame;
 
   //Prepare display
-  vpDisplayX * displayX = NULL;
+#if defined(VISP_HAVE_X11)
+  vpDisplayX * display = NULL;
+#elif defined(VISP_HAVE_GDI)
+  vpDisplayGDI * display = NULL;
+#endif
   bool displayInit = false;
 
   bool captureRunning = true;
@@ -56,7 +61,11 @@ int main(int argc, char** argv)
 
       //init display
       if(!displayInit && grabbedFrame->getHeight() !=0 && grabbedFrame->getWidth() !=0) {
-        displayX = new vpDisplayX(*grabbedFrame);
+#if defined(VISP_HAVE_X11)
+		  display = new vpDisplayX(*grabbedFrame);
+#elif defined(VISP_HAVE_GDI)
+		  display = new vpDisplayGDI(*grabbedFrame);
+#endif
         displayInit = true;
       }
 
@@ -72,7 +81,7 @@ int main(int argc, char** argv)
   } while(captureRunning);
 
   if(displayInit) {
-    delete displayX;
+    delete display;
   }
 
   return app.exec();

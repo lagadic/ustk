@@ -12,6 +12,7 @@
 #include <visp3/ustk_grabber/usNetworkGrabberRF.h>
 
 #include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayGDI.h>
 
 int main(int argc, char** argv)
 {
@@ -37,9 +38,12 @@ int main(int argc, char** argv)
   usRFToPreScan2DConverter converter;
 
   //Prepare display
-  vpDisplayX * displayX = NULL;
+#if defined(VISP_HAVE_X11)
+  vpDisplayX * display = NULL;
+#elif defined(VISP_HAVE_GDI)
+  vpDisplayGDI * display = NULL;
+#endif
   bool displayInit = false;
-
   bool captureRunning = true;
 
   // sending acquisition parameters
@@ -65,7 +69,11 @@ int main(int argc, char** argv)
 
       //init display
       if(!displayInit && preScanImage.getHeight() !=0 && preScanImage.getWidth() !=0) {
-        displayX = new vpDisplayX(preScanImage);
+#if defined(VISP_HAVE_X11)
+		  display = new vpDisplayX(preScanImage);
+#elif defined(VISP_HAVE_GDI)
+		  display = new vpDisplayGDI(preScanImage);
+#endif
         displayInit = true;
       }
 
@@ -81,7 +89,7 @@ int main(int argc, char** argv)
   } while(captureRunning);
 
   if(displayInit) {
-    delete displayX;
+    delete display;
   }
 
   return app.exec();
