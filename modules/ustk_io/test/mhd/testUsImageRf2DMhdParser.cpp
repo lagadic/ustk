@@ -208,8 +208,8 @@ int main(int argc, const char** argv)
     filename = dirname + vpIoTools::path("/") + "rf2d.mhd";
 
     //Init values in reference parser (same values in file read in test)
-    vpImage<unsigned char> data(186, 233, 128); // Set pixel intensity to 128
-    usImageRF2D<unsigned char> rf2DReference;
+    vpImage<short> data(186, 233, 128); // Set pixel intensity to 128
+    usImageRF2D<short> rf2DReference;
     rf2DReference.setData(data);
     rf2DReference.setScanLinePitch(0.0145);
     rf2DReference.setTransducerRadius(0.554);
@@ -223,7 +223,7 @@ int main(int argc, const char** argv)
     usImageIo::write(rf2DReference, filename);
 
     //read the image we just wrote
-    usImageRF2D<unsigned char> rf2D;
+    usImageRF2D<short> rf2D;
     filename = dirname + vpIoTools::path("/") + "rf2d.mhd";
     usImageIo::read(rf2D, filename);
 

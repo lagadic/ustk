@@ -93,7 +93,7 @@ int main()
   double axialResolution = 0.002;
 
   vpImage<unsigned char> I(RFSampleNumber, scanLineNumber);
-  usImageRF2D<unsigned char> rf2d;
+  usImageRF2D<short> rf2d;
   rf2d.setTransducerRadius(transducerRadius);
   rf2d.setScanLinePitch(scanLinePitch);
   rf2d.setScanLineNumber(scanLineNumber);

@@ -209,7 +209,7 @@ int main(int argc, const char** argv)
     filename = dirname + vpIoTools::path("/") + "rf3d.mhd";
 
     //Init values in reference parser (same values in file read in test)
-    usImageRF3D<unsigned char> rf3DReference;
+    usImageRF3D<short> rf3DReference;
     //settings initialisation
     rf3DReference.resize(186, 233, 163);
     rf3DReference.setScanLinePitch(0.0145);
@@ -227,7 +227,7 @@ int main(int argc, const char** argv)
     usImageIo::write(rf3DReference,filename);
 
     //read the image we just wrote
-    usImageRF3D<unsigned char> rf3D;
+    usImageRF3D<short> rf3D;
     filename = dirname + vpIoTools::path("/") + "rf3d.mhd";
     usImageIo::read(rf3D,filename);
 

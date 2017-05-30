@@ -124,9 +124,9 @@ int main()
   motorSettings.setFrameNumber(frameNumber);
   motorSettings.setMotorType(motorType);
 
-  usImage3D<unsigned char> I(RFSampleNumber, scanLineNumber, frameNumber);
+  usImage3D<short> I(RFSampleNumber, scanLineNumber, frameNumber);
 
-  usImageRF3D<unsigned char> rf3d;
+  usImageRF3D<short> rf3d;
   rf3d.setData(I);
   rf3d.setImagePreScanSettings(imagePreScanSettings);
   rf3d.setMotorSettings(motorSettings);
