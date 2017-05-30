@@ -14,6 +14,7 @@
 #include <visp3/ustk_confidence_map/usScanlineConfidence2D.h>
 
 #include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayGDI.h>
 
 int main(int argc, char** argv)
 {
@@ -36,8 +37,14 @@ int main(int argc, char** argv)
   usImagePreScan2D<unsigned char> confidence;
 
   //Prepare display
-  vpDisplayX * displayX = NULL;
-  vpDisplayX * displayXConf = NULL;
+#if defined(VISP_HAVE_X11)
+  vpDisplayX * display = NULL;
+  vpDisplayX * displayConf = NULL;
+#elif defined(VISP_HAVE_GDI)
+  vpDisplayGDI * display = NULL;
+  vpDisplayGDI * displayConf = NULL;
+#endif
+
   bool displayInit = false;
 
   //prepare confidence
@@ -69,8 +76,13 @@ int main(int argc, char** argv)
 
       //init display
       if(!displayInit && grabbedFrame->getHeight() !=0 && grabbedFrame->getWidth() !=0) {
-        displayX = new vpDisplayX(*grabbedFrame);
-        displayXConf = new vpDisplayX(confidence);
+#if defined(VISP_HAVE_X11)
+        display = new vpDisplayX(*grabbedFrame);
+        displayConf = new vpDisplayX(confidence);
+#elif defined(VISP_HAVE_GDI)
+        display = new vpDisplayGDI(*grabbedFrame);
+        displayConf = new vpDisplayGDI(confidence);
+#endif
         displayInit = true;
       }
 
@@ -89,8 +101,8 @@ int main(int argc, char** argv)
   }while(captureRunning);
 
   if(displayInit) {
-    delete displayX;
-    delete displayXConf;
+    delete display;
+    delete displayConf;
   }
 
   return app.exec();
