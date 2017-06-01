@@ -167,6 +167,12 @@ void usNetworkGrabberPreScan::dataArrived()
     m_grabbedImage.setFramesPerVolume(m_imageHeader.framesPerVolume);
     m_grabbedImage.setTimeStamp(m_imageHeader.timeStamp);
 
+    //warning if timestamps are close (< 1 ms)
+    if (m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getTimeStamp() -
+        m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getTimeStamp() < 1) {
+          std::cout << "WARNING : new image received with an acquisition timestamp close to previous image" << std::endl;
+        }
+
     m_grabbedImage.resize(m_imageHeader.frameWidth,m_imageHeader.frameHeight);
 
     m_bytesLeftToRead = m_imageHeader.dataLength;
