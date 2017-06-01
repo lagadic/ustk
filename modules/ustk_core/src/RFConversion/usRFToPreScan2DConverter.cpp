@@ -44,10 +44,9 @@
 * Constructor.
 * @param decimationFactor Decimation factor : keep only 1 pre-scan sample every N sample (N = decimationFactor)
 */
-usRFToPreScan2DConverter::usRFToPreScan2DConverter(int widthRF, int heightRF, int decimationFactor) : m_logCompressor(),
-  m_decimationFactor(decimationFactor) {
+usRFToPreScan2DConverter::usRFToPreScan2DConverter(int decimationFactor) : m_logCompressor(),
+  m_decimationFactor(decimationFactor), m_isInit(false) {
 
-  init(widthRF, heightRF);
 }
 
 /**
@@ -60,6 +59,8 @@ usRFToPreScan2DConverter::~usRFToPreScan2DConverter() {
 
 /**
 * Init method, to pre-allocate memory for all the processes (fft inputs/outputs, log compression output).
+* @param widthRF Width of the RF frames to convert : number of scanlines.
+* @param heigthRF Height of the RF frames to convert : number of RF samples.
 */
 void usRFToPreScan2DConverter::init(int widthRF, int heigthRF) {
 
@@ -72,8 +73,14 @@ void usRFToPreScan2DConverter::init(int widthRF, int heigthRF) {
   // for Hilbert transform
   m_sa = (std::complex<double> *) malloc(heigthRF * sizeof(std::complex<double> ));
 
+  // log compression
+  m_env = new double[heigthRF * widthRF];
+  m_comp = new unsigned char[heigthRF * widthRF];
+
   m_signalSize = heigthRF;
   m_scanLineNumber = widthRF;
+
+  m_isInit = true;
 }
 
 /*!
@@ -88,7 +95,6 @@ std::complex<double> * usRFToPreScan2DConverter::HilbertTransform(const short in
   //const clock_t begin_time = clock();
   fftw_plan p, pinv;
   int N = m_signalSize;
-
 
   p = fftw_plan_dft_1d(N, m_fft_in, m_fft_out, FFTW_FORWARD, FFTW_ESTIMATE);
   // Put signal data s into in
@@ -156,6 +162,9 @@ void usRFToPreScan2DConverter::sqrtAbsv(std::complex<double> * cv, double* out)
 */
 void usRFToPreScan2DConverter::convert(const usImageRF2D<short int> &rfImage, usImagePreScan2D<unsigned char> &preScanImage) {
 
+  if(!m_isInit) {
+    init(rfImage.getWidth(), rfImage.getHeight());
+  }
   preScanImage.resize(rfImage.getHeight() / m_decimationFactor,rfImage.getWidth());
 
   // First we copy the transducer settings
@@ -165,26 +174,23 @@ void usRFToPreScan2DConverter::convert(const usImageRF2D<short int> &rfImage, us
   int h = rfImage.getHeight();
 
   unsigned int frameSize = w*h;
-  double *env = new double[frameSize];
-
-  unsigned char *comp = new unsigned char[frameSize];
 
   // Run envelope detector
   for (int i = 0; i < w; ++i) {
-    sqrtAbsv(HilbertTransform(rfImage.bitmap + i*h), env + i * h);
+    sqrtAbsv(HilbertTransform(rfImage.bitmap + i*h), m_env + i * h);
   }
 
   // Log-compress
-  m_logCompressor.run(comp, env, frameSize);
+  m_logCompressor.run(m_comp, m_env, frameSize);
 
   //find min & max values
   double min = 1e8;
   double max = -1e8;
   for (unsigned int i = 0; i < frameSize; ++i) {
-    if (comp[i] < min)
-      min = comp[i];
-    if (comp[i] > max)
-      max = comp[i];
+    if (m_comp[i] < min)
+      min = m_comp[i];
+    if (m_comp[i] > max)
+      max = m_comp[i];
   }
 
   //max-min computation
@@ -194,7 +200,7 @@ void usRFToPreScan2DConverter::convert(const usImageRF2D<short int> &rfImage, us
   int k = 0;
   for (int i = 0; i < h; i+=m_decimationFactor) {
     for (int j = 0; j < w ; ++j) {
-      unsigned int  vcol = (unsigned int) (((comp[i + h * j] - min) / maxMinDiff) * 255);
+      unsigned int  vcol = (unsigned int) (((m_comp[i + h * j] - min) / maxMinDiff) * 255);
       preScanImage[k][j] = (vcol>255)?255:vcol;
     }
     k++;

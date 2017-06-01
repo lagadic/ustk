@@ -35,8 +35,7 @@ int main(int argc, char** argv)
 
   //prepare converter
   usImagePreScan2D<unsigned char> preScanImage;
-  usRFToPreScan2DConverter converter(3840,128);
-  std::cout << "init ok" << std::endl;
+  usRFToPreScan2DConverter converter;
 
   //Prepare display
 #if defined(VISP_HAVE_X11)
@@ -64,10 +63,9 @@ int main(int argc, char** argv)
       grabbedFrame = qtGrabber->acquire();
 
       std::cout <<"MAIN THREAD received frame No : " << grabbedFrame->getFrameCount() << std::endl;
-      double t1 = vpTime::measureTimeMs();
+
       //convert RF to pre-scan to display something ...
       converter.convert(*grabbedFrame,preScanImage);
-      std::cout << "dT = " << vpTime::measureTimeMs() - t1 << std::endl;
       //init display
       if(!displayInit && preScanImage.getHeight() !=0 && preScanImage.getWidth() !=0) {
 #if defined(VISP_HAVE_X11)
