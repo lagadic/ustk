@@ -44,16 +44,36 @@
 * Constructor.
 * @param decimationFactor Decimation factor : keep only 1 pre-scan sample every N sample (N = decimationFactor)
 */
-usRFToPreScan2DConverter::usRFToPreScan2DConverter(int decimationFactor) : m_logCompressor(),
+usRFToPreScan2DConverter::usRFToPreScan2DConverter(int widthRF, int heightRF, int decimationFactor) : m_logCompressor(),
   m_decimationFactor(decimationFactor) {
 
+  init(widthRF, heightRF);
 }
 
 /**
 * Destructor.
 */
 usRFToPreScan2DConverter::~usRFToPreScan2DConverter() {
+  fftw_free(m_fft_in); fftw_free(m_fft_out); fftw_free(m_fft_conv); fftw_free(m_fft_out_inv);
+}
 
+
+/**
+* Init method, to pre-allocate memory for all the processes (fft inputs/outputs, log compression output).
+*/
+void usRFToPreScan2DConverter::init(int widthRF, int heigthRF) {
+
+  // for FFT
+  m_fft_in = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * heigthRF);
+  m_fft_out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * heigthRF);
+  m_fft_conv = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * heigthRF);
+  m_fft_out_inv = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * heigthRF);
+
+  // for Hilbert transform
+  m_sa = (std::complex<double> *) malloc(heigthRF * sizeof(std::complex<double> ));
+
+  m_signalSize = heigthRF;
+  m_scanLineNumber = widthRF;
 }
 
 /*!
@@ -62,24 +82,20 @@ usRFToPreScan2DConverter::~usRFToPreScan2DConverter() {
  * \param s: Signal of 16-bit values
  * \return std::vector<std::complex<double> > that contains the Hilbert transform
  */
-std::vector<std::complex<double> > usRFToPreScan2DConverter::HilbertTransform(const short int *s, int size)
+std::complex<double> * usRFToPreScan2DConverter::HilbertTransform(const short int *s)
 {
   ///time of Hilbert transform
   //const clock_t begin_time = clock();
-  std::vector<std::complex<double> > sa;
-  fftw_complex *in, *out, *conv, *out_inv;
   fftw_plan p, pinv;
-  int N = size;
+  int N = m_signalSize;
 
-  in = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * N);
-  out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * N);
-  conv = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * N);
-  p = fftw_plan_dft_1d(N, in, out, FFTW_FORWARD, FFTW_ESTIMATE);
+
+  p = fftw_plan_dft_1d(N, m_fft_in, m_fft_out, FFTW_FORWARD, FFTW_ESTIMATE);
   // Put signal data s into in
   for(int i = 0; i < N; i++)
   {
-    in[i][0] = (double)s[i];
-    in[i][1] = 0.0;
+    m_fft_in[i][0] = (double)s[i];
+    m_fft_in[i][1] = 0.0;
   }
 
   // Obtain the FFT
@@ -89,45 +105,43 @@ std::vector<std::complex<double> > usRFToPreScan2DConverter::HilbertTransform(co
   {
 
     if(i<N/2)
-      out[i][1]=-1*out[i][1];
+      m_fft_out[i][1]=-1*m_fft_out[i][1];
     if(i==N/2)
     {
-      out[i][0]=0;
-      out[i][1]=0;
+      m_fft_out[i][0]=0;
+      m_fft_out[i][1]=0;
     }
     if(i>N/2)
-      out[i][0]=-1*out[i][0];
+      m_fft_out[i][0]=-1*m_fft_out[i][0];
     if(i==0)
     {
-      out[i][0]=0;
-      out[i][1]=0;
+      m_fft_out[i][0]=0;
+      m_fft_out[i][1]=0;
     }
 
-    double z=out[i][1];
-    out[i][1]=out[i][0];
-    out[i][0]=z;
+    double z=m_fft_out[i][1];
+    m_fft_out[i][1]=m_fft_out[i][0];
+    m_fft_out[i][0]=z;
   }
 
   // FFT Inverse
-  out_inv = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * N);
-  pinv = fftw_plan_dft_1d(N, out, out_inv, FFTW_BACKWARD, FFTW_ESTIMATE);
+  pinv = fftw_plan_dft_1d(N, m_fft_out, m_fft_out_inv, FFTW_BACKWARD, FFTW_ESTIMATE);
   // Obtain the IFFT
   fftw_execute(pinv);
   fftw_destroy_plan(p); fftw_destroy_plan(pinv);
   // Put the iFFT output in sa
   for(int i = 0; i < N; i++)
   {
-    sa.push_back(std::complex<double> (in[i][0], -out_inv[i][0]/(double)N));
+    m_sa[i] = std::complex<double> (m_fft_in[i][0], -m_fft_out_inv[i][0]/(double)N);
   }
-  fftw_free(in); fftw_free(out); fftw_free(conv); fftw_free(out_inv);
-  return sa;
+  return m_sa;
 }
 
-void usRFToPreScan2DConverter::sqrtAbsv(std::vector<std::complex<double> > cv, double* out)
+void usRFToPreScan2DConverter::sqrtAbsv(std::complex<double> * cv, double* out)
 {
-  for(unsigned int i = 0; i < cv.size(); i++)
+  for(int i = 0; i < m_signalSize; i++)
   {
-    out[i] = sqrt(abs(cv.at(i)));
+    out[i] = (unsigned char) sqrt(abs(cv[i]));
   }
 }
 
@@ -157,7 +171,7 @@ void usRFToPreScan2DConverter::convert(const usImageRF2D<short int> &rfImage, us
 
   // Run envelope detector
   for (int i = 0; i < w; ++i) {
-    sqrtAbsv(HilbertTransform(rfImage.bitmap + i*h , h), env + i * h);
+    sqrtAbsv(HilbertTransform(rfImage.bitmap + i*h), env + i * h);
   }
 
   // Log-compress

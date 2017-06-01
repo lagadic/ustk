@@ -68,7 +68,7 @@ class VISP_EXPORT usRFToPreScan2DConverter
 {
  public:
 
-  usRFToPreScan2DConverter(int decimationFactor=10);
+  usRFToPreScan2DConverter(int heightRF, int widthRF, int decimationFactor=10);
 
   ~usRFToPreScan2DConverter();
 
@@ -79,12 +79,19 @@ class VISP_EXPORT usRFToPreScan2DConverter
   void setDecimationFactor(int decimationFactor);
 
 private:
-  std::vector<std::complex<double> > HilbertTransform(const short *s, int size);
-  void sqrtAbsv(std::vector<std::complex<double> > cv, double* out);
+  void init(int widthRF, int heigthRF);
+  std::complex<double> *HilbertTransform(const short *s);
+  void sqrtAbsv(std::complex<double> * cv, double *out);
 
   usLogCompressor m_logCompressor;
 
   int m_decimationFactor;
+
+  fftw_complex *m_fft_in, *m_fft_out, *m_fft_conv, *m_fft_out_inv;
+  std::complex<double> * m_sa;
+
+  int m_signalSize;
+  int m_scanLineNumber;
 };
 
 #endif // USTK_HAVE_FFTW
