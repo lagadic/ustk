@@ -48,7 +48,7 @@ int main(int argc, char** argv)
   postscanImage.setDepth(0.15);
   preScanImage.setTransducerSettings(postscanImage);
 
-  usRFToPreScan2DConverter converterRF;
+  usRFToPreScan2DConverter converterRF(3840,128);
   usPreScanToPostScan2DConverter scanConverter;
 
   scanConverter.init(postscanImage,384,128);

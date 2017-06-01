@@ -38,7 +38,7 @@ int main(int argc, char** argv)
   std::cout << rfImage;
 
   usImagePreScan2D<unsigned char> preScanImage;
-  usRFToPreScan2DConverter converter;
+  usRFToPreScan2DConverter converter(rfImage.getHeight(),rfImage.getWidth());
   converter.convert(rfImage,preScanImage);
 
   usImageIo::write(preScanImage,"test.xml");
