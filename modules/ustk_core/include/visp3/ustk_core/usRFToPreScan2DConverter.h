@@ -68,7 +68,7 @@ class VISP_EXPORT usRFToPreScan2DConverter
 {
  public:
 
-  usRFToPreScan2DConverter(int heightRF, int widthRF, int decimationFactor=10);
+  usRFToPreScan2DConverter(int decimationFactor=10);
 
   ~usRFToPreScan2DConverter();
 
@@ -89,9 +89,13 @@ private:
 
   fftw_complex *m_fft_in, *m_fft_out, *m_fft_conv, *m_fft_out_inv;
   std::complex<double> * m_sa;
+  double * m_env;
+  unsigned char * m_comp;
 
   int m_signalSize;
   int m_scanLineNumber;
+
+  bool m_isInit;
 };
 
 #endif // USTK_HAVE_FFTW
