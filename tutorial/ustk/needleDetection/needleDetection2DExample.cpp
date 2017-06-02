@@ -39,7 +39,8 @@
 #
 #----------------------------------------------------------------------------
 */
-
+#include <sstream>
+#include <string>
 
 // visp
 #include <visp3/gui/vpDisplayX.h>
@@ -149,9 +150,9 @@ int main(int argc, const char *argv[])
   std::string opt_opath;
   std::string username;
 
-  char *logFilename = new char [FILENAME_MAX];
-  const char *opath = new char [FILENAME_MAX];
-  char *windowTitle = new char[32];
+  std::string logFilename;
+  std::string opath;
+  std::string windowTitle;
 
   // Set the default output path
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
@@ -170,10 +171,10 @@ int main(int argc, const char *argv[])
 
   // Get the option values
   if (!opt_opath.empty())
-    opath = opt_opath.c_str();
+    opath = opt_opath;
 
   // Append to the output path string, the login name of the user
-  std::string dirname = vpIoTools::createFilePath(opath, username);
+  std::string dirname = vpIoTools::createFilePath(opath.c_str(), username);
 
   // Test if the output path exist. If no try to create it
   if (vpIoTools::checkDirectory(dirname) == false) {
@@ -186,8 +187,7 @@ int main(int argc, const char *argv[])
       std::cerr << std::endl
                 << "ERROR:" << std::endl;
       std::cerr << "  Cannot create " << dirname << std::endl;
-      std::cerr << "  Check your -o " << opath << " option " << std::endl;
-      delete[] opath;
+      std::cerr << "  Check your -o " << opath.c_str() << " option " << std::endl;
       exit(-1);
     }
   }
@@ -282,9 +282,9 @@ int main(int argc, const char *argv[])
   std::cout << "Needle detector initialized." << std::endl;
 
   // Output
-  sprintf(logFilename, "%s/needle.dat", dirname.c_str());
-  std::ofstream ofile(logFilename);
-  std::cout << "Results will be saved in " << logFilename << std::endl;
+  logFilename = dirname + std::string("/needle.dat");
+  std::ofstream ofile(logFilename.c_str());
+  std::cout << "Results will be saved in " << logFilename.c_str() << std::endl;
 
   unsigned int nPoints =  needleDetector.getNeedle()->getOrder();
   controlPoints = needleDetector.getNeedle()->getControlPoints();
@@ -332,7 +332,9 @@ int main(int argc, const char *argv[])
     ofile << std::endl;
 
     // Display
-    std::sprintf(windowTitle, "Frame %d", n0);
+    char noChar[(int)ceil(log10(n0+1))];
+    sprintf(noChar, "%d", n0);
+    windowTitle =  std::string("Frame ") + std::string(noChar);
     vpDisplay::setTitle(I, windowTitle);
     vpDisplay::display(I);
 

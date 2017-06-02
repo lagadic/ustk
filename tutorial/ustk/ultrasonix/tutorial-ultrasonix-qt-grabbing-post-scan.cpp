@@ -78,9 +78,9 @@ int main(int argc, char** argv)
       //init display
       if(!displayInit && grabbedFrame->getHeight() !=0 && grabbedFrame->getWidth() !=0) {
 #if defined(VISP_HAVE_X11)
-		vpDisplayX * display = new vpDisplayX(*grabbedFrame);
+        display = new vpDisplayX(*grabbedFrame);
 #elif defined(VISP_HAVE_GDI)
-		vpDisplayGDI * display = new vpDisplayGDI(*grabbedFrame);
+        display = new vpDisplayGDI(*grabbedFrame);
 #endif
         displayInit = true;
       }
