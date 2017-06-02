@@ -3,7 +3,7 @@
 #include <iostream>
 #include <visp3/ustk_core/usConfig.h>
 
-#if (defined(USTK_HAVE_QT5) || defined(USTK_HAVE_VTK_QT)) && defined(VISP_HAVE_X11)
+#if (defined(USTK_HAVE_QT5) || defined(USTK_HAVE_VTK_QT)) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
 
 #include <QtCore/QThread>
 #include <QApplication>
@@ -11,6 +11,7 @@
 #include <visp3/ustk_grabber/usNetworkGrabberPostScan.h>
 
 #include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayGDI.h>
 
 int main(int argc, char** argv)
 {
@@ -31,7 +32,11 @@ int main(int argc, char** argv)
   usDataGrabbed<usImagePostScan2D<unsigned char> >* grabbedFrame;
 
   //Prepare display
-  vpDisplayX * displayX = NULL;
+#if defined(VISP_HAVE_X11)
+  vpDisplayX * display = NULL;
+#elif defined(VISP_HAVE_GDI)
+  vpDisplayGDI * display = NULL;
+#endif
   bool displayInit = false;
 
   bool captureRunning = true;
@@ -72,7 +77,11 @@ int main(int argc, char** argv)
 
       //init display
       if(!displayInit && grabbedFrame->getHeight() !=0 && grabbedFrame->getWidth() !=0) {
-        displayX = new vpDisplayX(*grabbedFrame);
+#if defined(VISP_HAVE_X11)
+		vpDisplayX * display = new vpDisplayX(*grabbedFrame);
+#elif defined(VISP_HAVE_GDI)
+		vpDisplayGDI * display = new vpDisplayGDI(*grabbedFrame);
+#endif
         displayInit = true;
       }
 
@@ -80,7 +89,6 @@ int main(int argc, char** argv)
       if(displayInit) {
         vpDisplay::display(*grabbedFrame);
         vpDisplay::flush(*grabbedFrame);
-        //vpTime::wait(100);// wait to simulate a local process running on last frame frabbed
       }
     }
     else {
@@ -89,7 +97,7 @@ int main(int argc, char** argv)
   }while(captureRunning);
 
   if(displayInit) {
-    delete displayX;
+    delete display;
   }
 
   return app.exec();
