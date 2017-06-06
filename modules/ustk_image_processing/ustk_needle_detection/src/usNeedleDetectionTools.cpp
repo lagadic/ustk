@@ -352,7 +352,6 @@ bool usNeedleDetectionTools::findTipUsingMeanValues(vtkImageData *image, const v
   vpColVector a(nPoints, 0.);
   vpColVector p0(3);
   vpColVector p(3);
-  double t = 0.0;
   a[0] = 1.;
 //  for (unsigned int i=1; i<nPoints; ++i)
 //    a[i] = a[i-1] * t;
@@ -372,6 +371,7 @@ bool usNeedleDetectionTools::findTipUsingMeanValues(vtkImageData *image, const v
   if (inside(p,VOI)) {
     bool found = 0;
     double intensity1 = 0;
+    double t = 0.0;
     intensity1 += image->GetScalarComponentAsDouble(p[0], p[1], p[2], 0);
     intensity1 += image->GetScalarComponentAsDouble(p[0]+1.0, p[1], p[2], 0);
     intensity1 += image->GetScalarComponentAsDouble(p[0], p[1]+1.0, p[2], 0);

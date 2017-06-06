@@ -42,7 +42,6 @@
 #include <visp3/ustk_core/usConfig.h>
 
 #if defined(USTK_HAVE_FFTW)
-
 //external includes
 #include <fftw3.h>
 
@@ -80,15 +79,15 @@ class VISP_EXPORT usRFToPreScan2DConverter
 
 private:
   void init(int widthRF, int heigthRF);
-  std::complex<double> *HilbertTransform(const short *s);
-  void sqrtAbsv(std::complex<double> * cv, double *out);
+  void enveloppeDetection(const short *s, double* out);
 
   usLogCompressor m_logCompressor;
 
   int m_decimationFactor;
 
   fftw_complex *m_fft_in, *m_fft_out, *m_fft_conv, *m_fft_out_inv;
-  std::complex<double> * m_sa;
+  fftw_plan m_p, m_pinv;
+
   double * m_env;
   unsigned char * m_comp;
 
