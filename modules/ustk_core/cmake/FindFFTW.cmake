@@ -17,13 +17,18 @@ if(WIN32)
     $ENV{FFTW_HOME}
   )
 else()
-  find_path(FFTW_INCLUDE_DIRS fftw3.h
-    $ENV{FFTW_HOME}
-  )
+  if($ENV{FFTW_HOME})
+    find_path(FFTW_INCLUDE_DIRS fftw3.h
+      "$ENV{FFTW_HOME}/include"
+    )
 
-  find_library(FFTW_LIBRARIES NAMES fftw3
-    $ENV{FFTW_HOME}
-  )
+    find_library(FFTW_LIBRARIES NAMES "fftw3"
+      PATHS "$ENV{FFTW_HOME}/lib"
+    )
+  else()
+    find_path(FFTW_INCLUDE_DIRS fftw3.h)
+    find_library(FFTW_LIBRARIES NAMES fftw3)
+  endif()
 endif()
 
 # handle the QUIETLY and REQUIRED arguments and set FFTW_FOUND to TRUE if
