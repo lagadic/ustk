@@ -53,8 +53,12 @@ usRFToPreScan2DConverter::usRFToPreScan2DConverter(int decimationFactor) : m_log
 * Destructor.
 */
 usRFToPreScan2DConverter::~usRFToPreScan2DConverter() {
-  fftw_free(m_fft_in); fftw_free(m_fft_out); fftw_free(m_fft_conv); fftw_free(m_fft_out_inv);
-  fftw_destroy_plan(m_p); fftw_destroy_plan(m_pinv);
+  if (m_isInit) {
+    fftw_free(m_fft_in); fftw_free(m_fft_out); fftw_free(m_fft_conv); fftw_free(m_fft_out_inv);
+    fftw_destroy_plan(m_p); fftw_destroy_plan(m_pinv);
+	delete m_env;
+	delete m_comp;
+  }
 }
 
 
@@ -64,6 +68,14 @@ usRFToPreScan2DConverter::~usRFToPreScan2DConverter() {
 * @param heigthRF Height of the RF frames to convert : number of RF samples.
 */
 void usRFToPreScan2DConverter::init(int widthRF, int heigthRF) {
+  if (m_isInit && (m_signalSize != heigthRF || m_scanLineNumber != heigthRF)) {
+    fftw_free(m_fft_in); fftw_free(m_fft_out); fftw_free(m_fft_conv); fftw_free(m_fft_out_inv);
+    fftw_destroy_plan(m_p); fftw_destroy_plan(m_pinv);
+	delete m_env;
+	delete m_comp;
+  }
+  else if(m_signalSize == heigthRF && m_scanLineNumber == heigthRF)
+    return;
 
   // for FFT
   m_fft_in = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * heigthRF);
@@ -110,14 +122,14 @@ void usRFToPreScan2DConverter::enveloppeDetection(const short int *s, double* ou
   {
 
     if(i<N/2)
-      m_fft_out[i][1]=-1*m_fft_out[i][1];
+      m_fft_out[i][1]=-m_fft_out[i][1];
     if(i==N/2)
     {
       m_fft_out[i][0]=0;
       m_fft_out[i][1]=0;
     }
     if(i>N/2)
-      m_fft_out[i][0]=-1*m_fft_out[i][0];
+      m_fft_out[i][0]=-m_fft_out[i][0];
     if(i==0)
     {
       m_fft_out[i][0]=0;
@@ -134,9 +146,10 @@ void usRFToPreScan2DConverter::enveloppeDetection(const short int *s, double* ou
   // Obtain the IFFT
   fftw_execute(m_pinv);
   // Put the iFFT output in sa
+  double Ndouble = (double)N;
   for(int i = 0; i < N; i++)
   {
-    out[i] = (unsigned char) sqrt(abs(std::complex<double> (m_fft_in[i][0], -m_fft_out_inv[i][0]/(double)N)));
+    out[i] = (unsigned char) sqrt(abs(std::complex<double> (m_fft_in[i][0], -m_fft_out_inv[i][0]/ Ndouble)));
   }
 }
 
