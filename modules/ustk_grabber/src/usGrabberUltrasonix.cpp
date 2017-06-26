@@ -31,6 +31,8 @@
  *
  *****************************************************************************/
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
 
 #include <visp3/ustk_grabber/usGrabberUltrasonix.h>
@@ -302,3 +304,4 @@ int usGrabberUltrasonix::getSocket() const { return m_communicationInormations.m
 double usGrabberUltrasonix::getFrameRate() const { return m_communicationInormations.m_frameRate; }
 
 #endif // UNIX
+#endif // Doxygen
