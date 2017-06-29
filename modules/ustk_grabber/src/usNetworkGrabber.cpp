@@ -433,7 +433,7 @@ void usNetworkGrabber::setFramesPerVolume(int framesPerVolume) {
   if(framesPerVolume < m_acquisitionParamters.getFramesPerVolumeMin() ||
      framesPerVolume > m_acquisitionParamters.getFramesPerVolumeMax() ||
      framesPerVolume % 2 == 0) // odd number of frames per volume required
-    throw(vpException(vpException::badValue));
+    throw(vpException(vpException::badValue),"Number of frames per volume must be odd, and between min and max values");
   m_acquisitionParamters.setFramesPerVolume(framesPerVolume);
 }
 
@@ -443,7 +443,7 @@ void usNetworkGrabber::setFramesPerVolume(int framesPerVolume) {
 void usNetworkGrabber::setImageDepth(int imageDepth) {
   if(imageDepth < m_acquisitionParamters.getImageDepthMin() ||
      imageDepth > m_acquisitionParamters.getImageDepthMax())
-    throw(vpException(vpException::badValue));
+    throw(vpException(vpException::badValue), "Image depth must be included between min and max values");
   m_acquisitionParamters.setImageDepth(imageDepth);
 }
 
@@ -453,7 +453,7 @@ void usNetworkGrabber::setImageDepth(int imageDepth) {
 void usNetworkGrabber::setImagingMode(int imagingMode) {
   if(imagingMode < m_acquisitionParamters.getImagingModeMin() ||
      imagingMode > m_acquisitionParamters.getImagingModeMax())
-    throw(vpException(vpException::badValue));
+    throw(vpException(vpException::badValue), "Imaging mode out of range");
   m_acquisitionParamters.setImagingMode(imagingMode);
 }
 
@@ -463,7 +463,7 @@ void usNetworkGrabber::setImagingMode(int imagingMode) {
 void usNetworkGrabber::setMotorPosition(int motorPosition) {
   if(motorPosition < m_acquisitionParamters.getMotorPositionMin() ||
      motorPosition > m_acquisitionParamters.getMotorPositionMax())
-    throw(vpException(vpException::badValue));
+    throw(vpException(vpException::badValue), "Motor poisition out of range");
   m_acquisitionParamters.setMotorPosition(motorPosition);
 }
 
@@ -494,7 +494,7 @@ void usNetworkGrabber::setPostScanWidth(int postScanWidth) {
 void usNetworkGrabber::setSamplingFrequency(int samplingFrequency) {
   if(samplingFrequency < m_acquisitionParamters.getSamplingFrequencyMin() ||
      samplingFrequency > m_acquisitionParamters.getSamplingFrequencyMax())
-    throw(vpException(vpException::badValue));
+    throw(vpException(vpException::badValue), "Sampling frequency out of range");
   m_acquisitionParamters.setSamplingFrequency(samplingFrequency);
 }
 
@@ -504,7 +504,7 @@ void usNetworkGrabber::setSamplingFrequency(int samplingFrequency) {
 void usNetworkGrabber::setSector(int sector) {
   if(sector < m_acquisitionParamters.getSectorMin() ||
      sector > m_acquisitionParamters.getSectorMax())
-    throw(vpException(vpException::badValue));
+    throw(vpException(vpException::badValue), "Sector out of range");
   m_acquisitionParamters.setSector(sector);
 }
 
@@ -514,7 +514,7 @@ void usNetworkGrabber::setSector(int sector) {
 void usNetworkGrabber::setTransmitFrequency(int transmitFrequency) {
   if(transmitFrequency < m_acquisitionParamters.getTransmitFrequencyMin() ||
      transmitFrequency > m_acquisitionParamters.getTransmitFrequencyMax())
-    throw(vpException(vpException::badValue));
+    throw(vpException(vpException::badValue), "Transmit frequency out of range");
 
   m_acquisitionParamters.setTransmitFrequency(transmitFrequency);
 }

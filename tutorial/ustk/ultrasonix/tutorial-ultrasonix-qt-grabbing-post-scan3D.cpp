@@ -13,6 +13,8 @@
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/gui/vpDisplayGDI.h>
 
+#include <visp3/io/vpImageIo.h>
+
 int main(int argc, char** argv)
 {
   // QT application
@@ -46,15 +48,15 @@ int main(int argc, char** argv)
 
   // grab a 640*480 post-scan image
   qtGrabber->setPostScanMode(true);
-  qtGrabber->setPostScanHeigh(480);
-  qtGrabber->setPostScanWidth(640);
+  qtGrabber->setPostScanHeigh(300);
+  qtGrabber->setPostScanWidth(400);
 
   // set the ultrsound depth to 140 mm
   qtGrabber->setImageDepth(140);
 
   // set the 4DC7 motor on the middle frame
   qtGrabber->setAnglePerFrame(4);
-  qtGrabber->setFramesPerVolume(15);
+  qtGrabber->setFramesPerVolume(9);
   qtGrabber->setActivateMotor(true);
 
   std::cout << "send update" << std::endl;
@@ -77,6 +79,11 @@ int main(int argc, char** argv)
 
       std::cout << *grabbedFrame << std::endl;
 
+      char buffer[400];
+      sprintf(buffer, "frame%d.png",grabbedFrame->getFrameCount());
+
+      //std::string fileName = "frame" + grabbedFrame->getFrameCount() + ".png";
+      vpImageIo::write(*grabbedFrame,buffer);
       //init display
       if(!displayInit && grabbedFrame->getHeight() !=0 && grabbedFrame->getWidth() !=0) {
 #if defined(VISP_HAVE_X11)
