@@ -151,7 +151,7 @@ public:
    * @name motor settings
    */
   /*@{*/
-    int degPerFr; /**< degree step between frames*/
+    int anglePerFr; /**< angular step between frames*/
     int framesPerVolume; /**< number of frames in a volume */
   /*@}*/
 
@@ -172,7 +172,7 @@ public:
   void setIPAddress(const std::string &s_ip){m_ip = s_ip;}
 
   void setActivateMotor(bool activateMotor);
-  void setDegreesPerFrame(int degreesPerFrame);
+  void setAnglePerFrame(int anglePerFrame);
   void setFramesPerVolume(int framesPerVolume);
   void setImageDepth(int imageDepth);
   void setImagingMode(int imagingMode) ;

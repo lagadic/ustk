@@ -49,15 +49,29 @@ class VISP_EXPORT usAcquisitionParameters
 {
 public:
 
+  /// For 4DC7 3D probe motor movement
+  typedef enum
+    {
+      /// motor not moving (2D case)
+      US_4DC7_STATIC_MOTOR = 0,
+
+      /// 4 motor steps per frame = 0.7317 degrees
+      US_4DC7_SMALL_ANGLE_PITCH = 4,
+
+      /// 8 motor steps per frame = 1.4634 degrees
+      US_4DC7_BIG_ANGLE_PITCH = 8
+    } us4DC7Angles;
+
+
   usAcquisitionParameters();
   ~usAcquisitionParameters();
 
   //values
   bool getActivateMotor() const {return m_activateMotor;}
 
-  int getDegreesPerFrame () const {return m_degreesPerFrame;}
-  int getDegreesPerFrameMax () const {return m_degreesPerFrameMax;}
-  int getDegreesPerFrameMin () const {return m_degreesPerFrameMin;}
+  int getAnglePerFrame () const {return m_anglePerFrame;}
+  int getAnglePerFrameMax () const {return m_anglePerFrameMax;}
+  int getAnglePerFrameMin () const {return m_anglePerFrameMin;}
 
   int getFramesPerVolume () const {return m_framesPerVolume;}
   int getFramesPerVolumeMax () const {return m_framesPerVolumeMax;}
@@ -97,9 +111,9 @@ public:
   //setters
   void setActivateMotor(bool activateMotor);
 
-  void setDegreesPerFrame(int degreesPerFrame);
-  void setDegreesPerFrameMax(int degreesPerFrameMax);
-  void setDegreesPerFrameMin(int degreesPerFrameMin);
+  void setAnglePerFrame(int anglePerFrame);
+  void setAnglePerFrameMax(int anglePerFrameMax);
+  void setAnglePerFrameMin(int anglePerFrameMin);
 
   void setFramesPerVolume(int framesPerVolume);
   void setFramesPerVolumeMax(int framesPerVolumeMax);
@@ -158,7 +172,7 @@ private :
 
   // motor movement parameters
   int m_framesPerVolume; // (must be odd : always a central frame)
-  int m_degreesPerFrame; // angle between two frames in degrees
+  int m_anglePerFrame; // angle between two frames in degrees
 
   // min values
   int m_transmitFrequencyMin;
@@ -168,7 +182,7 @@ private :
   int m_sectorMin;
   int m_motorPositionMin;
   int m_framesPerVolumeMin;
-  int m_degreesPerFrameMin;
+  int m_anglePerFrameMin;
 
   // max values
   int m_transmitFrequencyMax;
@@ -178,6 +192,6 @@ private :
   int m_sectorMax;
   int m_motorPositionMax;
   int m_framesPerVolumeMax;
-  int m_degreesPerFrameMax;
+  int m_anglePerFrameMax;
 };
 #endif // __usAcquisitionParameters_h_

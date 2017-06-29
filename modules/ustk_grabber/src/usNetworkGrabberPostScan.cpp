@@ -129,7 +129,7 @@ void usNetworkGrabberPostScan::dataArrived()
     in >> m_imageHeader.scanLinePitch;
     in >> m_imageHeader.scanLineNumber;
     in >> m_imageHeader.imageDepth;
-    in >> m_imageHeader.degPerFr;
+    in >> m_imageHeader.anglePerFr;
     in >> m_imageHeader.framesPerVolume;
 
     if(m_verbose) {
@@ -149,7 +149,7 @@ void usNetworkGrabberPostScan::dataArrived()
       std::cout << "scanLinePitch = " <<  m_imageHeader.scanLinePitch << std::endl;
       std::cout << "scanLineNumber = " <<  m_imageHeader.scanLineNumber << std::endl;
       std::cout << "imageDepth = " <<  m_imageHeader.imageDepth << std::endl;
-      std::cout << "degPerFr = " <<  m_imageHeader.degPerFr << std::endl;
+      std::cout << "anglePerFr = " <<  m_imageHeader.anglePerFr << std::endl;
       std::cout << "framesPerVolume = " <<  m_imageHeader.framesPerVolume << std::endl;
     }
 

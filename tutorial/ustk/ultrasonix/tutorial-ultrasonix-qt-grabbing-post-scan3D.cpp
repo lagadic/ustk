@@ -53,7 +53,9 @@ int main(int argc, char** argv)
   qtGrabber->setImageDepth(140);
 
   // set the 4DC7 motor on the middle frame
-  qtGrabber->setMotorPosition(37);
+  qtGrabber->setAnglePerFrame(4);
+  qtGrabber->setFramesPerVolume(15);
+  qtGrabber->setActivateMotor(true);
 
   std::cout << "send update" << std::endl;
   qtGrabber->sendAcquisitionParameters();

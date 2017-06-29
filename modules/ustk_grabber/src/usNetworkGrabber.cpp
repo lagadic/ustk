@@ -242,7 +242,7 @@ bool usNetworkGrabber::sendAcquisitionParameters() {
   stream << m_acquisitionParamters.getActivateMotor();
   stream << m_acquisitionParamters.getMotorPosition();
   stream << m_acquisitionParamters.getFramesPerVolume();
-  stream << m_acquisitionParamters.getDegreesPerFrame();
+  stream << m_acquisitionParamters.getAnglePerFrame();
 
   if(m_verbose) {
     std::cout << "UPDATE SENT : " << std::endl;
@@ -257,7 +257,7 @@ bool usNetworkGrabber::sendAcquisitionParameters() {
     std::cout << "ActivateMotor = " <<  m_acquisitionParamters.getActivateMotor() << std::endl;
     std::cout << "MotorPosition = " <<  m_acquisitionParamters.getMotorPosition() << std::endl;
     std::cout << "FramesPerVolume = " <<  m_acquisitionParamters.getFramesPerVolume() << std::endl;
-    std::cout << "DegreesPerFrame = " <<  m_acquisitionParamters.getDegreesPerFrame() << std::endl;
+    std::cout << "anglePerFrame = " <<  m_acquisitionParamters.getAnglePerFrame() << std::endl;
   }
   m_tcpSocket->write(block);
 
@@ -299,7 +299,7 @@ void usNetworkGrabber::readAcquisitionParameters(QDataStream &stream) {
   bool activateMotor;
   int motorPosition;
   int framesPerVolume;
-  int degreesPerFrame;
+  int anglePerFrame;
   int transmitFrequencyMin;
   int samplingFrequencyMin;
   int imagingModeMin;
@@ -307,7 +307,7 @@ void usNetworkGrabber::readAcquisitionParameters(QDataStream &stream) {
   int sectorMin;
   int motorPositionMin;
   int framesPerVolumeMin;
-  int degreesPerFrameMin;
+  int anglePerFrameMin;
   int transmitFrequencyMax;
   int samplingFrequencyMax;
   int imagingModeMax;
@@ -315,7 +315,7 @@ void usNetworkGrabber::readAcquisitionParameters(QDataStream &stream) {
   int sectorMax;
   int motorPositionMax;
   int framesPerVolumeMax;
-  int degreesPerFrameMax;
+  int anglePerFrameMax;
 
   stream >> transmitFrequency;
   stream >> samplingFrequency;
@@ -328,7 +328,7 @@ void usNetworkGrabber::readAcquisitionParameters(QDataStream &stream) {
   stream >> activateMotor;
   stream >> motorPosition;
   stream >> framesPerVolume;
-  stream >> degreesPerFrame;
+  stream >> anglePerFrame;
   stream >> transmitFrequencyMin;
   stream >> samplingFrequencyMin;
   stream >> imagingModeMin;
@@ -336,7 +336,7 @@ void usNetworkGrabber::readAcquisitionParameters(QDataStream &stream) {
   stream >> sectorMin;
   stream >> motorPositionMin;
   stream >> framesPerVolumeMin;
-  stream >> degreesPerFrameMin;
+  stream >> anglePerFrameMin;
   stream >> transmitFrequencyMax;
   stream >> samplingFrequencyMax;
   stream >> imagingModeMax;
@@ -344,7 +344,7 @@ void usNetworkGrabber::readAcquisitionParameters(QDataStream &stream) {
   stream >> sectorMax;
   stream >> motorPositionMax;
   stream >> framesPerVolumeMax;
-  stream >> degreesPerFrameMax;
+  stream >> anglePerFrameMax;
 
   if(m_verbose) {
     std::cout << "transmitFrequency = " <<transmitFrequency << std::endl;
@@ -358,7 +358,7 @@ void usNetworkGrabber::readAcquisitionParameters(QDataStream &stream) {
     std::cout << "activateMotor = " <<activateMotor << std::endl;
     std::cout << "motorPosition = " <<motorPosition << std::endl;
     std::cout << "framesPerVolume = " <<framesPerVolume << std::endl;
-    std::cout << "degreesPerFrame = " <<degreesPerFrame << std::endl;
+    std::cout << "anglePerFrame = " <<anglePerFrame << std::endl;
     std::cout << "transmitFrequencyMin = " <<transmitFrequencyMin << std::endl;
     std::cout << "samplingFrequencyMin = " <<samplingFrequencyMin << std::endl;
     std::cout << "imagingModeMin = " <<imagingModeMin << std::endl;
@@ -366,7 +366,7 @@ void usNetworkGrabber::readAcquisitionParameters(QDataStream &stream) {
     std::cout << "sectorMin = " <<sectorMin << std::endl;
     std::cout << "motorPositionMin = " <<motorPositionMin << std::endl;
     std::cout << "framesPerVolumeMin = " <<framesPerVolumeMin << std::endl;
-    std::cout << "degreesPerFrameMin = " <<degreesPerFrameMin << std::endl;
+    std::cout << "anglePerFrameMin = " <<anglePerFrameMin << std::endl;
     std::cout << "transmitFrequencyMax = " <<transmitFrequencyMax << std::endl;
     std::cout << "samplingFrequencyMax = " <<samplingFrequencyMax << std::endl;
     std::cout << "imagingModeMax = " <<imagingModeMax << std::endl;
@@ -374,7 +374,7 @@ void usNetworkGrabber::readAcquisitionParameters(QDataStream &stream) {
     std::cout << "sectorMax = " <<sectorMax << std::endl;
     std::cout << "motorPositionMax = " <<motorPositionMax << std::endl;
     std::cout << "framesPerVolumeMax = " <<framesPerVolumeMax << std::endl;
-    std::cout << "degreesPerFrameMax = " <<degreesPerFrameMax << std::endl;
+    std::cout << "anglePerFrameMax = " <<anglePerFrameMax << std::endl;
   }
 
   m_acquisitionParamters.setTransmitFrequency(transmitFrequency);
@@ -388,7 +388,7 @@ void usNetworkGrabber::readAcquisitionParameters(QDataStream &stream) {
   m_acquisitionParamters.setActivateMotor(activateMotor);
   m_acquisitionParamters.setMotorPosition(motorPosition);
   m_acquisitionParamters.setFramesPerVolume(framesPerVolume);
-  m_acquisitionParamters.setDegreesPerFrame(degreesPerFrame);
+  m_acquisitionParamters.setAnglePerFrame(anglePerFrame);
 
   m_acquisitionParamters.setTransmitFrequencyMin(transmitFrequencyMin);
   m_acquisitionParamters.setSamplingFrequencyMin(samplingFrequencyMin);
@@ -397,7 +397,7 @@ void usNetworkGrabber::readAcquisitionParameters(QDataStream &stream) {
   m_acquisitionParamters.setSectorMin(sectorMin);
   m_acquisitionParamters.setMotorPositionMin(motorPositionMin);
   m_acquisitionParamters.setFramesPerVolumeMin(framesPerVolumeMin);
-  m_acquisitionParamters.setDegreesPerFrameMin(degreesPerFrameMin);
+  m_acquisitionParamters.setAnglePerFrameMin(anglePerFrameMin);
 
   m_acquisitionParamters.setTransmitFrequencyMax(transmitFrequencyMax);
   m_acquisitionParamters.setSamplingFrequencyMax(samplingFrequencyMax);
@@ -406,7 +406,7 @@ void usNetworkGrabber::readAcquisitionParameters(QDataStream &stream) {
   m_acquisitionParamters.setSectorMax(sectorMax);
   m_acquisitionParamters.setMotorPositionMax(motorPositionMax);
   m_acquisitionParamters.setFramesPerVolumeMax(framesPerVolumeMax);
-  m_acquisitionParamters.setDegreesPerFrameMax(degreesPerFrameMax);
+  m_acquisitionParamters.setAnglePerFrameMax(anglePerFrameMax);
 }
 
 /**
@@ -417,13 +417,13 @@ void usNetworkGrabber::setActivateMotor(bool activateMotor) {
 }
 
 /**
-* Setter for angle between two sucessive frames (degrees).
+* Setter for angle between two sucessive frames (angle). See usAcquisitionParameters::us4DC7Angles
 */
-void usNetworkGrabber::setDegreesPerFrame(int degreesPerFrame) {
-  if(degreesPerFrame < m_acquisitionParamters.getDegreesPerFrameMin() ||
-     degreesPerFrame > m_acquisitionParamters.getDegreesPerFrameMax())
+void usNetworkGrabber::setAnglePerFrame(int anglePerFrame) {
+  if(anglePerFrame < m_acquisitionParamters.getAnglePerFrameMin() ||
+     anglePerFrame > m_acquisitionParamters.getAnglePerFrameMax())
     throw(vpException(vpException::badValue));
-  m_acquisitionParamters.setDegreesPerFrame(degreesPerFrame);
+  m_acquisitionParamters.setAnglePerFrame(anglePerFrame);
 }
 
 /**
@@ -431,7 +431,8 @@ void usNetworkGrabber::setDegreesPerFrame(int degreesPerFrame) {
 */
 void usNetworkGrabber::setFramesPerVolume(int framesPerVolume) {
   if(framesPerVolume < m_acquisitionParamters.getFramesPerVolumeMin() ||
-     framesPerVolume > m_acquisitionParamters.getFramesPerVolumeMax())
+     framesPerVolume > m_acquisitionParamters.getFramesPerVolumeMax() ||
+     framesPerVolume % 2 == 0) // odd number of frames per volume required
     throw(vpException(vpException::badValue));
   m_acquisitionParamters.setFramesPerVolume(framesPerVolume);
 }
@@ -457,7 +458,7 @@ void usNetworkGrabber::setImagingMode(int imagingMode) {
 }
 
 /**
-* Setter for a static motor position (in degrees from the beginning position).
+* Setter for a static motor position (in angle from the beginning position).
 */
 void usNetworkGrabber::setMotorPosition(int motorPosition) {
   if(motorPosition < m_acquisitionParamters.getMotorPositionMin() ||
