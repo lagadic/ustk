@@ -46,7 +46,7 @@
 
 #include <visp3/ustk_grabber/usNetworkGrabber.h>
 #include <visp3/ustk_core/usImagePreScan2D.h>
-#include <visp3/ustk_grabber/usDataGrabbed.h>
+#include <visp3/ustk_grabber/usFrameGrabbedInfo.h>
 
 /**
  * @class usNetworkGrabberPreScan2D
@@ -75,7 +75,7 @@ public:
   explicit usNetworkGrabberPreScan2D(usNetworkGrabber *parent = 0);
   ~usNetworkGrabberPreScan2D();
 
-  usDataGrabbed<usImagePreScan2D<unsigned char> > * acquire();
+  usFrameGrabbedInfo<usImagePreScan2D<unsigned char> > * acquire();
 
   void dataArrived();
 
@@ -89,10 +89,10 @@ protected:
 
 private:
   //grabbed image
-  usDataGrabbed<usImagePreScan2D<unsigned char> > m_grabbedImage;
+  usFrameGrabbedInfo<usImagePreScan2D<unsigned char> > m_grabbedImage;
 
   // Output images : we have to invert (i <-> j) in the image grabbed
-  std::vector<usDataGrabbed<usImagePreScan2D<unsigned char> > *> m_outputBuffer;
+  std::vector<usFrameGrabbedInfo<usImagePreScan2D<unsigned char> > *> m_outputBuffer;
   bool m_firstFrameAvailable;
 
   //to manage ptrs switch init

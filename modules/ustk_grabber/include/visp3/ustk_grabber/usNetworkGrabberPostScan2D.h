@@ -46,7 +46,7 @@
 
 #include <visp3/ustk_grabber/usNetworkGrabber.h>
 #include <visp3/ustk_core/usImagePostScan2D.h>
-#include <visp3/ustk_grabber/usDataGrabbed.h>
+#include <visp3/ustk_grabber/usFrameGrabbedInfo.h>
 
 /**
  * @class usNetworkGrabberPostScan2D
@@ -75,7 +75,7 @@ public:
   explicit usNetworkGrabberPostScan2D(usNetworkGrabber *parent = 0);
   ~usNetworkGrabberPostScan2D();
 
-  usDataGrabbed<usImagePostScan2D<unsigned char> > * acquire();
+  usFrameGrabbedInfo<usImagePostScan2D<unsigned char> > * acquire();
 
   void dataArrived();
 
@@ -86,10 +86,10 @@ signals:
 
 private:
   //grabbed image
-  usDataGrabbed<usImagePostScan2D<unsigned char> > m_grabbedImage;
+  usFrameGrabbedInfo<usImagePostScan2D<unsigned char> > m_grabbedImage;
 
   // Output images : we have to invert (i <-> j) in the image grabbed
-  std::vector<usDataGrabbed<usImagePostScan2D<unsigned char> > *> m_outputBuffer;
+  std::vector<usFrameGrabbedInfo<usImagePostScan2D<unsigned char> > *> m_outputBuffer;
   bool m_firstFrameAvailable;
 
   //to manage ptrs switch init

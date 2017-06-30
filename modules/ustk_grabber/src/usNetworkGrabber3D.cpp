@@ -31,7 +31,7 @@
  *
  *****************************************************************************/
 
-#include <visp3/ustk_grabber/usNetworkGrabberPreScan2D.h>
+#include <visp3/ustk_grabber/usNetworkGrabber3D.h>
 
 #if defined(USTK_HAVE_QT5) || defined(USTK_HAVE_VTK_QT)
 
@@ -41,28 +41,28 @@
 /**
 * Constructor. Inititializes the image, and manages Qt signal.
 */
-usNetworkGrabberPreScan2D::usNetworkGrabberPreScan2D(usNetworkGrabber *parent) :
-  usNetworkGrabber(parent)
+usNetworkGrabber3D::usNetworkGrabber3D(usNetworkGrabber *parent) :
+  usNetworkGrabber(parent),m_motorSettings()
 {
   m_grabbedImage.init(0,0);
 
-  //buffer of size 3
-  m_outputBuffer.push_back(new usFrameGrabbedInfo<usImagePreScan2D<unsigned char> >);
-  m_outputBuffer.push_back(new usFrameGrabbedInfo<usImagePreScan2D<unsigned char> >);
-  m_outputBuffer.push_back(new usFrameGrabbedInfo<usImagePreScan2D<unsigned char> >);
+  //allocating buffer of size 3
+  m_outputBuffer.push_back(new usVolumeGrabbedInfo<usImagePreScan3D<unsigned char> >);
+  m_outputBuffer.push_back(new usVolumeGrabbedInfo<usImagePreScan3D<unsigned char> >);
+  m_outputBuffer.push_back(new usVolumeGrabbedInfo<usImagePreScan3D<unsigned char> >);
 
   m_firstFrameAvailable = false;
+  m_firstVolumeAvailable = false;
 
   m_swichOutputInit = false;
 
   connect(m_tcpSocket ,SIGNAL(readyRead()),this, SLOT(dataArrived()));
 }
 
-
 /**
 * Destructor.
 */
-usNetworkGrabberPreScan2D::~usNetworkGrabberPreScan2D()
+usNetworkGrabber3D::~usNetworkGrabber3D()
 {
 
 }
@@ -71,7 +71,7 @@ usNetworkGrabberPreScan2D::~usNetworkGrabberPreScan2D()
 * Slot called when data is coming on the network.
 * Manages the type of data which is coming and read it. Emits newFrameArrived signal when a whole frame is available.
 */
-void usNetworkGrabberPreScan2D::dataArrived()
+void usNetworkGrabber3D::dataArrived()
 {
   ////////////////// HEADER READING //////////////////
   QDataStream in;
@@ -162,16 +162,20 @@ void usNetworkGrabberPreScan2D::dataArrived()
     m_grabbedImage.setScanLinePitch(m_imageHeader.scanLinePitch);
     m_grabbedImage.setDepth(m_imageHeader.imageDepth / 1000.0);
 
+    //update motor settings
+    m_motorSettings.setFrameNumber(m_imageHeader.framesPerVolume);
+    m_motorSettings.setFramePitch(m_imageHeader.anglePerFr); // TO CHECK (units : steps / degs ?)
+    m_motorSettings.setMotorType(usMotorSettings::TiltingMotor); // TO ADD IN IMAGE HEADER
+
     //set data info
     m_grabbedImage.setFrameCount(m_imageHeader.frameCount);
     m_grabbedImage.setFramesPerVolume(m_imageHeader.framesPerVolume);
-    m_grabbedImage.setTimeStamp(m_imageHeader.timeStamp);
 
     //warning if timestamps are close (< 1 ms)
-    if (m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getTimeStamp() -
-        m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getTimeStamp() < 1) {
-          std::cout << "WARNING : new image received with an acquisition timestamp close to previous image" << std::endl;
-        }
+    if (m_imageHeader.timeStamp - m_grabbedImage.getTimeStamp() < 10) {
+      std::cout << "WARNING : new image received with an acquisition timestamp close to previous image" << std::endl;
+    }
+    m_grabbedImage.setTimeStamp(m_imageHeader.timeStamp);
 
     m_grabbedImage.resize(m_imageHeader.frameWidth,m_imageHeader.frameHeight);
 
@@ -204,59 +208,93 @@ void usNetworkGrabberPreScan2D::dataArrived()
 /**
 * Method to invert rows and columns in the image.
 */
-void usNetworkGrabberPreScan2D::invertRowsCols() {
+void usNetworkGrabber3D::invertRowsCols() {
   // At this point, CURRENT_FILLED_FRAME_POSITION_IN_VEC is going to be filled
+  if(m_firstFrameAvailable)
+    if(m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getTransducerSettings() != (usTransducerSettings)m_grabbedImage)
+      throw(vpException(vpException::badValue, "Transducer settings changed during acquisition, somethink went wrong"));
+
   m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setTransducerSettings(m_grabbedImage);
 
-  m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setFrameCount(m_grabbedImage.getFrameCount());
-  m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setFramesPerVolume(m_grabbedImage.getFramesPerVolume());
-  m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setTimeStamp(m_grabbedImage.getTimeStamp());
+  if(m_firstFrameAvailable)
+    if(m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getMotorSettings() != m_motorSettings)
+      throw(vpException(vpException::badValue, "Motor settings changed during acquisition, somethink went wrong"));
 
-  m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->resize(m_grabbedImage.getWidth(),m_grabbedImage.getHeight());
+  m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setMotorSettings(m_motorSettings);
+
+  m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->resize(m_grabbedImage.getWidth(),m_grabbedImage.getHeight(),m_motorSettings.getFrameNumber());
+
+  //Inserting frame in volume by inverting rows and cols voxels (along x and y axis), to match ustk volume storage
+  int volumeIndex = m_grabbedImage.getFrameCount() / m_grabbedImage.getFramesPerVolume();
+  int framePostition = m_grabbedImage.getFrameCount() % m_grabbedImage.getFramesPerVolume();
+
+  if (volumeIndex % 2) { //case of backward moving motor (opposite to Z direction)
+    framePostition = m_grabbedImage.getFramesPerVolume() - framePostition - 1;
+    if(framePostition == m_grabbedImage.getFramesPerVolume() - 1)
+      m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setFirstFrameTimeStamp(m_grabbedImage.getTimeStamp());
+    if(framePostition == 0)
+      m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setLastFrameTimeStamp(m_grabbedImage.getTimeStamp());
+  }
+  else {
+    if(framePostition == 0)
+      m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setFirstFrameTimeStamp(m_grabbedImage.getTimeStamp());
+    if(framePostition == m_grabbedImage.getFramesPerVolume() - 1)
+      m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setLastFrameTimeStamp(m_grabbedImage.getTimeStamp());
+  }
+
+  m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setVolumeCount(volumeIndex);
 
   for(unsigned int i=0; i<m_grabbedImage.getHeight(); i++)
     for (unsigned int j=0; j<m_grabbedImage.getWidth(); j++)
-      (*m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC))(j,i,m_grabbedImage(i,j));
+      (*m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC))(j,i,framePostition,m_grabbedImage(i,j));
 
-  // Now CURRENT_FILLED_FRAME_POSITION_IN_VEC has become the last frame received
-  // So we switch pointers beween MOST_RECENT_FRAME_POSITION_IN_VEC and CURRENT_FILLED_FRAME_POSITION_IN_VEC
-  usFrameGrabbedInfo<usImagePreScan2D<unsigned char> >* savePtr = m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC);
-  m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
-  m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
+  //we reach the end of a volume
+  if(m_firstFrameAvailable && (framePostition == 0 || framePostition == (int) m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getFrameNumber())) {
+    // Now CURRENT_FILLED_FRAME_POSITION_IN_VEC has become the last frame received
+    // So we switch pointers beween MOST_RECENT_FRAME_POSITION_IN_VEC and CURRENT_FILLED_FRAME_POSITION_IN_VEC
+    usVolumeGrabbedInfo<usImagePreScan3D<unsigned char> > * savePtr = m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC);
+    m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
+    m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
+
+    emit(newVolumeAvailable());
+  }
 
   m_firstFrameAvailable = true;
-  emit(newFrameAvailable());
 }
 
 /**
 * Method to get the last frame received. The grabber is designed to avoid data copy (it is why you get a pointer on the data).
 * @note This method is designed to be thread-safe, you can call it from another thread.
+* @warning Make sure to lock the usFrameGrabbedInfo::mutex when you access/modify usFrameGrabbedInfo::frameCount attribute, wich is acessed in this method.
 * @return Pointer to the last frame acquired.
 */
-usFrameGrabbedInfo<usImagePreScan2D<unsigned char> >* usNetworkGrabberPreScan2D::acquire() {
+usImagePreScan3D<unsigned char> *usNetworkGrabber3D::acquire() {
   //check if the first frame is arrived
-  if (!m_firstFrameAvailable) {
-    throw(vpException(vpException::fatalError, "first frame not yet grabbed, cannot acquire"));
+  if (!m_firstVolumeAvailable) {
+    throw(vpException(vpException::fatalError, "first volume not yet grabbed, cannot acquire"));
   }
 
   //user grabs too fast
-  if(m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC)->getFrameCount() == m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getFrameCount() + 1) {
+
+
+  //TO IMPLEMENT FOR 3D : we need a setting (usGrabbedVolume) including the volume number
+  if(m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC)->getVolumeCount() == m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getVolumeCount() + 1) {
     //we wait until a new frame is available
     QEventLoop loop;
-    loop.connect(this, SIGNAL(newFrameAvailable()), SLOT(quit()));
+    loop.connect(this, SIGNAL(newVolumeAvailable()), SLOT(quit()));
     loop.exec();
 
     //switch pointers
-    usFrameGrabbedInfo<usImagePreScan2D<unsigned char> >* savePtr = m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC);
+    usVolumeGrabbedInfo<usImagePreScan3D<unsigned char> >* savePtr = m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC);
     m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
     m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
     m_swichOutputInit = true;
   }
 
   // if more recent frame available
-  else if(m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC)->getFrameCount() < m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getFrameCount() || !m_swichOutputInit) {
+  else if(m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC)->getVolumeCount() < m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getVolumeCount() || !m_swichOutputInit) {
     //switch pointers (output <-> mostRecentFilled)
-    usFrameGrabbedInfo<usImagePreScan2D<unsigned char> >* savePtr = m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC);
+    usVolumeGrabbedInfo<usImagePreScan3D<unsigned char> >* savePtr = m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC);
     m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
     m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
     m_swichOutputInit = true;

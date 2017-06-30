@@ -31,12 +31,12 @@
  *****************************************************************************/
 
 /**
- * @file usNetworkGrabberRF2D.h
- * @brief Grabber used to grab RF frames from ultrasonix station, using a tcp connection.
+ * @file usNetworkGrabber3D.h
+ * @brief Grabber used to grab pre-scan frames from ultrasonix station, using a tcp connection.
  */
 
-#ifndef __usNetworkGrabberRF2D_h_
-#define __usNetworkGrabberRF2D_h_
+#ifndef __usNetworkGrabber3D_h_
+#define __usNetworkGrabber3D_h_
 
 #include <visp3/ustk_core/usConfig.h>
 
@@ -45,12 +45,14 @@
 #include <vector>
 
 #include <visp3/ustk_grabber/usNetworkGrabber.h>
-#include <visp3/ustk_core/usImageRF2D.h>
+#include <visp3/ustk_core/usImagePreScan2D.h>
+#include <visp3/ustk_core/usImagePreScan3D.h>
 #include <visp3/ustk_grabber/usFrameGrabbedInfo.h>
+#include <visp3/ustk_grabber/usVolumeGrabbedInfo.h>
 
 /**
- * @class usNetworkGrabberRF2D
- * @brief Specific class to grab RF frames from the ultrasound station on the network.
+ * @class usNetworkGrabber3D
+ * @brief Specific class to grab pre-scan volumes from the ultrasound station on the network.
  * @ingroup module_ustk_grabber
  *
  * The following figure details the network communication process and summarizes the steps to follow to acquire ultrasound images :
@@ -62,36 +64,46 @@
  * - If you call acquire() faster than the frames are arriving on the network, it is blocking to wait next frame coming.
  * - If you call it slower you will loose frames, but you will get the last frame available.
  */
-class VISP_EXPORT usNetworkGrabberRF2D : public usNetworkGrabber
+class VISP_EXPORT usNetworkGrabber3D : public usNetworkGrabber
 {
   typedef enum {
     OUTPUT_FRAME_POSITION_IN_VEC = 0,
     MOST_RECENT_FRAME_POSITION_IN_VEC = 1,
-    CURRENT_FILLED_FRAME_POSITION_IN_VEC = 2,
+    CURRENT_FILLED_FRAME_POSITION_IN_VEC = 2
   }DataPositionInBuffer;
   Q_OBJECT
 public:
 
-  explicit usNetworkGrabberRF2D(usNetworkGrabber *parent = 0);
-  ~usNetworkGrabberRF2D();
+  explicit usNetworkGrabber3D(usNetworkGrabber *parent = 0);
+  ~usNetworkGrabber3D();
 
-  usFrameGrabbedInfo<usImageRF2D<short int> > * acquire();
+  usImagePreScan3D<unsigned char> * acquire();
 
   void dataArrived();
 
   bool isFirstFrameAvailable() {return m_firstFrameAvailable;}
 
 signals:
-  void newFrameAvailable();
+  void newVolumeAvailable();
+
+protected:
+  void invertRowsCols();
 
 private:
-  // Image buffer
-  std::vector<usFrameGrabbedInfo<usImageRF2D<short int> > *> m_outputBuffer;
+  //grabbed image (we have to "turn" it if it is a pre-scan frame)
+  usFrameGrabbedInfo<usImagePreScan2D<unsigned char> > m_grabbedImage;
+
+  // to keep saved motor settings from one frame to next one
+  usMotorSettings m_motorSettings;
+
+  // Output images : we have to invert (i <-> j) in the image grabbed
+  std::vector<usVolumeGrabbedInfo<usImagePreScan3D<unsigned char> > *> m_outputBuffer;
   bool m_firstFrameAvailable;
+  bool m_firstVolumeAvailable;
 
   //to manage ptrs switch init
   bool m_swichOutputInit;
 };
 
 #endif // QT4 || QT5
-#endif // __usNetworkGrabberRF2D_h_
+#endif // __usNetworkGrabber3D_h_

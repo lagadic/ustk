@@ -31,7 +31,7 @@ int main(int argc, char** argv)
   header.imagingMode = 12; //B-mode = 0, RF = 12
 
   //prepare image;
-  usDataGrabbed<usImageRF2D<short int> >* grabbedFrame;
+  usFrameGrabbedInfo<usImageRF2D<short int> >* grabbedFrame;
 
   //prepare converter
   usImagePreScan2D<unsigned char> preScanImage;

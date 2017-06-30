@@ -31,12 +31,12 @@
  *****************************************************************************/
 
 /**
- * @file usDataGrabbed.h
+ * @file usFrameGrabbedInfo.h
  * @brief Class to store additionnal informations arriving on the network with ultrasound images grabbed (frame count, timestamp ...).
  */
 
-#ifndef __usDataGrabbed_h_
-#define __usDataGrabbed_h_
+#ifndef __usFrameGrabbedInfo_h_
+#define __usFrameGrabbedInfo_h_
 
 
 #include <visp3/ustk_core/usConfig.h>
@@ -50,18 +50,18 @@
 #include <QtCore/QTypeInfo>
 
 /**
- * @class usDataGrabbed
+ * @class usFrameGrabbedInfo
  * @brief Class to store additionnal informations arriving on the network with ultrasound images grabbed, such as frame count, timestamp.
  * Usefull to do real-time process.
  * @ingroup module_ustk_grabber
  */
 template<class Type>
-class usDataGrabbed : public Type
+class usFrameGrabbedInfo : public Type
 {
 public:
 
-  explicit usDataGrabbed();
-  ~usDataGrabbed();
+  explicit usFrameGrabbedInfo();
+  ~usFrameGrabbedInfo();
 
   quint32 getFrameCount() const;
   int getFramesPerVolume() const;
@@ -70,8 +70,6 @@ public:
   void setFrameCount(quint32 frameCount);
   void setFramesPerVolume(int framesPerVolume);
   void setTimeStamp(quint64 timeStamp);
-
-  vpMutex mutex; // security to access the usImage grabbed from different threads
 
 private:
   quint32 m_frameCount; //from the beginning of acquisition
@@ -83,8 +81,8 @@ private:
 * Constructor.
 */
 template<class Type>
-usDataGrabbed<Type>::usDataGrabbed() :
-  Type(), mutex(), m_frameCount(0), m_timeStamp(0), m_framesPerVolume(0)
+usFrameGrabbedInfo<Type>::usFrameGrabbedInfo() :
+  Type(), m_frameCount(0), m_timeStamp(0), m_framesPerVolume(0)
 {
 
 }
@@ -93,7 +91,7 @@ usDataGrabbed<Type>::usDataGrabbed() :
 * Destructor.
 */
 template<class Type>
-usDataGrabbed<Type>::~usDataGrabbed()
+usFrameGrabbedInfo<Type>::~usFrameGrabbedInfo()
 {
 
 }
@@ -103,7 +101,7 @@ usDataGrabbed<Type>::~usDataGrabbed()
 * @return The frame number since beginning of acquisition.
 */
 template<class Type>
-quint32 usDataGrabbed<Type>::getFrameCount() const {
+quint32 usFrameGrabbedInfo<Type>::getFrameCount() const {
   return m_frameCount;
 }
 
@@ -112,7 +110,7 @@ quint32 usDataGrabbed<Type>::getFrameCount() const {
 * @return The number of frames per volume acquired. Used to reconstruct 3D volumes.
 */
 template<class Type>
-int usDataGrabbed<Type>::getFramesPerVolume() const{
+int usFrameGrabbedInfo<Type>::getFramesPerVolume() const{
   return m_framesPerVolume;
 }
 
@@ -121,7 +119,7 @@ int usDataGrabbed<Type>::getFramesPerVolume() const{
 * @return The time stamp of ultrasound station when the frame was acquired.
 */
 template<class Type>
-quint64 usDataGrabbed<Type>::getTimeStamp() const{
+quint64 usFrameGrabbedInfo<Type>::getTimeStamp() const{
   return m_timeStamp;
 }
 
@@ -130,7 +128,7 @@ quint64 usDataGrabbed<Type>::getTimeStamp() const{
 * @param frameCount The frame number since beginning of acquisition.
 */
 template<class Type>
-void usDataGrabbed<Type>::setFrameCount(quint32 frameCount) {
+void usFrameGrabbedInfo<Type>::setFrameCount(quint32 frameCount) {
   m_frameCount = frameCount;
 }
 
@@ -139,7 +137,7 @@ void usDataGrabbed<Type>::setFrameCount(quint32 frameCount) {
 * @param framesPerVolume The number of frames per volume acquired. Used to reconstruct 3D volumes.
 */
 template<class Type>
-void usDataGrabbed<Type>::setFramesPerVolume(int framesPerVolume){
+void usFrameGrabbedInfo<Type>::setFramesPerVolume(int framesPerVolume){
   m_framesPerVolume = framesPerVolume;
 }
 
@@ -148,7 +146,7 @@ void usDataGrabbed<Type>::setFramesPerVolume(int framesPerVolume){
 * @param timeStamp The time stamp of ultrasound station when the frame was acquired.
 */
 template<class Type>
-void usDataGrabbed<Type>::setTimeStamp(quint64 timeStamp){
+void usFrameGrabbedInfo<Type>::setTimeStamp(quint64 timeStamp){
   m_timeStamp = timeStamp;
 }
 
@@ -156,12 +154,12 @@ void usDataGrabbed<Type>::setTimeStamp(quint64 timeStamp){
   Print data grabbed information in a ostream.
   Usage example:
   \code
-  usDataGrabbed<Type> myDataGrabbed;
+  usFrameGrabbedInfo<Type> myDataGrabbed;
   std::cout << myDataGrabbed << std::endl;
   \endcode
 */
 template<class Type>
-std::ostream& operator<<(std::ostream& out, const usDataGrabbed<Type> &other)
+std::ostream& operator<<(std::ostream& out, const usFrameGrabbedInfo<Type> &other)
 {
   out << "timestamp : " << other.getTimeStamp() << std::endl
       << "frameCount : " << other.getFrameCount() << std::endl
@@ -172,4 +170,4 @@ std::ostream& operator<<(std::ostream& out, const usDataGrabbed<Type> &other)
 }
 
 #endif // QT4 || QT5
-#endif // __usDataGrabbed_h_
+#endif // __usFrameGrabbedInfo_h_

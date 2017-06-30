@@ -94,12 +94,14 @@ public:
   double getFramePitch() const;
   double getMotorFieldOfView() const;
   double getMotorRadius() const;
+  usMotorSettings getMotorSettings() const;
   usMotorType getMotorType() const;
 
   bool frameNumberIsSet() const;
 
   usMotorSettings& operator=(const usMotorSettings& other);
   bool operator==(const usMotorSettings& other);
+  bool operator!=(const usMotorSettings& other);
 
   // Settings from the 3D probe
   void setFrameNumber(unsigned int frameNumber);
