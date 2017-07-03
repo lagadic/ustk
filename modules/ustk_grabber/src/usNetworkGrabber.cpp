@@ -78,11 +78,11 @@ usNetworkGrabber::~usNetworkGrabber()
 }
 
 /**
-* Selection of the server ip adress : local loop (if simulation) or 192.168.100.2.
+* Selection of the server ip adress. For the lab network: 192.168.100.2. for ultrasonix machine.
 */
-void usNetworkGrabber::useSimulator(bool t_state)
+void usNetworkGrabber::setServerIp(std::string & ip)
 {
-  m_ip = (t_state)?"127.0.0.1":"192.168.100.2";
+  m_ip = ip;
 }
 
 /**
@@ -242,7 +242,7 @@ bool usNetworkGrabber::sendAcquisitionParameters() {
   stream << m_acquisitionParamters.getActivateMotor();
   stream << m_acquisitionParamters.getMotorPosition();
   stream << m_acquisitionParamters.getFramesPerVolume();
-  stream << m_acquisitionParamters.getAnglePerFrame();
+  stream << m_acquisitionParamters.getSepsPerFrame();
 
   if(m_verbose) {
     std::cout << "UPDATE SENT : " << std::endl;
@@ -257,7 +257,7 @@ bool usNetworkGrabber::sendAcquisitionParameters() {
     std::cout << "ActivateMotor = " <<  m_acquisitionParamters.getActivateMotor() << std::endl;
     std::cout << "MotorPosition = " <<  m_acquisitionParamters.getMotorPosition() << std::endl;
     std::cout << "FramesPerVolume = " <<  m_acquisitionParamters.getFramesPerVolume() << std::endl;
-    std::cout << "anglePerFrame = " <<  m_acquisitionParamters.getAnglePerFrame() << std::endl;
+    std::cout << "anglePerFrame = " <<  m_acquisitionParamters.getSepsPerFrame() << std::endl;
   }
   m_tcpSocket->write(block);
 
@@ -388,7 +388,18 @@ void usNetworkGrabber::readAcquisitionParameters(QDataStream &stream) {
   m_acquisitionParamters.setActivateMotor(activateMotor);
   m_acquisitionParamters.setMotorPosition(motorPosition);
   m_acquisitionParamters.setFramesPerVolume(framesPerVolume);
-  m_acquisitionParamters.setAnglePerFrame(anglePerFrame);
+  if(anglePerFrame == 0)
+    m_acquisitionParamters.setSepsPerFrame(usAcquisitionParameters::US_STATIC_MOTOR);
+  else if(anglePerFrame == 2)
+    m_acquisitionParamters.setSepsPerFrame(usAcquisitionParameters::US_ANGLE_PITCH_1);
+  else if(anglePerFrame == 4)
+    m_acquisitionParamters.setSepsPerFrame(usAcquisitionParameters::US_ANGLE_PITCH_2);
+  else if(anglePerFrame == 8)
+    m_acquisitionParamters.setSepsPerFrame(usAcquisitionParameters::US_ANGLE_PITCH_3);
+  else if(anglePerFrame == 16)
+    m_acquisitionParamters.setSepsPerFrame(usAcquisitionParameters::US_ANGLE_PITCH_4);
+  else if(anglePerFrame == 32)
+    m_acquisitionParamters.setSepsPerFrame(usAcquisitionParameters::US_ANGLE_PITCH_5);
 
   m_acquisitionParamters.setTransmitFrequencyMin(transmitFrequencyMin);
   m_acquisitionParamters.setSamplingFrequencyMin(samplingFrequencyMin);
@@ -396,8 +407,18 @@ void usNetworkGrabber::readAcquisitionParameters(QDataStream &stream) {
   m_acquisitionParamters.setImageDepthMin(imageDepthMin);
   m_acquisitionParamters.setSectorMin(sectorMin);
   m_acquisitionParamters.setMotorPositionMin(motorPositionMin);
-  m_acquisitionParamters.setFramesPerVolumeMin(framesPerVolumeMin);
-  m_acquisitionParamters.setAnglePerFrameMin(anglePerFrameMin);
+  if(anglePerFrame == 0)
+    m_acquisitionParamters.setSepsPerFrameMin(usAcquisitionParameters::US_STATIC_MOTOR);
+  else if(anglePerFrame == 2)
+    m_acquisitionParamters.setSepsPerFrameMin(usAcquisitionParameters::US_ANGLE_PITCH_1);
+  else if(anglePerFrame == 4)
+    m_acquisitionParamters.setSepsPerFrameMin(usAcquisitionParameters::US_ANGLE_PITCH_2);
+  else if(anglePerFrame == 8)
+    m_acquisitionParamters.setSepsPerFrameMin(usAcquisitionParameters::US_ANGLE_PITCH_3);
+  else if(anglePerFrame == 16)
+    m_acquisitionParamters.setSepsPerFrameMin(usAcquisitionParameters::US_ANGLE_PITCH_4);
+  else if(anglePerFrame == 32)
+    m_acquisitionParamters.setSepsPerFrameMin(usAcquisitionParameters::US_ANGLE_PITCH_5);
 
   m_acquisitionParamters.setTransmitFrequencyMax(transmitFrequencyMax);
   m_acquisitionParamters.setSamplingFrequencyMax(samplingFrequencyMax);
@@ -406,24 +427,33 @@ void usNetworkGrabber::readAcquisitionParameters(QDataStream &stream) {
   m_acquisitionParamters.setSectorMax(sectorMax);
   m_acquisitionParamters.setMotorPositionMax(motorPositionMax);
   m_acquisitionParamters.setFramesPerVolumeMax(framesPerVolumeMax);
-  m_acquisitionParamters.setAnglePerFrameMax(anglePerFrameMax);
+  if(anglePerFrame == 0)
+    m_acquisitionParamters.setSepsPerFrameMax(usAcquisitionParameters::US_STATIC_MOTOR);
+  else if(anglePerFrame == 2)
+    m_acquisitionParamters.setSepsPerFrameMax(usAcquisitionParameters::US_ANGLE_PITCH_1);
+  else if(anglePerFrame == 4)
+    m_acquisitionParamters.setSepsPerFrameMax(usAcquisitionParameters::US_ANGLE_PITCH_2);
+  else if(anglePerFrame == 8)
+    m_acquisitionParamters.setSepsPerFrameMax(usAcquisitionParameters::US_ANGLE_PITCH_3);
+  else if(anglePerFrame == 16)
+    m_acquisitionParamters.setSepsPerFrameMax(usAcquisitionParameters::US_ANGLE_PITCH_4);
+  else if(anglePerFrame == 32)
+    m_acquisitionParamters.setSepsPerFrameMax(usAcquisitionParameters::US_ANGLE_PITCH_5);
+
 }
 
 /**
 * Setter for motor activation : true to sweep the motor the motor during the acquisition, false to let it static.
 */
-void usNetworkGrabber::setActivateMotor(bool activateMotor) {
+void usNetworkGrabber::setMotorActivation(bool activateMotor) {
   m_acquisitionParamters.setActivateMotor(activateMotor);
 }
 
 /**
-* Setter for angle between two sucessive frames (angle). See usAcquisitionParameters::us4DC7Angles
+* Setter for steps between two sucessive frames (angle). See usAcquisitionParameters::usMotorSteps
 */
-void usNetworkGrabber::setAnglePerFrame(int anglePerFrame) {
-  if(anglePerFrame < m_acquisitionParamters.getAnglePerFrameMin() ||
-     anglePerFrame > m_acquisitionParamters.getAnglePerFrameMax())
-    throw(vpException(vpException::badValue));
-  m_acquisitionParamters.setAnglePerFrame(anglePerFrame);
+void usNetworkGrabber::setStepsPerFrame(usAcquisitionParameters::usMotorStep stepsPerFrame) {
+  m_acquisitionParamters.setSepsPerFrame(stepsPerFrame);
 }
 
 /**
@@ -565,6 +595,90 @@ void usNetworkGrabber::stopAcquisition() {
   out << header.headerId;
   out << header.run;
   m_tcpSocket->write(block);
+}
+
+/**
+* Getter for motor activation : true to sweep the motor the motor during the acquisition, false to let it static.
+*/
+bool usNetworkGrabber::getMotorActivation() {
+  return m_acquisitionParamters.getActivateMotor();
+}
+
+/**
+* Getter for steps between two sucessive frames (angle). See usAcquisitionParameters::usMotorSteps
+*/
+usAcquisitionParameters::usMotorStep usNetworkGrabber::getStepsPerFrame() {
+  return m_acquisitionParamters.getSepsPerFrame();
+}
+
+/**
+* Getter for the number of frames per volume, in 3D acquisition.
+*/
+int usNetworkGrabber::getFramesPerVolume() {
+  return m_acquisitionParamters.getFramesPerVolume();
+}
+
+/**
+* Getter for image depth (meters).
+*/
+int usNetworkGrabber::getImageDepth() {
+  return m_acquisitionParamters.getImageDepth();
+}
+
+/**
+* Getter for imaging mode (0 : B-Mode, 12 : RF).
+*/
+int usNetworkGrabber::getImagingMode()  {
+  return m_acquisitionParamters.getImagingMode();
+}
+
+/**
+* Getter for a static motor position (in angle from the beginning position).
+*/
+int usNetworkGrabber::getMotorPosition() {
+  return m_acquisitionParamters.getMotorPosition();
+}
+
+/**
+* Getter for post-scan image height.
+*/
+int usNetworkGrabber::getPostScanHeigh()  {
+  return m_acquisitionParamters.getPostScanHeigh();
+}
+
+/**
+* Getter for post-scan mode : true for post-scan, false for pre-scan.
+*/
+bool usNetworkGrabber::getPostScanMode() {
+  return m_acquisitionParamters.getPostScanMode();
+}
+
+/**
+* Getter for post-scan image width.
+*/
+int usNetworkGrabber::getPostScanWidth() {
+  return m_acquisitionParamters.getPostScanWidth();
+}
+
+/**
+* Getter for samplingFrequency (Hz).
+*/
+int usNetworkGrabber::getSamplingFrequency() {
+  return m_acquisitionParamters.getSamplingFrequency();
+}
+
+/**
+* Getter for sector (percentage of the number of transducers to use).
+*/
+int usNetworkGrabber::getSector() {
+  return m_acquisitionParamters.getSector();
+}
+
+/**
+* Getter for transmitFrequency (Hz).
+*/
+int usNetworkGrabber::getTransmitFrequency() {
+  return m_acquisitionParamters.getTransmitFrequency();
 }
 
 #endif

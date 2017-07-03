@@ -8,7 +8,7 @@
 #include <QtCore/QThread>
 #include <QApplication>
 
-#include <visp3/ustk_grabber/usNetworkGrabberPreScan.h>
+#include <visp3/ustk_grabber/usNetworkGrabberPreScan2D.h>
 
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/gui/vpDisplayGDI.h>
@@ -20,7 +20,7 @@ int main(int argc, char** argv)
 
   QThread * grabbingThread = new QThread();
 
-  usNetworkGrabberPreScan * qtGrabber = new usNetworkGrabberPreScan();
+  usNetworkGrabberPreScan2D * qtGrabber = new usNetworkGrabberPreScan2D();
   qtGrabber->setConnection(true);
 
   // setting acquisition parameters

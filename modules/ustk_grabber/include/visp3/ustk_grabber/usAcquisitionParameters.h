@@ -53,14 +53,23 @@ public:
   typedef enum
     {
       /// motor not moving (2D case)
-      US_4DC7_STATIC_MOTOR = 0,
+      US_STATIC_MOTOR = 0,
+
+      /// 2 motor steps per frame = 0.36585 degrees. Not working for 4DC7 probe !
+      US_ANGLE_PITCH_1 = 2,
 
       /// 4 motor steps per frame = 0.7317 degrees
-      US_4DC7_SMALL_ANGLE_PITCH = 4,
+      US_ANGLE_PITCH_2 = 4,
 
       /// 8 motor steps per frame = 1.4634 degrees
-      US_4DC7_BIG_ANGLE_PITCH = 8
-    } us4DC7Angles;
+      US_ANGLE_PITCH_3 = 8,
+
+      /// 8 motor steps per frame = 2.9268 degrees. Not working for 4DC7 probe !
+      US_ANGLE_PITCH_4 = 16,
+
+      /// 8 motor steps per frame = 5.8536 degrees. Not working for 4DC7 probe !
+      US_ANGLE_PITCH_5 = 32
+    } usMotorStep;
 
 
   usAcquisitionParameters();
@@ -69,9 +78,9 @@ public:
   //values
   bool getActivateMotor() const {return m_activateMotor;}
 
-  int getAnglePerFrame () const {return m_anglePerFrame;}
-  int getAnglePerFrameMax () const {return m_anglePerFrameMax;}
-  int getAnglePerFrameMin () const {return m_anglePerFrameMin;}
+  usMotorStep getSepsPerFrame () const {return m_motorSteps;}
+  usMotorStep getSepsPerFrameMax () const {return m_motorStepsMax;}
+  usMotorStep getSepsPerFrameMin () const {return m_motorStepsMin;}
 
   int getFramesPerVolume () const {return m_framesPerVolume;}
   int getFramesPerVolumeMax () const {return m_framesPerVolumeMax;}
@@ -111,9 +120,9 @@ public:
   //setters
   void setActivateMotor(bool activateMotor);
 
-  void setAnglePerFrame(int anglePerFrame);
-  void setAnglePerFrameMax(int anglePerFrameMax);
-  void setAnglePerFrameMin(int anglePerFrameMin);
+  void setSepsPerFrame(usMotorStep anglePerFrame);
+  void setSepsPerFrameMax(usMotorStep anglePerFrameMax);
+  void setSepsPerFrameMin(usMotorStep anglePerFrameMin);
 
   void setFramesPerVolume(int framesPerVolume);
   void setFramesPerVolumeMax(int framesPerVolumeMax);
@@ -172,7 +181,7 @@ private :
 
   // motor movement parameters
   int m_framesPerVolume; // (must be odd : always a central frame)
-  int m_anglePerFrame; // angle between two frames in degrees
+  usMotorStep m_motorSteps; // steps between two frames (see motor info between total steps and fov to convert in degrees)
 
   // min values
   int m_transmitFrequencyMin;
@@ -182,7 +191,7 @@ private :
   int m_sectorMin;
   int m_motorPositionMin;
   int m_framesPerVolumeMin;
-  int m_anglePerFrameMin;
+  usMotorStep m_motorStepsMin;
 
   // max values
   int m_transmitFrequencyMax;
@@ -192,6 +201,6 @@ private :
   int m_sectorMax;
   int m_motorPositionMax;
   int m_framesPerVolumeMax;
-  int m_anglePerFrameMax;
+  usMotorStep m_motorStepsMax;
 };
 #endif // __usAcquisitionParameters_h_

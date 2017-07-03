@@ -57,7 +57,7 @@
 
 /**
  * @class usNetworkGrabber
- * @brief Generic abstract class to manage tcp connection to grab ultrasound frames.
+ * @brief Generic abstract class to manage tcp connection to grab ultrasound frames (on port 8080).
  * @ingroup module_ustk_grabber
 
 
@@ -165,14 +165,29 @@ public:
 
   bool initAcquisition(const usNetworkGrabber::usInitHeaderSent &header);
 
+  bool getMotorActivation();
+  usAcquisitionParameters::usMotorStep getStepsPerFrame();
+  int getFramesPerVolume();
+  int getImageDepth();
+  int getImagingMode() ;
+  int getMotorPosition();
+  int getPostScanHeigh();
+  bool getPostScanMode();
+  int getPostScanWidth();
+  int getSamplingFrequency();
+  int getSector();
+  int getTransmitFrequency();
+
   void readAcquisitionParameters(QDataStream &stream);
 
   void runAcquisition();
 
+  bool sendAcquisitionParameters();
+
   void setIPAddress(const std::string &s_ip){m_ip = s_ip;}
 
-  void setActivateMotor(bool activateMotor);
-  void setAnglePerFrame(int anglePerFrame);
+  void setMotorActivation(bool activateMotor);
+  void setStepsPerFrame(usAcquisitionParameters::usMotorStep stepsPerFrame);
   void setFramesPerVolume(int framesPerVolume);
   void setImageDepth(int imageDepth);
   void setImagingMode(int imagingMode) ;
@@ -188,8 +203,6 @@ public:
 
   void stopAcquisition();
 
-  bool sendAcquisitionParameters();
-
 signals:
   void serverUpdateEnded(bool success);
   void endBlockingLoop();
@@ -203,7 +216,7 @@ public slots:
   void disconnected();
   void handleError(QAbstractSocket::SocketError err);
   void setConnection(bool actionConnect);
-  void useSimulator(bool t_state);
+  void setServerIp(std::string & ip);
 
 protected slots:
   void serverUpdated(bool sucess);

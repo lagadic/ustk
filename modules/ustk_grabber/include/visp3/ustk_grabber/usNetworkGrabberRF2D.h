@@ -31,12 +31,12 @@
  *****************************************************************************/
 
 /**
- * @file usNetworkGrabberPostScan.h
- * @brief Grabber used to grab post-scan frames from ultrasonix station, using a tcp connection.
+ * @file usNetworkGrabberRF2D.h
+ * @brief Grabber used to grab RF frames from ultrasonix station, using a tcp connection.
  */
 
-#ifndef __usNetworkGrabberPostScan_h_
-#define __usNetworkGrabberPostScan_h_
+#ifndef __usNetworkGrabberRF2D_h_
+#define __usNetworkGrabberRF2D_h_
 
 #include <visp3/ustk_core/usConfig.h>
 
@@ -45,24 +45,24 @@
 #include <vector>
 
 #include <visp3/ustk_grabber/usNetworkGrabber.h>
-#include <visp3/ustk_core/usImagePostScan2D.h>
+#include <visp3/ustk_core/usImageRF2D.h>
 #include <visp3/ustk_grabber/usDataGrabbed.h>
 
 /**
- * @class usNetworkGrabberPostScan
- * @brief Specific class to grab post-scan frames from the ultrasound station on the network.
+ * @class usNetworkGrabberRF2D
+ * @brief Specific class to grab RF frames from the ultrasound station on the network.
  * @ingroup module_ustk_grabber
  *
  * The following figure details the network communication process and summarizes the steps to follow to acquire ultrasound images :
  * \image html img-usNetworkGrabber.png
  *
  * This grabber manages a buffer system to avoid multiple copy of the frames.
- * The acquire() method returns a pointer on a new frame, you can acess and modify the frame (it is thread-safe).
+ * The acquire() method returns you a pointer on a new frame, you can acess and modify the frame (it is thread-safe).
  * Acquire() can be blocking, the behaviour depends on how often you call it :
  * - If you call acquire() faster than the frames are arriving on the network, it is blocking to wait next frame coming.
  * - If you call it slower you will loose frames, but you will get the last frame available.
  */
-class VISP_EXPORT usNetworkGrabberPostScan : public usNetworkGrabber
+class VISP_EXPORT usNetworkGrabberRF2D : public usNetworkGrabber
 {
   typedef enum {
     OUTPUT_FRAME_POSITION_IN_VEC = 0,
@@ -72,10 +72,10 @@ class VISP_EXPORT usNetworkGrabberPostScan : public usNetworkGrabber
   Q_OBJECT
 public:
 
-  explicit usNetworkGrabberPostScan(usNetworkGrabber *parent = 0);
-  ~usNetworkGrabberPostScan();
+  explicit usNetworkGrabberRF2D(usNetworkGrabber *parent = 0);
+  ~usNetworkGrabberRF2D();
 
-  usDataGrabbed<usImagePostScan2D<unsigned char> > * acquire();
+  usDataGrabbed<usImageRF2D<short int> > * acquire();
 
   void dataArrived();
 
@@ -85,11 +85,8 @@ signals:
   void newFrameAvailable();
 
 private:
-  //grabbed image
-  usDataGrabbed<usImagePostScan2D<unsigned char> > m_grabbedImage;
-
-  // Output images : we have to invert (i <-> j) in the image grabbed
-  std::vector<usDataGrabbed<usImagePostScan2D<unsigned char> > *> m_outputBuffer;
+  // Image buffer
+  std::vector<usDataGrabbed<usImageRF2D<short int> > *> m_outputBuffer;
   bool m_firstFrameAvailable;
 
   //to manage ptrs switch init
@@ -97,4 +94,4 @@ private:
 };
 
 #endif // QT4 || QT5
-#endif // __usNetworkGrabberPostScan_h_
+#endif // __usNetworkGrabberRF2D_h_

@@ -8,7 +8,7 @@
 #include <QtCore/QThread>
 #include <QApplication>
 
-#include <visp3/ustk_grabber/usNetworkGrabberPostScan.h>
+#include <visp3/ustk_grabber/usNetworkGrabberPostScan2D.h>
 
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/gui/vpDisplayGDI.h>
@@ -22,7 +22,7 @@ int main(int argc, char** argv)
 
   QThread * grabbingThread = new QThread();
 
-  usNetworkGrabberPostScan * qtGrabber = new usNetworkGrabberPostScan();
+  usNetworkGrabberPostScan2D * qtGrabber = new usNetworkGrabberPostScan2D();
   qtGrabber->setConnection(true);
 
   // setting acquisition parameters
@@ -55,9 +55,9 @@ int main(int argc, char** argv)
   qtGrabber->setImageDepth(140);
 
   // set the 4DC7 motor on the middle frame
-  qtGrabber->setAnglePerFrame(4);
+  qtGrabber->setStepsPerFrame(usAcquisitionParameters::US_ANGLE_PITCH_2);
   qtGrabber->setFramesPerVolume(9);
-  qtGrabber->setActivateMotor(true);
+  qtGrabber->setMotorActivation(true);
 
   std::cout << "send update" << std::endl;
   qtGrabber->sendAcquisitionParameters();

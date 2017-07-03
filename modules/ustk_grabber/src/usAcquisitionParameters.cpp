@@ -39,10 +39,10 @@
 */
 usAcquisitionParameters::usAcquisitionParameters() :
   m_transmitFrequency(0), m_samplingFrequency(0), m_imagingMode(0),m_postScanMode(false), m_postScanHeigh(0), m_postScanWidth(0),
-  m_imageDepth(0), m_sector(0), m_activateMotor(false), m_motorPosition(0),m_framesPerVolume(0), m_anglePerFrame(US_4DC7_STATIC_MOTOR),
+  m_imageDepth(0), m_sector(0), m_activateMotor(false), m_motorPosition(0),m_framesPerVolume(0), m_motorSteps(US_STATIC_MOTOR),
   m_transmitFrequencyMin(0), m_samplingFrequencyMin(0), m_imagingModeMin(0), m_imageDepthMin(0), m_sectorMin(0),
-  m_motorPositionMin(0), m_framesPerVolumeMin(0), m_anglePerFrameMin(0), m_transmitFrequencyMax(0), m_samplingFrequencyMax(0),
-  m_imagingModeMax(0), m_imageDepthMax(0), m_sectorMax(0), m_motorPositionMax(0), m_framesPerVolumeMax(0), m_anglePerFrameMax(0)
+  m_motorPositionMin(0), m_framesPerVolumeMin(0), m_motorStepsMin(US_STATIC_MOTOR), m_transmitFrequencyMax(0), m_samplingFrequencyMax(0),
+  m_imagingModeMax(0), m_imageDepthMax(0), m_sectorMax(0), m_motorPositionMax(0), m_framesPerVolumeMax(0), m_motorStepsMax(US_STATIC_MOTOR)
 {
 
 }
@@ -67,24 +67,24 @@ void usAcquisitionParameters::setActivateMotor(bool activateMotor) {
 * Setter for angle step per frame.
 * @param anglePerFrame Angle in degrees between 2 sucessive frames. See usAcquisitionParameters::us4DC7Angles
 */
-void usAcquisitionParameters::setAnglePerFrame(int anglePerFrame) {
-  m_anglePerFrame =  anglePerFrame;
+void usAcquisitionParameters::setSepsPerFrame(usMotorStep anglePerFrame) {
+  m_motorSteps =  anglePerFrame;
 }
 
 /**
 * Setter for angle step per frame max.
 * @param anglePerFrameMax Max angle in degrees between 2 sucessive frames. See usAcquisitionParameters::us4DC7Angles
 */
-void usAcquisitionParameters::setAnglePerFrameMax(int anglePerFrameMax) {
-  m_anglePerFrameMax =  anglePerFrameMax;
+void usAcquisitionParameters::setSepsPerFrameMax(usMotorStep anglePerFrameMax) {
+  m_motorStepsMax =  anglePerFrameMax;
 }
 
 /**
 * Setter for angle step per frame min.
 * @param anglePerFrameMin Min angle in degrees between 2 sucessive frames. See usAcquisitionParameters::us4DC7Angles
 */
-void usAcquisitionParameters::setAnglePerFrameMin(int anglePerFrameMin) {
-  m_anglePerFrameMin =  anglePerFrameMin;
+void usAcquisitionParameters::setSepsPerFrameMin(usMotorStep anglePerFrameMin) {
+  m_motorStepsMin =  anglePerFrameMin;
 }
 
 /**
