@@ -31,12 +31,12 @@
  *****************************************************************************/
 
 /**
- * @file usNetworkGrabberPreScan.h
+ * @file usNetworkGrabberPreScan2D.h
  * @brief Grabber used to grab pre-scan frames from ultrasonix station, using a tcp connection.
  */
 
-#ifndef __usNetworkGrabberPreScan_h_
-#define __usNetworkGrabberPreScan_h_
+#ifndef __usNetworkGrabberPreScan2D_h_
+#define __usNetworkGrabberPreScan2D_h_
 
 #include <visp3/ustk_core/usConfig.h>
 
@@ -49,7 +49,7 @@
 #include <visp3/ustk_grabber/usDataGrabbed.h>
 
 /**
- * @class usNetworkGrabberPreScan
+ * @class usNetworkGrabberPreScan2D
  * @brief Specific class to grab pre-scan frames from the ultrasound station on the network.
  * @ingroup module_ustk_grabber
  *
@@ -62,7 +62,7 @@
  * - If you call acquire() faster than the frames are arriving on the network, it is blocking to wait next frame coming.
  * - If you call it slower you will loose frames, but you will get the last frame available.
  */
-class VISP_EXPORT usNetworkGrabberPreScan : public usNetworkGrabber
+class VISP_EXPORT usNetworkGrabberPreScan2D : public usNetworkGrabber
 {
   typedef enum {
     OUTPUT_FRAME_POSITION_IN_VEC = 0,
@@ -72,8 +72,8 @@ class VISP_EXPORT usNetworkGrabberPreScan : public usNetworkGrabber
   Q_OBJECT
 public:
 
-  explicit usNetworkGrabberPreScan(usNetworkGrabber *parent = 0);
-  ~usNetworkGrabberPreScan();
+  explicit usNetworkGrabberPreScan2D(usNetworkGrabber *parent = 0);
+  ~usNetworkGrabberPreScan2D();
 
   usDataGrabbed<usImagePreScan2D<unsigned char> > * acquire();
 
@@ -100,4 +100,4 @@ private:
 };
 
 #endif // QT4 || QT5
-#endif // __usNetworkGrabberPreScan_h_
+#endif // __usNetworkGrabberPreScan2D_h_

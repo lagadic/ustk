@@ -31,7 +31,7 @@
  *
  *****************************************************************************/
 
-#include <visp3/ustk_grabber/usNetworkGrabberPreScan.h>
+#include <visp3/ustk_grabber/usNetworkGrabberPreScan2D.h>
 
 #if defined(USTK_HAVE_QT5) || defined(USTK_HAVE_VTK_QT)
 
@@ -41,7 +41,7 @@
 /**
 * Constructor. Inititializes the image, and manages Qt signal.
 */
-usNetworkGrabberPreScan::usNetworkGrabberPreScan(usNetworkGrabber *parent) :
+usNetworkGrabberPreScan2D::usNetworkGrabberPreScan2D(usNetworkGrabber *parent) :
   usNetworkGrabber(parent)
 {
   m_grabbedImage.init(0,0);
@@ -62,7 +62,7 @@ usNetworkGrabberPreScan::usNetworkGrabberPreScan(usNetworkGrabber *parent) :
 /**
 * Destructor.
 */
-usNetworkGrabberPreScan::~usNetworkGrabberPreScan()
+usNetworkGrabberPreScan2D::~usNetworkGrabberPreScan2D()
 {
 
 }
@@ -71,7 +71,7 @@ usNetworkGrabberPreScan::~usNetworkGrabberPreScan()
 * Slot called when data is coming on the network.
 * Manages the type of data which is coming and read it. Emits newFrameArrived signal when a whole frame is available.
 */
-void usNetworkGrabberPreScan::dataArrived()
+void usNetworkGrabberPreScan2D::dataArrived()
 {
   ////////////////// HEADER READING //////////////////
   QDataStream in;
@@ -133,7 +133,7 @@ void usNetworkGrabberPreScan::dataArrived()
     in >> m_imageHeader.scanLinePitch;
     in >> m_imageHeader.scanLineNumber;
     in >> m_imageHeader.imageDepth;
-    in >> m_imageHeader.degPerFr;
+    in >> m_imageHeader.anglePerFr;
     in >> m_imageHeader.framesPerVolume;
 
     if(m_verbose) {
@@ -153,7 +153,7 @@ void usNetworkGrabberPreScan::dataArrived()
       std::cout << "scanLinePitch = " <<  m_imageHeader.scanLinePitch << std::endl;
       std::cout << "scanLineNumber = " <<  m_imageHeader.scanLineNumber << std::endl;
       std::cout << "imageDepth = " <<  m_imageHeader.imageDepth << std::endl;
-      std::cout << "degPerFr = " <<  m_imageHeader.degPerFr << std::endl;
+      std::cout << "anglePerFr = " <<  m_imageHeader.anglePerFr << std::endl;
       std::cout << "framesPerVolume = " <<  m_imageHeader.framesPerVolume << std::endl;
     }
 
@@ -204,7 +204,7 @@ void usNetworkGrabberPreScan::dataArrived()
 /**
 * Method to invert rows and columns in the image.
 */
-void usNetworkGrabberPreScan::invertRowsCols() {
+void usNetworkGrabberPreScan2D::invertRowsCols() {
   // At this point, CURRENT_FILLED_FRAME_POSITION_IN_VEC is going to be filled
   m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setTransducerSettings(m_grabbedImage);
 
@@ -238,7 +238,7 @@ void usNetworkGrabberPreScan::invertRowsCols() {
 * @warning Make sure to lock the usDataGrabbed::mutex when you access/modify usDataGrabbed::frameCount attribute, wich is acessed in this method.
 * @return Pointer to the last frame acquired.
 */
-usDataGrabbed<usImagePreScan2D<unsigned char> >* usNetworkGrabberPreScan::acquire() {
+usDataGrabbed<usImagePreScan2D<unsigned char> >* usNetworkGrabberPreScan2D::acquire() {
   //check if the first frame is arrived
   if (!m_firstFrameAvailable) {
     throw(vpException(vpException::fatalError, "first frame not yet grabbed, cannot acquire"));

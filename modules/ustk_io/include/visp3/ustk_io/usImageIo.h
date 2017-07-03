@@ -66,7 +66,7 @@ public:
 
   /** @name RF io */
   //@{
-  static void read(usImageRF2D<short> &rfImage, const std::string &headerFileName);
+  static void read(usImageRF2D<short int> &imageRf2D, const std::string &headerFileName);
   static void read(usImageRF3D<short> &rfImage3D, const std::string &headerFileName);
 
   static void write(const usImageRF2D<short> &rfImage, const std::string &headerFileName,

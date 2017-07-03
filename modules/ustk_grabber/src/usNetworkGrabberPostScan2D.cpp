@@ -31,7 +31,7 @@
  *
  *****************************************************************************/
 
-#include <visp3/ustk_grabber/usNetworkGrabberPostScan.h>
+#include <visp3/ustk_grabber/usNetworkGrabberPostScan2D.h>
 
 #if defined(USTK_HAVE_QT5) || defined(USTK_HAVE_VTK_QT)
 
@@ -41,7 +41,7 @@
 /**
 * Constructor. Inititializes the image, and manages Qt signal.
 */
-usNetworkGrabberPostScan::usNetworkGrabberPostScan(usNetworkGrabber *parent) :
+usNetworkGrabberPostScan2D::usNetworkGrabberPostScan2D(usNetworkGrabber *parent) :
   usNetworkGrabber(parent)
 {
   //buffer of size 3
@@ -59,7 +59,7 @@ usNetworkGrabberPostScan::usNetworkGrabberPostScan(usNetworkGrabber *parent) :
 /**
 * Destructor.
 */
-usNetworkGrabberPostScan::~usNetworkGrabberPostScan()
+usNetworkGrabberPostScan2D::~usNetworkGrabberPostScan2D()
 {
 
 }
@@ -68,7 +68,7 @@ usNetworkGrabberPostScan::~usNetworkGrabberPostScan()
 * Slot called when data is coming on the network.
 * Manages the type of data is coming and read it. Emits newFrameArrived signal when a whole frame is available.
 */
-void usNetworkGrabberPostScan::dataArrived()
+void usNetworkGrabberPostScan2D::dataArrived()
 {
   ////////////////// HEADER READING //////////////////
   QDataStream in;
@@ -129,7 +129,7 @@ void usNetworkGrabberPostScan::dataArrived()
     in >> m_imageHeader.scanLinePitch;
     in >> m_imageHeader.scanLineNumber;
     in >> m_imageHeader.imageDepth;
-    in >> m_imageHeader.degPerFr;
+    in >> m_imageHeader.anglePerFr;
     in >> m_imageHeader.framesPerVolume;
 
     if(m_verbose) {
@@ -149,7 +149,7 @@ void usNetworkGrabberPostScan::dataArrived()
       std::cout << "scanLinePitch = " <<  m_imageHeader.scanLinePitch << std::endl;
       std::cout << "scanLineNumber = " <<  m_imageHeader.scanLineNumber << std::endl;
       std::cout << "imageDepth = " <<  m_imageHeader.imageDepth << std::endl;
-      std::cout << "degPerFr = " <<  m_imageHeader.degPerFr << std::endl;
+      std::cout << "anglePerFr = " <<  m_imageHeader.anglePerFr << std::endl;
       std::cout << "framesPerVolume = " <<  m_imageHeader.framesPerVolume << std::endl;
     }
 
@@ -242,7 +242,7 @@ void usNetworkGrabberPostScan::dataArrived()
 * @warning Make sure to lock the usDataGrabbed::mutex when you access/modify usDataGrabbed::frameCount attribute, wich is acessed in this method.
 * @return Pointer to the last frame acquired.
 */
-usDataGrabbed<usImagePostScan2D<unsigned char> >* usNetworkGrabberPostScan::acquire() {
+usDataGrabbed<usImagePostScan2D<unsigned char> >* usNetworkGrabberPostScan2D::acquire() {
   //check if the first frame is arrived
   if (!m_firstFrameAvailable) {
     throw(vpException(vpException::fatalError, "first frame not yet grabbed, cannot acquire"));

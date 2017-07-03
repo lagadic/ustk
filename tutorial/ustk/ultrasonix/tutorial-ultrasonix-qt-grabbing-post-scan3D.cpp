@@ -1,4 +1,4 @@
-//! \example tutorial-ultrasonix-qt-grabbing-pre-scan.cpp
+//! \example tutorial-ultrasonix-qt-grabbing-post-scan.cpp
 
 #include <iostream>
 #include <visp3/ustk_core/usConfig.h>
@@ -8,10 +8,12 @@
 #include <QtCore/QThread>
 #include <QApplication>
 
-#include <visp3/ustk_grabber/usNetworkGrabberPreScan2D.h>
+#include <visp3/ustk_grabber/usNetworkGrabberPostScan2D.h>
 
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/gui/vpDisplayGDI.h>
+
+#include <visp3/io/vpImageIo.h>
 
 int main(int argc, char** argv)
 {
@@ -20,7 +22,7 @@ int main(int argc, char** argv)
 
   QThread * grabbingThread = new QThread();
 
-  usNetworkGrabberPreScan2D * qtGrabber = new usNetworkGrabberPreScan2D();
+  usNetworkGrabberPostScan2D * qtGrabber = new usNetworkGrabberPostScan2D();
   qtGrabber->setConnection(true);
 
   // setting acquisition parameters
@@ -29,8 +31,7 @@ int main(int argc, char** argv)
   header.slotId = 0; //top slot id = 0
   header.imagingMode = 0; //B-mode = 0
 
-  //prepare image;
-  usDataGrabbed<usImagePreScan2D<unsigned char> >* grabbedFrame;
+  usDataGrabbed<usImagePostScan2D<unsigned char> >* grabbedFrame;
 
   //Prepare display
 #if defined(VISP_HAVE_X11)
@@ -45,26 +46,50 @@ int main(int argc, char** argv)
   // sending acquisition parameters
   qtGrabber->initAcquisition(header);
 
-  // Send the command to run the acquisition
+  // grab a 640*480 post-scan image
+  qtGrabber->setPostScanMode(true);
+  qtGrabber->setPostScanHeigh(300);
+  qtGrabber->setPostScanWidth(400);
+
+  // set the ultrsound depth to 140 mm
+  qtGrabber->setImageDepth(140);
+
+  // set the 4DC7 motor on the middle frame
+  qtGrabber->setStepsPerFrame(usAcquisitionParameters::US_ANGLE_PITCH_2);
+  qtGrabber->setFramesPerVolume(9);
+  qtGrabber->setMotorActivation(true);
+
+  std::cout << "send update" << std::endl;
+  qtGrabber->sendAcquisitionParameters();
+  std::cout << "end update" << std::endl;
   qtGrabber->runAcquisition();
 
-  // Move the grabber object to another thread, and run it
+  // Move the grabber object to another thread
   qtGrabber->moveToThread(grabbingThread);
   grabbingThread->start();
 
-  //our grabbing loop
+  std::cout << "waiting ultrasound initialisation..." << std::endl;
+
+  //our local grabbing loop
   do {
     if(qtGrabber->isFirstFrameAvailable()) {
       grabbedFrame = qtGrabber->acquire();
 
       std::cout <<"MAIN THREAD received frame No : " << grabbedFrame->getFrameCount() << std::endl;
 
+      std::cout << *grabbedFrame << std::endl;
+
+      char buffer[400];
+      sprintf(buffer, "frame%d.png",grabbedFrame->getFrameCount());
+
+      //std::string fileName = "frame" + grabbedFrame->getFrameCount() + ".png";
+      vpImageIo::write(*grabbedFrame,buffer);
       //init display
       if(!displayInit && grabbedFrame->getHeight() !=0 && grabbedFrame->getWidth() !=0) {
 #if defined(VISP_HAVE_X11)
-		  display = new vpDisplayX(*grabbedFrame);
+        display = new vpDisplayX(*grabbedFrame);
 #elif defined(VISP_HAVE_GDI)
-		  display = new vpDisplayGDI(*grabbedFrame);
+        display = new vpDisplayGDI(*grabbedFrame);
 #endif
         displayInit = true;
       }
@@ -78,7 +103,7 @@ int main(int argc, char** argv)
     else {
       vpTime::wait(10);
     }
-  } while(captureRunning);
+  }while(captureRunning);
 
   if(displayInit) {
     delete display;
@@ -90,7 +115,7 @@ int main(int argc, char** argv)
 #else
 int main()
 {
-  std::cout << "You should intall Qt5 (with wigdets and network modules), and display X to run this tutorial" << std::endl;
+  std::cout << "You should intall Qt5 (with wigdets and network modules), and display X  to run this tutorial" << std::endl;
   return 0;
 }
 

@@ -31,7 +31,7 @@
  *
  *****************************************************************************/
 
-#include <visp3/ustk_grabber/usNetworkGrabberRF.h>
+#include <visp3/ustk_grabber/usNetworkGrabberRF2D.h>
 
 #if defined(USTK_HAVE_QT5) || defined(USTK_HAVE_VTK_QT)
 
@@ -41,7 +41,7 @@
 /**
 * Constructor. Inititializes the image, and manages Qt signal.
 */
-usNetworkGrabberRF::usNetworkGrabberRF(usNetworkGrabber *parent) :
+usNetworkGrabberRF2D::usNetworkGrabberRF2D(usNetworkGrabber *parent) :
   usNetworkGrabber(parent)
 {
   //buffer of size 3
@@ -60,7 +60,7 @@ usNetworkGrabberRF::usNetworkGrabberRF(usNetworkGrabber *parent) :
 /**
 * Destructor.
 */
-usNetworkGrabberRF::~usNetworkGrabberRF()
+usNetworkGrabberRF2D::~usNetworkGrabberRF2D()
 {
 
 }
@@ -70,7 +70,7 @@ usNetworkGrabberRF::~usNetworkGrabberRF()
 * Manages the type of data is coming and read it. Emits newFrameArrived signal when a whole frame is available.
 */
 // This function is called when the data is fully arrived from the server to the client
-void usNetworkGrabberRF::dataArrived()
+void usNetworkGrabberRF2D::dataArrived()
 {
   ////////////////// HEADER READING //////////////////
   QDataStream in;
@@ -132,7 +132,7 @@ void usNetworkGrabberRF::dataArrived()
     in >> m_imageHeader.scanLinePitch;
     in >> m_imageHeader.scanLineNumber;
     in >> m_imageHeader.imageDepth;
-    in >> m_imageHeader.degPerFr;
+    in >> m_imageHeader.anglePerFr;
     in >> m_imageHeader.framesPerVolume;
 
     if(m_verbose) {
@@ -152,7 +152,7 @@ void usNetworkGrabberRF::dataArrived()
       std::cout << "scanLinePitch = " <<  m_imageHeader.scanLinePitch << std::endl;
       std::cout << "scanLineNumber = " <<  m_imageHeader.scanLineNumber << std::endl;
       std::cout << "imageDepth = " <<  m_imageHeader.imageDepth << std::endl;
-      std::cout << "degPerFr = " <<  m_imageHeader.degPerFr << std::endl;
+      std::cout << "anglePerFr = " <<  m_imageHeader.anglePerFr << std::endl;
       std::cout << "framesPerVolume = " <<  m_imageHeader.framesPerVolume << std::endl;
     }
 
@@ -233,7 +233,7 @@ void usNetworkGrabberRF::dataArrived()
 * @warning Make sure to lock the usDataGrabbed::mutex when you access/modify usDataGrabbed::frameCount attribute, wich is acessed in this method.
 * @return Pointer to the last frame acquired.
 */
-usDataGrabbed<usImageRF2D<short int> >* usNetworkGrabberRF::acquire() {
+usDataGrabbed<usImageRF2D<short int> >* usNetworkGrabberRF2D::acquire() {
   //check if the first frame is arrived
   if (!m_firstFrameAvailable) {
     throw(vpException(vpException::fatalError, "first frame not yet grabbed, cannot acquire"));

@@ -41,6 +41,8 @@
 
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #include <cmath>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -186,5 +188,6 @@ class VISP_EXPORT usGrabberUltrasonix {
 
   us::ImageType m_imageType;
 };
+#endif // Doxygen skip
 #endif // _WIN32
 #endif // US_GRABBER_ULTRASONIX_H

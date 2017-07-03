@@ -10,7 +10,7 @@
 
 #include <visp3/ustk_core/usRFToPreScan2DConverter.h>
 #include <visp3/ustk_core/usPreScanToPostScan2DConverter.h>
-#include <visp3/ustk_grabber/usNetworkGrabberRF.h>
+#include <visp3/ustk_grabber/usNetworkGrabberRF2D.h>
 
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/gui/vpDisplayGDI.h>
@@ -22,7 +22,7 @@ int main(int argc, char** argv)
 
   QThread * grabbingThread = new QThread();
 
-  usNetworkGrabberRF * qtGrabber = new usNetworkGrabberRF();
+  usNetworkGrabberRF2D * qtGrabber = new usNetworkGrabberRF2D();
   qtGrabber->setConnection(true);
 
   // setting acquisition parameters

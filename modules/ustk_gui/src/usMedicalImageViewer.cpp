@@ -81,7 +81,7 @@
 #include <QDesktopWidget>
 #include <QResizeEvent>
 
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 //----------------------------------------------------------------------------
 class vtkResliceCursorCallback : public vtkCommand
 {
@@ -105,6 +105,7 @@ public:
   us3DSceneWidget* widget3D;
   vtkResliceImageViewer* RIW[3];
 };
+#endif
 
 /**
 * Constructor.
