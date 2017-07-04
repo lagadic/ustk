@@ -31,7 +31,7 @@
  *
  *****************************************************************************/
 
-#include <visp3/ustk_grabber/usNetworkGrabber3D.h>
+#include <visp3/ustk_grabber/usNetworkGrabberPreScan3D.h>
 
 #if defined(USTK_HAVE_QT5) || defined(USTK_HAVE_VTK_QT)
 
@@ -41,7 +41,7 @@
 /**
 * Constructor. Inititializes the image, and manages Qt signal.
 */
-usNetworkGrabber3D::usNetworkGrabber3D(usNetworkGrabber *parent) :
+usNetworkGrabberPreScan3D::usNetworkGrabberPreScan3D(usNetworkGrabber *parent) :
   usNetworkGrabber(parent),m_motorSettings()
 {
   m_grabbedImage.init(0,0);
@@ -62,7 +62,7 @@ usNetworkGrabber3D::usNetworkGrabber3D(usNetworkGrabber *parent) :
 /**
 * Destructor.
 */
-usNetworkGrabber3D::~usNetworkGrabber3D()
+usNetworkGrabberPreScan3D::~usNetworkGrabberPreScan3D()
 {
 
 }
@@ -71,7 +71,7 @@ usNetworkGrabber3D::~usNetworkGrabber3D()
 * Slot called when data is coming on the network.
 * Manages the type of data which is coming and read it. Emits newFrameArrived signal when a whole frame is available.
 */
-void usNetworkGrabber3D::dataArrived()
+void usNetworkGrabberPreScan3D::dataArrived()
 {
   ////////////////// HEADER READING //////////////////
   QDataStream in;
@@ -208,7 +208,7 @@ void usNetworkGrabber3D::dataArrived()
 /**
 * Method to invert rows and columns in the image.
 */
-void usNetworkGrabber3D::invertRowsCols() {
+void usNetworkGrabberPreScan3D::invertRowsCols() {
   // At this point, CURRENT_FILLED_FRAME_POSITION_IN_VEC is going to be filled
   if(m_firstFrameAvailable)
     if(m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getTransducerSettings() != (usTransducerSettings)m_grabbedImage)
@@ -228,6 +228,7 @@ void usNetworkGrabber3D::invertRowsCols() {
   int volumeIndex = m_grabbedImage.getFrameCount() / m_grabbedImage.getFramesPerVolume();
   int framePostition = m_grabbedImage.getFrameCount() % m_grabbedImage.getFramesPerVolume();
 
+  //setting timestamps
   if (volumeIndex % 2) { //case of backward moving motor (opposite to Z direction)
     framePostition = m_grabbedImage.getFramesPerVolume() - framePostition - 1;
     if(framePostition == m_grabbedImage.getFramesPerVolume() - 1)
@@ -235,7 +236,7 @@ void usNetworkGrabber3D::invertRowsCols() {
     if(framePostition == 0)
       m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setLastFrameTimeStamp(m_grabbedImage.getTimeStamp());
   }
-  else {
+  else { // case of forward moving motor (along Z direction)
     if(framePostition == 0)
       m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setFirstFrameTimeStamp(m_grabbedImage.getTimeStamp());
     if(framePostition == m_grabbedImage.getFramesPerVolume() - 1)
@@ -268,16 +269,13 @@ void usNetworkGrabber3D::invertRowsCols() {
 * @warning Make sure to lock the usFrameGrabbedInfo::mutex when you access/modify usFrameGrabbedInfo::frameCount attribute, wich is acessed in this method.
 * @return Pointer to the last frame acquired.
 */
-usImagePreScan3D<unsigned char> *usNetworkGrabber3D::acquire() {
+usVolumeGrabbedInfo<usImagePreScan3D<unsigned char> > *usNetworkGrabberPreScan3D::acquire() {
   //check if the first frame is arrived
   if (!m_firstVolumeAvailable) {
     throw(vpException(vpException::fatalError, "first volume not yet grabbed, cannot acquire"));
   }
 
   //user grabs too fast
-
-
-  //TO IMPLEMENT FOR 3D : we need a setting (usGrabbedVolume) including the volume number
   if(m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC)->getVolumeCount() == m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getVolumeCount() + 1) {
     //we wait until a new frame is available
     QEventLoop loop;

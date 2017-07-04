@@ -70,6 +70,13 @@ class VISP_EXPORT usNetworkGrabber : public QObject
 {
   Q_OBJECT
 public:
+
+  typedef enum {
+    OUTPUT_FRAME_POSITION_IN_VEC = 0,
+    MOST_RECENT_FRAME_POSITION_IN_VEC = 1,
+    CURRENT_FILLED_FRAME_POSITION_IN_VEC = 2
+  }usDataPositionInBuffer;
+
   // Following headers must be the same in the server (ultrasound station) !
 
   /**

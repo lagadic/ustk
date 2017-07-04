@@ -64,11 +64,6 @@
  */
 class VISP_EXPORT usNetworkGrabberPostScan2D : public usNetworkGrabber
 {
-  typedef enum {
-    OUTPUT_FRAME_POSITION_IN_VEC = 0,
-    MOST_RECENT_FRAME_POSITION_IN_VEC = 1,
-    CURRENT_FILLED_FRAME_POSITION_IN_VEC = 2,
-  }DataPositionInBuffer;
   Q_OBJECT
 public:
 
