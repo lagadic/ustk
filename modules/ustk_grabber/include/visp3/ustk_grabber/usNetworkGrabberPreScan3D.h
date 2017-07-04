@@ -98,6 +98,9 @@ private:
 
   //to manage ptrs switch init
   bool m_swichOutputInit;
+
+  //to know motor sweep direction for volume grabbed
+  bool m_motorSweepingInZDirection;
 };
 
 #endif // QT4 || QT5

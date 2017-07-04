@@ -158,8 +158,9 @@ public:
    * @name motor settings
    */
   /*@{*/
-    int anglePerFr; /**< angular step between frames*/
+    int anglePerFr; /**< angular step between frames, in degrees*/
     int framesPerVolume; /**< number of frames in a volume */
+    double motorRadius; /**< Radius of the motor, in degrees */
   /*@}*/
 
 

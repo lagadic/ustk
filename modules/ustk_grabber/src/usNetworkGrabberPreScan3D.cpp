@@ -55,6 +55,7 @@ usNetworkGrabberPreScan3D::usNetworkGrabberPreScan3D(usNetworkGrabber *parent) :
   m_firstVolumeAvailable = false;
 
   m_swichOutputInit = false;
+  m_motorSweepingInZDirection = true;
 
   connect(m_tcpSocket ,SIGNAL(readyRead()),this, SLOT(dataArrived()));
 }
@@ -135,6 +136,7 @@ void usNetworkGrabberPreScan3D::dataArrived()
     in >> m_imageHeader.imageDepth;
     in >> m_imageHeader.anglePerFr;
     in >> m_imageHeader.framesPerVolume;
+    in >> m_imageHeader.motorRadius;
 
     if(m_verbose) {
       std::cout << "frameCount = " <<  m_imageHeader.frameCount << std::endl;
@@ -155,25 +157,28 @@ void usNetworkGrabberPreScan3D::dataArrived()
       std::cout << "imageDepth = " <<  m_imageHeader.imageDepth << std::endl;
       std::cout << "anglePerFr = " <<  m_imageHeader.anglePerFr << std::endl;
       std::cout << "framesPerVolume = " <<  m_imageHeader.framesPerVolume << std::endl;
+      std::cout << "motorRadius = " <<  m_imageHeader.motorRadius << std::endl;
     }
 
     //update transducer settings with image header received
     m_grabbedImage.setTransducerRadius(m_imageHeader.transducerRadius);
     m_grabbedImage.setScanLinePitch(m_imageHeader.scanLinePitch);
     m_grabbedImage.setDepth(m_imageHeader.imageDepth / 1000.0);
+    m_grabbedImage.setAxialResolution((m_imageHeader.imageDepth / 1000.0) / m_imageHeader.frameHeight);
 
     //update motor settings
     m_motorSettings.setFrameNumber(m_imageHeader.framesPerVolume);
     m_motorSettings.setFramePitch(m_imageHeader.anglePerFr); // TO CHECK (units : steps / degs ?)
     m_motorSettings.setMotorType(usMotorSettings::TiltingMotor); // TO ADD IN IMAGE HEADER
+    m_motorSettings.setMotorRadius(m_imageHeader.motorRadius);
 
     //set data info
     m_grabbedImage.setFrameCount(m_imageHeader.frameCount);
     m_grabbedImage.setFramesPerVolume(m_imageHeader.framesPerVolume);
 
-    //warning if timestamps are close (< 1 ms)
+    //warning if timestamps are close (< 10 ms)
     if (m_imageHeader.timeStamp - m_grabbedImage.getTimeStamp() < 10) {
-      std::cout << "WARNING : new image received with an acquisition timestamp close to previous image" << std::endl;
+      std::cout << "WARNING : new image received with an acquisition timestamp close to previous image (<10ms)" << std::endl;
     }
     m_grabbedImage.setTimeStamp(m_imageHeader.timeStamp);
 
@@ -210,26 +215,37 @@ void usNetworkGrabberPreScan3D::dataArrived()
 */
 void usNetworkGrabberPreScan3D::invertRowsCols() {
   // At this point, CURRENT_FILLED_FRAME_POSITION_IN_VEC is going to be filled
-  if(m_firstFrameAvailable)
-    if(m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getTransducerSettings() != (usTransducerSettings)m_grabbedImage)
+  if(m_firstFrameAvailable) {
+    if(m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getImagePreScanSettings() != (usImagePreScanSettings)m_grabbedImage)
       throw(vpException(vpException::badValue, "Transducer settings changed during acquisition, somethink went wrong"));
+  }
+  else { // init case
+    m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC)->setImagePreScanSettings(m_grabbedImage);
+    m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->setImagePreScanSettings(m_grabbedImage);
+  }
+  m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setImagePreScanSettings(m_grabbedImage);
 
-  m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setTransducerSettings(m_grabbedImage);
-
-  if(m_firstFrameAvailable)
+  if(m_firstFrameAvailable) {
     if(m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getMotorSettings() != m_motorSettings)
       throw(vpException(vpException::badValue, "Motor settings changed during acquisition, somethink went wrong"));
-
+  }
+  else { // init case
+    m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC)->setMotorSettings(m_motorSettings);
+    m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->setMotorSettings(m_motorSettings);
+  }
   m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setMotorSettings(m_motorSettings);
+
 
   m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->resize(m_grabbedImage.getWidth(),m_grabbedImage.getHeight(),m_motorSettings.getFrameNumber());
 
   //Inserting frame in volume by inverting rows and cols voxels (along x and y axis), to match ustk volume storage
-  int volumeIndex = m_grabbedImage.getFrameCount() / m_grabbedImage.getFramesPerVolume();
-  int framePostition = m_grabbedImage.getFrameCount() % m_grabbedImage.getFramesPerVolume();
+  int volumeIndex = (m_grabbedImage.getFrameCount()-1) / m_grabbedImage.getFramesPerVolume(); // from 0
+  int framePostition = (m_grabbedImage.getFrameCount()-1) % m_grabbedImage.getFramesPerVolume(); // from 0 to FPV-1
+
+  std::cout << "new frame : " << framePostition << "(tot=" << m_grabbedImage.getFrameCount() << "), in volume : " << volumeIndex << ". FPV = " << m_grabbedImage.getFramesPerVolume() << std::endl;
 
   //setting timestamps
-  if (volumeIndex % 2) { //case of backward moving motor (opposite to Z direction)
+  if (volumeIndex % 2 != 0) { //case of backward moving motor (opposite to Z direction)
     framePostition = m_grabbedImage.getFramesPerVolume() - framePostition - 1;
     if(framePostition == m_grabbedImage.getFramesPerVolume() - 1)
       m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setFirstFrameTimeStamp(m_grabbedImage.getTimeStamp());
@@ -250,13 +266,19 @@ void usNetworkGrabberPreScan3D::invertRowsCols() {
       (*m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC))(j,i,framePostition,m_grabbedImage(i,j));
 
   //we reach the end of a volume
-  if(m_firstFrameAvailable && (framePostition == 0 || framePostition == (int) m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getFrameNumber())) {
+  if(m_firstFrameAvailable && ((framePostition == 0 && !m_motorSweepingInZDirection)
+                               || (framePostition == (int) m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getFrameNumber()-1 && m_motorSweepingInZDirection))) {
     // Now CURRENT_FILLED_FRAME_POSITION_IN_VEC has become the last frame received
     // So we switch pointers beween MOST_RECENT_FRAME_POSITION_IN_VEC and CURRENT_FILLED_FRAME_POSITION_IN_VEC
     usVolumeGrabbedInfo<usImagePreScan3D<unsigned char> > * savePtr = m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC);
     m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
     m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
 
+    std::cout << "end of volume" << std::endl;
+    if (volumeIndex % 2 != 0) //case of backward moving motor (opposite to Z direction)
+      m_motorSweepingInZDirection = true;
+    else
+      m_motorSweepingInZDirection = false;
     emit(newVolumeAvailable());
   }
 
@@ -270,14 +292,9 @@ void usNetworkGrabberPreScan3D::invertRowsCols() {
 * @return Pointer to the last frame acquired.
 */
 usVolumeGrabbedInfo<usImagePreScan3D<unsigned char> > *usNetworkGrabberPreScan3D::acquire() {
-  //check if the first frame is arrived
+  //manage first volume
   if (!m_firstVolumeAvailable) {
-    throw(vpException(vpException::fatalError, "first volume not yet grabbed, cannot acquire"));
-  }
-
-  //user grabs too fast
-  if(m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC)->getVolumeCount() == m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getVolumeCount() + 1) {
-    //we wait until a new frame is available
+    //we wait until the first is available
     QEventLoop loop;
     loop.connect(this, SIGNAL(newVolumeAvailable()), SLOT(quit()));
     loop.exec();
@@ -288,15 +305,32 @@ usVolumeGrabbedInfo<usImagePreScan3D<unsigned char> > *usNetworkGrabberPreScan3D
     m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
     m_swichOutputInit = true;
   }
+  else {
+    //user grabs too fast
+    if(m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC)->getVolumeCount() == m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getVolumeCount() + 1) {
+      //we wait until a new frame is available
+      QEventLoop loop;
+      loop.connect(this, SIGNAL(newVolumeAvailable()), SLOT(quit()));
+      loop.exec();
 
-  // if more recent frame available
-  else if(m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC)->getVolumeCount() < m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getVolumeCount() || !m_swichOutputInit) {
-    //switch pointers (output <-> mostRecentFilled)
-    usVolumeGrabbedInfo<usImagePreScan3D<unsigned char> >* savePtr = m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC);
-    m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
-    m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
-    m_swichOutputInit = true;
+      //switch pointers
+      usVolumeGrabbedInfo<usImagePreScan3D<unsigned char> >* savePtr = m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC);
+      m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
+      m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
+      m_swichOutputInit = true;
+    }
+
+    // if more recent frame available
+    else if(m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC)->getVolumeCount() < m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getVolumeCount() || !m_swichOutputInit) {
+      //switch pointers (output <-> mostRecentFilled)
+      usVolumeGrabbedInfo<usImagePreScan3D<unsigned char> >* savePtr = m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC);
+      m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
+      m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
+      m_swichOutputInit = true;
+    }
   }
+
+  std::cout << "sending volume " << m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC)->getVolumeCount() << std::endl;
   return m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC);
 }
 

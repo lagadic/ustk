@@ -10,6 +10,8 @@
 
 #include <visp3/ustk_grabber/usNetworkGrabberPreScan3D.h>
 
+#include <visp3/ustk_io/usImageIo.h>
+
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/gui/vpDisplayGDI.h>
 
@@ -37,6 +39,12 @@ int main(int argc, char** argv)
   // sending acquisition parameters
   qtGrabber->initAcquisition(header);
 
+  // set the 4DC7 motor on the middle frame
+  qtGrabber->setStepsPerFrame(usAcquisitionParameters::US_ANGLE_PITCH_3);
+  qtGrabber->setFramesPerVolume(25);
+  qtGrabber->setMotorActivation(true);
+  qtGrabber->sendAcquisitionParameters();
+
   // Send the command to run the acquisition
   qtGrabber->runAcquisition();
 
@@ -51,6 +59,10 @@ int main(int argc, char** argv)
 
       std::cout <<"MAIN THREAD received volume No : " << grabbedFrame->getVolumeCount() << std::endl;
 
+      char buffer[FILENAME_MAX];
+      sprintf(buffer, "volumePreScan%d.mhd",grabbedFrame->getVolumeCount());
+
+      usImageIo::write(*grabbedFrame,buffer);
     }
     else {
       vpTime::wait(10);
