@@ -29,20 +29,14 @@
  *
  *****************************************************************************/
 
-/*                                                                -*-c++-*-
-#----------------------------------------------------------------------------
-#  
-#	Example file for needle detection.
-#
-#       Pierre Chatelain
-#       July 10, 2015
-#
-#----------------------------------------------------------------------------
-*/
 #include <sstream>
 #include <string>
+#include <iostream>
 
 // visp
+#include <visp3/core/vpConfig.h>
+
+#ifdef VISP_HAVE_XML2
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/gui/vpDisplayGTK.h>
 #include <visp3/gui/vpDisplayGDI.h>
@@ -55,6 +49,7 @@
 #include <visp3/gui/vpPlot.h>
 
 //ustk
+#include <visp3/ustk_core/us.h>
 #include <visp3/ustk_io/usSequenceReader.h>
 #include <visp3/ustk_needle_detection/usNeedleTrackerSIR2D.h>
 
@@ -372,3 +367,10 @@ int main(int argc, const char *argv[])
   ofile.close();
   return 0;
 }
+
+#else
+int main()
+{
+	std::cout << "You should install xml2 to use this example" << std::endl;
+}
+#endif

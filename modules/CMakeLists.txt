@@ -16,7 +16,7 @@ set(USTK_BINARY_DIR "${CMAKE_BINARY_DIR}")
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/ustk_core/cmake")
 
 VP_OPTION(USE_FFTW "FFTW" "" "Include fftw support" "" ON)
-VP_OPTION(USE_VTK  "VTK"  "" "Include vtk support"  "" ON)
+VP_OPTION(USE_VTK  "VTK"  QUIET "Include vtk support"  "" ON)
 
 if(USE_VTK)
   if(NOT VTK_VERSION)
@@ -38,7 +38,7 @@ endif()
 if(NOT USE_VTK)
   #find Qt5
   #find_package(Qt5 COMPONENTS Core Network Widgets)
-  VP_OPTION(USE_QT5 "Qt5;COMPONENTS;Core;Network;Widgets" "" "Include Qt5 support" "" ON)
+  VP_OPTION(USE_QT5 "Qt5;COMPONENTS;Core;Network;Widgets" QUIET "Include Qt5 support" "" ON)
 endif()
 
 if(USE_VTK)
