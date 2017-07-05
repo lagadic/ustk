@@ -608,6 +608,7 @@ void usImageIo::read(usImagePreScan3D<unsigned char> &preScanImage,const std::st
     settings.setTransducerConvexity(mhdHeader.isTransducerConvex);
     settings.setScanLineNumber(mhdHeader.dim[0]);
     settings.setAxialResolution(mhdParser.getAxialResolution());
+    settings.setDepth(mhdParser.getAxialResolution() * mhdHeader.dim[1]);
     preScanImage.setImagePreScanSettings(settings);
 
     usMotorSettings motorSettings;

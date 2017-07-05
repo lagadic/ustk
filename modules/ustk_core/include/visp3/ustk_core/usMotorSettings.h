@@ -79,8 +79,8 @@ public:
   /*! Enumerator for motor type*/
   typedef enum {
     LinearMotor = 0,/*!< Case of a linear motor. */
-    TiltingMotor,/*!< Case of a tilting motor (small rotation). */
-    RotationalMotor/*!< Case of a roatational motor (360&deg; rotation). */
+    TiltingMotor = 1,/*!< Case of a tilting motor (small rotation). */
+    RotationalMotor = 2/*!< Case of a roatational motor (360&deg; rotation). */
   } usMotorType;
 
   usMotorSettings();

@@ -136,6 +136,7 @@ void usNetworkGrabberPreScan2D::dataArrived()
     in >> m_imageHeader.anglePerFr;
     in >> m_imageHeader.framesPerVolume;
     in >> m_imageHeader.motorRadius;
+    in >> m_imageHeader.motorType;
 
     if(m_verbose) {
       std::cout << "frameCount = " <<  m_imageHeader.frameCount << std::endl;
@@ -157,6 +158,7 @@ void usNetworkGrabberPreScan2D::dataArrived()
       std::cout << "anglePerFr = " <<  m_imageHeader.anglePerFr << std::endl;
       std::cout << "framesPerVolume = " <<  m_imageHeader.framesPerVolume << std::endl;
       std::cout << "motorRadius = " <<  m_imageHeader.motorRadius << std::endl;
+      std::cout << "motorType = " <<  m_imageHeader.motorType << std::endl;
     }
 
     //update transducer settings with image header received

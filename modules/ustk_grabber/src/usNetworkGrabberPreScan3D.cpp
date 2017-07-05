@@ -137,6 +137,7 @@ void usNetworkGrabberPreScan3D::dataArrived()
     in >> m_imageHeader.anglePerFr;
     in >> m_imageHeader.framesPerVolume;
     in >> m_imageHeader.motorRadius;
+    in >> m_imageHeader.motorType;
 
     if(m_verbose) {
       std::cout << "frameCount = " <<  m_imageHeader.frameCount << std::endl;
@@ -158,6 +159,7 @@ void usNetworkGrabberPreScan3D::dataArrived()
       std::cout << "anglePerFr = " <<  m_imageHeader.anglePerFr << std::endl;
       std::cout << "framesPerVolume = " <<  m_imageHeader.framesPerVolume << std::endl;
       std::cout << "motorRadius = " <<  m_imageHeader.motorRadius << std::endl;
+      std::cout << "motorType = " <<  m_imageHeader.motorType << std::endl;
     }
 
     //update transducer settings with image header received
@@ -168,8 +170,15 @@ void usNetworkGrabberPreScan3D::dataArrived()
 
     //update motor settings
     m_motorSettings.setFrameNumber(m_imageHeader.framesPerVolume);
-    m_motorSettings.setFramePitch(m_imageHeader.anglePerFr); // TO CHECK (units : steps / degs ?)
-    m_motorSettings.setMotorType(usMotorSettings::TiltingMotor); // TO ADD IN IMAGE HEADER
+    m_motorSettings.setFramePitch(m_imageHeader.anglePerFr);
+
+    if(m_imageHeader.motorType == 0)
+      m_motorSettings.setMotorType(usMotorSettings::LinearMotor);
+    else if(m_imageHeader.motorType == 1)
+      m_motorSettings.setMotorType(usMotorSettings::TiltingMotor);
+    else if(m_imageHeader.motorType == 2)
+      m_motorSettings.setMotorType(usMotorSettings::RotationalMotor);
+
     m_motorSettings.setMotorRadius(m_imageHeader.motorRadius);
 
     //set data info
@@ -216,14 +225,24 @@ void usNetworkGrabberPreScan3D::dataArrived()
 void usNetworkGrabberPreScan3D::invertRowsCols() {
   // At this point, CURRENT_FILLED_FRAME_POSITION_IN_VEC is going to be filled
   if(m_firstFrameAvailable) {
-    if(m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getImagePreScanSettings() != (usImagePreScanSettings)m_grabbedImage)
+    //we test if the image settings are still the same for the new frame arrived
+      usImagePreScanSettings currentSettings= m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getImagePreScanSettings();
+    if(currentSettings.getAxialResolution() != m_grabbedImage.getAxialResolution() ||
+       currentSettings.getTransducerRadius() != m_grabbedImage.getTransducerRadius() ||
+       currentSettings.getScanLinePitch() != m_grabbedImage.getScanLinePitch() ||
+       currentSettings.getDepth() != m_grabbedImage.getDepth() ||
+       currentSettings.getScanLineNumber() != m_grabbedImage.getHeight()) { // m_grabbedImage is "turned" so the height corresponds to the scanline numer.
       throw(vpException(vpException::badValue, "Transducer settings changed during acquisition, somethink went wrong"));
+    }
   }
   else { // init case
     m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC)->setImagePreScanSettings(m_grabbedImage);
+    m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC)->setScanLineNumber(m_grabbedImage.getHeight());
     m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->setImagePreScanSettings(m_grabbedImage);
+    m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->setScanLineNumber(m_grabbedImage.getHeight());
   }
   m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setImagePreScanSettings(m_grabbedImage);
+  m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setScanLineNumber(m_grabbedImage.getHeight());
 
   if(m_firstFrameAvailable) {
     if(m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getMotorSettings() != m_motorSettings)
@@ -235,14 +254,11 @@ void usNetworkGrabberPreScan3D::invertRowsCols() {
   }
   m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setMotorSettings(m_motorSettings);
 
-
-  m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->resize(m_grabbedImage.getWidth(),m_grabbedImage.getHeight(),m_motorSettings.getFrameNumber());
+  m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->resize(m_grabbedImage.getHeight(),m_grabbedImage.getWidth(),m_motorSettings.getFrameNumber());
 
   //Inserting frame in volume by inverting rows and cols voxels (along x and y axis), to match ustk volume storage
   int volumeIndex = (m_grabbedImage.getFrameCount()-1) / m_grabbedImage.getFramesPerVolume(); // from 0
   int framePostition = (m_grabbedImage.getFrameCount()-1) % m_grabbedImage.getFramesPerVolume(); // from 0 to FPV-1
-
-  std::cout << "new frame : " << framePostition << "(tot=" << m_grabbedImage.getFrameCount() << "), in volume : " << volumeIndex << ". FPV = " << m_grabbedImage.getFramesPerVolume() << std::endl;
 
   //setting timestamps
   if (volumeIndex % 2 != 0) { //case of backward moving motor (opposite to Z direction)
@@ -262,8 +278,9 @@ void usNetworkGrabberPreScan3D::invertRowsCols() {
   m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setVolumeCount(volumeIndex);
 
   for(unsigned int i=0; i<m_grabbedImage.getHeight(); i++)
-    for (unsigned int j=0; j<m_grabbedImage.getWidth(); j++)
+    for (unsigned int j=0; j<m_grabbedImage.getWidth(); j++) {
       (*m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC))(j,i,framePostition,m_grabbedImage(i,j));
+    }
 
   //we reach the end of a volume
   if(m_firstFrameAvailable && ((framePostition == 0 && !m_motorSweepingInZDirection)
@@ -274,7 +291,6 @@ void usNetworkGrabberPreScan3D::invertRowsCols() {
     m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
     m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
 
-    std::cout << "end of volume" << std::endl;
     if (volumeIndex % 2 != 0) //case of backward moving motor (opposite to Z direction)
       m_motorSweepingInZDirection = true;
     else
@@ -330,7 +346,6 @@ usVolumeGrabbedInfo<usImagePreScan3D<unsigned char> > *usNetworkGrabberPreScan3D
     }
   }
 
-  std::cout << "sending volume " << m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC)->getVolumeCount() << std::endl;
   return m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC);
 }
 

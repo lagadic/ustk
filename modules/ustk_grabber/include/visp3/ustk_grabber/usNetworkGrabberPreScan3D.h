@@ -55,12 +55,12 @@
  * @brief Specific class to grab pre-scan volumes from the ultrasound station on the network.
  * @ingroup module_ustk_grabber
  *
- * The following figure details the network communication process and summarizes the steps to follow to acquire ultrasound images :
+ * The following figure details the network communication process and summarizes the steps to follow to acquire ultrasound images:
  * \image html img-usNetworkGrabber.png
  *
  * This grabber manages a buffer system to avoid multiple copy of the frames.
  * The acquire() method returns you a pointer on a new frame, you can acess and modify the frame (it is thread-safe).
- * Acquire() can be blocking, the behaviour depends on how often you call it :
+ * Acquire() can be blocking, the behaviour depends on how often you call it:
  * - If you call acquire() faster than the frames are arriving on the network, it is blocking to wait next frame coming.
  * - If you call it slower you will loose frames, but you will get the last frame available.
  */
@@ -85,13 +85,14 @@ protected:
   void invertRowsCols();
 
 private:
-  //grabbed image (we have to "turn" it if it is a pre-scan frame)
+  //grabbed image (we have to "turn" it if it is a pre-scan frame):
+  //the rows and cols have to be interverted, it is not a valid image to use.
   usFrameGrabbedInfo<usImagePreScan2D<unsigned char> > m_grabbedImage;
 
   // to keep saved motor settings from one frame to next one
   usMotorSettings m_motorSettings;
 
-  // Output images : we have to invert (i <-> j) in the image grabbed
+  // Output images: we have to invert (i <-> j) in the image grabbed
   std::vector<usVolumeGrabbedInfo<usImagePreScan3D<unsigned char> > *> m_outputBuffer;
   bool m_firstFrameAvailable;
   bool m_firstVolumeAvailable;
