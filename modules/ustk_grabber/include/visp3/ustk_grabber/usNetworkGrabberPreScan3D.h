@@ -82,7 +82,7 @@ signals:
   void newVolumeAvailable();
 
 protected:
-  void invertRowsCols();
+  void includeFrameInVolume();
 
 private:
   //grabbed image (we have to "turn" it if it is a pre-scan frame):

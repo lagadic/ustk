@@ -148,6 +148,8 @@ public:
 
   unsigned int getBModeSampleNumber() const;
 
+  void getFrame(vpImage<Type> &image, unsigned int index);
+
   void insertFrame(vpImage<Type> frame, unsigned int index);
 
   //assignement
@@ -337,4 +339,31 @@ void usImagePreScan3D<Type>::insertFrame(vpImage<Type> frame, unsigned int index
     }
   }
 }
+
+/**
+ * Returns a 2D slice of the volume at a given index.
+ * @param [out] image The 2D frame to insert.
+ * @param [in] index Position of the frame to extract in the volume.
+ */
+template<class Type>
+void usImagePreScan3D<Type>::getFrame(vpImage<Type> &image, unsigned int index) {
+
+  //Dimentions checks
+  if(index > this->getDimZ())
+    throw(vpException(vpException::badValue,"usImage3D::insertFrame : frame index out of volume"));
+
+  image.resize(this->getDimY(),this->getDimX());
+
+  //offset to access the frame in the volume
+  int offset = index * this->getDimY() * this->getDimX();
+  Type* frameBeginning = this->getData() + offset;
+
+  //copy
+  for(unsigned int i=0; i<this->getDimX(); i++) {
+    for(unsigned int j=0; j<this->getDimY(); j++) {
+      image[j][i] = frameBeginning[i + this->getDimX() * j];
+    }
+  }
+}
+
 #endif // US_IMAGE_PRESCAN_3D_H

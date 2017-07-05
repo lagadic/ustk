@@ -37,7 +37,7 @@
 
 #include <QtCore/QDataStream>
 #include <QtCore/QEventLoop>
-
+#include <visp3/ustk_io/usImageIo.h>
 /**
 * Constructor. Inititializes the image, and manages Qt signal.
 */
@@ -198,7 +198,7 @@ void usNetworkGrabberPreScan3D::dataArrived()
     m_bytesLeftToRead -= in.readRawData((char*)m_grabbedImage.bitmap,m_imageHeader.dataLength);
 
     if(m_bytesLeftToRead == 0 ) { // we've read all the frame in 1 packet.
-      invertRowsCols();
+      includeFrameInVolume();
     }
     if(m_verbose)
       std::cout << "Bytes left to read for whole frame = " << m_bytesLeftToRead << std::endl;
@@ -214,15 +214,15 @@ void usNetworkGrabberPreScan3D::dataArrived()
     m_bytesLeftToRead -= in.readRawData((char*)m_grabbedImage.bitmap+(m_grabbedImage.getSize()-m_bytesLeftToRead),m_bytesLeftToRead);
 
     if(m_bytesLeftToRead==0) { // we've read the last part of the frame.
-      invertRowsCols();
+      includeFrameInVolume();
     }
   }
 }
 
 /**
-* Method to invert rows and columns in the image.
+* Method to include the frame grabbed in the right volume.
 */
-void usNetworkGrabberPreScan3D::invertRowsCols() {
+void usNetworkGrabberPreScan3D::includeFrameInVolume() {
   // At this point, CURRENT_FILLED_FRAME_POSITION_IN_VEC is going to be filled
   if(m_firstFrameAvailable) {
     //we test if the image settings are still the same for the new frame arrived
@@ -279,7 +279,7 @@ void usNetworkGrabberPreScan3D::invertRowsCols() {
 
   for(unsigned int i=0; i<m_grabbedImage.getHeight(); i++)
     for (unsigned int j=0; j<m_grabbedImage.getWidth(); j++) {
-      (*m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC))(j,i,framePostition,m_grabbedImage(i,j));
+      (*m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC))(i,j,framePostition,m_grabbedImage(i,j));
     }
 
   //we reach the end of a volume
