@@ -327,9 +327,10 @@ int main(int argc, const char *argv[])
     ofile << std::endl;
 
     // Display
-    char noChar[(int)ceil(log10(n0+1))];
+    char *noChar = new char [(int)ceil(log10(n0+1))];
     sprintf(noChar, "%d", n0);
-    windowTitle =  std::string("Frame ") + std::string(noChar);
+    windowTitle = std::string("Frame ") + std::string(noChar);
+		delete[] noChar;
     vpDisplay::setTitle(I, windowTitle);
     vpDisplay::display(I);
 
@@ -337,8 +338,8 @@ int main(int argc, const char *argv[])
     unsigned int n = rendering.getCols();
     
     for (unsigned int j = 0; j < n - 1; ++j)
-      vpDisplay::displayLine(I, rendering[0][j], rendering[1][j],
-          rendering[0][j+1], rendering[1][j+1],
+      vpDisplay::displayLine(I, (int)rendering[0][j], (int)rendering[1][j],
+          (int)rendering[0][j+1], (int)rendering[1][j+1],
           vpColor::red, 2);
 
     tipStd = 0.0;
@@ -349,7 +350,7 @@ int main(int argc, const char *argv[])
           * (tipPose - tipMean) * (tipPose - tipMean).t();
 
       if ((it % 10) == 0)
-        vpDisplay::displayCross(I, tipPose[0], tipPose[1], 3, vpColor::blue);
+        vpDisplay::displayCross(I, (int)tipPose[0], (int)tipPose[1], 3, vpColor::blue);
     }
 
     vpDisplay::flush(I);
