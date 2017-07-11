@@ -60,22 +60,23 @@
 class VISP_EXPORT usPreScanToPostScan3DConverter
 {
 protected:
-    class VoxelWeightAndIndex
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+    class usVoxelWeightAndIndex
     {
         friend class usPreScanToPostScan3DConverter;
-        unsigned int _outputIndex;
-        unsigned int _inputIndex[8];
-        double _W[8];
+        unsigned int m_outputIndex;
+        unsigned int m_inputIndex[8];
+        double m_W[8];
     };
+#endif
+    std::vector<usVoxelWeightAndIndex> m_lookupTable1;
+    std::vector<usVoxelWeightAndIndex> m_lookupTable2;
 
-    std::vector<VoxelWeightAndIndex> _lookupTable1;
-    std::vector<VoxelWeightAndIndex> _lookupTable2;
+    usImagePreScan3D<unsigned char> m_VpreScan;
+    usImagePostScan3D<unsigned char> m_VpostScan;
 
-    usImagePreScan3D<unsigned char> _VpreScan;
-    usImagePostScan3D<unsigned char> _VpostScan;
-
-    double _resolution;
-    bool _SweepInZdirection;
+    double m_resolution;
+    bool m_SweepInZdirection;
 
     unsigned int m_nbX;
     unsigned int m_nbY;
@@ -94,9 +95,9 @@ public:
     void getVolume(usImagePostScan3D<unsigned char> &V);
     usImagePostScan3D<unsigned char> getVolume();
 
-    double getResolution() {return _resolution;}
+    double getResolution() {return m_resolution;}
 
-    void SweepInZdirection(bool flag) {_SweepInZdirection = flag;}
+    void SweepInZdirection(bool flag) {m_SweepInZdirection = flag;}
 
     void convert(usImagePostScan3D<unsigned char> &postScanImage, const unsigned char *dataPreScan=NULL);
 
