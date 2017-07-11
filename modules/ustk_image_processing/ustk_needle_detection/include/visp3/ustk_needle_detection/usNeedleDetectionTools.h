@@ -42,7 +42,6 @@
 #include <math.h>
 #include <float.h>
 
-
 // ViSP
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpColVector.h>
@@ -50,17 +49,6 @@
 
 //UsTK
 #include <visp3/ustk_core/usConfig.h>
-
-
-// VTK
-#if defined USTK_HAVE_VTK_QT
-#include <vtkDataSet.h>
-#include <vtkDataArray.h>
-#include <vtkShortArray.h>
-#include <vtkPointData.h>
-#include <vtkImageData.h>
-#include <vtkUnsignedIntArray.h>
-#endif
 
 /**
  * @namespace usNeedleDetectionTools
@@ -139,15 +127,6 @@ double dist3(double *x, double *y);
 bool findEntry(const vpMatrix &model, double *entry, unsigned int nPoints,
                const vpColVector &origin, const vpColVector &entryPlane, int VOI[6]);
 
-#if defined USTK_HAVE_VTK_QT
-int findTip(vtkDataArray *data, unsigned int dataSize, double gap);
-bool findTip(vtkImageData *image, const vpMatrix &model, int *VOI, double *tip, unsigned int nPoints, double gap);
-bool findTip(vtkImageData *image, const vpMatrix &model, int *VOI, double *tip, unsigned int nPoints, double gap, double length);
-unsigned int findTip(vtkDataArray *data, unsigned int dataSize, double threshL, double threshU);
-unsigned int findTip(vtkDataArray *data, unsigned int dataSize, double threshL, double threshU, int prediction);
-bool findTipUsingMeanValues(vtkImageData *image, const vpMatrix &model, int *VOI, double *tip, unsigned int nPoints, double gap, double length);
-#endif
-
 /**
    * Compute the geometric median of a set of d-dimensional points.
    * @param points The input points.
@@ -156,50 +135,6 @@ bool findTipUsingMeanValues(vtkImageData *image, const vpMatrix &model, int *VOI
    */
 vpColVector geometricMedian(const vpMatrix points, unsigned int npts,
                             unsigned int d);
-#if defined USTK_HAVE_VTK_QT
-/**
-   * Get the coordinates of the points of highest intensity.
-   *
-   * @param image The image.
-   * @param points [out] The points of intensity higher than the threshold.
-   * @param threshold Threshold.
-   *
-   * @return The threshold.
-   */
-void getThresholdedCoordinates(vtkImageData *image, vpMatrix &points, double threshold);
-#endif
-
-#if 0
-/**
-   * Get the coordinates of the points of highest intensity.
-   *
-   * @param V The volume.
-   * @param points [out] The points of intensity higher than the threshold.
-   * @param nDesired The desired number of points.
-   *
-   * @return The threshold.
-   */
-double getThresholdedCoordinates(const usVolume<unsigned int> &V,
-                                 vpMatrix &points,
-                                 unsigned int nDesired);
-#endif
-#if defined USTK_HAVE_VTK_QT
-/**
-   * Get the coordinates of the points of highest intensity.
-   *
-   * @param image The image.
-   * @param points [out] The points of intensity higher than the threshold.
-   * @param nDesired The desired number of points.
-   *
-   * @return The threshold.
-   */
-double getThresholdedCoordinates(vtkImageData *image,
-                                 vpMatrix &points,
-                                 unsigned int nDesired);
-#endif
-#if defined USTK_HAVE_VTK_QT
-vpList<double*> getThresholdedIds(vtkImageData *image, double threshold);
-#endif
 
 bool inside(const vpColVector point, int *VOI);
 
@@ -217,10 +152,6 @@ void linearRegression(vpMatrix &points, double &x, double &y, double &z,
 void linearRegression(vpMatrix &points, double &a, double &b, double &u, double &v, double &w);
 
 short quantile(short *data, unsigned int num, unsigned int n);
-
-#if defined USTK_HAVE_VTK_QT
-short quantile(vtkDataSet *data, unsigned int num);
-#endif
 
 /**
    * Compute the variance of a set of d-dimensional points.

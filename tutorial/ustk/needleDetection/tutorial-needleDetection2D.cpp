@@ -29,20 +29,14 @@
  *
  *****************************************************************************/
 
-/*                                                                -*-c++-*-
-#----------------------------------------------------------------------------
-#  
-#	Example file for needle detection.
-#
-#       Pierre Chatelain
-#       July 10, 2015
-#
-#----------------------------------------------------------------------------
-*/
 #include <sstream>
 #include <string>
+#include <iostream>
 
 // visp
+#include <visp3/core/vpConfig.h>
+
+#ifdef VISP_HAVE_XML2
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/gui/vpDisplayGTK.h>
 #include <visp3/gui/vpDisplayGDI.h>
@@ -55,6 +49,7 @@
 #include <visp3/gui/vpPlot.h>
 
 //ustk
+#include <visp3/ustk_core/us.h>
 #include <visp3/ustk_io/usSequenceReader.h>
 #include <visp3/ustk_needle_detection/usNeedleTrackerSIR2D.h>
 
@@ -332,9 +327,10 @@ int main(int argc, const char *argv[])
     ofile << std::endl;
 
     // Display
-    char noChar[(int)ceil(log10(n0+1))];
+    char *noChar = new char [(int)ceil(log10(n0+1))];
     sprintf(noChar, "%d", n0);
-    windowTitle =  std::string("Frame ") + std::string(noChar);
+    windowTitle = std::string("Frame ") + std::string(noChar);
+		delete[] noChar;
     vpDisplay::setTitle(I, windowTitle);
     vpDisplay::display(I);
 
@@ -342,8 +338,8 @@ int main(int argc, const char *argv[])
     unsigned int n = rendering.getCols();
     
     for (unsigned int j = 0; j < n - 1; ++j)
-      vpDisplay::displayLine(I, rendering[0][j], rendering[1][j],
-          rendering[0][j+1], rendering[1][j+1],
+      vpDisplay::displayLine(I, (int)rendering[0][j], (int)rendering[1][j],
+          (int)rendering[0][j+1], (int)rendering[1][j+1],
           vpColor::red, 2);
 
     tipStd = 0.0;
@@ -354,7 +350,7 @@ int main(int argc, const char *argv[])
           * (tipPose - tipMean) * (tipPose - tipMean).t();
 
       if ((it % 10) == 0)
-        vpDisplay::displayCross(I, tipPose[0], tipPose[1], 3, vpColor::blue);
+        vpDisplay::displayCross(I, (int)tipPose[0], (int)tipPose[1], 3, vpColor::blue);
     }
 
     vpDisplay::flush(I);
@@ -372,3 +368,10 @@ int main(int argc, const char *argv[])
   ofile.close();
   return 0;
 }
+
+#else
+int main()
+{
+	std::cout << "You should install xml2 to use this example" << std::endl;
+}
+#endif

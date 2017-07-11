@@ -5,8 +5,8 @@ cmake_minimum_required(VERSION 2.6)
 find_package(VISP REQUIRED visp_ustk_io visp_ustk_needle_detection)
 
 set(tutorial_cpp
-  needleDetection2DExample.cpp
-  volReading.cpp)
+  tutorial-needleDetection2D.cpp
+  tutorial-volReading.cpp)
 
 foreach(cpp ${tutorial_cpp})
   visp_add_target(${cpp})

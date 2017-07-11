@@ -8,10 +8,10 @@
  * Default constructor.
  */
 usPreScanToPostScan3DConverter::usPreScanToPostScan3DConverter() :
-  _VpreScan(),
-  _VpostScan(),
-  _resolution(),
-  _SweepInZdirection(true)
+  m_VpreScan(),
+  m_VpostScan(),
+  m_resolution(),
+  m_SweepInZdirection(true)
 {
 }
 
@@ -21,10 +21,10 @@ usPreScanToPostScan3DConverter::usPreScanToPostScan3DConverter() :
  * @param down Downsampling factor (sample number divided by this number).
  */
 usPreScanToPostScan3DConverter::usPreScanToPostScan3DConverter(const usImagePreScan3D<unsigned char> &preScanImage, int down) :
-  _VpreScan(),
-  _VpostScan(),
-  _resolution(),
-  _SweepInZdirection(true)
+  m_VpreScan(),
+  m_VpostScan(),
+  m_resolution(),
+  m_SweepInZdirection(true)
 {
   this->init(preScanImage, down);
 }
@@ -39,12 +39,12 @@ void usPreScanToPostScan3DConverter::init(const usImagePreScan3D<unsigned char> 
   if(!preScanImage.isTransducerConvex() || !(preScanImage.getMotorType() == usMotorSettings::TiltingMotor))
     throw(vpException(vpException::functionNotImplementedError, "3D scan-conversion available only for convex transducer and tilting motor"));
 
-  _VpreScan = preScanImage;
-  _resolution = down * _VpreScan.getAxialResolution();
+  m_VpreScan = preScanImage;
+  m_resolution = down * m_VpreScan.getAxialResolution();
 
-  int X = _VpreScan.getDimX();
-  int Y = _VpreScan.getDimY();
-  int Z = _VpreScan.getDimZ();
+  int X = m_VpreScan.getDimX();
+  int Y = m_VpreScan.getDimY();
+  int Z = m_VpreScan.getDimZ();
 
   double xmax;
   double ymin;
@@ -56,28 +56,28 @@ void usPreScanToPostScan3DConverter::init(const usImagePreScan3D<unsigned char> 
   usPreScanToPostScan3DConverter::convertPreScanCoordToPostScanCoord((double)X, (double)Y, Z/2.0, &xmax, NULL, NULL);
   usPreScanToPostScan3DConverter::convertPreScanCoordToPostScanCoord(X/2.0, (double)Y, Z, NULL, NULL, &zmax);
 
-  m_nbX = (unsigned int) ceil(2*xmax/_resolution);
-  m_nbY = (unsigned int) ceil((ymax-ymin)/_resolution);
-  m_nbZ = (unsigned int) ceil(2*zmax/_resolution);
+  m_nbX = (unsigned int) ceil(2*xmax/m_resolution);
+  m_nbY = (unsigned int) ceil((ymax-ymin)/m_resolution);
+  m_nbZ = (unsigned int) ceil(2*zmax/m_resolution);
 
   unsigned int nbXY = m_nbX*m_nbY;
   unsigned int XY = X*Y;
 
-  VoxelWeightAndIndex m;
+  usVoxelWeightAndIndex m;
 
   for(unsigned int x=0 ; x<m_nbX ; x++)
   {
-    double xx = _resolution*x-xmax;
+    double xx = m_resolution*x-xmax;
     for(unsigned int y=0 ; y<m_nbY ; y++)
     {
-      double yy = ymin+_resolution*y;
+      double yy = ymin+m_resolution*y;
 /*  BUG WHEN USING OPENMP FOR INIT : some black voxels appears in the middle of the image with no reason
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif*/
       for(unsigned int z=0 ; z<m_nbZ ; z++)
       {
-        double zz = _resolution*z-zmax;
+        double zz = m_resolution*z-zmax;
         double i,j,k;
         usPreScanToPostScan3DConverter::convertPostScanCoordToPreScanCoord(xx,yy,zz,&i,&j,&k,true);
 
@@ -87,7 +87,7 @@ void usPreScanToPostScan3DConverter::init(const usImagePreScan3D<unsigned char> 
 
         if(ii>=0 && jj>=0 && kk>=0 && ii+1<X && jj+1<Y && kk+1<Z)
         {
-          m._outputIndex = x + m_nbX*y + nbXY*z;
+          m.m_outputIndex = x + m_nbX*y + nbXY*z;
 
           double u = i - ii;
           double v = j -jj;
@@ -101,32 +101,32 @@ void usPreScanToPostScan3DConverter::init(const usImagePreScan3D<unsigned char> 
           double v1w = v1 * w;
           double vw = v * w;
 
-          m._W[0] = u1 * v1w1;
-          m._W[1] = u  * v1w1;
-          m._W[2] = u1 * vw1;
-          m._W[3] = u  * vw1;
-          m._W[4] = u1 * v1w;
-          m._W[5] = u  * v1w;
-          m._W[6] = u1 * vw;
-          m._W[7] = u  * vw;
+          m.m_W[0] = u1 * v1w1;
+          m.m_W[1] = u  * v1w1;
+          m.m_W[2] = u1 * vw1;
+          m.m_W[3] = u  * vw1;
+          m.m_W[4] = u1 * v1w;
+          m.m_W[5] = u  * v1w;
+          m.m_W[6] = u1 * vw;
+          m.m_W[7] = u  * vw;
 
           double Xjj = X * jj;
           double Xjj1 = X *(jj + 1);
           double XYKK = XY * kk;
           double XYKK1 = XY * (kk + 1);
 
-          m._inputIndex[0] = (unsigned int) (ii   + Xjj  + XYKK);
-          m._inputIndex[1] = (unsigned int)(ii+1 + Xjj  + XYKK);
-          m._inputIndex[2] = (unsigned int)(ii   + Xjj1 + XYKK);
-          m._inputIndex[3] = (unsigned int)(ii+1 + Xjj1 + XYKK);
-          m._inputIndex[4] = (unsigned int)(ii   + Xjj  + XYKK1);
-          m._inputIndex[5] = (unsigned int)(ii+1 + Xjj  + XYKK1);
-          m._inputIndex[6] = (unsigned int)(ii   + Xjj1 + XYKK1);
-          m._inputIndex[7] = (unsigned int)(ii+1 + Xjj1 + XYKK1);
+          m.m_inputIndex[0] = (unsigned int) (ii   + Xjj  + XYKK);
+          m.m_inputIndex[1] = (unsigned int)(ii+1 + Xjj  + XYKK);
+          m.m_inputIndex[2] = (unsigned int)(ii   + Xjj1 + XYKK);
+          m.m_inputIndex[3] = (unsigned int)(ii+1 + Xjj1 + XYKK);
+          m.m_inputIndex[4] = (unsigned int)(ii   + Xjj  + XYKK1);
+          m.m_inputIndex[5] = (unsigned int)(ii+1 + Xjj  + XYKK1);
+          m.m_inputIndex[6] = (unsigned int)(ii   + Xjj1 + XYKK1);
+          m.m_inputIndex[7] = (unsigned int)(ii+1 + Xjj1 + XYKK1);
 /*#ifdef VISP_HAVE_OPENMP
 #pragma omp critical
 #endif*/
-          _lookupTable1.push_back(m);
+          m_lookupTable1.push_back(m);
         }
 
         usPreScanToPostScan3DConverter::convertPostScanCoordToPreScanCoord(xx,yy,zz,&i,&j,&k,false);
@@ -137,9 +137,9 @@ void usPreScanToPostScan3DConverter::init(const usImagePreScan3D<unsigned char> 
 
         if(ii>=0 && jj>=0 && kk>=0 && ii+1<X && jj+1<Y && kk+1<Z)
         {
-          VoxelWeightAndIndex m;
+          usVoxelWeightAndIndex m;
 
-          m._outputIndex = x + m_nbX*y + nbXY*z;
+          m.m_outputIndex = x + m_nbX*y + nbXY*z;
 
           double u = i - ii;
           double v = j -jj;
@@ -153,39 +153,39 @@ void usPreScanToPostScan3DConverter::init(const usImagePreScan3D<unsigned char> 
           double v1w = v1 * w;
           double vw = v * w;
 
-          m._W[0] = u1 * v1w1;
-          m._W[1] = u  * v1w1;
-          m._W[2] = u1 * vw1;
-          m._W[3] = u  * vw1;
-          m._W[4] = u1 * v1w;
-          m._W[5] = u  * v1w;
-          m._W[6] = u1 * vw;
-          m._W[7] = u  * vw;
+          m.m_W[0] = u1 * v1w1;
+          m.m_W[1] = u  * v1w1;
+          m.m_W[2] = u1 * vw1;
+          m.m_W[3] = u  * vw1;
+          m.m_W[4] = u1 * v1w;
+          m.m_W[5] = u  * v1w;
+          m.m_W[6] = u1 * vw;
+          m.m_W[7] = u  * vw;
 
           double Xjj = X * jj;
           double Xjj1 = X *(jj + 1);
           double XYKK = XY * kk;
           double XYKK1 = XY * (kk + 1);
 
-          m._inputIndex[0] = (unsigned int)(ii   + Xjj  + XYKK);
-          m._inputIndex[1] = (unsigned int)(ii+1 + Xjj  + XYKK);
-          m._inputIndex[2] = (unsigned int)(ii   + Xjj1 + XYKK);
-          m._inputIndex[3] = (unsigned int)(ii+1 + Xjj1 + XYKK);
-          m._inputIndex[4] = (unsigned int)(ii   + Xjj  + XYKK1);
-          m._inputIndex[5] = (unsigned int)(ii+1 + Xjj  + XYKK1);
-          m._inputIndex[6] = (unsigned int)(ii   + Xjj1 + XYKK1);
-          m._inputIndex[7] = (unsigned int)(ii+1 + Xjj1 + XYKK1);
+          m.m_inputIndex[0] = (unsigned int)(ii   + Xjj  + XYKK);
+          m.m_inputIndex[1] = (unsigned int)(ii+1 + Xjj  + XYKK);
+          m.m_inputIndex[2] = (unsigned int)(ii   + Xjj1 + XYKK);
+          m.m_inputIndex[3] = (unsigned int)(ii+1 + Xjj1 + XYKK);
+          m.m_inputIndex[4] = (unsigned int)(ii   + Xjj  + XYKK1);
+          m.m_inputIndex[5] = (unsigned int)(ii+1 + Xjj  + XYKK1);
+          m.m_inputIndex[6] = (unsigned int)(ii   + Xjj1 + XYKK1);
+          m.m_inputIndex[7] = (unsigned int)(ii+1 + Xjj1 + XYKK1);
 /*#ifdef VISP_HAVE_OPENMP
 #pragma omp critical
 #endif*/
-          _lookupTable2.push_back(m);
+          m_lookupTable2.push_back(m);
 
         }
       }
     }
   }
-  std::cout << "LUT 1 size (bytes) : " << sizeof(VoxelWeightAndIndex) * _lookupTable1.size() << std::endl;
-  std::cout << "LUT 2 size (bytes) : " << sizeof(VoxelWeightAndIndex) * _lookupTable2.size() << std::endl;
+  std::cout << "LUT 1 size (bytes) : " << sizeof(usVoxelWeightAndIndex) * m_lookupTable1.size() << std::endl;
+  std::cout << "LUT 2 size (bytes) : " << sizeof(usVoxelWeightAndIndex) * m_lookupTable2.size() << std::endl;
 }
 
 /**
@@ -202,7 +202,7 @@ usPreScanToPostScan3DConverter::~usPreScanToPostScan3DConverter()
  */
 void usPreScanToPostScan3DConverter::getVolume(usImagePostScan3D<unsigned char> &V)
 {
-  V = _VpostScan;
+  V = m_VpostScan;
 }
 
 /**
@@ -211,7 +211,7 @@ void usPreScanToPostScan3DConverter::getVolume(usImagePostScan3D<unsigned char> 
  */
 usImagePostScan3D<unsigned char> usPreScanToPostScan3DConverter::getVolume()
 {
-  return _VpostScan;
+  return m_VpostScan;
 }
 
 /**
@@ -225,20 +225,20 @@ void usPreScanToPostScan3DConverter::convert( usImagePostScan3D<unsigned char> &
   unsigned char *dataPost = postScanImage.getData();
   const unsigned char *dataPre;
   if(dataPreScan==NULL)
-    dataPre= _VpreScan.getConstData();
+    dataPre= m_VpreScan.getConstData();
   else
     dataPre = dataPreScan;
 
-  if(_SweepInZdirection)
+  if(m_SweepInZdirection)
   {
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
-    for(int i=(int)_lookupTable1.size()-1 ; i>=0 ; i--)
+    for(int i=(int)m_lookupTable1.size()-1 ; i>=0 ; i--)
     {
       double v = 0;
-      for(int j=0 ; j<8 ; j++) v += _lookupTable1[i]._W[j] * dataPre[_lookupTable1[i]._inputIndex[j]];
-      dataPost[_lookupTable1[i]._outputIndex] = (unsigned char) v;
+      for(int j=0 ; j<8 ; j++) v += m_lookupTable1[i].m_W[j] * dataPre[m_lookupTable1[i].m_inputIndex[j]];
+      dataPost[m_lookupTable1[i].m_outputIndex] = (unsigned char) v;
 
     }
   }
@@ -247,21 +247,21 @@ void usPreScanToPostScan3DConverter::convert( usImagePostScan3D<unsigned char> &
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
-    for(int i= (int)_lookupTable2.size()-1 ; i>=0 ; i--)
+    for(int i= (int)m_lookupTable2.size()-1 ; i>=0 ; i--)
     {
       double v = 0;
-      for(int j=0 ; j<8 ; j++) v += _lookupTable2[i]._W[j] * dataPre[_lookupTable2[i]._inputIndex[j]];
-      dataPost[_lookupTable2[i]._outputIndex] = (unsigned char) v;
+      for(int j=0 ; j<8 ; j++) v += m_lookupTable2[i].m_W[j] * dataPre[m_lookupTable2[i].m_inputIndex[j]];
+      dataPost[m_lookupTable2[i].m_outputIndex] = (unsigned char) v;
     }
   }
 
   //writing post-scan image settings
-  postScanImage.setTransducerSettings(_VpreScan);
-  postScanImage.setMotorSettings(_VpreScan);
-  postScanImage.setElementSpacingX(_resolution);
-  postScanImage.setElementSpacingY(_resolution);
-  postScanImage.setElementSpacingZ(_resolution);
-  postScanImage.setScanLineDepth(_resolution * _VpreScan.getBModeSampleNumber());
+  postScanImage.setTransducerSettings(m_VpreScan);
+  postScanImage.setMotorSettings(m_VpreScan);
+  postScanImage.setElementSpacingX(m_resolution);
+  postScanImage.setElementSpacingY(m_resolution);
+  postScanImage.setElementSpacingZ(m_resolution);
+  postScanImage.setScanLineDepth(m_resolution * m_VpreScan.getBModeSampleNumber());
 }
 
 /**
@@ -277,20 +277,20 @@ void usPreScanToPostScan3DConverter::convert( usImagePostScan3D<unsigned char> &
  */
 void usPreScanToPostScan3DConverter::convertPreScanCoordToPostScanCoord(double i, double j, double k, double *x, double *y, double *z, bool sweepInZdirection)
 {
-  const double Nframe = _VpreScan.getFrameNumber();
-  const double Nline = _VpreScan.getScanLineNumber();
+  const double Nframe = m_VpreScan.getFrameNumber();
+  const double Nline = m_VpreScan.getScanLineNumber();
 
-  const double offsetPhi = 0.5*_VpreScan.getScanLinePitch()*(Nline-1);
-  const double offsetTheta = 0.5*_VpreScan.getFramePitch()*Nframe;
+  const double offsetPhi = 0.5*m_VpreScan.getScanLinePitch()*(Nline-1);
+  const double offsetTheta = 0.5*m_VpreScan.getFramePitch()*Nframe;
 
-  const double r = _VpreScan.getTransducerRadius() + j * _VpreScan.getAxialResolution();
-  const double phi = i * _VpreScan.getScanLinePitch() - offsetPhi;
-  const double theta = (sweepInZdirection?1:-1) * (_VpreScan.getFramePitch() * Nframe * (i + Nline*k) / (Nframe*Nline-1) - offsetTheta);
+  const double r = m_VpreScan.getTransducerRadius() + j * m_VpreScan.getAxialResolution();
+  const double phi = i * m_VpreScan.getScanLinePitch() - offsetPhi;
+  const double theta = (sweepInZdirection?1:-1) * (m_VpreScan.getFramePitch() * Nframe * (i + Nline*k) / (Nframe*Nline-1) - offsetTheta);
 
   const double cPhi = cos(phi);
 
   if(x) *x = r * sin(phi);
-  double radiusOffset = _VpreScan.getTransducerRadius() - _VpreScan.getMotorRadius();
+  double radiusOffset = m_VpreScan.getTransducerRadius() - m_VpreScan.getMotorRadius();
   if(y) *y = (r * cPhi - radiusOffset) * cos(theta);
   if(z) *z = (r * cPhi - radiusOffset) * sin(theta);
 }
@@ -308,16 +308,16 @@ void usPreScanToPostScan3DConverter::convertPreScanCoordToPostScanCoord(double i
  */
 void usPreScanToPostScan3DConverter::convertPostScanCoordToPreScanCoord(double x, double y, double z, double *i, double *j, double *k, bool sweepInZdirection)
 {
-  const double Nframe = _VpreScan.getFrameNumber();
-  const double Nline = _VpreScan.getScanLineNumber();
-  double radiusOffset = _VpreScan.getTransducerRadius() - _VpreScan.getMotorRadius();
+  const double Nframe = m_VpreScan.getFrameNumber();
+  const double Nline = m_VpreScan.getScanLineNumber();
+  double radiusOffset = m_VpreScan.getTransducerRadius() - m_VpreScan.getMotorRadius();
   const double rProbe = radiusOffset + sqrt(y*y+z*z);
   const double r = sqrt(rProbe*rProbe + x*x);
   const double phi = atan(x/rProbe);
   const double theta = atan(z/y);
 
-  double itmp = phi / _VpreScan.getScanLinePitch() + 0.5*(Nline-1);
+  double itmp = phi / m_VpreScan.getScanLinePitch() + 0.5*(Nline-1);
   if(j) *i = itmp;
-  if(j) *j = (r - _VpreScan.getTransducerRadius()) / _VpreScan.getAxialResolution();
-  if(k) *k = (Nframe*Nline-1) * (0.5/Nline + (sweepInZdirection?1:-1) * theta / (_VpreScan.getFramePitch() * Nframe*Nline)) - itmp/Nline;
+  if(j) *j = (r - m_VpreScan.getTransducerRadius()) / m_VpreScan.getAxialResolution();
+  if(k) *k = (Nframe*Nline-1) * (0.5/Nline + (sweepInZdirection?1:-1) * theta / (m_VpreScan.getFramePitch() * Nframe*Nline)) - itmp/Nline;
 }

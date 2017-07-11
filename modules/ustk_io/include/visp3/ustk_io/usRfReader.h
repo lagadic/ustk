@@ -61,7 +61,7 @@
 * @warning This class reads .rf files which don't contain transducer/motor informations. If yout want
 * to use the data grabbed by this class make sure to complete them by yourself.
 */
-class usRfReader
+class VISP_EXPORT usRfReader
 {
 public:
 

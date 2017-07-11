@@ -427,7 +427,7 @@ void usImageIo::read(usImagePreScan2D<unsigned char> &preScanImage,const std::st
     preScanImage.setScanLineNumber(preScanImage.getWidth());
     preScanImage.setDepth(xmlSettings.getAxialResolution()*preScanImage.getHeight());
 #else
-    throw(vpException(vpException::fatalEtrror, "Requires xml2 library"));
+    throw(vpException(vpException::fatalError, "Requires xml2 library"));
 #endif //VISP_HAVE_XML2
   }
   else if (headerFormat == FORMAT_MHD) {
@@ -583,7 +583,7 @@ void usImageIo::read(usImagePreScan3D<unsigned char> &preScanImage,const std::st
     preScanImage.setMotorSettings(motorSettings);
 
 #else
-    throw(vpException(vpException::fatalEtrror, "Requires xml2 library"));
+    throw(vpException(vpException::fatalError, "Requires xml2 library"));
 #endif //VISP_HAVE_XML2
   }
   else if (headerFormat == FORMAT_MHD) {

@@ -45,7 +45,10 @@
 #include <vector>
 #include <algorithm>
 
-#include <visp3/core/vpDebug.h>
+#include <visp3/core/vpConfig.h>
+
+#ifdef VISP_HAVE_XML2
+
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/io/vpImageIo.h>
@@ -411,4 +414,6 @@ usImageSettingsXmlParser usSequenceReader<ImageType>::getXmlParser()
     return m_xmlParser;
   throw(vpException(vpException::fatalError, "Sequence not opened, xml parser is empty !"));
 }
+
+#endif
 #endif //US_SEQUENCE_READER_H
