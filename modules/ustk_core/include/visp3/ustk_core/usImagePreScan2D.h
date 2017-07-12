@@ -123,6 +123,7 @@ public:
 
   //comparison
   bool operator==(const usImagePreScan2D<Type> &other);
+  bool operator!=(const usImagePreScan2D<Type> &other);
 
   void setData(const vpImage<Type> image);
   void setScanLineNumber(unsigned int scanLineNumber);
@@ -195,6 +196,15 @@ template<class Type>
 bool usImagePreScan2D<Type>::operator==(const usImagePreScan2D<Type> &other)
 {
   return(vpImage<Type>::operator== (other) && usImagePreScanSettings::operator ==(other));
+}
+
+/**
+* Comparison operator.
+*/
+template<class Type>
+bool usImagePreScan2D<Type>::operator!=(const usImagePreScan2D<Type> &other)
+{
+  return(!operator==(other));
 }
 
 /**
