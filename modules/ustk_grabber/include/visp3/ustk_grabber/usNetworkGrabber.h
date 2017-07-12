@@ -70,6 +70,13 @@ class VISP_EXPORT usNetworkGrabber : public QObject
 {
   Q_OBJECT
 public:
+
+  typedef enum {
+    OUTPUT_FRAME_POSITION_IN_VEC = 0,
+    MOST_RECENT_FRAME_POSITION_IN_VEC = 1,
+    CURRENT_FILLED_FRAME_POSITION_IN_VEC = 2
+  }usDataPositionInBuffer;
+
   // Following headers must be the same in the server (ultrasound station) !
 
   /**
@@ -151,8 +158,10 @@ public:
    * @name motor settings
    */
   /*@{*/
-    int anglePerFr; /**< angular step between frames*/
+    double anglePerFr; /**< angular step between frames, in degrees*/
     int framesPerVolume; /**< number of frames in a volume */
+    double motorRadius; /**< Radius of the motor, in degrees */
+    int motorType; /**< Type of the motor (see usMotorType) */
   /*@}*/
 
 

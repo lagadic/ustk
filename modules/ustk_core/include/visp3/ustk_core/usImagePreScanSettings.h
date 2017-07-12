@@ -89,6 +89,8 @@ public:
 
   double getAxialResolution() const;
 
+  usImagePreScanSettings getImagePreScanSettings()const;
+
   usImagePreScanSettings& operator=(const usImagePreScanSettings& other);
   bool operator==(const usImagePreScanSettings& other);
 

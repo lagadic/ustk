@@ -31,12 +31,12 @@
  *****************************************************************************/
 
 /**
- * @file usNetworkGrabberPreScan2D.h
+ * @file usNetworkGrabberPreScan3D.h
  * @brief Grabber used to grab pre-scan frames from ultrasonix station, using a tcp connection.
  */
 
-#ifndef __usNetworkGrabberPreScan2D_h_
-#define __usNetworkGrabberPreScan2D_h_
+#ifndef __usNetworkGrabberPreScan3D_h_
+#define __usNetworkGrabberPreScan3D_h_
 
 #include <visp3/ustk_core/usConfig.h>
 
@@ -46,53 +46,63 @@
 
 #include <visp3/ustk_grabber/usNetworkGrabber.h>
 #include <visp3/ustk_core/usImagePreScan2D.h>
+#include <visp3/ustk_core/usImagePreScan3D.h>
 #include <visp3/ustk_grabber/usFrameGrabbedInfo.h>
+#include <visp3/ustk_grabber/usVolumeGrabbedInfo.h>
 
 /**
- * @class usNetworkGrabberPreScan2D
- * @brief Specific class to grab pre-scan frames from the ultrasound station on the network.
+ * @class usNetworkGrabberPreScan3D
+ * @brief Specific class to grab pre-scan volumes from the ultrasound station on the network.
  * @ingroup module_ustk_grabber
  *
- * The following figure details the network communication process and summarizes the steps to follow to acquire ultrasound images :
+ * The following figure details the network communication process and summarizes the steps to follow to acquire ultrasound images:
  * \image html img-usNetworkGrabber.png
  *
  * This grabber manages a buffer system to avoid multiple copy of the frames.
  * The acquire() method returns you a pointer on a new frame, you can acess and modify the frame (it is thread-safe).
- * Acquire() can be blocking, the behaviour depends on how often you call it :
+ * Acquire() can be blocking, the behaviour depends on how often you call it:
  * - If you call acquire() faster than the frames are arriving on the network, it is blocking to wait next frame coming.
  * - If you call it slower you will loose frames, but you will get the last frame available.
  */
-class VISP_EXPORT usNetworkGrabberPreScan2D : public usNetworkGrabber
+class VISP_EXPORT usNetworkGrabberPreScan3D : public usNetworkGrabber
 {
   Q_OBJECT
 public:
 
-  explicit usNetworkGrabberPreScan2D(usNetworkGrabber *parent = 0);
-  ~usNetworkGrabberPreScan2D();
+  explicit usNetworkGrabberPreScan3D(usNetworkGrabber *parent = 0);
+  ~usNetworkGrabberPreScan3D();
 
-  usFrameGrabbedInfo<usImagePreScan2D<unsigned char> > * acquire();
+  usVolumeGrabbedInfo<usImagePreScan3D<unsigned char> > * acquire();
 
   void dataArrived();
 
   bool isFirstFrameAvailable() {return m_firstFrameAvailable;}
 
 signals:
-  void newFrameAvailable();
+  void newVolumeAvailable();
 
 protected:
-  void invertRowsCols();
+  void includeFrameInVolume();
 
 private:
-  //grabbed image
+  //grabbed image (we have to "turn" it if it is a pre-scan frame):
+  //the rows and cols have to be interverted, it is not a valid image to use.
   usFrameGrabbedInfo<usImagePreScan2D<unsigned char> > m_grabbedImage;
 
-  // Output images : we have to invert (i <-> j) in the image grabbed
-  std::vector<usFrameGrabbedInfo<usImagePreScan2D<unsigned char> > *> m_outputBuffer;
+  // to keep saved motor settings from one frame to next one
+  usMotorSettings m_motorSettings;
+
+  // Output images: we have to invert (i <-> j) in the image grabbed
+  std::vector<usVolumeGrabbedInfo<usImagePreScan3D<unsigned char> > *> m_outputBuffer;
   bool m_firstFrameAvailable;
+  bool m_firstVolumeAvailable;
 
   //to manage ptrs switch init
   bool m_swichOutputInit;
+
+  //to know motor sweep direction for volume grabbed
+  bool m_motorSweepingInZDirection;
 };
 
 #endif // QT4 || QT5
-#endif // __usNetworkGrabberPreScan2D_h_
+#endif // __usNetworkGrabberPreScan3D_h_

@@ -1,4 +1,4 @@
-//! \example tutorial-ultrasonix-qt-grabbing-pre-scan.cpp
+//! \example tutorial-ultrasonix-qt-grabbing-pre-scan3D.cpp
 
 #include <iostream>
 #include <visp3/ustk_core/usConfig.h>
@@ -8,7 +8,9 @@
 #include <QtCore/QThread>
 #include <QApplication>
 
-#include <visp3/ustk_grabber/usNetworkGrabberPreScan2D.h>
+#include <visp3/ustk_grabber/usNetworkGrabberPreScan3D.h>
+
+#include <visp3/ustk_io/usImageIo.h>
 
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/gui/vpDisplayGDI.h>
@@ -20,7 +22,7 @@ int main(int argc, char** argv)
 
   QThread * grabbingThread = new QThread();
 
-  usNetworkGrabberPreScan2D * qtGrabber = new usNetworkGrabberPreScan2D();
+  usNetworkGrabberPreScan3D * qtGrabber = new usNetworkGrabberPreScan3D();
   qtGrabber->setConnection(true);
 
   // setting acquisition parameters
@@ -30,20 +32,18 @@ int main(int argc, char** argv)
   header.imagingMode = 0; //B-mode = 0
 
   //prepare image;
-  usFrameGrabbedInfo<usImagePreScan2D<unsigned char> >* grabbedFrame;
-
-  //Prepare display
-#if defined(VISP_HAVE_X11)
-  vpDisplayX * display = NULL;
-#elif defined(VISP_HAVE_GDI)
-  vpDisplayGDI * display = NULL;
-#endif
-  bool displayInit = false;
+  usVolumeGrabbedInfo<usImagePreScan3D<unsigned char> >* grabbedFrame;
 
   bool captureRunning = true;
 
   // sending acquisition parameters
   qtGrabber->initAcquisition(header);
+
+  // set the 4DC7 motor on the middle frame
+  qtGrabber->setStepsPerFrame(usAcquisitionParameters::US_ANGLE_PITCH_3);
+  qtGrabber->setFramesPerVolume(25);
+  qtGrabber->setMotorActivation(true);
+  qtGrabber->sendAcquisitionParameters();
 
   // Send the command to run the acquisition
   qtGrabber->runAcquisition();
@@ -57,32 +57,17 @@ int main(int argc, char** argv)
     if(qtGrabber->isFirstFrameAvailable()) {
       grabbedFrame = qtGrabber->acquire();
 
-      std::cout <<"MAIN THREAD received frame No : " << grabbedFrame->getFrameCount() << std::endl;
+      std::cout <<"MAIN THREAD received volume No : " << grabbedFrame->getVolumeCount() << std::endl;
 
-      //init display
-      if(!displayInit && grabbedFrame->getHeight() !=0 && grabbedFrame->getWidth() !=0) {
-#if defined(VISP_HAVE_X11)
-		  display = new vpDisplayX(*grabbedFrame);
-#elif defined(VISP_HAVE_GDI)
-		  display = new vpDisplayGDI(*grabbedFrame);
-#endif
-        displayInit = true;
-      }
+      char buffer[FILENAME_MAX];
+      sprintf(buffer, "volumePreScan%d.mhd",grabbedFrame->getVolumeCount());
 
-      // processing display
-      if(displayInit) {
-        vpDisplay::display(*grabbedFrame);
-        vpDisplay::flush(*grabbedFrame);
-      }
+      usImageIo::write(*grabbedFrame,buffer);
     }
     else {
       vpTime::wait(10);
     }
   } while(captureRunning);
-
-  if(displayInit) {
-    delete display;
-  }
 
   return app.exec();
 }

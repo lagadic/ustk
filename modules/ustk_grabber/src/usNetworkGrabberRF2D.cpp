@@ -45,9 +45,9 @@ usNetworkGrabberRF2D::usNetworkGrabberRF2D(usNetworkGrabber *parent) :
   usNetworkGrabber(parent)
 {
   //buffer of size 3
-  m_outputBuffer.push_back(new usDataGrabbed<usImageRF2D<short int> >);
-  m_outputBuffer.push_back(new usDataGrabbed<usImageRF2D<short int> >);
-  m_outputBuffer.push_back(new usDataGrabbed<usImageRF2D<short int> >);
+  m_outputBuffer.push_back(new usFrameGrabbedInfo<usImageRF2D<short int> >);
+  m_outputBuffer.push_back(new usFrameGrabbedInfo<usImageRF2D<short int> >);
+  m_outputBuffer.push_back(new usFrameGrabbedInfo<usImageRF2D<short int> >);
 
   m_firstFrameAvailable = false;
 
@@ -134,6 +134,9 @@ void usNetworkGrabberRF2D::dataArrived()
     in >> m_imageHeader.imageDepth;
     in >> m_imageHeader.anglePerFr;
     in >> m_imageHeader.framesPerVolume;
+    in >> m_imageHeader.motorRadius;
+    in >> m_imageHeader.motorType;
+
 
     if(m_verbose) {
       std::cout << "frameCount = " <<  m_imageHeader.frameCount << std::endl;
@@ -154,6 +157,8 @@ void usNetworkGrabberRF2D::dataArrived()
       std::cout << "imageDepth = " <<  m_imageHeader.imageDepth << std::endl;
       std::cout << "anglePerFr = " <<  m_imageHeader.anglePerFr << std::endl;
       std::cout << "framesPerVolume = " <<  m_imageHeader.framesPerVolume << std::endl;
+      std::cout << "motorRadius = " <<  m_imageHeader.motorRadius << std::endl;
+      std::cout << "motorType = " <<  m_imageHeader.motorType << std::endl;
     }
 
     //update transducer settings with image header received
@@ -181,14 +186,10 @@ void usNetworkGrabberRF2D::dataArrived()
     if(m_bytesLeftToRead == 0 ) { // we've read all the frame in 1 packet.
       // Now CURRENT_FILLED_FRAME_POSITION_IN_VEC has become the last frame received
       // So we switch pointers beween MOST_RECENT_FRAME_POSITION_IN_VEC and CURRENT_FILLED_FRAME_POSITION_IN_VEC
-      {
-        // security lock data at MOST_RECENT_FRAME_POSITION_IN_VEC, wich may be used in acquire() by concurrent thread
-        vpMutex::vpScopedLock lock(m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->mutex);
-        //switch ptrs (currentFilled <-> lastFilled)
-        usDataGrabbed<usImageRF2D<short int> >* savePtr = m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC);
-        m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
-        m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
-      }
+      usFrameGrabbedInfo<usImageRF2D<short int> >* savePtr = m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC);
+      m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
+      m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
+
       m_firstFrameAvailable = true;
       emit(newFrameAvailable());
     }
@@ -213,14 +214,10 @@ void usNetworkGrabberRF2D::dataArrived()
     if(m_bytesLeftToRead==0) { // we've read the last part of the frame.
       // Now CURRENT_FILLED_FRAME_POSITION_IN_VEC has become the last frame received
       // So we switch pointers beween MOST_RECENT_FRAME_POSITION_IN_VEC and CURRENT_FILLED_FRAME_POSITION_IN_VEC
-      {
-        // security lock data at MOST_RECENT_FRAME_POSITION_IN_VEC, wich may be used in acquire() by concurrent thread
-        vpMutex::vpScopedLock lock(m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->mutex);
-        //switch ptrs (currentFilled <-> lastFilled)
-        usDataGrabbed<usImageRF2D<short int> >* savePtr = m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC);
-        m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
-        m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
-      }
+      usFrameGrabbedInfo<usImageRF2D<short int> >* savePtr = m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC);
+      m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
+      m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
+
       m_firstFrameAvailable = true;
       emit(newFrameAvailable());
     }
@@ -230,10 +227,9 @@ void usNetworkGrabberRF2D::dataArrived()
 /**
 * Method to get the last frame received. The grabber is designed to avoid data copy (it is why you get a pointer on the data).
 * @note This method is designed to be thread-safe, you can call it from another thread.
-* @warning Make sure to lock the usDataGrabbed::mutex when you access/modify usDataGrabbed::frameCount attribute, wich is acessed in this method.
 * @return Pointer to the last frame acquired.
 */
-usDataGrabbed<usImageRF2D<short int> >* usNetworkGrabberRF2D::acquire() {
+usFrameGrabbedInfo<usImageRF2D<short int> >* usNetworkGrabberRF2D::acquire() {
   //check if the first frame is arrived
   if (!m_firstFrameAvailable) {
     throw(vpException(vpException::fatalError, "first frame not yet grabbed, cannot acquire"));
@@ -247,7 +243,7 @@ usDataGrabbed<usImageRF2D<short int> >* usNetworkGrabberRF2D::acquire() {
     loop.exec();
 
     //switch pointers
-    usDataGrabbed<usImageRF2D<short int> >* savePtr = m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC);
+    usFrameGrabbedInfo<usImageRF2D<short int> >* savePtr = m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC);
     m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
     m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
     m_swichOutputInit = true;
@@ -257,7 +253,7 @@ usDataGrabbed<usImageRF2D<short int> >* usNetworkGrabberRF2D::acquire() {
   else if(m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC)->getFrameCount() < m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getFrameCount() ||
      !m_swichOutputInit) {
     //switch pointers (output <-> mostRecentFilled)
-    usDataGrabbed<usImageRF2D<short int> >* savePtr = m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC);
+    usFrameGrabbedInfo<usImageRF2D<short int> >* savePtr = m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC);
     m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
     m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
     m_swichOutputInit = true;

@@ -9,6 +9,7 @@ set(tutorial_ultrasonix_cpp
   tutorial-ultrasonix-confidence-2D.cpp
   tutorial-ultrasonix-servo-confidence-3D.cpp
   tutorial-ultrasonix-qt-grabbing-pre-scan.cpp
+  tutorial-ultrasonix-qt-grabbing-pre-scan3D.cpp
   tutorial-ultrasonix-qt-grabbing-post-scan.cpp
   tutorial-ultrasonix-qt-grabbing-post-scan3D.cpp
   tutorial-ultrasonix-qt-grabbing-RF.cpp
