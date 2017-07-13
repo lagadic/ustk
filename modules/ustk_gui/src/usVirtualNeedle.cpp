@@ -192,13 +192,12 @@ void usVirtualNeedle::setMeshInScene(vtkPolyData* mesh) {
 }
 
 /**
-* Slot to call every time you want to set
-* @param mesh The mesh, under vtkPolydataFormat.
+* Slot to call every time you want to update the virtual needle positon.
+* @param transform The homogeneous matrix of the needle movement since last call (can be considered as a "delta" movement).
 */
 void usVirtualNeedle::updateNeedlePosition(vpHomogeneousMatrix transform) {
 
-
-  if(m_needleActor->GetUserMatrix() == NULL) { //init
+  if(m_needleActor->GetUserMatrix() == NULL) { //init case
     vtkSmartPointer<vtkMatrix4x4> vtkMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
     usVTKConverter::convert(transform,vtkMatrix);
     m_needleActor->SetUserMatrix(vtkMatrix);
@@ -208,6 +207,7 @@ void usVirtualNeedle::updateNeedlePosition(vpHomogeneousMatrix transform) {
     vpHomogeneousMatrix currentTransform;
     currentTransform.eye();
     usVTKConverter::convert(m_needleActor->GetUserMatrix(),currentTransform);
+
     // Conversion, taking in account current transform of the needle
     vpHomogeneousMatrix newTransform = currentTransform * transform;
 
@@ -218,7 +218,21 @@ void usVirtualNeedle::updateNeedlePosition(vpHomogeneousMatrix transform) {
     m_needleActor->SetUserMatrix(vtkNewtransform);
     this->GetRenderWindow()->Render();
   }
+}
 
+/**
+* Point set of the mesh getter. To update a point position: call GetPoint(int ptIndex), update the coordinates, and then call SetPoint(ptIndex,yourPoint) followed by Modified() to update vtk object.
+* @return The points of the mesh (pointer);
+*/
+vtkPoints * usVirtualNeedle::getMeshPoints() {
+  return m_meshPolyData->GetPoints();
+}
+
+/**
+* To render the scene, after some updates done on objects.
+*/
+void usVirtualNeedle::render() {
+  this->GetRenderWindow()->Render();
 }
 
 #endif

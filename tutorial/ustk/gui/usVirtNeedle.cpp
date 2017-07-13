@@ -22,6 +22,7 @@ int main(int argc, char** argv)
 
   app.setActiveWindow(&scene);
   scene.show();
+  scene.showMaximized();
 
   return app.exec();
 }

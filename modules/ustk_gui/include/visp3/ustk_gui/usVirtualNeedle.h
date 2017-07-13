@@ -53,6 +53,7 @@
 #include <vtkRenderWindow.h>
 #include <vtkAxesActor.h>
 #include <vtkPolyDataMapper.h>
+#include <vtkPoints.h>
 
 // Qt includes
 #if defined(USTK_HAVE_VTK_QT4)
@@ -86,12 +87,16 @@ public:
   usVirtualNeedle(QWidget* parent = NULL, Qt::WindowFlags f = 0);
   ~usVirtualNeedle() {}
 
+  void keyPressEvent(QKeyEvent *event);
+
+  vtkPoints * getMeshPoints();
+
   void setMeshInScene(vtkPolyData* mesh);
 
   //Catch paint events, in case we want to display some informations (writing in this widget) over the vtk scene
   void paintEvent( QPaintEvent* event );
 
-  void keyPressEvent(QKeyEvent *event);
+  void render();
 
 public slots:
   void updateNeedlePosition(vpHomogeneousMatrix transform);
