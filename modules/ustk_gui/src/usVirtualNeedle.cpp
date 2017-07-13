@@ -114,7 +114,7 @@ void usVirtualNeedle::paintEvent( QPaintEvent* event )
 }
 
 /**
-* Qt key press event overload if needed to update Qt widget
+* Qt key press event catcher, used to move the virtual needle in the scene.
 * @param event QKeyEvent.
 */
 void usVirtualNeedle::keyPressEvent(QKeyEvent *event)
@@ -146,14 +146,28 @@ void usVirtualNeedle::keyPressEvent(QKeyEvent *event)
   else if(event->key() == Qt::Key_PageUp) {
     vpHomogeneousMatrix transform;
     transform.eye();
-    transform[2][3] = 0.001;// remove 1mm on Y axis
+    transform[2][3] = 0.001;// remove 1mm on Z axis
     updateNeedlePosition(transform);
   }
   else if(event->key() == Qt::Key_PageDown) {
     vpHomogeneousMatrix transform;
     transform.eye();
-    transform[2][3] = -0.001;// remove 1mm on Y axis
+    transform[2][3] = -0.001;// remove 1mm on Z axis
     updateNeedlePosition(transform);
+  }
+  else if(event->key() == Qt::Key_Space) { // move first point of the mesh of 1mm along Z
+    double * point1 = m_meshPolyData->GetPoints()->GetPoint(0);
+    point1[2] += 0.001;
+    m_meshPolyData->GetPoints()->SetPoint(0,point1);
+    m_meshPolyData->GetPoints()->Modified();
+    this->GetRenderWindow()->Render();
+  }
+  else if(event->key() == Qt::Key_0) {// move first point of the mesh of - 1mm along Z
+    double * point1 = m_meshPolyData->GetPoints()->GetPoint(0);
+    point1[2] -= 0.001;
+    m_meshPolyData->GetPoints()->SetPoint(0,point1);
+    m_meshPolyData->GetPoints()->Modified();
+    this->GetRenderWindow()->Render();
   }
   else {
     usViewerWidget::keyPressEvent( event );
@@ -194,9 +208,8 @@ void usVirtualNeedle::updateNeedlePosition(vpHomogeneousMatrix transform) {
     vpHomogeneousMatrix currentTransform;
     currentTransform.eye();
     usVTKConverter::convert(m_needleActor->GetUserMatrix(),currentTransform);
-    // Conversion
-    // To check !
-    vpHomogeneousMatrix newTransform = currentTransform * transform; // or transform.inverse ?
+    // Conversion, taking in account current transform of the needle
+    vpHomogeneousMatrix newTransform = currentTransform * transform;
 
     // set new position
     vtkMatrix4x4* vtkNewtransform = vtkMatrix4x4::New();
