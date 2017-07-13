@@ -114,6 +114,53 @@ void usVirtualNeedle::paintEvent( QPaintEvent* event )
 }
 
 /**
+* Qt key press event overload if needed to update Qt widget
+* @param event QKeyEvent.
+*/
+void usVirtualNeedle::keyPressEvent(QKeyEvent *event)
+{
+  if(event->key() == Qt::Key_Left) {
+    vpHomogeneousMatrix transform;
+    transform.eye();
+    transform[0][3] = 0.001;// add 1mm on X axis
+    updateNeedlePosition(transform);
+  }
+  else if(event->key() == Qt::Key_Right) {
+    vpHomogeneousMatrix transform;
+    transform.eye();
+    transform[0][3] = -0.001;// minus 1mm on X axis
+    updateNeedlePosition(transform);
+  }
+  else if(event->key() == Qt::Key_Up) {
+    vpHomogeneousMatrix transform;
+    transform.eye();
+    transform[1][3] = 0.001;// add 1mm on Y axis
+    updateNeedlePosition(transform);
+  }
+  else if(event->key() == Qt::Key_Down) {
+    vpHomogeneousMatrix transform;
+    transform.eye();
+    transform[1][3] = -0.001;// remove 1mm on Y axis
+    updateNeedlePosition(transform);
+  }
+  else if(event->key() == Qt::Key_PageUp) {
+    vpHomogeneousMatrix transform;
+    transform.eye();
+    transform[2][3] = 0.001;// remove 1mm on Y axis
+    updateNeedlePosition(transform);
+  }
+  else if(event->key() == Qt::Key_PageDown) {
+    vpHomogeneousMatrix transform;
+    transform.eye();
+    transform[2][3] = -0.001;// remove 1mm on Y axis
+    updateNeedlePosition(transform);
+  }
+  else {
+    usViewerWidget::keyPressEvent( event );
+  }
+}
+
+/**
 * Setter for the mesh to introcuce in the scene.
 * @param mesh The mesh, under vtkPolydataFormat.
 */
@@ -135,18 +182,30 @@ void usVirtualNeedle::setMeshInScene(vtkPolyData* mesh) {
 * @param mesh The mesh, under vtkPolydataFormat.
 */
 void usVirtualNeedle::updateNeedlePosition(vpHomogeneousMatrix transform) {
-  // get current matrix
-  vpHomogeneousMatrix currentTransform;
-  usVTKConverter::convert(m_needleActor->GetUserMatrix(),currentTransform);
 
-  // Conversion
-  // To check !
-  vpHomogeneousMatrix newTransform = currentTransform * transform; // or transform.inverse ?
 
-  // set new position
-  vtkMatrix4x4* vtkNewtransform = vtkMatrix4x4::New();
-  usVTKConverter::convert(newTransform,vtkNewtransform);
-  m_needleActor->SetUserMatrix(vtkNewtransform);
+  if(m_needleActor->GetUserMatrix() == NULL) { //init
+    vtkSmartPointer<vtkMatrix4x4> vtkMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
+    usVTKConverter::convert(transform,vtkMatrix);
+    m_needleActor->SetUserMatrix(vtkMatrix);
+  }
+  else {
+    // get current matrix
+    vpHomogeneousMatrix currentTransform;
+    currentTransform.eye();
+    usVTKConverter::convert(m_needleActor->GetUserMatrix(),currentTransform);
+    // Conversion
+    // To check !
+    vpHomogeneousMatrix newTransform = currentTransform * transform; // or transform.inverse ?
+
+    // set new position
+    vtkMatrix4x4* vtkNewtransform = vtkMatrix4x4::New();
+    usVTKConverter::convert(newTransform,vtkNewtransform);
+
+    m_needleActor->SetUserMatrix(vtkNewtransform);
+    this->GetRenderWindow()->Render();
+  }
+
 }
 
 #endif

@@ -60,14 +60,16 @@
 #  include <QtGui/QMainWindow>
 #  include <QtGui/QGridLayout>
 #  include <QtGui/QPushButton>
+#  include <QKeyEvent>
+#include <QVTKWidget.h>
 #elif defined USTK_HAVE_VTK_QT5
 #  include <QApplication>
 #  include <QtWidgets/QMainWindow>
 #  include <QtWidgets/QGridLayout>
 #  include <QtWidgets/QPushButton>
-#endif
-
+#  include <QKeyEvent>
 #include <QVTKWidget.h>
+#endif
 
 /**
  * @class usVirtualNeedle
@@ -88,6 +90,8 @@ public:
 
   //Catch paint events, in case we want to display some informations (writing in this widget) over the vtk scene
   void paintEvent( QPaintEvent* event );
+
+  void keyPressEvent(QKeyEvent *event);
 
 public slots:
   void updateNeedlePosition(vpHomogeneousMatrix transform);
