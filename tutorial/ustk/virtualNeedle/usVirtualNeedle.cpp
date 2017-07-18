@@ -34,28 +34,10 @@
 * @file usVirtualNeedle.cpp
 * @brief Graphical main window containing 4 vtk views.
 */
-#include <visp3/core/vpException.h>
-#include <visp3/ustk_gui/usVirtualNeedle.h>
-#include <visp3/core/vpRotationMatrix.h>
+
+#include "usVirtualNeedle.h"
 
 #ifdef USTK_HAVE_VTK_QT
-
-#include <visp3/ustk_gui/usVTKConverter.h>
-
-// VTK includes
-#include <vtkSmartPointer.h>
-#include <vtkRenderWindowInteractor.h>
-#include <vtkInteractorStyleTrackballCamera.h>
-#include <vtkArrowSource.h>
-#include <vtkMatrix4x4.h>
-#include <vtkSphereSource.h>
-#include <vtkProperty.h>
-#include <vtkCylinderSource.h>
-#include <vtkSTLReader.h>
-#include <vtkSTLWriter.h>
-
-#include <QPainter>
-#include <QPaintEngine>
 
 /**
 * Constructor.
@@ -103,6 +85,11 @@ usVirtualNeedle::usVirtualNeedle(QWidget* parent, Qt::WindowFlags f) : usViewerW
   vtkRenderWindow* renderWindow = this->GetRenderWindow();
   renderWindow->AddRenderer(renderer);
 }
+/*
+usVirtualNeedle::~usVirtualNeedle()
+{
+
+}*/
 
 /**
 * Qt paint event overload if needed to update Qt widget

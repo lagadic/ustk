@@ -123,12 +123,12 @@ void usRFToPreScan2DConverter::enveloppeDetection(const short int *s, double* ou
 
     if(i<N/2)
       m_fft_out[i][1]=-m_fft_out[i][1];
-    if(i==N/2)
+    else if(i==N/2)
     {
       m_fft_out[i][0]=0;
       m_fft_out[i][1]=0;
     }
-    if(i>N/2)
+    else if(i>N/2)
       m_fft_out[i][0]=-m_fft_out[i][0];
     if(i==0)
     {

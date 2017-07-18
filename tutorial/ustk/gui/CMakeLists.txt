@@ -5,7 +5,6 @@ cmake_minimum_required(VERSION 2.6)
 find_package(VISP REQUIRED visp_ustk_gui visp_ustk_io)
 
 set(tutorial_cpp
-  usVirtNeedle.cpp
   usMedicalViewerExample.cpp
   usFullConverter.cpp
   usGrabber3DViewer.cpp

@@ -72,7 +72,7 @@ public:
 
   // Constructor/Destructor
   usViewerWidget(QWidget* parent = NULL, Qt::WindowFlags f = 0);
-  ~usViewerWidget() {}
+  virtual ~usViewerWidget();
 
   void paintEvent( QPaintEvent* event );
 };

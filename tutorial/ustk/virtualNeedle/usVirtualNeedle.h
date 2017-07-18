@@ -47,13 +47,30 @@
 
 #include <visp3/ustk_gui/usViewerWidget.h>
 
-//VTK includes
+#include <visp3/ustk_gui/usVTKConverter.h>
+
+// VTK includes
+#include <vtkSmartPointer.h>
+#include <vtkRenderWindowInteractor.h>
+#include <vtkInteractorStyleTrackballCamera.h>
+#include <vtkArrowSource.h>
+#include <vtkMatrix4x4.h>
+#include <vtkSphereSource.h>
+#include <vtkProperty.h>
+#include <vtkCylinderSource.h>
+#include <vtkSTLReader.h>
+#include <vtkSTLWriter.h>
+
+#include <QPainter>
+#include <QPaintEngine>
+
 #include <vtkSmartPointer.h>
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
 #include <vtkAxesActor.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkPoints.h>
+#include <vtkActor.h>
 
 // Qt includes
 #if defined(USTK_HAVE_VTK_QT4)
@@ -78,14 +95,14 @@
  * @ingroup module_ustk_gui
  */
 
-class VISP_EXPORT usVirtualNeedle : public usViewerWidget
+class usVirtualNeedle : public usViewerWidget
 {
   Q_OBJECT
 public:
 
   // Constructor/Destructor
   usVirtualNeedle(QWidget* parent = NULL, Qt::WindowFlags f = 0);
-  ~usVirtualNeedle() {}
+  virtual ~usVirtualNeedle() {}
 
   void keyPressEvent(QKeyEvent *event);
 
@@ -100,8 +117,6 @@ public:
 
 public slots:
   void updateNeedlePosition(vpHomogeneousMatrix transform);
-
-signals:
 
 private:
   //mesh polydata
