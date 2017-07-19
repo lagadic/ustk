@@ -7,11 +7,8 @@
 
 int main(int argc, char** argv)
 {
-  std::cout << "toto" << std::endl;
   // QT application
   QApplication app( argc, argv );
-
-  std::cout << "toto" << std::endl;
 
   //setup view widget
   usVirtualNeedle scene;

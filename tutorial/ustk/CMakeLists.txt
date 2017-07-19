@@ -31,4 +31,6 @@ visp_add_subdirectory(needleDetection REQUIRED_DEPS visp_ustk_io visp_ustk_needl
 visp_add_subdirectory(scanConversion REQUIRED_DEPS visp_ustk_io)
 visp_add_subdirectory(sonosite REQUIRED_DEPS visp_ustk_confidence_map visp_ustk_template_tracking visp_robot)
 visp_add_subdirectory(ultrasonix REQUIRED_DEPS visp_ustk_grabber)
-visp_add_subdirectory(virtualNeedle REQUIRED_DEPS visp_ustk_gui)
+if(USTK_HAVE_VTK_QT5)
+  visp_add_subdirectory(virtualNeedle REQUIRED_DEPS visp_ustk_gui)
+endif()
