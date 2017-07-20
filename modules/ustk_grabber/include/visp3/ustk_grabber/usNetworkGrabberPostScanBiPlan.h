@@ -31,12 +31,12 @@
  *****************************************************************************/
 
 /**
- * @file usNetworkGrabberPostScan2D.h
+ * @file usNetworkGrabberPostScanBiPlan.h
  * @brief Grabber used to grab post-scan frames from ultrasonix station, using a tcp connection.
  */
 
-#ifndef __usNetworkGrabberPostScan2D_h_
-#define __usNetworkGrabberPostScan2D_h_
+#ifndef __usNetworkGrabberPostScanBiPlan_h_
+#define __usNetworkGrabberPostScanBiPlan_h_
 
 #include <visp3/ustk_core/usConfig.h>
 
@@ -49,8 +49,8 @@
 #include <visp3/ustk_grabber/usFrameGrabbedInfo.h>
 
 /**
- * @class usNetworkGrabberPostScan2D
- * @brief Specific class to grab post-scan frames from the ultrasound station on the network.
+ * @class usNetworkGrabberPostScanBiPlan
+ * @brief Specific class to grab post-scan frames from the ultrasound station on the network with the bi-plane probe.
  * @ingroup module_ustk_grabber
  *
  * The following figure details the network communication process and summarizes the steps to follow to acquire ultrasound images :
@@ -62,15 +62,15 @@
  * - If you call acquire() faster than the frames are arriving on the network, it is blocking to wait next frame coming.
  * - If you call it slower you will loose frames, but you will get the last frame available.
  */
-class VISP_EXPORT usNetworkGrabberPostScan2D : public usNetworkGrabber
+class VISP_EXPORT usNetworkGrabberPostScanBiPlan : public usNetworkGrabber
 {
   Q_OBJECT
 public:
 
-  explicit usNetworkGrabberPostScan2D(usNetworkGrabber *parent = 0);
-  ~usNetworkGrabberPostScan2D();
+  explicit usNetworkGrabberPostScanBiPlan(usNetworkGrabber *parent = 0);
+  ~usNetworkGrabberPostScanBiPlan();
 
-  usFrameGrabbedInfo<usImagePostScan2D<unsigned char> > * acquire();
+  usFrameGrabbedInfo<usImagePostScan2D<unsigned char> > ** acquire();
 
   void dataArrived();
 
@@ -81,7 +81,11 @@ signals:
 
 private:
   // Output images
-  std::vector<usFrameGrabbedInfo<usImagePostScan2D<unsigned char> > *> m_outputBuffer;
+  std::vector<usFrameGrabbedInfo<usImagePostScan2D<unsigned char> > *> m_outputBuffer1;
+  std::vector<usFrameGrabbedInfo<usImagePostScan2D<unsigned char> > *> m_outputBuffer2;
+
+  int m_bufferToFill;
+
   bool m_firstFrameAvailable;
 
   //to manage ptrs switch init
@@ -89,4 +93,4 @@ private:
 };
 
 #endif // QT4 || QT5
-#endif // __usNetworkGrabberPostScan2D_h_
+#endif // __usNetworkGrabberPostScanBiPlan_h_
