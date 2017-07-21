@@ -70,7 +70,7 @@ public:
   explicit usNetworkGrabberPostScanBiPlan(usNetworkGrabber *parent = 0);
   ~usNetworkGrabberPostScanBiPlan();
 
-  usFrameGrabbedInfo<usImagePostScan2D<unsigned char> > ** acquire();
+  std::vector<usFrameGrabbedInfo<usImagePostScan2D<unsigned char> > *> acquire();
 
   void dataArrived();
 

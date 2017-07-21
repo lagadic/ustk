@@ -8,7 +8,7 @@
 #include <QtCore/QThread>
 #include <QApplication>
 
-#include <visp3/ustk_grabber/usNetworkGrabberPostScan2D.h>
+#include <visp3/ustk_grabber/usNetworkGrabberPostScanBiPlan.h>
 
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/gui/vpDisplayGDI.h>
@@ -20,22 +20,24 @@ int main(int argc, char** argv)
 
   QThread * grabbingThread = new QThread();
 
-  usNetworkGrabberPostScan2D * qtGrabber = new usNetworkGrabberPostScan2D();
+  usNetworkGrabberPostScanBiPlan * qtGrabber = new usNetworkGrabberPostScanBiPlan();
   qtGrabber->setConnection(true);
-
+  //qtGrabber->setVerbose(true);
   // setting acquisition parameters
   usNetworkGrabber::usInitHeaderSent header;
-  header.probeId = 14; // 4DC7 id = 15
+  header.probeId = 14; // bi-plan probe id = 15
   header.slotId = 0; //top slot id = 0
-  header.imagingMode = 0; //B-mode = 0
+  header.imagingMode = 23; //bi-plan = 23
 
-  usFrameGrabbedInfo<usImagePostScan2D<unsigned char> >* grabbedFrame;
+  std::vector<usFrameGrabbedInfo<usImagePostScan2D<unsigned char> > * > grabbedFrame;
 
   //Prepare display
 #if defined(VISP_HAVE_X11)
-  vpDisplayX * display = NULL;
+  vpDisplayX * display1 = NULL;
+  vpDisplayX * display2 = NULL;
 #elif defined(VISP_HAVE_GDI)
-  vpDisplayGDI * display = NULL;
+  vpDisplayGDI * display1 = NULL;
+  vpDisplayGDI * display2 = NULL;
 #endif
   bool displayInit = false;
 
@@ -46,18 +48,10 @@ int main(int argc, char** argv)
 
   // grab a 640*480 post-scan image
   qtGrabber->setPostScanMode(true);
-  qtGrabber->setPostScanHeigh(480);
-  qtGrabber->setPostScanWidth(640);
+  qtGrabber->setPostScanHeigh(300);
+  qtGrabber->setPostScanWidth(300);
 
-  // set the ultrsound depth to 140 mm
-  qtGrabber->setImageDepth(140);
-
-  // set the 4DC7 motor on the middle frame
-  qtGrabber->setMotorPosition(37);
-
-  std::cout << "send update" << std::endl;
   qtGrabber->sendAcquisitionParameters();
-  std::cout << "end update" << std::endl;
   qtGrabber->runAcquisition();
 
   // Move the grabber object to another thread
@@ -69,26 +63,30 @@ int main(int argc, char** argv)
   //our local grabbing loop
   do {
     if(qtGrabber->isFirstFrameAvailable()) {
+
       grabbedFrame = qtGrabber->acquire();
 
-      std::cout <<"MAIN THREAD received frame No : " << grabbedFrame->getFrameCount() << std::endl;
-
-      std::cout << *grabbedFrame << std::endl;
+      std::cout <<"MAIN THREAD received frame No : " << grabbedFrame[0]->getFrameCount() <<
+                  " and " << grabbedFrame[1]->getFrameCount() << std::endl;
 
       //init display
-      if(!displayInit && grabbedFrame->getHeight() !=0 && grabbedFrame->getWidth() !=0) {
+      if(!displayInit && grabbedFrame[0]->getHeight() !=0 && grabbedFrame[0]->getWidth() !=0) {
 #if defined(VISP_HAVE_X11)
-        display = new vpDisplayX(*grabbedFrame);
+        display1 = new vpDisplayX(*(grabbedFrame[0]));
+        display2 = new vpDisplayX(*(grabbedFrame[1]));
 #elif defined(VISP_HAVE_GDI)
-        display = new vpDisplayGDI(*grabbedFrame);
+        display1 = new vpDisplayGDI(*(grabbedFrame);
+        display2 = new vpDisplayGDI(*(grabbedFrame[1]);
 #endif
         displayInit = true;
       }
 
       // processing display
       if(displayInit) {
-        vpDisplay::display(*grabbedFrame);
-        vpDisplay::flush(*grabbedFrame);
+        vpDisplay::display(*(grabbedFrame[0]));
+        vpDisplay::display(*(grabbedFrame[1]));
+        vpDisplay::flush(*(grabbedFrame[0]));
+        vpDisplay::flush(*(grabbedFrame[1]));
       }
     }
     else {
@@ -97,7 +95,8 @@ int main(int argc, char** argv)
   }while(captureRunning);
 
   if(displayInit) {
-    delete display;
+    delete display1;
+    delete display2;
   }
 
   return app.exec();

@@ -90,10 +90,12 @@ void usNetworkGrabberPostScanBiPlan::dataArrived()
 
   //select buffer to write in
   std::vector<usFrameGrabbedInfo<usImagePostScan2D<unsigned char> > *> * refOnBufferToFill;
-  if(m_bufferToFill == 1)
+  if(m_bufferToFill == 1) {
     refOnBufferToFill = &m_outputBuffer1;
-  else
+  }
+  else {
     refOnBufferToFill = &m_outputBuffer2;
+  }
 
   if(m_bytesLeftToRead == 0 ) { // do not try to read a header if last frame was not complete
     in >> headerType;
@@ -217,10 +219,11 @@ void usNetworkGrabberPostScanBiPlan::dataArrived()
         refOnBufferToFill->at(CURRENT_FILLED_FRAME_POSITION_IN_VEC) = refOnBufferToFill->at(MOST_RECENT_FRAME_POSITION_IN_VEC);
         refOnBufferToFill->at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
       }
-      m_firstFrameAvailable = true;
       m_bufferToFill = (m_bufferToFill == 1) ? 2 : 1;
-      if(m_bufferToFill == 1) //we just read image 2
+      if(m_bufferToFill == 1) { //we just read image 2
+        m_firstFrameAvailable = true;
         emit(newFrameAvailable());
+      }
 
     }
     if(m_verbose)
@@ -242,11 +245,11 @@ void usNetworkGrabberPostScanBiPlan::dataArrived()
       usFrameGrabbedInfo<usImagePostScan2D<unsigned char> >* savePtr = refOnBufferToFill->at(CURRENT_FILLED_FRAME_POSITION_IN_VEC);
       refOnBufferToFill->at(CURRENT_FILLED_FRAME_POSITION_IN_VEC) = refOnBufferToFill->at(MOST_RECENT_FRAME_POSITION_IN_VEC);
       refOnBufferToFill->at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
-
-      m_firstFrameAvailable = true;
       m_bufferToFill = (m_bufferToFill == 1) ? 2 : 1;
-      if(m_bufferToFill == 1) //we just read image 2
+      if(m_bufferToFill == 1) { //we just read image 2
+        m_firstFrameAvailable = true;
         emit(newFrameAvailable());
+      }
     }
   }
 }
@@ -256,14 +259,15 @@ void usNetworkGrabberPostScanBiPlan::dataArrived()
 * @note This method is designed to be thread-safe, you can call it from another thread.
 * @return Pointer to the last frame acquired.
 */
-usFrameGrabbedInfo<usImagePostScan2D<unsigned char> > ** usNetworkGrabberPostScanBiPlan::acquire() {
+std::vector<usFrameGrabbedInfo<usImagePostScan2D<unsigned char> > *> usNetworkGrabberPostScanBiPlan::acquire() {
   //check if the first frame is arrived
   if (!m_firstFrameAvailable) {
     throw(vpException(vpException::fatalError, "first frame not yet grabbed, cannot acquire"));
   }
 
   //user grabs too fast
-  if(m_outputBuffer1.at(OUTPUT_FRAME_POSITION_IN_VEC)->getFrameCount() == m_outputBuffer1.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getFrameCount() + 1) {
+  if(m_outputBuffer1.at(OUTPUT_FRAME_POSITION_IN_VEC)->getFrameCount() == m_outputBuffer1.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getFrameCount() + 1 &&
+     m_outputBuffer2.at(OUTPUT_FRAME_POSITION_IN_VEC)->getFrameCount() == m_outputBuffer2.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getFrameCount() + 1 ) {
     //we wait until a new frame is available
     QEventLoop loop;
     loop.connect(this, SIGNAL(newFrameAvailable()), SLOT(quit()));
@@ -282,7 +286,9 @@ usFrameGrabbedInfo<usImagePostScan2D<unsigned char> > ** usNetworkGrabberPostSca
   }
 
   // if more recent frame available
-  else if(m_outputBuffer1.at(OUTPUT_FRAME_POSITION_IN_VEC)->getFrameCount() < m_outputBuffer1.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getFrameCount() || !m_swichOutputInit) {
+  else if(( m_outputBuffer1.at(OUTPUT_FRAME_POSITION_IN_VEC)->getFrameCount() < m_outputBuffer1.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getFrameCount() &&
+            m_outputBuffer2.at(OUTPUT_FRAME_POSITION_IN_VEC)->getFrameCount() < m_outputBuffer2.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getFrameCount()
+           ) || !m_swichOutputInit) {
     //switch pointers (output <-> mostRecentFilled)
     usFrameGrabbedInfo<usImagePostScan2D<unsigned char> >* savePtr = m_outputBuffer1.at(OUTPUT_FRAME_POSITION_IN_VEC);
     m_outputBuffer1.at(OUTPUT_FRAME_POSITION_IN_VEC) = m_outputBuffer1.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
@@ -295,10 +301,9 @@ usFrameGrabbedInfo<usImagePostScan2D<unsigned char> > ** usNetworkGrabberPostSca
   }
 
   //return the pointers on the two images
-  usFrameGrabbedInfo<usImagePostScan2D<unsigned char> > * ret[2];
-  ret[0] = m_outputBuffer1.at(OUTPUT_FRAME_POSITION_IN_VEC);
-  ret[1] = m_outputBuffer2.at(OUTPUT_FRAME_POSITION_IN_VEC);
-
+  std::vector<usFrameGrabbedInfo<usImagePostScan2D<unsigned char> > * > ret;
+  ret.push_back(m_outputBuffer1.at(OUTPUT_FRAME_POSITION_IN_VEC));
+  ret.push_back(m_outputBuffer2.at(OUTPUT_FRAME_POSITION_IN_VEC));
   return ret;
 }
 
