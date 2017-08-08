@@ -75,8 +75,8 @@ int main(int argc, char** argv)
         display1 = new vpDisplayX(*(grabbedFrame[0]));
         display2 = new vpDisplayX(*(grabbedFrame[1]));
 #elif defined(VISP_HAVE_GDI)
-        display1 = new vpDisplayGDI(*(grabbedFrame);
-        display2 = new vpDisplayGDI(*(grabbedFrame[1]);
+        display1 = new vpDisplayGDI(*(grabbedFrame[0]));
+        display2 = new vpDisplayGDI(*(grabbedFrame[1]));
 #endif
         displayInit = true;
       }
