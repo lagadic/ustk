@@ -78,7 +78,6 @@ void usRFToPreScan3DConverter::convert(const usImageRF3D<short int> &rfImage, us
   for(unsigned int i = 0; i<rfImage.getDimZ(); i++) {
     rfImage.getFrame(frameRF,i);
     m_converter.convert(frameRF, preScanFrame);
-
     preScanImage.insertFrame(preScanFrame,i);
   }
 }
