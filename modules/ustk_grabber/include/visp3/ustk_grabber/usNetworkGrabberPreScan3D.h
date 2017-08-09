@@ -58,11 +58,11 @@
  * The following figure details the network communication process and summarizes the steps to follow to acquire ultrasound images:
  * \image html img-usNetworkGrabber.png
  *
- * This grabber manages a buffer system to avoid multiple copy of the frames.
- * The acquire() method returns you a pointer on a new frame, you can acess and modify the frame (it is thread-safe).
+ * This grabber manages a buffer system to avoid multiple copy of the volumes.
+ * The acquire() method returns you a pointer on a new volumes, you can acess and modify the volumes (it is thread-safe).
  * Acquire() can be blocking, the behaviour depends on how often you call it:
- * - If you call acquire() faster than the frames are arriving on the network, it is blocking to wait next frame coming.
- * - If you call it slower you will loose frames, but you will get the last frame available.
+ * - If you call acquire() faster than the volumes are arriving on the network, it is blocking to wait next volumes coming.
+ * - If you call it slower you will loose volumes, but you will get the last volumes available.
  */
 class VISP_EXPORT usNetworkGrabberPreScan3D : public usNetworkGrabber
 {

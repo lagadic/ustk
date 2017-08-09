@@ -350,7 +350,7 @@ void usImagePreScan3D<Type>::getFrame(vpImage<Type> &image, unsigned int index) 
 
   //Dimentions checks
   if(index > this->getDimZ())
-    throw(vpException(vpException::badValue,"usImage3D::insertFrame : frame index out of volume"));
+    throw(vpException(vpException::badValue,"usImage3D::getFrame : frame index out of volume"));
 
   image.resize(this->getDimY(),this->getDimX());
 
