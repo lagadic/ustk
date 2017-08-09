@@ -39,7 +39,6 @@ int main(int argc, char** argv)
   // sending acquisition parameters
   qtGrabber->initAcquisition(header);
 
-  // set the 4DC7 motor on the middle frame
   qtGrabber->setStepsPerFrame(usAcquisitionParameters::US_ANGLE_PITCH_3);
   qtGrabber->setFramesPerVolume(25);
   qtGrabber->setMotorActivation(true);

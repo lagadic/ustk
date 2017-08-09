@@ -211,7 +211,7 @@ void usNetworkGrabberRF3D::dataArrived()
       std::cout << "reading following part of the frame" << std::endl;
       std::cout << "local image size = " << m_grabbedImage.getSize() << std::endl;
     }
-    m_bytesLeftToRead -= in.readRawData((char*)m_grabbedImage.bitmap+(m_grabbedImage.getSize()-m_bytesLeftToRead),m_bytesLeftToRead);
+    m_bytesLeftToRead -= in.readRawData((char*)m_grabbedImage.bitmap+((m_grabbedImage.getSize()*2)-m_bytesLeftToRead),m_bytesLeftToRead);
 
     if(m_bytesLeftToRead==0) { // we've read the last part of the frame.
       includeFrameInVolume();
@@ -232,17 +232,17 @@ void usNetworkGrabberRF3D::includeFrameInVolume() {
        currentSettings.getScanLinePitch() != m_grabbedImage.getScanLinePitch() ||
        currentSettings.getDepth() != m_grabbedImage.getDepth() ||
        currentSettings.getScanLineNumber() != m_grabbedImage.getScanLineNumber()) {
+      std::cout << m_grabbedImage;
+      std::cout << currentSettings;
+
       throw(vpException(vpException::badValue, "Transducer settings changed during acquisition, somethink went wrong"));
     }
   }
   else { // init case
     m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC)->setImagePreScanSettings(m_grabbedImage);
-    m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC)->setScanLineNumber(m_grabbedImage.getHeight());
     m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->setImagePreScanSettings(m_grabbedImage);
-    m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->setScanLineNumber(m_grabbedImage.getHeight());
   }
   m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setImagePreScanSettings(m_grabbedImage);
-  m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setScanLineNumber(m_grabbedImage.getHeight());
 
   if(m_firstFrameAvailable) {
     if(m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getMotorSettings() != m_motorSettings)
@@ -256,7 +256,7 @@ void usNetworkGrabberRF3D::includeFrameInVolume() {
 
   m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->resize(m_grabbedImage.getWidth(),m_grabbedImage.getHeight(),m_motorSettings.getFrameNumber());
 
-  //Inserting frame in volume by inverting rows and cols voxels (along x and y axis), to match ustk volume storage
+  //Inserting frame in volume
   int volumeIndex = (m_grabbedImage.getFrameCount()-1) / m_grabbedImage.getFramesPerVolume(); // from 0
   int framePostition = (m_grabbedImage.getFrameCount()-1) % m_grabbedImage.getFramesPerVolume(); // from 0 to FPV-1
 

@@ -24,7 +24,7 @@ int main(int argc, char** argv)
 
   usNetworkGrabberRF3D * qtGrabber = new usNetworkGrabberRF3D();
   qtGrabber->setConnection(true);
-
+  //qtGrabber->setVerbose(true);
   // setting acquisition parameters
   usNetworkGrabber::usInitHeaderSent header;
   header.probeId = 15; // 4DC7 id = 15
@@ -49,6 +49,11 @@ int main(int argc, char** argv)
 
   // sending acquisition parameters
   qtGrabber->initAcquisition(header);
+
+  qtGrabber->setStepsPerFrame(usAcquisitionParameters::US_ANGLE_PITCH_3);
+  qtGrabber->setFramesPerVolume(25);
+  qtGrabber->setMotorActivation(true);
+  qtGrabber->sendAcquisitionParameters();
 
   qtGrabber->runAcquisition();
 
