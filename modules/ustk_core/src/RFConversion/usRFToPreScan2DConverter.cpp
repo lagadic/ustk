@@ -164,7 +164,7 @@ void usRFToPreScan2DConverter::enveloppeDetection(const short int *s, double* ou
 */
 void usRFToPreScan2DConverter::convert(const usImageRF2D<short int> &rfImage, usImagePreScan2D<unsigned char> &preScanImage) {
 
-  if(!m_isInit || rfImage.getWidth() != m_scanLineNumber || rfImage.getHeight() != m_signalSize) {
+  if(!m_isInit || ((int)rfImage.getWidth()) != m_scanLineNumber || ((int)rfImage.getHeight()) != m_signalSize) {
     init(rfImage.getWidth(), rfImage.getHeight());
   }
   preScanImage.resize(rfImage.getHeight() / m_decimationFactor,rfImage.getWidth());

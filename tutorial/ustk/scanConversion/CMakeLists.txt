@@ -6,7 +6,8 @@ find_package(VISP REQUIRED visp_ustk_io)
 
 set(tutorial_cpp
   tutorial-scanConversion3D.cpp
-  tutorial-scanConversion2D.cpp)
+  tutorial-scanConversion2D.cpp
+  tutorial-fullConversion2D.cpp)
 
 foreach(cpp ${tutorial_cpp})
   visp_add_target(${cpp})
