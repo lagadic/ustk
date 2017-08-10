@@ -1,3 +1,7 @@
+#include <visp3/ustk_core/usConfig.h>
+
+#ifdef USTK_HAVE_FFTW
+
 #include <visp3/ustk_core/usRFToPostScan2DConverter.h>
 #include <visp3/ustk_io/usImageIo.h>
 #include <visp3/core/vpTime.h>
@@ -33,11 +37,11 @@ int main(int argc, char** argv)
   postscanImage.setWidthResolution(0.0005);
 
   usImageIo::read(rfImage,filename);
+
+  //settings used for signal.rf file in ustk-dataset
   rfImage.setScanLinePitch(0.010625);
   rfImage.setTransducerRadius(0.0398);
   rfImage.setDepth(0.15);
-
-  std::cout << rfImage << std::endl;
 
   postscanImage.setTransducerSettings(rfImage);
 
@@ -68,3 +72,13 @@ int main(int argc, char** argv)
 
   return 0;
 }
+
+#else
+#include <iostream>
+int main()
+{
+  std::cout << "You should install FFTW library to run this tutorial" << std::endl;
+  return 0;
+}
+
+#endif
