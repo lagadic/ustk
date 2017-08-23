@@ -5,6 +5,7 @@ cmake_minimum_required(VERSION 2.6)
 find_package(VISP REQUIRED visp_ustk_io)
 
 set(tutorial_cpp
+  tutorial-rfConversion3D.cpp
   tutorial-scanConversion3D.cpp
   tutorial-scanConversion2D.cpp
   tutorial-fullConversion2D.cpp)

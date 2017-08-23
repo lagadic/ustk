@@ -40,6 +40,10 @@
 
 #if defined(USTK_HAVE_FFTW)
 
+#ifdef VISP_HAVE_OPENMP
+#include <omp.h>
+#endif
+
 /**
 * Constructor.
 * @param decimationFactor Decimation factor : keep only 1 pre-scan sample every N sample (N = decimationFactor)
@@ -75,6 +79,9 @@ void usRFToPreScan3DConverter::convert(const usImageRF3D<short int> &rfImage, us
   usImageRF2D<short int> frameRF;
 
   //loop to convert each frame of the volume
+#ifdef VISP_HAVE_OPENMP
+//#pragma omp parallel for
+#endif
   for(unsigned int i = 0; i<rfImage.getDimZ(); i++) {
     rfImage.getFrame(frameRF,i);
     m_converter.convert(frameRF, preScanFrame);
