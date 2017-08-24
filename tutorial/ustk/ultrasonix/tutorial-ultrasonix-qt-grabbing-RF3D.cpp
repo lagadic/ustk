@@ -71,7 +71,11 @@ int main(int argc, char** argv)
       std::cout <<"MAIN THREAD received volume No : " << grabbedVolume->getVolumeCount() << std::endl;
 
       //convert RF to pre-scan to save the image
+      double t0 = vpTime::measureTimeMs();
       converter.convert(*grabbedVolume,preScanImage);
+      double t1 = vpTime::measureTimeMs();
+      std::cout << "conversion time = " << t1-t0 << std::endl;
+
       QString filename = QString("volume") + QString::number(grabbedVolume->getVolumeCount()) + QString(".mhd");
       usImageIo::write(preScanImage,filename.toStdString());
 

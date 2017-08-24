@@ -65,7 +65,11 @@ int main(int argc, char** argv)
       std::cout <<"MAIN THREAD received frame No : " << grabbedFrame->getFrameCount() << std::endl;
 
       //convert RF to pre-scan to display something ...
+      double t0 = vpTime::measureTimeMs();
       converter.convert(*grabbedFrame,preScanImage);
+      double t1 = vpTime::measureTimeMs();
+      std::cout << "conversion time = " << t1-t0 << std::endl;
+
       //init display
       if(!displayInit && preScanImage.getHeight() !=0 && preScanImage.getWidth() !=0) {
 #if defined(VISP_HAVE_X11)
