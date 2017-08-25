@@ -71,14 +71,10 @@ int main(int argc, char** argv)
       std::cout <<"MAIN THREAD received volume No : " << grabbedVolume->getVolumeCount() << std::endl;
 
       //convert RF to pre-scan to save the image
-      double t0 = vpTime::measureTimeMs();
       converter.convert(*grabbedVolume,preScanImage);
-      double t1 = vpTime::measureTimeMs();
-      std::cout << "conversion time = " << t1-t0 << std::endl;
 
       QString filename = QString("volume") + QString::number(grabbedVolume->getVolumeCount()) + QString(".mhd");
       usImageIo::write(preScanImage,filename.toStdString());
-
     }
     else {
       vpTime::wait(10);
@@ -95,7 +91,7 @@ int main(int argc, char** argv)
 #else
 int main()
 {
-  std::cout << "You should intall Qt5 (with wigdets and network modules) to run this tutorial" << std::endl;
+  std::cout << "You should intall Qt5 (with wigdets and network modules), FFTW and GDI or X11 to run this tutorial" << std::endl;
   return 0;
 }
 

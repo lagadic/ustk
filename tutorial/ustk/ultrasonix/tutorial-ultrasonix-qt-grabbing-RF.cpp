@@ -48,7 +48,6 @@ int main(int argc, char** argv)
 
   // sending acquisition parameters
   qtGrabber->initAcquisition(header);
-
   qtGrabber->runAcquisition();
 
   // Move the grabber object to another thread
@@ -101,7 +100,7 @@ int main(int argc, char** argv)
 #else
 int main()
 {
-  std::cout << "You should intall Qt5 (with wigdets and network modules) to run this tutorial" << std::endl;
+  std::cout << "You should intall Qt5 (with wigdets and network modules), FFTW and GDI or X11 to run this tutorial" << std::endl;
   return 0;
 }
 

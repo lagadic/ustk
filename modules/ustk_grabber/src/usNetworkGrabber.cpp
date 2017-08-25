@@ -468,7 +468,7 @@ void usNetworkGrabber::setFramesPerVolume(int framesPerVolume) {
 }
 
 /**
-* Setter for image depth (meters).
+* Setter for image depth (millimeters).
 */
 void usNetworkGrabber::setImageDepth(int imageDepth) {
   if(imageDepth < m_acquisitionParamters.getImageDepthMin() ||

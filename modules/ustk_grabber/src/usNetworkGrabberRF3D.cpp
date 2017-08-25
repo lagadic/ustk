@@ -345,6 +345,7 @@ usVolumeGrabbedInfo<usImageRF3D<short int> > *usNetworkGrabberRF3D::acquire() {
       m_swichOutputInit = true;
     }
   }
+  m_firstVolumeAvailable = true;
 
   return m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC);
 }
