@@ -1,4 +1,4 @@
-//! \example tutorial-ultrasonix-qt-grabbing-RF.cpp
+//! \example tutorial-ultrasonix-qt-grabbing-RF3D.cpp
 
 #include <iostream>
 #include <visp3/ustk_core/usConfig.h>

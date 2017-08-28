@@ -1,4 +1,4 @@
-//! \example tutorial-ultrasonix-qt-grabbing-post-scan.cpp
+//! \example tutorial-ultrasonix-qt-grabbing-post-scan-bi-plan.cpp
 
 #include <iostream>
 #include <visp3/ustk_core/usConfig.h>
