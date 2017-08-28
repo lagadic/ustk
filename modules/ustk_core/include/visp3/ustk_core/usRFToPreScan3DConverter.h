@@ -68,7 +68,7 @@ class VISP_EXPORT usRFToPreScan3DConverter
 {
  public:
 
-  usRFToPreScan3DConverter(int decimationFactor=10);
+  usRFToPreScan3DConverter();
 
   ~usRFToPreScan3DConverter();
 
@@ -78,8 +78,16 @@ class VISP_EXPORT usRFToPreScan3DConverter
 
   void setDecimationFactor(int decimationFactor);
 
+protected:
+  void init(int heightRF, int widthRF, int frameNumber);
+
 private:
-  usRFToPreScan2DConverter m_converter;
+  usRFToPreScan2DConverter * m_converter;
+  int m_frameNumber;
+  int m_widthRF;
+  int m_heightRF;
+  bool m_isInit;
+  int m_decimationFactor;
 };
 
 #endif // USTK_HAVE_FFTW

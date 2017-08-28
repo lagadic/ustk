@@ -65,6 +65,7 @@
  */
 class VISP_EXPORT usRFToPreScan2DConverter
 {
+ friend class usRFToPreScan3DConverter;
  public:
 
   usRFToPreScan2DConverter(int decimationFactor=10);

@@ -48,7 +48,7 @@
 * Constructor.
 * @param decimationFactor Decimation factor : keep only 1 pre-scan sample every N sample (N = decimationFactor)
 */
-usRFToPreScan3DConverter::usRFToPreScan3DConverter(int decimationFactor) : m_converter(decimationFactor ) {
+usRFToPreScan3DConverter::usRFToPreScan3DConverter() :m_frameNumber(), m_isInit(false), m_decimationFactor(10) {
 
 }
 
@@ -69,23 +69,34 @@ usRFToPreScan3DConverter::~usRFToPreScan3DConverter() {
 * @param preScanImage pre-scan image : result of convertion
 */
 void usRFToPreScan3DConverter::convert(const usImageRF3D<short int> &rfImage, usImagePreScan3D<unsigned char> &preScanImage) {
-
+  if(!m_isInit || (((int)rfImage.getDimZ()) != m_frameNumber)
+     || (((int)rfImage.getDimY()) != m_heightRF)|| (((int)rfImage.getDimX()) != m_widthRF)) {
+    init(rfImage.getDimY(),rfImage.getDimX(),rfImage.getDimZ());
+  }
   preScanImage.resize(rfImage.getDimX() ,rfImage.getDimY() / getDecimationFactor(),rfImage.getDimZ());
-
   // First we copy the transducer settings
   preScanImage.setImagePreScanSettings(rfImage);
-
-  usImagePreScan2D<unsigned char> preScanFrame;
-  usImageRF2D<short int> frameRF;
-
+  usImagePreScan2D<unsigned char> preScanFrame[m_frameNumber];
+  usImageRF2D<short int> frameRF[m_frameNumber];
   //loop to convert each frame of the volume
+
+  for(int i = 0; i<m_frameNumber; i++) {
+    rfImage.getFrame(frameRF[i],i);
+  }
+
+  if(!m_isInit) {
+    init(rfImage.getDimY(),rfImage.getDimZ(),rfImage.getDimZ());
+  }
+
 #ifdef VISP_HAVE_OPENMP
-//#pragma omp parallel for
+#pragma omp parallel for
 #endif
-  for(unsigned int i = 0; i<rfImage.getDimZ(); i++) {
-    rfImage.getFrame(frameRF,i);
-    m_converter.convert(frameRF, preScanFrame);
-    preScanImage.insertFrame(preScanFrame,i);
+  for(int i = 0; i<m_frameNumber; i++) {
+    m_converter[i].convert(frameRF[i], preScanFrame[i]);
+  }
+
+  for(int i = 0; i<m_frameNumber; i++) {
+    preScanImage.insertFrame(preScanFrame[i],i);
   }
 }
 
@@ -94,7 +105,7 @@ void usRFToPreScan3DConverter::convert(const usImageRF3D<short int> &rfImage, us
 * @return Decimation factor : keep only 1 pre-scan sample every N sample (N = decimationFactor)
 */
 int usRFToPreScan3DConverter::getDecimationFactor() {
-  return m_converter.getDecimationFactor();
+  return m_decimationFactor;
 }
 
 /**
@@ -102,7 +113,37 @@ int usRFToPreScan3DConverter::getDecimationFactor() {
 * @param  decimationFactor : keep only 1 pre-scan sample every N sample (N = decimationFactor)
 */
 void usRFToPreScan3DConverter::setDecimationFactor(int decimationFactor) {
-  m_converter.setDecimationFactor(decimationFactor);
+  for(int i=0; i<m_frameNumber; i++)
+    m_converter[i].setDecimationFactor(decimationFactor);
+  m_decimationFactor = decimationFactor;
 }
 
+/**
+* Initialisation of the converter.
+*/
+void usRFToPreScan3DConverter::init(int heightRF, int widthRF, int frameNumber) {
+  //first init
+  if(!m_isInit) {
+    m_converter = new usRFToPreScan2DConverter[frameNumber];
+    for(int i=0; i<frameNumber; i++)
+      m_converter[i].init(widthRF,heightRF);
+
+    m_isInit = true;
+    m_frameNumber = frameNumber;
+    m_heightRF = heightRF;
+    m_widthRF = widthRF;
+  }
+  //update image size
+  else if (m_frameNumber != frameNumber || m_heightRF != heightRF || m_widthRF != widthRF) {
+    for(int i=0; i<m_frameNumber; i++)
+      delete &(m_converter[i]);
+
+    m_frameNumber = frameNumber;
+    m_heightRF = heightRF;
+    m_widthRF = widthRF;
+    m_converter = new usRFToPreScan2DConverter[m_frameNumber];
+    for(int i=0; i<m_frameNumber; i++)
+      m_converter[i].init(m_widthRF,m_heightRF);
+  }
+}
 #endif
