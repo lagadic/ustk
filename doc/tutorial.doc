@@ -1,9 +1,7 @@
 /*! \page tutorial_ustk Tutorials in UsTK
 This page references all the tutorials related to Ultrasound TK.
 
-- \subpage tutorial-ustk-core <br>This tutorial gives an overview of ustk_core module
-
-- \subpage tutorial-ustk-io <br>This tutorial gives an overview of ustk_io module
+- \subpage tutorial-ustk-core-io <br>This tutorial gives an overview of ustk_core and ustk_io modules
 
 - \subpage tutorial-ustk-grabber-sonosite <br>This tutorial gives examples to use sonosite grabber
 
