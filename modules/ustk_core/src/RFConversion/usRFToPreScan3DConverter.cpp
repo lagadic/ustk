@@ -76,12 +76,14 @@ void usRFToPreScan3DConverter::convert(const usImageRF3D<short int> &rfImage, us
   preScanImage.resize(rfImage.getDimX() ,rfImage.getDimY() / getDecimationFactor(),rfImage.getDimZ());
   // First we copy the transducer settings
   preScanImage.setImagePreScanSettings(rfImage);
-  usImagePreScan2D<unsigned char> preScanFrame[m_frameNumber];
-  usImageRF2D<short int> frameRF[m_frameNumber];
+  std::vector<usImagePreScan2D<unsigned char> > preScanFrame;
+  preScanFrame.resize(m_frameNumber);
+  std::vector<usImageRF2D<short int> > frameRF;
+  frameRF.resize(m_frameNumber);
   //loop to convert each frame of the volume
 
   for(int i = 0; i<m_frameNumber; i++) {
-    rfImage.getFrame(frameRF[i],i);
+    rfImage.getFrame(frameRF.at(i),i);
   }
 
   if(!m_isInit) {
@@ -92,7 +94,7 @@ void usRFToPreScan3DConverter::convert(const usImageRF3D<short int> &rfImage, us
 #pragma omp parallel for
 #endif
   for(int i = 0; i<m_frameNumber; i++) {
-    m_converter[i].convert(frameRF[i], preScanFrame[i]);
+    m_converter[i].convert(frameRF[i], preScanFrame.at(i));
   }
 
   for(int i = 0; i<m_frameNumber; i++) {

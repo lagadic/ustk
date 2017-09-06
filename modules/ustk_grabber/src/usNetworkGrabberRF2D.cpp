@@ -37,7 +37,6 @@
 
 #include <QtCore/QDataStream>
 #include <QtCore/QEventLoop>
-
 /**
 * Constructor. Inititializes the image, and manages Qt signal.
 */

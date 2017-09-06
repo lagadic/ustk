@@ -37,7 +37,6 @@
 
 #include <QtCore/QDataStream>
 #include <QtCore/QEventLoop>
-#include <visp3/ustk_io/usImageIo.h>
 /**
 * Constructor. Inititializes the image, and manages Qt signal.
 */
