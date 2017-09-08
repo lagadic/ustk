@@ -74,8 +74,10 @@ void usRFToPreScan3DConverter::convert(const usImageRF3D<short int> &rfImage, us
     init(rfImage.getDimY(),rfImage.getDimX(),rfImage.getDimZ());
   }
   preScanImage.resize(rfImage.getDimX() ,rfImage.getDimY() / getDecimationFactor(),rfImage.getDimZ());
-  // First we copy the transducer settings
+  // First we copy the transducer/motor settings
   preScanImage.setImagePreScanSettings(rfImage);
+  preScanImage.setAxialResolution(rfImage.getDepth() / preScanImage.getDimY());
+  preScanImage.setMotorSettings(rfImage);
   std::vector<usImagePreScan2D<unsigned char> > preScanFrame;
   preScanFrame.resize(m_frameNumber);
   std::vector<usImageRF2D<short int> > frameRF;

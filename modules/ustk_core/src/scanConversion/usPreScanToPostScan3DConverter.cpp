@@ -39,6 +39,14 @@ void usPreScanToPostScan3DConverter::init(const usImagePreScan3D<unsigned char> 
   if(!preScanImage.isTransducerConvex() || !(preScanImage.getMotorType() == usMotorSettings::TiltingMotor))
     throw(vpException(vpException::functionNotImplementedError, "3D scan-conversion available only for convex transducer and tilting motor"));
 
+  //compare pre-scan image parameters, to avoid recomputing all the init process if parameters are the same
+  if(((usMotorSettings) m_VpreScan) == ((usMotorSettings)preScanImage) && ((usImagePreScanSettings) m_VpreScan) == ((usImagePreScanSettings)preScanImage) &&
+     m_VpreScan.getDimX() == preScanImage.getDimX() && m_VpreScan.getDimY() == preScanImage.getDimY() && m_VpreScan.getDimZ() == preScanImage.getDimZ() &&
+     m_resolution == down * m_VpreScan.getAxialResolution()) {
+    m_VpreScan = preScanImage; //update image content
+    return;
+  }
+
   m_VpreScan = preScanImage;
   m_resolution = down * m_VpreScan.getAxialResolution();
 
@@ -239,7 +247,6 @@ void usPreScanToPostScan3DConverter::convert( usImagePostScan3D<unsigned char> &
       double v = 0;
       for(int j=0 ; j<8 ; j++) v += m_lookupTable1[i].m_W[j] * dataPre[m_lookupTable1[i].m_inputIndex[j]];
       dataPost[m_lookupTable1[i].m_outputIndex] = (unsigned char) v;
-
     }
   }
   else

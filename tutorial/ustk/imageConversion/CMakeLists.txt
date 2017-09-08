@@ -8,7 +8,8 @@ set(tutorial_cpp
   tutorial-rfConversion3D.cpp
   tutorial-scanConversion3D.cpp
   tutorial-scanConversion2D.cpp
-  tutorial-fullConversion2D.cpp)
+  tutorial-fullConversion2D.cpp
+  tutorial-fullConversion3D.cpp)
 
 foreach(cpp ${tutorial_cpp})
   visp_add_target(${cpp})
