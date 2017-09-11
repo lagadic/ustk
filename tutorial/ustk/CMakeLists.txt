@@ -25,6 +25,7 @@ if(MSVC)
   endif()
 endif()
 
+visp_add_subdirectory(confidence REQUIRED_DEPS visp_ustk_io visp_ustk_confidence_map)
 visp_add_subdirectory(io REQUIRED_DEPS visp_ustk_io)
 visp_add_subdirectory(gui REQUIRED_DEPS visp_ustk_gui visp_ustk_io)
 visp_add_subdirectory(needleDetection REQUIRED_DEPS visp_ustk_io visp_ustk_needle_detection)
