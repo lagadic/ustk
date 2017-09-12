@@ -32,7 +32,7 @@
 #include <visp3/ustk_core/usPreScanToPostScan2DConverter.h>
 #include <visp/vpMath.h>
 
-usPreScanToPostScan2DConverter::usPreScanToPostScan2DConverter() {}
+usPreScanToPostScan2DConverter::usPreScanToPostScan2DConverter() : m_initDone(false) {}
 
 usPreScanToPostScan2DConverter::~usPreScanToPostScan2DConverter() {}
 
@@ -46,7 +46,6 @@ usPreScanToPostScan2DConverter::~usPreScanToPostScan2DConverter() {}
 void usPreScanToPostScan2DConverter::init(const usImagePostScan2D<unsigned char> &inputSettings, const int BModeSampleNumber,
             const int scanLineNumber)
 {
-
   //check resolution to avoir errors
   if(inputSettings.getHeightResolution() == 0.0 || inputSettings.getWidthResolution() == 0.0)
     throw(vpException(vpException::notInitialized, "Please fill the post-scan resplution before init the conversion."));
@@ -84,6 +83,7 @@ void usPreScanToPostScan2DConverter::init(const usImagePostScan2D<unsigned char>
       m_tMap[i][j] = atan2(y, x) * inputSettings.getTransducerRadius() / LPitch + (scanLineNumber-1) / 2.0;
     }
   }
+  m_initDone = true;
 }
 
 /**
@@ -131,15 +131,22 @@ void usPreScanToPostScan2DConverter::init(const usTransducerSettings &inputSetti
       m_tMap[i][j] = atan2(y, x) * inputSettings.getTransducerRadius() / LPitch + (scanLineNumber-1) / 2.0;
     }
   }
+  m_initDone = true;
 }
 
 /**
 * Run the scan-converter.
-* @param [out] postScanImage Post-scan image : result of the scan conversion.
+* @param [in] [out] postScanImage Post-scan image : result of the scan conversion.
 * @param [in] preScanImage Pre-scan image to convert.
 */
 void usPreScanToPostScan2DConverter::run(const usImagePreScan2D<unsigned char> &preScanImage, usImagePostScan2D<unsigned char> &postScanImage)
 {
+  //check if init is done
+  if (!m_initDone) {
+    double resolution = preScanImage.getAxialResolution();
+    init(preScanImage, preScanImage.getBModeSampleNumber(), preScanImage.getScanLineNumber(), resolution, resolution);
+  }
+
   postScanImage.resize(m_height, m_width);
   for (unsigned int i = 0; i < m_height; ++i)
     for (unsigned int j = 0; j < m_width; ++j) {

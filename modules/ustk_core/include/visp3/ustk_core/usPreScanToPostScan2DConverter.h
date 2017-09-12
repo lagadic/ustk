@@ -82,6 +82,7 @@ class VISP_EXPORT usPreScanToPostScan2DConverter
   unsigned int m_height;
   unsigned int m_width;
 
+  bool m_initDone;
 };
 
 #endif // US_SCAN_CONVERTER_2D_H

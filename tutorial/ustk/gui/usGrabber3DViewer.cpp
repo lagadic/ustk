@@ -57,8 +57,8 @@ int main(int argc, char** argv)
   std::cout << "init time (sec) = " << (endInitTime - startTime) / 1000.0 << std::endl;
 
   //scan-convert to init post-scan images (and not have a NULL pointer given to vtk importer)
-   converter.convert(postScanImage,preScanImage.getConstData());
-   converter.convert(postScanImage2,preScanImage2.getConstData());
+   converter.convert(postScanImage,preScanImage);
+   converter.convert(postScanImage2,preScanImage2);
 
   //check addresses of each image
   std::cout << "image 1 @ : " << (void *)postScanImage.getConstData() << std::endl;

@@ -67,7 +67,7 @@ void usRFToPostScan3DConverter::convert(const usImageRF3D<short int> &rfImage, u
   // this init method checks if parameters are the same, to avoid recomputing all the init proccess if not necessarry
   m_scanConverter.init(m_intermediateImage);
 
-  m_scanConverter.convert(postScanImage);
+  m_scanConverter.convert(postScanImage, m_intermediateImage);
 }
 
 #endif

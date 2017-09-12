@@ -36,7 +36,7 @@
 /**
  * Default constructor.
  */
-usPostScanToPreScan2DConverter::usPostScanToPreScan2DConverter() {}
+usPostScanToPreScan2DConverter::usPostScanToPreScan2DConverter() : m_isInit(false) {}
 
 /**
  * Initialisation constructor.
@@ -73,6 +73,11 @@ usPostScanToPreScan2DConverter::~usPostScanToPreScan2DConverter() {}
 void usPostScanToPreScan2DConverter::init(const usImagePostScan2D<unsigned char> &inputSettings, const int BModeSampleNumber,
                                  const int scanLineNumber)
 {
+  //check if init is necessary
+  if (m_initSettings == (usTransducerSettings)inputSettings && m_xResolution == inputSettings.getWidthResolution() && m_yResolution == inputSettings.getHeightResolution() && m_scanLineNumber == scanLineNumber && m_BModeSampleNumber == BModeSampleNumber) {
+    return;
+  }
+
   //check resolution to avoir errors
   if(inputSettings.getHeightResolution() == 0.0 || inputSettings.getWidthResolution() == 0.0)
     throw(vpException(vpException::notInitialized, "Please fill the post-scan resplution before init the conversion."));
@@ -104,10 +109,11 @@ void usPostScanToPreScan2DConverter::init(const usImagePostScan2D<unsigned char>
         m_jMap[u][v] = (r * sin(t) - y_min) / inputSettings.getWidthResolution(); //resolution to check
       }
     }
+	m_isInit = true;
   }
   //linear transducer scan-conversion
   else {
-    //not implemented
+	  throw(vpException(vpException::notImplementedError, "Back-scan conversion is not implemented for linear transducer."));
   }
   //saving settings
   m_initSettings = inputSettings;
@@ -128,6 +134,11 @@ void usPostScanToPreScan2DConverter::init(const usImagePostScan2D<unsigned char>
 void usPostScanToPreScan2DConverter::init(const usTransducerSettings &transducerSettings, const int BModeSampleNumber,
  const int scanLineNumber,const double xResolution, const double yResolution)
 {
+  //check if init is necessary
+  if (m_initSettings == transducerSettings && m_xResolution == xResolution && m_yResolution == yResolution && m_scanLineNumber == scanLineNumber && m_BModeSampleNumber == BModeSampleNumber) {
+    return;
+  }
+
   //convex transducer scan conversion
   if(transducerSettings.isTransducerConvex()) {
     double APitch = transducerSettings.getDepth() / BModeSampleNumber;
@@ -153,6 +164,7 @@ void usPostScanToPreScan2DConverter::init(const usTransducerSettings &transducer
         m_jMap[u][v] = (r * sin(t) - y_min) / xResolution; //to check
       }
     }
+	m_isInit = true;
   }
   //linear transducer scan-conversion
   else {
@@ -173,6 +185,10 @@ void usPostScanToPreScan2DConverter::init(const usTransducerSettings &transducer
 */
 void usPostScanToPreScan2DConverter::run(const usImagePostScan2D<unsigned char> &imageToConvert, usImagePreScan2D<unsigned char> &imageConverted)
 {
+	if (!m_isInit) {
+		init(imageToConvert, (int)(imageToConvert.getDepth() / imageToConvert.getHeightResolution()), imageToConvert.getScanLineNumber());
+	}
+
   imageConverted.setImagePreScanSettings(usImagePreScanSettings(m_initSettings, m_yResolution));
 
 

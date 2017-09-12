@@ -11,7 +11,8 @@ usPreScanToPostScan3DConverter::usPreScanToPostScan3DConverter() :
   m_VpreScan(),
   m_VpostScan(),
   m_resolution(),
-  m_SweepInZdirection(true)
+  m_SweepInZdirection(true),
+  m_initDone(false)
 {
 }
 
@@ -24,7 +25,8 @@ usPreScanToPostScan3DConverter::usPreScanToPostScan3DConverter(const usImagePreS
   m_VpreScan(),
   m_VpostScan(),
   m_resolution(),
-  m_SweepInZdirection(true)
+  m_SweepInZdirection(true),
+  m_initDone(false)
 {
   this->init(preScanImage, down);
 }
@@ -38,11 +40,12 @@ void usPreScanToPostScan3DConverter::init(const usImagePreScan3D<unsigned char> 
 {
   if(!preScanImage.isTransducerConvex() || !(preScanImage.getMotorType() == usMotorSettings::TiltingMotor))
     throw(vpException(vpException::functionNotImplementedError, "3D scan-conversion available only for convex transducer and tilting motor"));
-
+  
   //compare pre-scan image parameters, to avoid recomputing all the init process if parameters are the same
   if(((usMotorSettings) m_VpreScan) == ((usMotorSettings)preScanImage) && ((usImagePreScanSettings) m_VpreScan) == ((usImagePreScanSettings)preScanImage) &&
      m_VpreScan.getDimX() == preScanImage.getDimX() && m_VpreScan.getDimY() == preScanImage.getDimY() && m_VpreScan.getDimZ() == preScanImage.getDimZ() &&
-     m_resolution == down * m_VpreScan.getAxialResolution()) {
+     m_resolution == down * m_VpreScan.getAxialResolution())
+  {
     m_VpreScan = preScanImage; //update image content
     return;
   }
@@ -194,6 +197,7 @@ void usPreScanToPostScan3DConverter::init(const usImagePreScan3D<unsigned char> 
   }
   std::cout << "LUT 1 size (bytes) : " << sizeof(usVoxelWeightAndIndex) * m_lookupTable1.size() << std::endl;
   std::cout << "LUT 2 size (bytes) : " << sizeof(usVoxelWeightAndIndex) * m_lookupTable2.size() << std::endl;
+  m_initDone = true;
 }
 
 /**
@@ -227,15 +231,15 @@ usImagePostScan3D<unsigned char> usPreScanToPostScan3DConverter::getVolume()
  * @param [out] postScanImage The result of the scan-conversion.
  * @param dataPreScan
  */
-void usPreScanToPostScan3DConverter::convert( usImagePostScan3D<unsigned char> &postScanImage, const unsigned char *dataPreScan)
+void usPreScanToPostScan3DConverter::convert( usImagePostScan3D<unsigned char> &postScanImage,const usImagePreScan3D<unsigned char> &preScanImage)
 {
+  if (!m_initDone) {
+	  init(preScanImage);
+  }
   postScanImage.resize(m_nbX,m_nbY,m_nbZ);
   unsigned char *dataPost = postScanImage.getData();
   const unsigned char *dataPre;
-  if(dataPreScan==NULL)
-    dataPre= m_VpreScan.getConstData();
-  else
-    dataPre = dataPreScan;
+  dataPre = preScanImage.getConstData();
 
   if(m_SweepInZdirection)
   {
