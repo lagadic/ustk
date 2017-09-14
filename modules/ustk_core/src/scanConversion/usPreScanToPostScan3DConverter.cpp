@@ -261,7 +261,7 @@ usImagePostScan3D<unsigned char> usPreScanToPostScan3DConverter::getVolume()
 /**
  * Conversion method : compute the scan-conversion 3D and write the post-scan image settings.
  * @param [out] postScanImage The result of the scan-conversion.
- * @param dataPreScan
+ * @param [in] preScanImage Pre-scan image to convert.
  */
 void usPreScanToPostScan3DConverter::convert( usImagePostScan3D<unsigned char> &postScanImage,const usImagePreScan3D<unsigned char> &preScanImage)
 {

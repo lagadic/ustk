@@ -46,7 +46,6 @@
 
 /**
 * Constructor.
-* @param decimationFactor Decimation factor : keep only 1 pre-scan sample every N sample (N = decimationFactor)
 */
 usRFToPreScan3DConverter::usRFToPreScan3DConverter() :m_frameNumber(), m_isInit(false), m_decimationFactor(10) {
 
