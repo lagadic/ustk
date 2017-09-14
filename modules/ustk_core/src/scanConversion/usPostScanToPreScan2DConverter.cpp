@@ -1,28 +1,29 @@
 /****************************************************************************
  *
- * This file is part of the UsTk software.
- * Copyright (C) 2014 by Inria. All rights reserved.
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License ("GPL") as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * See the file COPYING at the root directory of this source
+ * This file is part of the ustk software.
+ * Copyright (C) 2016 - 2017 by Inria. All rights reserved.
+ *
+ * This software is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * ("GPL") version 2 as published by the Free Software Foundation.
+ * See the file LICENSE.txt at the root directory of this source
  * distribution for additional information about the GNU GPL.
- * 
+ *
+ * For using ustk with software that can not be combined with the GNU
+ * GPL, please contact Inria about acquiring a ViSP Professional
+ * Edition License.
+ *
  * This software was developed at:
- * INRIA Rennes - Bretagne Atlantique
+ * Inria Rennes - Bretagne Atlantique
  * Campus Universitaire de Beaulieu
  * 35042 Rennes Cedex
  * France
- * http://www.irisa.fr/lagadic
  *
- * If you have questions regarding the use of this file, please contact the
- * authors at Alexandre.Krupa@inria.fr
- * 
+ * If you have questions regarding the use of this file, please contact
+ * Inria at ustk@inria.fr
+ *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
  *
  * Authors:
  * Pierre Chatelain
@@ -109,11 +110,11 @@ void usPostScanToPreScan2DConverter::init(const usImagePostScan2D<unsigned char>
         m_jMap[u][v] = (r * sin(t) - y_min) / inputSettings.getWidthResolution(); //resolution to check
       }
     }
-	m_isInit = true;
+  m_isInit = true;
   }
   //linear transducer scan-conversion
   else {
-	  throw(vpException(vpException::notImplementedError, "Back-scan conversion is not implemented for linear transducer."));
+    throw(vpException(vpException::notImplementedError, "Back-scan conversion is not implemented for linear transducer."));
   }
   //saving settings
   m_initSettings = inputSettings;
@@ -164,7 +165,7 @@ void usPostScanToPreScan2DConverter::init(const usTransducerSettings &transducer
         m_jMap[u][v] = (r * sin(t) - y_min) / xResolution; //to check
       }
     }
-	m_isInit = true;
+  m_isInit = true;
   }
   //linear transducer scan-conversion
   else {
@@ -185,9 +186,9 @@ void usPostScanToPreScan2DConverter::init(const usTransducerSettings &transducer
 */
 void usPostScanToPreScan2DConverter::run(const usImagePostScan2D<unsigned char> &imageToConvert, usImagePreScan2D<unsigned char> &imageConverted)
 {
-	if (!m_isInit) {
-		init(imageToConvert, (int)(imageToConvert.getDepth() / imageToConvert.getHeightResolution()), imageToConvert.getScanLineNumber());
-	}
+  if (!m_isInit) {
+    init(imageToConvert, (int)(imageToConvert.getDepth() / imageToConvert.getHeightResolution()), imageToConvert.getScanLineNumber());
+  }
 
   imageConverted.setImagePreScanSettings(usImagePreScanSettings(m_initSettings, m_yResolution));
 
