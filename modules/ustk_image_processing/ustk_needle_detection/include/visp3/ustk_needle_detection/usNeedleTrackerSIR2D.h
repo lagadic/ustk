@@ -47,6 +47,8 @@
  * @ingroup module_ustk_needle_detection
  *
  * This class defines the particle-based needle detection pipeline for 2D images.
+ *
+ * See \cite Chatelain15b for more details.
  */
 class VISP_EXPORT usNeedleTrackerSIR2D
 {
@@ -55,12 +57,12 @@ class VISP_EXPORT usNeedleTrackerSIR2D
    * Default constructor.
    */
   usNeedleTrackerSIR2D();
-  
+
   /**
    * Destructor.
    */
   ~usNeedleTrackerSIR2D();
- 
+
   /**
    * Computing the likelihood of the model for a given observation.
    *

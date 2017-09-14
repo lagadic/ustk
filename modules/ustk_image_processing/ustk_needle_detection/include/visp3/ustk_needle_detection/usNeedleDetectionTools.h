@@ -55,7 +55,7 @@
  * @brief Basic tools for needle detection.
  * @ingroup module_ustk_needle_detection
  *
- * This class implements diverse tools for 3D point cloud processing.
+ * This class implements various tools for 3D point cloud processing.
  *
  */
 namespace usNeedleDetectionTools
