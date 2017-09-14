@@ -1,3 +1,35 @@
+/****************************************************************************
+ *
+ * This file is part of the ustk software.
+ * Copyright (C) 2016 - 2017 by Inria. All rights reserved.
+ *
+ * This software is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * ("GPL") version 2 as published by the Free Software Foundation.
+ * See the file LICENSE.txt at the root directory of this source
+ * distribution for additional information about the GNU GPL.
+ *
+ * For using ustk with software that can not be combined with the GNU
+ * GPL, please contact Inria about acquiring a ViSP Professional
+ * Edition License.
+ *
+ * This software was developed at:
+ * Inria Rennes - Bretagne Atlantique
+ * Campus Universitaire de Beaulieu
+ * 35042 Rennes Cedex
+ * France
+ *
+ * If you have questions regarding the use of this file, please contact
+ * Inria at ustk@inria.fr
+ *
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * Authors:
+ * Marc Pouliquen
+ *
+ *****************************************************************************/
+
 #include<visp3/ustk_core/usPreScanToPostScan3DConverter.h>
 
 #ifdef VISP_HAVE_OPENMP
@@ -11,7 +43,8 @@ usPreScanToPostScan3DConverter::usPreScanToPostScan3DConverter() :
   m_VpreScan(),
   m_VpostScan(),
   m_resolution(),
-  m_SweepInZdirection(true)
+  m_SweepInZdirection(true),
+  m_initDone(false)
 {
 }
 
@@ -24,7 +57,8 @@ usPreScanToPostScan3DConverter::usPreScanToPostScan3DConverter(const usImagePreS
   m_VpreScan(),
   m_VpostScan(),
   m_resolution(),
-  m_SweepInZdirection(true)
+  m_SweepInZdirection(true),
+  m_initDone(false)
 {
   this->init(preScanImage, down);
 }
@@ -38,6 +72,15 @@ void usPreScanToPostScan3DConverter::init(const usImagePreScan3D<unsigned char> 
 {
   if(!preScanImage.isTransducerConvex() || !(preScanImage.getMotorType() == usMotorSettings::TiltingMotor))
     throw(vpException(vpException::functionNotImplementedError, "3D scan-conversion available only for convex transducer and tilting motor"));
+
+  //compare pre-scan image parameters, to avoid recomputing all the init process if parameters are the same
+  if(((usMotorSettings) m_VpreScan) == ((usMotorSettings)preScanImage) && ((usImagePreScanSettings) m_VpreScan) == ((usImagePreScanSettings)preScanImage) &&
+     m_VpreScan.getDimX() == preScanImage.getDimX() && m_VpreScan.getDimY() == preScanImage.getDimY() && m_VpreScan.getDimZ() == preScanImage.getDimZ() &&
+     m_resolution == down * m_VpreScan.getAxialResolution())
+  {
+    m_VpreScan = preScanImage; //update image content
+    return;
+  }
 
   m_VpreScan = preScanImage;
   m_resolution = down * m_VpreScan.getAxialResolution();
@@ -186,6 +229,7 @@ void usPreScanToPostScan3DConverter::init(const usImagePreScan3D<unsigned char> 
   }
   std::cout << "LUT 1 size (bytes) : " << sizeof(usVoxelWeightAndIndex) * m_lookupTable1.size() << std::endl;
   std::cout << "LUT 2 size (bytes) : " << sizeof(usVoxelWeightAndIndex) * m_lookupTable2.size() << std::endl;
+  m_initDone = true;
 }
 
 /**
@@ -217,17 +261,17 @@ usImagePostScan3D<unsigned char> usPreScanToPostScan3DConverter::getVolume()
 /**
  * Conversion method : compute the scan-conversion 3D and write the post-scan image settings.
  * @param [out] postScanImage The result of the scan-conversion.
- * @param dataPreScan
+ * @param [in] preScanImage Pre-scan image to convert.
  */
-void usPreScanToPostScan3DConverter::convert( usImagePostScan3D<unsigned char> &postScanImage, const unsigned char *dataPreScan)
+void usPreScanToPostScan3DConverter::convert( usImagePostScan3D<unsigned char> &postScanImage,const usImagePreScan3D<unsigned char> &preScanImage)
 {
+  if (!m_initDone) {
+    init(preScanImage);
+  }
   postScanImage.resize(m_nbX,m_nbY,m_nbZ);
   unsigned char *dataPost = postScanImage.getData();
   const unsigned char *dataPre;
-  if(dataPreScan==NULL)
-    dataPre= m_VpreScan.getConstData();
-  else
-    dataPre = dataPreScan;
+  dataPre = preScanImage.getConstData();
 
   if(m_SweepInZdirection)
   {
@@ -239,7 +283,6 @@ void usPreScanToPostScan3DConverter::convert( usImagePostScan3D<unsigned char> &
       double v = 0;
       for(int j=0 ; j<8 ; j++) v += m_lookupTable1[i].m_W[j] * dataPre[m_lookupTable1[i].m_inputIndex[j]];
       dataPost[m_lookupTable1[i].m_outputIndex] = (unsigned char) v;
-
     }
   }
   else

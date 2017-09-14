@@ -265,6 +265,8 @@ void usSequenceReader<usImagePreScan2D<unsigned char> >::open(usImagePreScan2D<u
   std::string imageFileName =  parentName + buffer;
   vpImageIo::read(image,imageFileName);
 
+  m_frame.setDepth((image.getHeight()-1) * m_frame.getAxialResolution());
+
   //workaround to prevent the resize by setImagePreScanSettings (having a scanline number at 0 if not precised in the xml)
   int scanlineNumber = image.getWidth();
   image.setImagePreScanSettings(m_frame);
@@ -305,6 +307,7 @@ void usSequenceReader<usImagePostScan2D<unsigned char> >::open(usImagePostScan2D
   }
   std::string imageFileName =  parentName + buffer;
   vpImageIo::read(image,imageFileName);
+  m_frame.setDepth(image.getHeight()-1 * m_frame.getHeightResolution());
 
   image.setTransducerRadius(m_frame.getTransducerRadius());
   image.setScanLinePitch(m_frame.getScanLinePitch());
@@ -312,6 +315,7 @@ void usSequenceReader<usImagePostScan2D<unsigned char> >::open(usImagePostScan2D
   image.setTransducerConvexity(m_frame.isTransducerConvex());
   image.setWidthResolution(m_frame.getWidthResolution());
   image.setHeightResolution(m_frame.getHeightResolution());
+  image.setDepth(m_frame.getDepth());
 
   m_frameCount = m_firstFrame + 1;
   is_open = true;
@@ -340,6 +344,36 @@ void usSequenceReader<ImageType>::acquire(ImageType &image)
   vpImageIo::read(image,imageFileName);
   image.setTransducerSettings(m_frame);
   image.setScanLineNumber(image.getWidth());
+  image.setDepth(m_frame.getDepth());
+
+  m_frameCount+=loopIncrement;
+}
+
+/**
+* Sequence image acquisition (grabber-style : an internal counter is incremented to open next image at the next call).
+* @param image Image of the sequence to read.
+*/
+template<>
+void usSequenceReader<usImagePreScan2D<unsigned char> >::acquire(usImagePreScan2D<unsigned char>  &image)
+{
+  if (!is_open) {
+    this->open(image);
+    return;
+  }
+  //Reading image
+  char buffer[FILENAME_MAX];
+  sprintf(buffer, m_genericImageFileName.c_str(), m_frameCount);
+  std::string parentName = vpIoTools::getParent(m_sequenceFileName);
+  if(!parentName.empty()) {
+    parentName = parentName + vpIoTools::path("/");
+  }
+  std::string imageFileName =  parentName + buffer;
+
+  vpImageIo::read(image,imageFileName);
+  image.setTransducerSettings(m_frame);
+  image.setScanLineNumber(image.getWidth());
+  image.setDepth(m_frame.getDepth());
+  image.setAxialResolution(m_frame.getAxialResolution());
 
   m_frameCount+=loopIncrement;
 }

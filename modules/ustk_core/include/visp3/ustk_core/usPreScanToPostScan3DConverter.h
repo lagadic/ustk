@@ -61,48 +61,50 @@ class VISP_EXPORT usPreScanToPostScan3DConverter
 {
 protected:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-    class usVoxelWeightAndIndex
-    {
-        friend class usPreScanToPostScan3DConverter;
-        unsigned int m_outputIndex;
-        unsigned int m_inputIndex[8];
-        double m_W[8];
-    };
+  class usVoxelWeightAndIndex
+  {
+    friend class usPreScanToPostScan3DConverter;
+    unsigned int m_outputIndex;
+    unsigned int m_inputIndex[8];
+    double m_W[8];
+  };
 #endif
-    std::vector<usVoxelWeightAndIndex> m_lookupTable1;
-    std::vector<usVoxelWeightAndIndex> m_lookupTable2;
+  std::vector<usVoxelWeightAndIndex> m_lookupTable1;
+  std::vector<usVoxelWeightAndIndex> m_lookupTable2;
 
-    usImagePreScan3D<unsigned char> m_VpreScan;
-    usImagePostScan3D<unsigned char> m_VpostScan;
+  usImagePreScan3D<unsigned char> m_VpreScan;
+  usImagePostScan3D<unsigned char> m_VpostScan;
 
-    double m_resolution;
-    bool m_SweepInZdirection;
+  double m_resolution;
+  bool m_SweepInZdirection;
 
-    unsigned int m_nbX;
-    unsigned int m_nbY;
-    unsigned int m_nbZ;
+  unsigned int m_nbX;
+  unsigned int m_nbY;
+  unsigned int m_nbZ;
+
+  bool m_initDone;
 
 public:
 
-    usPreScanToPostScan3DConverter();
-    usPreScanToPostScan3DConverter(const usImagePreScan3D<unsigned char> &preScanImage, int down);
-    virtual ~usPreScanToPostScan3DConverter();
+  usPreScanToPostScan3DConverter();
+  usPreScanToPostScan3DConverter(const usImagePreScan3D<unsigned char> &preScanImage, int down);
+  virtual ~usPreScanToPostScan3DConverter();
 
-    void init(const usImagePreScan3D<unsigned char> &preScanImage, int down = 1);
+  void init(const usImagePreScan3D<unsigned char> &preScanImage, int down = 1);
 
-    double getResolution() const;
+  double getResolution() const;
 
-    void getVolume(usImagePostScan3D<unsigned char> &V);
-    usImagePostScan3D<unsigned char> getVolume();
+  void getVolume(usImagePostScan3D<unsigned char> &V);
+  usImagePostScan3D<unsigned char> getVolume();
 
-    double getResolution() {return m_resolution;}
+  double getResolution() {return m_resolution;}
 
-    void SweepInZdirection(bool flag) {m_SweepInZdirection = flag;}
+  void SweepInZdirection(bool flag) {m_SweepInZdirection = flag;}
 
-    void convert(usImagePostScan3D<unsigned char> &postScanImage, const unsigned char *dataPreScan=NULL);
+  void convert(usImagePostScan3D<unsigned char> &postScanImage, const usImagePreScan3D<unsigned char> &preScanImage);
 
-    void convertPreScanCoordToPostScanCoord(double i, double j, double k, double *x=NULL, double *y=NULL, double *z=NULL, bool sweepInZdirection=true);
-    void convertPostScanCoordToPreScanCoord(double x, double y, double z, double *i=NULL, double *j=NULL, double *k=NULL, bool sweepInZdirection=true);
+  void convertPreScanCoordToPostScanCoord(double i, double j, double k, double *x=NULL, double *y=NULL, double *z=NULL, bool sweepInZdirection=true);
+  void convertPostScanCoordToPreScanCoord(double x, double y, double z, double *i=NULL, double *j=NULL, double *k=NULL, bool sweepInZdirection=true);
 };
 
 #endif // US_SCAN_CONVERTER_3D_H

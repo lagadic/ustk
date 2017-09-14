@@ -33,7 +33,7 @@ int main(int argc, char** argv)
   header.imagingMode = 0; //B-mode = 0
 
   //prepare image;
-  usDataGrabbed<usImagePreScan2D<unsigned char> >* grabbedFrame;
+  usFrameGrabbedInfo<usImagePreScan2D<unsigned char> >* grabbedFrame;
   usImagePreScan2D<unsigned char> confidence;
 
   //Prepare display

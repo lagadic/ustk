@@ -1,4 +1,4 @@
-//! \example tutorial-ultrasonix-qt-grabbing-post-scan.cpp
+//! \example tutorial-ultrasonix-qt-grabbing-post-scan3D.cpp
 
 #include <iostream>
 #include <visp3/ustk_core/usConfig.h>
@@ -31,7 +31,7 @@ int main(int argc, char** argv)
   header.slotId = 0; //top slot id = 0
   header.imagingMode = 0; //B-mode = 0
 
-  usDataGrabbed<usImagePostScan2D<unsigned char> >* grabbedFrame;
+  usFrameGrabbedInfo<usImagePostScan2D<unsigned char> >* grabbedFrame;
 
   //Prepare display
 #if defined(VISP_HAVE_X11)

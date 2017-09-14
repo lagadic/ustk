@@ -68,6 +68,8 @@ int main(int argc, char** argv)
 
   usImageIo::read(prescanImage,mhd_filename);
 
+  std::cout << prescanImage;
+
   std::cout << "end reading" << std::endl;
 
   //scan-conversion
@@ -82,13 +84,13 @@ int main(int argc, char** argv)
   std::cout << "init time (sec) = " << (endInitTime - startTime) / 1000.0 << std::endl;
 
   std::cout << "converting..." << std::endl;
-  converter.convert(postscanImage);
+  converter.convert(postscanImage, prescanImage);
 
   double endConvertTime = vpTime::measureTimeMs();
   std::cout << "convert time (sec) = " << (endConvertTime - endInitTime) / 1000.0 << std::endl;
 
   std::cout << "writing post-scan..." << std::endl;
-  std::string mhdFileName ="volume.mhd";
+  std::string mhdFileName ="volumePostScan1.mhd";
   usImageIo::write(postscanImage,mhdFileName);
 
   return 0;

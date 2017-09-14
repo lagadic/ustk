@@ -31,7 +31,7 @@ int main(int argc, char** argv)
   header.imagingMode = 12; //B-mode = 0, RF = 12
 
   //prepare image;
-  usDataGrabbed<usImageRF2D<short int> >* grabbedFrame;
+  usFrameGrabbedInfo<usImageRF2D<short int> >* grabbedFrame;
 
   //prepare converter
   usImagePreScan2D<unsigned char> preScanImage;
@@ -48,7 +48,6 @@ int main(int argc, char** argv)
 
   // sending acquisition parameters
   qtGrabber->initAcquisition(header);
-
   qtGrabber->runAcquisition();
 
   // Move the grabber object to another thread
@@ -65,7 +64,11 @@ int main(int argc, char** argv)
       std::cout <<"MAIN THREAD received frame No : " << grabbedFrame->getFrameCount() << std::endl;
 
       //convert RF to pre-scan to display something ...
+      double t0 = vpTime::measureTimeMs();
       converter.convert(*grabbedFrame,preScanImage);
+      double t1 = vpTime::measureTimeMs();
+      std::cout << "conversion time = " << t1-t0 << std::endl;
+
       //init display
       if(!displayInit && preScanImage.getHeight() !=0 && preScanImage.getWidth() !=0) {
 #if defined(VISP_HAVE_X11)
@@ -97,7 +100,7 @@ int main(int argc, char** argv)
 #else
 int main()
 {
-  std::cout << "You should intall Qt5 (with wigdets and network modules) to run this tutorial" << std::endl;
+  std::cout << "You should intall Qt5 (with wigdets and network modules), FFTW and GDI or X11 to run this tutorial" << std::endl;
   return 0;
 }
 

@@ -47,9 +47,9 @@ usNetworkGrabberPreScan2D::usNetworkGrabberPreScan2D(usNetworkGrabber *parent) :
   m_grabbedImage.init(0,0);
 
   //buffer of size 3
-  m_outputBuffer.push_back(new usDataGrabbed<usImagePreScan2D<unsigned char> >);
-  m_outputBuffer.push_back(new usDataGrabbed<usImagePreScan2D<unsigned char> >);
-  m_outputBuffer.push_back(new usDataGrabbed<usImagePreScan2D<unsigned char> >);
+  m_outputBuffer.push_back(new usFrameGrabbedInfo<usImagePreScan2D<unsigned char> >);
+  m_outputBuffer.push_back(new usFrameGrabbedInfo<usImagePreScan2D<unsigned char> >);
+  m_outputBuffer.push_back(new usFrameGrabbedInfo<usImagePreScan2D<unsigned char> >);
 
   m_firstFrameAvailable = false;
 
@@ -135,6 +135,8 @@ void usNetworkGrabberPreScan2D::dataArrived()
     in >> m_imageHeader.imageDepth;
     in >> m_imageHeader.anglePerFr;
     in >> m_imageHeader.framesPerVolume;
+    in >> m_imageHeader.motorRadius;
+    in >> m_imageHeader.motorType;
 
     if(m_verbose) {
       std::cout << "frameCount = " <<  m_imageHeader.frameCount << std::endl;
@@ -155,6 +157,8 @@ void usNetworkGrabberPreScan2D::dataArrived()
       std::cout << "imageDepth = " <<  m_imageHeader.imageDepth << std::endl;
       std::cout << "anglePerFr = " <<  m_imageHeader.anglePerFr << std::endl;
       std::cout << "framesPerVolume = " <<  m_imageHeader.framesPerVolume << std::endl;
+      std::cout << "motorRadius = " <<  m_imageHeader.motorRadius << std::endl;
+      std::cout << "motorType = " <<  m_imageHeader.motorType << std::endl;
     }
 
     //update transducer settings with image header received
@@ -214,20 +218,16 @@ void usNetworkGrabberPreScan2D::invertRowsCols() {
 
   m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->resize(m_grabbedImage.getWidth(),m_grabbedImage.getHeight());
 
-  m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->mutex.lock();
   for(unsigned int i=0; i<m_grabbedImage.getHeight(); i++)
     for (unsigned int j=0; j<m_grabbedImage.getWidth(); j++)
       (*m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC))(j,i,m_grabbedImage(i,j));
 
-  m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->mutex.unlock();
-
   // Now CURRENT_FILLED_FRAME_POSITION_IN_VEC has become the last frame received
   // So we switch pointers beween MOST_RECENT_FRAME_POSITION_IN_VEC and CURRENT_FILLED_FRAME_POSITION_IN_VEC
-  {
-    usDataGrabbed<usImagePreScan2D<unsigned char> >* savePtr = m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC);
-    m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
-    m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
-  }
+  usFrameGrabbedInfo<usImagePreScan2D<unsigned char> >* savePtr = m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC);
+  m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
+  m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
+
   m_firstFrameAvailable = true;
   emit(newFrameAvailable());
 }
@@ -235,10 +235,9 @@ void usNetworkGrabberPreScan2D::invertRowsCols() {
 /**
 * Method to get the last frame received. The grabber is designed to avoid data copy (it is why you get a pointer on the data).
 * @note This method is designed to be thread-safe, you can call it from another thread.
-* @warning Make sure to lock the usDataGrabbed::mutex when you access/modify usDataGrabbed::frameCount attribute, wich is acessed in this method.
 * @return Pointer to the last frame acquired.
 */
-usDataGrabbed<usImagePreScan2D<unsigned char> >* usNetworkGrabberPreScan2D::acquire() {
+usFrameGrabbedInfo<usImagePreScan2D<unsigned char> >* usNetworkGrabberPreScan2D::acquire() {
   //check if the first frame is arrived
   if (!m_firstFrameAvailable) {
     throw(vpException(vpException::fatalError, "first frame not yet grabbed, cannot acquire"));
@@ -252,7 +251,7 @@ usDataGrabbed<usImagePreScan2D<unsigned char> >* usNetworkGrabberPreScan2D::acqu
     loop.exec();
 
     //switch pointers
-    usDataGrabbed<usImagePreScan2D<unsigned char> >* savePtr = m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC);
+    usFrameGrabbedInfo<usImagePreScan2D<unsigned char> >* savePtr = m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC);
     m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
     m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
     m_swichOutputInit = true;
@@ -261,7 +260,7 @@ usDataGrabbed<usImagePreScan2D<unsigned char> >* usNetworkGrabberPreScan2D::acqu
   // if more recent frame available
   else if(m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC)->getFrameCount() < m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getFrameCount() || !m_swichOutputInit) {
     //switch pointers (output <-> mostRecentFilled)
-    usDataGrabbed<usImagePreScan2D<unsigned char> >* savePtr = m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC);
+    usFrameGrabbedInfo<usImagePreScan2D<unsigned char> >* savePtr = m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC);
     m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
     m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
     m_swichOutputInit = true;

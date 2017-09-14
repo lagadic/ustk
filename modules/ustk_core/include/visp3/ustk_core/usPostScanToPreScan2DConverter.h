@@ -79,6 +79,8 @@ class VISP_EXPORT usPostScanToPreScan2DConverter
   int m_BModeSampleNumber;
   usTransducerSettings m_initSettings;
 
+  bool m_isInit;
+
   double interpolateLinear(const vpImage<unsigned char>& I, double x, double y);
 };
 

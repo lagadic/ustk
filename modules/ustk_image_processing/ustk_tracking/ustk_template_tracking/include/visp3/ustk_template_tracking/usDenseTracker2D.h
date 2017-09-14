@@ -50,6 +50,9 @@
  * @ingroup module_ustk_template_tracking
  *
  * Class to perform a 2D tracking of a region of interest.
+ *
+ * See \cite Nadeau15a for more details.
+ *
  */
 class VISP_EXPORT usDenseTracker2D
 {

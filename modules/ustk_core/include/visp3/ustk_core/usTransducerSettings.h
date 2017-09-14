@@ -93,11 +93,13 @@ public:
   unsigned int getScanLineNumber() const;
   double getScanLinePitch() const;
   double getTransducerRadius() const;
+  usTransducerSettings getTransducerSettings() const;
 
   bool isTransducerConvex() const;
 
   usTransducerSettings& operator=(const usTransducerSettings& other);
   bool operator==(usTransducerSettings const& other);
+  bool operator!=(usTransducerSettings const& other);
 
   bool scanLineNumberIsSet() const;
   //Settings for the probe transducer

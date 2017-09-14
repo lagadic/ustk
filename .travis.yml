@@ -38,6 +38,9 @@ before_install:
   - "if [ $TRAVIS_OS_NAME = 'linux' ]; then sudo apt-get install -qq libswscale-dev libavutil-dev; fi"
   - "if [ $TRAVIS_OS_NAME = 'linux' ]; then sudo apt-get install -qq libavformat-dev; fi"
   - "if [ $TRAVIS_OS_NAME = 'linux' ]; then sudo apt-get install -qq libavcodec-dev libbz2-dev; fi"
+  
+  # Work arround to find libomp.so
+  - "if [ $CC = 'clang' ]; then export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/clang-3.9.0/lib; fi"
 
 before_script:
   - git clone https://github.com/lagadic/visp.git /tmp/visp

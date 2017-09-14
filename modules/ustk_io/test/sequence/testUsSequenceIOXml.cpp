@@ -81,7 +81,7 @@ OPTIONS:                                               Default\n\
      Set data output path.\n\
      From this directory, creates the \"%s\"\n\
      subdirectory depending on the username, where \n\
-     sequenceRF2D.xml file is written.\n\
+     sequencepreScan2D.xml file is written.\n\
               \n\
   -h\n\
      Print the help.\n\n", opath.c_str(), user.c_str());
@@ -189,40 +189,40 @@ int main(int argc, const char** argv)
       }
     }
 
-    filename = dirname + vpIoTools::path("/") + "sequenceRF2D.xml";
+    filename = dirname + vpIoTools::path("/") + "sequencepreScan2D.xml";
 
     //Init values in reference image
-    usImagePreScan2D<unsigned char> rf2DReference;
+    usImagePreScan2D<unsigned char> preScan2DReference;
     //init image
     vpImage<unsigned char> image;
     image.resize(320,128,123);
     //init settings
-    rf2DReference.setAxialResolution(0.0005);
-    rf2DReference.setScanLinePitch(0.0045);
-    rf2DReference.setTransducerRadius(0.05478);
-    rf2DReference.setTransducerConvexity(true);
-    rf2DReference.setData(image);
+    preScan2DReference.setAxialResolution(0.0005);
+    preScan2DReference.setDepth(0.0005 * 319);
+    preScan2DReference.setScanLinePitch(0.0045);
+    preScan2DReference.setTransducerRadius(0.05478);
+    preScan2DReference.setTransducerConvexity(true);
+    preScan2DReference.setData(image);
 
     std::vector<usImagePreScan2D<unsigned char> > ImageBufferRef;
     for(int i=0;i<4;i++) {
-      ImageBufferRef.push_back(rf2DReference);
+      ImageBufferRef.push_back(preScan2DReference);
     }
 
     usSequenceWriter<usImagePreScan2D<unsigned char> > writer;
     writer.setSequenceFileName(filename);
-    writer.setImageFileName(std::string("mysubdir/sequenceRF2D%04d.png"));
+    writer.setImageFileName(std::string("mysubdir/sequencepreScan2D%04d.png"));
     writer.setFrameRate(15);
     int i=0;
     while( i<4) {
       writer.saveImage(ImageBufferRef.at(i));
       i++;
     }
-    std::cout << "read i : " << i <<std::endl;
     writer.close();
 
     std::cout << "Written in " << filename << std::endl;
-    std::cout << rf2DReference;
-    std::cout << "height resolution : " << rf2DReference.getAxialResolution() << std::endl;
+    std::cout << preScan2DReference;
+    std::cout << "height resolution : " << preScan2DReference.getAxialResolution() << std::endl;
 
     //read the image we just wrote    
     usSequenceReader<usImagePreScan2D<unsigned char> > reader;
@@ -232,9 +232,9 @@ int main(int argc, const char** argv)
     reader.setSequenceFileName(filename);
     i = 0;
     while(!reader.end()) {
-      usImagePreScan2D<unsigned char> rf2D;
-      reader.acquire(rf2D);
-      ImageBuffer.push_back(rf2D);
+      usImagePreScan2D<unsigned char> preScan2D;
+      reader.acquire(preScan2D);
+      ImageBuffer.push_back(preScan2D);
       i++;
     }
 
@@ -265,8 +265,6 @@ int main(int argc, const char** argv)
     //read the image we just wrote
     usSequenceReader<usImagePreScan2D<unsigned char> > readerCycling;
 
-    //std::vector<usImagePreScan2D<unsigned char> > ImageBufferCycling;
-
     //ref timer
     time_t refTimer;
     time(&refTimer);
@@ -275,8 +273,8 @@ int main(int argc, const char** argv)
     readerCycling.setLoopCycling(true);
     i = 0;
     while(!readerCycling.end()) {
-      usImagePreScan2D<unsigned char> rf2D;
-      readerCycling.acquire(rf2D);
+      usImagePreScan2D<unsigned char> preScan2D;
+      readerCycling.acquire(preScan2D);
       time_t testTimer;
       time(&testTimer);
       double seconds = difftime(testTimer,refTimer);

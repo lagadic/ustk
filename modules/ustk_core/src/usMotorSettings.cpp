@@ -110,6 +110,16 @@ bool usMotorSettings::operator==(const usMotorSettings& other)
 }
 
 /**
+ * Compare two motor settings.
+ * @param other Motor settings to compare.
+ * @return false if settings are the same, true otherwise.
+ */
+bool usMotorSettings::operator!=(const usMotorSettings& other)
+{
+  return ! operator==(other);
+}
+
+/**
 * Print probe settings information.
 */
 VISP_EXPORT std::ostream& operator<<(std::ostream& out, const usMotorSettings& other)
@@ -242,4 +252,9 @@ void usMotorSettings::setMotorFieldOfView(double motorFieldOfView) {
   if(!m_frameNumberIsSet)
     throw vpException(vpException::notInitialized, "The frame number is not set, cannot determine the pitch from the field of view");
   m_framePitch = motorFieldOfView / (double) (m_frameNumber - 1);
+}
+
+usMotorSettings usMotorSettings::getMotorSettings() const {
+  usMotorSettings ret = *this;
+  return ret;
 }

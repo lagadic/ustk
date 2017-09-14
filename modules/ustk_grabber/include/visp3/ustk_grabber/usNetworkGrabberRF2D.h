@@ -46,7 +46,7 @@
 
 #include <visp3/ustk_grabber/usNetworkGrabber.h>
 #include <visp3/ustk_core/usImageRF2D.h>
-#include <visp3/ustk_grabber/usDataGrabbed.h>
+#include <visp3/ustk_grabber/usFrameGrabbedInfo.h>
 
 /**
  * @class usNetworkGrabberRF2D
@@ -64,18 +64,13 @@
  */
 class VISP_EXPORT usNetworkGrabberRF2D : public usNetworkGrabber
 {
-  typedef enum {
-    OUTPUT_FRAME_POSITION_IN_VEC = 0,
-    MOST_RECENT_FRAME_POSITION_IN_VEC = 1,
-    CURRENT_FILLED_FRAME_POSITION_IN_VEC = 2,
-  }DataPositionInBuffer;
   Q_OBJECT
 public:
 
   explicit usNetworkGrabberRF2D(usNetworkGrabber *parent = 0);
   ~usNetworkGrabberRF2D();
 
-  usDataGrabbed<usImageRF2D<short int> > * acquire();
+  usFrameGrabbedInfo<usImageRF2D<short int> > * acquire();
 
   void dataArrived();
 
@@ -86,7 +81,7 @@ signals:
 
 private:
   // Image buffer
-  std::vector<usDataGrabbed<usImageRF2D<short int> > *> m_outputBuffer;
+  std::vector<usFrameGrabbedInfo<usImageRF2D<short int> > *> m_outputBuffer;
   bool m_firstFrameAvailable;
 
   //to manage ptrs switch init

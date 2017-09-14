@@ -134,4 +134,9 @@ double usImagePreScanSettings::getAxialResolution() const
 }
 
 
+usImagePreScanSettings usImagePreScanSettings::getImagePreScanSettings()const
+{
+  usImagePreScanSettings ret = *this;
+  return ret;
+}
 

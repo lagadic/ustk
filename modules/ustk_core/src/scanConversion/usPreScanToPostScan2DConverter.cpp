@@ -1,28 +1,29 @@
 /****************************************************************************
  *
- * This file is part of the UsTk software.
- * Copyright (C) 2014 by Inria. All rights reserved.
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License ("GPL") as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * See the file COPYING at the root directory of this source
+ * This file is part of the ustk software.
+ * Copyright (C) 2016 - 2017 by Inria. All rights reserved.
+ *
+ * This software is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * ("GPL") version 2 as published by the Free Software Foundation.
+ * See the file LICENSE.txt at the root directory of this source
  * distribution for additional information about the GNU GPL.
- * 
+ *
+ * For using ustk with software that can not be combined with the GNU
+ * GPL, please contact Inria about acquiring a ViSP Professional
+ * Edition License.
+ *
  * This software was developed at:
- * INRIA Rennes - Bretagne Atlantique
+ * Inria Rennes - Bretagne Atlantique
  * Campus Universitaire de Beaulieu
  * 35042 Rennes Cedex
  * France
- * http://www.irisa.fr/lagadic
  *
- * If you have questions regarding the use of this file, please contact the
- * authors at Alexandre.Krupa@inria.fr
- * 
+ * If you have questions regarding the use of this file, please contact
+ * Inria at ustk@inria.fr
+ *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
  *
  * Authors:
  * Pierre Chatelain
@@ -32,7 +33,7 @@
 #include <visp3/ustk_core/usPreScanToPostScan2DConverter.h>
 #include <visp/vpMath.h>
 
-usPreScanToPostScan2DConverter::usPreScanToPostScan2DConverter() {}
+usPreScanToPostScan2DConverter::usPreScanToPostScan2DConverter() : m_initDone(false) {}
 
 usPreScanToPostScan2DConverter::~usPreScanToPostScan2DConverter() {}
 
@@ -46,7 +47,6 @@ usPreScanToPostScan2DConverter::~usPreScanToPostScan2DConverter() {}
 void usPreScanToPostScan2DConverter::init(const usImagePostScan2D<unsigned char> &inputSettings, const int BModeSampleNumber,
             const int scanLineNumber)
 {
-
   //check resolution to avoir errors
   if(inputSettings.getHeightResolution() == 0.0 || inputSettings.getWidthResolution() == 0.0)
     throw(vpException(vpException::notInitialized, "Please fill the post-scan resplution before init the conversion."));
@@ -84,6 +84,7 @@ void usPreScanToPostScan2DConverter::init(const usImagePostScan2D<unsigned char>
       m_tMap[i][j] = atan2(y, x) * inputSettings.getTransducerRadius() / LPitch + (scanLineNumber-1) / 2.0;
     }
   }
+  m_initDone = true;
 }
 
 /**
@@ -121,7 +122,7 @@ void usPreScanToPostScan2DConverter::init(const usTransducerSettings &inputSetti
 
   m_rMap.resize(m_height, m_width);
   m_tMap.resize(m_height, m_width);
-  
+
   double x, y;
   for (unsigned int i = 0; i < m_height; ++i) {
     for (unsigned int j = 0; j < m_width; ++j) {
@@ -131,15 +132,22 @@ void usPreScanToPostScan2DConverter::init(const usTransducerSettings &inputSetti
       m_tMap[i][j] = atan2(y, x) * inputSettings.getTransducerRadius() / LPitch + (scanLineNumber-1) / 2.0;
     }
   }
+  m_initDone = true;
 }
 
 /**
 * Run the scan-converter.
-* @param [out] postScanImage Post-scan image : result of the scan conversion.
+* @param [in, out] postScanImage Post-scan image : result of the scan conversion.
 * @param [in] preScanImage Pre-scan image to convert.
 */
 void usPreScanToPostScan2DConverter::run(const usImagePreScan2D<unsigned char> &preScanImage, usImagePostScan2D<unsigned char> &postScanImage)
 {
+  //check if init is done
+  if (!m_initDone) {
+    double resolution = preScanImage.getAxialResolution();
+    init(preScanImage, preScanImage.getBModeSampleNumber(), preScanImage.getScanLineNumber(), resolution, resolution);
+  }
+
   postScanImage.resize(m_height, m_width);
   for (unsigned int i = 0; i < m_height; ++i)
     for (unsigned int j = 0; j < m_width; ++j) {

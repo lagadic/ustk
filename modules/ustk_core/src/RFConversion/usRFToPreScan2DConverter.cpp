@@ -68,7 +68,7 @@ usRFToPreScan2DConverter::~usRFToPreScan2DConverter() {
 * @param heigthRF Height of the RF frames to convert : number of RF samples.
 */
 void usRFToPreScan2DConverter::init(int widthRF, int heigthRF) {
-  if (m_isInit && (m_signalSize != heigthRF || m_scanLineNumber != heigthRF)) {
+  if (m_isInit && (m_signalSize != heigthRF || m_scanLineNumber != widthRF)) {
     fftw_free(m_fft_in); fftw_free(m_fft_out); fftw_free(m_fft_conv); fftw_free(m_fft_out_inv);
     fftw_destroy_plan(m_p); fftw_destroy_plan(m_pinv);
 	delete m_env;
@@ -123,12 +123,12 @@ void usRFToPreScan2DConverter::enveloppeDetection(const short int *s, double* ou
 
     if(i<N/2)
       m_fft_out[i][1]=-m_fft_out[i][1];
-    if(i==N/2)
+    else if(i==N/2)
     {
       m_fft_out[i][0]=0;
       m_fft_out[i][1]=0;
     }
-    if(i>N/2)
+    else if(i>N/2)
       m_fft_out[i][0]=-m_fft_out[i][0];
     if(i==0)
     {
@@ -164,7 +164,7 @@ void usRFToPreScan2DConverter::enveloppeDetection(const short int *s, double* ou
 */
 void usRFToPreScan2DConverter::convert(const usImageRF2D<short int> &rfImage, usImagePreScan2D<unsigned char> &preScanImage) {
 
-  if(!m_isInit) {
+  if(!m_isInit || ((int)rfImage.getWidth()) != m_scanLineNumber || ((int)rfImage.getHeight()) != m_signalSize) {
     init(rfImage.getWidth(), rfImage.getHeight());
   }
   preScanImage.resize(rfImage.getHeight() / m_decimationFactor,rfImage.getWidth());

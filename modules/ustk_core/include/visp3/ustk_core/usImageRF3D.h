@@ -41,6 +41,7 @@
 #include <cstring>
 
 #include <visp3/ustk_core/usImage3D.h>
+#include <visp3/ustk_core/usImageRF2D.h>
 
 #include <visp3/ustk_core/usImagePreScanSettings.h>
 #include <visp3/ustk_core/usMotorSettings.h>
@@ -143,6 +144,8 @@ public:
   usImageRF3D(const usImage3D<Type> &image3D, const usImagePreScanSettings &imageSettings, const usMotorSettings &motorSettings);
   usImageRF3D(const usImageRF3D<Type> &other);
   virtual ~usImageRF3D();
+
+  void getFrame(usImageRF2D<Type> &image, unsigned int index) const;
 
   unsigned int getRFSampleNumber() const ;
 
@@ -339,6 +342,33 @@ void usImageRF3D<Type>::insertFrame(vpImage<Type> frame, unsigned int index)
   for(unsigned int i=0; i<this->getDimX(); i++) {
     for(unsigned int j=0; j<this->getDimY(); j++) {
       frameBeginning[i + this->getDimX() * j] = frame[j][i];
+    }
+  }
+}
+
+/**
+ * Returns a 2D slice of the volume at a given index.
+ * @param [out] image The 2D frame.
+ * @param [in] index Position of the frame to extract in the volume.
+ */
+template<class Type>
+void usImageRF3D<Type>::getFrame(usImageRF2D<Type> &image, unsigned int index) const {
+
+  //Dimentions checks
+  if(index > this->getDimZ())
+    throw(vpException(vpException::badValue,"usImageRF3D::getFrame : frame index out of volume"));
+
+  image.resize(this->getDimY(),this->getDimX());
+
+
+  //offset to access the frame in the volume
+  int offset = index * this->getDimY() * this->getDimX();
+  Type* frameBeginning = this->getConstData() + offset;
+
+  //copy
+  for(unsigned int i=0; i<this->getDimX(); i++) {
+    for(unsigned int j=0; j<this->getDimY(); j++) {
+      image[j][i] = frameBeginning[i + this->getDimX() * j];
     }
   }
 }

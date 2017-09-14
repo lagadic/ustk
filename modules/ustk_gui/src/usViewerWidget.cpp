@@ -57,6 +57,11 @@ usViewerWidget::usViewerWidget(QWidget* parent, Qt::WindowFlags f) : QVTKWidget(
 
 }
 
+usViewerWidget::~usViewerWidget()
+{
+
+}
+
 /**
 * Qt paint event overload if needed to update Qt widget
 * @param event QPAintEvent.

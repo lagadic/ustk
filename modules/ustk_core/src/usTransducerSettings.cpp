@@ -111,6 +111,14 @@ bool usTransducerSettings::operator==(usTransducerSettings const& other)
            this->isTransducerConvex() == other.isTransducerConvex());
 }
 
+/**
+* Compare two probe transducer settings.
+* @return False if the settings are the same, true otherwise.
+*/
+bool usTransducerSettings::operator!=(usTransducerSettings const& other) {
+  return ! operator==(other);
+}
+
 /*!
   Print transducer information in a ostream.
   Usage example:
@@ -289,4 +297,9 @@ void usTransducerSettings::setDepth(double depth)
 double usTransducerSettings::getDepth() const
 {
   return m_depth;
+}
+
+usTransducerSettings usTransducerSettings ::getTransducerSettings() const {
+  usTransducerSettings ret = *this;
+  return ret;
 }
