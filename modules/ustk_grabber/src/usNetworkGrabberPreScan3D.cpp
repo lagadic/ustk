@@ -166,6 +166,7 @@ void usNetworkGrabberPreScan3D::dataArrived()
     m_grabbedImage.setScanLinePitch(m_imageHeader.scanLinePitch);
     m_grabbedImage.setDepth(m_imageHeader.imageDepth / 1000.0);
     m_grabbedImage.setAxialResolution((m_imageHeader.imageDepth / 1000.0) / m_imageHeader.frameHeight);
+    m_grabbedImage.setTransducerConvexity(m_imageHeader.transducerRadius != 0.);
 
     //update motor settings
     m_motorSettings.setFrameNumber(m_imageHeader.framesPerVolume);

@@ -165,6 +165,7 @@ void usNetworkGrabberPreScan2D::dataArrived()
     m_grabbedImage.setTransducerRadius(m_imageHeader.transducerRadius);
     m_grabbedImage.setScanLinePitch(m_imageHeader.scanLinePitch);
     m_grabbedImage.setDepth(m_imageHeader.imageDepth / 1000.0);
+    m_grabbedImage.setTransducerConvexity(m_imageHeader.transducerRadius != 0.);
 
     //set data info
     m_grabbedImage.setFrameCount(m_imageHeader.frameCount);
