@@ -194,18 +194,19 @@ void usRFToPreScan2DConverter::convert(const usImageRF2D<short int> &rfImage, us
     if (m_comp[i] > max)
       max = m_comp[i];
   }
-
   //max-min computation
   double maxMinDiff = max - min;
 
   //Decimate and normalize
-  int k = 0;
+  unsigned int k = 0;
   for (int i = 0; i < h; i+=m_decimationFactor) {
     for (int j = 0; j < w ; ++j) {
       unsigned int  vcol = (unsigned int) (((m_comp[i + h * j] - min) / maxMinDiff) * 255);
       preScanImage[k][j] = (vcol>255)?255:vcol;
     }
     k++;
+    if(k==preScanImage.getHeight()) //prevent overflow for k at last iteration (index given to operator[] on vpImage goes from 0 to N-1)
+      return;
   }
 }
 
