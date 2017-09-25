@@ -102,17 +102,17 @@ public:
   void setSequenceFileName(const std::string sequence_name) {m_sequence_name = sequence_name;}
 
 private:
-quint32 xmlReadUInt32Child(xmlDocPtr doc, xmlNodePtr node);
-quint64 xmlReadUInt64Child(xmlDocPtr doc, xmlNodePtr node);
-void xmlWriteUInt32Child(xmlNodePtr node, const char* label, const quint32 value);
-void xmlWriteUInt64Child(xmlNodePtr node, const char* label, const quint64 value);
+  quint32 xmlReadUInt32Child(xmlDocPtr doc, xmlNodePtr node);
+  quint64 xmlReadUInt64Child(xmlDocPtr doc, xmlNodePtr node);
+  void xmlWriteUInt32Child(xmlNodePtr node, const char* label, const quint32 value);
+  void xmlWriteUInt64Child(xmlNodePtr node, const char* label, const quint64 value);
 
-usNetworkGrabber::usImageHeader m_imageHeader;
-std::string m_sequence_name;
+  usNetworkGrabber::usImageHeader m_imageHeader;
+  std::string m_sequence_name;
 
 protected:
-   void readMainClass (xmlDocPtr doc, xmlNodePtr node);
-   void writeMainClass (xmlNodePtr node);
+  void readMainClass (xmlDocPtr doc, xmlNodePtr node);
+  void writeMainClass (xmlNodePtr node);
 };
 #endif //US_IMAGE_HEADER_XML_PARSER_H
 #endif //VISP_HAVE_XML2 || QT

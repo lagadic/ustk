@@ -38,7 +38,7 @@
 #include<visp3/ustk_grabber/usImageHeaderXmlParser.h>
 #ifdef VISP_HAVE_XML2
 
- /**
+/**
  * Default constructor.
  */
 usImageHeaderXmlParser::usImageHeaderXmlParser()
@@ -92,8 +92,8 @@ usImageHeaderXmlParser::readMainClass (xmlDocPtr doc, xmlNodePtr node)
           this->m_imageHeader.frameCount = xmlReadUInt32Child(doc, dataNode);
           break;
         case CODE_XML_TIME_STAMP:
-           this->m_imageHeader.timeStamp = xmlReadUInt64Child(doc, dataNode);
-           break;
+          this->m_imageHeader.timeStamp = xmlReadUInt64Child(doc, dataNode);
+          break;
         case CODE_XML_DATA_RATE:
           this->m_imageHeader.dataRate = xmlReadDoubleChild(doc, dataNode);
           break;
@@ -191,7 +191,7 @@ usImageHeaderXmlParser::writeMainClass(xmlNodePtr node)
 }
 
 quint32 usImageHeaderXmlParser::xmlReadUInt32Child(xmlDocPtr doc, xmlNodePtr node) {
- if(node ->xmlChildrenNode == NULL){
+  if(node ->xmlChildrenNode == NULL){
     std::string errorMsg = "Empty node " + std::string((char*)node->name) + ", cannot read int";
     std::cerr << errorMsg << std::endl;
     throw vpException(vpException::fatalError, errorMsg);
@@ -213,7 +213,7 @@ quint32 usImageHeaderXmlParser::xmlReadUInt32Child(xmlDocPtr doc, xmlNodePtr nod
 }
 
 quint64 usImageHeaderXmlParser::xmlReadUInt64Child(xmlDocPtr doc, xmlNodePtr node) {
- if(node ->xmlChildrenNode == NULL){
+  if(node ->xmlChildrenNode == NULL){
     std::string errorMsg = "Empty node " + std::string((char*)node->name) + ", cannot read int";
     std::cerr << errorMsg << std::endl;
     throw vpException(vpException::fatalError, errorMsg);

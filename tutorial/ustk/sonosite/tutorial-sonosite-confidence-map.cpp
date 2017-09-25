@@ -116,7 +116,7 @@ vpThread::Return displayFunction(vpThread::Args args)
       // Convert post-scan to pre-scan image
       usPostScanToPreScan2DConverter backConverter_;
       backConverter_.init(postScan_, 480, 128);
-      backConverter_.run(postScan_,preScan_);
+      backConverter_.convert(postScan_,preScan_);
 
       //Compute confidence map on pre-scan image
       //initialisations
@@ -129,7 +129,7 @@ vpThread::Return displayFunction(vpThread::Args args)
       confidenceMapProcessor_.run(confidencePreScan_, preScan_);
 
       //converting computed confidence map in post-scan
-      converter_.run(confidencePreScan_, confidencePostScan_);
+      converter_.convert(confidencePreScan_, confidencePostScan_);
 
 
       // Check if we need to initialize the display with the first frame

@@ -140,8 +140,8 @@ vpThread::Return displayFunction(vpThread::Args args)
       if(firstIteration) {
         scanConverter.init(preScan_,preScan_.getBModeSampleNumber(),preScan_.getScanLineNumber(),0.0005,0.0005);
       }
-      scanConverter.run(preScan_,postScan_);
-      scanConverter.run(preScanConfidence_, postScanConfidence_);
+      scanConverter.convert(preScan_,postScan_);
+      scanConverter.convert(preScanConfidence_, postScanConfidence_);
 
       // Check if we need to initialize the display with the first frame
       if (! display_initialized_) {

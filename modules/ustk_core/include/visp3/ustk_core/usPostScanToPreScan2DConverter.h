@@ -48,7 +48,7 @@
  * @ingroup module_ustk_core
  *
  * This class allows to convert 2D post-scan ultrasound images to pre-scan.
- * The converter should be initialized through init() and then applied through run().
+ * The converter should be initialized through init() and then applied through convert().
  */
 class VISP_EXPORT usPostScanToPreScan2DConverter
 {
@@ -68,7 +68,7 @@ class VISP_EXPORT usPostScanToPreScan2DConverter
   void init(const usTransducerSettings &inputSettings, const int BModeSampleNumber,
             const int scanLineNumber,const double xResolution, const double yResolution);
 
-  void run(const usImagePostScan2D<unsigned char> &imageToConvert, usImagePreScan2D<unsigned char> &imageConverted);
+  void convert(const usImagePostScan2D<unsigned char> &imageToConvert, usImagePreScan2D<unsigned char> &imageConverted);
 
  private:
   vpMatrix m_iMap;

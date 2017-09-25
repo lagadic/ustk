@@ -49,7 +49,7 @@ void usPreScanToPostScan2DConverter::init(const usImagePostScan2D<unsigned char>
 {
   //check resolution to avoir errors
   if(inputSettings.getHeightResolution() == 0.0 || inputSettings.getWidthResolution() == 0.0)
-    throw(vpException(vpException::notInitialized, "Please fill the post-scan resplution before init the conversion."));
+    throw(vpException(vpException::notInitialized, "Please fill the post-scan resolution before init the conversion."));
 
   m_scanLineNumber = scanLineNumber;
   m_BModeSampleNumber = BModeSampleNumber;
@@ -140,8 +140,13 @@ void usPreScanToPostScan2DConverter::init(const usTransducerSettings &inputSetti
 * @param [in, out] postScanImage Post-scan image : result of the scan conversion.
 * @param [in] preScanImage Pre-scan image to convert.
 */
-void usPreScanToPostScan2DConverter::run(const usImagePreScan2D<unsigned char> &preScanImage, usImagePostScan2D<unsigned char> &postScanImage)
+void usPreScanToPostScan2DConverter::convert(const usImagePreScan2D<unsigned char> &preScanImage, usImagePostScan2D<unsigned char> &postScanImage,int xResolution, int yResolution)
 {
+  // if user specified the resolution wanted
+  if(xResolution != 0 && yResolution != 0) {
+    init(preScanImage, preScanImage.getBModeSampleNumber(), preScanImage.getScanLineNumber(), xResolution, yResolution);
+  }
+
   //check if init is done
   if (!m_initDone) {
     double resolution = preScanImage.getAxialResolution();

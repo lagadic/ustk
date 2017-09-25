@@ -184,7 +184,7 @@ void usPostScanToPreScan2DConverter::init(const usTransducerSettings &transducer
 * @param [in] imageToConvert Post-scan image to convert back.
 * @param [out] imageConverted Pre-scan image obtained after back conversion.
 */
-void usPostScanToPreScan2DConverter::run(const usImagePostScan2D<unsigned char> &imageToConvert, usImagePreScan2D<unsigned char> &imageConverted)
+void usPostScanToPreScan2DConverter::convert(const usImagePostScan2D<unsigned char> &imageToConvert, usImagePreScan2D<unsigned char> &imageConverted)
 {
   if (!m_isInit) {
     init(imageToConvert, (int)(imageToConvert.getDepth() / imageToConvert.getHeightResolution()), imageToConvert.getScanLineNumber());

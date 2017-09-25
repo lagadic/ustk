@@ -64,7 +64,7 @@ class VISP_EXPORT usPreScanToPostScan2DConverter
   void init(const usTransducerSettings &inputSettings, const int BModeSampleNumber,
             const int scanLineNumber, const double xResolution, const double yResolution);
 
-  void run(const usImagePreScan2D<unsigned char> &preScanImage, usImagePostScan2D<unsigned char> &postScanImage);
+  void convert(const usImagePreScan2D<unsigned char> &preScanImage, usImagePostScan2D<unsigned char> &postScanImage, int xResolution = 0, int yResolution = 0);
 
  private:
   double interpolateLinear(const vpImage<unsigned char>& I, double x, double y);

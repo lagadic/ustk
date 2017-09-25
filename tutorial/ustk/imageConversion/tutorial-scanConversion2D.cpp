@@ -52,7 +52,7 @@ int main(int argc, char** argv)
   std::cout << "init time (sec) = " << (endInitTime - startTime) / 1000.0 << std::endl;
 
   std::cout << "converting..." << std::endl;
-  converter.run(prescanImage,postscanImage);
+  converter.convert(prescanImage,postscanImage);
 
   std::cout << postscanImage;
 
