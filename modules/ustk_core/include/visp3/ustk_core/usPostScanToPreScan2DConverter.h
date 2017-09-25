@@ -49,6 +49,19 @@
  *
  * This class allows to convert 2D post-scan ultrasound images to pre-scan.
  * The converter should be initialized through init() and then applied through convert().
+ *
+ * Here is an example of how to use the converter, to build a pre-scan image from a post-scan image.
+ *
+ * \code
+ *  usImagePostScan2D<unsigned char> postScan; // your post-scan image
+ *  // then you have can fill the postScan image and settings
+ *
+ *  usImagePreScan2D <unsigned char> preScan; // converter output
+ *
+ *  usPostScanToPreScan2DConverter backConverter;
+ *  backConverter.init(postScan, 480, 128);
+ *  backConverter.convert(postScan,preScan); // preScan is now an image built from postScan image
+ * \endcode
  */
 class VISP_EXPORT usPostScanToPreScan2DConverter
 {

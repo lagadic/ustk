@@ -56,6 +56,20 @@
  * @ingroup module_ustk_core
  *
  * This class allows to convert 2D RF ultrasound images to post-scan.
+ * Here is an example to show how to use it :
+ *
+ * \code
+ * usImageRF2D<short int> rfImage; // to fill (image + settings)
+ *
+ * usImagePostScan2D<unsigned char> postscanImage;
+ * postscanImage.setHeightResolution(0.0005);
+ * postscanImage.setWidthResolution(0.0005); // pixels of 0.5*0.5 mm in output
+ *
+ * usRFToPostScan2DConverter converter;
+ * converter.setConversionParameters(postscanImage,rfImage.getRFSampleNumber()/10,rfImage.getScanLineNumber(),10);
+ * converter.convert(rfImage,postscanImage);
+ *
+ * \endcode
  *
  */
 class VISP_EXPORT usRFToPostScan2DConverter

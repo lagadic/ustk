@@ -139,6 +139,8 @@ void usPreScanToPostScan2DConverter::init(const usTransducerSettings &inputSetti
 * Run the scan-converter.
 * @param [in, out] postScanImage Post-scan image : result of the scan conversion.
 * @param [in] preScanImage Pre-scan image to convert.
+* @param [in] xResolution Size of a pixel along x axis in post-scan image built (optionnal).
+* @param [in] yResolution Size of a pixel along y axis in post-scan image built (optionnal).
 */
 void usPreScanToPostScan2DConverter::convert(const usImagePreScan2D<unsigned char> &preScanImage, usImagePostScan2D<unsigned char> &postScanImage,int xResolution, int yResolution)
 {

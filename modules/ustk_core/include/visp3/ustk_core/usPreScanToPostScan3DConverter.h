@@ -56,6 +56,19 @@
  * This class accepts only images acquired by a convex transducer and a tilting motor for now.
  *
  * @warning Converting with this class uses a lot of RAM when computing the LUTs in init().
+ *
+ *  Here is an example of how to use this converter :
+ *
+ * \code
+ *  usImagePreScan3D<unsigned char> prescanImage;
+ *  // then you have to fill prescanImage, and set transducer / motor settings.
+ *
+ *  usImagePostScan3D<unsigned char> postscanImage;
+ *  //scan-converster
+ *  usPreScanToPostScan3DConverter converter;
+ *  converter.init(prescanImage);
+ *  converter.convert(postscanImage, prescanImage);
+ *  \endcode
  */
 class VISP_EXPORT usPreScanToPostScan3DConverter
 {

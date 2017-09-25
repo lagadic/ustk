@@ -48,7 +48,23 @@
  * @ingroup module_ustk_core
  *
  * This class allows to convert 2D pre-scan ultrasound images to post-scan.
- * The converter should be initialized through init() and then applied through run().
+ * The converter should be initialized through init() and then applied through convert().
+ *
+ *
+ * Here is an example of how to use the converter, to build a post-scan image from a pre-scan image.
+ *
+ * \code
+ *  usImagePreScan2D <unsigned char> preScan; // your input pre-scan image
+ *  // then you have can fill the preScan image and settings
+ *
+ *  // converter output
+ *  usImagePostScan2D<unsigned char> postScan;
+ *
+ *  usPreScanToPostScan2DConverter scanConverter;
+ *  scanConverter.init(preScan,preScan.getBModeSampleNumber(),preScan.getScanLineNumber(),0.0005,0.0005);
+ *  scanConverter.convert(preScan,postScan); // now postScan is filled from preScan, with pixels of 0.5mm
+ * \endcode
+ *
  */
 class VISP_EXPORT usPreScanToPostScan2DConverter
 {
