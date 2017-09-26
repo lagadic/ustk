@@ -122,7 +122,6 @@ vpThread::Return displayFunction(vpThread::Args args)
       //initialisations
       //settings for sonosite probe
       usPreScanToPostScan2DConverter converter_;
-      converter_.init(postScan_, 480,128);
 
       //computing pre-scan confidence map
       confidencePreScan_.setImagePreScanSettings(preScan_);

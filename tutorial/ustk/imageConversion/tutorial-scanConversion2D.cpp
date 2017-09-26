@@ -30,34 +30,16 @@ int main(int argc, char** argv)
   usImagePreScan2D<unsigned char> prescanImage;
   prescanImage.resize(128,480,16);
   usImagePostScan2D<unsigned char> postscanImage;
-  postscanImage.setHeightResolution(0.0005);
-  postscanImage.setWidthResolution(0.0005);
 
   usImageIo::read(prescanImage,filename);
-
-  postscanImage.setTransducerSettings(prescanImage);
-
-
-  std::cout << "end reading" << std::endl;
 
   //scan-conversion
   usPreScanToPostScan2DConverter converter;
 
-  double startTime = vpTime::measureTimeMs();
-  std::cout << "init converter..." << std::endl;
-
-  converter.init(postscanImage,480,128);
-
-  double endInitTime = vpTime::measureTimeMs();
-  std::cout << "init time (sec) = " << (endInitTime - startTime) / 1000.0 << std::endl;
-
-  std::cout << "converting..." << std::endl;
   converter.convert(prescanImage,postscanImage);
 
+  std::cout << "converted image : " << std::endl;
   std::cout << postscanImage;
-
-  double endConvertTime = vpTime::measureTimeMs();
-  std::cout << "convert time (sec) = " << (endConvertTime - endInitTime) / 1000.0 << std::endl;
 
   std::cout << "writing post-scan..." << std::endl;
   std::string outFileName ="postscan.xml";

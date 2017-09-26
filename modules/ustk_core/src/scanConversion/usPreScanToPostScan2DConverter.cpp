@@ -51,39 +51,63 @@ void usPreScanToPostScan2DConverter::init(const usImagePostScan2D<unsigned char>
   if(inputSettings.getHeightResolution() == 0.0 || inputSettings.getWidthResolution() == 0.0)
     throw(vpException(vpException::notInitialized, "Please fill the post-scan resolution before init the conversion."));
 
-  m_scanLineNumber = scanLineNumber;
-  m_BModeSampleNumber = BModeSampleNumber;
-  m_xResolution = inputSettings.getWidthResolution();
-  m_yResolution = inputSettings.getHeightResolution();
-  m_settings = inputSettings;
+  if(inputSettings.isTransducerConvex()) {
+    m_scanLineNumber = scanLineNumber;
+    m_BModeSampleNumber = BModeSampleNumber;
+    m_xResolution = inputSettings.getWidthResolution();
+    m_yResolution = inputSettings.getHeightResolution();
+    m_settings = inputSettings;
 
-  double APitch = inputSettings.getDepth() / (double)(BModeSampleNumber);
-  double LPitch = inputSettings.getFieldOfView() * inputSettings.getTransducerRadius() / (double)(scanLineNumber -1);
+    double APitch = inputSettings.getDepth() / (double)(BModeSampleNumber);
+    double LPitch = inputSettings.getFieldOfView() * inputSettings.getTransducerRadius() / (double)(scanLineNumber -1);
 
-  double r_min = inputSettings.getTransducerRadius();
-  double r_max = (inputSettings.getTransducerRadius() + APitch * BModeSampleNumber);
-  double t_min = - ( (double)(scanLineNumber-1) * LPitch) / (2.0 * inputSettings.getTransducerRadius());
-  double t_max = - t_min;
-  double x_min = r_min * cos(t_min);
-  double x_max = r_max;
-  double y_min = r_max * sin(t_min);
-  double y_max = r_max * sin(t_max);
+    double r_min = inputSettings.getTransducerRadius();
+    double r_max = (inputSettings.getTransducerRadius() + APitch * BModeSampleNumber);
+    double t_min = - ( (double)(scanLineNumber-1) * LPitch) / (2.0 * inputSettings.getTransducerRadius());
+    double t_max = - t_min;
+    double x_min = r_min * cos(t_min);
+    double x_max = r_max;
+    double y_min = r_max * sin(t_min);
+    double y_max = r_max * sin(t_max);
 
-  m_height = vpMath::round((x_max - x_min) / m_yResolution);
-  m_width = vpMath::round((y_max - y_min) / m_xResolution);
+    m_height = vpMath::round((x_max - x_min) / m_yResolution);
+    m_width = vpMath::round((y_max - y_min) / m_xResolution);
 
-  m_rMap.resize(m_height, m_width);
-  m_tMap.resize(m_height, m_width);
+    m_rMap.resize(m_height, m_width);
+    m_tMap.resize(m_height, m_width);
 
-  double x, y;
-  for (unsigned int i = 0; i < m_height; ++i) {
-    for (unsigned int j = 0; j < m_width; ++j) {
-      x = x_min + i * m_yResolution;
-      y = y_min + j * m_xResolution;
-      m_rMap[i][j] = (sqrt(x * x + y * y) - inputSettings.getTransducerRadius()) / APitch;
-      m_tMap[i][j] = atan2(y, x) * inputSettings.getTransducerRadius() / LPitch + (scanLineNumber-1) / 2.0;
+    double x, y;
+    for (unsigned int i = 0; i < m_height; ++i) {
+      for (unsigned int j = 0; j < m_width; ++j) {
+        x = x_min + i * m_yResolution;
+        y = y_min + j * m_xResolution;
+        m_rMap[i][j] = (sqrt(x * x + y * y) - inputSettings.getTransducerRadius()) / APitch;
+        m_tMap[i][j] = atan2(y, x) * inputSettings.getTransducerRadius() / LPitch + (scanLineNumber-1) / 2.0;
+      }
     }
   }
+  else{
+    m_scanLineNumber = scanLineNumber;
+    m_BModeSampleNumber = BModeSampleNumber;
+    m_xResolution = inputSettings.getWidthResolution();
+    m_yResolution = inputSettings.getHeightResolution();
+    m_settings = inputSettings;
+
+    double APitch = inputSettings.getDepth() / (double)(BModeSampleNumber);
+    m_height = vpMath::round((APitch * BModeSampleNumber) / m_yResolution);
+    m_width = vpMath::round( inputSettings.getScanLinePitch() * (scanLineNumber - 1) / m_xResolution);
+
+    m_rMap.resize(m_height, m_width);
+    m_tMap.resize(m_height, m_width);
+
+    for (unsigned int i = 0; i < m_height; ++i) {
+      for (unsigned int j = 0; j < m_width; ++j) {
+        m_rMap[i][j] = j;
+        m_tMap[i][j] = i;
+      }
+    }
+  }
+
   m_initDone = true;
 }
 
@@ -97,41 +121,68 @@ void usPreScanToPostScan2DConverter::init(const usImagePostScan2D<unsigned char>
 */
 
 void usPreScanToPostScan2DConverter::init(const usTransducerSettings &inputSettings, const int BModeSampleNumber,
-                             const int scanLineNumber, const double xResolution, const double yResolution)
+                                          const int scanLineNumber, const double xResolution, const double yResolution)
 {
-  m_scanLineNumber = scanLineNumber;
-  m_BModeSampleNumber = BModeSampleNumber;
-  m_xResolution = xResolution;
-  m_yResolution = yResolution;
-  m_settings = inputSettings;
+  if(inputSettings.isTransducerConvex()) {
+    m_scanLineNumber = scanLineNumber;
+    m_BModeSampleNumber = BModeSampleNumber;
+    m_xResolution = xResolution;
+    m_yResolution = yResolution;
+    m_settings = inputSettings;
 
-  double APitch = inputSettings.getDepth() / (double)(BModeSampleNumber);
-  double LPitch = inputSettings.getFieldOfView() * inputSettings.getTransducerRadius() / (double)(scanLineNumber -1);
+    double APitch = inputSettings.getDepth() / (double)(BModeSampleNumber);
+    double LPitch = inputSettings.getFieldOfView() * inputSettings.getTransducerRadius() / (double)(scanLineNumber -1);
 
-  double r_min = inputSettings.getTransducerRadius();
-  double r_max = (inputSettings.getTransducerRadius() + APitch * BModeSampleNumber);
-  double t_min = - ( (double)(scanLineNumber-1) * LPitch) / (2.0 * inputSettings.getTransducerRadius());
-  double t_max = - t_min;
-  double x_min = r_min * cos(t_min);
-  double x_max = r_max;
-  double y_min = r_max * sin(t_min);
-  double y_max = r_max * sin(t_max);
+    double r_min = inputSettings.getTransducerRadius();
+    double r_max = (inputSettings.getTransducerRadius() + APitch * BModeSampleNumber);
+    double t_min = - ( (double)(scanLineNumber-1) * LPitch) / (2.0 * inputSettings.getTransducerRadius());
+    double t_max = - t_min;
+    double x_min = r_min * cos(t_min);
+    double x_max = r_max;
+    double y_min = r_max * sin(t_min);
+    double y_max = r_max * sin(t_max);
 
-  m_height = vpMath::round((x_max - x_min) / m_yResolution);
-  m_width = vpMath::round((y_max - y_min) / m_xResolution);
+    m_height = vpMath::round((x_max - x_min) / m_yResolution);
+    m_width = vpMath::round((y_max - y_min) / m_xResolution);
 
-  m_rMap.resize(m_height, m_width);
-  m_tMap.resize(m_height, m_width);
+    m_rMap.resize(m_height, m_width);
+    m_tMap.resize(m_height, m_width);
 
-  double x, y;
-  for (unsigned int i = 0; i < m_height; ++i) {
-    for (unsigned int j = 0; j < m_width; ++j) {
-      x = x_min + i * m_yResolution;
-      y = y_min + j * m_xResolution;
-      m_rMap[i][j] = (sqrt(x * x + y * y) - inputSettings.getTransducerRadius()) / APitch;
-      m_tMap[i][j] = atan2(y, x) * inputSettings.getTransducerRadius() / LPitch + (scanLineNumber-1) / 2.0;
+    double x, y;
+    for (unsigned int i = 0; i < m_height; ++i) {
+      for (unsigned int j = 0; j < m_width; ++j) {
+        x = x_min + i * m_yResolution;
+        y = y_min + j * m_xResolution;
+        m_rMap[i][j] = (sqrt(x * x + y * y) - inputSettings.getTransducerRadius()) / APitch;
+        m_tMap[i][j] = atan2(y, x) * inputSettings.getTransducerRadius() / LPitch + (scanLineNumber-1) / 2.0;
+      }
     }
   }
+  else{
+    m_scanLineNumber = scanLineNumber;
+    m_BModeSampleNumber = BModeSampleNumber;
+    m_xResolution = xResolution;
+    m_yResolution = yResolution;
+    m_settings = inputSettings;
+
+    double APitch = inputSettings.getDepth() / (double)(BModeSampleNumber);
+    m_height = vpMath::round(inputSettings.getDepth() / m_yResolution);
+    m_width = vpMath::round( inputSettings.getScanLinePitch() * (scanLineNumber - 1) / m_xResolution);
+
+    m_rMap.resize(m_height, m_width);
+    m_tMap.resize(m_height, m_width);
+
+    double ratio1 = m_xResolution / inputSettings.getScanLinePitch();
+    double ratio2 = m_yResolution/APitch ;
+
+    for (unsigned int i = 0; i < m_height; ++i) {
+      for (unsigned int j = 0; j < m_width; ++j) {
+        m_rMap[i][j] = i * ratio2;
+        m_tMap[i][j] = j * ratio1;
+      }
+    }
+  }
+
   m_initDone = true;
 }
 
@@ -142,17 +193,22 @@ void usPreScanToPostScan2DConverter::init(const usTransducerSettings &inputSetti
 * @param [in] xResolution Size of a pixel along x axis in post-scan image built (optionnal).
 * @param [in] yResolution Size of a pixel along y axis in post-scan image built (optionnal).
 */
-void usPreScanToPostScan2DConverter::convert(const usImagePreScan2D<unsigned char> &preScanImage, usImagePostScan2D<unsigned char> &postScanImage,int xResolution, int yResolution)
+void usPreScanToPostScan2DConverter::convert(const usImagePreScan2D<unsigned char> &preScanImage, usImagePostScan2D<unsigned char> &postScanImage,double xResolution, double yResolution)
 {
   // if user specified the resolution wanted
-  if(xResolution != 0 && yResolution != 0) {
+  if(xResolution != 0. && yResolution != 0.) {
     init(preScanImage, preScanImage.getBModeSampleNumber(), preScanImage.getScanLineNumber(), xResolution, yResolution);
   }
 
   //check if init is done
   if (!m_initDone) {
-    double resolution = preScanImage.getAxialResolution();
-    init(preScanImage, preScanImage.getBModeSampleNumber(), preScanImage.getScanLineNumber(), resolution, resolution);
+    if(preScanImage.isTransducerConvex()) {
+      double resolution = preScanImage.getAxialResolution();
+      init(preScanImage, preScanImage.getBModeSampleNumber(), preScanImage.getScanLineNumber(), resolution, resolution);
+    }
+    else {
+      init(preScanImage, preScanImage.getBModeSampleNumber(), preScanImage.getScanLineNumber(), preScanImage.getScanLinePitch(), preScanImage.getAxialResolution());
+    }
   }
 
   postScanImage.resize(m_height, m_width);
@@ -162,7 +218,6 @@ void usPreScanToPostScan2DConverter::convert(const usImagePreScan2D<unsigned cha
       double v = m_tMap[i][j];
       postScanImage(i, j, (unsigned char)interpolateLinear(preScanImage, u, v));
     }
-
   //saving settings in postScanImage
   postScanImage.setHeightResolution(m_yResolution);
   postScanImage.setWidthResolution(m_xResolution);
