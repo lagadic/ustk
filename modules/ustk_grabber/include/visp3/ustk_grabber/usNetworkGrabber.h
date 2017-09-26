@@ -215,6 +215,8 @@ public:
 signals:
   void serverUpdateEnded(bool success);
   void endBlockingLoop();
+  void runAcquisitionSignal(bool run);
+  void sendAcquisitionParametersSignal();
 
 
 public slots:
@@ -229,6 +231,8 @@ public slots:
 
 protected slots:
   void serverUpdated(bool sucess);
+  void sendRunSignal(bool run);
+  void sendAcquisitionParametersSlot();
 
 protected:
 
@@ -252,6 +256,9 @@ protected:
   usInitHeaderConfirmation m_confirmHeader;
   usImageHeader m_imageHeader;
 
+  // grabber state
+  bool m_isInit;
+  bool m_isRunning;
 };
 
 #endif // QT4 || QT5

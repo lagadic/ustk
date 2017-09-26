@@ -52,7 +52,16 @@
  * @ingroup module_ustk_core
  *
  * This class allows to convert 3D RF ultrasound images to post-scan.
+ * Here is an example to show how to use it :
  *
+ * \code
+ * usImageRF3D<short int> rfImage; // to fill (image + settings)
+ * usImagePostScan3D<unsigned char> postscanImage; // output
+ *
+ * usRFToPostScan3DConverter converter;
+ * converter.convert(rfImage,postscanImage);
+ *
+ * \endcode
  */
 class VISP_EXPORT usRFToPostScan3DConverter
 {

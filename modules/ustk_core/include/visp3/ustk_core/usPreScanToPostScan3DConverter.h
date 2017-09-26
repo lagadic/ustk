@@ -56,6 +56,19 @@
  * This class accepts only images acquired by a convex transducer and a tilting motor for now.
  *
  * @warning Converting with this class uses a lot of RAM when computing the LUTs in init().
+ *
+ *  Here is an example of how to use this converter :
+ *
+ * \code
+ *  usImagePreScan3D<unsigned char> prescanImage;
+ *  // then you have to fill prescanImage, and set transducer / motor settings.
+ *
+ *  usImagePostScan3D<unsigned char> postscanImage;
+ *  //scan-converster
+ *  usPreScanToPostScan3DConverter converter;
+ *  converter.init(prescanImage);
+ *  converter.convert(postscanImage, prescanImage);
+ *  \endcode
  */
 class VISP_EXPORT usPreScanToPostScan3DConverter
 {
@@ -90,6 +103,11 @@ public:
   usPreScanToPostScan3DConverter(const usImagePreScan3D<unsigned char> &preScanImage, int down);
   virtual ~usPreScanToPostScan3DConverter();
 
+  void convert(usImagePostScan3D<unsigned char> &postScanImage, const usImagePreScan3D<unsigned char> &preScanImage, int downSamplingFactor = 1);
+
+  void convertPreScanCoordToPostScanCoord(double i, double j, double k, double *x=NULL, double *y=NULL, double *z=NULL, bool sweepInZdirection=true);
+  void convertPostScanCoordToPreScanCoord(double x, double y, double z, double *i=NULL, double *j=NULL, double *k=NULL, bool sweepInZdirection=true);
+
   void init(const usImagePreScan3D<unsigned char> &preScanImage, int down = 1);
 
   double getResolution() const;
@@ -100,11 +118,6 @@ public:
   double getResolution() {return m_resolution;}
 
   void SweepInZdirection(bool flag) {m_SweepInZdirection = flag;}
-
-  void convert(usImagePostScan3D<unsigned char> &postScanImage, const usImagePreScan3D<unsigned char> &preScanImage);
-
-  void convertPreScanCoordToPostScanCoord(double i, double j, double k, double *x=NULL, double *y=NULL, double *z=NULL, bool sweepInZdirection=true);
-  void convertPostScanCoordToPreScanCoord(double x, double y, double z, double *i=NULL, double *j=NULL, double *k=NULL, bool sweepInZdirection=true);
 };
 
 #endif // US_SCAN_CONVERTER_3D_H

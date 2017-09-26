@@ -68,7 +68,7 @@ usRFToPostScan2DConverter::~usRFToPostScan2DConverter() {
 void usRFToPostScan2DConverter::convert(const usImageRF2D<short int> &rfImage, usImagePostScan2D<unsigned char> &postScanImage) {
   usImagePreScan2D<unsigned char> preScanImage;
   m_RFConverter.convert(rfImage,preScanImage);
-  m_scanConverter.run(preScanImage,postScanImage);
+  m_scanConverter.convert(preScanImage,postScanImage);
 }
 
 /**

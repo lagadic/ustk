@@ -65,7 +65,12 @@ usNetworkGrabber::usNetworkGrabber(QObject *parent) :
   m_confirmHeader = usInitHeaderConfirmation();
   m_imageHeader = usImageHeader();
 
+  m_isInit = false;
+  m_isRunning = false;
+
   QObject::connect(this, SIGNAL(serverUpdateEnded(bool)), this, SLOT(serverUpdated(bool)));
+  QObject::connect(this, SIGNAL(runAcquisitionSignal(bool)), this, SLOT(sendRunSignal(bool)));
+  QObject::connect(this, SIGNAL(sendAcquisitionParametersSignal()), this, SLOT(sendAcquisitionParametersSlot()));
 }
 
 /**
@@ -175,6 +180,9 @@ void usNetworkGrabber::handleError(QAbstractSocket::SocketError err)
 */
 bool usNetworkGrabber::initAcquisition(const usNetworkGrabber::usInitHeaderSent &header) {
 
+  if(m_isRunning)
+    stopAcquisition();
+
   QByteArray block;
   QDataStream out(&block, QIODevice::WriteOnly);
 #if (defined(USTK_HAVE_QT5) || defined(USTK_HAVE_VTK_QT5))
@@ -200,6 +208,8 @@ bool usNetworkGrabber::initAcquisition(const usNetworkGrabber::usInitHeaderSent 
   QObject::connect(this, SIGNAL(endBlockingLoop()), loop, SLOT(quit()));
   loop->exec();
 
+  m_isInit = m_updateParametersSucess;
+
   if(m_verbose)
     std::cout << "server confirmation : " << (int)m_updateParametersSucess << std::endl;
 
@@ -217,6 +227,20 @@ void usNetworkGrabber::disconnect() {
 * Method to send to the server the new acquisition parameters.
 */
 bool usNetworkGrabber::sendAcquisitionParameters() {
+
+  if(m_isRunning)
+    stopAcquisition();
+
+  emit sendAcquisitionParametersSignal();
+
+  return m_updateParametersSucess;
+}
+
+/**
+  * Slot to send to the server the new acquisition parameters.
+  */
+void usNetworkGrabber::sendAcquisitionParametersSlot() {
+
   QByteArray block;
   QDataStream stream(&block, QIODevice::WriteOnly);
 #if (defined(USTK_HAVE_QT5) || defined(USTK_HAVE_VTK_QT5))
@@ -271,8 +295,6 @@ bool usNetworkGrabber::sendAcquisitionParameters() {
 
   if(m_verbose)
     std::cout << "Update server confirmation : " << (int)m_updateParametersSucess << std::endl;
-
-  return m_updateParametersSucess;
 }
 
 /**
@@ -553,23 +575,8 @@ void usNetworkGrabber::setTransmitFrequency(int transmitFrequency) {
 * Sends the command to run the acquisition on the ulstrasound station.
 */
 void usNetworkGrabber::runAcquisition() {
-
-  usRunControlHeaderSent header;
-  header.run = true;
-
-  QByteArray block;
-  QDataStream out(&block, QIODevice::WriteOnly);
-#if (defined(USTK_HAVE_QT5) || defined(USTK_HAVE_VTK_QT5))
-  out.setVersion(QDataStream::Qt_5_0);
-#elif defined(USTK_HAVE_VTK_QT4)
-  out.setVersion(QDataStream::Qt_4_8);
-#else
-  throw(vpException(vpException::fatalError,"your Qt version is not managed in ustk"));
-#endif
-  // Writing on the stream. Warning : order matters ! (must be the same as on server side when reading)
-  out << header.headerId;
-  out << header.run;
-  m_tcpSocket->write(block);
+  emit runAcquisitionSignal(true);
+  vpTime::wait(10); // workaround to allow calling run / stop methods one just after another
 }
 
 /**
@@ -578,8 +585,17 @@ void usNetworkGrabber::runAcquisition() {
 * The acquisition parameters will be kept.
 */
 void usNetworkGrabber::stopAcquisition() {
+  emit runAcquisitionSignal(false);
+  vpTime::wait(10); // workaround to allow calling run / stop methods one just after another
+}
+
+/**
+  * Slot called to write on the socket the command run / stop.
+  * @param run Boolean to run the acquisition (true), or stop it (false).
+  */
+void usNetworkGrabber::sendRunSignal(bool run) {
   usRunControlHeaderSent header;
-  header.run = false;
+  header.run = run;
 
   QByteArray block;
   QDataStream out(&block, QIODevice::WriteOnly);
@@ -595,6 +611,7 @@ void usNetworkGrabber::stopAcquisition() {
   out << header.headerId;
   out << header.run;
   m_tcpSocket->write(block);
+  m_isRunning = run;
 }
 
 /**

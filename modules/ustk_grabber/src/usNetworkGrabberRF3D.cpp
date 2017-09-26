@@ -165,6 +165,7 @@ void usNetworkGrabberRF3D::dataArrived()
     m_grabbedImage.setTransducerRadius(m_imageHeader.transducerRadius);
     m_grabbedImage.setScanLinePitch(m_imageHeader.scanLinePitch);
     m_grabbedImage.setDepth(m_imageHeader.imageDepth / 1000.0);
+    m_grabbedImage.setTransducerConvexity(m_imageHeader.transducerRadius != 0.);
     m_grabbedImage.setAxialResolution((m_imageHeader.imageDepth / 1000.0) / m_imageHeader.frameHeight);
 
     //update motor settings

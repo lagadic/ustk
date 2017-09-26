@@ -88,7 +88,7 @@ int main(int argc, char** argv)
       double endRFConvertTime = vpTime::measureTimeMs();
       std::cout << "RF conversion time (sec) = " << (endRFConvertTime - startTime) / 1000.0 << std::endl;
 
-      scanConverter.run(preScanImage,postscanImage);
+      scanConverter.convert(preScanImage,postscanImage);
 
       double endScanConvertTime = vpTime::measureTimeMs();
       std::cout << "scan-conversion time (sec) = " << (endScanConvertTime - endRFConvertTime) / 1000.0 << std::endl;

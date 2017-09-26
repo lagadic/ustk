@@ -61,7 +61,17 @@
  * @ingroup module_ustk_core
  *
  * This class allows to convert 2D RF ultrasound images to pre-scan.
+ * Here is an example to show how to use it :
  *
+ * \code
+ * usImageRF2D<short int> rfImage; // to fill (image + settings)
+ *
+ * usImagePreScan2D<unsigned char> prescanImage; // output
+ *
+ * usRFToPreScan2DConverter converter;
+ * converter.convert(rfImage,prescanImage);
+ *
+ * \endcode
  */
 class VISP_EXPORT usRFToPreScan2DConverter
 {

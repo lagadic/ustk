@@ -45,7 +45,7 @@
 usVirtualNeedle::usVirtualNeedle(QWidget* parent, Qt::WindowFlags f) : usViewerWidget(parent,f)
 {
   // POLYDATA
-
+  m_meshPolyData = vtkPolyData::New();
   // Create a cylinder for the needle
   vtkSmartPointer<vtkCylinderSource> cylinderSource =
     vtkSmartPointer<vtkCylinderSource>::New();
