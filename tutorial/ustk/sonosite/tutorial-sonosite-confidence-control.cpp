@@ -110,7 +110,6 @@ vpThread::Return displayFunction(vpThread::Args args)
 
   double startTime = vpTime::measureTimeMs();
 
-  bool firstLoopCycle = true;
   do {
     s_mutex_capture.lock();
     capture_state_ = s_capture_state;
@@ -141,18 +140,13 @@ vpThread::Return displayFunction(vpThread::Args args)
       postScan_.setWidthResolution((2.0*(postScan_.getTransducerRadius() + postScan_.getDepth())
                                     * sin(postScan_.getFieldOfView() / 2.0)) / postScan_.getWidth());
 
-      // Convert post-scan to pre-scan image
-      if(firstLoopCycle) {
-        backConverter_.init(postScan_, 480,128);
-        converter_.init(postScan_,480,128);
-      }
 
-      backConverter_.run(postScan_,preScan_);
+      backConverter_.convert(postScan_,preScan_);
       //Compute confidence map on pre-scan image
       confidenceMapProcessor_.run(confidencePreScan_, preScan_);
 
       //converting computed confidence map in post-scan
-      converter_.run(confidencePreScan_, confidencePostScan_);
+      converter_.convert(confidencePreScan_, confidencePostScan_);
 
       unsigned int height(confidencePreScan_.getHeight()), width(confidencePreScan_.getWidth());
 
@@ -228,7 +222,6 @@ vpThread::Return displayFunction(vpThread::Args args)
       vpDisplay::flush(preScan_);
       vpDisplay::flush(confidencePostScan_);
       vpDisplay::flush(confidencePreScan_);
-      firstLoopCycle=false;
     }
     else {
       vpTime::wait(2); // Sleep 2ms

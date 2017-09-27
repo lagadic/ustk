@@ -153,12 +153,6 @@ vpThread::Return displayFunction(vpThread::Args args)
         postScan_.setWidthResolution((postScan_.getDepth()+postScan_.getTransducerRadius()*(1-cos(postScan_.getFieldOfView()/2.0)))/postScan_.getHeight());
       }
 
-      // init converters
-      if(firstLoopCycle) {
-        backConverter_.init(postScan_, 480,128);
-        converter_.init(postScan_,480,128);
-      }
-
       //target init (wait for ROI definition)
       if(rectangleRoiDefined && stateROI==ROI_waiting) {
         tracker.init(postScan_,rectangle);
@@ -169,11 +163,11 @@ vpThread::Return displayFunction(vpThread::Args args)
       }
 
       //confidence
-      backConverter_.run(postScan_,preScan_);
+      backConverter_.convert(postScan_,preScan_);
       //Compute confidence map on pre-scan image
       confidenceMapProcessor_.run(confidencePreScan_, preScan_);
       //converting computed confidence map in post-scan
-      converter_.run(confidencePreScan_, confidencePostScan_);
+      converter_.convert(confidencePreScan_, confidencePostScan_);
 
       //if ROI defined, we can send commands
       if(stateROI == ROI_started ) {
