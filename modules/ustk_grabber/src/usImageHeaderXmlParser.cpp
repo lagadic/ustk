@@ -223,7 +223,7 @@ quint64 usImageHeaderXmlParser::xmlReadUInt64Child(xmlDocPtr doc, xmlNodePtr nod
   quint64 val_int;
 
   val_char = (char *) xmlNodeListGetString(doc, node ->xmlChildrenNode, 1);
-  val_int = (quint64)strtouq ((char *)val_char, &control_convert, 10);
+  val_int = (quint64)strtoull((char *)val_char, &control_convert, 10);
 
   if (val_char == control_convert){
     xmlFree((xmlChar*) val_char);
