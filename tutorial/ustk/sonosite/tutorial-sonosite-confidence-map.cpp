@@ -115,7 +115,6 @@ vpThread::Return displayFunction(vpThread::Args args)
 
       // Convert post-scan to pre-scan image
       usPostScanToPreScan2DConverter backConverter_;
-      backConverter_.init(postScan_, 480, 128);
       backConverter_.convert(postScan_,preScan_);
 
       //Compute confidence map on pre-scan image

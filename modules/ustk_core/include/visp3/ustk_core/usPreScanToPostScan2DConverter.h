@@ -61,8 +61,7 @@
  *  usImagePostScan2D<unsigned char> postScan;
  *
  *  usPreScanToPostScan2DConverter scanConverter;
- *  scanConverter.init(preScan,preScan.getBModeSampleNumber(),preScan.getScanLineNumber(),0.0005,0.0005);
- *  scanConverter.convert(preScan,postScan); // now postScan is filled from preScan, with pixels of 0.5mm
+ *  scanConverter.convert(preScan,postScan,0.0005,0.0005); // now postScan is filled from preScan, with pixels of 0.5mm
  * \endcode
  *
  */
