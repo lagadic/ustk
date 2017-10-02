@@ -242,7 +242,9 @@ void usSequenceWriter< usImageRF2D < unsigned char > >::close()
     m_frame.getScanLinePitch(),
     m_frame.isTransducerConvex(),
     m_frame.getAxialResolution(),
-    us::RF_2D);
+    us::RF_2D,
+    m_frame.getSamplingFrequency(),
+    m_frame.getTransmitFrequency());
   xmlParser.setSequenceFrameRate(m_frameRate);
   xmlParser.setSequenceStartNumber(m_firstFrame);
   xmlParser.setSequenceStopNumber(m_frameCount-1);
@@ -263,7 +265,9 @@ void usSequenceWriter < usImagePreScan2D < unsigned char > >::close()
     m_frame.getScanLinePitch(),
     m_frame.isTransducerConvex(),
     m_frame.getAxialResolution(),
-    us::PRESCAN_2D);
+    us::PRESCAN_2D,
+    m_frame.getSamplingFrequency(),
+    m_frame.getTransmitFrequency());
   xmlParser.setImageType(us::PRESCAN_2D);
   xmlParser.setSequenceFrameRate(m_frameRate);
   xmlParser.setSequenceStartNumber(m_firstFrame);
@@ -286,7 +290,9 @@ void usSequenceWriter<usImagePostScan2D<unsigned char> >::close()
     m_frame.isTransducerConvex(),
     m_frame.getScanLineNumber(),
     m_frame.getWidthResolution(),
-    m_frame.getHeightResolution());
+    m_frame.getHeightResolution(),
+    m_frame.getSamplingFrequency(),
+    m_frame.getTransmitFrequency());
 
   xmlParser.setImageType(us::POSTSCAN_2D);
   xmlParser.setSequenceFrameRate(m_frameRate);

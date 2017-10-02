@@ -95,6 +95,8 @@ public:
     double framePitch;
     unsigned int scanLineNumber; // for post-scan
     unsigned int frameNumber; // for post-scan
+    int transmitFrequency;
+    int samplingFrequency;
   };
 #endif //DOXYGEN_SHOULD_SKIP_THIS
 

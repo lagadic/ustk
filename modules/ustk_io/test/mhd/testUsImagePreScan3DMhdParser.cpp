@@ -220,6 +220,8 @@ int main(int argc, const char** argv)
     prescan3DReference.setMotorRadius(0.025);
     prescan3DReference.setMotorType(usMotorSettings::TiltingMotor);
     prescan3DReference.setAxialResolution(0.0058);
+    prescan3DReference.setTransmitFrequency(300000);
+    prescan3DReference.setSamplingFrequency(2000000);
     //image initialisation
     prescan3DReference.initData(255);
 

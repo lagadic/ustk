@@ -254,6 +254,8 @@ void usSequenceReader<usImagePreScan2D<unsigned char> >::open(usImagePreScan2D<u
   m_frame.setScanLineNumber(m_xmlParser.getTransducerSettings().getScanLineNumber());
   m_frame.setTransducerConvexity(m_xmlParser.getTransducerSettings().isTransducerConvex());
   m_frame.setAxialResolution(m_xmlParser.getAxialResolution());
+  m_frame.setSamplingFrequency(m_xmlParser.getTransducerSettings().getSamplingFrequency());
+  m_frame.setTransmitFrequency(m_xmlParser.getTransducerSettings().getTransmitFrequency());
 
   //Reading image
   char buffer[FILENAME_MAX];
@@ -297,6 +299,8 @@ void usSequenceReader<usImagePostScan2D<unsigned char> >::open(usImagePostScan2D
   m_frame.setTransducerConvexity(m_xmlParser.getTransducerSettings().isTransducerConvex());
   m_frame.setWidthResolution(m_xmlParser.getWidthResolution());
   m_frame.setHeightResolution(m_xmlParser.getHeightResolution());
+  m_frame.setSamplingFrequency(m_xmlParser.getTransducerSettings().getSamplingFrequency());
+  m_frame.setTransmitFrequency(m_xmlParser.getTransducerSettings().getTransmitFrequency());
 
   //Reading image
   char buffer[FILENAME_MAX];
@@ -315,6 +319,8 @@ void usSequenceReader<usImagePostScan2D<unsigned char> >::open(usImagePostScan2D
   image.setTransducerConvexity(m_frame.isTransducerConvex());
   image.setWidthResolution(m_frame.getWidthResolution());
   image.setHeightResolution(m_frame.getHeightResolution());
+  image.setSamplingFrequency(m_frame.getSamplingFrequency());
+  image.setTransmitFrequency(m_frame.getTransmitFrequency());
   image.setDepth(m_frame.getDepth());
 
   m_frameCount = m_firstFrame + 1;
@@ -374,6 +380,8 @@ void usSequenceReader<usImagePreScan2D<unsigned char> >::acquire(usImagePreScan2
   image.setScanLineNumber(image.getWidth());
   image.setDepth(m_frame.getDepth());
   image.setAxialResolution(m_frame.getAxialResolution());
+  image.setSamplingFrequency(m_frame.getSamplingFrequency());
+  image.setTransmitFrequency(m_frame.getTransmitFrequency());
 
   m_frameCount+=loopIncrement;
 }

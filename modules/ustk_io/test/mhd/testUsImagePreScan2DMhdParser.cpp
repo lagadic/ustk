@@ -217,6 +217,8 @@ int main(int argc, const char** argv)
     prescan2DReference.setTransducerRadius(0.554);
     prescan2DReference.setTransducerConvexity(true);
     prescan2DReference.setAxialResolution(0.0058);
+    prescan2DReference.setTransmitFrequency(300000);
+    prescan2DReference.setSamplingFrequency(2000000);
 
     std::cout << "Written in " << filename << std::endl ;
     std::cout << prescan2DReference;

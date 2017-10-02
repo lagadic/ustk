@@ -202,6 +202,8 @@ int main(int argc, const char** argv)
     preScan2DReference.setScanLinePitch(0.0045);
     preScan2DReference.setTransducerRadius(0.05478);
     preScan2DReference.setTransducerConvexity(true);
+    preScan2DReference.setTransmitFrequency(300000);
+    preScan2DReference.setSamplingFrequency(2000000);
     preScan2DReference.setData(image);
 
     std::vector<usImagePreScan2D<unsigned char> > ImageBufferRef;
