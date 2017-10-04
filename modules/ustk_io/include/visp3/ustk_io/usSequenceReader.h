@@ -44,6 +44,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <unistd.h>
 
 #include <visp3/core/vpConfig.h>
 
@@ -109,6 +110,7 @@ public:
 
   //get images in grabber style
   void acquire(ImageType &image);
+  void acquire(ImageType &image, uint64_t &timestamp);
 
 
   /*!
@@ -158,6 +160,7 @@ public:
   usImageSettingsXmlParser getXmlParser();
 
 
+  void open(ImageType &image, uint64_t & timestamp);
   void open(ImageType &image);
 
   void setFirstFrameIndex(long firstIndex);
@@ -175,8 +178,8 @@ public:
 */
 template<class ImageType>
 usSequenceReader<ImageType>::usSequenceReader() : m_frame(), m_frameRate(0.0), m_firstFrame(0), m_firstFrameIsSet(false),
- m_lastFrame(0), m_lastFrameIsSet(false), m_frameCount(0), m_sequenceFileName(""),m_genericImageFileName(""), m_fileNameIsSet(false),
-is_open(false), m_enableLoopCycling(false), loopIncrement(1)
+  m_lastFrame(0), m_lastFrameIsSet(false), m_frameCount(0), m_sequenceFileName(""),m_genericImageFileName(""), m_fileNameIsSet(false),
+  is_open(false), m_enableLoopCycling(false), loopIncrement(1)
 {
 
 }
@@ -234,6 +237,18 @@ void usSequenceReader<ImageType>::open(ImageType &image)
   throw(vpException(vpException::notImplementedError));
 }
 
+/**
+* Sequence opening.
+* @param image First image of the sequence to read.
+*/
+template<class ImageType>
+void usSequenceReader<ImageType>::open(ImageType &image, uint64_t & timestamp)
+{
+  (void) image;
+  (void) timestamp;
+  throw(vpException(vpException::notImplementedError));
+}
+
 template<>
 void usSequenceReader<usImagePreScan2D<unsigned char> >::open(usImagePreScan2D<unsigned char> &image)
 {
@@ -260,11 +275,116 @@ void usSequenceReader<usImagePreScan2D<unsigned char> >::open(usImagePreScan2D<u
   //Reading image
   char buffer[FILENAME_MAX];
   sprintf(buffer, m_genericImageFileName.c_str(), m_firstFrame);
+  std::string imageFileName;
+  //check timestamp
+  std::vector<std::string> splitName = vpIoTools::splitChain(vpIoTools::splitChain(m_genericImageFileName, std::string("/")).back(), std::string("."));
+
   std::string parentName = vpIoTools::getParent(m_sequenceFileName);
   if(!parentName.empty()) {
     parentName = parentName + vpIoTools::path("/");
   }
-  std::string imageFileName =  parentName + buffer;
+  std::vector<std::string> splitNameDirs = vpIoTools::splitChain(m_genericImageFileName, std::string("/"));
+  if(splitNameDirs.size() > 1) { // images are in a subdirectory of the one conatining the xml file
+    for(unsigned int i=0 ; i< splitNameDirs.size()-1; i++ )
+      parentName += (splitNameDirs.at(i) + vpIoTools::path("/"));
+  }
+  if(splitName.size() == 2) { // no timestamp : image0002.png for example
+    imageFileName =  parentName + buffer;
+  }
+  else if (splitName.size() == 3) { // timestamp included : image0002.156464063.png for example
+    std::vector<std::string> dirFiles;
+
+    if(vpIoTools::checkDirectory(vpIoTools::getParent(m_sequenceFileName))) { //correct path
+      dirFiles = vpIoTools::getDirFiles(parentName);
+
+      std::sort(dirFiles.begin(), dirFiles.end());
+
+      if(dirFiles.size() != (unsigned int)(m_xmlParser.getSequenceStopNumber() - m_xmlParser.getSequenceStartNumber() + 1))
+        throw(vpException(vpException::fatalError, "For imgage sequnces with timeStamps, the directory must contain only the entire image sequence (no additionnal files allowed)"));
+
+      imageFileName = parentName + dirFiles.front();
+    }
+    else { // path not correct
+      throw(vpException(vpException::fatalError),"Sequence filename incorrect !");
+    }
+  }
+
+  vpImageIo::read(image,imageFileName);
+
+  m_frame.setDepth((image.getHeight()-1) * m_frame.getAxialResolution());
+
+  //workaround to prevent the resize by setImagePreScanSettings (having a scanline number at 0 if not precised in the xml)
+  int scanlineNumber = image.getWidth();
+  image.setImagePreScanSettings(m_frame);
+  image.setScanLineNumber(scanlineNumber);
+
+  m_frameCount = m_firstFrame + 1;
+  is_open = true;
+}
+
+template<>
+void usSequenceReader<usImagePreScan2D<unsigned char> >::open(usImagePreScan2D<unsigned char> &image, uint64_t & timestamp)
+{
+  if(!m_fileNameIsSet) {
+    throw(vpException(vpException::badValue, "Sequence settings file name not set"));
+  }
+
+  m_xmlParser.parse(m_sequenceFileName);
+
+  setFirstFrameIndex(m_xmlParser.getSequenceStartNumber());
+  setLastFrameIndex(m_xmlParser.getSequenceStopNumber());
+  m_frameRate = m_xmlParser.getSequenceFrameRate();
+  m_genericImageFileName = m_xmlParser.getImageFileName();
+
+  //saving the settings for all the pre-scan sequence
+  m_frame.setTransducerRadius(m_xmlParser.getTransducerSettings().getTransducerRadius());
+  m_frame.setScanLinePitch(m_xmlParser.getTransducerSettings().getScanLinePitch());
+  m_frame.setScanLineNumber(m_xmlParser.getTransducerSettings().getScanLineNumber());
+  m_frame.setTransducerConvexity(m_xmlParser.getTransducerSettings().isTransducerConvex());
+  m_frame.setAxialResolution(m_xmlParser.getAxialResolution());
+  m_frame.setSamplingFrequency(m_xmlParser.getTransducerSettings().getSamplingFrequency());
+  m_frame.setTransmitFrequency(m_xmlParser.getTransducerSettings().getTransmitFrequency());
+
+  //Reading image
+  char buffer[FILENAME_MAX];
+  sprintf(buffer, m_genericImageFileName.c_str(), m_firstFrame);
+  std::string imageFileName;
+  //check timestamp
+  std::vector<std::string> splitName = vpIoTools::splitChain(vpIoTools::splitChain(m_genericImageFileName, std::string("/")).back(), std::string("."));
+
+  std::string parentName = vpIoTools::getParent(m_sequenceFileName);
+  if(!parentName.empty()) {
+    parentName = parentName + vpIoTools::path("/");
+  }
+  std::vector<std::string> splitNameDirs = vpIoTools::splitChain(m_genericImageFileName, std::string("/"));
+  if(splitNameDirs.size() > 1) { // images are in a subdirectory of the one conatining the xml file
+    for(unsigned int i=0 ; i< splitNameDirs.size()-1; i++ )
+      parentName += (splitNameDirs.at(i) + vpIoTools::path("/"));
+  }
+  if(splitName.size() == 2) { // no timestamp : image0002.png for example
+    imageFileName =  parentName + buffer;
+    timestamp = 0;
+  }
+  else if (splitName.size() == 3) { // timestamp included : image0002.156464063.png for example
+    std::vector<std::string> dirFiles;
+
+    if(vpIoTools::checkDirectory(vpIoTools::getParent(m_sequenceFileName))) { //correct path
+      dirFiles = vpIoTools::getDirFiles(parentName);
+
+      std::sort(dirFiles.begin(), dirFiles.end());
+
+      std::istringstream(vpIoTools::splitChain(dirFiles.at(0), std::string(".")).at(1)) >> timestamp;
+
+      if(dirFiles.size() != (unsigned int)(m_xmlParser.getSequenceStopNumber() - m_xmlParser.getSequenceStartNumber() + 1))
+        throw(vpException(vpException::fatalError, "For imgage sequnces with timeStamps, the directory must contain only the entire image sequence (no additionnal files allowed)"));
+
+      imageFileName = parentName + dirFiles.front();
+    }
+    else { // path not correct
+      throw(vpException(vpException::fatalError),"Sequence filename incorrect !");
+    }
+  }
+
   vpImageIo::read(image,imageFileName);
 
   m_frame.setDepth((image.getHeight()-1) * m_frame.getAxialResolution());
@@ -305,11 +425,121 @@ void usSequenceReader<usImagePostScan2D<unsigned char> >::open(usImagePostScan2D
   //Reading image
   char buffer[FILENAME_MAX];
   sprintf(buffer, m_genericImageFileName.c_str(), m_firstFrame);
+  std::string imageFileName;
+  //check timestamp
+  std::vector<std::string> splitName = vpIoTools::splitChain(vpIoTools::splitChain(m_genericImageFileName, std::string("/")).back(), std::string("."));
+
   std::string parentName = vpIoTools::getParent(m_sequenceFileName);
   if(!parentName.empty()) {
     parentName = parentName + vpIoTools::path("/");
   }
-  std::string imageFileName =  parentName + buffer;
+  std::vector<std::string> splitNameDirs = vpIoTools::splitChain(m_genericImageFileName, std::string("/"));
+  if(splitNameDirs.size() > 1) { // images are in a subdirectory of the one conatining the xml file
+    for(unsigned int i=0 ; i< splitNameDirs.size()-1; i++ )
+      parentName += (splitNameDirs.at(i) + vpIoTools::path("/"));
+  }
+  if(splitName.size() == 2) { // no timestamp : image0002.png for example
+    imageFileName =  parentName + buffer;
+  }
+  else if (splitName.size() == 3) { // timestamp included : image0002.156464063.png for example
+    std::vector<std::string> dirFiles;
+
+    if(vpIoTools::checkDirectory(vpIoTools::getParent(m_sequenceFileName))) { //correct path
+      dirFiles = vpIoTools::getDirFiles(parentName);
+
+      std::sort(dirFiles.begin(), dirFiles.end());
+
+      if(dirFiles.size() != (unsigned int)(m_xmlParser.getSequenceStopNumber() - m_xmlParser.getSequenceStartNumber() + 1))
+        throw(vpException(vpException::fatalError, "For imgage sequnces with timeStamps, the directory must contain only the entire image sequence (no additionnal files allowed)"));
+
+      imageFileName = parentName + dirFiles.front();
+    }
+    else { // path not correct
+      throw(vpException(vpException::fatalError),"Sequence filename incorrect !");
+    }
+  }
+
+  vpImageIo::read(image,imageFileName);
+  m_frame.setDepth(image.getHeight()-1 * m_frame.getHeightResolution());
+
+  image.setTransducerRadius(m_frame.getTransducerRadius());
+  image.setScanLinePitch(m_frame.getScanLinePitch());
+  image.setScanLineNumber(m_frame.getScanLineNumber());
+  image.setTransducerConvexity(m_frame.isTransducerConvex());
+  image.setWidthResolution(m_frame.getWidthResolution());
+  image.setHeightResolution(m_frame.getHeightResolution());
+  image.setSamplingFrequency(m_frame.getSamplingFrequency());
+  image.setTransmitFrequency(m_frame.getTransmitFrequency());
+  image.setDepth(m_frame.getDepth());
+
+  m_frameCount = m_firstFrame + 1;
+  is_open = true;
+}
+
+template<>
+void usSequenceReader<usImagePostScan2D<unsigned char> >::open(usImagePostScan2D<unsigned char> &image, uint64_t & timestamp)
+{
+  if(!m_fileNameIsSet) {
+    throw(vpException(vpException::badValue, "Sequence settings file name not set"));
+  }
+
+  m_xmlParser.parse(m_sequenceFileName);
+
+  setFirstFrameIndex(m_xmlParser.getSequenceStartNumber());
+  setLastFrameIndex(m_xmlParser.getSequenceStopNumber());
+  m_frameRate = m_xmlParser.getSequenceFrameRate();
+  m_genericImageFileName = m_xmlParser.getImageFileName();
+
+  //saving the settings for all the post scan sequence
+  m_frame.setTransducerRadius(m_xmlParser.getTransducerSettings().getTransducerRadius());
+  m_frame.setScanLinePitch(m_xmlParser.getTransducerSettings().getScanLinePitch());
+  m_frame.setScanLineNumber(m_xmlParser.getTransducerSettings().getScanLineNumber());
+  m_frame.setTransducerConvexity(m_xmlParser.getTransducerSettings().isTransducerConvex());
+  m_frame.setWidthResolution(m_xmlParser.getWidthResolution());
+  m_frame.setHeightResolution(m_xmlParser.getHeightResolution());
+  m_frame.setSamplingFrequency(m_xmlParser.getTransducerSettings().getSamplingFrequency());
+  m_frame.setTransmitFrequency(m_xmlParser.getTransducerSettings().getTransmitFrequency());
+
+  //Reading image
+  char buffer[FILENAME_MAX];
+  sprintf(buffer, m_genericImageFileName.c_str(), m_firstFrame);
+  std::string imageFileName;
+  //check timestamp
+  std::vector<std::string> splitName = vpIoTools::splitChain(vpIoTools::splitChain(m_genericImageFileName, std::string("/")).back(), std::string("."));
+
+  std::string parentName = vpIoTools::getParent(m_sequenceFileName);
+  if(!parentName.empty()) {
+    parentName = parentName + vpIoTools::path("/");
+  }
+  std::vector<std::string> splitNameDirs = vpIoTools::splitChain(m_genericImageFileName, std::string("/"));
+  if(splitNameDirs.size() > 1) { // images are in a subdirectory of the one conatining the xml file
+    for(unsigned int i=0 ; i< splitNameDirs.size()-1; i++ )
+      parentName += (splitNameDirs.at(i) + vpIoTools::path("/"));
+  }
+  if(splitName.size() == 2) { // no timestamp : image0002.png for example
+    imageFileName =  parentName + buffer;
+    timestamp = 0;
+  }
+  else if (splitName.size() == 3) { // timestamp included : image0002.156464063.png for example
+    std::istringstream(splitName.at(1)) >> timestamp;
+    std::vector<std::string> dirFiles;
+
+    if(vpIoTools::checkDirectory(vpIoTools::getParent(m_sequenceFileName))) { //correct path
+      dirFiles = vpIoTools::getDirFiles(parentName);
+
+      std::sort(dirFiles.begin(), dirFiles.end());
+
+      std::istringstream(vpIoTools::splitChain(dirFiles.at(0), std::string(".")).at(1)) >> timestamp;
+
+      if(dirFiles.size() != (unsigned int)(m_xmlParser.getSequenceStopNumber() - m_xmlParser.getSequenceStartNumber() + 1))
+        throw(vpException(vpException::fatalError, "For imgage sequnces with timeStamps, the directory must contain only the entire image sequence (no additionnal files allowed)"));
+
+      imageFileName = parentName + dirFiles.front();
+    }
+    else { // path not correct
+      throw(vpException(vpException::fatalError),"Sequence filename incorrect !");
+    }
+  }
   vpImageIo::read(image,imageFileName);
   m_frame.setDepth(image.getHeight()-1 * m_frame.getHeightResolution());
 
@@ -338,14 +568,101 @@ void usSequenceReader<ImageType>::acquire(ImageType &image)
     this->open(image);
     return;
   }
+
   //Reading image
   char buffer[FILENAME_MAX];
-  sprintf(buffer, m_genericImageFileName.c_str(), m_frameCount);
+  sprintf(buffer, m_genericImageFileName.c_str(), m_firstFrame);
+  std::string imageFileName;
+  //check timestamp
+  std::vector<std::string> splitName = vpIoTools::splitChain(vpIoTools::splitChain(m_genericImageFileName, std::string("/")).back(), std::string("."));
+
   std::string parentName = vpIoTools::getParent(m_sequenceFileName);
   if(!parentName.empty()) {
     parentName = parentName + vpIoTools::path("/");
   }
-  std::string imageFileName =  parentName + buffer;
+  std::vector<std::string> splitNameDirs = vpIoTools::splitChain(m_genericImageFileName, std::string("/"));
+  if(splitNameDirs.size() > 1) { // images are in a subdirectory of the one conatining the xml file
+    for(unsigned int i=0 ; i< splitNameDirs.size()-1; i++ )
+      parentName += (splitNameDirs.at(i) + vpIoTools::path("/"));
+  }
+  if(splitName.size() == 2) { // no timestamp : image0002.png for example
+    imageFileName =  parentName + buffer;
+  }
+  else if (splitName.size() == 3) { // timestamp included : image0002.156464063.png for example
+    std::vector<std::string> dirFiles;
+
+    if(vpIoTools::checkDirectory(vpIoTools::getParent(m_sequenceFileName))) { //correct path
+      dirFiles = vpIoTools::getDirFiles(parentName);
+      std::sort(dirFiles.begin(), dirFiles.end());
+
+      if(dirFiles.size() != (unsigned int)(m_xmlParser.getSequenceStopNumber() - m_xmlParser.getSequenceStartNumber() + 1))
+        throw(vpException(vpException::fatalError, "For imgage sequnces with timeStamps, the directory must contain only the entire image sequence (no additionnal files allowed)"));
+
+      imageFileName = parentName + dirFiles.at(m_frameCount);
+    }
+    else { // path not correct
+      throw(vpException(vpException::fatalError),"Sequence filename incorrect !");
+    }
+  }
+  vpImageIo::read(image,imageFileName);
+  image.setTransducerSettings(m_frame);
+  image.setScanLineNumber(image.getWidth());
+  image.setDepth(m_frame.getDepth());
+
+  m_frameCount+=loopIncrement;
+}
+
+/**
+* Sequence image acquisition (grabber-style : an internal counter is incremented to open next image at the next call).
+* @param image Image of the sequence to read.
+*/
+template<class ImageType>
+void usSequenceReader<ImageType>::acquire(ImageType &image, uint64_t &timestamp)
+{
+  if (!is_open) {
+    this->open(image, timestamp);
+    return;
+  }
+//Reading image
+  char buffer[FILENAME_MAX];
+  sprintf(buffer, m_genericImageFileName.c_str(), m_firstFrame);
+  std::string imageFileName;
+  //check timestamp
+  std::vector<std::string> splitName = vpIoTools::splitChain(vpIoTools::splitChain(m_genericImageFileName, std::string("/")).back(), std::string("."));
+
+  std::string parentName = vpIoTools::getParent(m_sequenceFileName);
+  if(!parentName.empty()) {
+    parentName = parentName + vpIoTools::path("/");
+  }
+  std::vector<std::string> splitNameDirs = vpIoTools::splitChain(m_genericImageFileName, std::string("/"));
+  if(splitNameDirs.size() > 1) { // images are in a subdirectory of the one conatining the xml file
+    for(unsigned int i=0 ; i< splitNameDirs.size()-1; i++ )
+      parentName += (splitNameDirs.at(i) + vpIoTools::path("/"));
+  }
+  if(splitName.size() == 2) { // no timestamp : image0002.png for example
+    imageFileName =  parentName + buffer;
+    timestamp = 0;
+  }
+  else if (splitName.size() == 3) { // timestamp included : image0002.156464063.png for example
+
+    std::vector<std::string> dirFiles;
+
+    if(vpIoTools::checkDirectory(vpIoTools::getParent(m_sequenceFileName))) { //correct path
+      dirFiles = vpIoTools::getDirFiles(parentName);
+
+      std::sort(dirFiles.begin(), dirFiles.end());
+
+      std::istringstream(vpIoTools::splitChain(dirFiles.at(m_frameCount), std::string(".")).at(1)) >> timestamp;
+
+      if(dirFiles.size() != (unsigned int)(m_xmlParser.getSequenceStopNumber() - m_xmlParser.getSequenceStartNumber() + 1))
+        throw(vpException(vpException::fatalError, "For imgage sequnces with timeStamps, the directory must contain only the entire image sequence (no additionnal files allowed)"));
+
+      imageFileName = parentName + dirFiles.at(m_frameCount);
+    }
+    else { // path not correct
+      throw(vpException(vpException::fatalError),"Sequence filename incorrect !");
+    }
+  }
 
   vpImageIo::read(image,imageFileName);
   image.setTransducerSettings(m_frame);
@@ -366,14 +683,103 @@ void usSequenceReader<usImagePreScan2D<unsigned char> >::acquire(usImagePreScan2
     this->open(image);
     return;
   }
-  //Reading image
+//Reading image
   char buffer[FILENAME_MAX];
-  sprintf(buffer, m_genericImageFileName.c_str(), m_frameCount);
+  sprintf(buffer, m_genericImageFileName.c_str(), m_firstFrame);
+  std::string imageFileName;
+  //check timestamp
+  std::vector<std::string> splitName = vpIoTools::splitChain(vpIoTools::splitChain(m_genericImageFileName, std::string("/")).back(), std::string("."));
+
   std::string parentName = vpIoTools::getParent(m_sequenceFileName);
   if(!parentName.empty()) {
     parentName = parentName + vpIoTools::path("/");
   }
-  std::string imageFileName =  parentName + buffer;
+  std::vector<std::string> splitNameDirs = vpIoTools::splitChain(m_genericImageFileName, std::string("/"));
+  if(splitNameDirs.size() > 1) { // images are in a subdirectory of the one conatining the xml file
+    for(unsigned int i=0 ; i< splitNameDirs.size()-1; i++ )
+      parentName += (splitNameDirs.at(i) + vpIoTools::path("/"));
+  }
+  if(splitName.size() == 2) { // no timestamp : image0002.png for example
+    imageFileName =  parentName + buffer;
+  }
+  else if (splitName.size() == 3) { // timestamp included : image0002.156464063.png for example
+    std::vector<std::string> dirFiles;
+
+    if(vpIoTools::checkDirectory(vpIoTools::getParent(m_sequenceFileName))) { //correct path
+      dirFiles = vpIoTools::getDirFiles(parentName);
+
+      std::sort(dirFiles.begin(), dirFiles.end());
+
+      if(dirFiles.size() != (unsigned int)(m_xmlParser.getSequenceStopNumber() - m_xmlParser.getSequenceStartNumber() + 1))
+        throw(vpException(vpException::fatalError, "For imgage sequnces with timeStamps, the directory must contain only the entire image sequence (no additionnal files allowed)"));
+
+      imageFileName = parentName + dirFiles.at(m_frameCount);
+    }
+    else { // path not correct
+      throw(vpException(vpException::fatalError),"Sequence filename incorrect !");
+    }
+  }
+
+  vpImageIo::read(image,imageFileName);
+  image.setTransducerSettings(m_frame);
+  image.setScanLineNumber(image.getWidth());
+  image.setDepth(m_frame.getDepth());
+  image.setAxialResolution(m_frame.getAxialResolution());
+  image.setSamplingFrequency(m_frame.getSamplingFrequency());
+  image.setTransmitFrequency(m_frame.getTransmitFrequency());
+
+  m_frameCount+=loopIncrement;
+}
+
+/**
+* Sequence image acquisition (grabber-style : an internal counter is incremented to open next image at the next call).
+* @param image Image of the sequence to read.
+*/
+template<>
+void usSequenceReader<usImagePreScan2D<unsigned char> >::acquire(usImagePreScan2D<unsigned char>  &image, uint64_t &timestamp)
+{
+  if (!is_open) {
+    this->open(image);
+    return;
+  }
+//Reading image
+  char buffer[FILENAME_MAX];
+  sprintf(buffer, m_genericImageFileName.c_str(), m_firstFrame);
+  std::string imageFileName;
+  //check timestamp
+  std::vector<std::string> splitName = vpIoTools::splitChain(vpIoTools::splitChain(m_genericImageFileName, std::string("/")).back(), std::string("."));
+
+  std::string parentName = vpIoTools::getParent(m_sequenceFileName);
+  if(!parentName.empty()) {
+    parentName = parentName + vpIoTools::path("/");
+  }
+  std::vector<std::string> splitNameDirs = vpIoTools::splitChain(m_genericImageFileName, std::string("/"));
+  if(splitNameDirs.size() > 1) { // images are in a subdirectory of the one conatining the xml file
+    for(unsigned int i=0 ; i< splitNameDirs.size()-1; i++ )
+      parentName += (splitNameDirs.at(i) + vpIoTools::path("/"));
+  }
+  if(splitName.size() == 2) { // no timestamp : image0002.png for example
+    imageFileName =  parentName + buffer;
+    timestamp = 0;
+  }
+  else if (splitName.size() == 3) { // timestamp included : image0002.156464063.png for example
+    std::vector<std::string> dirFiles;
+
+    if(vpIoTools::checkDirectory(vpIoTools::getParent(m_sequenceFileName))) { //correct path
+      dirFiles = vpIoTools::getDirFiles(parentName);
+
+      std::sort(dirFiles.begin(), dirFiles.end());
+      std::istringstream(vpIoTools::splitChain(dirFiles.at(m_frameCount), std::string(".")).at(1)) >> timestamp;
+
+      if(dirFiles.size() != (unsigned int)(m_xmlParser.getSequenceStopNumber() - m_xmlParser.getSequenceStartNumber() + 1))
+        throw(vpException(vpException::fatalError, "For imgage sequnces with timeStamps, the directory must contain only the entire image sequence (no additionnal files allowed)"));
+
+      imageFileName = parentName + dirFiles.at(m_frameCount);
+    }
+    else { // path not correct
+      throw(vpException(vpException::fatalError),"Sequence filename incorrect !");
+    }
+  }
 
   vpImageIo::read(image,imageFileName);
   image.setTransducerSettings(m_frame);
