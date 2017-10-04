@@ -289,7 +289,7 @@ void usSequenceReader<usImagePreScan2D<unsigned char> >::open(usImagePreScan2D<u
       parentName += (splitNameDirs.at(i) + vpIoTools::path("/"));
   }
   if(splitName.size() == 2) { // no timestamp : image0002.png for example
-    imageFileName =  parentName + buffer;
+    imageFileName =  parentName + vpIoTools::splitChain(std::string(buffer),std::string("/")).back();
   }
   else if (splitName.size() == 3) { // timestamp included : image0002.156464063.png for example
     std::vector<std::string> dirFiles;
@@ -362,7 +362,7 @@ void usSequenceReader<usImagePreScan2D<unsigned char> >::open(usImagePreScan2D<u
       parentName += (splitNameDirs.at(i) + vpIoTools::path("/"));
   }
   if(splitName.size() == 2) { // no timestamp : image0002.png for example
-    imageFileName =  parentName + buffer;
+    imageFileName =  parentName + vpIoTools::splitChain(std::string(buffer),std::string("/")).back();
     timestamp = 0;
   }
   else if (splitName.size() == 3) { // timestamp included : image0002.156464063.png for example
@@ -439,7 +439,7 @@ void usSequenceReader<usImagePostScan2D<unsigned char> >::open(usImagePostScan2D
       parentName += (splitNameDirs.at(i) + vpIoTools::path("/"));
   }
   if(splitName.size() == 2) { // no timestamp : image0002.png for example
-    imageFileName =  parentName + buffer;
+    imageFileName =  parentName + vpIoTools::splitChain(std::string(buffer),std::string("/")).back();
   }
   else if (splitName.size() == 3) { // timestamp included : image0002.156464063.png for example
     std::vector<std::string> dirFiles;
@@ -517,7 +517,7 @@ void usSequenceReader<usImagePostScan2D<unsigned char> >::open(usImagePostScan2D
       parentName += (splitNameDirs.at(i) + vpIoTools::path("/"));
   }
   if(splitName.size() == 2) { // no timestamp : image0002.png for example
-    imageFileName =  parentName + buffer;
+    imageFileName =  parentName + vpIoTools::splitChain(std::string(buffer),std::string("/")).back();
     timestamp = 0;
   }
   else if (splitName.size() == 3) { // timestamp included : image0002.156464063.png for example
@@ -586,7 +586,7 @@ void usSequenceReader<ImageType>::acquire(ImageType &image)
       parentName += (splitNameDirs.at(i) + vpIoTools::path("/"));
   }
   if(splitName.size() == 2) { // no timestamp : image0002.png for example
-    imageFileName =  parentName + buffer;
+    imageFileName =  parentName + vpIoTools::splitChain(std::string(buffer),std::string("/")).back();
   }
   else if (splitName.size() == 3) { // timestamp included : image0002.156464063.png for example
     std::vector<std::string> dirFiles;
@@ -640,7 +640,7 @@ void usSequenceReader<ImageType>::acquire(ImageType &image, uint64_t &timestamp)
       parentName += (splitNameDirs.at(i) + vpIoTools::path("/"));
   }
   if(splitName.size() == 2) { // no timestamp : image0002.png for example
-    imageFileName =  parentName + buffer;
+    imageFileName =  parentName + vpIoTools::splitChain(std::string(buffer),std::string("/")).back();
     timestamp = 0;
   }
   else if (splitName.size() == 3) { // timestamp included : image0002.156464063.png for example
@@ -700,7 +700,7 @@ void usSequenceReader<usImagePreScan2D<unsigned char> >::acquire(usImagePreScan2
       parentName += (splitNameDirs.at(i) + vpIoTools::path("/"));
   }
   if(splitName.size() == 2) { // no timestamp : image0002.png for example
-    imageFileName =  parentName + buffer;
+    imageFileName =  parentName + vpIoTools::splitChain(std::string(buffer),std::string("/")).back();
   }
   else if (splitName.size() == 3) { // timestamp included : image0002.156464063.png for example
     std::vector<std::string> dirFiles;
@@ -759,7 +759,7 @@ void usSequenceReader<usImagePreScan2D<unsigned char> >::acquire(usImagePreScan2
       parentName += (splitNameDirs.at(i) + vpIoTools::path("/"));
   }
   if(splitName.size() == 2) { // no timestamp : image0002.png for example
-    imageFileName =  parentName + buffer;
+    imageFileName =  parentName + vpIoTools::splitChain(std::string(buffer),std::string("/")).back();
     timestamp = 0;
   }
   else if (splitName.size() == 3) { // timestamp included : image0002.156464063.png for example
