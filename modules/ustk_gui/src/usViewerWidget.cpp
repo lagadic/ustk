@@ -68,19 +68,6 @@ usViewerWidget::~usViewerWidget()
 */
 void usViewerWidget::paintEvent( QPaintEvent* event )
 {
-
   QVTKWidget::paintEvent( event );
-/*  QPainter painter ( this );
-  QPen pen(Qt::red, 10, Qt::SolidLine);
-  painter.setPen(pen);
-  painter.drawLine(10, 10, 20, 20);
-
-  QPolygon p = QPolygon();
-  QPoint points[3];
-  points[0] = QPoint(0, 0);
-  points[1] = QPoint(10, 0);
-  points[2] = QPoint(0, 10);
-  QVTKWidget::paintEngine()->drawPolygon(points,3,QPaintEngine::WindingMode);*/
-  //painter.drawPolygon( p );
 }
 #endif
