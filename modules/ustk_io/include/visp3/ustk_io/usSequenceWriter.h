@@ -244,7 +244,7 @@ void usSequenceWriter<ImageType>::close()
 }
 
 template<>
-void usSequenceWriter< usImageRF2D < unsigned char > >::close()
+inline void usSequenceWriter< usImageRF2D < unsigned char > >::close()
 {
   if(!is_open)
     return;
@@ -267,7 +267,7 @@ void usSequenceWriter< usImageRF2D < unsigned char > >::close()
 }
 
 template<>
-void usSequenceWriter < usImagePreScan2D < unsigned char > >::close()
+inline void usSequenceWriter < usImagePreScan2D < unsigned char > >::close()
 {
   if(!is_open)
     return;
@@ -291,7 +291,7 @@ void usSequenceWriter < usImagePreScan2D < unsigned char > >::close()
 }
 
 template<>
-void usSequenceWriter<usImagePostScan2D<unsigned char> >::close()
+inline void usSequenceWriter<usImagePostScan2D<unsigned char> >::close()
 {
   if(!is_open)
     return;

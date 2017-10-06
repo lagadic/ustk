@@ -250,7 +250,7 @@ void usSequenceReader<ImageType>::open(ImageType &image, uint64_t & timestamp)
 }
 
 template<>
-void usSequenceReader<usImagePreScan2D<unsigned char> >::open(usImagePreScan2D<unsigned char> &image)
+inline void usSequenceReader<usImagePreScan2D<unsigned char> >::open(usImagePreScan2D<unsigned char> &image)
 {
   if(!m_fileNameIsSet) {
     throw(vpException(vpException::badValue, "Sequence settings file name not set"));
@@ -323,7 +323,7 @@ void usSequenceReader<usImagePreScan2D<unsigned char> >::open(usImagePreScan2D<u
 }
 
 template<>
-void usSequenceReader<usImagePreScan2D<unsigned char> >::open(usImagePreScan2D<unsigned char> &image, uint64_t & timestamp)
+inline void usSequenceReader<usImagePreScan2D<unsigned char> >::open(usImagePreScan2D<unsigned char> &image, uint64_t & timestamp)
 {
   if(!m_fileNameIsSet) {
     throw(vpException(vpException::badValue, "Sequence settings file name not set"));
@@ -399,7 +399,7 @@ void usSequenceReader<usImagePreScan2D<unsigned char> >::open(usImagePreScan2D<u
 }
 
 template<>
-void usSequenceReader<usImagePostScan2D<unsigned char> >::open(usImagePostScan2D<unsigned char> &image)
+inline void usSequenceReader<usImagePostScan2D<unsigned char> >::open(usImagePostScan2D<unsigned char> &image)
 {
   if(!m_fileNameIsSet) {
     throw(vpException(vpException::badValue, "Sequence settings file name not set"));
@@ -477,7 +477,7 @@ void usSequenceReader<usImagePostScan2D<unsigned char> >::open(usImagePostScan2D
 }
 
 template<>
-void usSequenceReader<usImagePostScan2D<unsigned char> >::open(usImagePostScan2D<unsigned char> &image, uint64_t & timestamp)
+inline void usSequenceReader<usImagePostScan2D<unsigned char> >::open(usImagePostScan2D<unsigned char> &image, uint64_t & timestamp)
 {
   if(!m_fileNameIsSet) {
     throw(vpException(vpException::badValue, "Sequence settings file name not set"));
@@ -677,7 +677,7 @@ void usSequenceReader<ImageType>::acquire(ImageType &image, uint64_t &timestamp)
 * @param image Image of the sequence to read.
 */
 template<>
-void usSequenceReader<usImagePreScan2D<unsigned char> >::acquire(usImagePreScan2D<unsigned char>  &image)
+inline void usSequenceReader<usImagePreScan2D<unsigned char> >::acquire(usImagePreScan2D<unsigned char>  &image)
 {
   if (!is_open) {
     this->open(image);
@@ -736,7 +736,7 @@ void usSequenceReader<usImagePreScan2D<unsigned char> >::acquire(usImagePreScan2
 * @param image Image of the sequence to read.
 */
 template<>
-void usSequenceReader<usImagePreScan2D<unsigned char> >::acquire(usImagePreScan2D<unsigned char>  &image, uint64_t &timestamp)
+inline void usSequenceReader<usImagePreScan2D<unsigned char> >::acquire(usImagePreScan2D<unsigned char>  &image, uint64_t &timestamp)
 {
   if (!is_open) {
     this->open(image);
