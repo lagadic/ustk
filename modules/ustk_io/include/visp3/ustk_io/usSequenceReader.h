@@ -257,6 +257,8 @@ inline void usSequenceReader<usImagePreScan2D<unsigned char> >::open(usImagePreS
   }
 
   m_xmlParser.parse(m_sequenceFileName);
+  if(m_xmlParser.getImageType() != us::PRESCAN_2D)
+    throw(vpException(vpException::badValue), "trying to open a non-usImagePreScan2D image !");
 
   setFirstFrameIndex(m_xmlParser.getSequenceStartNumber());
   setLastFrameIndex(m_xmlParser.getSequenceStopNumber());
@@ -330,6 +332,8 @@ inline void usSequenceReader<usImagePreScan2D<unsigned char> >::open(usImagePreS
   }
 
   m_xmlParser.parse(m_sequenceFileName);
+  if(m_xmlParser.getImageType() != us::PRESCAN_2D)
+    throw(vpException(vpException::badValue), "trying to open a non-usImagePreScan2D image !");
 
   setFirstFrameIndex(m_xmlParser.getSequenceStartNumber());
   setLastFrameIndex(m_xmlParser.getSequenceStopNumber());
@@ -406,6 +410,8 @@ inline void usSequenceReader<usImagePostScan2D<unsigned char> >::open(usImagePos
   }
 
   m_xmlParser.parse(m_sequenceFileName);
+  if(m_xmlParser.getImageType() != us::POSTSCAN_2D)
+    throw(vpException(vpException::badValue), "trying to open a non-usImagePostScan2D image !");
 
   setFirstFrameIndex(m_xmlParser.getSequenceStartNumber());
   setLastFrameIndex(m_xmlParser.getSequenceStopNumber());
@@ -484,6 +490,8 @@ inline void usSequenceReader<usImagePostScan2D<unsigned char> >::open(usImagePos
   }
 
   m_xmlParser.parse(m_sequenceFileName);
+  if(m_xmlParser.getImageType() != us::POSTSCAN_2D)
+    throw(vpException(vpException::badValue), "trying to open a non-usImagePostScan2D image !");
 
   setFirstFrameIndex(m_xmlParser.getSequenceStartNumber());
   setLastFrameIndex(m_xmlParser.getSequenceStopNumber());
