@@ -747,7 +747,7 @@ template<>
 inline void usSequenceReader<usImagePreScan2D<unsigned char> >::acquire(usImagePreScan2D<unsigned char>  &image, uint64_t &timestamp)
 {
   if (!is_open) {
-    this->open(image);
+    this->open(image,timestamp);
     return;
   }
 //Reading image

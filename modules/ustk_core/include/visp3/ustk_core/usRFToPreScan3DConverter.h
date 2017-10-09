@@ -65,13 +65,39 @@
  * Here is an example to show how to use it :
  *
  * \code
- * usImageRF3D<short int> rfImage; // to fill (image + settings)
- *
- * usImagePreScan3D<unsigned char> prescanImage; // output
- *
- * usRFToPreScan3DConverter converter;
- * converter.convert(rfImage,prescanImage);
- *
+#include <visp3/ustk_core/usRFToPreScan3DConverter.h>
+
+int main()
+{
+  // example of 2D post-scan image settings
+  unsigned int width = 320;
+  unsigned int height = 240;
+  unsigned int frames = 10;
+  double transducerRadius = 0.045;
+  double scanLinePitch = 0.0012;
+  unsigned int scanLineNumber = 256;
+  bool isTransducerConvex = true;
+  double axialResolution = 0.002;
+  double framePitch = 0.002;
+  double motorRadius = 0.04;
+
+  usImage3D<short int> I(height, width,frames);
+  usImageRF3D<short int> rfImage; // to fill (image + settings)
+  rfImage.setTransducerRadius(transducerRadius);
+  rfImage.setScanLinePitch(scanLinePitch);
+  rfImage.setScanLineNumber(scanLineNumber);
+  rfImage.setTransducerConvexity(isTransducerConvex);
+  rfImage.setAxialResolution(axialResolution);
+  rfImage.setMotorRadius(motorRadius);
+  rfImage.setMotorType(usMotorSettings::TiltingMotor);
+  rfImage.setFramePitch(framePitch);
+  rfImage.setData(I);
+
+  usImagePreScan3D<unsigned char> prescanImage; // output
+  usRFToPreScan3DConverter converter;
+  converter.convert(rfImage,prescanImage);
+}
+
  * \endcode
  */
 class VISP_EXPORT usRFToPreScan3DConverter

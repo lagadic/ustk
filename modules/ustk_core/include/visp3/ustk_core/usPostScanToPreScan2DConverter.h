@@ -53,13 +53,34 @@
  * Here is an example of how to use the converter, to build a pre-scan image from a post-scan image.
  *
  * \code
- *  usImagePostScan2D<unsigned char> postScan; // your post-scan image
- *  // then you have can fill the postScan image and settings
- *
- *  usImagePreScan2D <unsigned char> preScan; // converter output
- *
- *  usPostScanToPreScan2DConverter backConverter;
- *  backConverter.convert(postScan,preScan); // preScan is now an image built from postScan image
+#include <visp3/ustk_core/usPostScanToPreScan2DConverter.h>
+
+int main()
+{
+  // example of 2D post-scan image settings
+  unsigned int width = 320;
+  unsigned int height = 240;
+  double transducerRadius = 0.045;
+  double scanLinePitch = 0.0012;
+  unsigned int scanLineNumber = 256;
+  bool isTransducerConvex = true;
+  double widthResolution = 0.002;
+  double heightResolution = 0.002;
+
+  vpImage<unsigned char> I(height, width); // to fill
+  usImagePostScan2D<unsigned char> postScan2d;
+  postScan2d.setTransducerRadius(transducerRadius);
+  postScan2d.setScanLinePitch(scanLinePitch);
+  postScan2d.setScanLineNumber(scanLineNumber);
+  postScan2d.setTransducerConvexity(isTransducerConvex);
+  postScan2d.setWidthResolution(widthResolution);
+  postScan2d.setHeightResolution(heightResolution);
+  postScan2d.setData(I);
+
+  usImagePreScan2D <unsigned char> preScan; // converter output
+  usPostScanToPreScan2DConverter backConverter;
+  backConverter.convert(postScan2d,preScan); // preScan is now an image built from postScan image
+}
  * \endcode
  */
 class VISP_EXPORT usPostScanToPreScan2DConverter

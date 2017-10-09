@@ -59,16 +59,36 @@
  * Here is an example to show how to use it :
  *
  * \code
- * usImageRF2D<short int> rfImage; // to fill (image + settings)
- *
- * usImagePostScan2D<unsigned char> postscanImage;
- * postscanImage.setHeightResolution(0.0005);
- * postscanImage.setWidthResolution(0.0005); // pixels of 0.5*0.5 mm in output
- *
- * usRFToPostScan2DConverter converter;
- * converter.setConversionParameters(postscanImage,rfImage.getRFSampleNumber()/10,rfImage.getScanLineNumber(),10);
- * converter.convert(rfImage,postscanImage);
- *
+#include <visp3/ustk_core/usRFToPostScan2DConverter.h>
+
+int main()
+{
+  // example of 2D post-scan image settings
+  unsigned int width = 320;
+  unsigned int height = 240;
+  double transducerRadius = 0.045;
+  double scanLinePitch = 0.0012;
+  unsigned int scanLineNumber = 256;
+  bool isTransducerConvex = true;
+  double axialResolution = 0.002;
+
+  vpImage<short int> I(height, width);
+  usImageRF2D<short int> rfImage; // to fill (image + settings)
+  rfImage.setTransducerRadius(transducerRadius);
+  rfImage.setScanLinePitch(scanLinePitch);
+  rfImage.setScanLineNumber(scanLineNumber);
+  rfImage.setTransducerConvexity(isTransducerConvex);
+  rfImage.setAxialResolution(axialResolution);
+  rfImage.setData(I);
+
+
+  usImagePostScan2D<unsigned char> postscanImage;
+  postscanImage.setHeightResolution(0.0005);
+  postscanImage.setWidthResolution(0.0005); // pixels of 0.5*0.5 mm in output
+  usRFToPostScan2DConverter converter;
+  converter.setConversionParameters(postscanImage,rfImage.getRFSampleNumber()/10,rfImage.getScanLineNumber(),10);
+  converter.convert(rfImage,postscanImage);
+}
  * \endcode
  *
  */
