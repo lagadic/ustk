@@ -124,9 +124,9 @@ public:
   void setFrameNumber(unsigned int frameNumber) {m_motorSettings.setFrameNumber(frameNumber);}
   void setImageFileName(const std::string &imageFileName);
   void setImageSettings(double transducerRadius, double scanLinePitch, bool isTransducerConvex, double axialResolution, us::ImageType image_type,
-                        int samlingFrequency, int transmitFrequency);
+                        int samplingFrequency, int transmitFrequency);
   void setImageSettings(double transducerRadius, double scanLinePitch, bool isTransducerConvex, unsigned int scanLineNumber,
-                        double widthResolution, double heightResolution, int samlingFrequency, int transmitFrequency);
+                        double widthResolution, double heightResolution, int samplingFrequency, int transmitFrequency);
   void setImageType(us::ImageType image_type) { m_image_type = image_type;}
   void setMotorSettings(const usMotorSettings &motorSettings);
   void setScanLineNumber(unsigned int scanLineNumber) {m_transducerSettings.setScanLineNumber(scanLineNumber);}

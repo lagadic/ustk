@@ -329,16 +329,18 @@ usImageSettingsXmlParser::writeMainClass(xmlNodePtr node)
 * @param isTransducerConvex : the transducer type (true if convex transducer, false if linear).
 * @param axialResolution : the image axial resolution.
 * @param image_type : image type (rf or pre-scan).
+* @param samplingFrequency : frequency used to sample the ultrasound wave during the acquisition.
+* @param transmitFrequency : frequency of the ultrasound wave used to create the image.
 */
 void usImageSettingsXmlParser::setImageSettings(double transducerRadius, double scanLinePitch, bool isTransducerConvex,
-                                                double axialResolution, us::ImageType image_type, int samlingFrequency, int transmitFrequency)
+                                                double axialResolution, us::ImageType image_type, int samplingFrequency, int transmitFrequency)
 {
   if (image_type == us::PRESCAN_2D || image_type == us::RF_2D)
   {
     m_transducerSettings.setTransducerConvexity(isTransducerConvex);
     m_transducerSettings.setTransducerRadius(transducerRadius);
     m_transducerSettings.setScanLinePitch(scanLinePitch);
-    m_transducerSettings.setSamplingFrequency(samlingFrequency);
+    m_transducerSettings.setSamplingFrequency(samplingFrequency);
     m_transducerSettings.setTransmitFrequency(transmitFrequency);
     m_axialResolution = axialResolution;
     m_image_type = image_type;
@@ -356,15 +358,17 @@ void usImageSettingsXmlParser::setImageSettings(double transducerRadius, double 
 * @param scanLineNumber : the number of scan lines of the probe used.
 * @param widthResolution : the image width resolution.
 * @param heightResolution : the image height resolution.
+* @param samplingFrequency : frequency used to sample the ultrasound wave during the acquisition.
+* @param transmitFrequency : frequency of the ultrasound wave used to create the image.
 */
 void usImageSettingsXmlParser::setImageSettings(double transducerRadius, double scanLinePitch, bool isTransducerConvex, unsigned int scanLineNumber,
-                                                double widthResolution, double heightResolution, int samlingFrequency, int transmitFrequency)
+                                                double widthResolution, double heightResolution, int samplingFrequency, int transmitFrequency)
 {
   m_transducerSettings.setTransducerConvexity(isTransducerConvex);
   m_transducerSettings.setTransducerRadius(transducerRadius);
   m_transducerSettings.setScanLinePitch(scanLinePitch);
   m_transducerSettings.setScanLineNumber(scanLineNumber);
-  m_transducerSettings.setSamplingFrequency(samlingFrequency);
+  m_transducerSettings.setSamplingFrequency(samplingFrequency);
   m_transducerSettings.setTransmitFrequency(transmitFrequency);
   m_heightResolution = widthResolution;
   m_widthResolution = heightResolution;

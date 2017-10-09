@@ -48,7 +48,7 @@
  * @ingroup module_ustk_core
  *
  * This class allows to convert 2D post-scan ultrasound images to pre-scan.
- * The converter should be initialized through init() and then applied through convert().
+ * The convertion is applied in the convert() method.
  *
  * Here is an example of how to use the converter, to build a pre-scan image from a post-scan image.
  *

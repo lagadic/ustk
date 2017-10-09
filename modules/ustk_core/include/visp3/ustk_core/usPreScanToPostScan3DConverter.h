@@ -52,7 +52,7 @@
  * @ingroup module_ustk_core
  *
  * This class allows to convert 3D pre-scan ultrasound images to post-scan.
- * The converter should be initialized through init() and then applied through convert().
+ * The converter can be initialized through init() and then applied through convert().
  * This class accepts only images acquired by a convex transducer and a tilting motor for now.
  *
  * @warning Converting with this class uses a lot of RAM when computing the LUTs in init().

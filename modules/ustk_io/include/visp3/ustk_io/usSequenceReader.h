@@ -240,6 +240,7 @@ void usSequenceReader<ImageType>::open(ImageType &image)
 /**
 * Sequence opening.
 * @param image First image of the sequence to read.
+* @param [out] timestamp Real timestamp of the image acquisition (optionnal).
 */
 template<class ImageType>
 void usSequenceReader<ImageType>::open(ImageType &image, uint64_t & timestamp)
@@ -567,7 +568,7 @@ inline void usSequenceReader<usImagePostScan2D<unsigned char> >::open(usImagePos
 
 /**
 * Sequence image acquisition (grabber-style : an internal counter is incremented to open next image at the next call).
-* @param image Image of the sequence to read.
+* @param [out] image Image of the sequence to read.
 */
 template<class ImageType>
 void usSequenceReader<ImageType>::acquire(ImageType &image)
@@ -622,7 +623,8 @@ void usSequenceReader<ImageType>::acquire(ImageType &image)
 
 /**
 * Sequence image acquisition (grabber-style : an internal counter is incremented to open next image at the next call).
-* @param image Image of the sequence to read.
+* @param [out] image Image of the sequence to read.
+* @param [out] timestamp Real timestamp of the image acquisition (optionnal).
 */
 template<class ImageType>
 void usSequenceReader<ImageType>::acquire(ImageType &image, uint64_t &timestamp)
@@ -682,7 +684,7 @@ void usSequenceReader<ImageType>::acquire(ImageType &image, uint64_t &timestamp)
 
 /**
 * Sequence image acquisition (grabber-style : an internal counter is incremented to open next image at the next call).
-* @param image Image of the sequence to read.
+* @param [out] image Image of the sequence to read.
 */
 template<>
 inline void usSequenceReader<usImagePreScan2D<unsigned char> >::acquire(usImagePreScan2D<unsigned char>  &image)
@@ -741,7 +743,8 @@ inline void usSequenceReader<usImagePreScan2D<unsigned char> >::acquire(usImageP
 
 /**
 * Sequence image acquisition (grabber-style : an internal counter is incremented to open next image at the next call).
-* @param image Image of the sequence to read.
+* @param [out] image Image of the sequence to read.
+* @param [out] timestamp Real timestamp of the image acquisition (optionnal).
 */
 template<>
 inline void usSequenceReader<usImagePreScan2D<unsigned char> >::acquire(usImagePreScan2D<unsigned char>  &image, uint64_t &timestamp)
@@ -802,8 +805,8 @@ inline void usSequenceReader<usImagePreScan2D<unsigned char> >::acquire(usImageP
 
 /**
 * Sequence image acquisition with selection of the index (bypassing the internal counter).
-* @param image Image of the sequence to read.
-* @param index Index of the image you want to acquire.
+* @param [out] image Image of the sequence to read.
+* @param [in] index Index of the image you want to acquire.
 */
 template<class ImageType>
 void usSequenceReader<ImageType>::getFrame(ImageType &image, int index)

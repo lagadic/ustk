@@ -60,13 +60,15 @@ usTransducerSettings::usTransducerSettings()
 * @param scanLineNumber Number of scan lines acquired by the probe transducer.
 * @param transducerConvex Boolean to specify if the probe transducer is convex (true) or linear (false).
 * @param depth Distance in meters between first and last pixel of a scan line.
+* @param samplingFrequency : frequency used to sample the ultrasound wave during the acquisition.
+* @param transmitFrequency : frequency of the ultrasound wave used to create the image.
 */
 usTransducerSettings::usTransducerSettings(double transducerRadius, double scanLinePitch,
                                            unsigned int scanLineNumber, bool transducerConvex,
-                                           double depth, int transmitfrequency, int samplingFrequency)
+                                           double depth, int transmitFrequency, int samplingFrequency)
   : m_transducerRadius(transducerRadius), m_scanLinePitch(scanLinePitch),
     m_scanLineNumber(scanLineNumber), m_isTransducerConvex(transducerConvex),
-    m_depth(depth), m_scanLineNumberIsSet(true), m_transmitFrequency(transmitfrequency), m_samplingFrequency(samplingFrequency)
+    m_depth(depth), m_scanLineNumberIsSet(true), m_transmitFrequency(transmitFrequency), m_samplingFrequency(samplingFrequency)
 {}
 
 /**
