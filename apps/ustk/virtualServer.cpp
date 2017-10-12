@@ -1,8 +1,8 @@
 #include "usVirtualServer.h"
+#include <QApplication>
 
 int main(int argc, char** argv)
 {
-std::cout <<"test" << std::endl;
   std::string filename;
 
   for (int i=0; i<argc; i++) {
@@ -18,20 +18,20 @@ std::cout <<"test" << std::endl;
   if (filename.empty()) {
     std::string env_ipath = us::getDataSetPath();
     if (! env_ipath.empty())
-      filename = env_ipath + "/pre-scan/3D_xml/sequencepreScan3D.xml";
+      filename = env_ipath + "/pre-scan/timestampSequence/sequenceTimestamps.xml";
     else {
       std::cout << "You should set USTK_DATASET_PATH environment var to access to ustk dataset" << std::endl;
       return 0;
     }
   }
 
-  usVirtualServer server;
+  QApplication app(argc, argv);
 
-  server.setSequenceFileName(filename);
+  usVirtualServer server(filename);
 
 
 
 
   //wait until user closes the window
-  return 0;
+  return app.exec();
 }

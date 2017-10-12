@@ -380,6 +380,12 @@ inline void usSequenceReader<usImagePreScan2D<unsigned char> >::open(usImagePreS
 
       std::istringstream(vpIoTools::splitChain(dirFiles.at(0), std::string(".")).at(1)) >> timestamp;
 
+      if(dirFiles.size() == (unsigned int)(m_xmlParser.getSequenceStopNumber() - m_xmlParser.getSequenceStartNumber() + 2)) {// case of xml file in same directory
+        for(unsigned int i=0; i< dirFiles.size(); i++) {
+          if(vpIoTools::splitChain(dirFiles.at(i), std::string(".")).at(1) == std::string("xml"))
+            dirFiles.erase(dirFiles.begin() + i);
+        }
+      }
       if(dirFiles.size() != (unsigned int)(m_xmlParser.getSequenceStopNumber() - m_xmlParser.getSequenceStartNumber() + 1))
         throw(vpException(vpException::fatalError, "For imgage sequnces with timeStamps, the directory must contain only the entire image sequence (no additionnal files allowed)"));
 

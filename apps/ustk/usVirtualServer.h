@@ -12,6 +12,7 @@
 #include <cmath>
 #include <ctime>
 #include <iostream>
+#include <unistd.h>
 
 //USTK inclues
 #include <visp3/ustk_io/usSequenceReader.h>
@@ -99,12 +100,10 @@ public:
     int motorType;
   };
 
-  explicit usVirtualServer(QObject *parent = 0);
+  explicit usVirtualServer(std::string sequenceFileName, QObject *parent = 0);
   ~usVirtualServer();
 
   QTcpSocket* getSocket();
-
-  void setSequenceFileName(const std::string sequenceFileName);
 
   usImageHeader imageHeader;
 
@@ -122,28 +121,28 @@ private slots:
   // Called automatically when client has closed the connection
   void connectionAboutToClose();
 
-  //to get the name of the xml settings file corresponding to a probe Id
-  QString getProbeSettingsFromId(int probeId);
-
   // Called automatically when data sent by a client is fully available to the server
   void readIncomingData();
 
   void sendNewImage();
 
 private:
+
+  void initServer(usInitHeaderIncomming header);
+
+  void invertRowsColsOnPreScan();
+
+  void setSequenceFileName(const std::string sequenceFileName);
+
+  bool updateServer(usUpdateHeaderIncomming header);
+
+  void writeInitAcquisitionParameters(QDataStream & out, int imagingMode);
+
   // Variable(socket) to store listening tcpserver
-  QTcpServer tcpServer;
+  QTcpServer m_tcpServer;
 
   // Variable(socket) to store newly established connection with the client
   QTcpSocket * connectionSoc;
-
-  void initPorta(usInitHeaderIncomming header);
-  bool updatePorta(usUpdateHeaderIncomming header);
-  void writeInitAcquisitionParameters(QDataStream & out,int imagingMode, int probeId);
-  void writeUpdateAcquisitionParameters(QDataStream & stream, usUpdateHeaderIncomming header, int probeId);
-
-  //imagingMode m_currentImagingMode;
-
   usInitHeaderConfirmation confirmHeader;
 
   bool initWithoutUpdate;
@@ -157,7 +156,7 @@ private:
 
   us::ImageType m_imageType;
 
-  uint64_t m_previousImageTimestamp;
+  int64_t m_previousImageTimestamp;
 };
 
 #endif // US_VIRTUAL_SERVER_H

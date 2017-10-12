@@ -1,14 +1,18 @@
 #include "usVirtualServer.h"
 
-usVirtualServer::usVirtualServer(QObject *parent) : QObject(parent)
+usVirtualServer::usVirtualServer(std::string sequenceFileName, QObject *parent) : QObject(parent), m_tcpServer()
 {
+  imageHeader.frameCount = 0;
+  //read sequence parameters
+  setSequenceFileName(sequenceFileName); //opens first image of the sequence
+
   //init TCP server
   // set : acceptTheConnection() will be called whenever there is a new connection
-  connect(&tcpServer, SIGNAL(newConnection()), this, SLOT(acceptTheConnection()));
+  connect(&m_tcpServer, SIGNAL(newConnection()), this, SLOT(acceptTheConnection()));
 
   //Start listening on port 8080
   QString portNum = QString::number(8080);
-  bool status = tcpServer.listen(QHostAddress::Any, portNum.toUShort() );
+  bool status = m_tcpServer.listen(QHostAddress::Any, portNum.toUShort() );
 
   // Check, if the server did start correctly or not
   if( status == true )
@@ -17,7 +21,7 @@ usVirtualServer::usVirtualServer(QObject *parent) : QObject(parent)
   }
   else
   {
-    std::cout << "TCP server start failure" << tcpServer.errorString().toStdString() << std::endl;
+    std::cout << "TCP server start failure" << m_tcpServer.errorString().toStdString() << std::endl;
   }
 }
 
@@ -29,16 +33,11 @@ usVirtualServer::~usVirtualServer()
 void usVirtualServer::acceptTheConnection()
 {
 
-  // Accept and establish the connection. Note that, the data-transfer happens with `connectionSoc` and not with `tcpServer`
-  // `tcpServer` only waits and listens to new connections
-  connectionSoc = tcpServer.nextPendingConnection();
+  connectionSoc = m_tcpServer.nextPendingConnection();
 
-  // Set : readIncomingData() will be called whenever the data (coming from client) is available
   connect(connectionSoc, SIGNAL(readyRead()), this, SLOT(readIncomingData()) );
 
-  // Set : connectionAboutToClose() will be called whenever the connection is close by the client
   connect(connectionSoc, SIGNAL(disconnected()), this, SLOT(connectionAboutToClose()));
-
 }
 
 // Will be called whenever the data (coming from client) is available
@@ -46,7 +45,6 @@ void usVirtualServer::readIncomingData()
 {
   //headers possible to be received
   usVirtualServer::usInitHeaderIncomming headerInit;
-  usVirtualServer::usUpdateHeaderIncomming headerUpdate;
 
   //reading part
 
@@ -66,8 +64,9 @@ void usVirtualServer::readIncomingData()
     in >> headerInit.slotId;
     in >> headerInit.imagingMode;
 
-    // TODO !
-    //initPorta(headerInit);
+    //values by default for virtual server
+    confirmHeader.initOk = 1;
+    confirmHeader.probeId = 0;
 
     //send back default params
     QByteArray block;
@@ -77,55 +76,12 @@ void usVirtualServer::readIncomingData()
     out << confirmHeader.initOk;
     out << confirmHeader.probeId;
 
-    writeInitAcquisitionParameters(out,headerInit.imagingMode,headerInit.probeId);
+    writeInitAcquisitionParameters(out,headerInit.imagingMode);
 
     connectionSoc->write(block);
   }
   else if(id == 2) { //update header
-    initWithoutUpdate = false;
-
-    in >> headerUpdate.transmitFrequency;
-    in >> headerUpdate.samplingFrequency;
-    in >> headerUpdate.imagingMode;
-    in >> headerUpdate.postScanMode;
-    in >> headerUpdate.postScanHeight;
-    in >> headerUpdate.postScanWidth;
-    in >> headerUpdate.imageDepth;
-    in >> headerUpdate.sector;
-    in >> headerUpdate.activateMotor;
-    in >> headerUpdate.motorPosition;
-    in >> headerUpdate.framesPerVolume;
-    in >> headerUpdate.stepsPerFrame;
-
-    std::cout << "received header UPDATE = " << id << std::endl;
-    std::cout << "transmitFrequency = " << headerUpdate.transmitFrequency << std::endl;
-    std::cout << "samplingFrequency = " << headerUpdate.samplingFrequency << std::endl;
-    std::cout << "imagingMode = " << headerUpdate.imagingMode << std::endl;
-    std::cout << "postScanMode = " << headerUpdate.postScanMode << std::endl;
-    std::cout << "postScanHeigh = " << headerUpdate.postScanHeight << std::endl;
-    std::cout << "postScanWidtht = " << headerUpdate.postScanWidth << std::endl;
-    std::cout << "imageDepth = " << headerUpdate.imageDepth << std::endl;
-    std::cout << "sector = " << headerUpdate.sector << std::endl;
-    std::cout << "activateMotor = " << headerUpdate.activateMotor << std::endl;
-    std::cout << "motorPosition = " << headerUpdate.motorPosition << std::endl;
-    std::cout << "framesPerVolume = " << headerUpdate.framesPerVolume << std::endl;
-    std::cout << "degreesPerFrame = " << headerUpdate.stepsPerFrame << std::endl;
-
-
-
-    // TODO !
-    /*if(updatePorta(headerUpdate)) { //sucess
-      //send back default params
-      QByteArray block;
-      QDataStream out(&block,QIODevice::WriteOnly);
-      out.setVersion(QDataStream::Qt_5_0);
-      out << confirmHeader.headerId;
-      out << confirmHeader.initOk;
-      out << confirmHeader.probeId;
-
-      writeUpdateAcquisitionParameters(out,headerUpdate,confirmHeader.probeId);
-      std::cout << "bytes written to confirm update" << connectionSoc->write(block) << std::endl;
-    }*/
+    throw(vpException(vpException::fatalError, "no update available for virtual server !"));
   }
   else if(id == 3) { // run - stop command
     std::cout << "received header RUN/STOP = " << id << std::endl;
@@ -133,20 +89,21 @@ void usVirtualServer::readIncomingData()
     in >> run;
 
     //TODO !
-    /*if(run) {
-      probeInfo nfo;
+    if(run) {
+      sendNewImage();
+      /*probeInfo nfo;
       m_porta->getProbeInfo(nfo);
       if(initWithoutUpdate && nfo.motorized) {
         m_porta->setParam(prmMotorStatus, 0); // disables the motor
         m_porta->setMotorActive(false);
       }
-      m_porta->runImage();
+      m_porta->runImage();*/
     }
     else {
-      m_porta->stopImage();
+      /*m_porta->stopImage();
       m_porta->setParam(prmMotorStatus, 0); // disables the motor
-      m_porta->setMotorActive(false);
-    }*/
+      m_porta->setMotorActive(false);*/
+    }
   }
   else {
     std::cout << "ERROR : unknown data received !" << std::endl;
@@ -161,6 +118,11 @@ void usVirtualServer::connectionAboutToClose()
 
   // Close the connection (Say bye)
   connectionSoc->close();
+
+  //delete sequcence reader and reset frame count (to prepare them for a potential new connection)
+  m_sequenceReaderPostScan = usSequenceReader<usImagePostScan2D <unsigned char> > ();
+  m_sequenceReaderPreScan = usSequenceReader<usImagePreScan2D <unsigned char> > ();
+  imageHeader.frameCount = 0;
 }
 
 //TODO !
@@ -333,110 +295,6 @@ bool portaCallback(void* param, unsigned char* addr, int blockIndex, int)
   std::cout << "steps = " << portaInstance->getParam(prmMotorSteps) << std::endl;
   return true;
 }*/
-/*
-//porta init
-void usVirtualServer::initPorta(usVirtualServer::usInitHeaderIncomming header)
-{
-  //prepare return value
-  confirmHeader.initOk = 0;
-
-  //check probe
-  char name[1024];
-  int code;
-  probeInfo nfo;
-
-  if (m_porta->isConnected())
-  {
-    code = m_porta->getProbeID(header.slotId);
-    std::cout << "probe Id " << code << std::endl;
-    confirmHeader.probeId = code;
-    // select the code read
-    if (m_porta->selectProbe(code) && m_porta->getProbeInfo(nfo))
-    {
-      // Select slot passed by the header
-      if (m_porta->activateProbeConnector(header.slotId)) {
-
-        if (m_porta->getProbeName(name, 1024, code))
-        {
-          std::cout << "detected probe : " << name << std::endl;
-        }
-
-        QString settingsPath("D:/Common/soft/Ultrasonix/SDK/SDK-5.6.0/porta/dat/presets/imaging/");
-        settingsPath += getProbeSettingsFromId(code);
-        m_porta->loadPreset(settingsPath.toStdString().c_str());
-
-        if(!m_porta->initImagingMode((imagingMode)header.imagingMode)) {
-          std::cout << "error initializing imaging mode" << std::endl;
-        }
-        else {
-          if(code == header.probeId) {
-            m_porta->setRawDataCallback(portaCallback,(void*)this);
-            //case of 3D, we disable motor by default and set it to middle frame
-            if(nfo.motorized) {
-              m_porta->goToPosition(0); // 0 = begin position
-              m_porta->setParam(prmMotorStatus, 0);
-              m_porta->setMotorActive(false);
-              m_porta->setParam(prmMotorStatus,0);
-              imageHeader.motorRadius = nfo.motorRadius / 1000000.0; // from microns to meters
-              std::cout << "motor radius : " << imageHeader.motorRadius << std::endl;
-              if(header.probeId == 15) //4DC7
-                imageHeader.motorType = 1; // see usMotorType
-              else
-                imageHeader.motorType = 0;
-            }
-            m_currentImagingMode = (imagingMode)header.imagingMode;
-            confirmHeader.initOk = 1;
-          }
-        }
-      }
-    }
-  }
-
-  //must set it to 128 for 4DC7 and C5-2 probes
-  m_porta->setParam(prmBLineDensity, 128);
-
-  imageHeader.frameCount = 0;
-  imageHeader.transducerRadius = nfo.radius / 1000000.0; //from microns to  meters
-  imageHeader.scanLinePitch = (nfo.pitch /1000000.0) / imageHeader.transducerRadius; // in meters
-
-  int sector;
-  m_porta->getParam(prmBSector, sector);
-  imageHeader.scanLineNumber = m_porta->getParam(prmBLineDensity) * sector / 100;
-  imageHeader.degPerFrame = m_porta->getParam(prmMotorSteps) * (double)(nfo.motorFov/1000.0) / (double)nfo.motorSteps;
-  imageHeader.motorRadius = nfo.motorRadius / 1000000.0; // from microns to meters
-  if(code == 15)
-    imageHeader.motorType = 1;
-  else
-    imageHeader.motorType = 0;
-
-  int fpv;
-  m_porta->getParam(prmMotorFrames, fpv);
-  imageHeader.framesPerVolume = fpv;
-
-  imageHeader.transmitFrequency = m_porta->getParam(prmBTxFreq);
-  imageHeader.samplingFrequency = m_porta->getParam(prmBSamplingFreq);
-
-  imageHeader.imageDepth = m_porta->getParam(prmBImageDepth);
-
-  URect rect;
-  m_porta->getParam(prmBImageRect,rect);
-
-  if(header.imagingMode == 12) { //RF
-    imageHeader.imageType = 2;
-    imageHeader.frameWidth = m_porta->getParam(prmRfNumLines) ;
-    imageHeader.frameHeight = m_porta->getParam(prmRfNumSamples);
-    m_porta->setParam(prmRfMode,1);
-  }
-  else {
-    imageHeader.imageType = 0;
-    imageHeader.frameWidth = rect.right + 1 ;
-    imageHeader.frameHeight = rect.bottom;
-  }
-  imageHeader.ss = m_porta->getParam(prmBSampleSize) == 0 ? 8 : 16;
-
-  motorOffsetSkipped = false;
-  std::cout << "end init porta" << std::endl;
-}*/
 
 /*
 bool usVirtualServer::updatePorta(usUpdateHeaderIncomming header) {
@@ -555,80 +413,66 @@ QTcpSocket* usVirtualServer::getSocket() {
   return connectionSoc;
 }
 
-QString usVirtualServer::getProbeSettingsFromId(int probeId) {
-  QString settingName;
-  if(probeId == 10) {
-    settingName = QString("FAST-General (C5-2 60mm).xml");
-  }
-  else if(probeId == 12) {
-    settingName = QString("GEN-General (BPL9-5 55mm).xml");
-  }
-  else if(probeId == 13) {
-    settingName = QString("GEN-General (BPC8-4 10mm).xml");
-  }
-  else if(probeId == 14) {
-    settingName = QString("GEN-General (PAXY).xml");
-  }
-  else if(probeId == 15) {
-    settingName = QString("GEN-General (4DC7-3 40mm).xml");
-  }
-  return settingName;
-}
 
+void usVirtualServer::writeInitAcquisitionParameters(QDataStream & stream, int imagingMode) {
 
-void usVirtualServer::writeInitAcquisitionParameters(QDataStream & stream, int imagingMode, int probeId) {
-  int transmitFrequency;
-  int samplingFrequency;
+  int transmitFrequency = 0;
+  int samplingFrequency = 0;
   bool postScanMode = false;
   int postScanHeight = 0;
   int postScanWidth = 0;
-  int imageDepth;
-  int sector;
+  int imageDepth = 0;
+  int sector = 100;
   bool activateMotor = false;
   int motorPosition = 0;
   int framesPerVolume = 1;
   int stepsPerFrame = 0;
-  int transmitFrequencyMin;
-  int samplingFrequencyMin;
+  int transmitFrequencyMin = 0;
+  int samplingFrequencyMin = 0;
   int imagingModeMin = 0;
-  int imageDepthMin;
-  int sectorMin;
+  int imageDepthMin = 0;
+  int sectorMin = 100;
   int motorPositionMin = 0;
   int framesPerVolumeMin = 1;
   int stepsPerFrameMin = 0;
-  int transmitFrequencyMax;
-  int samplingFrequencyMax;
+  int transmitFrequencyMax = 0;
+  int samplingFrequencyMax = 0;
   int imagingModeMax = 27;
-  int imageDepthMax;
-  int sectorMax;
+  int imageDepthMax = 0;
+  int sectorMax = 100;
   int motorPositionMax = 0;
   int framesPerVolumeMax = 0;
   int stepsPerFrameMax = 0;
 
-  //case of 4DC7 probe
-  if(probeId == 15) {
-    motorPositionMax = 75;
-    framesPerVolumeMax = 31;
 
-    /*m_porta->getParam(prmMotorSteps,stepsPerFrame);
-    m_porta->getParam(prmMotorFrames,framesPerVolume);*/
+  if(m_imageType == us::PRESCAN_2D) {
+    transmitFrequency = m_preScanImage.getTransmitFrequency();
+    transmitFrequencyMin = m_preScanImage.getTransmitFrequency();
+    transmitFrequencyMax = m_preScanImage.getTransmitFrequency();
+
+    samplingFrequency = m_preScanImage.getSamplingFrequency();
+    samplingFrequencyMin = m_preScanImage.getSamplingFrequency();
+    samplingFrequencyMax = m_preScanImage.getSamplingFrequency();
+
+    imageDepth = m_preScanImage.getDepth();
+    imageDepthMin = m_preScanImage.getDepth();
+    imageDepthMax = m_preScanImage.getDepth();
   }
+  else if (m_imageType == us::POSTSCAN_2D) {
+    transmitFrequency = m_postScanImage.getTransmitFrequency();
+    transmitFrequencyMin = m_postScanImage.getTransmitFrequency();
+    transmitFrequencyMax = m_postScanImage.getTransmitFrequency();
 
-  /*m_porta->getParam(prmBTxFreq,transmitFrequency);
-  m_porta->getParam(prmBSamplingFreq,samplingFrequency);
-  m_porta->getParam(prmBImageDepth,imageDepth);
-  m_porta->getParam(prmBSector,sector);*/
+    samplingFrequency = m_postScanImage.getSamplingFrequency();
+    samplingFrequencyMin = m_postScanImage.getSamplingFrequency();
+    samplingFrequencyMax = m_postScanImage.getSamplingFrequency();
 
-  int motorStatus;
-  //m_porta->getParam(prmMotorStatus,motorStatus);
-  if(motorStatus == 1) {
-    activateMotor = true;
+    imageDepth = m_postScanImage.getDepth();
+    imageDepthMin = m_postScanImage.getDepth();
+    imageDepthMax = m_postScanImage.getDepth();
+
+    postScanMode = true;
   }
-
-  /*m_porta->getParamMinMax(prmBTxFreq,transmitFrequencyMin,transmitFrequencyMax);
-  m_porta->getParamMinMax(prmBSamplingFreq,samplingFrequencyMin,samplingFrequencyMax);
-  m_porta->getParamMinMax(prmBImageDepth,imageDepthMin,imageDepthMax);
-  m_porta->getParamMinMax(prmBSector,sectorMin,sectorMax);*/
 
   stream << transmitFrequency;
   stream << samplingFrequency;
@@ -660,103 +504,29 @@ void usVirtualServer::writeInitAcquisitionParameters(QDataStream & stream, int i
   stream << stepsPerFrameMax;
 }
 
-void usVirtualServer::writeUpdateAcquisitionParameters(QDataStream & stream, usUpdateHeaderIncomming header, int probeId) {
-
-  int framesPerVolume = 1;
-  int stepsPerFrame = 0;
-
-  int transmitFrequencyMin;
-  int samplingFrequencyMin;
-  int imagingModeMin = 0;
-  int imageDepthMin;
-  int sectorMin;
-  int motorPositionMin = 0;
-  int framesPerVolumeMin = 1;
-  int stepsPerFrameMin = 0;
-
-  int transmitFrequencyMax;
-  int samplingFrequencyMax;
-  int imagingModeMax = 27;
-  int imageDepthMax;
-  int sectorMax;
-  int motorPositionMax = 0;
-  int framesPerVolumeMax = 1;
-  int stepsPerFrameMax = 0;
-
-  if(probeId == 15) { // for 4DC7
-    stepsPerFrame= 8;
-    motorPositionMax = 75;
-    framesPerVolumeMax = 31;
-
-    /*m_porta->getParam(prmMotorSteps,stepsPerFrame);
-    m_porta->getParam(prmMotorFrames,framesPerVolume);*/
-  }
-
-  /*m_porta->getParam(prmBTxFreq,header.transmitFrequency);
-  m_porta->getParam(prmBSamplingFreq,header.samplingFrequency);
-  m_porta->getDisplayDimensions(0, header.postScanWidth, header.postScanHeight);
-  m_porta->getParam(prmBImageDepth,header.imageDepth);
-  m_porta->getParam(prmBSector,header.sector);*/
-
-  int motorStatus;
-  //m_porta->getParam(prmMotorStatus,motorStatus);
-  header.activateMotor = (motorStatus == 1);
-  std::cout << "writeUpdateAcquisitionParameters(), motor status = " << motorStatus << std::endl;
-
-  /*m_porta->getParamMinMax(prmBTxFreq,transmitFrequencyMin,transmitFrequencyMax);
-  m_porta->getParamMinMax(prmBSamplingFreq,samplingFrequencyMin,samplingFrequencyMax);
-  m_porta->getParamMinMax(prmBImageDepth,imageDepthMin,imageDepthMax);
-  m_porta->getParamMinMax(prmBSector,sectorMin,sectorMax);*/
-
-  stream << header.transmitFrequency;
-  stream << header.samplingFrequency;
-  stream << header.imagingMode;
-  stream << header.postScanMode;
-  stream << header.postScanHeight;
-  stream << header.postScanWidth;
-  stream << header.imageDepth;
-  stream << header.sector;
-  stream << header.activateMotor;
-  stream << header.motorPosition;
-  stream << framesPerVolume;
-  stream << stepsPerFrame;
-  stream << transmitFrequencyMin;
-  stream << samplingFrequencyMin;
-  stream << imagingModeMin;
-  stream << imageDepthMin;
-  stream << sectorMin;
-  stream << motorPositionMin;
-  stream << framesPerVolumeMin;
-  stream << stepsPerFrameMin;
-  stream << transmitFrequencyMax;
-  stream << samplingFrequencyMax;
-  stream << imagingModeMax;
-  stream << imageDepthMax;
-  stream << sectorMax;
-  stream << motorPositionMax;
-  stream << framesPerVolumeMax;
-  stream << stepsPerFrameMax;
-}
-
 void usVirtualServer::setSequenceFileName(const std::string sequenceFileName) {
   m_sequenceReaderPostScan.setSequenceFileName(sequenceFileName);
   m_sequenceReaderPreScan.setSequenceFileName(sequenceFileName);
 
-  uint64_t timestamp;
   //try to open post-scan sequence
   try {
-    m_sequenceReaderPostScan.open(m_postScanImage,timestamp);
-    if(timestamp == 0) { // timestamps are requested for virtual server
+    uint64_t localTimestamp;
+    m_sequenceReaderPostScan.open(m_postScanImage,localTimestamp);
+    imageHeader.timeStamp = localTimestamp;
+    if(imageHeader.timeStamp == 0) { // timestamps are requested for virtual server
       throw(vpException(vpException::fatalError), "usVirtualServer error : no timestamp associated in sequence !");
     }
     m_imageType = us::POSTSCAN_2D;
   } catch(...) {
     //if we have an exception, it's not a post-scan image. So we try a pre-scan
     try {
-      m_sequenceReaderPreScan.open(m_preScanImage,timestamp);
-      if(timestamp == 0) { // timestamps are requested for virtual server
+      uint64_t localTimestamp;
+      m_sequenceReaderPreScan.open(m_preScanImage,localTimestamp);
+      imageHeader.timeStamp = localTimestamp;
+      if(imageHeader.timeStamp == 0) { // timestamps are requested for virtual server
         throw(vpException(vpException::fatalError), "usVirtualServer error : no timestamp associated in sequence !");
       }
+      invertRowsColsOnPreScan(); //to fit with ultrasonix grabbers (pre-scan image is inverted in porta SDK)
       m_imageType = us::PRESCAN_2D;
     }
     catch(...) {
@@ -765,66 +535,85 @@ void usVirtualServer::setSequenceFileName(const std::string sequenceFileName) {
   }
 }
 
-
-
-
 void usVirtualServer::sendNewImage() {
-  std::cout << "new frame acquired" << std::endl;
 
+  m_previousImageTimestamp = imageHeader.timeStamp;
+  //manage first frame sent
+  if(imageHeader.frameCount != 0) {
+    if(m_imageType == us::PRESCAN_2D) {
+      uint64_t localTimestamp;
+      m_sequenceReaderPreScan.acquire(m_preScanImage,localTimestamp);
+      invertRowsColsOnPreScan(); //to fit with ultrasonix grabbers (pre-scan image is inverted in porta SDK)
+      imageHeader.timeStamp = localTimestamp;
+      imageHeader.imageType = 0;
+    }
+    else if(m_imageType == us::POSTSCAN_2D) {
+      uint64_t localTimestamp;
+      m_sequenceReaderPostScan.acquire(m_postScanImage,localTimestamp);
+      imageHeader.timeStamp = localTimestamp;
+      imageHeader.imageType = 1;
+    }
+  }
+
+  imageHeader.dataRate = 1000.0 / (imageHeader.timeStamp - m_previousImageTimestamp);
+
+  //WAITING PROCESS TO UPDATE (to respect sequence timestamps)
+  vpTime::wait(30);
+
+  std::cout << "new frame acquired !" << std::endl;
 
   QByteArray block;
-  std::cout << "writing 2nd header" << std::endl;
   QDataStream out(&block,QIODevice::WriteOnly);
   out.setVersion(QDataStream::Qt_5_0);
   out << imageHeader.headerId;
   out << imageHeader.frameCount;
   out << imageHeader.timeStamp;
   out << imageHeader.dataRate;
-  out << imageHeader.dataLength;
-  out << imageHeader.ss;
-  out << imageHeader.imageType;
-  out << imageHeader.frameWidth;
-  out << imageHeader.frameHeight;
-  out << imageHeader.pixelWidth;
-  out << imageHeader.pixelHeight;
-  out << imageHeader.transmitFrequency;
-  out << imageHeader.samplingFrequency;
-  out << imageHeader.transducerRadius;
-  out << imageHeader.scanLinePitch;
-  out << imageHeader.scanLineNumber;
-  out << imageHeader.imageDepth;
-  out << imageHeader.degPerFrame;
-  out << imageHeader.framesPerVolume;
-  out << imageHeader.motorRadius;
-  out << imageHeader.motorType;
-  std::cout << "writing 2nd image" << std::endl;
-  out.writeRawData((char*)secondBiplaneImage,imageHeader.dataLength);
+
+  if(m_imageType == us::PRESCAN_2D) { //send pre-scan image
+    out << (int) m_preScanImage.getHeight() * m_preScanImage.getWidth(); //datalength in bytes
+    out << (int) 8; //sample size in bits
+    out << imageHeader.imageType;
+    out << m_preScanImage.getHeight();
+    out << m_preScanImage.getWidth();
+    out << (double).0;//pixelWidth
+    out << (double).0;//pixelHeight
+    out << m_preScanImage.getTransmitFrequency();
+    out << m_preScanImage.getSamplingFrequency();
+    out << m_preScanImage.getTransducerRadius();
+    out << m_preScanImage.getScanLinePitch();
+    out << (int) m_preScanImage.getScanLineNumber();
+    out << m_preScanImage.getDepth();
+    out << (double) .0; //degPerFrame
+    out << (int) 0;//framesPerVolume
+    out << (double) .0;//motorRadius
+    out << (int) 0; //motorType
+    out.writeRawData((char*)m_preScanImage.bitmap,(int) m_preScanImage.getHeight() * m_preScanImage.getWidth());
+  }
+  else if(m_imageType == us::POSTSCAN_2D) { //send post-scan image
+    out << (int) m_postScanImage.getHeight() * m_postScanImage.getWidth(); //datalength in bytes
+    out << (int) 8; //sample size in bits
+    out << imageHeader.imageType;
+    out << m_postScanImage.getWidth();
+    out << m_postScanImage.getHeight();
+    out << m_postScanImage.getWidthResolution();//pixelWidth
+    out << m_postScanImage.getHeightResolution();//pixelHeight
+    out << m_postScanImage.getTransmitFrequency();
+    out << m_postScanImage.getSamplingFrequency();
+    out << m_postScanImage.getTransducerRadius();
+    out << m_postScanImage.getScanLinePitch();
+    out << (int) m_postScanImage.getScanLineNumber();
+    out << m_postScanImage.getDepth();
+    out << (double) .0; //degPerFrame
+    out << (int) 0;//framesPerVolume
+    out << (double) .0;//motorRadius
+    out << (int) 0; //motorType
+    out.writeRawData((char*)m_preScanImage.bitmap,(int) m_preScanImage.getHeight() * m_preScanImage.getWidth());
+  }
 
   connectionSoc->write(block);
 
-
-
-  if(m_imageType == us::PRESCAN_2D) { //send pre-scan image
-
-  }
-  else if(m_imageType == us::POSTSCAN_2D) { //send post-scan image
-
-  }
-
-
-
-
-
-
-
-
-
-
-
-
-
   imageHeader.frameCount ++;
-
 }
 
 
@@ -1003,3 +792,15 @@ bool portaCallback(void* param, unsigned char* addr, int blockIndex, int)
   std::cout << "steps = " << portaInstance->getParam(prmMotorSteps) << std::endl;
   return true;
 }*/
+
+/**
+* Method to invert rows and columns in the image.
+*/
+void usVirtualServer::invertRowsColsOnPreScan() {
+  usImagePreScan2D<unsigned char> temp = m_preScanImage;
+  m_preScanImage.resize(temp.getWidth(),temp.getHeight());
+
+  for(unsigned int i=0; i<m_preScanImage.getHeight(); i++)
+    for (unsigned int j=0; j<m_preScanImage.getWidth(); j++)
+      m_preScanImage(i,j,temp(j,i));
+}
