@@ -220,6 +220,8 @@ int main(int argc, const char** argv)
     postscan2DReference.setScanLinePitch(0.0045);
     postscan2DReference.setTransducerRadius(0.05478);
     postscan2DReference.setTransducerConvexity(true);
+    postscan2DReference.setTransmitFrequency(300000);
+    postscan2DReference.setSamplingFrequency(2000000);
 
     usImageIo::write(postscan2DReference,filename);
 

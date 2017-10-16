@@ -215,6 +215,8 @@ int main(int argc, const char** argv)
     rf2DReference.setTransducerRadius(0.554);
     rf2DReference.setTransducerConvexity(true);
     rf2DReference.setAxialResolution(0.0058);
+    rf2DReference.setTransmitFrequency(300000);
+    rf2DReference.setSamplingFrequency(2000000);
 
     std::cout << "Written in " << filename << std::endl ;
     std::cout << rf2DReference;

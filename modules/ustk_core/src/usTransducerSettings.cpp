@@ -49,7 +49,7 @@
 */
 usTransducerSettings::usTransducerSettings()
   : m_transducerRadius(0.0f), m_scanLinePitch(0.0f), m_scanLineNumber(0), m_isTransducerConvex(true),
-    m_scanLineNumberIsSet(false) {}
+    m_scanLineNumberIsSet(false), m_transmitFrequency(0), m_samplingFrequency(0) {}
 
 /**
 * Full constructor with all the settings availables:
@@ -60,13 +60,15 @@ usTransducerSettings::usTransducerSettings()
 * @param scanLineNumber Number of scan lines acquired by the probe transducer.
 * @param transducerConvex Boolean to specify if the probe transducer is convex (true) or linear (false).
 * @param depth Distance in meters between first and last pixel of a scan line.
+* @param samplingFrequency : frequency used to sample the ultrasound wave during the acquisition.
+* @param transmitFrequency : frequency of the ultrasound wave used to create the image.
 */
 usTransducerSettings::usTransducerSettings(double transducerRadius, double scanLinePitch,
                                            unsigned int scanLineNumber, bool transducerConvex,
-                                           double depth)
+                                           double depth, int transmitFrequency, int samplingFrequency)
   : m_transducerRadius(transducerRadius), m_scanLinePitch(scanLinePitch),
     m_scanLineNumber(scanLineNumber), m_isTransducerConvex(transducerConvex),
-    m_depth(depth), m_scanLineNumberIsSet(true)
+    m_depth(depth), m_scanLineNumberIsSet(true), m_transmitFrequency(transmitFrequency), m_samplingFrequency(samplingFrequency)
 {}
 
 /**
@@ -95,6 +97,8 @@ usTransducerSettings& usTransducerSettings::operator=(const usTransducerSettings
   m_isTransducerConvex = other.isTransducerConvex();
   m_scanLineNumberIsSet = other.scanLineNumberIsSet();
   m_depth = other.getDepth();
+  m_samplingFrequency = other.getSamplingFrequency();
+  m_transmitFrequency = other.getTransmitFrequency();
 
   return *this;
 }
@@ -108,7 +112,9 @@ bool usTransducerSettings::operator==(usTransducerSettings const& other)
   return ( this->getTransducerRadius() == other.getTransducerRadius() &&
            this->getScanLinePitch() == other.getScanLinePitch() &&
            this->getScanLineNumber() == other.getScanLineNumber() &&
-           this->isTransducerConvex() == other.isTransducerConvex());
+           this->isTransducerConvex() == other.isTransducerConvex() &&
+           this->getSamplingFrequency() == other.getSamplingFrequency() &&
+           this->getTransmitFrequency() == other.getTransmitFrequency());
 }
 
 /**
@@ -124,7 +130,7 @@ bool usTransducerSettings::operator!=(usTransducerSettings const& other) {
   Usage example:
   \code
   usTransducerSettings myTransducerSettings;
-  std::cout << myTransducerSettings << std::endl;
+  std::cout << myTransducerSettings;
   \endcode
 */
 VISP_EXPORT std::ostream& operator<<(std::ostream& out, const usTransducerSettings &other)
@@ -136,7 +142,9 @@ VISP_EXPORT std::ostream& operator<<(std::ostream& out, const usTransducerSettin
     out << "scan line pitch distance: " << other.getScanLinePitch() << std::endl;
   out << "scan line number : " << other.getScanLineNumber() << std::endl
       << "convex probe used: " << other.isTransducerConvex() << std::endl
-      << "depth : " << other.getDepth() << std::endl;
+      << "depth : " << other.getDepth() << std::endl
+      << "sampling frequency " << other.getSamplingFrequency() << std::endl
+      << "transmit frequency " << other.getTransmitFrequency() << std::endl;
   return out;
 }
 
@@ -299,7 +307,44 @@ double usTransducerSettings::getDepth() const
   return m_depth;
 }
 
-usTransducerSettings usTransducerSettings ::getTransducerSettings() const {
+/**
+* Getter for transducer settings : allows heritating classes to get the transducer settings.
+* @return The transducer settings.
+*/
+usTransducerSettings usTransducerSettings::getTransducerSettings() const {
   usTransducerSettings ret = *this;
   return ret;
 }
+
+/**
+* Getter for sampling frequency : frequency used to sample the echo of the ultrasound wave.
+* @return Sampling frequency Frequency in Hz.
+*/
+int usTransducerSettings::getSamplingFrequency() const {
+  return m_samplingFrequency;
+}
+
+/**
+* Getter for transmit frequency : frequency of the ultrasound wave used.
+* @return Transmit frequency in Hz.
+*/
+int usTransducerSettings::getTransmitFrequency() const {
+  return m_transmitFrequency;
+}
+
+/**
+* Setter for sampling frequency : frequency used to sample the echo of the ultrasound wave.
+* @param samplingFrequency Frequency in Hz.
+*/
+void usTransducerSettings::setSamplingFrequency(const int samplingFrequency) {
+  m_samplingFrequency = samplingFrequency;
+}
+
+/**
+* Setter for transmit frequency : frequency of the ultrasound wave used.
+* @param transmitFrequency Frequency in Hz.
+*/
+void usTransducerSettings::setTransmitFrequency(const int transmitFrequency) {
+  m_transmitFrequency = transmitFrequency;
+}
+

@@ -218,6 +218,8 @@ int main(int argc, const char** argv)
     prescan2DReference.setScanLinePitch(0.0045);
     prescan2DReference.setTransducerRadius(0.05478);
     prescan2DReference.setTransducerConvexity(true);
+    prescan2DReference.setTransmitFrequency(300000);
+    prescan2DReference.setSamplingFrequency(2000000);
 
     usImageIo::write(prescan2DReference,filename);
 

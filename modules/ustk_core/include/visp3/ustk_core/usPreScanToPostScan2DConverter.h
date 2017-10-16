@@ -48,39 +48,60 @@
  * @ingroup module_ustk_core
  *
  * This class allows to convert 2D pre-scan ultrasound images to post-scan.
- * The converter should be initialized through init() and then applied through convert().
- *
+ * The convertion is applied in the convert() method.
  *
  * Here is an example of how to use the converter, to build a post-scan image from a pre-scan image.
  *
  * \code
- *  usImagePreScan2D <unsigned char> preScan; // your input pre-scan image
- *  // then you have can fill the preScan image and settings
- *
- *  // converter output
- *  usImagePostScan2D<unsigned char> postScan;
- *
- *  usPreScanToPostScan2DConverter scanConverter;
- *  scanConverter.init(preScan,preScan.getBModeSampleNumber(),preScan.getScanLineNumber(),0.0005,0.0005);
- *  scanConverter.convert(preScan,postScan); // now postScan is filled from preScan, with pixels of 0.5mm
+ * #include <visp3/ustk_core/usPreScanToPostScan2DConverter.h>
+
+int main()
+{
+  // example of 2D pre-scan image settings
+  unsigned int width = 320;
+  unsigned int height = 240;
+  double transducerRadius = 0.045;
+  double scanLinePitch = 0.0012;
+  unsigned int scanLineNumber = 256;
+  bool isTransducerConvex = true;
+  double axialResolution = 0.002;
+
+  vpImage<unsigned char> I(height, width);
+  usImagePreScan2D <unsigned char> preScan; // your input pre-scan image
+  // then you can fill the preScan image and settings
+  preScan.setTransducerRadius(transducerRadius);
+  preScan.setScanLinePitch(scanLinePitch);
+  preScan.setScanLineNumber(scanLineNumber);
+  preScan.setTransducerConvexity(isTransducerConvex);
+  preScan.setAxialResolution(axialResolution);
+  preScan.setData(I);
+
+  // converter output
+  usImagePostScan2D<unsigned char> postScan;
+  usPreScanToPostScan2DConverter scanConverter;
+  scanConverter.convert(preScan,postScan,0.0005,0.0005); // now postScan is filled from preScan, with pixels of 0.5mm
+}
  * \endcode
  *
  */
 class VISP_EXPORT usPreScanToPostScan2DConverter
 {
+friend class usRFToPostScan2DConverter;
  public:
 
   usPreScanToPostScan2DConverter();
 
   ~usPreScanToPostScan2DConverter();
 
+  void convert(const usImagePreScan2D<unsigned char> &preScanImage, usImagePostScan2D<unsigned char> &postScanImage, double xResolution = 0., double yResolution = 0.);
+
+protected:
+
   void init(const usImagePostScan2D<unsigned char> &inputSettings, const int BModeSampleNumber,
             const int scanLineNumber);
 
   void init(const usTransducerSettings &inputSettings, const int BModeSampleNumber,
             const int scanLineNumber, const double xResolution, const double yResolution);
-
-  void convert(const usImagePreScan2D<unsigned char> &preScanImage, usImagePostScan2D<unsigned char> &postScanImage, int xResolution = 0, int yResolution = 0);
 
  private:
   double interpolateLinear(const vpImage<unsigned char>& I, double x, double y);

@@ -79,7 +79,7 @@
 class VISP_EXPORT usTransducerSettings {
 public:
   usTransducerSettings();
-  usTransducerSettings(double transducerRadius, double scanLinePitch, unsigned int scanLineNumber, bool transducerConvex, double depth);
+  usTransducerSettings(double transducerRadius, double scanLinePitch, unsigned int scanLineNumber, bool transducerConvex, double depth, int transmitFrequency=0, int samplingFrequency=0);
   usTransducerSettings(const usTransducerSettings &other);
 
   virtual ~usTransducerSettings();
@@ -90,10 +90,12 @@ public:
   double getDepth() const;
   double getFieldOfView() const;
   std::string getProbeName() const;
+  int getSamplingFrequency() const;
   unsigned int getScanLineNumber() const;
   double getScanLinePitch() const;
   double getTransducerRadius() const;
   usTransducerSettings getTransducerSettings() const;
+  int getTransmitFrequency() const;
 
   bool isTransducerConvex() const;
 
@@ -106,11 +108,13 @@ public:
   void setDepth(double depth);
   void setFieldOfView(double fieldOfView);
   void setProbeName(std::string probeName);
+  void setSamplingFrequency(const int samplingFrequency);
   void setScanLineNumber(unsigned int scanLineNumber);
   void setScanLinePitch(const double scanLinePitch);
   void setTransducerConvexity(const bool isTransducerConvex);
   void setTransducerSettings(const usTransducerSettings& other);
   void setTransducerRadius(const double transducerRadius);
+  void setTransmitFrequency(const int transmitFrequency);
 
   //@}
 
@@ -126,6 +130,9 @@ private:
   std::string m_probeName;
 
   bool m_scanLineNumberIsSet;
+
+  int m_transmitFrequency;
+  int m_samplingFrequency;
 };
 
 #endif // US_TRANSDUCER_SETTINGS_H

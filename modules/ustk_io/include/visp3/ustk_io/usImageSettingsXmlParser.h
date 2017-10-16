@@ -78,6 +78,8 @@ public:
     CODE_XML_MOTOR_RADIUS, 
     CODE_XML_MOTOR_TYPE,
     CODE_XML_AXIAL_RESOLUTION,
+    CODE_XML_SAMPLING_FREQUENCY,
+    CODE_XML_TRANSMIT_FREQUENCY,
     CODE_XML_HEIGHT_RESOLUTION,
     CODE_XML_WIDTH_RESOLUTION,
     CODE_XML_SCANLINE_NUMBER,
@@ -121,9 +123,10 @@ public:
   //Data setters
   void setFrameNumber(unsigned int frameNumber) {m_motorSettings.setFrameNumber(frameNumber);}
   void setImageFileName(const std::string &imageFileName);
-  void setImageSettings(double transducerRadius, double scanLinePitch, bool isTransducerConvex, double axialResolution, us::ImageType image_type);
+  void setImageSettings(double transducerRadius, double scanLinePitch, bool isTransducerConvex, double axialResolution, us::ImageType image_type,
+                        int samplingFrequency, int transmitFrequency);
   void setImageSettings(double transducerRadius, double scanLinePitch, bool isTransducerConvex, unsigned int scanLineNumber,
-                        double widthResolution, double heightResolution);
+                        double widthResolution, double heightResolution, int samplingFrequency, int transmitFrequency);
   void setImageType(us::ImageType image_type) { m_image_type = image_type;}
   void setMotorSettings(const usMotorSettings &motorSettings);
   void setScanLineNumber(unsigned int scanLineNumber) {m_transducerSettings.setScanLineNumber(scanLineNumber);}

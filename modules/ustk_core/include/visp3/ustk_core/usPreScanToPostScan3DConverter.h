@@ -52,7 +52,7 @@
  * @ingroup module_ustk_core
  *
  * This class allows to convert 3D pre-scan ultrasound images to post-scan.
- * The converter should be initialized through init() and then applied through convert().
+ * The converter can be initialized through init() and then applied through convert().
  * This class accepts only images acquired by a convex transducer and a tilting motor for now.
  *
  * @warning Converting with this class uses a lot of RAM when computing the LUTs in init().
@@ -60,14 +60,42 @@
  *  Here is an example of how to use this converter :
  *
  * \code
- *  usImagePreScan3D<unsigned char> prescanImage;
- *  // then you have to fill prescanImage, and set transducer / motor settings.
- *
- *  usImagePostScan3D<unsigned char> postscanImage;
- *  //scan-converster
- *  usPreScanToPostScan3DConverter converter;
- *  converter.init(prescanImage);
- *  converter.convert(postscanImage, prescanImage);
+#include <visp3/ustk_core/usPreScanToPostScan3DConverter.h>
+
+int main()
+{
+  // example of 3D pre-scan image settings
+  unsigned int width = 320;
+  unsigned int height = 240;
+  unsigned int frames = 10;
+  double transducerRadius = 0.045;
+  double scanLinePitch = 0.0012;
+  unsigned int scanLineNumber = 256;
+  bool isTransducerConvex = true;
+  double axialResolution = 0.002;
+  double framePitch = 0.002;
+  double motorRadius = 0.04;
+
+  usImage3D<unsigned char> I(height, width, frames);
+  usImagePreScan3D <unsigned char> preScan; // your input pre-scan image
+  // then you can fill the preScan image and settings
+  preScan.setTransducerRadius(transducerRadius);
+  preScan.setScanLinePitch(scanLinePitch);
+  preScan.setScanLineNumber(scanLineNumber);
+  preScan.setTransducerConvexity(isTransducerConvex);
+  preScan.setAxialResolution(axialResolution);
+  preScan.setMotorRadius(motorRadius);
+  preScan.setMotorType(usMotorSettings::TiltingMotor);
+  preScan.setFramePitch(framePitch);
+
+  preScan.setData(I);
+
+  usImagePostScan3D<unsigned char> postscanImage;
+  //scan-converster
+  usPreScanToPostScan3DConverter converter;
+  converter.init(preScan);
+  converter.convert(postscanImage, preScan);
+}
  *  \endcode
  */
 class VISP_EXPORT usPreScanToPostScan3DConverter

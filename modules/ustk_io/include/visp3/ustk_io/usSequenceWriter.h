@@ -72,7 +72,7 @@ public:
 
   double getFrameRate() const;
 
-  void saveImage(const ImageType &image);
+  void saveImage(const ImageType &image, uint64_t timestamp = 0);
 
   void setFirstFrameIndex(long firstIndex);
   void setFrameRate(double frameRate);
@@ -102,7 +102,7 @@ private:
   bool is_open;
 
 
-  void open(const ImageType &image);
+  void open(const ImageType &image, uint64_t timestamp = 0);
 };
 
 /****************************************************************************
@@ -195,7 +195,7 @@ void usSequenceWriter<ImageType>::setFirstFrameIndex(long firstIndex)
 * @param image First image to write.
 */
 template<class ImageType>
-void usSequenceWriter<ImageType>::open(const ImageType &image)
+void usSequenceWriter<ImageType>::open(const ImageType &image, uint64_t timestamp)
 {
   if(!m_headerFileNameIsSet || !m_imageFileNameIsSet )
     throw(vpException(vpException::badValue, "file names not set"));
@@ -213,7 +213,20 @@ void usSequenceWriter<ImageType>::open(const ImageType &image)
   //Reading image
   char buffer[FILENAME_MAX];
   sprintf(buffer, m_genericImageFileName.c_str(),m_frameCount);
+
+  //case of timestamp to add
+  if(timestamp != 0){
+    std::vector<std::string> splitted = vpIoTools::splitChain(std::string(buffer), std::string("."));
+    std::string base = splitted.at(0);
+    base.append(std::string(".%lld."));
+    base.append(splitted.at(1));
+    sprintf(buffer, base.c_str(),timestamp);
+    std::vector<std::string> splittedGeneric = vpIoTools::splitChain(std::string(m_genericImageFileName), std::string("."));
+    m_genericImageFileName = splittedGeneric.at(0) + std::string(".TIMESTAMP.") + splittedGeneric.at(1);
+  }
+
   std::string imageFileName = vpIoTools::getParent(m_sequenceFileName) + vpIoTools::path("/") + buffer;
+
   vpImageIo::write(image, imageFileName);
 
   m_frameCount = m_firstFrame + 1;
@@ -231,7 +244,7 @@ void usSequenceWriter<ImageType>::close()
 }
 
 template<>
-void usSequenceWriter< usImageRF2D < unsigned char > >::close()
+inline void usSequenceWriter< usImageRF2D < unsigned char > >::close()
 {
   if(!is_open)
     return;
@@ -242,7 +255,9 @@ void usSequenceWriter< usImageRF2D < unsigned char > >::close()
     m_frame.getScanLinePitch(),
     m_frame.isTransducerConvex(),
     m_frame.getAxialResolution(),
-    us::RF_2D);
+    us::RF_2D,
+    m_frame.getSamplingFrequency(),
+    m_frame.getTransmitFrequency());
   xmlParser.setSequenceFrameRate(m_frameRate);
   xmlParser.setSequenceStartNumber(m_firstFrame);
   xmlParser.setSequenceStopNumber(m_frameCount-1);
@@ -252,7 +267,7 @@ void usSequenceWriter< usImageRF2D < unsigned char > >::close()
 }
 
 template<>
-void usSequenceWriter < usImagePreScan2D < unsigned char > >::close()
+inline void usSequenceWriter < usImagePreScan2D < unsigned char > >::close()
 {
   if(!is_open)
     return;
@@ -263,7 +278,9 @@ void usSequenceWriter < usImagePreScan2D < unsigned char > >::close()
     m_frame.getScanLinePitch(),
     m_frame.isTransducerConvex(),
     m_frame.getAxialResolution(),
-    us::PRESCAN_2D);
+    us::PRESCAN_2D,
+    m_frame.getSamplingFrequency(),
+    m_frame.getTransmitFrequency());
   xmlParser.setImageType(us::PRESCAN_2D);
   xmlParser.setSequenceFrameRate(m_frameRate);
   xmlParser.setSequenceStartNumber(m_firstFrame);
@@ -274,7 +291,7 @@ void usSequenceWriter < usImagePreScan2D < unsigned char > >::close()
 }
 
 template<>
-void usSequenceWriter<usImagePostScan2D<unsigned char> >::close()
+inline void usSequenceWriter<usImagePostScan2D<unsigned char> >::close()
 {
   if(!is_open)
     return;
@@ -286,7 +303,9 @@ void usSequenceWriter<usImagePostScan2D<unsigned char> >::close()
     m_frame.isTransducerConvex(),
     m_frame.getScanLineNumber(),
     m_frame.getWidthResolution(),
-    m_frame.getHeightResolution());
+    m_frame.getHeightResolution(),
+    m_frame.getSamplingFrequency(),
+    m_frame.getTransmitFrequency());
 
   xmlParser.setImageType(us::POSTSCAN_2D);
   xmlParser.setSequenceFrameRate(m_frameRate);
@@ -300,21 +319,32 @@ void usSequenceWriter<usImagePostScan2D<unsigned char> >::close()
 /**
 * Sequence last index setter.
 * @param image Next image to write.
+* @param timestamp timestamp of the image (optionnal).
 */
 template<class ImageType>
-void usSequenceWriter<ImageType>::saveImage(const ImageType &image)
+void usSequenceWriter<ImageType>::saveImage(const ImageType &image, uint64_t timestamp)
 {
   if (!is_open) {
-    open(image);
+    open(image,timestamp);
     return; //first image has been written by open();
   }
 
   //Writing image
   char buffer[FILENAME_MAX];
   sprintf(buffer, m_genericImageFileName.c_str(),m_frameCount);
+
+  //case of timestamp to add
+  if(timestamp != 0){
+    std::vector<std::string> splitted = vpIoTools::splitChain(std::string(buffer), std::string("."));
+    std::string base = splitted.at(0);
+    base.append(std::string(".%lld."));
+    base.append(splitted.at(2));
+    sprintf(buffer, base.c_str(),timestamp);
+  }
+
   std::string imageFileName = vpIoTools::getParent(m_sequenceFileName) + vpIoTools::path("/") + buffer;
 
-  vpImageIo::write(image,imageFileName);
+  vpImageIo::write(image, imageFileName);
 
   m_frameCount = m_frameCount + 1;
 }

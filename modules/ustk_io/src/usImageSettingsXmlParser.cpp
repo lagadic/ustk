@@ -57,6 +57,8 @@ usImageSettingsXmlParser::usImageSettingsXmlParser()
   nodeMap["motor_type"] = CODE_XML_MOTOR_TYPE;
   nodeMap["axial_resolution"] = CODE_XML_AXIAL_RESOLUTION;
   nodeMap["height_resolution"] = CODE_XML_HEIGHT_RESOLUTION;
+  nodeMap["sampling_frequency"] = CODE_XML_SAMPLING_FREQUENCY;
+  nodeMap["transmit_frequency"] = CODE_XML_TRANSMIT_FREQUENCY;
   nodeMap["width_resolution"] = CODE_XML_WIDTH_RESOLUTION;
   nodeMap["scanline_number"] = CODE_XML_SCANLINE_NUMBER;
   nodeMap["frame_number"] = CODE_XML_FRAME_NUMBER;
@@ -201,6 +203,12 @@ usImageSettingsXmlParser::readMainClass (xmlDocPtr doc, xmlNodePtr node)
           this->m_transducerSettings.setTransducerConvexity(xmlReadBoolChild(doc, dataNode));
           this->m_transducerSettings.setTransducerConvexity(xmlReadBoolChild(doc, dataNode));
           break;
+        case CODE_XML_SAMPLING_FREQUENCY:
+          this->m_transducerSettings.setSamplingFrequency(xmlReadIntChild(doc, dataNode));
+          break;
+        case CODE_XML_TRANSMIT_FREQUENCY:
+          this->m_transducerSettings.setTransmitFrequency(xmlReadIntChild(doc, dataNode));
+          break;
         case CODE_XML_FRAME_PITCH:
           this->m_motorSettings.setFramePitch(xmlReadDoubleChild(doc, dataNode));
           break;
@@ -261,6 +269,8 @@ usImageSettingsXmlParser::writeMainClass(xmlNodePtr node)
     xmlWriteDoubleChild(node, "probe_radius", m_transducerSettings.getTransducerRadius());
     xmlWriteBoolChild(node, "is_probe_convex", m_transducerSettings.isTransducerConvex());
     xmlWriteDoubleChild(node, "axial_resolution", m_axialResolution);
+    xmlWriteDoubleChild(node, "transmit_frequency", m_transducerSettings.getTransmitFrequency());
+    xmlWriteDoubleChild(node, "sampling_frequency", m_transducerSettings.getSamplingFrequency());
   }
   if (this->m_image_type == us::PRESCAN_2D) {
     xmlWriteStringChild(node, "image_type", std::string("prescan"));
@@ -268,6 +278,8 @@ usImageSettingsXmlParser::writeMainClass(xmlNodePtr node)
     xmlWriteDoubleChild(node, "probe_radius", m_transducerSettings.getTransducerRadius());
     xmlWriteBoolChild(node, "is_probe_convex", m_transducerSettings.isTransducerConvex());
     xmlWriteDoubleChild(node, "axial_resolution", m_axialResolution);
+    xmlWriteDoubleChild(node, "transmit_frequency", m_transducerSettings.getTransmitFrequency());
+    xmlWriteDoubleChild(node, "sampling_frequency", m_transducerSettings.getSamplingFrequency());
   }
   else if (this->m_image_type == us::POSTSCAN_2D) {
     xmlWriteStringChild(node, "image_type", std::string("postscan"));
@@ -275,6 +287,8 @@ usImageSettingsXmlParser::writeMainClass(xmlNodePtr node)
     xmlWriteDoubleChild(node, "probe_radius", m_transducerSettings.getTransducerRadius());
     xmlWriteBoolChild(node, "is_probe_convex", m_transducerSettings.isTransducerConvex());
     xmlWriteIntChild(node, "scanline_number", m_transducerSettings.getScanLineNumber());
+    xmlWriteDoubleChild(node, "transmit_frequency", m_transducerSettings.getTransmitFrequency());
+    xmlWriteDoubleChild(node, "sampling_frequency", m_transducerSettings.getSamplingFrequency());
     if(m_is_3D) {
       xmlWriteIntChild(node, "frame_number", m_motorSettings.getFrameNumber());
       xmlWriteDoubleChild(node, "spacing_x", m_spacingX);
@@ -315,15 +329,19 @@ usImageSettingsXmlParser::writeMainClass(xmlNodePtr node)
 * @param isTransducerConvex : the transducer type (true if convex transducer, false if linear).
 * @param axialResolution : the image axial resolution.
 * @param image_type : image type (rf or pre-scan).
+* @param samplingFrequency : frequency used to sample the ultrasound wave during the acquisition.
+* @param transmitFrequency : frequency of the ultrasound wave used to create the image.
 */
 void usImageSettingsXmlParser::setImageSettings(double transducerRadius, double scanLinePitch, bool isTransducerConvex,
-                                                double axialResolution, us::ImageType image_type)
+                                                double axialResolution, us::ImageType image_type, int samplingFrequency, int transmitFrequency)
 {
   if (image_type == us::PRESCAN_2D || image_type == us::RF_2D)
   {
     m_transducerSettings.setTransducerConvexity(isTransducerConvex);
     m_transducerSettings.setTransducerRadius(transducerRadius);
     m_transducerSettings.setScanLinePitch(scanLinePitch);
+    m_transducerSettings.setSamplingFrequency(samplingFrequency);
+    m_transducerSettings.setTransmitFrequency(transmitFrequency);
     m_axialResolution = axialResolution;
     m_image_type = image_type;
   }
@@ -340,14 +358,18 @@ void usImageSettingsXmlParser::setImageSettings(double transducerRadius, double 
 * @param scanLineNumber : the number of scan lines of the probe used.
 * @param widthResolution : the image width resolution.
 * @param heightResolution : the image height resolution.
+* @param samplingFrequency : frequency used to sample the ultrasound wave during the acquisition.
+* @param transmitFrequency : frequency of the ultrasound wave used to create the image.
 */
 void usImageSettingsXmlParser::setImageSettings(double transducerRadius, double scanLinePitch, bool isTransducerConvex, unsigned int scanLineNumber,
-                                                double widthResolution, double heightResolution)
+                                                double widthResolution, double heightResolution, int samplingFrequency, int transmitFrequency)
 {
   m_transducerSettings.setTransducerConvexity(isTransducerConvex);
   m_transducerSettings.setTransducerRadius(transducerRadius);
   m_transducerSettings.setScanLinePitch(scanLinePitch);
   m_transducerSettings.setScanLineNumber(scanLineNumber);
+  m_transducerSettings.setSamplingFrequency(samplingFrequency);
+  m_transducerSettings.setTransmitFrequency(transmitFrequency);
   m_heightResolution = widthResolution;
   m_widthResolution = heightResolution;
   m_image_type = us::POSTSCAN_2D;

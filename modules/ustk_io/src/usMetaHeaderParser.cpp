@@ -102,6 +102,8 @@ void  usMetaHeaderParser::readMHDHeader(const std::string &fileName)
   this->header.scanLinePitch = 0.0;
   this->header.motorRadius = 0.0;
   this->header.framePitch = 0.0;
+  this->header.samplingFrequency = 0;
+  this->header.transmitFrequency = 0;
 
   std::ifstream file;
   file.open(fileName.c_str(), std::ifstream::in);
@@ -226,6 +228,16 @@ void  usMetaHeaderParser::readMHDHeader(const std::string &fileName)
       it=keyval.end();
       keyval.erase(std::remove(keyval.begin(),keyval.end(),'\r'),it);
       this->header.isTransducerConvex = ((keyval == "True") || (keyval == "1"));
+    }
+    else if (keyword == "TransmitFrequency")
+    {
+      file >> this->header.transmitFrequency;
+      std::getline(file, keyval, '\n');
+    }
+    else if (keyword == "SamplingFrequency")
+    {
+      file >> this->header.samplingFrequency;
+      std::getline(file, keyval, '\n');
     }
     else if (keyword == "FramePitch")
     {
@@ -357,6 +369,10 @@ void usMetaHeaderParser::parse()
       MHDfile << "TransducerRadius = " << header.transducerRadius << "\n";
       MHDfile << "Comment = Distance between 2 scan lines.\n";
       MHDfile << "ScanLinePitch = " << header.scanLinePitch << "\n";
+      MHDfile << "Comment = Distance between 2 scan lines.\n";
+      MHDfile << "TransmitFrequency = " << header.transmitFrequency<< "\n";
+      MHDfile << "Comment = Distance between 2 scan lines.\n";
+      MHDfile << "SamplingFrequency = " << header.samplingFrequency << "\n";
       MHDfile << "Comment = The axial resolution is the distance in meters between two successives A-samples in a scan line.\n";
       MHDfile << "AxialResolution = " << this->m_axialResolution << "\n";
     }
@@ -369,6 +385,10 @@ void usMetaHeaderParser::parse()
       MHDfile << "TransducerRadius = " << header.transducerRadius << "\n";
       MHDfile << "Comment = Distance between 2 scan lines.\n";
       MHDfile << "ScanLinePitch = " << header.scanLinePitch << "\n";
+      MHDfile << "Comment = Distance between 2 scan lines.\n";
+      MHDfile << "TransmitFrequency = " << header.transmitFrequency<< "\n";
+      MHDfile << "Comment = Distance between 2 scan lines.\n";
+      MHDfile << "SamplingFrequency = " << header.samplingFrequency << "\n";
       MHDfile << "Comment = Probe motor type : LinearMotor, TiltingMotor (for small roatations), or RotationalMotor (for 360 deg rotation).\n";
       if (header.motorType == usMotorSettings::LinearMotor) {
         MHDfile << "MotorType = " << "LinearMotor" << "\n";
@@ -395,6 +415,10 @@ void usMetaHeaderParser::parse()
       MHDfile << "TransducerRadius = " << header.transducerRadius << "\n";
       MHDfile << "Comment = Distance between 2 scanlines.\n";
       MHDfile << "ScanLinePitch = " << header.scanLinePitch << "\n";
+      MHDfile << "Comment = Distance between 2 scan lines.\n";
+      MHDfile << "TransmitFrequency = " << header.transmitFrequency<< "\n";
+      MHDfile << "Comment = Distance between 2 scan lines.\n";
+      MHDfile << "SamplingFrequency = " << header.samplingFrequency << "\n";
       MHDfile << "Comment = The axial resolution is the distance in meters between two successives A-samples in a scan line.\n";
       MHDfile << "AxialResolution = " << this->m_axialResolution << "\n";
     }
@@ -407,6 +431,10 @@ void usMetaHeaderParser::parse()
       MHDfile << "TransducerRadius = " << header.transducerRadius << "\n";
       MHDfile << "Comment = Distance between 2 scan lines.\n";
       MHDfile << "ScanLinePitch = " << header.scanLinePitch << "\n";
+      MHDfile << "Comment = Distance between 2 scan lines.\n";
+      MHDfile << "TransmitFrequency = " << header.transmitFrequency<< "\n";
+      MHDfile << "Comment = Distance between 2 scan lines.\n";
+      MHDfile << "SamplingFrequency = " << header.samplingFrequency << "\n";
       MHDfile << "Comment = Probe motor type : LinearMotor, TiltingMotor (for small roatations), or RotationalMotor (for 360 deg rotation).\n";
       if (header.motorType == usMotorSettings::LinearMotor) {
         MHDfile << "MotorType = " << "LinearMotor" << "\n";
@@ -433,6 +461,10 @@ void usMetaHeaderParser::parse()
       MHDfile << "TransducerRadius = " << header.transducerRadius << "\n";
       MHDfile << "Comment = Distance between 2 scan lines.\n";
       MHDfile << "ScanLinePitch = " << header.scanLinePitch << "\n";
+      MHDfile << "Comment = Distance between 2 scan lines.\n";
+      MHDfile << "TransmitFrequency = " << header.transmitFrequency<< "\n";
+      MHDfile << "Comment = Distance between 2 scan lines.\n";
+      MHDfile << "SamplingFrequency = " << header.samplingFrequency << "\n";
       MHDfile << "HeightResolution = " << this->m_heightResolution << "\n";
       MHDfile << "WidthResolution = " << this->m_widthResolution << "\n";
       MHDfile << "ScanLineNumber = " << header.scanLineNumber << "\n";
@@ -446,6 +478,10 @@ void usMetaHeaderParser::parse()
       MHDfile << "TransducerRadius = " << header.transducerRadius << "\n";
       MHDfile << "Comment = Distance between 2 scan lines.\n";
       MHDfile << "ScanLinePitch = " << header.scanLinePitch << "\n";
+      MHDfile << "Comment = Distance between 2 scan lines.\n";
+      MHDfile << "TransmitFrequency = " << header.transmitFrequency<< "\n";
+      MHDfile << "Comment = Distance between 2 scan lines.\n";
+      MHDfile << "SamplingFrequency = " << header.samplingFrequency << "\n";
       MHDfile << "Comment = Probe motor type : LinearMotor, TiltingMotor (for small roatations), or RotationalMotor (for 360 deg rotation).\n";
       if (header.motorType == usMotorSettings::LinearMotor) {
         MHDfile << "MotorType = " << "LinearMotor" << "\n";
@@ -487,6 +523,8 @@ void usMetaHeaderParser::read(const std::string& filename)
   this->m_transducerSettings.setTransducerRadius(header.transducerRadius);
   this->m_transducerSettings.setScanLinePitch(header.scanLinePitch);
   this->m_transducerSettings.setTransducerConvexity(header.isTransducerConvex);
+  this->m_transducerSettings.setSamplingFrequency(header.samplingFrequency);
+  this->m_transducerSettings.setTransmitFrequency(header.transmitFrequency);
 
   if(this->header.imageType == us::RF_3D || this->header.imageType == us::PRESCAN_3D || this->header.imageType == us::POSTSCAN_3D) {
     this->m_motorSettings.setMotorRadius(header.motorRadius);

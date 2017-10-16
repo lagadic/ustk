@@ -130,6 +130,8 @@ void usImageIo::write(const usImageRF2D<short> &imageRf2D, const std::string &he
     header.isTransducerConvex = imageRf2D.isTransducerConvex();
     header.transducerRadius = imageRf2D.getTransducerRadius();
     header.scanLinePitch = imageRf2D.getScanLinePitch();
+    header.samplingFrequency = imageRf2D.getSamplingFrequency();
+    header.transmitFrequency= imageRf2D.getTransmitFrequency();
     //writing in file
     usMetaHeaderParser mhdParser;
     mhdParser.setMHDHeader(header);
@@ -178,6 +180,8 @@ void usImageIo::read(usImageRF2D<short int> &imageRf2D, const std::string &heade
     settings.setTransducerConvexity(mhdHeader.isTransducerConvex);
     settings.setAxialResolution(mhdParser.getAxialResolution());
     settings.setDepth(settings.getAxialResolution()*mhdHeader.dim[1]);
+    settings.setSamplingFrequency(mhdHeader.samplingFrequency);
+    settings.setTransmitFrequency(mhdHeader.transmitFrequency);
     imageRf2D.setImagePreScanSettings(settings);
 
     //resizing image in memory
@@ -245,6 +249,8 @@ void usImageIo::write(const usImageRF3D<short> &imageRf3D, const std::string &he
     header.motorType = imageRf3D.getMotorType();
     header.motorRadius = imageRf3D.getMotorRadius();
     header.framePitch = imageRf3D.getFramePitch();
+    header.samplingFrequency = imageRf3D.getSamplingFrequency();
+    header.transmitFrequency= imageRf3D.getTransmitFrequency();
     //writing in file
     usMetaHeaderParser mhdParser;
     mhdParser.setMHDHeader(header);
@@ -291,6 +297,8 @@ void usImageIo::read(usImageRF3D<short> &imageRf3, const std::string &headerFile
     settings.setScanLineNumber(mhdHeader.dim[0]);
     settings.setAxialResolution(mhdParser.getAxialResolution());
     settings.setDepth(mhdParser.getAxialResolution() * mhdHeader.dim[1]);
+    settings.setSamplingFrequency(mhdHeader.samplingFrequency);
+    settings.setTransmitFrequency(mhdHeader.transmitFrequency);
     imageRf3.setImagePreScanSettings(settings);
 
     usMotorSettings motorSettings;
@@ -352,7 +360,9 @@ void usImageIo::write(const usImagePreScan2D<unsigned char> &preScanImage, const
                                    preScanImage.getScanLinePitch(),
                                    preScanImage.isTransducerConvex(),
                                    preScanImage.getAxialResolution(),
-                                   us::PRESCAN_2D);
+                                   us::PRESCAN_2D,
+                                   preScanImage.getSamplingFrequency(),
+                                   preScanImage.getTransmitFrequency());
       //just writing the image file name without parents directories (header and image are in the same directory).
       imageFileName = vpIoTools::getName(imageFileName);
       xmlSettings.setImageFileName(imageFileName);
@@ -388,6 +398,8 @@ void usImageIo::write(const usImagePreScan2D<unsigned char> &preScanImage, const
     header.isTransducerConvex = preScanImage.isTransducerConvex();
     header.transducerRadius = preScanImage.getTransducerRadius();
     header.scanLinePitch = preScanImage.getScanLinePitch();
+    header.samplingFrequency = preScanImage.getSamplingFrequency();
+    header.transmitFrequency= preScanImage.getTransmitFrequency();
     //writing in file
     usMetaHeaderParser mhdParser;
     mhdParser.setMHDHeader(header);
@@ -426,6 +438,9 @@ void usImageIo::read(usImagePreScan2D<unsigned char> &preScanImage,const std::st
     preScanImage.setAxialResolution(xmlSettings.getAxialResolution());
     preScanImage.setScanLineNumber(preScanImage.getWidth());
     preScanImage.setDepth(xmlSettings.getAxialResolution()*preScanImage.getHeight());
+    preScanImage.setSamplingFrequency(xmlSettings.getTransducerSettings().getSamplingFrequency());
+    preScanImage.setTransmitFrequency(xmlSettings.getTransducerSettings().getTransmitFrequency());
+    preScanImage.setDepth(xmlSettings.getAxialResolution()*preScanImage.getHeight());
 #else
     throw(vpException(vpException::fatalError, "Requires xml2 library"));
 #endif //VISP_HAVE_XML2
@@ -451,6 +466,8 @@ void usImageIo::read(usImagePreScan2D<unsigned char> &preScanImage,const std::st
     settings.setScanLinePitch(mhdHeader.scanLinePitch);
     settings.setTransducerConvexity(mhdHeader.isTransducerConvex);
     settings.setAxialResolution(mhdParser.getAxialResolution());
+    settings.setSamplingFrequency(mhdHeader.samplingFrequency);
+    settings.setTransmitFrequency(mhdHeader.transmitFrequency);
     preScanImage.setImagePreScanSettings(settings);
     preScanImage.setDepth(settings.getAxialResolution()*preScanImage.getHeight());
     preScanImage.setScanLineNumber(preScanImage.getWidth());
@@ -523,6 +540,8 @@ void usImageIo::write(const usImagePreScan3D<unsigned char> &preScanImage, const
     header.isTransducerConvex = preScanImage.isTransducerConvex();
     header.transducerRadius = preScanImage.getTransducerRadius();
     header.scanLinePitch = preScanImage.getScanLinePitch();
+    header.samplingFrequency = preScanImage.getSamplingFrequency();
+    header.transmitFrequency= preScanImage.getTransmitFrequency();
     header.motorType = preScanImage.getMotorType();
     header.motorRadius = preScanImage.getMotorRadius();
     header.framePitch = preScanImage.getFramePitch();
@@ -609,6 +628,8 @@ void usImageIo::read(usImagePreScan3D<unsigned char> &preScanImage,const std::st
     settings.setScanLineNumber(mhdHeader.dim[0]);
     settings.setAxialResolution(mhdParser.getAxialResolution());
     settings.setDepth(mhdParser.getAxialResolution() * mhdHeader.dim[1]);
+    settings.setSamplingFrequency(mhdHeader.samplingFrequency);
+    settings.setTransmitFrequency(mhdHeader.transmitFrequency);
     preScanImage.setImagePreScanSettings(settings);
 
     usMotorSettings motorSettings;
@@ -779,7 +800,9 @@ void usImageIo::write(const usImagePostScan2D<unsigned char> &postScanImage, con
                                    postScanImage.isTransducerConvex(),
                                    postScanImage.getScanLineNumber(),
                                    postScanImage.getWidthResolution(),
-                                   postScanImage.getHeightResolution());
+                                   postScanImage.getHeightResolution(),
+                                   postScanImage.getSamplingFrequency(),
+                                   postScanImage.getTransmitFrequency());
 
       xmlSettings.setImageType(us::POSTSCAN_2D);
       //just writing the image file name without parents directories (header and image are in the same directory).
@@ -818,6 +841,8 @@ void usImageIo::write(const usImagePostScan2D<unsigned char> &postScanImage, con
     header.transducerRadius = postScanImage.getTransducerRadius();
     header.scanLinePitch = postScanImage.getScanLinePitch();
     header.scanLineNumber = postScanImage.getScanLineNumber();
+    header.samplingFrequency = postScanImage.getSamplingFrequency();
+    header.transmitFrequency= postScanImage.getTransmitFrequency();
     //writing in file
     usMetaHeaderParser mhdParser;
     mhdParser.setMHDHeader(header);
@@ -855,6 +880,8 @@ void usImageIo::read(usImagePostScan2D<unsigned char> &postScanImage,const std::
     postScanImage.setTransducerConvexity(xmlSettings.getTransducerSettings().isTransducerConvex());
     postScanImage.setWidthResolution(xmlSettings.getWidthResolution());
     postScanImage.setHeightResolution(xmlSettings.getHeightResolution());
+    postScanImage.setSamplingFrequency(xmlSettings.getTransducerSettings().getSamplingFrequency());
+    postScanImage.setTransmitFrequency(xmlSettings.getTransducerSettings().getTransmitFrequency());
 #else
     throw(vpException(vpException::fatalError, "Requires xml2 library"));
 #endif
@@ -879,6 +906,8 @@ void usImageIo::read(usImagePostScan2D<unsigned char> &postScanImage,const std::
     postScanImage.setTransducerRadius(mhdHeader.transducerRadius);
     postScanImage.setScanLinePitch(mhdHeader.scanLinePitch);
     postScanImage.setScanLineNumber(mhdHeader.scanLineNumber);
+    postScanImage.setSamplingFrequency(mhdHeader.samplingFrequency);
+    postScanImage.setTransmitFrequency(mhdHeader.transmitFrequency);
     postScanImage.setTransducerConvexity(mhdHeader.isTransducerConvex);
     postScanImage.setHeightResolution(mhdParser.getHeightResolution());
     postScanImage.setWidthResolution(mhdParser.getWidthResolution());
@@ -956,6 +985,8 @@ void usImageIo::write(const usImagePostScan3D<unsigned char> &postScanImage, con
     header.framePitch = postScanImage.getFramePitch();
     header.frameNumber = postScanImage.getFrameNumber();
     header.scanLineNumber = postScanImage.getScanLineNumber();
+    header.samplingFrequency = postScanImage.getSamplingFrequency();
+    header.transmitFrequency= postScanImage.getTransmitFrequency();
     //writing in file
     usMetaHeaderParser mhdParser;
     mhdParser.setMHDHeader(header);
@@ -1013,6 +1044,8 @@ void usImageIo::read(usImagePostScan3D<unsigned char> &postScanImage, const std:
     postScanImage.setFramePitch(mhdHeader.framePitch);
     postScanImage.setFrameNumber(mhdHeader.frameNumber);
     postScanImage.setMotorType(mhdHeader.motorType);
+    postScanImage.setSamplingFrequency(mhdHeader.samplingFrequency);
+    postScanImage.setTransmitFrequency(mhdHeader.transmitFrequency);
 
     //data parsing
     usRawFileParser rawParser;

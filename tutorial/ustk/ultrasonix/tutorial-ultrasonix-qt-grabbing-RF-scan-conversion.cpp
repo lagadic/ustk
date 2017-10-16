@@ -51,8 +51,6 @@ int main(int argc, char** argv)
   usRFToPreScan2DConverter converterRF;
   usPreScanToPostScan2DConverter scanConverter;
 
-  scanConverter.init(postscanImage,384,128);
-
   //Prepare display
 #if defined(VISP_HAVE_X11)
   vpDisplayX * display = NULL;

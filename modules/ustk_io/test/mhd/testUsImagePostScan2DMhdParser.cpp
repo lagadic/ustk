@@ -217,6 +217,8 @@ int main(int argc, const char** argv)
     usImagePostScan2DReference.setScanLineNumber(45);
     usImagePostScan2DReference.setTransducerRadius(0.554);
     usImagePostScan2DReference.setTransducerConvexity(true);
+    usImagePostScan2DReference.setTransmitFrequency(300000);
+    usImagePostScan2DReference.setSamplingFrequency(2000000);
     usImagePostScan2DReference.setWidthResolution(0.0058);
     usImagePostScan2DReference.setHeightResolution(0.0058);
 

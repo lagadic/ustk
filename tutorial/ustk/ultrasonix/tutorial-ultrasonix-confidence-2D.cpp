@@ -99,7 +99,6 @@ vpThread::Return displayFunction(vpThread::Args args)
   usImagePostScan2D<unsigned char> postScanConfidence_;
   usScanlineConfidence2D scanlineConfidence;
   usPreScanToPostScan2DConverter scanConverter;
-  bool firstIteration = true;
 
   t_CaptureState capture_state_;
   bool display_initialized_ = false;
@@ -137,11 +136,8 @@ vpThread::Return displayFunction(vpThread::Args args)
       scanlineConfidence.run(preScanConfidence_,preScan_);
 
       //Scan conversions
-      if(firstIteration) {
-        scanConverter.init(preScan_,preScan_.getBModeSampleNumber(),preScan_.getScanLineNumber(),0.0005,0.0005);
-      }
-      scanConverter.convert(preScan_,postScan_);
-      scanConverter.convert(preScanConfidence_, postScanConfidence_);
+      scanConverter.convert(preScan_,postScan_,0.0005,0.0005);
+      scanConverter.convert(preScanConfidence_, postScanConfidence_,0.0005,0.0005);
 
       // Check if we need to initialize the display with the first frame
       if (! display_initialized_) {
@@ -200,7 +196,6 @@ vpThread::Return displayFunction(vpThread::Args args)
         // Update the display
         vpDisplay::flush(postScanConfidence_);
       }
-      firstIteration = false;
     }
     else {
       vpTime::wait(2); // Sleep 2ms

@@ -220,6 +220,8 @@ int main(int argc, const char** argv)
     postscan3DReference.setTransducerRadius(0.554);
     postscan3DReference.setScanLineNumber(211);
     postscan3DReference.setTransducerConvexity(true);
+    postscan3DReference.setTransmitFrequency(300000);
+    postscan3DReference.setSamplingFrequency(2000000);
     postscan3DReference.setFramePitch(0.258);
     postscan3DReference.setFrameNumber(258);
     postscan3DReference.setMotorRadius(0.025);
