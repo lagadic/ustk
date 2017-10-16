@@ -300,8 +300,6 @@ inline void usSequenceReader<usImagePreScan2D<unsigned char> >::open(usImagePreS
     if(vpIoTools::checkDirectory(vpIoTools::getParent(m_sequenceFileName))) { //correct path
       dirFiles = vpIoTools::getDirFiles(parentName);
 
-      std::sort(dirFiles.begin(), dirFiles.end());
-
       if(dirFiles.size() != (unsigned int)(m_xmlParser.getSequenceStopNumber() - m_xmlParser.getSequenceStartNumber() + 1))
         throw(vpException(vpException::fatalError, "For imgage sequnces with timeStamps, the directory must contain only the entire image sequence (no additionnal files allowed)"));
 
@@ -375,8 +373,6 @@ inline void usSequenceReader<usImagePreScan2D<unsigned char> >::open(usImagePreS
 
     if(vpIoTools::checkDirectory(vpIoTools::getParent(m_sequenceFileName))) { //correct path
       dirFiles = vpIoTools::getDirFiles(parentName);
-
-      std::sort(dirFiles.begin(), dirFiles.end());
 
       std::istringstream(vpIoTools::splitChain(dirFiles.at(0), std::string(".")).at(1)) >> timestamp;
 
@@ -453,8 +449,6 @@ inline void usSequenceReader<usImagePostScan2D<unsigned char> >::open(usImagePos
 
     if(vpIoTools::checkDirectory(vpIoTools::getParent(m_sequenceFileName))) { //correct path
       dirFiles = vpIoTools::getDirFiles(parentName);
-
-      std::sort(dirFiles.begin(), dirFiles.end());
 
       if(dirFiles.size() != (unsigned int)(m_xmlParser.getSequenceStopNumber() - m_xmlParser.getSequenceStartNumber() + 1))
         throw(vpException(vpException::fatalError, "For imgage sequnces with timeStamps, the directory must contain only the entire image sequence (no additionnal files allowed)"));
@@ -536,8 +530,6 @@ inline void usSequenceReader<usImagePostScan2D<unsigned char> >::open(usImagePos
     if(vpIoTools::checkDirectory(vpIoTools::getParent(m_sequenceFileName))) { //correct path
       dirFiles = vpIoTools::getDirFiles(parentName);
 
-      std::sort(dirFiles.begin(), dirFiles.end());
-
       std::istringstream(vpIoTools::splitChain(dirFiles.at(0), std::string(".")).at(1)) >> timestamp;
 
       if(dirFiles.size() != (unsigned int)(m_xmlParser.getSequenceStopNumber() - m_xmlParser.getSequenceStartNumber() + 1))
@@ -602,7 +594,6 @@ void usSequenceReader<ImageType>::acquire(ImageType &image)
 
     if(vpIoTools::checkDirectory(vpIoTools::getParent(m_sequenceFileName))) { //correct path
       dirFiles = vpIoTools::getDirFiles(parentName);
-      std::sort(dirFiles.begin(), dirFiles.end());
 
       if(dirFiles.size() != (unsigned int)(m_xmlParser.getSequenceStopNumber() - m_xmlParser.getSequenceStartNumber() + 1))
         throw(vpException(vpException::fatalError, "For imgage sequnces with timeStamps, the directory must contain only the entire image sequence (no additionnal files allowed)"));
@@ -660,8 +651,6 @@ void usSequenceReader<ImageType>::acquire(ImageType &image, uint64_t &timestamp)
     if(vpIoTools::checkDirectory(vpIoTools::getParent(m_sequenceFileName))) { //correct path
       dirFiles = vpIoTools::getDirFiles(parentName);
 
-      std::sort(dirFiles.begin(), dirFiles.end());
-
       std::istringstream(vpIoTools::splitChain(dirFiles.at(m_frameCount), std::string(".")).at(1)) >> timestamp;
 
       if(dirFiles.size() != (unsigned int)(m_xmlParser.getSequenceStopNumber() - m_xmlParser.getSequenceStartNumber() + 1))
@@ -717,8 +706,6 @@ inline void usSequenceReader<usImagePreScan2D<unsigned char> >::acquire(usImageP
 
     if(vpIoTools::checkDirectory(vpIoTools::getParent(m_sequenceFileName))) { //correct path
       dirFiles = vpIoTools::getDirFiles(parentName);
-
-      std::sort(dirFiles.begin(), dirFiles.end());
 
       if(dirFiles.size() != (unsigned int)(m_xmlParser.getSequenceStopNumber() - m_xmlParser.getSequenceStartNumber() + 1))
         throw(vpException(vpException::fatalError, "For imgage sequnces with timeStamps, the directory must contain only the entire image sequence (no additionnal files allowed)"));
@@ -779,7 +766,6 @@ inline void usSequenceReader<usImagePreScan2D<unsigned char> >::acquire(usImageP
     if(vpIoTools::checkDirectory(vpIoTools::getParent(m_sequenceFileName))) { //correct path
       dirFiles = vpIoTools::getDirFiles(parentName);
 
-      std::sort(dirFiles.begin(), dirFiles.end());
       std::istringstream(vpIoTools::splitChain(dirFiles.at(m_frameCount), std::string(".")).at(1)) >> timestamp;
 
       if(dirFiles.size() != (unsigned int)(m_xmlParser.getSequenceStopNumber() - m_xmlParser.getSequenceStartNumber() + 1))
