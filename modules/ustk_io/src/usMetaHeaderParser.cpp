@@ -104,6 +104,7 @@ void  usMetaHeaderParser::readMHDHeader(const std::string &fileName)
   this->header.framePitch = 0.0;
   this->header.samplingFrequency = 0;
   this->header.transmitFrequency = 0;
+  this->header.timestamp = 0;
 
   std::ifstream file;
   file.open(fileName.c_str(), std::ifstream::in);
@@ -237,6 +238,11 @@ void  usMetaHeaderParser::readMHDHeader(const std::string &fileName)
     else if (keyword == "SamplingFrequency")
     {
       file >> this->header.samplingFrequency;
+      std::getline(file, keyval, '\n');
+    }
+    else if (keyword == "Timestamp")
+    {
+      file >> this->header.timestamp;
       std::getline(file, keyval, '\n');
     }
     else if (keyword == "FramePitch")
@@ -500,6 +506,7 @@ void usMetaHeaderParser::parse()
       MHDfile << "WidthResolution = " << this->m_widthResolution << "\n";
       MHDfile << "ScanLineNumber = " << header.scanLineNumber << "\n";
       MHDfile << "FrameNumber = " << header.frameNumber << "\n";
+      MHDfile << "Timestamp = " << header.timestamp << "\n";
     }
     else
       MHDfile << "UltrasoundImageType = " << "MET_UNKNOWN" << "\n";
@@ -524,6 +531,7 @@ void usMetaHeaderParser::read(const std::string& filename)
   this->m_transducerSettings.setScanLinePitch(header.scanLinePitch);
   this->m_transducerSettings.setTransducerConvexity(header.isTransducerConvex);
   this->m_transducerSettings.setSamplingFrequency(header.samplingFrequency);
+  this->m_transducerSettings.setTransmitFrequency(header.transmitFrequency);
   this->m_transducerSettings.setTransmitFrequency(header.transmitFrequency);
 
   if(this->header.imageType == us::RF_3D || this->header.imageType == us::PRESCAN_3D || this->header.imageType == us::POSTSCAN_3D) {
@@ -594,5 +602,14 @@ void usMetaHeaderParser::setWidthResolution(const double widthResolution)
 void usMetaHeaderParser::setMHDHeader(const MHDHeader header)
 {
   this->header = header;
+}
+
+/**
+* Image timestamp setter
+* @param header MHDHeader to set.
+*/
+void usMetaHeaderParser::setImageTimestamp(const uint64_t timestamp)
+{
+  this->header.timestamp = timestamp;
 }
 #endif //DOXYGEN_SHOULD_SKIP_THIS

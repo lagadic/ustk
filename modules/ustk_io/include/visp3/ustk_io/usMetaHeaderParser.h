@@ -47,6 +47,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <stdint.h>
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/ustk_core/us.h>
@@ -97,6 +98,7 @@ public:
     unsigned int frameNumber; // for post-scan
     int transmitFrequency;
     int samplingFrequency;
+    uint64_t timestamp;
   };
 #endif //DOXYGEN_SHOULD_SKIP_THIS
 
@@ -129,6 +131,7 @@ public:
   void setAxialResolution(const double axialresolution);
   void setHeightResolution(const double heightResolution);
   void setImageFileName(const std::string &imageFileName);
+  void setImageTimestamp(const uint64_t timestamp);
   void setMHDHeader(MHDHeader header);
   void setMotorSettings(const usMotorSettings &motorSettings);
   void setRawFileName(const std::string &rawFileName);
