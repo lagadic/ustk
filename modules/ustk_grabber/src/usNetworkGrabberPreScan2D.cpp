@@ -37,6 +37,7 @@
 
 #include <QtCore/QDataStream>
 #include <QtCore/QEventLoop>
+#include <visp3/ustk_io/usImageIo.h>
 
 /**
 * Constructor. Inititializes the image, and manages Qt signal.
@@ -108,7 +109,6 @@ void usNetworkGrabberPreScan2D::dataArrived()
 
     //read all acquisition parameters received
     readAcquisitionParameters(in);
-
 
     emit(serverUpdateEnded(m_confirmHeader.initOk));
   }

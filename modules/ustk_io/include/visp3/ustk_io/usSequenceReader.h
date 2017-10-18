@@ -102,6 +102,9 @@ private:
   /** Xml parser used*/
   usImageSettingsXmlParser m_xmlParser;
 
+  /** Sequence timestamps*/
+  std::vector<uint64_t> m_timestamps;
+
 public:
 
   usSequenceReader();
@@ -155,6 +158,9 @@ public:
   //attributes getters/setters
   double getFrameRate() const {return m_frameRate;}
   long getImageNumber() const {return m_frameCount;}
+
+  //timestamps vector getter
+  std::vector<uint64_t> getSequenceTimestamps() const {return m_timestamps;}
 
   //get the xml parser : usefull to acess all the image settings contained in it
   usImageSettingsXmlParser getXmlParser();
@@ -301,10 +307,23 @@ inline void usSequenceReader<usImagePreScan2D<unsigned char> >::open(usImagePreS
       dirFiles = vpIoTools::getDirFiles(parentName);
 
       std::sort(dirFiles.begin(), dirFiles.end());
-
+      if(dirFiles.size() == (unsigned int)(m_xmlParser.getSequenceStopNumber() - m_xmlParser.getSequenceStartNumber() + 2)) {// case of xml file in same directory
+        for(unsigned int i=0; i< dirFiles.size(); i++) {
+          if(vpIoTools::splitChain(dirFiles.at(i), std::string(".")).at(1) == std::string("xml"))
+            dirFiles.erase(dirFiles.begin() + i);
+        }
+      }
       if(dirFiles.size() != (unsigned int)(m_xmlParser.getSequenceStopNumber() - m_xmlParser.getSequenceStartNumber() + 1))
         throw(vpException(vpException::fatalError, "For imgage sequnces with timeStamps, the directory must contain only the entire image sequence (no additionnal files allowed)"));
 
+      // getting the all the timestamps of the sequence
+      unsigned int i=0;
+      while(i<dirFiles.size()) {
+        uint64_t timestamp_temp;
+        std::istringstream(vpIoTools::splitChain(dirFiles.at(i), std::string(".")).at(1)) >> timestamp_temp;
+        m_timestamps.push_back(timestamp_temp);
+        i++;
+      }
       imageFileName = parentName + dirFiles.front();
     }
     else { // path not correct
@@ -369,6 +388,8 @@ inline void usSequenceReader<usImagePreScan2D<unsigned char> >::open(usImagePreS
   if(splitName.size() == 2) { // no timestamp : image0002.png for example
     imageFileName =  parentName + vpIoTools::splitChain(std::string(buffer),std::string("/")).back();
     timestamp = 0;
+    m_timestamps.clear();
+    m_timestamps.push_back(timestamp);
   }
   else if (splitName.size() == 3) { // timestamp included : image0002.156464063.png for example
     std::vector<std::string> dirFiles;
@@ -378,8 +399,6 @@ inline void usSequenceReader<usImagePreScan2D<unsigned char> >::open(usImagePreS
 
       std::sort(dirFiles.begin(), dirFiles.end());
 
-      std::istringstream(vpIoTools::splitChain(dirFiles.at(0), std::string(".")).at(1)) >> timestamp;
-
       if(dirFiles.size() == (unsigned int)(m_xmlParser.getSequenceStopNumber() - m_xmlParser.getSequenceStartNumber() + 2)) {// case of xml file in same directory
         for(unsigned int i=0; i< dirFiles.size(); i++) {
           if(vpIoTools::splitChain(dirFiles.at(i), std::string(".")).at(1) == std::string("xml"))
@@ -388,6 +407,16 @@ inline void usSequenceReader<usImagePreScan2D<unsigned char> >::open(usImagePreS
       }
       if(dirFiles.size() != (unsigned int)(m_xmlParser.getSequenceStopNumber() - m_xmlParser.getSequenceStartNumber() + 1))
         throw(vpException(vpException::fatalError, "For imgage sequnces with timeStamps, the directory must contain only the entire image sequence (no additionnal files allowed)"));
+
+      // getting the all the timestamps of the sequence
+      unsigned int i=0;
+      while(i<dirFiles.size()) {
+        uint64_t timestamp_temp;
+        std::istringstream(vpIoTools::splitChain(dirFiles.at(i), std::string(".")).at(1)) >> timestamp_temp;
+        m_timestamps.push_back(timestamp_temp);
+        i++;
+      }
+      std::istringstream(vpIoTools::splitChain(dirFiles.at(0), std::string(".")).at(1)) >> timestamp;
 
       imageFileName = parentName + dirFiles.front();
     }
@@ -462,8 +491,24 @@ inline void usSequenceReader<usImagePostScan2D<unsigned char> >::open(usImagePos
 
       std::sort(dirFiles.begin(), dirFiles.end());
 
+      if(dirFiles.size() == (unsigned int)(m_xmlParser.getSequenceStopNumber() - m_xmlParser.getSequenceStartNumber() + 2)) {// case of xml file in same directory
+        for(unsigned int i=0; i< dirFiles.size(); i++) {
+          if(vpIoTools::splitChain(dirFiles.at(i), std::string(".")).at(1) == std::string("xml"))
+            dirFiles.erase(dirFiles.begin() + i);
+        }
+      }
+
       if(dirFiles.size() != (unsigned int)(m_xmlParser.getSequenceStopNumber() - m_xmlParser.getSequenceStartNumber() + 1))
         throw(vpException(vpException::fatalError, "For imgage sequnces with timeStamps, the directory must contain only the entire image sequence (no additionnal files allowed)"));
+
+      // getting the all the timestamps of the sequence
+      unsigned int i=0;
+      while(i<dirFiles.size()) {
+        uint64_t timestamp_temp;
+        std::istringstream(vpIoTools::splitChain(dirFiles.at(i), std::string(".")).at(1)) >> timestamp_temp;
+        m_timestamps.push_back(timestamp_temp);
+        i++;
+      }
 
       imageFileName = parentName + dirFiles.front();
     }
@@ -544,10 +589,26 @@ inline void usSequenceReader<usImagePostScan2D<unsigned char> >::open(usImagePos
 
       std::sort(dirFiles.begin(), dirFiles.end());
 
+      if(dirFiles.size() == (unsigned int)(m_xmlParser.getSequenceStopNumber() - m_xmlParser.getSequenceStartNumber() + 2)) {// case of xml file in same directory
+        for(unsigned int i=0; i< dirFiles.size(); i++) {
+          if(vpIoTools::splitChain(dirFiles.at(i), std::string(".")).at(1) == std::string("xml"))
+            dirFiles.erase(dirFiles.begin() + i);
+        }
+      }
+
       std::istringstream(vpIoTools::splitChain(dirFiles.at(0), std::string(".")).at(1)) >> timestamp;
 
       if(dirFiles.size() != (unsigned int)(m_xmlParser.getSequenceStopNumber() - m_xmlParser.getSequenceStartNumber() + 1))
         throw(vpException(vpException::fatalError, "For imgage sequnces with timeStamps, the directory must contain only the entire image sequence (no additionnal files allowed)"));
+
+      // getting the all the timestamps of the sequence
+      unsigned int i=0;
+      while(i<dirFiles.size()) {
+        uint64_t timestamp_temp;
+        std::istringstream(vpIoTools::splitChain(dirFiles.at(i), std::string(".")).at(1)) >> timestamp_temp;
+        m_timestamps.push_back(timestamp_temp);
+        i++;
+      }
 
       imageFileName = parentName + dirFiles.front();
     }
@@ -610,6 +671,13 @@ void usSequenceReader<ImageType>::acquire(ImageType &image)
       dirFiles = vpIoTools::getDirFiles(parentName);
       std::sort(dirFiles.begin(), dirFiles.end());
 
+      if(dirFiles.size() == (unsigned int)(m_xmlParser.getSequenceStopNumber() - m_xmlParser.getSequenceStartNumber() + 2)) {// case of xml file in same directory
+        for(unsigned int i=0; i< dirFiles.size(); i++) {
+          if(vpIoTools::splitChain(dirFiles.at(i), std::string(".")).at(1) == std::string("xml"))
+            dirFiles.erase(dirFiles.begin() + i);
+        }
+      }
+
       if(dirFiles.size() != (unsigned int)(m_xmlParser.getSequenceStopNumber() - m_xmlParser.getSequenceStartNumber() + 1))
         throw(vpException(vpException::fatalError, "For imgage sequnces with timeStamps, the directory must contain only the entire image sequence (no additionnal files allowed)"));
 
@@ -668,6 +736,13 @@ void usSequenceReader<ImageType>::acquire(ImageType &image, uint64_t &timestamp)
 
       std::sort(dirFiles.begin(), dirFiles.end());
 
+      if(dirFiles.size() == (unsigned int)(m_xmlParser.getSequenceStopNumber() - m_xmlParser.getSequenceStartNumber() + 2)) {// case of xml file in same directory
+        for(unsigned int i=0; i< dirFiles.size(); i++) {
+          if(vpIoTools::splitChain(dirFiles.at(i), std::string(".")).at(1) == std::string("xml"))
+            dirFiles.erase(dirFiles.begin() + i);
+        }
+      }
+
       std::istringstream(vpIoTools::splitChain(dirFiles.at(m_frameCount), std::string(".")).at(1)) >> timestamp;
 
       if(dirFiles.size() != (unsigned int)(m_xmlParser.getSequenceStopNumber() - m_xmlParser.getSequenceStartNumber() + 1))
@@ -725,6 +800,13 @@ inline void usSequenceReader<usImagePreScan2D<unsigned char> >::acquire(usImageP
       dirFiles = vpIoTools::getDirFiles(parentName);
 
       std::sort(dirFiles.begin(), dirFiles.end());
+
+     if(dirFiles.size() == (unsigned int)(m_xmlParser.getSequenceStopNumber() - m_xmlParser.getSequenceStartNumber() + 2)) {// case of xml file in same directory
+        for(unsigned int i=0; i< dirFiles.size(); i++) {
+          if(vpIoTools::splitChain(dirFiles.at(i), std::string(".")).at(1) == std::string("xml"))
+            dirFiles.erase(dirFiles.begin() + i);
+        }
+      }
 
       if(dirFiles.size() != (unsigned int)(m_xmlParser.getSequenceStopNumber() - m_xmlParser.getSequenceStartNumber() + 1))
         throw(vpException(vpException::fatalError, "For imgage sequnces with timeStamps, the directory must contain only the entire image sequence (no additionnal files allowed)"));
@@ -786,6 +868,12 @@ inline void usSequenceReader<usImagePreScan2D<unsigned char> >::acquire(usImageP
       dirFiles = vpIoTools::getDirFiles(parentName);
 
       std::sort(dirFiles.begin(), dirFiles.end());
+      if(dirFiles.size() == (unsigned int)(m_xmlParser.getSequenceStopNumber() - m_xmlParser.getSequenceStartNumber() + 2)) {// case of xml file in same directory
+        for(unsigned int i=0; i< dirFiles.size(); i++) {
+          if(vpIoTools::splitChain(dirFiles.at(i), std::string(".")).at(1) == std::string("xml"))
+            dirFiles.erase(dirFiles.begin() + i);
+        }
+      }
       std::istringstream(vpIoTools::splitChain(dirFiles.at(m_frameCount), std::string(".")).at(1)) >> timestamp;
 
       if(dirFiles.size() != (unsigned int)(m_xmlParser.getSequenceStopNumber() - m_xmlParser.getSequenceStartNumber() + 1))
@@ -864,7 +952,7 @@ template<class ImageType>
 long usSequenceReader<ImageType>::getFrameCount()
 {
   if(is_open)
-    return m_lastFrame - m_firstFrame;
+    return m_lastFrame - m_firstFrame + 1;
   throw(vpException(vpException::fatalError, "Cannot compute the frame number of the sequence before opening it !"));
 }
 

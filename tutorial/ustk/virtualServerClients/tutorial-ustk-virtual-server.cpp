@@ -9,12 +9,18 @@
 #include <QApplication>
 
 #include <visp3/ustk_grabber/usNetworkGrabberPreScan2D.h>
+#include <visp3/ustk_io/usImageIo.h>
 
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/gui/vpDisplayGDI.h>
 
 int main(int argc, char** argv)
 {
+  std::cout << "int : " << sizeof(int) << std::endl;
+  std::cout << "double : " << sizeof(double) << std::endl;
+  std::cout << "unsigned int  : " << sizeof(unsigned int) << std::endl;
+  std::cout << "usImageHeader : " << sizeof(usNetworkGrabber::usImageHeader) << std::endl;
+
   // QT application
   QApplication app( argc, argv );
 
@@ -41,7 +47,7 @@ int main(int argc, char** argv)
   bool displayInit = false;
 
   bool captureRunning = true;
-
+  //qtGrabber->setVerbose(true);
   // sending acquisition parameters
   qtGrabber->initAcquisition(header);
   std::cout << "init success" << std::endl;
@@ -59,6 +65,8 @@ int main(int argc, char** argv)
       grabbedFrame = qtGrabber->acquire();
 
       std::cout <<"MAIN THREAD received frame No : " << grabbedFrame->getFrameCount() << std::endl;
+      QString filename = QString("img") + QString::number(grabbedFrame->getFrameCount()) + QString(".xml");
+      usImageIo::write(*grabbedFrame, filename.toStdString());
 
       std::cout << *grabbedFrame << std::endl;
 
@@ -74,6 +82,7 @@ int main(int argc, char** argv)
 
       // processing display
       if(displayInit) {
+        std::cout << "flushing display" << std::endl;
         vpDisplay::display(*grabbedFrame);
         vpDisplay::flush(*grabbedFrame);
       }

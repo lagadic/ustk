@@ -1,6 +1,6 @@
 #include "usVirtualServer.h"
 
-usVirtualServer::usVirtualServer(std::string sequenceFileName, QObject *parent) : QObject(parent), m_tcpServer()
+usVirtualServer::usVirtualServer(std::string sequenceFileName, QObject *parent) : QObject(parent), m_tcpServer(), m_serverIsSendingImages(false)
 {
   imageHeader.frameCount = 0;
   //read sequence parameters
@@ -9,6 +9,10 @@ usVirtualServer::usVirtualServer(std::string sequenceFileName, QObject *parent) 
   //init TCP server
   // set : acceptTheConnection() will be called whenever there is a new connection
   connect(&m_tcpServer, SIGNAL(newConnection()), this, SLOT(acceptTheConnection()));
+
+  // loop sending image activation / desactivation
+  connect(this, SIGNAL(runAcquisitionSignal(bool)), this, SLOT(runAcquisition(bool)));
+  connect(this, SIGNAL(startSendingLoopSignal()), this, SLOT(startSendingLoop()));
 
   //Start listening on port 8080
   QString portNum = QString::number(8080);
@@ -56,7 +60,6 @@ void usVirtualServer::readIncomingData()
   //read header id
   int id;
   in >> id;
-  std::cout << "id received : " << id << std::endl;
 
   if(id == 1) { // init header
     initWithoutUpdate = true;
@@ -84,19 +87,10 @@ void usVirtualServer::readIncomingData()
     throw(vpException(vpException::fatalError, "no update available for virtual server !"));
   }
   else if(id == 3) { // run - stop command
-    std::cout << "received header RUN/STOP = " << id << std::endl;
     bool run;
     in >> run;
 
-    //TODO !
-    if(run) {
-      sendNewImage();
-    }
-    else {
-      /*m_porta->stopImage();
-      m_porta->setParam(prmMotorStatus, 0); // disables the motor
-      m_porta->setMotorActive(false);*/
-    }
+    emit(runAcquisitionSignal(run));
   }
   else {
     std::cout << "ERROR : unknown data received !" << std::endl;
@@ -116,6 +110,9 @@ void usVirtualServer::connectionAboutToClose()
   m_sequenceReaderPostScan = usSequenceReader<usImagePostScan2D <unsigned char> > ();
   m_sequenceReaderPreScan = usSequenceReader<usImagePreScan2D <unsigned char> > ();
   imageHeader.frameCount = 0;
+
+  // Re-open the sequence to prepare next connection incomming (the server is still running)
+  setSequenceFileName(m_sequenceFileName);
 }
 
 QTcpSocket* usVirtualServer::getSocket() {
@@ -214,6 +211,7 @@ void usVirtualServer::writeInitAcquisitionParameters(QDataStream & stream, int i
 }
 
 void usVirtualServer::setSequenceFileName(const std::string sequenceFileName) {
+  m_sequenceFileName = sequenceFileName;
   m_sequenceReaderPostScan.setSequenceFileName(sequenceFileName);
   m_sequenceReaderPreScan.setSequenceFileName(sequenceFileName);
 
@@ -244,85 +242,93 @@ void usVirtualServer::setSequenceFileName(const std::string sequenceFileName) {
   }
 }
 
-void usVirtualServer::sendNewImage() {
+void usVirtualServer::startSendingLoop() {
 
-  m_previousImageTimestamp = imageHeader.timeStamp;
-  //manage first frame sent
-  if(imageHeader.frameCount != 0) {
-    if(m_imageType == us::PRESCAN_2D) {
-      uint64_t localTimestamp;
-      m_sequenceReaderPreScan.acquire(m_preScanImage,localTimestamp);
-      invertRowsColsOnPreScan(); //to fit with ultrasonix grabbers (pre-scan image is inverted in porta SDK)
-      imageHeader.timeStamp = localTimestamp;
-      imageHeader.imageType = 0;
+  bool endOfSequence = false;
+  while(m_serverIsSendingImages && ! endOfSequence ) {
+    m_previousImageTimestamp = imageHeader.timeStamp;
+    //manage first frame sent (already aquired with open() method)
+    if(imageHeader.frameCount != 0) {
+      if(m_imageType == us::PRESCAN_2D) {
+        uint64_t localTimestamp;
+        m_sequenceReaderPreScan.acquire(m_preScanImage,localTimestamp);
+        invertRowsColsOnPreScan(); //to fit with ultrasonix grabbers (pre-scan image is inverted in porta SDK)
+        imageHeader.timeStamp = localTimestamp;
+        imageHeader.imageType = 0;
+      }
+      else if(m_imageType == us::POSTSCAN_2D) {
+        uint64_t localTimestamp;
+        m_sequenceReaderPostScan.acquire(m_postScanImage,localTimestamp);
+        imageHeader.timeStamp = localTimestamp;
+        imageHeader.imageType = 1;
+      }
     }
-    else if(m_imageType == us::POSTSCAN_2D) {
-      uint64_t localTimestamp;
-      m_sequenceReaderPostScan.acquire(m_postScanImage,localTimestamp);
-      imageHeader.timeStamp = localTimestamp;
-      imageHeader.imageType = 1;
+
+    imageHeader.dataRate = 1000.0 / (imageHeader.timeStamp - m_previousImageTimestamp);
+
+    //WAITING PROCESS (to respect sequence timestamps)
+    vpTime::wait((double) (imageHeader.timeStamp - m_previousImageTimestamp));
+
+    QByteArray block;
+    QDataStream out(&block,QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_5_0);
+    out << imageHeader.headerId;
+    out << imageHeader.frameCount;
+    out << imageHeader.timeStamp;
+    out << imageHeader.dataRate;
+
+    if(m_imageType == us::PRESCAN_2D) { //send pre-scan image
+      out << (int) m_preScanImage.getHeight() * m_preScanImage.getWidth(); //datalength in bytes
+      out << (int) 8; //sample size in bits
+      out << (int) 0;
+      out << m_preScanImage.getHeight();
+      out << m_preScanImage.getWidth();
+      out << (double).0;//pixelWidth
+      out << (double).0;//pixelHeight
+      out << m_preScanImage.getTransmitFrequency();
+      out << m_preScanImage.getSamplingFrequency();
+      out << m_preScanImage.getTransducerRadius();
+      out << m_preScanImage.getScanLinePitch();
+      out << (int) m_preScanImage.getScanLineNumber();
+      out << (int) (m_postScanImage.getDepth() / 1000.0); //int in mm
+      out << (double) .0; //degPerFrame
+      out << (int) 0;//framesPerVolume
+      out << (double) .0;//motorRadius
+      out << (int) 0; //motorType
+      out.writeRawData((char*)m_preScanImage.bitmap,(int) m_preScanImage.getHeight() * m_preScanImage.getWidth());
+
+      endOfSequence = (m_sequenceReaderPreScan.getFrameCount() == imageHeader.frameCount + 1);
     }
+    else if(m_imageType == us::POSTSCAN_2D) { //send post-scan image
+      out << (int) m_postScanImage.getHeight() * m_postScanImage.getWidth(); //datalength in bytes
+      out << (int) 8; //sample size in bits
+      out << (int) 1;
+      out << m_postScanImage.getWidth();
+      out << m_postScanImage.getHeight();
+      out << m_postScanImage.getWidthResolution();//pixelWidth
+      out << m_postScanImage.getHeightResolution();//pixelHeight
+      out << m_postScanImage.getTransmitFrequency();
+      out << m_postScanImage.getSamplingFrequency();
+      out << m_postScanImage.getTransducerRadius();
+      out << m_postScanImage.getScanLinePitch();
+      out << (int) m_postScanImage.getScanLineNumber();
+      out << (int) (m_postScanImage.getDepth() / 1000.0); //int in mm
+      out << (double) .0; //degPerFrame
+      out << (int) 0;//framesPerVolume
+      out << (double) .0;//motorRadius
+      out << (int) 0; //motorType
+      out.writeRawData((char*)m_postScanImage.bitmap,(int) m_postScanImage.getHeight() * m_postScanImage.getWidth());
+
+      endOfSequence = (m_sequenceReaderPostScan.getFrameCount() == imageHeader.frameCount + 1);
+    }
+
+    connectionSoc->write(block);
+    qApp->processEvents();
+
+    std::cout << "new frame sent, No " << imageHeader.frameCount << std::endl;
+
+    imageHeader.frameCount ++;
   }
-
-  imageHeader.dataRate = 1000.0 / (imageHeader.timeStamp - m_previousImageTimestamp);
-
-  //WAITING PROCESS TO UPDATE (to respect sequence timestamps)
-  vpTime::wait(30);
-
-  std::cout << "new frame acquired !" << std::endl;
-
-  QByteArray block;
-  QDataStream out(&block,QIODevice::WriteOnly);
-  out.setVersion(QDataStream::Qt_5_0);
-  out << imageHeader.headerId;
-  out << imageHeader.frameCount;
-  out << imageHeader.timeStamp;
-  out << imageHeader.dataRate;
-
-  if(m_imageType == us::PRESCAN_2D) { //send pre-scan image
-    out << (int) m_preScanImage.getHeight() * m_preScanImage.getWidth(); //datalength in bytes
-    out << (int) 8; //sample size in bits
-    out << imageHeader.imageType;
-    out << m_preScanImage.getHeight();
-    out << m_preScanImage.getWidth();
-    out << (double).0;//pixelWidth
-    out << (double).0;//pixelHeight
-    out << m_preScanImage.getTransmitFrequency();
-    out << m_preScanImage.getSamplingFrequency();
-    out << m_preScanImage.getTransducerRadius();
-    out << m_preScanImage.getScanLinePitch();
-    out << (int) m_preScanImage.getScanLineNumber();
-    out << m_preScanImage.getDepth();
-    out << (double) .0; //degPerFrame
-    out << (int) 0;//framesPerVolume
-    out << (double) .0;//motorRadius
-    out << (int) 0; //motorType
-    out.writeRawData((char*)m_preScanImage.bitmap,(int) m_preScanImage.getHeight() * m_preScanImage.getWidth());
-  }
-  else if(m_imageType == us::POSTSCAN_2D) { //send post-scan image
-    out << (int) m_postScanImage.getHeight() * m_postScanImage.getWidth(); //datalength in bytes
-    out << (int) 8; //sample size in bits
-    out << imageHeader.imageType;
-    out << m_postScanImage.getWidth();
-    out << m_postScanImage.getHeight();
-    out << m_postScanImage.getWidthResolution();//pixelWidth
-    out << m_postScanImage.getHeightResolution();//pixelHeight
-    out << m_postScanImage.getTransmitFrequency();
-    out << m_postScanImage.getSamplingFrequency();
-    out << m_postScanImage.getTransducerRadius();
-    out << m_postScanImage.getScanLinePitch();
-    out << (int) m_postScanImage.getScanLineNumber();
-    out << m_postScanImage.getDepth();
-    out << (double) .0; //degPerFrame
-    out << (int) 0;//framesPerVolume
-    out << (double) .0;//motorRadius
-    out << (int) 0; //motorType
-    out.writeRawData((char*)m_preScanImage.bitmap,(int) m_preScanImage.getHeight() * m_preScanImage.getWidth());
-  }
-
-  connectionSoc->write(block);
-
-  imageHeader.frameCount ++;
 }
 
 /**
@@ -335,4 +341,12 @@ void usVirtualServer::invertRowsColsOnPreScan() {
   for(unsigned int i=0; i<m_preScanImage.getHeight(); i++)
     for (unsigned int j=0; j<m_preScanImage.getWidth(); j++)
       m_preScanImage(i,j,temp(j,i));
+}
+
+
+void usVirtualServer::runAcquisition(bool run) {
+  m_serverIsSendingImages = run;
+  if(run) {
+    emit(startSendingLoopSignal());
+  }
 }

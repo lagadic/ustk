@@ -1,6 +1,7 @@
 #ifndef US_VIRTUAL_SERVER_H
 #define US_VIRTUAL_SERVER_H
 
+#include <QApplication>
 #include <QtNetwork/QTcpServer>
 #include <QtNetwork/QTcpSocket>
 #include <QtCore/QDataStream>
@@ -105,14 +106,10 @@ public:
 
   QTcpSocket* getSocket();
 
-  usImageHeader imageHeader;
+signals:
+  void runAcquisitionSignal(bool run);
 
-  unsigned char* postScanImage;
-
-  //for bi-plane
-  unsigned char * secondBiplaneImage;
-
-  bool motorOffsetSkipped;
+  void startSendingLoopSignal();
 
 private slots:
   // Called automatically when a client attempts to connect
@@ -124,7 +121,9 @@ private slots:
   // Called automatically when data sent by a client is fully available to the server
   void readIncomingData();
 
-  void sendNewImage();
+  void runAcquisition(bool run);
+
+  void startSendingLoop();
 
 private:
 
@@ -151,12 +150,18 @@ private:
   usSequenceReader<usImagePreScan2D <unsigned char> > m_sequenceReaderPreScan;
   //usSequenceReader<usImageRF2D <short int> > m_sequenceReaderRF;
 
+  usImageHeader imageHeader;
+
   usImagePostScan2D <unsigned char> m_postScanImage;
   usImagePreScan2D <unsigned char> m_preScanImage;
 
   us::ImageType m_imageType;
 
   int64_t m_previousImageTimestamp;
+
+  bool m_serverIsSendingImages;
+
+  std::string m_sequenceFileName;
 };
 
 #endif // US_VIRTUAL_SERVER_H
