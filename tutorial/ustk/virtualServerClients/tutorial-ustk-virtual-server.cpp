@@ -16,11 +16,6 @@
 
 int main(int argc, char** argv)
 {
-  std::cout << "int : " << sizeof(int) << std::endl;
-  std::cout << "double : " << sizeof(double) << std::endl;
-  std::cout << "unsigned int  : " << sizeof(unsigned int) << std::endl;
-  std::cout << "usImageHeader : " << sizeof(usNetworkGrabber::usImageHeader) << std::endl;
-
   // QT application
   QApplication app( argc, argv );
 
@@ -69,7 +64,7 @@ int main(int argc, char** argv)
       usImageIo::write(*grabbedFrame, filename.toStdString());
 
       std::cout << *grabbedFrame << std::endl;
-
+/*
       //init display
       if(!displayInit && grabbedFrame->getHeight() !=0 && grabbedFrame->getWidth() !=0) {
 #if defined(VISP_HAVE_X11)
@@ -85,7 +80,7 @@ int main(int argc, char** argv)
         std::cout << "flushing display" << std::endl;
         vpDisplay::display(*grabbedFrame);
         vpDisplay::flush(*grabbedFrame);
-      }
+      }*/
     }
     else {
       vpTime::wait(10);

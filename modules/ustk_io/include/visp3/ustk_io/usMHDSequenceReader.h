@@ -51,9 +51,52 @@
  * Image sequence files order have to respect alphabetical order in the directory, and be the same for corresponding mhd and raw files.
  * For example : image1.mhd, image1.raw, image2.mhd, image2.raw, ...
  * The directory must contain exactly the same number of images as the number of images contained in the sequence (1 mhd file and 1 raw file per image of the sequence).
+ *
+ * Here is an example code of a basic use of this class:
+ * @code
+#include <visp3/ustk_io/usMHDSequenceReader.h>
+
+int main(int argc, char** argv)
+{
+  std::string sequenceDirectory;
+  if(argc == 1) {
+    std::cout << "\nUsage: " << argv[0] << " [--input /path/to/mhd/sequence ] \n" << std::endl;
+    return 0;
+  }
+
+  for (unsigned int i=1; i<(unsigned int)argc; i++) {
+    if (std::string(argv[i]) == "--input") {
+      sequenceDirectory = std::string(argv[i+1]);
+      i = argc;
+      std::cout << "tests" << std::endl;
+    }
+    else {
+      std::cout << "\nUsage: " << argv[0] << " [--input /path/to/mhd/sequence ] \n" << std::endl;
+      return 0;
+    }
+  }
+
+  usImagePreScan3D<unsigned char> image;
+  uint64_t timestamp;
+
+  usMHDSequenceReader reader;
+  reader.setSequenceDirectory(sequenceDirectory);
+
+  //reading loop
+  while ( !reader.end()) {
+    reader.acquire(image,timestamp);
+
+    std::cout << image;
+    std::cout << "timestamp : " << timestamp << std::endl;
+  }
+
+  return 0;
+}
+ *
+ * @endcode
  * @ingroup module_ustk_io
  */
-class usMHDSequenceReader
+class VISP_EXPORT usMHDSequenceReader
 {
 public:
 
@@ -64,6 +107,8 @@ public:
   void acquire(usImageRF3D<short int> & image, uint64_t & timestamp);
   void acquire(usImagePreScan3D<unsigned char> & image, uint64_t & timestamp);
   void acquire(usImagePostScan3D<unsigned char> & image, uint64_t & timestamp);
+
+  bool end();
 
   void setSequenceDirectory(const std::string sequenceDirectory);
 
