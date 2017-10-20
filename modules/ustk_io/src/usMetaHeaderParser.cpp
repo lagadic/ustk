@@ -380,6 +380,7 @@ void usMetaHeaderParser::parse()
       MHDfile << "Comment = Distance between 2 scan lines.\n";
       MHDfile << "SamplingFrequency = " << header.samplingFrequency << "\n";
       MHDfile << "Comment = The axial resolution is the distance in meters between two successives A-samples in a scan line.\n";
+      MHDfile << "Timestamp = " << header.timestamp << "\n";
       MHDfile << "AxialResolution = " << this->m_axialResolution << "\n";
     }
     else if (header.imageType == us::RF_3D) {
@@ -411,6 +412,7 @@ void usMetaHeaderParser::parse()
       MHDfile << "FramePitch = " << header.framePitch << "\n";
       MHDfile << "Comment = The axial resolution is the distance in meters between two successives A-samples in a scan line.\n";
       MHDfile << "AxialResolution = " << this->m_axialResolution << "\n";
+      MHDfile << "Timestamp = " << header.timestamp << "\n";
     }
     else if (header.imageType == us::PRESCAN_2D) {
       MHDfile << "Comment = Availables ultrasound image types are RF_2D, RF_3D, PRESCAN_2D, PRESCAN_3D, POSTSCAN_2D and POSTSCAN_3D.\n";
@@ -427,6 +429,7 @@ void usMetaHeaderParser::parse()
       MHDfile << "SamplingFrequency = " << header.samplingFrequency << "\n";
       MHDfile << "Comment = The axial resolution is the distance in meters between two successives A-samples in a scan line.\n";
       MHDfile << "AxialResolution = " << this->m_axialResolution << "\n";
+      MHDfile << "Timestamp = " << header.timestamp << "\n";
     }
     else if (header.imageType == us::PRESCAN_3D) {
       MHDfile << "Comment = Availables ultrasound image types are RF_2D, RF_3D, PRESCAN_2D, PRESCAN_3D, POSTSCAN_2D and POSTSCAN_3D.\n";
@@ -457,6 +460,7 @@ void usMetaHeaderParser::parse()
       MHDfile << "FramePitch = " << header.framePitch << "\n";
       MHDfile << "Comment = The axial resolution is the distance in meters between two successives A-samples in a scan line.\n";
       MHDfile << "AxialResolution = " << this->m_axialResolution << "\n";
+      MHDfile << "Timestamp = " << header.timestamp << "\n";
     }
     else if (header.imageType == us::POSTSCAN_2D) {
       MHDfile << "Comment = Availables ultrasound image types are RF_2D, RF_3D, PRESCAN_2D, PRESCAN_3D, POSTSCAN_2D and POSTSCAN_3D.\n";
@@ -474,6 +478,7 @@ void usMetaHeaderParser::parse()
       MHDfile << "HeightResolution = " << this->m_heightResolution << "\n";
       MHDfile << "WidthResolution = " << this->m_widthResolution << "\n";
       MHDfile << "ScanLineNumber = " << header.scanLineNumber << "\n";
+      MHDfile << "Timestamp = " << header.timestamp << "\n";
     }
     else if (header.imageType == us::POSTSCAN_3D) {
       MHDfile << "Comment = Availables ultrasound image types are RF_2D, RF_3D, PRESCAN_2D, PRESCAN_3D, POSTSCAN_2D and POSTSCAN_3D.\n";

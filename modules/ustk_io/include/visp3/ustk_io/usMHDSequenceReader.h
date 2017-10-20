@@ -68,7 +68,6 @@ int main(int argc, char** argv)
     if (std::string(argv[i]) == "--input") {
       sequenceDirectory = std::string(argv[i+1]);
       i = argc;
-      std::cout << "tests" << std::endl;
     }
     else {
       std::cout << "\nUsage: " << argv[0] << " [--input /path/to/mhd/sequence ] \n" << std::endl;
@@ -104,11 +103,15 @@ public:
   ~usMHDSequenceReader();
 
   void acquire(usImageRF2D<short int> & image, uint64_t & timestamp);
+  void acquire(usImagePreScan2D<unsigned char> & image, uint64_t & timestamp);
+  void acquire(usImagePostScan2D<unsigned char> & image, uint64_t & timestamp);
   void acquire(usImageRF3D<short int> & image, uint64_t & timestamp);
   void acquire(usImagePreScan3D<unsigned char> & image, uint64_t & timestamp);
   void acquire(usImagePostScan3D<unsigned char> & image, uint64_t & timestamp);
 
   bool end();
+
+  us::ImageType getImageType() const;
 
   void setSequenceDirectory(const std::string sequenceDirectory);
 

@@ -17,6 +17,7 @@
 
 //USTK inclues
 #include <visp3/ustk_io/usSequenceReader.h>
+#include <visp3/ustk_io/usMHDSequenceReader.h>
 
 class usVirtualServer : public QObject
 {
@@ -101,7 +102,7 @@ public:
     int motorType;
   };
 
-  explicit usVirtualServer(std::string sequenceFileName, QObject *parent = 0);
+  explicit usVirtualServer(std::string sequencePath, QObject *parent = 0);
   ~usVirtualServer();
 
   QTcpSocket* getSocket();
@@ -131,7 +132,10 @@ private:
 
   void invertRowsColsOnPreScan();
 
-  void setSequenceFileName(const std::string sequenceFileName);
+  void setSequencePath(const std::string sequencePath);
+
+  void sendingLoopSequenceXml();
+  void sendingLoopSequenceMHD();
 
   bool updateServer(usUpdateHeaderIncomming header);
 
@@ -148,20 +152,26 @@ private:
 
   usSequenceReader<usImagePostScan2D <unsigned char> > m_sequenceReaderPostScan;
   usSequenceReader<usImagePreScan2D <unsigned char> > m_sequenceReaderPreScan;
-  //usSequenceReader<usImageRF2D <short int> > m_sequenceReaderRF;
+  usMHDSequenceReader m_MHDSequenceReader;
 
   usImageHeader imageHeader;
 
-  usImagePostScan2D <unsigned char> m_postScanImage;
-  usImagePreScan2D <unsigned char> m_preScanImage;
+  usImagePostScan2D <unsigned char> m_postScanImage2d;
+  usImagePreScan2D <unsigned char> m_preScanImage2d;
+  usImageRF2D <short int> m_rfImage2d;
+  usImagePostScan3D <unsigned char> m_postScanImage3d;
+  usImagePreScan3D <unsigned char> m_preScanImage3d;
+  usImageRF3D <short int> m_rfImage3d;
 
   us::ImageType m_imageType;
+
+  bool m_isMHDSequence; // mhd sequence if true, xml otherwise
 
   int64_t m_previousImageTimestamp;
 
   bool m_serverIsSendingImages;
 
-  std::string m_sequenceFileName;
+  std::string m_sequencePath;
 };
 
 #endif // US_VIRTUAL_SERVER_H

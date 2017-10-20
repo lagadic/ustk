@@ -74,6 +74,98 @@ void usMHDSequenceReader::acquire(usImageRF2D<short int> & image, uint64_t & tim
 }
 
 /**
+* Acquisition method for usImagePreScan2D : fills the output image with the next image in the sequence.
+* @param [out] image The usImagePreScan2D image acquired.
+* @param [out] timestamp The timestamp of the image (0 if not present in the sequence parameters).
+*/
+void usMHDSequenceReader::acquire(usImagePreScan2D<unsigned char> & image, uint64_t & timestamp) {
+
+  if(m_imageCounter > m_totalImageNumber)
+    throw(vpException(vpException::fatalError, "usMHDSequenceReader : end of sequence reached !"));
+
+  if(usImageIo::getHeaderFormat(m_sequenceFiles.at(2*m_imageCounter)) != usImageIo::FORMAT_MHD) //check file extention
+    throw(vpException(vpException::fatalError, "usMHDSequenceReader trying to open a non-mhd file !"));
+
+  usMetaHeaderParser mhdParser;
+  mhdParser.read(m_sequenceDirectory + vpIoTools::path("/") + m_sequenceFiles.at(2*m_imageCounter)); // we skip raw files
+  m_sequenceImageType = mhdParser.getImageType();
+  if (m_sequenceImageType != us::PRESCAN_2D && m_sequenceImageType != us::NOT_SET) {
+    throw(vpException(vpException::badValue, "Reading a non pre-scan 2D image!"));
+  }
+  if (mhdParser.getElementType() != usMetaHeaderParser::MET_UCHAR) {
+    throw(vpException(vpException::badValue, "Reading a non unsigned char image!"));
+  }
+
+  usMetaHeaderParser::MHDHeader mhdHeader = mhdParser.getMHDHeader();
+  timestamp = mhdHeader.timestamp;
+
+  usImagePreScanSettings settings;
+  settings.setTransducerRadius(mhdHeader.transducerRadius);
+  settings.setScanLinePitch(mhdHeader.scanLinePitch);
+  settings.setTransducerConvexity(mhdHeader.isTransducerConvex);
+  settings.setAxialResolution(mhdParser.getAxialResolution());
+  settings.setDepth(settings.getAxialResolution()*mhdHeader.dim[1]);
+  settings.setSamplingFrequency(mhdHeader.samplingFrequency);
+  settings.setTransmitFrequency(mhdHeader.transmitFrequency);
+  image.setImagePreScanSettings(settings);
+
+  //resizing image in memory
+  image.resize(mhdHeader.dim[1], mhdHeader.dim[0]);
+
+  //data parsing
+  usRawFileParser rawParser;
+  rawParser.read(image, mhdParser.getRawFileName());
+
+  m_imageCounter ++;
+}
+
+/**
+* Acquisition method for usImagePostScan2D : fills the output image with the next image in the sequence.
+* @param [out] image The usImagePostScan2D image acquired.
+* @param [out] timestamp The timestamp of the image (0 if not present in the sequence parameters).
+*/
+void usMHDSequenceReader::acquire(usImagePostScan2D<unsigned char> & image, uint64_t & timestamp) {
+
+  if(m_imageCounter > m_totalImageNumber)
+    throw(vpException(vpException::fatalError, "usMHDSequenceReader : end of sequence reached !"));
+
+  if(usImageIo::getHeaderFormat(m_sequenceFiles.at(2*m_imageCounter)) != usImageIo::FORMAT_MHD) //check file extention
+    throw(vpException(vpException::fatalError, "usMHDSequenceReader trying to open a non-mhd file !"));
+
+  usMetaHeaderParser mhdParser;
+  mhdParser.read(m_sequenceDirectory + vpIoTools::path("/") + m_sequenceFiles.at(2*m_imageCounter)); // we skip raw files
+  m_sequenceImageType = mhdParser.getImageType();
+  if (m_sequenceImageType != us::POSTSCAN_2D && m_sequenceImageType != us::NOT_SET) {
+    throw(vpException(vpException::badValue, "Reading a non p-scan 2D image!"));
+  }
+  if (mhdParser.getElementType() != usMetaHeaderParser::MET_UCHAR) {
+    throw(vpException(vpException::badValue, "Reading a non unsigned char image!"));
+  }
+
+  usMetaHeaderParser::MHDHeader mhdHeader = mhdParser.getMHDHeader();
+  timestamp = mhdHeader.timestamp;
+
+  usImagePreScanSettings settings;
+  image.setTransducerRadius(mhdHeader.transducerRadius);
+  image.setScanLinePitch(mhdHeader.scanLinePitch);
+  image.setTransducerConvexity(mhdHeader.isTransducerConvex);;
+  image.setDepth(settings.getAxialResolution()*mhdHeader.dim[1]);
+  image.setWidthResolution(mhdHeader.dim[0]);
+  image.setWidthResolution(mhdHeader.dim[1]);
+  image.setSamplingFrequency(mhdHeader.samplingFrequency);
+  image.setTransmitFrequency(mhdHeader.transmitFrequency);
+
+  //resizing image in memory
+  image.resize(mhdHeader.dim[1], mhdHeader.dim[0]);
+
+  //data parsing
+  usRawFileParser rawParser;
+  rawParser.read(image, mhdParser.getRawFileName());
+
+  m_imageCounter ++;
+}
+
+/**
 * Acquisition method for usImageRF3D : fills the output image with the next volume in the sequence.
 * @param [out] image The usImageRF3D image acquired.
 * @param [out] timestamp The timestamp of the image (0 if not present in the sequence parameters).
@@ -237,4 +329,12 @@ void usMHDSequenceReader::acquire(usImagePostScan3D<unsigned char> & image, uint
 */
 bool usMHDSequenceReader::end() {
   return m_imageCounter >= m_totalImageNumber;
+}
+
+/**
+* Returns the current type of image acquired.
+* @return The image type of the sequence currently read.
+*/
+us::ImageType usMHDSequenceReader::getImageType() const {
+  return m_sequenceImageType;
 }

@@ -1,10 +1,15 @@
 #include "usVirtualServer.h"
 
-usVirtualServer::usVirtualServer(std::string sequenceFileName, QObject *parent) : QObject(parent), m_tcpServer(), m_serverIsSendingImages(false)
+/**
+* Constructor, sets the sequence
+* @param image The usImageRF2D image to write.
+* @param timestamp The timestamp of the image.
+*/
+usVirtualServer::usVirtualServer(std::string sequencePath, QObject *parent) : QObject(parent), m_tcpServer(), m_serverIsSendingImages(false)
 {
   imageHeader.frameCount = 0;
   //read sequence parameters
-  setSequenceFileName(sequenceFileName); //opens first image of the sequence
+  setSequencePath(sequencePath); //opens first image of the sequence
 
   //init TCP server
   // set : acceptTheConnection() will be called whenever there is a new connection
@@ -112,7 +117,7 @@ void usVirtualServer::connectionAboutToClose()
   imageHeader.frameCount = 0;
 
   // Re-open the sequence to prepare next connection incomming (the server is still running)
-  setSequenceFileName(m_sequenceFileName);
+  setSequencePath(m_sequencePath);
 }
 
 QTcpSocket* usVirtualServer::getSocket() {
@@ -152,30 +157,30 @@ void usVirtualServer::writeInitAcquisitionParameters(QDataStream & stream, int i
 
 
   if(m_imageType == us::PRESCAN_2D) {
-    transmitFrequency = m_preScanImage.getTransmitFrequency();
-    transmitFrequencyMin = m_preScanImage.getTransmitFrequency();
-    transmitFrequencyMax = m_preScanImage.getTransmitFrequency();
+    transmitFrequency = m_preScanImage2d.getTransmitFrequency();
+    transmitFrequencyMin = m_preScanImage2d.getTransmitFrequency();
+    transmitFrequencyMax = m_preScanImage2d.getTransmitFrequency();
 
-    samplingFrequency = m_preScanImage.getSamplingFrequency();
-    samplingFrequencyMin = m_preScanImage.getSamplingFrequency();
-    samplingFrequencyMax = m_preScanImage.getSamplingFrequency();
+    samplingFrequency = m_preScanImage2d.getSamplingFrequency();
+    samplingFrequencyMin = m_preScanImage2d.getSamplingFrequency();
+    samplingFrequencyMax = m_preScanImage2d.getSamplingFrequency();
 
-    imageDepth = m_preScanImage.getDepth();
-    imageDepthMin = m_preScanImage.getDepth();
-    imageDepthMax = m_preScanImage.getDepth();
+    imageDepth = m_preScanImage2d.getDepth();
+    imageDepthMin = m_preScanImage2d.getDepth();
+    imageDepthMax = m_preScanImage2d.getDepth();
   }
   else if (m_imageType == us::POSTSCAN_2D) {
-    transmitFrequency = m_postScanImage.getTransmitFrequency();
-    transmitFrequencyMin = m_postScanImage.getTransmitFrequency();
-    transmitFrequencyMax = m_postScanImage.getTransmitFrequency();
+    transmitFrequency = m_postScanImage2d.getTransmitFrequency();
+    transmitFrequencyMin = m_postScanImage2d.getTransmitFrequency();
+    transmitFrequencyMax = m_postScanImage2d.getTransmitFrequency();
 
-    samplingFrequency = m_postScanImage.getSamplingFrequency();
-    samplingFrequencyMin = m_postScanImage.getSamplingFrequency();
-    samplingFrequencyMax = m_postScanImage.getSamplingFrequency();
+    samplingFrequency = m_postScanImage2d.getSamplingFrequency();
+    samplingFrequencyMin = m_postScanImage2d.getSamplingFrequency();
+    samplingFrequencyMax = m_postScanImage2d.getSamplingFrequency();
 
-    imageDepth = m_postScanImage.getDepth();
-    imageDepthMin = m_postScanImage.getDepth();
-    imageDepthMax = m_postScanImage.getDepth();
+    imageDepth = m_postScanImage2d.getDepth();
+    imageDepthMin = m_postScanImage2d.getDepth();
+    imageDepthMax = m_postScanImage2d.getDepth();
 
     postScanMode = true;
   }
@@ -210,39 +215,91 @@ void usVirtualServer::writeInitAcquisitionParameters(QDataStream & stream, int i
   stream << stepsPerFrameMax;
 }
 
-void usVirtualServer::setSequenceFileName(const std::string sequenceFileName) {
-  m_sequenceFileName = sequenceFileName;
-  m_sequenceReaderPostScan.setSequenceFileName(sequenceFileName);
-  m_sequenceReaderPreScan.setSequenceFileName(sequenceFileName);
+void usVirtualServer::setSequencePath(const std::string sequencePath) {
 
-  //try to open post-scan sequence
-  try {
-    uint64_t localTimestamp;
-    m_sequenceReaderPostScan.open(m_postScanImage,localTimestamp);
-    imageHeader.timeStamp = localTimestamp;
-    if(imageHeader.timeStamp == 0) { // timestamps are requested for virtual server
-      throw(vpException(vpException::fatalError), "usVirtualServer error : no timestamp associated in sequence !");
-    }
-    m_imageType = us::POSTSCAN_2D;
-  } catch(...) {
-    //if we have an exception, it's not a post-scan image. So we try a pre-scan
+  if(vpIoTools::checkFilename(sequencePath)) { // xml file pointing on a sequence of 2d images (pre-scan or post-scan)
+
+    m_sequencePath = sequencePath;
+    m_sequenceReaderPostScan.setSequenceFileName(sequencePath);
+    m_sequenceReaderPreScan.setSequenceFileName(sequencePath);
+
+    //try to open post-scan sequence
     try {
       uint64_t localTimestamp;
-      m_sequenceReaderPreScan.open(m_preScanImage,localTimestamp);
+      m_sequenceReaderPostScan.open(m_postScanImage2d,localTimestamp);
       imageHeader.timeStamp = localTimestamp;
       if(imageHeader.timeStamp == 0) { // timestamps are requested for virtual server
         throw(vpException(vpException::fatalError), "usVirtualServer error : no timestamp associated in sequence !");
       }
-      invertRowsColsOnPreScan(); //to fit with ultrasonix grabbers (pre-scan image is inverted in porta SDK)
-      m_imageType = us::PRESCAN_2D;
+      m_imageType = us::POSTSCAN_2D;
+      m_isMHDSequence = false;
+    } catch(...) {
+      //if we have an exception, it's not a post-scan image. So we try a pre-scan
+      try {
+        uint64_t localTimestamp;
+        m_sequenceReaderPreScan.open(m_preScanImage2d,localTimestamp);
+        imageHeader.timeStamp = localTimestamp;
+        if(imageHeader.timeStamp == 0) { // timestamps are requested for virtual server
+          throw(vpException(vpException::fatalError), "usVirtualServer error : no timestamp associated in sequence !");
+        }
+        invertRowsColsOnPreScan(); //to fit with ultrasonix grabbers (pre-scan image is inverted in porta SDK)
+        m_imageType = us::PRESCAN_2D;
+        m_isMHDSequence = false;
+      }
+      catch(...) {
+        throw(vpException(vpException::badValue), "usVirtualServer error : trying to open a xml image sequence not managed (neither pre-scan 2D nor post-scan 2D)or with no timestamp associated");
+      }
     }
-    catch(...) {
-      throw(vpException(vpException::badValue), "usVirtualServer error : trying to open a image sequence not managed (neither pre-scan 2D nor post-scan 2D)or with no timestamp associated");
+  }
+  // case of a directory containing a sequence of mhd/raw images
+  else if(vpIoTools::checkDirectory(sequencePath) && usImageIo::getHeaderFormat(vpIoTools::getDirFiles(sequencePath).front()) == usImageIo::FORMAT_MHD) {
+    m_MHDSequenceReader.setSequenceDirectory(sequencePath);
+    uint64_t localTimestamp;
+    // at this point, we don't know the type of image contained in the sequence, we have to try them all
+    try {
+      m_MHDSequenceReader.acquire(m_rfImage2d,localTimestamp);
+    } catch(...) {//if we have an exception, it's not a RF 2D image. So we try a pre-scan 2D
+      try {
+        m_MHDSequenceReader.acquire(m_preScanImage2d,localTimestamp);
+      } catch(...) {// it's not a pre-scan 2D image...
+        try {
+          m_MHDSequenceReader.acquire(m_postScanImage2d,localTimestamp);
+        } catch(...) {// it's not a post-scan 2D image...
+          try {
+            m_MHDSequenceReader.acquire(m_rfImage3d,localTimestamp);
+          } catch(...) {// it's not a pre-scan 2D image...
+            try {
+              m_MHDSequenceReader.acquire(m_preScanImage3d,localTimestamp);
+            } catch(...) {// it's not a pre-scan 2D image...
+              try {
+                m_MHDSequenceReader.acquire(m_postScanImage3d,localTimestamp);
+              } catch(...) {// it's not a valid type
+                throw(vpException(vpException::badValue), "usVirtualServer error : trying to open a mhd image sequence not managed !");
+
+              }
+            }
+          }
+        }
+      }
     }
+
+    m_imageType = m_MHDSequenceReader.getImageType();
+    m_isMHDSequence = true;
+    imageHeader.timeStamp = localTimestamp;
+  }
+  else {
+    throw(vpException(vpException::badValue, "usVirtualServer error : sequence path incorrect !"));
   }
 }
 
 void usVirtualServer::startSendingLoop() {
+  if(m_isMHDSequence)
+    sendingLoopSequenceMHD();
+  else
+    sendingLoopSequenceXml();
+}
+
+void usVirtualServer::sendingLoopSequenceXml() {
 
   bool endOfSequence = false;
   while(m_serverIsSendingImages && ! endOfSequence ) {
@@ -251,14 +308,14 @@ void usVirtualServer::startSendingLoop() {
     if(imageHeader.frameCount != 0) {
       if(m_imageType == us::PRESCAN_2D) {
         uint64_t localTimestamp;
-        m_sequenceReaderPreScan.acquire(m_preScanImage,localTimestamp);
+        m_sequenceReaderPreScan.acquire(m_preScanImage2d,localTimestamp);
         invertRowsColsOnPreScan(); //to fit with ultrasonix grabbers (pre-scan image is inverted in porta SDK)
         imageHeader.timeStamp = localTimestamp;
         imageHeader.imageType = 0;
       }
       else if(m_imageType == us::POSTSCAN_2D) {
         uint64_t localTimestamp;
-        m_sequenceReaderPostScan.acquire(m_postScanImage,localTimestamp);
+        m_sequenceReaderPostScan.acquire(m_postScanImage2d,localTimestamp);
         imageHeader.timeStamp = localTimestamp;
         imageHeader.imageType = 1;
       }
@@ -278,46 +335,46 @@ void usVirtualServer::startSendingLoop() {
     out << imageHeader.dataRate;
 
     if(m_imageType == us::PRESCAN_2D) { //send pre-scan image
-      out << (int) m_preScanImage.getHeight() * m_preScanImage.getWidth(); //datalength in bytes
+      out << (int) m_preScanImage2d.getHeight() * m_preScanImage2d.getWidth(); //datalength in bytes
       out << (int) 8; //sample size in bits
       out << (int) 0;
-      out << m_preScanImage.getHeight();
-      out << m_preScanImage.getWidth();
+      out << m_preScanImage2d.getHeight();
+      out << m_preScanImage2d.getWidth();
       out << (double).0;//pixelWidth
       out << (double).0;//pixelHeight
-      out << m_preScanImage.getTransmitFrequency();
-      out << m_preScanImage.getSamplingFrequency();
-      out << m_preScanImage.getTransducerRadius();
-      out << m_preScanImage.getScanLinePitch();
-      out << (int) m_preScanImage.getScanLineNumber();
-      out << (int) (m_postScanImage.getDepth() / 1000.0); //int in mm
+      out << m_preScanImage2d.getTransmitFrequency();
+      out << m_preScanImage2d.getSamplingFrequency();
+      out << m_preScanImage2d.getTransducerRadius();
+      out << m_preScanImage2d.getScanLinePitch();
+      out << (int) m_preScanImage2d.getScanLineNumber();
+      out << (int) (m_postScanImage2d.getDepth() / 1000.0); //int in mm
       out << (double) .0; //degPerFrame
       out << (int) 0;//framesPerVolume
       out << (double) .0;//motorRadius
       out << (int) 0; //motorType
-      out.writeRawData((char*)m_preScanImage.bitmap,(int) m_preScanImage.getHeight() * m_preScanImage.getWidth());
+      out.writeRawData((char*)m_preScanImage2d.bitmap,(int) m_preScanImage2d.getHeight() * m_preScanImage2d.getWidth());
 
       endOfSequence = (m_sequenceReaderPreScan.getFrameCount() == imageHeader.frameCount + 1);
     }
     else if(m_imageType == us::POSTSCAN_2D) { //send post-scan image
-      out << (int) m_postScanImage.getHeight() * m_postScanImage.getWidth(); //datalength in bytes
+      out << (int) m_postScanImage2d.getHeight() * m_postScanImage2d.getWidth(); //datalength in bytes
       out << (int) 8; //sample size in bits
       out << (int) 1;
-      out << m_postScanImage.getWidth();
-      out << m_postScanImage.getHeight();
-      out << m_postScanImage.getWidthResolution();//pixelWidth
-      out << m_postScanImage.getHeightResolution();//pixelHeight
-      out << m_postScanImage.getTransmitFrequency();
-      out << m_postScanImage.getSamplingFrequency();
-      out << m_postScanImage.getTransducerRadius();
-      out << m_postScanImage.getScanLinePitch();
-      out << (int) m_postScanImage.getScanLineNumber();
-      out << (int) (m_postScanImage.getDepth() / 1000.0); //int in mm
+      out << m_postScanImage2d.getWidth();
+      out << m_postScanImage2d.getHeight();
+      out << m_postScanImage2d.getWidthResolution();//pixelWidth
+      out << m_postScanImage2d.getHeightResolution();//pixelHeight
+      out << m_postScanImage2d.getTransmitFrequency();
+      out << m_postScanImage2d.getSamplingFrequency();
+      out << m_postScanImage2d.getTransducerRadius();
+      out << m_postScanImage2d.getScanLinePitch();
+      out << (int) m_postScanImage2d.getScanLineNumber();
+      out << (int) (m_postScanImage2d.getDepth() / 1000.0); //int in mm
       out << (double) .0; //degPerFrame
       out << (int) 0;//framesPerVolume
       out << (double) .0;//motorRadius
       out << (int) 0; //motorType
-      out.writeRawData((char*)m_postScanImage.bitmap,(int) m_postScanImage.getHeight() * m_postScanImage.getWidth());
+      out.writeRawData((char*)m_postScanImage2d.bitmap,(int) m_postScanImage2d.getHeight() * m_postScanImage2d.getWidth());
 
       endOfSequence = (m_sequenceReaderPostScan.getFrameCount() == imageHeader.frameCount + 1);
     }
@@ -331,16 +388,20 @@ void usVirtualServer::startSendingLoop() {
   }
 }
 
+void usVirtualServer::sendingLoopSequenceMHD() {
+  // TO DO
+}
+
 /**
 * Method to invert rows and columns in the image.
 */
 void usVirtualServer::invertRowsColsOnPreScan() {
-  usImagePreScan2D<unsigned char> temp = m_preScanImage;
-  m_preScanImage.resize(temp.getWidth(),temp.getHeight());
+  usImagePreScan2D<unsigned char> temp = m_preScanImage2d;
+  m_preScanImage2d.resize(temp.getWidth(),temp.getHeight());
 
-  for(unsigned int i=0; i<m_preScanImage.getHeight(); i++)
-    for (unsigned int j=0; j<m_preScanImage.getWidth(); j++)
-      m_preScanImage(i,j,temp(j,i));
+  for(unsigned int i=0; i<m_preScanImage2d.getHeight(); i++)
+    for (unsigned int j=0; j<m_preScanImage2d.getWidth(); j++)
+      m_preScanImage2d(i,j,temp(j,i));
 }
 
 
