@@ -49,7 +49,7 @@
  * @class usMHDSequenceWriter
  * @brief Writer for a sequence of images stored as mhd/raw files in a directory
  * Image filenames are set based on the following format: "image%05d.mhd" and "image%05d.raw".
- * An internal counter is incremented every time writeImage() is called, to update the filename of the new image in the sequence.
+ * An internal counter is incremented every time write() is called, to update the filename of the new image in the sequence.
  * @ingroup module_ustk_io
  */
 class VISP_EXPORT usMHDSequenceWriter
@@ -61,12 +61,12 @@ public:
 
   void setSequenceDirectory(const std::string sequenceDirectory);
 
-  void writeImage(const usImageRF2D<short int> &image, const uint64_t timestamp);
-  void writeImage(const usImagePreScan2D<unsigned char> &image, const uint64_t timestamp);
-  void writeImage(const usImagePostScan2D<unsigned char> &image, const uint64_t timestamp);
-  void writeImage(const usImageRF3D<short int> &image, const uint64_t timestamp);
-  void writeImage(const usImagePreScan3D<unsigned char> &image, const uint64_t timestamp);
-  void writeImage(const usImagePostScan3D<unsigned char> &image, const uint64_t timestamp);
+  void write(const usImageRF2D<short int> &image, const uint64_t timestamp);
+  void write(const usImagePreScan2D<unsigned char> &image, const uint64_t timestamp);
+  void write(const usImagePostScan2D<unsigned char> &image, const uint64_t timestamp);
+  void write(const usImageRF3D<short int> &image, const uint64_t timestamp);
+  void write(const usImagePreScan3D<unsigned char> &image, const uint64_t timestamp);
+  void write(const usImagePostScan3D<unsigned char> &image, const uint64_t timestamp);
 
 private:
 

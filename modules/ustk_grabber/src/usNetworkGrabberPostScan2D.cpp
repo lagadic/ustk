@@ -113,7 +113,9 @@ void usNetworkGrabberPostScan2D::dataArrived()
   else if(headerType == m_imageHeader.headerId) {
     //read whole header
     in >> m_imageHeader.frameCount;
-    in >> m_imageHeader.timeStamp;
+    quint64 timestamp;
+    in >> timestamp;
+    m_imageHeader.timeStamp = timestamp;
     in >> m_imageHeader.dataRate;
     in >> m_imageHeader.dataLength;
     in >> m_imageHeader.ss;

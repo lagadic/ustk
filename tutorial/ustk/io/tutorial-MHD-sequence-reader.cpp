@@ -36,7 +36,7 @@ int main(int argc, char** argv)
     std::cout << "timestamp : " << timestamp << std::endl;
 
     timestamp = 1561565362;
-    writer.writeImage(image,timestamp);
+    writer.write(image,timestamp);
   }
 
   return 0;

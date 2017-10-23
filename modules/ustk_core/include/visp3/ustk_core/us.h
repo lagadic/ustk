@@ -38,11 +38,13 @@
 #ifndef __us_h_
 #define __us_h_
 
+#include <cstdint>
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpIoTools.h>
 
 #include <visp3/ustk_core/usImagePreScanSettings.h>
 #include <visp3/ustk_core/usMotorSettings.h>
+
 /**
  * @namespace us
  * @brief General tools

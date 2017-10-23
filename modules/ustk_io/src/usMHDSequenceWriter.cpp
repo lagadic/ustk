@@ -17,7 +17,7 @@ usMHDSequenceWriter::~usMHDSequenceWriter() {
 }
 
 /**
-* Setter for the directory where to write the mhd sequence. To call before calling writeImage !
+* Setter for the directory where to write the mhd sequence. To call before calling write !
 * @param sequenceDirectory The directory path.
 */
 void usMHDSequenceWriter::setSequenceDirectory(const std::string sequenceDirectory) {
@@ -35,7 +35,7 @@ void usMHDSequenceWriter::setSequenceDirectory(const std::string sequenceDirecto
 * @param image The usImageRF2D image to write.
 * @param timestamp The timestamp of the image.
 */
-void usMHDSequenceWriter::writeImage(const usImageRF2D<short int> & image, const uint64_t timestamp) {
+void usMHDSequenceWriter::write(const usImageRF2D<short int> & image, const uint64_t timestamp) {
 
   if(m_sequenceImageType == us::NOT_SET) //first image written
     m_sequenceImageType = us::RF_2D;
@@ -88,7 +88,7 @@ void usMHDSequenceWriter::writeImage(const usImageRF2D<short int> & image, const
 * @param image The usImagePreScan2D image to write.
 * @param timestamp The timestamp of the image.
 */
-void usMHDSequenceWriter::writeImage(const usImagePreScan2D<unsigned char> & image, const uint64_t timestamp) {
+void usMHDSequenceWriter::write(const usImagePreScan2D<unsigned char> & image, const uint64_t timestamp) {
 
   if(m_sequenceImageType == us::NOT_SET) //first image written
     m_sequenceImageType = us::PRESCAN_2D;
@@ -141,7 +141,7 @@ void usMHDSequenceWriter::writeImage(const usImagePreScan2D<unsigned char> & ima
 * @param image The usImageRF2D image to write.
 * @param timestamp The timestamp of the image.
 */
-void usMHDSequenceWriter::writeImage(const usImagePostScan2D<unsigned char> & image, const uint64_t timestamp) {
+void usMHDSequenceWriter::write(const usImagePostScan2D<unsigned char> & image, const uint64_t timestamp) {
 
   if(m_sequenceImageType == us::NOT_SET) //first image written
     m_sequenceImageType = us::POSTSCAN_2D;
@@ -194,7 +194,7 @@ void usMHDSequenceWriter::writeImage(const usImagePostScan2D<unsigned char> & im
 * @param image The usImageRF3D image to write.
 * @param timestamp The timestamp of the image.
 */
-void usMHDSequenceWriter::writeImage(const usImageRF3D<short int> & image, const uint64_t timestamp) {
+void usMHDSequenceWriter::write(const usImageRF3D<short int> & image, const uint64_t timestamp) {
 
   if(m_sequenceImageType == us::NOT_SET) //first image written
     m_sequenceImageType = us::RF_3D;
@@ -253,7 +253,7 @@ void usMHDSequenceWriter::writeImage(const usImageRF3D<short int> & image, const
 * @param image The usImagePreScan3D image to write.
 * @param timestamp The timestamp of the image.
 */
-void usMHDSequenceWriter::writeImage(const usImagePreScan3D<unsigned char> & image, const uint64_t timestamp) {
+void usMHDSequenceWriter::write(const usImagePreScan3D<unsigned char> & image, const uint64_t timestamp) {
 
   if(m_sequenceImageType == us::NOT_SET) //first image written
     m_sequenceImageType = us::PRESCAN_3D;
@@ -312,7 +312,7 @@ void usMHDSequenceWriter::writeImage(const usImagePreScan3D<unsigned char> & ima
 * @param image The usImagePostScan3D image to write.
 * @param timestamp The timestamp of the image.
 */
-void usMHDSequenceWriter::writeImage(const usImagePostScan3D<unsigned char> & image, const uint64_t timestamp) {
+void usMHDSequenceWriter::write(const usImagePostScan3D<unsigned char> & image, const uint64_t timestamp) {
 
   if(m_sequenceImageType == us::NOT_SET) //first image written
     m_sequenceImageType = us::POSTSCAN_3D;
