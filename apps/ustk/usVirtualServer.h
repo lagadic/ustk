@@ -13,7 +13,7 @@
 #include <cmath>
 #include <ctime>
 #include <iostream>
-#include <unistd.h>
+//#include <unistd.h>
 
 //USTK inclues
 #include <visp3/ustk_io/usSequenceReader.h>

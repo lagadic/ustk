@@ -44,7 +44,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
-#include <unistd.h>
+//#include <unistd.h>
 
 #include <visp3/core/vpConfig.h>
 

@@ -63,7 +63,7 @@ usNetworkGrabber::usNetworkGrabber(QObject *parent) :
 
   m_acquisitionParamters = usAcquisitionParameters();
   m_confirmHeader = usInitHeaderConfirmation();
-  m_imageHeader = usImageHeader();
+  m_imageHeader = us::usImageHeader();
 
   m_isInit = false;
   m_isRunning = false;
