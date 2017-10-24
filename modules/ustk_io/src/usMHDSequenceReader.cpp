@@ -51,7 +51,7 @@ void usMHDSequenceReader::acquire(usImageRF2D<short int> & image, uint64_t & tim
   }
 
   usMetaHeaderParser::MHDHeader mhdHeader = mhdParser.getMHDHeader();
-  timestamp = mhdHeader.timestamp;
+  timestamp = mhdHeader.timestamp.at(0);
 
   usImagePreScanSettings settings;
   settings.setTransducerRadius(mhdHeader.transducerRadius);
@@ -97,7 +97,7 @@ void usMHDSequenceReader::acquire(usImagePreScan2D<unsigned char> & image, uint6
   }
 
   usMetaHeaderParser::MHDHeader mhdHeader = mhdParser.getMHDHeader();
-  timestamp = mhdHeader.timestamp;
+  timestamp = mhdHeader.timestamp.at(0);
 
   usImagePreScanSettings settings;
   settings.setTransducerRadius(mhdHeader.transducerRadius);
@@ -143,7 +143,7 @@ void usMHDSequenceReader::acquire(usImagePostScan2D<unsigned char> & image, uint
   }
 
   usMetaHeaderParser::MHDHeader mhdHeader = mhdParser.getMHDHeader();
-  timestamp = mhdHeader.timestamp;
+  timestamp = mhdHeader.timestamp.at(0);
 
   usImagePreScanSettings settings;
   image.setTransducerRadius(mhdHeader.transducerRadius);
@@ -168,9 +168,9 @@ void usMHDSequenceReader::acquire(usImagePostScan2D<unsigned char> & image, uint
 /**
 * Acquisition method for usImageRF3D : fills the output image with the next volume in the sequence.
 * @param [out] image The usImageRF3D image acquired.
-* @param [out] timestamp The timestamp of the image (0 if not present in the sequence parameters).
+* @param [out] timestamp The timestamps of the image (0 if not present in the sequence parameters). Every frame of the volume contains an associated timesamp.
 */
-void usMHDSequenceReader::acquire(usImageRF3D<short int> & image, uint64_t & timestamp) {
+void usMHDSequenceReader::acquire(usImageRF3D<short int> & image, std::vector<uint64_t> & timestamp) {
 
   if(m_imageCounter > m_totalImageNumber)
     throw(vpException(vpException::fatalError, "usMHDSequenceReader : end of sequence reached !"));
@@ -221,9 +221,9 @@ void usMHDSequenceReader::acquire(usImageRF3D<short int> & image, uint64_t & tim
 /**
 * Acquisition method for usImagePreScan3D : fills the output image with the next volume in the sequence.
 * @param [out] image The usImagePreScan3D image acquired.
-* @param [out] timestamp The timestamp of the image (0 if not present in the sequence parameters).
+* @param [out] timestamp The timestamps of the image (0 if not present in the sequence parameters). Every frame of the volume contains an associated timesamp.
 */
-void usMHDSequenceReader::acquire(usImagePreScan3D<unsigned char> & image, uint64_t & timestamp) {
+void usMHDSequenceReader::acquire(usImagePreScan3D<unsigned char> & image, std::vector<uint64_t> & timestamp) {
 
   if(m_imageCounter > m_totalImageNumber)
     throw(vpException(vpException::fatalError, "usMHDSequenceReader : end of sequence reached !"));
@@ -275,9 +275,9 @@ void usMHDSequenceReader::acquire(usImagePreScan3D<unsigned char> & image, uint6
 /**
 * Acquisition method for usImagePostScan3D : fills the output image with the next volume in the sequence.
 * @param [out] image The usImagePostScan3D image acquired.
-* @param [out] timestamp The timestamp of the image (0 if not present in the sequence parameters).
+* @param [out] timestamp The timestamps of the image (0 if not present in the sequence parameters). Every frame of the volume contains an associated timesamp.
 */
-void usMHDSequenceReader::acquire(usImagePostScan3D<unsigned char> & image, uint64_t & timestamp) {
+void usMHDSequenceReader::acquire(usImagePostScan3D<unsigned char> & image, std::vector<uint64_t> & timestamp) {
 
   if(m_imageCounter > m_totalImageNumber)
     throw(vpException(vpException::fatalError, "usMHDSequenceReader : end of sequence reached !"));

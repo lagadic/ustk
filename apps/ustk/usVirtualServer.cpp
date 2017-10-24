@@ -254,7 +254,7 @@ void usVirtualServer::setSequencePath(const std::string sequencePath) {
   // case of a directory containing a sequence of mhd/raw images
   else if(vpIoTools::checkDirectory(sequencePath) && usImageIo::getHeaderFormat(vpIoTools::getDirFiles(sequencePath).front()) == usImageIo::FORMAT_MHD) {
     m_MHDSequenceReader.setSequenceDirectory(sequencePath);
-    uint64_t localTimestamp;
+    std::vector<uint64_t> localTimestamp;
     // at this point, we don't know the type of image contained in the sequence, we have to try them all
     try {
       m_MHDSequenceReader.acquire(m_rfImage2d,localTimestamp);

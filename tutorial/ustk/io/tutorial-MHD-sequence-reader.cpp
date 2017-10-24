@@ -20,7 +20,7 @@ int main(int argc, char** argv)
   }
 
   usImagePreScan3D<unsigned char> image;
-  uint64_t timestamp;
+  std::vector<uint64_t> timestamp;
 
   usMHDSequenceReader reader;
   reader.setSequenceDirectory(sequenceDirectory);
@@ -28,14 +28,19 @@ int main(int argc, char** argv)
   usMHDSequenceWriter writer;
   writer.setSequenceDirectory("/tmp");
 
+  uint64_t newTimestamp=0;
   //reading loop
   while ( !reader.end()) {
     reader.acquire(image,timestamp);
 
     std::cout << image;
-    std::cout << "timestamp : " << timestamp << std::endl;
+    //std::cout << "timestamps : ";
+    //std::cout << timestamp.size();
+    for (unsigned int i = 0; i < timestamp.size(); i++) {
+      timestamp.at(i) = newTimestamp;
+      newTimestamp++;
+    }
 
-    timestamp = 1561565362;
     writer.write(image,timestamp);
   }
 

@@ -3,7 +3,7 @@
 #include <iostream>
 #include <visp3/ustk_core/usConfig.h>
 
-#if (defined(USTK_HAVE_QT5) || defined(USTK_HAVE_VTK_QT)) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
+#if (defined(USTK_HAVE_QT5) || defined(USTK_HAVE_VTK_QT)) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
 
 #include <QtCore/QThread>
 #include <QApplication>
@@ -13,6 +13,7 @@
 
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
 
 int main(int argc, char** argv)
 {
@@ -35,13 +36,16 @@ int main(int argc, char** argv)
 
   //Prepare display
 #if defined(VISP_HAVE_X11)
-  vpDisplayX * display = NULL;
+  vpDisplayX * display = new vpDisplayX();
 #elif defined(VISP_HAVE_GDI)
-  vpDisplayGDI * display = NULL;
+  vpDisplayGDI * display = new vpDisplayGDI();
+#elif defined(VISP_HAVE_OPENCV)
+  vpDisplayOpenCV * display = new vpDisplayOpenCV();
 #endif
-  bool displayInit = false;
+
 
   bool captureRunning = true;
+  bool displayInit = false;
   //qtGrabber->setVerbose(true);
   // sending acquisition parameters
   qtGrabber->initAcquisition(header);
@@ -64,32 +68,21 @@ int main(int argc, char** argv)
       usImageIo::write(*grabbedFrame, filename.toStdString());
 
       std::cout << *grabbedFrame << std::endl;
-/*
-      //init display
-      if(!displayInit && grabbedFrame->getHeight() !=0 && grabbedFrame->getWidth() !=0) {
-#if defined(VISP_HAVE_X11)
-        display = new vpDisplayX(*grabbedFrame);
-#elif defined(VISP_HAVE_GDI)
-        display = new vpDisplayGDI(*grabbedFrame);
-#endif
+
+      if(!displayInit) {
+        display->init(*grabbedFrame);
         displayInit = true;
       }
 
-      // processing display
-      if(displayInit) {
-        std::cout << "flushing display" << std::endl;
-        vpDisplay::display(*grabbedFrame);
-        vpDisplay::flush(*grabbedFrame);
-      }*/
+      vpDisplay::display(*grabbedFrame);
+      vpDisplay::flush(*grabbedFrame);
     }
     else {
       vpTime::wait(10);
     }
   }while(captureRunning);
 
-  if(displayInit) {
     delete display;
-  }
 
   return app.exec();
 }

@@ -69,7 +69,7 @@ void usMHDSequenceWriter::write(const usImageRF2D<short int> & image, const uint
   header.samplingFrequency = image.getSamplingFrequency();
   header.scanLineNumber = image.getScanLineNumber();
   header.scanLinePitch = image.getScanLinePitch();
-  header.timestamp = timestamp;
+  header.timestamp.push_back(timestamp);
   header.transducerRadius = image.getTransducerRadius();
   header.transmitFrequency= image.getTransmitFrequency();
 
@@ -122,7 +122,7 @@ void usMHDSequenceWriter::write(const usImagePreScan2D<unsigned char> & image, c
   header.samplingFrequency = image.getSamplingFrequency();
   header.scanLineNumber = image.getScanLineNumber();
   header.scanLinePitch = image.getScanLinePitch();
-  header.timestamp = timestamp;
+  header.timestamp.push_back(timestamp);
   header.transducerRadius = image.getTransducerRadius();
   header.transmitFrequency= image.getTransmitFrequency();
 
@@ -175,7 +175,7 @@ void usMHDSequenceWriter::write(const usImagePostScan2D<unsigned char> & image, 
   header.samplingFrequency = image.getSamplingFrequency();
   header.scanLineNumber = image.getScanLineNumber();
   header.scanLinePitch = image.getScanLinePitch();
-  header.timestamp = timestamp;
+  header.timestamp.push_back(timestamp);
   header.transducerRadius = image.getTransducerRadius();
   header.transmitFrequency= image.getTransmitFrequency();
 
@@ -192,9 +192,9 @@ void usMHDSequenceWriter::write(const usImagePostScan2D<unsigned char> & image, 
 /**
 * Writing method for usImageRF3D images in a sequence.
 * @param image The usImageRF3D image to write.
-* @param timestamp The timestamp of the image.
+* @param timestamp The timestamps of every frame of the volume .
 */
-void usMHDSequenceWriter::write(const usImageRF3D<short int> & image, const uint64_t timestamp) {
+void usMHDSequenceWriter::write(const usImageRF3D<short int> & image, const std::vector<uint64_t> timestamp) {
 
   if(m_sequenceImageType == us::NOT_SET) //first image written
     m_sequenceImageType = us::RF_3D;
@@ -251,9 +251,9 @@ void usMHDSequenceWriter::write(const usImageRF3D<short int> & image, const uint
 /**
 * Writing method for usImagePreScan3D images in a sequence.
 * @param image The usImagePreScan3D image to write.
-* @param timestamp The timestamp of the image.
+* @param timestamp The timestamps of every frame of the volume
 */
-void usMHDSequenceWriter::write(const usImagePreScan3D<unsigned char> & image, const uint64_t timestamp) {
+void usMHDSequenceWriter::write(const usImagePreScan3D<unsigned char> & image, const std::vector<uint64_t> timestamp) {
 
   if(m_sequenceImageType == us::NOT_SET) //first image written
     m_sequenceImageType = us::PRESCAN_3D;
@@ -310,9 +310,9 @@ void usMHDSequenceWriter::write(const usImagePreScan3D<unsigned char> & image, c
 /**
 * Writing method for usImagePostScan3D images in a sequence.
 * @param image The usImagePostScan3D image to write.
-* @param timestamp The timestamp of the image.
+* @param timestamp The timestamps of every frame of the volume
 */
-void usMHDSequenceWriter::write(const usImagePostScan3D<unsigned char> & image, const uint64_t timestamp) {
+void usMHDSequenceWriter::write(const usImagePostScan3D<unsigned char> & image, const std::vector<uint64_t> timestamp) {
 
   if(m_sequenceImageType == us::NOT_SET) //first image written
     m_sequenceImageType = us::POSTSCAN_3D;

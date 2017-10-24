@@ -105,9 +105,9 @@ public:
   void acquire(usImageRF2D<short int> & image, uint64_t & timestamp);
   void acquire(usImagePreScan2D<unsigned char> & image, uint64_t & timestamp);
   void acquire(usImagePostScan2D<unsigned char> & image, uint64_t & timestamp);
-  void acquire(usImageRF3D<short int> & image, uint64_t & timestamp);
-  void acquire(usImagePreScan3D<unsigned char> & image, uint64_t & timestamp);
-  void acquire(usImagePostScan3D<unsigned char> & image, uint64_t & timestamp);
+  void acquire(usImageRF3D<short int> & image, std::vector<uint64_t> & timestamp);
+  void acquire(usImagePreScan3D<unsigned char> & image, std::vector<uint64_t> & timestamp);
+  void acquire(usImagePostScan3D<unsigned char> & image, std::vector<uint64_t> & timestamp);
 
   bool end();
 

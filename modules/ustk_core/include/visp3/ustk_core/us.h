@@ -38,8 +38,15 @@
 #ifndef __us_h_
 #define __us_h_
 
-#include <cstdint>
 #include <visp3/core/vpConfig.h>
+
+// includes for uint64 type
+#if defined(VISP_HAVE_CPP11_COMPATIBILITY) //CPP 11
+#include <cstdint>
+#else
+#include <stdint.h>
+#endif
+
 #include <visp3/core/vpIoTools.h>
 
 #include <visp3/ustk_core/usImagePreScanSettings.h>
