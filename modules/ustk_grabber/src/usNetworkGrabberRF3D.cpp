@@ -259,8 +259,8 @@ void usNetworkGrabberRF3D::includeFrameInVolume() {
   m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->resize(m_grabbedImage.getWidth(),m_grabbedImage.getHeight(),m_motorSettings.getFrameNumber());
 
   //Inserting frame in volume
-  int volumeIndex = (m_grabbedImage.getFrameCount()-1) / m_grabbedImage.getFramesPerVolume(); // from 0
-  int framePostition = (m_grabbedImage.getFrameCount()-1) % m_grabbedImage.getFramesPerVolume(); // from 0 to FPV-1
+  int volumeIndex = m_grabbedImage.getFrameCount() / m_grabbedImage.getFramesPerVolume(); // from 0
+  int framePostition = m_grabbedImage.getFrameCount() % m_grabbedImage.getFramesPerVolume(); // from 0 to FPV-1
 
   //setting timestamps
   if (volumeIndex % 2 != 0) { //case of backward moving motor (opposite to Z direction)

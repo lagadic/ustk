@@ -259,12 +259,12 @@ void usNetworkGrabberPreScan3D::includeFrameInVolume() {
   m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->resize(m_grabbedImage.getHeight(),m_grabbedImage.getWidth(),m_motorSettings.getFrameNumber());
 
   //Inserting frame in volume by inverting rows and cols voxels (along x and y axis), to match ustk volume storage
-  int volumeIndex = (m_grabbedImage.getFrameCount()-1) / m_grabbedImage.getFramesPerVolume(); // from 0
-  int framePostition = (m_grabbedImage.getFrameCount()-1) % m_grabbedImage.getFramesPerVolume(); // from 0 to FPV-1
+  int volumeIndex = (m_grabbedImage.getFrameCount() / m_grabbedImage.getFramesPerVolume()); // from 0
+  int framePostition = (m_grabbedImage.getFrameCount() % m_grabbedImage.getFramesPerVolume()); // from 0 to FPV-1
 
   //setting timestamps
   if (volumeIndex % 2 != 0) { //case of backward moving motor (opposite to Z direction)
-    framePostition = m_grabbedImage.getFramesPerVolume() - framePostition - 1;
+    framePostition = m_grabbedImage.getFramesPerVolume() - framePostition - 1; // inverting frames order
     if(framePostition == m_grabbedImage.getFramesPerVolume() - 1)
       m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setFirstFrameTimeStamp(m_grabbedImage.getTimeStamp());
     if(framePostition == 0)
