@@ -37,7 +37,7 @@ cmake_minimum_required(VERSION 2.6)
 find_package(VISP REQUIRED visp_ustk_grabber visp_sensor visp_robot)
 
 set(tutorial_ultrasonix_cpp
-  tutorial-ustk-virtual-server.cpp
+  tutorial-ustk-virtual-server-preScan2D.cpp
   tutorial-ustk-virtual-server-preScan3D.cpp)
 
 foreach(cpp ${tutorial_ultrasonix_cpp})

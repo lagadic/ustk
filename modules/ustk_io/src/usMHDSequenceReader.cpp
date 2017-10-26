@@ -68,7 +68,7 @@ void usMHDSequenceReader::acquire(usImageRF2D<short int> & image, uint64_t & tim
 
   //data parsing
   usRawFileParser rawParser;
-  rawParser.read(image, mhdParser.getRawFileName());
+  rawParser.read(image, m_sequenceDirectory + vpIoTools::path("/") + m_sequenceFiles.at(2*m_imageCounter + 1));
 
   m_imageCounter ++;
 }
@@ -114,7 +114,7 @@ void usMHDSequenceReader::acquire(usImagePreScan2D<unsigned char> & image, uint6
 
   //data parsing
   usRawFileParser rawParser;
-  rawParser.read(image, mhdParser.getRawFileName());
+  rawParser.read(image, m_sequenceDirectory + vpIoTools::path("/") + m_sequenceFiles.at(2*m_imageCounter + 1));
 
   m_imageCounter ++;
 }
@@ -160,7 +160,7 @@ void usMHDSequenceReader::acquire(usImagePostScan2D<unsigned char> & image, uint
 
   //data parsing
   usRawFileParser rawParser;
-  rawParser.read(image, mhdParser.getRawFileName());
+  rawParser.read(image, m_sequenceDirectory + vpIoTools::path("/") + m_sequenceFiles.at(2*m_imageCounter + 1));
 
   m_imageCounter ++;
 }
@@ -217,7 +217,7 @@ void usMHDSequenceReader::acquire(usImageRF3D<short int> & image, std::vector<ui
 
   //data parsing
   usRawFileParser rawParser;
-  rawParser.read(image, mhdParser.getRawFileName());
+  rawParser.read(image, m_sequenceDirectory + vpIoTools::path("/") + m_sequenceFiles.at(2*m_imageCounter + 1));
 
   m_imageCounter ++;
 }
@@ -274,7 +274,7 @@ void usMHDSequenceReader::acquire(usImagePreScan3D<unsigned char> & image, std::
 
   //data parsing
   usRawFileParser rawParser;
-  rawParser.read(image, mhdParser.getRawFileName());
+  rawParser.read(image, m_sequenceDirectory + vpIoTools::path("/") + m_sequenceFiles.at(2*m_imageCounter + 1));
 
   m_imageCounter ++;
 }
@@ -323,8 +323,7 @@ void usMHDSequenceReader::acquire(usImagePostScan3D<unsigned char> & image, std:
 
   //data parsing
   usRawFileParser rawParser;
-  std::string fullImageFileName = mhdParser.getRawFileName();
-  rawParser.read(image,fullImageFileName);
+  rawParser.read(image, m_sequenceDirectory + vpIoTools::path("/") + m_sequenceFiles.at(2*m_imageCounter + 1));
 
   m_imageCounter ++;
 }
