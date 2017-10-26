@@ -156,10 +156,12 @@ private:
 
   usImageHeader imageHeader;
 
+  // 2D images
   usImagePostScan2D <unsigned char> m_postScanImage2d;
   usImagePreScan2D <unsigned char> m_preScanImage2d;
   usImageRF2D <short int> m_rfImage2d;
-  usImagePostScan3D <unsigned char> m_postScanImage3d;
+
+  // 3D images
   usImagePreScan3D <unsigned char> m_preScanImage3d;
   usImageRF3D <short int> m_rfImage3d;
 
@@ -167,7 +169,8 @@ private:
 
   bool m_isMHDSequence; // mhd sequence if true, xml otherwise
 
-  int64_t m_previousImageTimestamp;
+  std::vector<uint64_t> m_timestamps; // vector of timestamps of the current volume (only for 3D case : RF and pre-scan volumes)
+  int64_t m_nextImageTimestamp;
 
   bool m_serverIsSendingImages;
 

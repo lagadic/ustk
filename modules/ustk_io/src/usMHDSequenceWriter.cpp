@@ -192,7 +192,7 @@ void usMHDSequenceWriter::write(const usImagePostScan2D<unsigned char> & image, 
 /**
 * Writing method for usImageRF3D images in a sequence.
 * @param image The usImageRF3D image to write.
-* @param timestamp The timestamps of every frame of the volume .
+* @param timestamp The timestamps of every frame of the volume  (inverted in case of odd volume in sequence !).
 */
 void usMHDSequenceWriter::write(const usImageRF3D<short int> & image, const std::vector<uint64_t> timestamp) {
 
@@ -251,7 +251,7 @@ void usMHDSequenceWriter::write(const usImageRF3D<short int> & image, const std:
 /**
 * Writing method for usImagePreScan3D images in a sequence.
 * @param image The usImagePreScan3D image to write.
-* @param timestamp The timestamps of every frame of the volume
+* @param timestamp The timestamps of every frame of the volume (inverted in case of odd volume in sequence !).
 */
 void usMHDSequenceWriter::write(const usImagePreScan3D<unsigned char> & image, const std::vector<uint64_t> timestamp) {
 
@@ -310,7 +310,6 @@ void usMHDSequenceWriter::write(const usImagePreScan3D<unsigned char> & image, c
 /**
 * Writing method for usImagePostScan3D images in a sequence.
 * @param image The usImagePostScan3D image to write.
-* @param timestamp The timestamps of every frame of the volume
 */
 void usMHDSequenceWriter::write(const usImagePostScan3D<unsigned char> & image, const std::vector<uint64_t> timestamp) {
 

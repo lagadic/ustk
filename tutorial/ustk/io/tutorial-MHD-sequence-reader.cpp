@@ -28,7 +28,8 @@ int main(int argc, char** argv)
   usMHDSequenceWriter writer;
   writer.setSequenceDirectory("/tmp");
 
-  uint64_t newTimestamp=0;
+  uint64_t newTimestamp = 1456115;
+  int inc= 0;
   //reading loop
   while ( !reader.end()) {
     reader.acquire(image,timestamp);
@@ -38,10 +39,13 @@ int main(int argc, char** argv)
     //std::cout << timestamp.size();
     for (unsigned int i = 0; i < timestamp.size(); i++) {
       timestamp.at(i) = newTimestamp;
-      newTimestamp++;
+      newTimestamp += 100;
     }
+    if(inc%2 == 1)
+      std::reverse(timestamp.begin(),timestamp.end());
 
     writer.write(image,timestamp);
+    inc++;
   }
 
   return 0;

@@ -169,6 +169,8 @@ void usMHDSequenceReader::acquire(usImagePostScan2D<unsigned char> & image, uint
 * Acquisition method for usImageRF3D : fills the output image with the next volume in the sequence.
 * @param [out] image The usImageRF3D image acquired.
 * @param [out] timestamp The timestamps of the image (0 if not present in the sequence parameters). Every frame of the volume contains an associated timesamp.
+* If the volume number in the sequence is odd, the timestamp vector is reversed : to fit the real conditions of the sweeping motor of a 3D probe (along + / - Z axis every new volume).
+* First volume of a sequence is considered going along Z axis, and the second along -Z, etc...
 */
 void usMHDSequenceReader::acquire(usImageRF3D<short int> & image, std::vector<uint64_t> & timestamp) {
 
@@ -190,6 +192,8 @@ void usMHDSequenceReader::acquire(usImageRF3D<short int> & image, std::vector<ui
 
   usMetaHeaderParser::MHDHeader mhdHeader = mhdParser.getMHDHeader();
   timestamp = mhdHeader.timestamp;
+  if(m_imageCounter%2 == 1) // odd volume: we reverse it
+    std::reverse(timestamp.begin(),timestamp.end());
 
   usImagePreScanSettings settings;
   settings.setTransducerRadius(mhdHeader.transducerRadius);
@@ -222,6 +226,8 @@ void usMHDSequenceReader::acquire(usImageRF3D<short int> & image, std::vector<ui
 * Acquisition method for usImagePreScan3D : fills the output image with the next volume in the sequence.
 * @param [out] image The usImagePreScan3D image acquired.
 * @param [out] timestamp The timestamps of the image (0 if not present in the sequence parameters). Every frame of the volume contains an associated timesamp.
+* If the volume number in the sequence is odd, the timestamp vector is reversed : to fit the real conditions of the sweeping motor of a 3D probe (along + / - Z axis every new volume).
+* First volume of a sequence is considered going along Z axis, and the second along -Z, etc...
 */
 void usMHDSequenceReader::acquire(usImagePreScan3D<unsigned char> & image, std::vector<uint64_t> & timestamp) {
 
@@ -232,7 +238,6 @@ void usMHDSequenceReader::acquire(usImagePreScan3D<unsigned char> & image, std::
     throw(vpException(vpException::fatalError, "usMHDSequenceReader trying to open a non-mhd file !"));
 
   usMetaHeaderParser mhdParser;
-  std::cout << "opening mhd file : " << m_sequenceDirectory + vpIoTools::path("/") + m_sequenceFiles.at(2*m_imageCounter) << std::endl;
   mhdParser.read(m_sequenceDirectory + vpIoTools::path("/") + m_sequenceFiles.at(2*m_imageCounter)); // we skip raw files
   m_sequenceImageType = mhdParser.getImageType();
   if (m_sequenceImageType != us::PRESCAN_3D && m_sequenceImageType != us::NOT_SET) {
@@ -244,6 +249,8 @@ void usMHDSequenceReader::acquire(usImagePreScan3D<unsigned char> & image, std::
 
   usMetaHeaderParser::MHDHeader mhdHeader = mhdParser.getMHDHeader();
   timestamp = mhdHeader.timestamp;
+  if(m_imageCounter%2 == 1) // odd volume: we reverse it
+    std::reverse(timestamp.begin(),timestamp.end());
 
   usImagePreScanSettings settings;
   settings.setTransducerRadius(mhdHeader.transducerRadius);
@@ -275,7 +282,6 @@ void usMHDSequenceReader::acquire(usImagePreScan3D<unsigned char> & image, std::
 /**
 * Acquisition method for usImagePostScan3D : fills the output image with the next volume in the sequence.
 * @param [out] image The usImagePostScan3D image acquired.
-* @param [out] timestamp The timestamps of the image (0 if not present in the sequence parameters). Every frame of the volume contains an associated timesamp.
 */
 void usMHDSequenceReader::acquire(usImagePostScan3D<unsigned char> & image, std::vector<uint64_t> & timestamp) {
 
@@ -337,4 +343,27 @@ bool usMHDSequenceReader::end() {
 */
 us::ImageType usMHDSequenceReader::getImageType() const {
   return m_sequenceImageType;
+}
+
+/**
+* Returns the timestamp of next frame (use only for 2D sequence).
+* @return The timestamp of next frame.
+*/
+uint64_t usMHDSequenceReader::getNextTimeStamp() {
+  usMetaHeaderParser mhdParser;
+  mhdParser.read(m_sequenceDirectory + vpIoTools::path("/") + m_sequenceFiles.at(2* m_imageCounter)); // we skip raw files, imagecounter already incremented
+  return mhdParser.getMHDHeader().timestamp.at(0);
+}
+
+/**
+* Returns the timestamps of next volume.
+* @return The timestamps of next volume.
+*/
+std::vector<uint64_t> usMHDSequenceReader::getNextTimeStamps() {
+  usMetaHeaderParser mhdParser;
+  mhdParser.read(m_sequenceDirectory + vpIoTools::path("/") + m_sequenceFiles.at(2* m_imageCounter)); // we skip raw files, imagecounter already incremented
+  std::vector<uint64_t> timestamps = mhdParser.getMHDHeader().timestamp;
+  if(m_imageCounter % 2 == 0) // current volume is even => next volume is odd
+    std::reverse(timestamps.begin(),timestamps.end());
+  return timestamps;
 }

@@ -225,9 +225,10 @@ void usVirtualServer::setSequencePath(const std::string sequencePath) {
 
     //try to open post-scan sequence
     try {
-      uint64_t localTimestamp;
-      m_sequenceReaderPostScan.open(m_postScanImage2d,localTimestamp);
-      imageHeader.timeStamp = localTimestamp;
+      uint64_t timestampTmp;
+      m_sequenceReaderPostScan.open(m_postScanImage2d,timestampTmp);
+      imageHeader.timeStamp = timestampTmp;
+      m_nextImageTimestamp = m_sequenceReaderPostScan.getSequenceTimestamps().at(imageHeader.frameCount + 1);
       if(imageHeader.timeStamp == 0) { // timestamps are requested for virtual server
         throw(vpException(vpException::fatalError), "usVirtualServer error : no timestamp associated in sequence !");
       }
@@ -236,9 +237,10 @@ void usVirtualServer::setSequencePath(const std::string sequencePath) {
     } catch(...) {
       //if we have an exception, it's not a post-scan image. So we try a pre-scan
       try {
-        uint64_t localTimestamp;
-        m_sequenceReaderPreScan.open(m_preScanImage2d,localTimestamp);
-        imageHeader.timeStamp = localTimestamp;
+        uint64_t timestampTmp;
+        m_sequenceReaderPreScan.open(m_preScanImage2d,timestampTmp);
+        imageHeader.timeStamp = timestampTmp;
+        m_nextImageTimestamp = m_sequenceReaderPreScan.getSequenceTimestamps().at(imageHeader.frameCount + 1);
         if(imageHeader.timeStamp == 0) { // timestamps are requested for virtual server
           throw(vpException(vpException::fatalError), "usVirtualServer error : no timestamp associated in sequence !");
         }
@@ -254,38 +256,62 @@ void usVirtualServer::setSequencePath(const std::string sequencePath) {
   // case of a directory containing a sequence of mhd/raw images
   else if(vpIoTools::checkDirectory(sequencePath) && usImageIo::getHeaderFormat(vpIoTools::getDirFiles(sequencePath).front()) == usImageIo::FORMAT_MHD) {
     m_MHDSequenceReader.setSequenceDirectory(sequencePath);
-    std::vector<uint64_t> localTimestamp;
+
     // at this point, we don't know the type of image contained in the sequence, we have to try them all
     try {
-      m_MHDSequenceReader.acquire(m_rfImage2d,localTimestamp);
+      uint64_t timestampTmp;
+      m_MHDSequenceReader.acquire(m_rfImage2d,timestampTmp);
+      imageHeader.timeStamp = timestampTmp;
+      m_nextImageTimestamp = m_MHDSequenceReader.getNextTimeStamp();
+      if(imageHeader.timeStamp == 0)  // timestamps are requested for virtual server
+        throw(vpException(vpException::fatalError), "usVirtualServer error : no timestamp associated in sequence !");
     } catch(...) {//if we have an exception, it's not a RF 2D image. So we try a pre-scan 2D
       try {
-        m_MHDSequenceReader.acquire(m_preScanImage2d,localTimestamp);
+        uint64_t timestampTmp;
+        m_MHDSequenceReader.acquire(m_preScanImage2d,timestampTmp);
+        imageHeader.timeStamp = timestampTmp;
+        m_nextImageTimestamp = m_MHDSequenceReader.getNextTimeStamp();
+        if(imageHeader.timeStamp == 0)  // timestamps are requested for virtual server
+          throw(vpException(vpException::fatalError), "usVirtualServer error : no timestamp associated in sequence !");
+
+        invertRowsColsOnPreScan(); //to fit with ultrasonix grabbers (pre-scan image is inverted in porta SDK)
       } catch(...) {// it's not a pre-scan 2D image...
         try {
-          m_MHDSequenceReader.acquire(m_postScanImage2d,localTimestamp);
+          uint64_t timestampTmp;
+          m_MHDSequenceReader.acquire(m_postScanImage2d,timestampTmp);
+          imageHeader.timeStamp = timestampTmp;
+          m_nextImageTimestamp = m_MHDSequenceReader.getNextTimeStamp();
+          if(imageHeader.timeStamp == 0)  // timestamps are requested for virtual server
+            throw(vpException(vpException::fatalError), "usVirtualServer error : no timestamp associated in sequence !");
         } catch(...) {// it's not a post-scan 2D image...
           try {
-            m_MHDSequenceReader.acquire(m_rfImage3d,localTimestamp);
-          } catch(...) {// it's not a pre-scan 2D image...
+            m_timestamps.clear();
+            m_MHDSequenceReader.acquire(m_rfImage3d,m_timestamps);
+            imageHeader.timeStamp = m_timestamps.at(0);
+            m_nextImageTimestamp = m_timestamps.at(1);
+            if(imageHeader.timeStamp == 0)
+              throw(vpException(vpException::fatalError), "usVirtualServer error : no timestamp associated in sequence !");
+          } catch(...) {// it's not a rf 3D image...
             try {
-              m_MHDSequenceReader.acquire(m_preScanImage3d,localTimestamp);
-            } catch(...) {// it's not a pre-scan 2D image...
-              try {
-                m_MHDSequenceReader.acquire(m_postScanImage3d,localTimestamp);
-              } catch(...) {// it's not a valid type
-                throw(vpException(vpException::badValue), "usVirtualServer error : trying to open a mhd image sequence not managed !");
+              m_timestamps.clear();
+              m_MHDSequenceReader.acquire(m_preScanImage3d,m_timestamps);
+              imageHeader.timeStamp = m_timestamps.at(0);
+              m_nextImageTimestamp = m_timestamps.at(1);
+              if(imageHeader.timeStamp == 0)
+                throw(vpException(vpException::fatalError), "usVirtualServer error : no timestamp associated in sequence !");
 
-              }
+              m_preScanImage3d.getFrame(m_preScanImage2d,0);
+              m_preScanImage2d.setImagePreScanSettings(m_preScanImage3d);
+              invertRowsColsOnPreScan(); //to fit with ultrasonix grabbers (pre-scan image is inverted in porta SDK)
+            } catch(...) {// it's not a valid type
+              throw(vpException(vpException::badValue), "usVirtualServer error : trying to open a mhd image sequence not managed, or with no timestamps associated to sequence frames !");
             }
           }
         }
       }
     }
-
     m_imageType = m_MHDSequenceReader.getImageType();
     m_isMHDSequence = true;
-    imageHeader.timeStamp = localTimestamp;
   }
   else {
     throw(vpException(vpException::badValue, "usVirtualServer error : sequence path incorrect !"));
@@ -303,7 +329,6 @@ void usVirtualServer::sendingLoopSequenceXml() {
 
   bool endOfSequence = false;
   while(m_serverIsSendingImages && ! endOfSequence ) {
-    m_previousImageTimestamp = imageHeader.timeStamp;
     //manage first frame sent (already aquired with open() method)
     if(imageHeader.frameCount != 0) {
       if(m_imageType == us::PRESCAN_2D) {
@@ -311,20 +336,21 @@ void usVirtualServer::sendingLoopSequenceXml() {
         m_sequenceReaderPreScan.acquire(m_preScanImage2d,localTimestamp);
         invertRowsColsOnPreScan(); //to fit with ultrasonix grabbers (pre-scan image is inverted in porta SDK)
         imageHeader.timeStamp = localTimestamp;
+        if(m_sequenceReaderPreScan.getSequenceTimestamps().size() > imageHeader.frameCount )
+          m_nextImageTimestamp = m_sequenceReaderPreScan.getSequenceTimestamps().at(imageHeader.frameCount);
         imageHeader.imageType = 0;
       }
       else if(m_imageType == us::POSTSCAN_2D) {
         uint64_t localTimestamp;
         m_sequenceReaderPostScan.acquire(m_postScanImage2d,localTimestamp);
         imageHeader.timeStamp = localTimestamp;
+        if(m_sequenceReaderPostScan.getSequenceTimestamps().size() > imageHeader.frameCount )
+          m_nextImageTimestamp = m_sequenceReaderPostScan.getSequenceTimestamps().at(imageHeader.frameCount);
         imageHeader.imageType = 1;
       }
     }
 
-    imageHeader.dataRate = 1000.0 / (imageHeader.timeStamp - m_previousImageTimestamp);
-
-    //WAITING PROCESS (to respect sequence timestamps)
-    vpTime::wait((double) (imageHeader.timeStamp - m_previousImageTimestamp));
+    imageHeader.dataRate = 1000.0 / (m_nextImageTimestamp - imageHeader.timeStamp );
 
     QByteArray block;
     QDataStream out(&block,QIODevice::WriteOnly);
@@ -385,11 +411,321 @@ void usVirtualServer::sendingLoopSequenceXml() {
     std::cout << "new frame sent, No " << imageHeader.frameCount << std::endl;
 
     imageHeader.frameCount ++;
+
+    //WAITING PROCESS (to respect sequence timestamps)
+    vpTime::wait((double) (m_nextImageTimestamp - imageHeader.timeStamp));
   }
 }
 
 void usVirtualServer::sendingLoopSequenceMHD() {
-  // TO DO
+  bool endOfSequence = false;
+  while(m_serverIsSendingImages && ! endOfSequence ) {
+    //manage first frame sent (already aquired with open() method)
+    if(imageHeader.frameCount != 0) {
+      if(m_imageType == us::RF_2D) {
+        uint64_t localTimestamp;
+        m_MHDSequenceReader.acquire(m_rfImage2d,localTimestamp);
+        imageHeader.timeStamp = localTimestamp;
+        if(! m_MHDSequenceReader.end())
+          m_nextImageTimestamp = m_MHDSequenceReader.getNextTimeStamp();
+        imageHeader.imageType = 2;
+      }
+      else if(m_imageType == us::PRESCAN_2D) {
+        uint64_t localTimestamp;
+        m_MHDSequenceReader.acquire(m_preScanImage2d,localTimestamp);
+        invertRowsColsOnPreScan(); //to fit with ultrasonix grabbers (pre-scan image is inverted in porta SDK)
+        imageHeader.timeStamp = localTimestamp;
+        if(! m_MHDSequenceReader.end())
+          m_nextImageTimestamp = m_MHDSequenceReader.getNextTimeStamp();
+        imageHeader.imageType = 0;
+      }
+      else if(m_imageType == us::POSTSCAN_2D) {
+        uint64_t localTimestamp;
+        m_MHDSequenceReader.acquire(m_postScanImage2d,localTimestamp);
+        imageHeader.timeStamp = localTimestamp;
+        if(! m_MHDSequenceReader.end())
+          m_nextImageTimestamp = m_MHDSequenceReader.getNextTimeStamp();
+        imageHeader.imageType = 1;
+      }
+      else if(m_imageType == us::RF_3D) {
+        m_MHDSequenceReader.acquire(m_rfImage3d,m_timestamps);
+        imageHeader.timeStamp = m_timestamps.at(0);
+        m_nextImageTimestamp = m_timestamps.at(1);
+        imageHeader.imageType = 2;
+      }
+      else if(m_imageType == us::PRESCAN_3D) {
+        m_MHDSequenceReader.acquire(m_preScanImage3d,m_timestamps);
+        imageHeader.timeStamp = m_timestamps.at(0);
+        m_nextImageTimestamp = m_timestamps.at(1);
+        imageHeader.imageType = 0;
+      }
+    }
+
+    if(m_imageType == us::RF_2D) { //send RF image
+      imageHeader.dataRate = 1000.0 / (m_nextImageTimestamp - imageHeader.timeStamp );
+
+      QByteArray block;
+      QDataStream out(&block,QIODevice::WriteOnly);
+      out.setVersion(QDataStream::Qt_5_0);
+
+      out << imageHeader.headerId;
+      out << imageHeader.frameCount;
+      out << imageHeader.timeStamp;
+      out << imageHeader.dataRate;
+      out << (int) m_rfImage2d.getHeight() * m_rfImage2d.getWidth() * 2; //datalength in bytes
+      out << (int) 16; //sample size in bits
+      out << (int) 2; // image type
+      out << m_rfImage2d.getHeight();
+      out << m_rfImage2d.getWidth();
+      out << (double).0;//pixelWidth
+      out << (double).0;//pixelHeight
+      out << m_rfImage2d.getTransmitFrequency();
+      out << m_rfImage2d.getSamplingFrequency();
+      out << m_rfImage2d.getTransducerRadius();
+      out << m_rfImage2d.getScanLinePitch();
+      out << (int) m_rfImage2d.getScanLineNumber();
+      out << (int) (m_rfImage2d.getDepth() / 1000.0); //int in mm
+      out << (double) .0; //degPerFrame
+      out << (int) 0;//framesPerVolume
+      out << (double) .0;//motorRadius
+      out << (int) 0; //motorType
+      out.writeRawData((char*)m_rfImage2d.bitmap,(int) m_rfImage2d.getHeight() * m_rfImage2d.getWidth() * 2);
+
+      endOfSequence = (m_sequenceReaderPreScan.getFrameCount() == imageHeader.frameCount + 1);
+
+      connectionSoc->write(block);
+      qApp->processEvents();
+
+      std::cout << "new frame sent, No " << imageHeader.frameCount << std::endl;
+
+      imageHeader.frameCount ++;
+
+      //WAITING PROCESS (to respect sequence timestamps)
+      vpTime::wait((double) (m_nextImageTimestamp - imageHeader.timeStamp));
+    }
+    else if(m_imageType == us::PRESCAN_2D) { //send pre-scan image
+      imageHeader.dataRate = 1000.0 / (m_nextImageTimestamp - imageHeader.timeStamp );
+
+
+      QByteArray block;
+      QDataStream out(&block,QIODevice::WriteOnly);
+      out.setVersion(QDataStream::Qt_5_0);
+
+      out << imageHeader.headerId;
+      out << imageHeader.frameCount;
+      out << imageHeader.timeStamp;
+      out << imageHeader.dataRate;
+      out << (int) m_preScanImage2d.getHeight() * m_preScanImage2d.getWidth(); //datalength in bytes
+      out << (int) 8; //sample size in bits
+      out << (int) 0;
+      out << m_preScanImage2d.getHeight();
+      out << m_preScanImage2d.getWidth();
+      out << (double).0;//pixelWidth
+      out << (double).0;//pixelHeight
+      out << m_preScanImage2d.getTransmitFrequency();
+      out << m_preScanImage2d.getSamplingFrequency();
+      out << m_preScanImage2d.getTransducerRadius();
+      out << m_preScanImage2d.getScanLinePitch();
+      out << (int) m_preScanImage2d.getScanLineNumber();
+      out << (int) (m_preScanImage2d.getDepth() / 1000.0); //int in mm
+      out << (double) .0; //degPerFrame
+      out << (int) 0;//framesPerVolume
+      out << (double) .0;//motorRadius
+      out << (int) 0; //motorType
+      out.writeRawData((char*)m_preScanImage2d.bitmap,(int) m_preScanImage2d.getHeight() * m_preScanImage2d.getWidth());
+
+      endOfSequence = (m_sequenceReaderPreScan.getFrameCount() == imageHeader.frameCount + 1);
+
+      connectionSoc->write(block);
+      qApp->processEvents();
+
+      std::cout << "new frame sent, No " << imageHeader.frameCount << std::endl;
+
+      imageHeader.frameCount ++;
+
+      //WAITING PROCESS (to respect sequence timestamps)
+      vpTime::wait((double) (m_nextImageTimestamp - imageHeader.timeStamp));
+    }
+    else if(m_imageType == us::POSTSCAN_2D) { //send post-scan image
+      imageHeader.dataRate = 1000.0 / (m_nextImageTimestamp - imageHeader.timeStamp );
+
+      QByteArray block;
+      QDataStream out(&block,QIODevice::WriteOnly);
+      out.setVersion(QDataStream::Qt_5_0);
+
+      out << imageHeader.headerId;
+      out << imageHeader.frameCount;
+      out << imageHeader.timeStamp;
+      out << imageHeader.dataRate;
+      out << (int) m_postScanImage2d.getHeight() * m_postScanImage2d.getWidth(); //datalength in bytes
+      out << (int) 8; //sample size in bits
+      out << (int) 1;
+      out << m_postScanImage2d.getWidth();
+      out << m_postScanImage2d.getHeight();
+      out << m_postScanImage2d.getWidthResolution();//pixelWidth
+      out << m_postScanImage2d.getHeightResolution();//pixelHeight
+      out << m_postScanImage2d.getTransmitFrequency();
+      out << m_postScanImage2d.getSamplingFrequency();
+      out << m_postScanImage2d.getTransducerRadius();
+      out << m_postScanImage2d.getScanLinePitch();
+      out << (int) m_postScanImage2d.getScanLineNumber();
+      out << (int) (m_postScanImage2d.getDepth() / 1000.0); //int in mm
+      out << (double) .0; //degPerFrame
+      out << (int) 0;//framesPerVolume
+      out << (double) .0;//motorRadius
+      out << (int) 0; //motorType
+      out.writeRawData((char*)m_postScanImage2d.bitmap,(int) m_postScanImage2d.getHeight() * m_postScanImage2d.getWidth());
+
+      endOfSequence = (m_sequenceReaderPostScan.getFrameCount() == imageHeader.frameCount + 1);
+
+      connectionSoc->write(block);
+      qApp->processEvents();
+
+      std::cout << "new frame sent, No " << imageHeader.frameCount << std::endl;
+
+      imageHeader.frameCount ++;
+
+      //WAITING PROCESS (to respect sequence timestamps)
+      vpTime::wait((double) (m_nextImageTimestamp - imageHeader.timeStamp));
+    }
+    //3D case
+    else if(m_imageType == us::RF_3D) { //send RF volume frame by frame
+      bool endOfVolume = false;
+      unsigned int currentFrameInVolume = 0;
+      while (!endOfVolume) {
+
+        QByteArray block;
+        QDataStream out(&block,QIODevice::WriteOnly);
+        out.setVersion(QDataStream::Qt_5_0);
+
+        // new frame to send
+        usImageRF2D<short int> rfFrameToSend;
+        if((imageHeader.frameCount / m_rfImage3d.getFrameNumber()) % 2 == 1)
+          m_rfImage3d.getFrame(rfFrameToSend,m_rfImage3d.getFrameNumber() - currentFrameInVolume - 1);
+        else
+          m_rfImage3d.getFrame(rfFrameToSend,currentFrameInVolume);
+
+        // timestamps
+        imageHeader.timeStamp = m_timestamps.at(currentFrameInVolume);
+        if(m_rfImage3d.getFrameNumber() == currentFrameInVolume + 1 && !m_MHDSequenceReader.end()) //we're sending last frame of the volume
+          m_nextImageTimestamp = m_MHDSequenceReader.getNextTimeStamps().at(0); // next timestamp is first of next volume
+        else
+          m_nextImageTimestamp = m_timestamps.at(currentFrameInVolume + 1);
+        imageHeader.dataRate = 1000.0 / (m_nextImageTimestamp - imageHeader.timeStamp);
+
+        out << imageHeader.headerId;
+        out << imageHeader.frameCount;
+        out << imageHeader.timeStamp;
+        out << imageHeader.dataRate;
+        out << (int) m_rfImage3d.getDimX() * m_rfImage3d.getDimY() * 2; //datalength in bytes
+        out << (int) 16; //sample size in bits
+        out << (int) 2; // image type
+        out << m_rfImage3d.getDimX();
+        out << m_rfImage3d.getDimY();
+        out << (double).0;//pixelWidth
+        out << (double).0;//pixelHeight
+        out << m_rfImage3d.getTransmitFrequency();
+        out << m_rfImage3d.getSamplingFrequency();
+        out << m_rfImage3d.getTransducerRadius();
+        out << m_rfImage3d.getScanLinePitch();
+        out << (int) m_rfImage3d.getScanLineNumber();
+        out << (int) (m_rfImage3d.getDepth() / 1000.0); //int in mm
+        out << (double) vpMath::deg(m_rfImage3d.getFramePitch()); //degPerFrame
+        out << (int) m_rfImage3d.getFrameNumber();//framesPerVolume
+        out << (double) m_rfImage3d.getMotorRadius();//motorRadius
+        out << (int) m_rfImage3d.getMotorType(); //motorType
+        out.writeRawData((char*)m_rfImage2d.bitmap,(int) m_rfImage2d.getHeight() * m_rfImage2d.getWidth() * 2);
+
+        connectionSoc->write(block);
+        qApp->processEvents();
+
+        std::cout << "new frame sent, No " << imageHeader.frameCount << std::endl;
+
+        imageHeader.frameCount ++;
+        currentFrameInVolume ++;
+        endOfVolume = m_rfImage3d.getFrameNumber() == currentFrameInVolume;
+        endOfSequence = (m_MHDSequenceReader.end() && endOfVolume);
+
+        //WAITING PROCESS (to respect sequence timestamps)
+        vpTime::wait((double) (m_nextImageTimestamp - imageHeader.timeStamp));
+      }
+    }
+    else if(m_imageType == us::PRESCAN_3D) { //send pre-scan volume frame by frame
+      bool endOfVolume = false;
+      unsigned int currentFrameInVolume = 0;
+      while (!endOfVolume) {
+
+        QByteArray block;
+        QDataStream out(&block,QIODevice::WriteOnly);
+        out.setVersion(QDataStream::Qt_5_0);
+
+        // new frame to send
+        if((imageHeader.frameCount / m_preScanImage3d.getFrameNumber()) % 2 == 1) // if odd volume we start from the end, to fit motor sweeping along +/- Z
+          m_preScanImage3d.getFrame(m_preScanImage2d,m_preScanImage3d.getFrameNumber() - currentFrameInVolume - 1);
+        else
+          m_preScanImage3d.getFrame(m_preScanImage2d,currentFrameInVolume);
+        invertRowsColsOnPreScan();
+
+        // timestamps
+        imageHeader.timeStamp = m_timestamps.at(currentFrameInVolume);
+        if(m_preScanImage3d.getFrameNumber() == currentFrameInVolume + 1) {//we're sending last frame of the volume
+          if(m_MHDSequenceReader.end()) //last frame of last volume
+            m_nextImageTimestamp = imageHeader.timeStamp;
+          else if((imageHeader.frameCount / m_preScanImage3d.getFrameNumber())%2 == 0) {//nex volume is odd
+            m_nextImageTimestamp = m_MHDSequenceReader.getNextTimeStamps().back(); // next timestamp is last of next volume
+          }
+          else {// next volume is even
+            m_nextImageTimestamp = m_MHDSequenceReader.getNextTimeStamps().back(); // next timestamp is first of next volume
+          }
+        }
+        else if(m_timestamps.size() != currentFrameInVolume + 1)
+          m_nextImageTimestamp = m_timestamps.at(currentFrameInVolume + 1);
+
+
+        imageHeader.dataRate = 1000.0 / (m_nextImageTimestamp - imageHeader.timeStamp);
+
+        out << imageHeader.headerId;
+        out << imageHeader.frameCount;
+        out << imageHeader.timeStamp;
+        out << imageHeader.dataRate;
+        out << (int) m_preScanImage3d.getDimX() * m_preScanImage3d.getDimY(); //datalength in bytes
+        out << (int) 8; //sample size in bits
+        out << (int) 0;
+        out << m_preScanImage3d.getDimX();
+        out << m_preScanImage3d.getDimY();
+        out << (double).0;//pixelWidth
+        out << (double).0;//pixelHeight
+        out << m_preScanImage3d.getTransmitFrequency();
+        out << m_preScanImage3d.getSamplingFrequency();
+        out << m_preScanImage3d.getTransducerRadius();
+        out << m_preScanImage3d.getScanLinePitch();
+        out << (int) m_preScanImage3d.getScanLineNumber();
+        out << (int) (m_preScanImage3d.getDepth() / 1000.0); //int in mm
+        out << (double) vpMath::deg(m_preScanImage3d.getFramePitch()); //degPerFrame
+        out << (int) m_preScanImage3d.getFrameNumber();//framesPerVolume
+        out << (double) m_preScanImage3d.getMotorRadius();//motorRadius
+        out << (int) m_preScanImage3d.getMotorType(); //motorType
+        //invert row / cols to fit porta SDK (using member image pre-scan 2D
+        out.writeRawData((char*)m_preScanImage2d.bitmap,(int) m_preScanImage2d.getHeight() * m_preScanImage2d.getWidth());
+
+        connectionSoc->write(block);
+        qApp->processEvents();
+
+        std::cout << "new frame sent, No " << imageHeader.frameCount << std::endl;
+        std::cout << "current timestamp : " << imageHeader.timeStamp << std::endl;
+        std::cout << "next timestamp : " << m_nextImageTimestamp << std::endl;
+
+        imageHeader.frameCount ++;
+        currentFrameInVolume ++;
+        endOfVolume = m_preScanImage3d.getFrameNumber() == currentFrameInVolume;
+        endOfSequence = (m_MHDSequenceReader.end() && endOfVolume);
+
+        //WAITING PROCESS (to respect sequence timestamps)
+        if(!endOfSequence)
+          vpTime::wait((double) (m_nextImageTimestamp - imageHeader.timeStamp));
+      }
+    }
+  }
 }
 
 /**
@@ -403,7 +739,6 @@ void usVirtualServer::invertRowsColsOnPreScan() {
     for (unsigned int j=0; j<m_preScanImage2d.getWidth(); j++)
       m_preScanImage2d(i,j,temp(j,i));
 }
-
 
 void usVirtualServer::runAcquisition(bool run) {
   m_serverIsSendingImages = run;
