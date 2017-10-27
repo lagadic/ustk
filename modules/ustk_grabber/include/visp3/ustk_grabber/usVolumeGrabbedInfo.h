@@ -111,7 +111,7 @@ void usVolumeGrabbedInfo<Type>::setVolumeCount(quint32 volumeCount) {
 }
 
 /**
-* Append a new timestamp to the array (corresponding to a new frame of the volume).
+* Includes a new timestamp into the array (corresponding to a frame of the volume).
 * @param timestamp The new timestamp when the first frame in the volume was acquired.
 * @param position The new timestamp position in the array (from O to array size - 1).
 */
@@ -120,12 +120,7 @@ void usVolumeGrabbedInfo<Type>::addTimeStamp(quint64 timestamp, unsigned int pos
   if(position == m_timestamps.size())
     m_timestamps.push_back(timestamp);
   else if(position > m_timestamps.size()){
-    std::vector<uint64_t> tmp = m_timestamps;
     m_timestamps.resize(position+1);
-    for(unsigned int i=0; i<m_timestamps.size();i++) {
-      if(tmp.size()>i)
-        m_timestamps.at(i) = tmp.at(i);
-    }
     m_timestamps.at(position) = timestamp;
   }
   else
@@ -133,8 +128,8 @@ void usVolumeGrabbedInfo<Type>::addTimeStamp(quint64 timestamp, unsigned int pos
 }
 
 /**
-* Volume last timestamp setter.
-* @param lastFrameTimeStamp The timestamp when the last frame in the volume was acquired.
+* Getter for the timestamps array.
+* @return The vector of timestamps (make sure you filled it with addTimeStamp() at every new frame before call this method.
 */
 template<class Type>
 std::vector<uint64_t> usVolumeGrabbedInfo<Type>::getTimeStamps() const {

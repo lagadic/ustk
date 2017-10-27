@@ -66,7 +66,7 @@ public:
   void write(const usImagePostScan2D<unsigned char> &image, const uint64_t timestamp);
   void write(const usImageRF3D<short int> &image, const std::vector<uint64_t> timestamp);
   void write(const usImagePreScan3D<unsigned char> &image, const std::vector<uint64_t> timestamp);
-  void write(const usImagePostScan3D<unsigned char> &image, const std::vector<uint64_t> timestamp);
+  void write(const usImagePostScan3D<unsigned char> &image, const uint64_t timestamp);
 
 private:
 

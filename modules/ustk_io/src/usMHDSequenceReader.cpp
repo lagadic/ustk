@@ -282,8 +282,9 @@ void usMHDSequenceReader::acquire(usImagePreScan3D<unsigned char> & image, std::
 /**
 * Acquisition method for usImagePostScan3D : fills the output image with the next volume in the sequence.
 * @param [out] image The usImagePostScan3D image acquired.
+* @param [out] timestamp The usImagePostScan3D timestamp (0 if not present in mhd file).
 */
-void usMHDSequenceReader::acquire(usImagePostScan3D<unsigned char> & image, std::vector<uint64_t> & timestamp) {
+void usMHDSequenceReader::acquire(usImagePostScan3D<unsigned char> & image, uint64_t & timestamp) {
 
   if(m_imageCounter > m_totalImageNumber)
     throw(vpException(vpException::fatalError, "usMHDSequenceReader : end of sequence reached !"));
@@ -302,7 +303,9 @@ void usMHDSequenceReader::acquire(usImagePostScan3D<unsigned char> & image, std:
   }
 
   usMetaHeaderParser::MHDHeader mhdHeader = mhdParser.getMHDHeader();
-  timestamp = mhdHeader.timestamp;
+  timestamp = 0;
+  if(mhdHeader.timestamp.size()>0)
+    timestamp = mhdHeader.timestamp.at(0);
 
   //resizing image in memory
   image.resize(mhdHeader.dim[0], mhdHeader.dim[1],mhdHeader.dim[2]);

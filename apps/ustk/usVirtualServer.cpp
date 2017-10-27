@@ -1,9 +1,41 @@
+/****************************************************************************
+ *
+ * This file is part of the ustk software.
+ * Copyright (C) 2016 - 2017 by Inria. All rights reserved.
+ *
+ * This software is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * ("GPL") version 2 as published by the Free Software Foundation.
+ * See the file LICENSE.txt at the root directory of this source
+ * distribution for additional information about the GNU GPL.
+ *
+ * For using ustk with software that can not be combined with the GNU
+ * GPL, please contact Inria about acquiring a ViSP Professional
+ * Edition License.
+ *
+ * This software was developed at:
+ * Inria Rennes - Bretagne Atlantique
+ * Campus Universitaire de Beaulieu
+ * 35042 Rennes Cedex
+ * France
+ *
+ * If you have questions regarding the use of this file, please contact
+ * Inria at ustk@inria.fr
+ *
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * Authors:
+ * Marc Pouliquen
+ *
+ *****************************************************************************/
+
 #include "usVirtualServer.h"
 
 /**
-* Constructor, sets the sequence
-* @param image The usImageRF2D image to write.
-* @param timestamp The timestamp of the image.
+* Constructor, sets the sequence path to open.
+* @param sequencePath The path to the sequence to replay : xml file for pre-scan 2D or post-scan 2D (using usSequenceReader), or directory containing mhd/raw files (using usMHDSequenceReader).
+* @param parent The optionnal QObject parent.
 */
 usVirtualServer::usVirtualServer(std::string sequencePath, QObject *parent) : QObject(parent), m_tcpServer(), m_serverIsSendingImages(false)
 {
@@ -34,11 +66,16 @@ usVirtualServer::usVirtualServer(std::string sequencePath, QObject *parent) : QO
   }
 }
 
+/**
+* Destructor.
+*/
 usVirtualServer::~usVirtualServer()
 {
 }
 
-// This function is called whenever we have an incoming connection
+/**
+* Slot called when there is an incomming connection on the server.
+*/
 void usVirtualServer::acceptTheConnection()
 {
 
@@ -49,7 +86,9 @@ void usVirtualServer::acceptTheConnection()
   connect(connectionSoc, SIGNAL(disconnected()), this, SLOT(connectionAboutToClose()));
 }
 
-// Will be called whenever the data (coming from client) is available
+/**
+* Slot called whenever the data (coming from client) is available.
+*/
 void usVirtualServer::readIncomingData()
 {
   //headers possible to be received
@@ -102,7 +141,9 @@ void usVirtualServer::readIncomingData()
   }
 }
 
-// Will be called whenever the connection is close by the client
+/**
+* Slot called whenever whenever the connection is closed by the client.
+*/
 void usVirtualServer::connectionAboutToClose()
 {
   // Set this text into the label
@@ -120,11 +161,9 @@ void usVirtualServer::connectionAboutToClose()
   setSequencePath(m_sequencePath);
 }
 
-QTcpSocket* usVirtualServer::getSocket() {
-  return connectionSoc;
-}
-
-
+/**
+* Slot called whenever whenever the connection is closed by the client.
+*/
 void usVirtualServer::writeInitAcquisitionParameters(QDataStream & stream, int imagingMode) {
 
   int transmitFrequency = 0;
@@ -215,6 +254,10 @@ void usVirtualServer::writeInitAcquisitionParameters(QDataStream & stream, int i
   stream << stepsPerFrameMax;
 }
 
+/**
+* Setter for sequence path : pointing on the sequence to replay.
+* @param sequencePath The path to the sequence to replay : xml file for pre-scan 2D or post-scan 2D (@see usSequenceReader), or directory containing mhd/raw files (@see usMHDSequenceReader).
+*/
 void usVirtualServer::setSequencePath(const std::string sequencePath) {
 
   if(vpIoTools::checkFilename(sequencePath)) { // xml file pointing on a sequence of 2d images (pre-scan or post-scan)
@@ -318,6 +361,9 @@ void usVirtualServer::setSequencePath(const std::string sequencePath) {
   }
 }
 
+/**
+* Slot called when the clients asks to start the acquisition.
+*/
 void usVirtualServer::startSendingLoop() {
   if(m_isMHDSequence)
     sendingLoopSequenceMHD();
@@ -325,6 +371,9 @@ void usVirtualServer::startSendingLoop() {
     sendingLoopSequenceXml();
 }
 
+/**
+* Method to send the image sequence through the network in case of xml sequence as input.
+*/
 void usVirtualServer::sendingLoopSequenceXml() {
 
   bool endOfSequence = false;
@@ -416,6 +465,9 @@ void usVirtualServer::sendingLoopSequenceXml() {
   }
 }
 
+/**
+* Method to send the image sequence through the network in case of mhd/raw sequence as input.
+*/
 void usVirtualServer::sendingLoopSequenceMHD() {
   bool endOfSequence = false;
   while(m_serverIsSendingImages && ! endOfSequence ) {
@@ -728,7 +780,7 @@ void usVirtualServer::sendingLoopSequenceMHD() {
 }
 
 /**
-* Method to invert rows and columns in the image.
+* Method to invert rows and columns in the image (case of pre-scan frames) : to fit real server behaviour.
 */
 void usVirtualServer::invertRowsColsOnPreScan() {
   usImagePreScan2D<unsigned char> temp = m_preScanImage2d;
@@ -739,6 +791,9 @@ void usVirtualServer::invertRowsColsOnPreScan() {
       m_preScanImage2d(i,j,temp(j,i));
 }
 
+/**
+* Slot called when the server receives a run/stop order.
+*/
 void usVirtualServer::runAcquisition(bool run) {
   m_serverIsSendingImages = run;
   if(run) {

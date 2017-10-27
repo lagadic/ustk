@@ -1,4 +1,4 @@
-//! \example tutorial-ultrasonix-qt-grabbing-Pre-scan.cpp
+//! \example tutorial-ustk-virtual-server-preScan3D.cpp
 
 #include <iostream>
 #include <visp3/ustk_core/usConfig.h>
@@ -9,7 +9,7 @@
 #include <QApplication>
 
 #include <visp3/ustk_grabber/usNetworkGrabberPreScan3D.h>
-#include <visp3/ustk_io/usImageIo.h>
+#include <visp3/ustk_io/usMHDSequenceWriter.h>
 
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/gui/vpDisplayGDI.h>
@@ -19,13 +19,16 @@ int main(int argc, char** argv)
 {
   // QT application
   QApplication app( argc, argv );
+  QString outputPath;
+  if(app.arguments().contains(QString("--output"))) {
+    outputPath = app.arguments().at(app.arguments().indexOf(QString("--output")) + 1);
+  }
 
   QThread * grabbingThread = new QThread();
 
   usNetworkGrabberPreScan3D * qtGrabber = new usNetworkGrabberPreScan3D();
   qtGrabber->setIPAddress("127.0.0.1");
   qtGrabber->setConnection(true);
-  //qtGrabber->setVerbose(true);
 
   // setting acquisition parameters
   usNetworkGrabber::usInitHeaderSent header;
@@ -35,6 +38,10 @@ int main(int argc, char** argv)
 
   usVolumeGrabbedInfo<usImagePreScan3D<unsigned char> >* grabbedFrame;
 
+  usMHDSequenceWriter writer;
+  if(!outputPath.isEmpty()) {
+    writer.setSequenceDirectory(outputPath.toStdString());
+  }
 
   bool captureRunning = true;
   //qtGrabber->setVerbose(true);
@@ -49,8 +56,6 @@ int main(int argc, char** argv)
 
   std::cout << "waiting ultrasound initialisation..." << std::endl;
 
-  //our local grabbing loop
-
   //our grabbing loop
   do {
     if(qtGrabber->isFirstFrameAvailable()) {
@@ -58,10 +63,9 @@ int main(int argc, char** argv)
 
       std::cout <<"MAIN THREAD received volume No : " << grabbedFrame->getVolumeCount() << std::endl;
 
-      char buffer[FILENAME_MAX];
-      sprintf(buffer, "volumePreScan%d.mhd",grabbedFrame->getVolumeCount());
+      if(!outputPath.isEmpty())
+        writer.write(*grabbedFrame,grabbedFrame->getTimeStamps());
 
-      usImageIo::write(*grabbedFrame,buffer);
     }
     else {
       vpTime::wait(10);

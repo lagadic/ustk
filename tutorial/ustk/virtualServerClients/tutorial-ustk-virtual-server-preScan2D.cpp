@@ -1,4 +1,4 @@
-//! \example tutorial-ultrasonix-qt-grabbing-Pre-scan.cpp
+//! \example tutorial-ustk-virtual-server-preScan2D.cpp
 
 #include <iostream>
 #include <visp3/ustk_core/usConfig.h>
