@@ -61,18 +61,16 @@ public:
   explicit usVolumeGrabbedInfo();
   ~usVolumeGrabbedInfo();
 
+  void addTimeStamp(quint64 timestamp, unsigned int position);
+
   quint32 getVolumeCount() const;
-  quint64 getFistFrameTimeStamp() const;
-  quint64 getLastFrameTimeStamp() const;
+  std::vector<uint64_t> getTimeStamps() const;
 
   void setVolumeCount(quint32 volumeCount);
-  void setFirstFrameTimeStamp(quint64 firstFrameTimeStamp);
-  void setLastFrameTimeStamp(quint64 timeStamp);
 
 private:
   quint32 m_volumeCount; //from the beginning of acquisition
-  quint64 m_firstFrameTimeStamp; //msecs since epoch (on ultrasond machine) for first frame of the volume
-  quint64 m_lastFrameTimeStamp; //msecs since epoch (on ultrasond machine) for last frame of the volume
+  std::vector<uint64_t> m_timestamps; //msecs since epoch (on ultrasond machine)
 };
 
 /**
@@ -80,7 +78,7 @@ private:
 */
 template<class Type>
 usVolumeGrabbedInfo<Type>::usVolumeGrabbedInfo() :
-  Type(), m_volumeCount(0), m_firstFrameTimeStamp(0), m_lastFrameTimeStamp(0)
+  Type(), m_volumeCount(0), m_timestamps()
 {
 
 }
@@ -104,24 +102,6 @@ quint32 usVolumeGrabbedInfo<Type>::getVolumeCount() const {
 }
 
 /**
-* Volume first timestamp getter.
-* @return The timestamp when the first frame in the volume was acquired.
-*/
-template<class Type>
-quint64 usVolumeGrabbedInfo<Type>::getFistFrameTimeStamp() const{
-  return m_firstFrameTimeStamp;
-}
-
-/**
-* Volume last timestamp getter.
-* @return The timestamp when the last frame in the volume was acquired.
-*/
-template<class Type>
-quint64 usVolumeGrabbedInfo<Type>::getLastFrameTimeStamp() const{
-  return m_lastFrameTimeStamp;
-}
-
-/**
 * Volume count setter.
 * @param volumeCount The volume number since beginning of acquisition.
 */
@@ -131,12 +111,25 @@ void usVolumeGrabbedInfo<Type>::setVolumeCount(quint32 volumeCount) {
 }
 
 /**
-* Volume first timestamp setter.
-* @param firstFrameTimeStamp The timestamp when the first frame in the volume was acquired.
+* Append a new timestamp to the array (corresponding to a new frame of the volume).
+* @param timestamp The new timestamp when the first frame in the volume was acquired.
+* @param position The new timestamp position in the array (from O to array size - 1).
 */
 template<class Type>
-void usVolumeGrabbedInfo<Type>::setFirstFrameTimeStamp(quint64 firstFrameTimeStamp){
-  m_firstFrameTimeStamp = firstFrameTimeStamp;
+void usVolumeGrabbedInfo<Type>::addTimeStamp(quint64 timestamp, unsigned int position){
+  if(position == m_timestamps.size())
+    m_timestamps.push_back(timestamp);
+  else if(position > m_timestamps.size()){
+    std::vector<uint64_t> tmp = m_timestamps;
+    m_timestamps.resize(position+1);
+    for(unsigned int i=0; i<m_timestamps.size();i++) {
+      if(tmp.size()>i)
+        m_timestamps.at(i) = tmp.at(i);
+    }
+    m_timestamps.at(position) = timestamp;
+  }
+  else
+    m_timestamps.at(position) = timestamp;
 }
 
 /**
@@ -144,8 +137,8 @@ void usVolumeGrabbedInfo<Type>::setFirstFrameTimeStamp(quint64 firstFrameTimeSta
 * @param lastFrameTimeStamp The timestamp when the last frame in the volume was acquired.
 */
 template<class Type>
-void usVolumeGrabbedInfo<Type>::setLastFrameTimeStamp(quint64 lastFrameTimeStamp){
-  m_lastFrameTimeStamp = lastFrameTimeStamp;
+std::vector<uint64_t> usVolumeGrabbedInfo<Type>::getTimeStamps() const {
+  return m_timestamps;
 }
 
 /*!

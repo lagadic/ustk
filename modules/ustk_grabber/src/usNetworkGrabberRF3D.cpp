@@ -263,20 +263,10 @@ void usNetworkGrabberRF3D::includeFrameInVolume() {
   int framePostition = m_grabbedImage.getFrameCount() % m_grabbedImage.getFramesPerVolume(); // from 0 to FPV-1
 
   //setting timestamps
-  if (volumeIndex % 2 != 0) { //case of backward moving motor (opposite to Z direction)
+  if (volumeIndex % 2 != 0) //case of backward moving motor (opposite to Z direction)
     framePostition = m_grabbedImage.getFramesPerVolume() - framePostition - 1;
-    if(framePostition == m_grabbedImage.getFramesPerVolume() - 1)
-      m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setFirstFrameTimeStamp(m_grabbedImage.getTimeStamp());
-    if(framePostition == 0)
-      m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setLastFrameTimeStamp(m_grabbedImage.getTimeStamp());
-  }
-  else { // case of forward moving motor (along Z direction)
-    if(framePostition == 0)
-      m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setFirstFrameTimeStamp(m_grabbedImage.getTimeStamp());
-    if(framePostition == m_grabbedImage.getFramesPerVolume() - 1)
-      m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setLastFrameTimeStamp(m_grabbedImage.getTimeStamp());
-  }
 
+  m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->addTimeStamp(m_grabbedImage.getTimeStamp(),framePostition);
   m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setVolumeCount(volumeIndex);
 
   for(unsigned int i=0; i<m_grabbedImage.getHeight(); i++)
