@@ -336,16 +336,16 @@ void usVirtualServer::sendingLoopSequenceXml() {
         m_sequenceReaderPreScan.acquire(m_preScanImage2d,localTimestamp);
         invertRowsColsOnPreScan(); //to fit with ultrasonix grabbers (pre-scan image is inverted in porta SDK)
         imageHeader.timeStamp = localTimestamp;
-        if(m_sequenceReaderPreScan.getSequenceTimestamps().size() > imageHeader.frameCount )
-          m_nextImageTimestamp = m_sequenceReaderPreScan.getSequenceTimestamps().at(imageHeader.frameCount);
+        if(m_sequenceReaderPreScan.getSequenceTimestamps().size() > imageHeader.frameCount + 1)
+          m_nextImageTimestamp = m_sequenceReaderPreScan.getSequenceTimestamps().at(imageHeader.frameCount + 1);
         imageHeader.imageType = 0;
       }
       else if(m_imageType == us::POSTSCAN_2D) {
         uint64_t localTimestamp;
         m_sequenceReaderPostScan.acquire(m_postScanImage2d,localTimestamp);
         imageHeader.timeStamp = localTimestamp;
-        if(m_sequenceReaderPostScan.getSequenceTimestamps().size() > imageHeader.frameCount )
-          m_nextImageTimestamp = m_sequenceReaderPostScan.getSequenceTimestamps().at(imageHeader.frameCount);
+        if(m_sequenceReaderPostScan.getSequenceTimestamps().size() > imageHeader.frameCount  + 1)
+          m_nextImageTimestamp = m_sequenceReaderPostScan.getSequenceTimestamps().at(imageHeader.frameCount + 1);
         imageHeader.imageType = 1;
       }
     }
@@ -411,7 +411,6 @@ void usVirtualServer::sendingLoopSequenceXml() {
     std::cout << "new frame sent, No " << imageHeader.frameCount << std::endl;
 
     imageHeader.frameCount ++;
-
     //WAITING PROCESS (to respect sequence timestamps)
     vpTime::wait((double) (m_nextImageTimestamp - imageHeader.timeStamp));
   }

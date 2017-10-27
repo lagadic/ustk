@@ -66,6 +66,7 @@ int main(int argc, char** argv)
 #elif defined(VISP_HAVE_GDI)
 		  display = new vpDisplayGDI(*grabbedFrame);
 #endif
+        qtGrabber->useVpDisplay(display);
         displayInit = true;
       }
 

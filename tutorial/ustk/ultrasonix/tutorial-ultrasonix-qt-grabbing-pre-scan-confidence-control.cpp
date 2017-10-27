@@ -314,6 +314,7 @@ int main(int argc, char** argv)
         display = new vpDisplayGDI(*grabbedFrame);
         displayConf = new vpDisplayGDI(confidence, (*grabbedFrame).getWidth()+60, 10);
 #endif
+        qtGrabber->useVpDisplay(display);
         displayInit = true;
       }
 

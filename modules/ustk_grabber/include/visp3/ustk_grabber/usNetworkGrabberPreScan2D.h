@@ -76,6 +76,8 @@ public:
 
   bool isFirstFrameAvailable() {return m_firstFrameAvailable;}
 
+  void useVpDisplay(vpDisplay * display);
+
 signals:
   void newFrameAvailable();
 

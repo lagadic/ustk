@@ -271,4 +271,13 @@ usFrameGrabbedInfo<usImagePreScan2D<unsigned char> >* usNetworkGrabberPreScan2D:
   return m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC);
 }
 
+/**
+* Method to link every image of the internal buffer to the vpDisplay you want to use. To call before any display operation using vpDisplay.
+* @param display The vpDisplay used to display your images.
+*/
+void usNetworkGrabberPreScan2D::useVpDisplay(vpDisplay * display) {
+  for(unsigned int i=0; i<m_outputBuffer.size(); i++)
+    m_outputBuffer.at(i)->display = display;
+}
+
 #endif

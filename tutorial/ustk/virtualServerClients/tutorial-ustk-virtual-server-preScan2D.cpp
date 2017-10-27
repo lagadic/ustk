@@ -71,9 +71,9 @@ int main(int argc, char** argv)
 
       if(!displayInit) {
         display->init(*grabbedFrame);
+        qtGrabber->useVpDisplay(display);
         displayInit = true;
       }
-
       vpDisplay::display(*grabbedFrame);
       vpDisplay::flush(*grabbedFrame);
     }
