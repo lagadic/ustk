@@ -23,7 +23,7 @@ int main(int argc, char** argv)
   QThread * grabbingThread = new QThread();
 
   usNetworkGrabberPreScan2D * qtGrabber = new usNetworkGrabberPreScan2D();
-  qtGrabber->setIPAddress("127.0.0.1");
+  qtGrabber->setIPAddress("127.0.0.1");//local loop, server must be running on same computer
   qtGrabber->setConnection(true);
 
   // setting acquisition parameters

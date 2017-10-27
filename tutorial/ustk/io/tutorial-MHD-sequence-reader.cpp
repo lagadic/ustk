@@ -1,3 +1,4 @@
+//! \example tutorial-MHD-sequence-reader.cpp
 #include <visp3/ustk_io/usMHDSequenceReader.h>
 #include <visp3/ustk_io/usMHDSequenceWriter.h>
 int main(int argc, char** argv)
@@ -34,14 +35,15 @@ int main(int argc, char** argv)
   while ( !reader.end()) {
     reader.acquire(image,timestamp);
 
+    //print your image informations
     std::cout << image;
-    //std::cout << "timestamps : ";
-    //std::cout << timestamp.size();
+
+    // add a timestamp of 100ms between each frame
     for (unsigned int i = 0; i < timestamp.size(); i++) {
       timestamp.at(i) = newTimestamp;
       newTimestamp += 100;
     }
-    if(inc%2 == 1)
+    if(inc%2 == 1) // to fit a virtual probe motor sweeping along Z axis (at every volume, frame order is inverted along Z axis)
       std::reverse(timestamp.begin(),timestamp.end());
 
     writer.write(image,timestamp);
