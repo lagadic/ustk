@@ -52,6 +52,8 @@ usNetworkGrabberRF2D::usNetworkGrabberRF2D(usNetworkGrabber *parent) :
 
   m_swichOutputInit = false;
 
+  m_recordingOn = false;
+
   connect(m_tcpSocket ,SIGNAL(readyRead()),this, SLOT(dataArrived()));
 }
 
@@ -197,6 +199,8 @@ void usNetworkGrabberRF2D::dataArrived()
       usFrameGrabbedInfo<usImageRF2D<short int> >* savePtr = m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC);
       m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
       m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
+      if(m_recordingOn)
+        m_sequenceWriter.write(*m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC),m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getTimeStamp());
 
       m_firstFrameAvailable = true;
       emit(newFrameAvailable());
@@ -225,6 +229,8 @@ void usNetworkGrabberRF2D::dataArrived()
       usFrameGrabbedInfo<usImageRF2D<short int> >* savePtr = m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC);
       m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
       m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
+      if(m_recordingOn)
+        m_sequenceWriter.write(*m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC),m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getTimeStamp());
 
       m_firstFrameAvailable = true;
       emit(newFrameAvailable());
@@ -268,4 +274,21 @@ usFrameGrabbedInfo<usImageRF2D<short int> >* usNetworkGrabberRF2D::acquire() {
   }
 return m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC);
 }
+
+/**
+* Method to record the sequence received, to replay it later with the virtual server for example.
+* @param path The path where the sequence will be saved.
+*/
+void usNetworkGrabberRF2D::activateRecording(std::string path) {
+  m_recordingOn = true;
+  m_sequenceWriter.setSequenceDirectory(path);
+}
+
+/**
+* Stop recording process.
+*/
+void usNetworkGrabberRF2D::stopRecording() {
+  m_recordingOn = false;
+}
+
 #endif

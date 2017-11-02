@@ -53,6 +53,8 @@ usNetworkGrabberPostScan2D::usNetworkGrabberPostScan2D(usNetworkGrabber *parent)
 
   m_swichOutputInit = false;
 
+  m_recordingOn = false;
+
   connect(m_tcpSocket, SIGNAL(readyRead()), this, SLOT(dataArrived()));
 }
 
@@ -206,6 +208,8 @@ void usNetworkGrabberPostScan2D::dataArrived()
         usFrameGrabbedInfo<usImagePostScan2D<unsigned char> >* savePtr = m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC);
         m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
         m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
+        if(m_recordingOn)
+          m_sequenceWriter.write(*m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC),m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getTimeStamp());
       }
       m_firstFrameAvailable = true;
       emit(newFrameAvailable());
@@ -229,6 +233,9 @@ void usNetworkGrabberPostScan2D::dataArrived()
       usFrameGrabbedInfo<usImagePostScan2D<unsigned char> >* savePtr = m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC);
       m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
       m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
+
+      if(m_recordingOn)
+        m_sequenceWriter.write(*m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC),m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getTimeStamp());
 
       m_firstFrameAvailable = true;
       emit(newFrameAvailable());
@@ -279,6 +286,22 @@ usFrameGrabbedInfo<usImagePostScan2D<unsigned char> >* usNetworkGrabberPostScan2
 void usNetworkGrabberPostScan2D::useVpDisplay(vpDisplay * display) {
   for(unsigned int i=0; i<m_outputBuffer.size(); i++)
     m_outputBuffer.at(i)->display = display;
+}
+
+/**
+* Method to record the sequence received, to replay it later with the virtual server for example.
+* @param path The path where the sequence will be saved.
+*/
+void usNetworkGrabberPostScan2D::activateRecording(std::string path) {
+  m_recordingOn = true;
+  m_sequenceWriter.setSequenceDirectory(path);
+}
+
+/**
+* Stop recording process.
+*/
+void usNetworkGrabberPostScan2D::stopRecording() {
+  m_recordingOn = false;
 }
 
 #endif

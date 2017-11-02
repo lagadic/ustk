@@ -56,6 +56,8 @@ usNetworkGrabberPreScan3D::usNetworkGrabberPreScan3D(usNetworkGrabber *parent) :
   m_swichOutputInit = false;
   m_motorSweepingInZDirection = true;
 
+  m_recordingOn = false;
+
   connect(m_tcpSocket ,SIGNAL(readyRead()),this, SLOT(dataArrived()));
 }
 
@@ -282,6 +284,9 @@ void usNetworkGrabberPreScan3D::includeFrameInVolume() {
     usVolumeGrabbedInfo<usImagePreScan3D<unsigned char> > * savePtr = m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC);
     m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
     m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
+    if(m_recordingOn)
+      m_sequenceWriter.write(*m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC),m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getTimeStamps());
+
 
     if (volumeIndex % 2 != 0) //case of backward moving motor (opposite to Z direction)
       m_motorSweepingInZDirection = true;
@@ -339,6 +344,22 @@ usVolumeGrabbedInfo<usImagePreScan3D<unsigned char> > *usNetworkGrabberPreScan3D
   }
 
   return m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC);
+}
+
+/**
+* Method to record the sequence received, to replay it later with the virtual server for example.
+* @param path The path where the sequence will be saved.
+*/
+void usNetworkGrabberPreScan3D::activateRecording(std::string path) {
+  m_recordingOn = true;
+  m_sequenceWriter.setSequenceDirectory(path);
+}
+
+/**
+* Stop recording process.
+*/
+void usNetworkGrabberPreScan3D::stopRecording() {
+  m_recordingOn = false;
 }
 
 #endif

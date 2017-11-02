@@ -47,6 +47,7 @@
 #include <visp3/ustk_grabber/usNetworkGrabber.h>
 #include <visp3/ustk_core/usImagePreScan2D.h>
 #include <visp3/ustk_grabber/usFrameGrabbedInfo.h>
+#include <visp3/ustk_io/usMHDSequenceWriter.h>
 
 /**
  * @class usNetworkGrabberPreScan2D
@@ -72,9 +73,13 @@ public:
 
   usFrameGrabbedInfo<usImagePreScan2D<unsigned char> > * acquire();
 
+  void activateRecording(std::string path);
+
   void dataArrived();
 
   bool isFirstFrameAvailable() {return m_firstFrameAvailable;}
+
+  void stopRecording();
 
   void useVpDisplay(vpDisplay * display);
 
@@ -94,6 +99,10 @@ private:
 
   //to manage ptrs switch init
   bool m_swichOutputInit;
+
+  //to manage the recording process
+  bool m_recordingOn;
+  usMHDSequenceWriter m_sequenceWriter;
 };
 
 #endif // QT4 || QT5

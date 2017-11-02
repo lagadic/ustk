@@ -11,9 +11,9 @@ This tutorial expains how to run the virtual server and how to grab the ultrasou
 \section ustk_virtual_server_data_format Formatting correctly your data: image sequence used as input of the virtual server.
 
 To use your sequence of ultrasound images in the virtual server application, the main information to precise is the timestamps of every frame: the server uses them to respect the delay between each frame sent.
-The virtual server can take 2 types of image sequences as input:
--A 2D sequence using a xml file and a set of images in standard formats (png, pgm, jpeg...): available for sequence of pre-scan 2D or post-scan 2D images (based on usSequenceReader / usSequenceWriter)
--A 2D or 3D sequence using metaheader format (mhd/raw): available for RF (2D and 3D), pre-scan (2D and 3D) and for post-scan 2D (based on usMHDSequenceReader and usMHDSequenceWriter)
+The virtual server can take 2 types of image sequences as input: <br>
+- A 2D sequence using a xml file and a set of images in standard formats (png, pgm, jpeg...): available for sequence of pre-scan 2D or post-scan 2D images (based on usSequenceReader / usSequenceWriter)<br>
+- A 2D or 3D sequence using metaheader format (mhd/raw): available for RF (2D and 3D), pre-scan (2D and 3D) and for post-scan 2D (based on usMHDSequenceReader and usMHDSequenceWriter)<br>
 
 Here is an example of how to load a sequence of pre-scan volumes written in metaheader format, and set to each frame a timestamp of your choice (expressed in ms since epoch): 
 
