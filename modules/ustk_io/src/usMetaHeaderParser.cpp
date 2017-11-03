@@ -393,7 +393,7 @@ void usMetaHeaderParser::parse()
         MHDfile << header.timestamp.at(i) << " ";
       }
       MHDfile << "\n";
-      MHDfile << "Comment = The axial resolution is the distance in meters between two successives A-samples in a scan line.\n";
+      MHDfile << "Comment = The axial resolution is the distance in meters between two successives RF-samples in a scan line.\n";
       MHDfile << "AxialResolution = " << this->m_axialResolution << "\n";
     }
     else if (header.imageType == us::RF_3D) {
@@ -423,7 +423,7 @@ void usMetaHeaderParser::parse()
       MHDfile << "MotorRadius = " << header.motorRadius << "\n";
       MHDfile << "Comment = Only in 3d. Distance between 2 successive frames.\n";
       MHDfile << "FramePitch = " << header.framePitch << "\n";
-      MHDfile << "Comment = The axial resolution is the distance in meters between two successives A-samples in a scan line.\n";
+      MHDfile << "Comment = The axial resolution is the distance in meters between two successives RF-samples in a scan line.\n";
       MHDfile << "AxialResolution = " << this->m_axialResolution << "\n";
       MHDfile << "Comment = The frame timestamps are expressed in ms since epoch.\n";
       MHDfile << "Timestamp = ";

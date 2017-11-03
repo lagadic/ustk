@@ -175,6 +175,7 @@ void usNetworkGrabberRF2D::dataArrived()
       m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setTransducerConvexity(false);
     }
     m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setDepth(m_imageHeader.imageDepth / 1000.0);
+    m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setAxialResolution((m_imageHeader.imageDepth / 1000.0 )/m_imageHeader.frameHeight);
     m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setTransmitFrequency(m_imageHeader.transmitFrequency);
     m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setSamplingFrequency(m_imageHeader.samplingFrequency);
 
