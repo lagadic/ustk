@@ -50,16 +50,14 @@
 #  include <QtGui/QMainWindow>
 #  include <QtGui/QGridLayout>
 #  include <QtGui/QPushButton>
-//VTK includes
-#include <QVTKWidget.h>
 #elif defined USTK_HAVE_VTK_QT5
 #  include <QApplication>
 #  include <QtWidgets/QMainWindow>
 #  include <QtWidgets/QGridLayout>
 #  include <QtWidgets/QPushButton>
-//VTK includes
-#include <QVTKOpenGLWidget.h>
 #endif
+//VTK includes
+#include <QVTKWidget.h>
 
 
 /**
@@ -68,11 +66,7 @@
  * @ingroup module_ustk_gui
  */
 
-#if defined(USTK_HAVE_VTK_QT4)
 class VISP_EXPORT usViewerWidget : public QVTKWidget
-#elif defined USTK_HAVE_VTK_QT5
-class VISP_EXPORT usViewerWidget : public QVTKOpenGLWidget
-#endif
 {
   Q_OBJECT
 public:

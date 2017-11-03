@@ -75,6 +75,7 @@ void usMHDSequenceWriter::write(const usImageRF2D<short int> & image, const uint
 
   usMetaHeaderParser mhdParser;
   mhdParser.setMHDHeader(header);
+  mhdParser.setAxialResolution(image.getAxialResolution());
   mhdParser.parse();
 
   usRawFileParser rawParser;
@@ -128,6 +129,7 @@ void usMHDSequenceWriter::write(const usImagePreScan2D<unsigned char> & image, c
 
   usMetaHeaderParser mhdParser;
   mhdParser.setMHDHeader(header);
+  mhdParser.setAxialResolution(image.getAxialResolution());
   mhdParser.parse();
 
   usRawFileParser rawParser;
@@ -181,6 +183,8 @@ void usMHDSequenceWriter::write(const usImagePostScan2D<unsigned char> & image, 
 
   usMetaHeaderParser mhdParser;
   mhdParser.setMHDHeader(header);
+  mhdParser.setHeightResolution(image.getHeightResolution());
+  mhdParser.setWidthResolution(image.getWidthResolution());
   mhdParser.parse();
 
   usRawFileParser rawParser;
@@ -240,6 +244,7 @@ void usMHDSequenceWriter::write(const usImageRF3D<short int> & image, const std:
 
   usMetaHeaderParser mhdParser;
   mhdParser.setMHDHeader(header);
+  mhdParser.setAxialResolution(image.getAxialResolution());
   mhdParser.parse();
 
   usRawFileParser rawParser;
@@ -299,6 +304,7 @@ void usMHDSequenceWriter::write(const usImagePreScan3D<unsigned char> & image, c
 
   usMetaHeaderParser mhdParser;
   mhdParser.setMHDHeader(header);
+  mhdParser.setAxialResolution(image.getAxialResolution());
   mhdParser.parse();
 
   usRawFileParser rawParser;

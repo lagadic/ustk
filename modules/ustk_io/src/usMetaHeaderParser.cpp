@@ -379,20 +379,21 @@ void usMetaHeaderParser::parse()
       MHDfile << "UltrasoundImageType = " << "RF_2D" << "\n";
       MHDfile << "Comment = True if probe transducer is convex, false if linear. \n";
       MHDfile << "IsTransducerConvex = " << header.isTransducerConvex << "\n";
-      MHDfile << "Comment = Radius between the scan lines intersection and the first pixel of each line acquired. 0 if linear probe.\n";
+      MHDfile << "Comment = Radius between the scan lines intersection and the first pixel of each line acquired (in meters). 0 if linear probe.\n";
       MHDfile << "TransducerRadius = " << header.transducerRadius << "\n";
-      MHDfile << "Comment = Distance between 2 scan lines.\n";
+      MHDfile << "Comment = Distance between 2 scan lines (in radians or meters).\n";
       MHDfile << "ScanLinePitch = " << header.scanLinePitch << "\n";
-      MHDfile << "Comment = Distance between 2 scan lines.\n";
+      MHDfile << "Comment = Frequency of the ultrasound wave sent (Hz).\n";
       MHDfile << "TransmitFrequency = " << header.transmitFrequency<< "\n";
-      MHDfile << "Comment = Distance between 2 scan lines.\n";
+      MHDfile << "Comment = Frequency used to sample the ultrasound wave received (Hz).\n";
       MHDfile << "SamplingFrequency = " << header.samplingFrequency << "\n";
-      MHDfile << "Comment = The axial resolution is the distance in meters between two successives A-samples in a scan line.\n";
+      MHDfile << "Comment = The timestamp is expressed in ms since epoch.\n";
       MHDfile << "Timestamp = ";
       for(unsigned int i = 0; i<header.timestamp.size();i++ ) {
         MHDfile << header.timestamp.at(i) << " ";
       }
       MHDfile << "\n";
+      MHDfile << "Comment = The axial resolution is the distance in meters between two successives A-samples in a scan line.\n";
       MHDfile << "AxialResolution = " << this->m_axialResolution << "\n";
     }
     else if (header.imageType == us::RF_3D) {
@@ -404,9 +405,9 @@ void usMetaHeaderParser::parse()
       MHDfile << "TransducerRadius = " << header.transducerRadius << "\n";
       MHDfile << "Comment = Distance between 2 scan lines.\n";
       MHDfile << "ScanLinePitch = " << header.scanLinePitch << "\n";
-      MHDfile << "Comment = Distance between 2 scan lines.\n";
+      MHDfile << "Comment = Frequency of the ultrasound wave sent (Hz).\n";
       MHDfile << "TransmitFrequency = " << header.transmitFrequency<< "\n";
-      MHDfile << "Comment = Distance between 2 scan lines.\n";
+      MHDfile << "Comment = Frequency used to sample the ultrasound wave received (Hz).\n";
       MHDfile << "SamplingFrequency = " << header.samplingFrequency << "\n";
       MHDfile << "Comment = Probe motor type : LinearMotor, TiltingMotor (for small roatations), or RotationalMotor (for 360 deg rotation).\n";
       if (header.motorType == usMotorSettings::LinearMotor) {
@@ -424,6 +425,7 @@ void usMetaHeaderParser::parse()
       MHDfile << "FramePitch = " << header.framePitch << "\n";
       MHDfile << "Comment = The axial resolution is the distance in meters between two successives A-samples in a scan line.\n";
       MHDfile << "AxialResolution = " << this->m_axialResolution << "\n";
+      MHDfile << "Comment = The frame timestamps are expressed in ms since epoch.\n";
       MHDfile << "Timestamp = ";
       for(unsigned int i = 0; i<header.timestamp.size();i++ ) {
         MHDfile << header.timestamp.at(i) << " ";
@@ -439,12 +441,13 @@ void usMetaHeaderParser::parse()
       MHDfile << "TransducerRadius = " << header.transducerRadius << "\n";
       MHDfile << "Comment = Distance between 2 scanlines.\n";
       MHDfile << "ScanLinePitch = " << header.scanLinePitch << "\n";
-      MHDfile << "Comment = Distance between 2 scan lines.\n";
+      MHDfile << "Comment = Frequency of the ultrasound wave sent (Hz).\n";
       MHDfile << "TransmitFrequency = " << header.transmitFrequency<< "\n";
-      MHDfile << "Comment = Distance between 2 scan lines.\n";
+      MHDfile << "Comment = Frequency used to sample the ultrasound wave received (Hz).\n";
       MHDfile << "SamplingFrequency = " << header.samplingFrequency << "\n";
       MHDfile << "Comment = The axial resolution is the distance in meters between two successives A-samples in a scan line.\n";
       MHDfile << "AxialResolution = " << this->m_axialResolution << "\n";
+      MHDfile << "Comment = The timestamp is expressed in ms since epoch.\n";
       MHDfile << "Timestamp = ";
       for(unsigned int i = 0; i<header.timestamp.size();i++ ) {
         MHDfile << header.timestamp.at(i) << " ";
@@ -460,9 +463,9 @@ void usMetaHeaderParser::parse()
       MHDfile << "TransducerRadius = " << header.transducerRadius << "\n";
       MHDfile << "Comment = Distance between 2 scan lines.\n";
       MHDfile << "ScanLinePitch = " << header.scanLinePitch << "\n";
-      MHDfile << "Comment = Distance between 2 scan lines.\n";
+      MHDfile << "Comment = Frequency of the ultrasound wave sent (Hz).\n";
       MHDfile << "TransmitFrequency = " << header.transmitFrequency<< "\n";
-      MHDfile << "Comment = Distance between 2 scan lines.\n";
+      MHDfile << "Comment = Frequency used to sample the ultrasound wave received (Hz).\n";
       MHDfile << "SamplingFrequency = " << header.samplingFrequency << "\n";
       MHDfile << "Comment = Probe motor type : LinearMotor, TiltingMotor (for small roatations), or RotationalMotor (for 360 deg rotation).\n";
       if (header.motorType == usMotorSettings::LinearMotor) {
@@ -480,6 +483,7 @@ void usMetaHeaderParser::parse()
       MHDfile << "FramePitch = " << header.framePitch << "\n";
       MHDfile << "Comment = The axial resolution is the distance in meters between two successives A-samples in a scan line.\n";
       MHDfile << "AxialResolution = " << this->m_axialResolution << "\n";
+      MHDfile << "Comment = The frame timestamps are expressed in ms since epoch.\n";
       MHDfile << "Timestamp = ";
       for(unsigned int i = 0; i<header.timestamp.size();i++ ) {
         MHDfile << header.timestamp.at(i) << " ";
@@ -495,13 +499,14 @@ void usMetaHeaderParser::parse()
       MHDfile << "TransducerRadius = " << header.transducerRadius << "\n";
       MHDfile << "Comment = Distance between 2 scan lines.\n";
       MHDfile << "ScanLinePitch = " << header.scanLinePitch << "\n";
-      MHDfile << "Comment = Distance between 2 scan lines.\n";
+      MHDfile << "Comment = Frequency of the ultrasound wave sent (Hz).\n";
       MHDfile << "TransmitFrequency = " << header.transmitFrequency<< "\n";
-      MHDfile << "Comment = Distance between 2 scan lines.\n";
+      MHDfile << "Comment = Frequency used to sample the ultrasound wave received (Hz).\n";
       MHDfile << "SamplingFrequency = " << header.samplingFrequency << "\n";
       MHDfile << "HeightResolution = " << this->m_heightResolution << "\n";
       MHDfile << "WidthResolution = " << this->m_widthResolution << "\n";
       MHDfile << "ScanLineNumber = " << header.scanLineNumber << "\n";
+      MHDfile << "Comment = The timestamp is expressed in ms since epoch.\n";
       MHDfile << "Timestamp = ";
       for(unsigned int i = 0; i<header.timestamp.size();i++ ) {
         MHDfile << header.timestamp.at(i) << " ";
@@ -517,9 +522,9 @@ void usMetaHeaderParser::parse()
       MHDfile << "TransducerRadius = " << header.transducerRadius << "\n";
       MHDfile << "Comment = Distance between 2 scan lines.\n";
       MHDfile << "ScanLinePitch = " << header.scanLinePitch << "\n";
-      MHDfile << "Comment = Distance between 2 scan lines.\n";
+      MHDfile << "Comment = Frequency of the ultrasound wave sent (Hz).\n";
       MHDfile << "TransmitFrequency = " << header.transmitFrequency<< "\n";
-      MHDfile << "Comment = Distance between 2 scan lines.\n";
+      MHDfile << "Comment = Frequency used to sample the ultrasound wave received (Hz).\n";
       MHDfile << "SamplingFrequency = " << header.samplingFrequency << "\n";
       MHDfile << "Comment = Probe motor type : LinearMotor, TiltingMotor (for small roatations), or RotationalMotor (for 360 deg rotation).\n";
       if (header.motorType == usMotorSettings::LinearMotor) {
@@ -539,10 +544,6 @@ void usMetaHeaderParser::parse()
       MHDfile << "WidthResolution = " << this->m_widthResolution << "\n";
       MHDfile << "ScanLineNumber = " << header.scanLineNumber << "\n";
       MHDfile << "FrameNumber = " << header.frameNumber << "\n";
-      MHDfile << "Timestamp = ";
-      for(unsigned int i = 0; i<header.timestamp.size();i++ ) {
-        MHDfile << header.timestamp.at(i) << " ";
-      }
       MHDfile << "\n";
     }
     else
