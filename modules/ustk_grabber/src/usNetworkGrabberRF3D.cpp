@@ -171,6 +171,8 @@ void usNetworkGrabberRF3D::dataArrived()
     m_grabbedImage.setDepth(m_imageHeader.imageDepth / 1000.0);
     m_grabbedImage.setTransducerConvexity(m_imageHeader.transducerRadius != 0.);
     m_grabbedImage.setAxialResolution((m_imageHeader.imageDepth / 1000.0) / m_imageHeader.frameHeight);
+    m_grabbedImage.setTransmitFrequency(m_imageHeader.transmitFrequency);
+    m_grabbedImage.setSamplingFrequency(m_imageHeader.samplingFrequency);
 
     //update motor settings
     m_motorSettings.setFrameNumber(m_imageHeader.framesPerVolume);
@@ -286,7 +288,7 @@ void usNetworkGrabberRF3D::includeFrameInVolume() {
     m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
 
     if(m_recordingOn)
-      m_sequenceWriter.write(*m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC),m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getTimeStamps());
+      m_sequenceWriter.write(*m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC),m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getTimeStamps());
 
     if (volumeIndex % 2 != 0) //case of backward moving motor (opposite to Z direction)
       m_motorSweepingInZDirection = true;

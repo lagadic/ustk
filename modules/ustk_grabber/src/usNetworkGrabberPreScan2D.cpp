@@ -170,6 +170,8 @@ void usNetworkGrabberPreScan2D::dataArrived()
     m_grabbedImage.setScanLinePitch(m_imageHeader.scanLinePitch);
     m_grabbedImage.setDepth(m_imageHeader.imageDepth / 1000.0);
     m_grabbedImage.setTransducerConvexity(m_imageHeader.transducerRadius != 0.);
+    m_grabbedImage.setTransmitFrequency(m_imageHeader.transmitFrequency);
+    m_grabbedImage.setSamplingFrequency(m_imageHeader.samplingFrequency);
 
     //set data info
     m_grabbedImage.setFrameCount(m_imageHeader.frameCount);
@@ -233,7 +235,7 @@ void usNetworkGrabberPreScan2D::invertRowsCols() {
   m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
   m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
   if(m_recordingOn)
-    m_sequenceWriter.write(*m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC),m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getTimeStamp());
+    m_sequenceWriter.write(*m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC),m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getTimeStamp());
 
   m_firstFrameAvailable = true;
   emit(newFrameAvailable());
