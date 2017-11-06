@@ -387,14 +387,14 @@ void usMetaHeaderParser::parse()
       MHDfile << "TransmitFrequency = " << header.transmitFrequency<< "\n";
       MHDfile << "Comment = Frequency used to sample the ultrasound wave received (Hz).\n";
       MHDfile << "SamplingFrequency = " << header.samplingFrequency << "\n";
+      MHDfile << "Comment = The axial resolution is the distance in meters between two successives RF-samples in a scan line.\n";
+      MHDfile << "AxialResolution = " << this->m_axialResolution << "\n";
       MHDfile << "Comment = The timestamp is expressed in ms since epoch.\n";
       MHDfile << "Timestamp = ";
       for(unsigned int i = 0; i<header.timestamp.size();i++ ) {
         MHDfile << header.timestamp.at(i) << " ";
       }
       MHDfile << "\n";
-      MHDfile << "Comment = The axial resolution is the distance in meters between two successives RF-samples in a scan line.\n";
-      MHDfile << "AxialResolution = " << this->m_axialResolution << "\n";
     }
     else if (header.imageType == us::RF_3D) {
       MHDfile << "Comment = Availables ultrasound image types are RF_2D, RF_3D, PRESCAN_2D, PRESCAN_3D, POSTSCAN_2D and POSTSCAN_3D.\n";
