@@ -47,6 +47,7 @@
 #include <visp3/ustk_grabber/usNetworkGrabber.h>
 #include <visp3/ustk_core/usImageRF2D.h>
 #include <visp3/ustk_grabber/usFrameGrabbedInfo.h>
+#include <visp3/ustk_io/usMHDSequenceWriter.h>
 
 /**
  * @class usNetworkGrabberRF2D
@@ -70,11 +71,15 @@ public:
   explicit usNetworkGrabberRF2D(usNetworkGrabber *parent = 0);
   ~usNetworkGrabberRF2D();
 
+  void activateRecording(std::string path);
+
   usFrameGrabbedInfo<usImageRF2D<short int> > * acquire();
 
   void dataArrived();
 
   bool isFirstFrameAvailable() {return m_firstFrameAvailable;}
+
+  void stopRecording();
 
 signals:
   void newFrameAvailable();
@@ -86,6 +91,10 @@ private:
 
   //to manage ptrs switch init
   bool m_swichOutputInit;
+
+  //to manage the recording process
+  bool m_recordingOn;
+  usMHDSequenceWriter m_sequenceWriter;
 };
 
 #endif // QT4 || QT5

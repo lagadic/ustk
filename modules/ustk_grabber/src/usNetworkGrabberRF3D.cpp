@@ -56,6 +56,8 @@ usNetworkGrabberRF3D::usNetworkGrabberRF3D(usNetworkGrabber *parent) :
   m_swichOutputInit = false;
   m_motorSweepingInZDirection = true;
 
+  m_recordingOn = false;
+
   connect(m_tcpSocket ,SIGNAL(readyRead()),this, SLOT(dataArrived()));
 }
 
@@ -117,7 +119,9 @@ void usNetworkGrabberRF3D::dataArrived()
   else if(headerType == m_imageHeader.headerId) {
     //read whole header
     in >> m_imageHeader.frameCount;
-    in >> m_imageHeader.timeStamp;
+    quint64 timestamp;
+    in >> timestamp;
+    m_imageHeader.timeStamp = timestamp;
     in >> m_imageHeader.dataRate;
     in >> m_imageHeader.dataLength;
     in >> m_imageHeader.ss;
@@ -167,6 +171,8 @@ void usNetworkGrabberRF3D::dataArrived()
     m_grabbedImage.setDepth(m_imageHeader.imageDepth / 1000.0);
     m_grabbedImage.setTransducerConvexity(m_imageHeader.transducerRadius != 0.);
     m_grabbedImage.setAxialResolution((m_imageHeader.imageDepth / 1000.0) / m_imageHeader.frameHeight);
+    m_grabbedImage.setTransmitFrequency(m_imageHeader.transmitFrequency);
+    m_grabbedImage.setSamplingFrequency(m_imageHeader.samplingFrequency);
 
     //update motor settings
     m_motorSettings.setFrameNumber(m_imageHeader.framesPerVolume);
@@ -257,24 +263,14 @@ void usNetworkGrabberRF3D::includeFrameInVolume() {
   m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->resize(m_grabbedImage.getWidth(),m_grabbedImage.getHeight(),m_motorSettings.getFrameNumber());
 
   //Inserting frame in volume
-  int volumeIndex = (m_grabbedImage.getFrameCount()-1) / m_grabbedImage.getFramesPerVolume(); // from 0
-  int framePostition = (m_grabbedImage.getFrameCount()-1) % m_grabbedImage.getFramesPerVolume(); // from 0 to FPV-1
+  int volumeIndex = m_grabbedImage.getFrameCount() / m_grabbedImage.getFramesPerVolume(); // from 0
+  int framePostition = m_grabbedImage.getFrameCount() % m_grabbedImage.getFramesPerVolume(); // from 0 to FPV-1
 
   //setting timestamps
-  if (volumeIndex % 2 != 0) { //case of backward moving motor (opposite to Z direction)
+  if (volumeIndex % 2 != 0) //case of backward moving motor (opposite to Z direction)
     framePostition = m_grabbedImage.getFramesPerVolume() - framePostition - 1;
-    if(framePostition == m_grabbedImage.getFramesPerVolume() - 1)
-      m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setFirstFrameTimeStamp(m_grabbedImage.getTimeStamp());
-    if(framePostition == 0)
-      m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setLastFrameTimeStamp(m_grabbedImage.getTimeStamp());
-  }
-  else { // case of forward moving motor (along Z direction)
-    if(framePostition == 0)
-      m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setFirstFrameTimeStamp(m_grabbedImage.getTimeStamp());
-    if(framePostition == m_grabbedImage.getFramesPerVolume() - 1)
-      m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setLastFrameTimeStamp(m_grabbedImage.getTimeStamp());
-  }
 
+  m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->addTimeStamp(m_grabbedImage.getTimeStamp(),framePostition);
   m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setVolumeCount(volumeIndex);
 
   for(unsigned int i=0; i<m_grabbedImage.getHeight(); i++)
@@ -290,6 +286,9 @@ void usNetworkGrabberRF3D::includeFrameInVolume() {
     usVolumeGrabbedInfo<usImageRF3D<short int> > * savePtr = m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC);
     m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
     m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
+
+    if(m_recordingOn)
+      m_sequenceWriter.write(*m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC),m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getTimeStamps());
 
     if (volumeIndex % 2 != 0) //case of backward moving motor (opposite to Z direction)
       m_motorSweepingInZDirection = true;
@@ -348,6 +347,22 @@ usVolumeGrabbedInfo<usImageRF3D<short int> > *usNetworkGrabberRF3D::acquire() {
   m_firstVolumeAvailable = true;
 
   return m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC);
+}
+
+/**
+* Method to record the sequence received, to replay it later with the virtual server for example.
+* @param path The path where the sequence will be saved.
+*/
+void usNetworkGrabberRF3D::activateRecording(std::string path) {
+  m_recordingOn = true;
+  m_sequenceWriter.setSequenceDirectory(path);
+}
+
+/**
+* Stop recording process.
+*/
+void usNetworkGrabberRF3D::stopRecording() {
+  m_recordingOn = false;
 }
 
 #endif

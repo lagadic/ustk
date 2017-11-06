@@ -134,8 +134,6 @@ vpThread::Return displayFunction(vpThread::Args args)
 
   vpImagePoint ROI_centralPoint;
 
-  bool firstLoopCycle = true;
-
   double startTime = vpTime::measureTimeMs();
 
   do {
@@ -272,7 +270,6 @@ vpThread::Return displayFunction(vpThread::Args args)
       // Update the display
       vpDisplay::flush(postScan_);
       vpDisplay::flush(confidencePostScan_);
-      firstLoopCycle=false;
     }
     else {
       vpTime::wait(2); // Sleep 2ms

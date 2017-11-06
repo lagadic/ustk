@@ -40,6 +40,7 @@
 #define __usNetworkGrabber_h_
 
 #include <visp3/ustk_core/usConfig.h>
+#include <visp3/ustk_core/us.h>
 #include <visp3/ustk_grabber/usAcquisitionParameters.h>
 
 #if defined(USTK_HAVE_QT5) || defined(USTK_HAVE_VTK_QT)
@@ -115,56 +116,6 @@ public:
 
     int initOk; /**<  1 if init ok, 0 otherwise */
     int probeId; /**<  unique code for each probe (4DC7 = 15, C 50-62 = 10) */
-  };
-
-
-  /**
-   *  Header coming before every frame
-   */
-  struct usImageHeader{
-    usImageHeader() : headerId(2) {} //set header Id to 2 by default
-    int headerId; /**<  Never change this value ! It is used to differenciate usInitHeaderConfirmation (=1) / usImageHeader (=2) */
-
-    quint32 frameCount; /**< from the beginning of last acquisition */
-    quint64 timeStamp; /**< msecs since epoch (on ultrasond machine) */
-
-    double dataRate; /**< in FPS */
-
-    int dataLength; /**< frame size in bytes, used to read on the network */
-    int ss;	/**< sample size in bits */
-
-    int imageType;	 	/**< type of data (0 = pre-scan, 1 = post-scan, 2 = rf) */
-
-    int frameWidth; /**< width of a frame (pixels for post-scan, scanlines for pre-scan or rf data) */
-    int frameHeight; /**< height of frame (pixels for post-scan, samples for pre-scan or rf data) */
-
-    double pixelWidth; /**< width of post-scan pixel */
-    double pixelHeight; /**< height of post-scan pixel */
-
-    int transmitFrequency; /**< in Hz */
-    int samplingFrequency; /**< in Hz */
-
-  /**
-   * @name transducer settings
-   */
-  /*@{*/
-    double transducerRadius; /**< radius of the probe (for convex ones), in meters (0 if linear)*/
-    double scanLinePitch; /**< Angle (rad) between two scan-lines (if convex)) */
-    unsigned int scanLineNumber; /**< number of scanLines used for acquisition*/
-    int imageDepth; /**< depth of the image, in mm */
-  /*@}*/
-
-  /**
-   * @name motor settings
-   */
-  /*@{*/
-    double anglePerFr; /**< angular step between frames, in degrees*/
-    int framesPerVolume; /**< number of frames in a volume */
-    double motorRadius; /**< Radius of the motor, in degrees */
-    int motorType; /**< Type of the motor (see usMotorType) */
-  /*@}*/
-
-
   };
 
   explicit usNetworkGrabber(QObject *parent = 0);
@@ -254,7 +205,7 @@ protected:
 
   //received headers
   usInitHeaderConfirmation m_confirmHeader;
-  usImageHeader m_imageHeader;
+  us::usImageHeader m_imageHeader;
 
   // grabber state
   bool m_isInit;

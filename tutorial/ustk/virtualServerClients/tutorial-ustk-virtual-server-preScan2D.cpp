@@ -1,17 +1,19 @@
-//! \example tutorial-ultrasonix-qt-grabbing-post-scan.cpp
+//! \example tutorial-ustk-virtual-server-preScan2D.cpp
 
 #include <iostream>
 #include <visp3/ustk_core/usConfig.h>
 
-#if (defined(USTK_HAVE_QT5) || defined(USTK_HAVE_VTK_QT)) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
+#if (defined(USTK_HAVE_QT5) || defined(USTK_HAVE_VTK_QT)) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
 
 #include <QtCore/QThread>
 #include <QApplication>
 
-#include <visp3/ustk_grabber/usNetworkGrabberPostScan2D.h>
+#include <visp3/ustk_grabber/usNetworkGrabberPreScan2D.h>
+#include <visp3/ustk_io/usImageIo.h>
 
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
 
 int main(int argc, char** argv)
 {
@@ -20,44 +22,34 @@ int main(int argc, char** argv)
 
   QThread * grabbingThread = new QThread();
 
-  usNetworkGrabberPostScan2D * qtGrabber = new usNetworkGrabberPostScan2D();
+  usNetworkGrabberPreScan2D * qtGrabber = new usNetworkGrabberPreScan2D();
+  qtGrabber->setIPAddress("127.0.0.1");//local loop, server must be running on same computer
   qtGrabber->setConnection(true);
 
   // setting acquisition parameters
   usNetworkGrabber::usInitHeaderSent header;
-  header.probeId = 14; // 4DC7 id = 15
+  header.probeId = 0; // 4DC7 id = 15
   header.slotId = 0; //top slot id = 0
   header.imagingMode = 0; //B-mode = 0
 
-  usFrameGrabbedInfo<usImagePostScan2D<unsigned char> >* grabbedFrame;
+  usFrameGrabbedInfo<usImagePreScan2D<unsigned char> >* grabbedFrame;
 
   //Prepare display
 #if defined(VISP_HAVE_X11)
-  vpDisplayX * display = NULL;
+  vpDisplayX * display = new vpDisplayX();
 #elif defined(VISP_HAVE_GDI)
-  vpDisplayGDI * display = NULL;
+  vpDisplayGDI * display = new vpDisplayGDI();
+#elif defined(VISP_HAVE_OPENCV)
+  vpDisplayOpenCV * display = new vpDisplayOpenCV();
 #endif
-  bool displayInit = false;
+
 
   bool captureRunning = true;
-
+  bool displayInit = false;
+  //qtGrabber->setVerbose(true);
   // sending acquisition parameters
   qtGrabber->initAcquisition(header);
-
-  // grab a 640*480 post-scan image
-  qtGrabber->setPostScanMode(true);
-  qtGrabber->setPostScanHeigh(480);
-  qtGrabber->setPostScanWidth(640);
-
-  // set the ultrsound depth to 140 mm
-  qtGrabber->setImageDepth(140);
-
-  // set the 4DC7 motor on the middle frame
-  qtGrabber->setMotorPosition(37);
-
-  std::cout << "send update" << std::endl;
-  qtGrabber->sendAcquisitionParameters();
-  std::cout << "end update" << std::endl;
+  std::cout << "init success" << std::endl;
   qtGrabber->runAcquisition();
 
   // Move the grabber object to another thread
@@ -72,34 +64,25 @@ int main(int argc, char** argv)
       grabbedFrame = qtGrabber->acquire();
 
       std::cout <<"MAIN THREAD received frame No : " << grabbedFrame->getFrameCount() << std::endl;
+      QString filename = QString("img") + QString::number(grabbedFrame->getFrameCount()) + QString(".xml");
+      usImageIo::write(*grabbedFrame, filename.toStdString());
 
       std::cout << *grabbedFrame << std::endl;
 
-      //init display
-      if(!displayInit && grabbedFrame->getHeight() !=0 && grabbedFrame->getWidth() !=0) {
-#if defined(VISP_HAVE_X11)
-        display = new vpDisplayX(*grabbedFrame);
-#elif defined(VISP_HAVE_GDI)
-        display = new vpDisplayGDI(*grabbedFrame);
-#endif
+      if(!displayInit) {
+        display->init(*grabbedFrame);
         qtGrabber->useVpDisplay(display);
         displayInit = true;
       }
-
-      // processing display
-      if(displayInit) {
-        vpDisplay::display(*grabbedFrame);
-        vpDisplay::flush(*grabbedFrame);
-      }
+      vpDisplay::display(*grabbedFrame);
+      vpDisplay::flush(*grabbedFrame);
     }
     else {
       vpTime::wait(10);
     }
   }while(captureRunning);
 
-  if(displayInit) {
     delete display;
-  }
 
   return app.exec();
 }

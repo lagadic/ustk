@@ -128,7 +128,9 @@ void usNetworkGrabberPostScanBiPlan::dataArrived()
   else if(headerType == m_imageHeader.headerId) {
     //read whole header
     in >> m_imageHeader.frameCount;
-    in >> m_imageHeader.timeStamp;
+    quint64 timestamp;
+    in >> timestamp;
+    m_imageHeader.timeStamp = timestamp;
     in >> m_imageHeader.dataRate;
     in >> m_imageHeader.dataLength;
     in >> m_imageHeader.ss;
@@ -177,6 +179,8 @@ void usNetworkGrabberPostScanBiPlan::dataArrived()
     refOnBufferToFill->at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setScanLinePitch(m_imageHeader.scanLinePitch);
     refOnBufferToFill->at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setScanLineNumber(m_imageHeader.scanLineNumber);
     refOnBufferToFill->at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setDepth(m_imageHeader.imageDepth / 1000.0);
+    refOnBufferToFill->at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setTransmitFrequency(m_imageHeader.transmitFrequency);
+    refOnBufferToFill->at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setSamplingFrequency(m_imageHeader.samplingFrequency);
 
     //set data info
     refOnBufferToFill->at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setFrameCount(m_imageHeader.frameCount);
