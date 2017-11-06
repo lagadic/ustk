@@ -91,22 +91,26 @@ void usNetworkGrabber::setServerIp(std::string & ip)
 }
 
 /**
-* Method used to initialize / stop the grabber.
-* @param actionConnect Boolean to initialize (if true) or stop (if false) the grabber.
+* Method used to connect to the server.
 */
-void usNetworkGrabber::setConnection(bool actionConnect)
+void usNetworkGrabber::connectToServer()
 {
-  m_connect = actionConnect;
-  if(actionConnect)
-    this->connectToServer();
-  else
-    m_tcpSocket->disconnect();
+  m_connect = true;
+  this->processConnectionToServer();
 }
 
 /**
-* Method used to connect / disconnect to the server and manage signals/slots communication.
+* Method used to disconnect from the server.
 */
-void usNetworkGrabber::connectToServer()
+void usNetworkGrabber::disconnectFromServer() {
+  m_connect = false;
+  m_tcpSocket->disconnect();
+}
+
+/**
+* Method used to do all the process of the server connection.
+*/
+void usNetworkGrabber::processConnectionToServer()
 {
   if(m_connect)
   {

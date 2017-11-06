@@ -272,8 +272,8 @@ void usVirtualServer::setSequencePath(const std::string sequencePath) {
       m_sequenceReaderPostScan.open(m_postScanImage2d,timestampTmp);
       imageHeader.timeStamp = timestampTmp;
       m_nextImageTimestamp = m_sequenceReaderPostScan.getSequenceTimestamps().at(imageHeader.frameCount + 1);
-      if(imageHeader.timeStamp == 0) { // timestamps are requested for virtual server
-        throw(vpException(vpException::fatalError), "usVirtualServer error : no timestamp associated in sequence !");
+      if(imageHeader.timeStamp == m_nextImageTimestamp) { // timestamps are supposed to be different for different frames
+        throw(vpException(vpException::fatalError), "usVirtualServer error : successives timestamps are equal !");
       }
       m_imageType = us::POSTSCAN_2D;
       m_isMHDSequence = false;
@@ -284,8 +284,8 @@ void usVirtualServer::setSequencePath(const std::string sequencePath) {
         m_sequenceReaderPreScan.open(m_preScanImage2d,timestampTmp);
         imageHeader.timeStamp = timestampTmp;
         m_nextImageTimestamp = m_sequenceReaderPreScan.getSequenceTimestamps().at(imageHeader.frameCount + 1);
-        if(imageHeader.timeStamp == 0) { // timestamps are requested for virtual server
-          throw(vpException(vpException::fatalError), "usVirtualServer error : no timestamp associated in sequence !");
+        if(imageHeader.timeStamp == m_nextImageTimestamp) { // timestamps are supposed to be different for different frames
+          throw(vpException(vpException::fatalError), "usVirtualServer error : successives timestamps are equal !");
         }
         invertRowsColsOnPreScan(); //to fit with ultrasonix grabbers (pre-scan image is inverted in porta SDK)
         m_imageType = us::PRESCAN_2D;
@@ -306,16 +306,16 @@ void usVirtualServer::setSequencePath(const std::string sequencePath) {
       m_MHDSequenceReader.acquire(m_rfImage2d,timestampTmp);
       imageHeader.timeStamp = timestampTmp;
       m_nextImageTimestamp = m_MHDSequenceReader.getNextTimeStamp();
-      if(imageHeader.timeStamp == 0)  // timestamps are requested for virtual server
-        throw(vpException(vpException::fatalError), "usVirtualServer error : no timestamp associated in sequence !");
+      if(imageHeader.timeStamp == m_nextImageTimestamp) // timestamps are supposed to be different for different frames
+        throw(vpException(vpException::fatalError), "usVirtualServer error : successives timestamps are equal !");
     } catch(...) {//if we have an exception, it's not a RF 2D image. So we try a pre-scan 2D
       try {
         uint64_t timestampTmp;
         m_MHDSequenceReader.acquire(m_preScanImage2d,timestampTmp);
         imageHeader.timeStamp = timestampTmp;
         m_nextImageTimestamp = m_MHDSequenceReader.getNextTimeStamp();
-        if(imageHeader.timeStamp == 0)  // timestamps are requested for virtual server
-          throw(vpException(vpException::fatalError), "usVirtualServer error : no timestamp associated in sequence !");
+        if(imageHeader.timeStamp == m_nextImageTimestamp)  // timestamps are supposed to be different for different frames
+          throw(vpException(vpException::fatalError), "usVirtualServer error : successives timestamps are equal !");
 
         invertRowsColsOnPreScan(); //to fit with ultrasonix grabbers (pre-scan image is inverted in porta SDK)
       } catch(...) {// it's not a pre-scan 2D image...
@@ -324,24 +324,24 @@ void usVirtualServer::setSequencePath(const std::string sequencePath) {
           m_MHDSequenceReader.acquire(m_postScanImage2d,timestampTmp);
           imageHeader.timeStamp = timestampTmp;
           m_nextImageTimestamp = m_MHDSequenceReader.getNextTimeStamp();
-          if(imageHeader.timeStamp == 0)  // timestamps are requested for virtual server
-            throw(vpException(vpException::fatalError), "usVirtualServer error : no timestamp associated in sequence !");
+          if(imageHeader.timeStamp == m_nextImageTimestamp) // timestamps are supposed to be different for different frames
+            throw(vpException(vpException::fatalError), "usVirtualServer error : successives timestamps are equal !");
         } catch(...) {// it's not a post-scan 2D image...
           try {
             m_timestamps.clear();
             m_MHDSequenceReader.acquire(m_rfImage3d,m_timestamps);
             imageHeader.timeStamp = m_timestamps.at(0);
             m_nextImageTimestamp = m_timestamps.at(1);
-            if(imageHeader.timeStamp == 0)
-              throw(vpException(vpException::fatalError), "usVirtualServer error : no timestamp associated in sequence !");
+            if(imageHeader.timeStamp == m_nextImageTimestamp)
+              throw(vpException(vpException::fatalError), "usVirtualServer error : successives timestamps are equal !");
           } catch(...) {// it's not a rf 3D image...
             try {
               m_timestamps.clear();
               m_MHDSequenceReader.acquire(m_preScanImage3d,m_timestamps);
               imageHeader.timeStamp = m_timestamps.at(0);
               m_nextImageTimestamp = m_timestamps.at(1);
-              if(imageHeader.timeStamp == 0)
-                throw(vpException(vpException::fatalError), "usVirtualServer error : no timestamp associated in sequence !");
+              if(imageHeader.timeStamp == m_nextImageTimestamp)
+                throw(vpException(vpException::fatalError), "usVirtualServer error : successives timestamps are equal !");
 
               m_preScanImage3d.getFrame(m_preScanImage2d,0);
               m_preScanImage2d.setImagePreScanSettings(m_preScanImage3d);

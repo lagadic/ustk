@@ -173,11 +173,12 @@ signals:
 public slots:
   /// Network
   void connected();
-  void connectToServer();
+  void processConnectionToServer();
   virtual void dataArrived() = 0;
   void disconnected();
   void handleError(QAbstractSocket::SocketError err);
-  void setConnection(bool actionConnect);
+  void connectToServer();
+  void disconnectFromServer();
   void setServerIp(std::string & ip);
 
 protected slots:

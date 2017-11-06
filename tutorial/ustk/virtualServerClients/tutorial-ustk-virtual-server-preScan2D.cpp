@@ -24,7 +24,7 @@ int main(int argc, char** argv)
 
   usNetworkGrabberPreScan2D * qtGrabber = new usNetworkGrabberPreScan2D();
   qtGrabber->setIPAddress("127.0.0.1");//local loop, server must be running on same computer
-  qtGrabber->setConnection(true);
+  qtGrabber->connectToServer();
 
   // setting acquisition parameters
   usNetworkGrabber::usInitHeaderSent header;

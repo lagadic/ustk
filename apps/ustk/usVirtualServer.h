@@ -208,7 +208,7 @@ private:
   bool m_isMHDSequence; // mhd sequence if true, xml otherwise
 
   std::vector<uint64_t> m_timestamps; // vector of timestamps of the current volume (only for 3D case : RF and pre-scan volumes)
-  int64_t m_nextImageTimestamp;
+  uint64_t m_nextImageTimestamp;
 
   bool m_serverIsSendingImages;
 

@@ -21,7 +21,7 @@ int main(int argc, char** argv)
   QThread * grabbingThread = new QThread();
 
   usNetworkGrabberPostScanBiPlan * qtGrabber = new usNetworkGrabberPostScanBiPlan();
-  qtGrabber->setConnection(true);
+  qtGrabber->connectToServer();
   //qtGrabber->setVerbose(true);
   // setting acquisition parameters
   usNetworkGrabber::usInitHeaderSent header;

@@ -23,7 +23,7 @@ int main(int argc, char** argv)
   QThread * grabbingThread = new QThread();
 
   usNetworkGrabberRF3D * qtGrabber = new usNetworkGrabberRF3D();
-  qtGrabber->setConnection(true);
+  qtGrabber->connectToServer();
   //qtGrabber->setVerbose(true);
   // setting acquisition parameters
   usNetworkGrabber::usInitHeaderSent header;
