@@ -44,7 +44,6 @@
 
 #include <iostream>
 #include <visp3/ustk_core/us.h>
-#include <visp3/ustk_grabber/usNetworkGrabber.h>
 #include <visp3/core/vpXmlParser.h>
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpIoTools.h>
@@ -94,20 +93,20 @@ public:
   } vpXmlCodeSequenceType;
 
   //getters
-  usNetworkGrabber::usImageHeader const getImageHeader() {return m_imageHeader;}
+  us::usImageHeader const getImageHeader() {return m_imageHeader;}
   std::string getSequenceFileName() const {return m_sequence_name;}
   
   //Data setters
-  void setImageHeader(const usNetworkGrabber::usImageHeader imageHeader) {m_imageHeader = imageHeader;}
+  void setImageHeader(const us::usImageHeader imageHeader) {m_imageHeader = imageHeader;}
   void setSequenceFileName(const std::string sequence_name) {m_sequence_name = sequence_name;}
 
 private:
-  quint32 xmlReadUInt32Child(xmlDocPtr doc, xmlNodePtr node);
-  quint64 xmlReadUInt64Child(xmlDocPtr doc, xmlNodePtr node);
-  void xmlWriteUInt32Child(xmlNodePtr node, const char* label, const quint32 value);
-  void xmlWriteUInt64Child(xmlNodePtr node, const char* label, const quint64 value);
+  uint32_t xmlReadUInt32Child(xmlDocPtr doc, xmlNodePtr node);
+  uint64_t xmlReadUInt64Child(xmlDocPtr doc, xmlNodePtr node);
+  void xmlWriteUInt32Child(xmlNodePtr node, const char* label, const uint32_t value);
+  void xmlWriteUInt64Child(xmlNodePtr node, const char* label, const uint64_t value);
 
-  usNetworkGrabber::usImageHeader m_imageHeader;
+  us::usImageHeader m_imageHeader;
   std::string m_sequence_name;
 
 protected:

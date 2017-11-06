@@ -53,6 +53,8 @@ usNetworkGrabberPostScan2D::usNetworkGrabberPostScan2D(usNetworkGrabber *parent)
 
   m_swichOutputInit = false;
 
+  m_recordingOn = false;
+
   connect(m_tcpSocket, SIGNAL(readyRead()), this, SLOT(dataArrived()));
 }
 
@@ -113,7 +115,9 @@ void usNetworkGrabberPostScan2D::dataArrived()
   else if(headerType == m_imageHeader.headerId) {
     //read whole header
     in >> m_imageHeader.frameCount;
-    in >> m_imageHeader.timeStamp;
+    quint64 timestamp;
+    in >> timestamp;
+    m_imageHeader.timeStamp = timestamp;
     in >> m_imageHeader.dataRate;
     in >> m_imageHeader.dataLength;
     in >> m_imageHeader.ss;
@@ -163,6 +167,8 @@ void usNetworkGrabberPostScan2D::dataArrived()
     m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setScanLineNumber(m_imageHeader.scanLineNumber);
     m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setDepth(m_imageHeader.imageDepth / 1000.0);
     m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setTransducerConvexity(m_imageHeader.transducerRadius != 0.);
+    m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setTransmitFrequency(m_imageHeader.transmitFrequency);
+    m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setSamplingFrequency(m_imageHeader.samplingFrequency);
 
     //set data info
     m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setFrameCount(m_imageHeader.frameCount);
@@ -204,6 +210,8 @@ void usNetworkGrabberPostScan2D::dataArrived()
         usFrameGrabbedInfo<usImagePostScan2D<unsigned char> >* savePtr = m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC);
         m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
         m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
+        if(m_recordingOn)
+          m_sequenceWriter.write(*m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC),m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getTimeStamp());
       }
       m_firstFrameAvailable = true;
       emit(newFrameAvailable());
@@ -227,6 +235,9 @@ void usNetworkGrabberPostScan2D::dataArrived()
       usFrameGrabbedInfo<usImagePostScan2D<unsigned char> >* savePtr = m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC);
       m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
       m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
+
+      if(m_recordingOn)
+        m_sequenceWriter.write(*m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC),m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getTimeStamp());
 
       m_firstFrameAvailable = true;
       emit(newFrameAvailable());
@@ -268,6 +279,31 @@ usFrameGrabbedInfo<usImagePostScan2D<unsigned char> >* usNetworkGrabberPostScan2
     m_swichOutputInit = true;
   }
   return m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC);
+}
+
+/**
+* Method to link every image of the internal buffer to the vpDisplay you want to use. To call before any display operation using vpDisplay.
+* @param display The vpDisplay used to display your images.
+*/
+void usNetworkGrabberPostScan2D::useVpDisplay(vpDisplay * display) {
+  for(unsigned int i=0; i<m_outputBuffer.size(); i++)
+    m_outputBuffer.at(i)->display = display;
+}
+
+/**
+* Method to record the sequence received, to replay it later with the virtual server for example.
+* @param path The path where the sequence will be saved.
+*/
+void usNetworkGrabberPostScan2D::activateRecording(std::string path) {
+  m_recordingOn = true;
+  m_sequenceWriter.setSequenceDirectory(path);
+}
+
+/**
+* Stop recording process.
+*/
+void usNetworkGrabberPostScan2D::stopRecording() {
+  m_recordingOn = false;
 }
 
 #endif

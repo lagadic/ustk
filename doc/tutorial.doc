@@ -9,6 +9,8 @@ This page references all the tutorials related to Ultrasound TK.
 
 - \subpage tutorial-ustk-grabber-ultrasonix-confidence <br>This tutorial gives examples to run a confidence map using ultrasonix grabber
 
-- \subpage tutorial-ustk-grabber-ultrasonix-confidence-servoing <br>This tutorial shows how to perform a simple visual servoing task on a confidence map
+- \subpage tutorial-ustk-grabber-ultrasonix-confidence-servoing <br>This tutorial shows how to perform a simple visual servoing task based on a confidence map
+
+- \subpage tutorial-ustk-virtual-server <br>This tutorial explains how to run the virtual server, and how to prepare your sequence of images to be compatible as input of the virtual server.
 
 */

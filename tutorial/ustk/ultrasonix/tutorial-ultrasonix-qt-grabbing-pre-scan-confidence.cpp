@@ -83,6 +83,7 @@ int main(int argc, char** argv)
         display = new vpDisplayGDI(*grabbedFrame);
         displayConf = new vpDisplayGDI(confidence);
 #endif
+        qtGrabber->useVpDisplay(display);
         displayInit = true;
       }
 

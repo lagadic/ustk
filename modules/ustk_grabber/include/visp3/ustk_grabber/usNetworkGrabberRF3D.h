@@ -49,6 +49,7 @@
 #include <visp3/ustk_core/usImageRF3D.h>
 #include <visp3/ustk_grabber/usFrameGrabbedInfo.h>
 #include <visp3/ustk_grabber/usVolumeGrabbedInfo.h>
+#include <visp3/ustk_io/usMHDSequenceWriter.h>
 
 /**
  * @class usNetworkGrabberRF3D
@@ -72,11 +73,15 @@ public:
   explicit usNetworkGrabberRF3D(usNetworkGrabber *parent = 0);
   ~usNetworkGrabberRF3D();
 
+  void activateRecording(std::string path);
+
   usVolumeGrabbedInfo<usImageRF3D<short int> > * acquire();
 
   void dataArrived();
 
   bool isFirstFrameAvailable() {return m_firstFrameAvailable;}
+
+  void stopRecording();
 
 signals:
   void newVolumeAvailable();
@@ -102,6 +107,10 @@ private:
 
   //to know motor sweep direction for volume grabbed
   bool m_motorSweepingInZDirection;
+
+  //to manage the recording process
+  bool m_recordingOn;
+  usMHDSequenceWriter m_sequenceWriter;
 };
 
 #endif // QT4 || QT5
