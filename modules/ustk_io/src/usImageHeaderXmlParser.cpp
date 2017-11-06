@@ -36,7 +36,8 @@
  */
 
 #include<visp3/ustk_io/usImageHeaderXmlParser.h>
-#ifdef VISP_HAVE_XML2
+
+#if defined(VISP_HAVE_XML2) && (defined(USTK_HAVE_QT5) ||defined(USTK_HAVE_VTK_QT))
 
 /**
  * Default constructor.
@@ -249,4 +250,4 @@ void usImageHeaderXmlParser::xmlWriteUInt64Child(xmlNodePtr node, const char* la
   xmlNodePtr tmp = xmlNewChild(node, NULL, (xmlChar*)label, (xmlChar*)os.str().c_str());
   xmlAddChild(node, tmp);
 }
-#endif //VISP_HAVE_XML2
+#endif //VISP_HAVE_XML2 && QT
