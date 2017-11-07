@@ -37,8 +37,18 @@
 * @param sequencePath The path to the sequence to replay : xml file for pre-scan 2D or post-scan 2D (using usSequenceReader), or directory containing mhd/raw files (using usMHDSequenceReader).
 * @param parent The optionnal QObject parent.
 */
-usVirtualServer::usVirtualServer(std::string sequencePath, QObject *parent) : QObject(parent), m_tcpServer(), m_serverIsSendingImages(false)
+usVirtualServer::usVirtualServer(std::string sequencePath, QObject *parent) : QObject(parent), m_tcpServer(), m_serverIsSendingImages(false), m_consoleListener()
 {
+  m_usePause = false;
+  m_pauseOn = false;
+  m_pauseDurationOffset = 0;
+  m_pauseIndexOffset = 0;
+  if(qApp->arguments().contains(QString("--pause"))) {
+    m_usePause = true;
+    m_pauseImageNumber = qApp->arguments().at(qApp->arguments().indexOf(QString("--pause")) + 1).toInt();
+    std::cout << "Pause activated on image N. : " << m_pauseImageNumber << "\n";
+  }
+
   imageHeader.frameCount = 0;
   //read sequence parameters
   setSequencePath(sequencePath); //opens first image of the sequence
@@ -51,9 +61,12 @@ usVirtualServer::usVirtualServer(std::string sequencePath, QObject *parent) : QO
   connect(this, SIGNAL(runAcquisitionSignal(bool)), this, SLOT(runAcquisition(bool)));
   connect(this, SIGNAL(startSendingLoopSignal()), this, SLOT(startSendingLoop()));
 
+  //console input (user)
+  connect(&m_consoleListener, SIGNAL(quitPause()), this, SLOT(quitPause()));
+
   //Start listening on port 8080
   QString portNum = QString::number(8080);
-  bool status = m_tcpServer.listen(QHostAddress::Any, portNum.toUShort() );
+  bool status = m_tcpServer.listen(QHostAddress::Any, portNum.toUShort());
 
   // Check, if the server did start correctly or not
   if( status == true )
@@ -381,21 +394,80 @@ void usVirtualServer::sendingLoopSequenceXml() {
     //manage first frame sent (already aquired with open() method)
     if(imageHeader.frameCount != 0) {
       if(m_imageType == us::PRESCAN_2D) {
-        uint64_t localTimestamp;
-        m_sequenceReaderPreScan.acquire(m_preScanImage2d,localTimestamp);
-        invertRowsColsOnPreScan(); //to fit with ultrasonix grabbers (pre-scan image is inverted in porta SDK)
-        imageHeader.timeStamp = localTimestamp;
-        if(m_sequenceReaderPreScan.getSequenceTimestamps().size() > imageHeader.frameCount + 1)
-          m_nextImageTimestamp = m_sequenceReaderPreScan.getSequenceTimestamps().at(imageHeader.frameCount + 1);
-        imageHeader.imageType = 0;
+        if(m_usePause) {
+          if(!m_pauseOn) {
+            uint64_t localTimestamp;
+            m_sequenceReaderPreScan.acquire(m_preScanImage2d,localTimestamp);
+            invertRowsColsOnPreScan(); //to fit with ultrasonix grabbers (pre-scan image is inverted in porta SDK)
+            imageHeader.timeStamp = localTimestamp + m_pauseDurationOffset;
+            if(m_sequenceReaderPreScan.getSequenceTimestamps().size() > imageHeader.frameCount + 1 - m_pauseIndexOffset)
+              m_nextImageTimestamp = m_sequenceReaderPreScan.getSequenceTimestamps().at(imageHeader.frameCount + 1 - m_pauseIndexOffset) + m_pauseDurationOffset;
+            imageHeader.imageType = 0;
+          }
+          else { //pause activated, we continue sending the same image, and increasing timestamps
+            uint64_t deltaT = m_nextImageTimestamp - imageHeader.timeStamp;
+            m_nextImageTimestamp += deltaT;
+            imageHeader.timeStamp += deltaT;
+            m_pauseDurationOffset += deltaT;
+            m_pauseIndexOffset++;
+          }
+
+          if(imageHeader.frameCount == m_pauseImageNumber)
+            m_pauseOn = true;
+        }
+        else {
+          uint64_t localTimestamp;
+          m_sequenceReaderPreScan.acquire(m_preScanImage2d,localTimestamp);
+          invertRowsColsOnPreScan(); //to fit with ultrasonix grabbers (pre-scan image is inverted in porta SDK)
+          imageHeader.timeStamp = localTimestamp;
+          if(m_sequenceReaderPreScan.getSequenceTimestamps().size() > imageHeader.frameCount + 1)
+            m_nextImageTimestamp = m_sequenceReaderPreScan.getSequenceTimestamps().at(imageHeader.frameCount + 1);
+          imageHeader.imageType = 0;
+        }
       }
       else if(m_imageType == us::POSTSCAN_2D) {
-        uint64_t localTimestamp;
-        m_sequenceReaderPostScan.acquire(m_postScanImage2d,localTimestamp);
-        imageHeader.timeStamp = localTimestamp;
-        if(m_sequenceReaderPostScan.getSequenceTimestamps().size() > imageHeader.frameCount  + 1)
-          m_nextImageTimestamp = m_sequenceReaderPostScan.getSequenceTimestamps().at(imageHeader.frameCount + 1);
-        imageHeader.imageType = 1;
+        if(m_usePause) {
+          if(!m_pauseOn) {
+            uint64_t localTimestamp;
+            m_sequenceReaderPreScan.acquire(m_preScanImage2d,localTimestamp);
+            invertRowsColsOnPreScan(); //to fit with ultrasonix grabbers (pre-scan image is inverted in porta SDK)
+            imageHeader.timeStamp = localTimestamp;
+            if(m_sequenceReaderPreScan.getSequenceTimestamps().size() > imageHeader.frameCount + 1 - m_pauseIndexOffset)
+              m_nextImageTimestamp = m_sequenceReaderPreScan.getSequenceTimestamps().at(imageHeader.frameCount + 1 - m_pauseIndexOffset);
+            imageHeader.imageType = 0;
+          }
+          else { //pause activated, we continue sending the same image, and increasing timestamps
+            uint64_t deltaT = m_nextImageTimestamp - imageHeader.timeStamp;
+            m_nextImageTimestamp += deltaT;
+            imageHeader.timeStamp += deltaT;
+            m_pauseDurationOffset += deltaT;
+            m_pauseIndexOffset++;
+          }
+
+          if(imageHeader.frameCount == m_pauseImageNumber)
+            m_pauseOn = true;
+        }
+        else {
+          uint64_t localTimestamp;
+          m_sequenceReaderPostScan.acquire(m_postScanImage2d,localTimestamp);
+          imageHeader.timeStamp = localTimestamp;
+          if(m_sequenceReaderPostScan.getSequenceTimestamps().size() > imageHeader.frameCount + 1)
+            m_nextImageTimestamp = m_sequenceReaderPostScan.getSequenceTimestamps().at(imageHeader.frameCount + 1);
+          imageHeader.imageType = 1;
+        }
+      }
+    }
+    else { //first image
+      if(m_usePause && imageHeader.frameCount == m_pauseImageNumber)
+        m_pauseOn = true;
+
+      if(m_usePause && m_pauseOn) {
+            uint64_t deltaT = 40; // if we pause on first image, we set the pause time to 40ms
+            m_nextImageTimestamp += deltaT;
+            imageHeader.timeStamp += deltaT;
+            m_pauseDurationOffset += deltaT;
+            if(imageHeader.frameCount != 0) //manage first case
+              m_pauseIndexOffset++;
       }
     }
 
@@ -429,7 +501,7 @@ void usVirtualServer::sendingLoopSequenceXml() {
       out << (int) 0; //motorType
       out.writeRawData((char*)m_preScanImage2d.bitmap,(int) m_preScanImage2d.getHeight() * m_preScanImage2d.getWidth());
 
-      endOfSequence = (m_sequenceReaderPreScan.getFrameCount() == imageHeader.frameCount + 1);
+      endOfSequence = (m_sequenceReaderPreScan.getFrameCount() == imageHeader.frameCount + 1 - m_pauseIndexOffset);
     }
     else if(m_imageType == us::POSTSCAN_2D) { //send post-scan image
       out << (int) m_postScanImage2d.getHeight() * m_postScanImage2d.getWidth(); //datalength in bytes
@@ -451,7 +523,7 @@ void usVirtualServer::sendingLoopSequenceXml() {
       out << (int) 0; //motorType
       out.writeRawData((char*)m_postScanImage2d.bitmap,(int) m_postScanImage2d.getHeight() * m_postScanImage2d.getWidth());
 
-      endOfSequence = (m_sequenceReaderPostScan.getFrameCount() == imageHeader.frameCount + 1);
+      endOfSequence = (m_sequenceReaderPostScan.getFrameCount() == imageHeader.frameCount + 1 - m_pauseIndexOffset);
     }
 
     connectionSoc->write(block);
@@ -763,8 +835,6 @@ void usVirtualServer::sendingLoopSequenceMHD() {
         qApp->processEvents();
 
         std::cout << "new frame sent, No " << imageHeader.frameCount << std::endl;
-        std::cout << "current timestamp : " << imageHeader.timeStamp << std::endl;
-        std::cout << "next timestamp : " << m_nextImageTimestamp << std::endl;
 
         imageHeader.frameCount ++;
         currentFrameInVolume ++;
@@ -799,4 +869,11 @@ void usVirtualServer::runAcquisition(bool run) {
   if(run) {
     emit(startSendingLoopSignal());
   }
+}
+
+/**
+* Slot called when the user un-pauses the server on sending a single image.
+*/
+void usVirtualServer::quitPause() {
+  m_pauseOn = false;
 }

@@ -55,6 +55,8 @@
 #include <visp3/ustk_io/usSequenceReader.h>
 #include <visp3/ustk_io/usMHDSequenceReader.h>
 
+#include "usConsoleListener.h"
+
 /**
  * @class usVirtualServer
  * @brief Class to simulate a server sending frames from an ultrasound station. Permits to replay a sequence of images sent through the network, by respeting the timestamps of each frame sent (to do real-time tests).
@@ -157,6 +159,9 @@ private slots:
   // Called automatically when client has closed the connection
   void connectionAboutToClose();
 
+  // Called when user decide to quit the pause (see usConsoleListener)
+  void quitPause();
+
   // Called automatically when data sent by a client is fully available to the server
   void readIncomingData();
 
@@ -213,6 +218,16 @@ private:
   bool m_serverIsSendingImages;
 
   std::string m_sequencePath;
+
+  //pause option
+  bool m_usePause;
+  bool m_pauseOn;
+  unsigned int m_pauseImageNumber;
+  uint64_t m_pauseDurationOffset;
+  unsigned int m_pauseIndexOffset;
+
+  // For user inputs in console
+  usConsoleListener m_consoleListener;
 };
 
 #endif // US_VIRTUAL_SERVER_H

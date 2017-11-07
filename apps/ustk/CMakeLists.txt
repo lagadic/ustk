@@ -50,8 +50,8 @@ if(BUILD_USTK_APPS)
 
   include_directories(${VISP_INCLUDE_DIRS})
 
-  set(HEADER_FILES usVirtualServer.h)
-  set(CPP_FILES usVirtualServer.cpp virtualServer.cpp)
+  set(HEADER_FILES usVirtualServer.h usConsoleListener.h)
+  set(CPP_FILES usVirtualServer.cpp usConsoleListener.cpp virtualServer.cpp)
 
   add_executable(ustk-virtualServer ${CPP_FILES} ${HEADER_FILES})
 

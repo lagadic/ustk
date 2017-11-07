@@ -27,9 +27,9 @@ int main(int argc, char** argv)
   reader.setSequenceDirectory(sequenceDirectory);
 
   usMHDSequenceWriter writer;
-  writer.setSequenceDirectory("/tmp");
+  writer.setSequenceDirectory("/tmp"); //set here your outpur directory
 
-  uint64_t newTimestamp = 1456115;
+  uint64_t newTimestamp = 0;
   int inc= 0;
   //reading loop
   while ( !reader.end()) {
