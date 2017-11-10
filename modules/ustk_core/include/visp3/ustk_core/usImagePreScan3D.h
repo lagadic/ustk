@@ -349,7 +349,7 @@ template<class Type>
 void usImagePreScan3D<Type>::getFrame(vpImage<Type> &image, unsigned int index) {
 
   //Dimentions checks
-  if(index > this->getDimZ())
+  if(index > this->getDimZ() - 1)
     throw(vpException(vpException::badValue,"usImage3D::getFrame : frame index out of volume"));
 
   image.resize(this->getDimY(),this->getDimX());

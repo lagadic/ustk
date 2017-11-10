@@ -44,6 +44,7 @@ usConsoleListener::usConsoleListener()
 
 /**
  * Slot Called when an input is detected in console.
+ * If it's "p" character, it emits quitPause signal.
  */
 void usConsoleListener::readCommand()
 {

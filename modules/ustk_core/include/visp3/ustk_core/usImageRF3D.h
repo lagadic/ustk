@@ -355,7 +355,7 @@ template<class Type>
 void usImageRF3D<Type>::getFrame(usImageRF2D<Type> &image, unsigned int index) const {
 
   //Dimentions checks
-  if(index > this->getDimZ())
+  if(index > this->getDimZ() - 1)
     throw(vpException(vpException::badValue,"usImageRF3D::getFrame : frame index out of volume"));
 
   image.resize(this->getDimY(),this->getDimX());

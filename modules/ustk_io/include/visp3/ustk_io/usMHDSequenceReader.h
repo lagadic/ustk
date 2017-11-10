@@ -113,6 +113,8 @@ public:
 
   us::ImageType getImageType() const;
 
+  int getImageNumber() const;
+
   uint64_t getNextTimeStamp();
   std::vector<uint64_t> getNextTimeStamps();
 

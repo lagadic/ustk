@@ -29,7 +29,6 @@ int main(int argc, char** argv)
   usNetworkGrabberPreScan3D * qtGrabber = new usNetworkGrabberPreScan3D();
   qtGrabber->setIPAddress("127.0.0.1"); //local loop, server must be running on same computer
   qtGrabber->connectToServer();
-  //qtGrabber->setVerbose(true);
 
 
   // setting acquisition parameters

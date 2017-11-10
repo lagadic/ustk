@@ -1,4 +1,4 @@
-//! \example tutorial-ustk-virtual-server-preScan3D.cpp
+//! \example tutorial-ustk-virtual-server-postScan2D.cpp
 
 #include <iostream>
 #include <visp3/ustk_core/usConfig.h>
@@ -8,8 +8,8 @@
 #include <QtCore/QThread>
 #include <QApplication>
 
-#include <visp3/ustk_grabber/usNetworkGrabberPreScan3D.h>
-#include <visp3/ustk_io/usMHDSequenceWriter.h>
+#include <visp3/ustk_grabber/usNetworkGrabberPostScan2D.h>
+#include <visp3/ustk_io/usImageIo.h>
 
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/gui/vpDisplayGDI.h>
@@ -19,18 +19,12 @@ int main(int argc, char** argv)
 {
   // QT application
   QApplication app( argc, argv );
-  QString outputPath;
-  if(app.arguments().contains(QString("--output"))) {
-    outputPath = app.arguments().at(app.arguments().indexOf(QString("--output")) + 1);
-  }
 
   QThread * grabbingThread = new QThread();
 
-  usNetworkGrabberPreScan3D * qtGrabber = new usNetworkGrabberPreScan3D();
-  qtGrabber->setIPAddress("127.0.0.1"); //local loop, server must be running on same computer
+  usNetworkGrabberPostScan2D * qtGrabber = new usNetworkGrabberPostScan2D();
+  qtGrabber->setIPAddress("127.0.0.1");//local loop, server must be running on same computer
   qtGrabber->connectToServer();
-  //qtGrabber->setVerbose(true);
-
 
   // setting acquisition parameters
   usNetworkGrabber::usInitHeaderSent header;
@@ -38,14 +32,20 @@ int main(int argc, char** argv)
   header.slotId = 0; //top slot id = 0
   header.imagingMode = 0; //B-mode = 0
 
-  usVolumeGrabbedInfo<usImagePreScan3D<unsigned char> >* grabbedFrame;
+  usFrameGrabbedInfo<usImagePostScan2D<unsigned char> >* grabbedFrame;
 
-  usMHDSequenceWriter writer;
-  if(!outputPath.isEmpty()) {
-    writer.setSequenceDirectory(outputPath.toStdString());
-  }
+  //Prepare display
+#if defined(VISP_HAVE_X11)
+  vpDisplayX * display = new vpDisplayX();
+#elif defined(VISP_HAVE_GDI)
+  vpDisplayGDI * display = new vpDisplayGDI();
+#elif defined(VISP_HAVE_OPENCV)
+  vpDisplayOpenCV * display = new vpDisplayOpenCV();
+#endif
+
 
   bool captureRunning = true;
+  bool displayInit = false;
   //qtGrabber->setVerbose(true);
   // sending acquisition parameters
   qtGrabber->initAcquisition(header);
@@ -58,21 +58,31 @@ int main(int argc, char** argv)
 
   std::cout << "waiting ultrasound initialisation..." << std::endl;
 
-  //our grabbing loop
+  //our local grabbing loop
   do {
     if(qtGrabber->isFirstFrameAvailable()) {
       grabbedFrame = qtGrabber->acquire();
 
-      std::cout <<"MAIN THREAD received volume No : " << grabbedFrame->getVolumeCount() << std::endl;
+      std::cout <<"MAIN THREAD received frame No : " << grabbedFrame->getFrameCount() << std::endl;
+      QString filename = QString("img") + QString::number(grabbedFrame->getFrameCount()) + QString(".xml");
+      usImageIo::write(*grabbedFrame, filename.toStdString());
 
-      if(!outputPath.isEmpty())
-        writer.write(*grabbedFrame,grabbedFrame->getTimeStamps());
+      std::cout << *grabbedFrame << std::endl;
 
+      if(!displayInit) {
+        display->init(*grabbedFrame);
+        qtGrabber->useVpDisplay(display);
+        displayInit = true;
+      }
+      vpDisplay::display(*grabbedFrame);
+      vpDisplay::flush(*grabbedFrame);
     }
     else {
       vpTime::wait(10);
     }
-  } while(captureRunning);
+  }while(captureRunning);
+
+    delete display;
 
   return app.exec();
 }

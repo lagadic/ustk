@@ -191,8 +191,6 @@ private:
   QTcpSocket * connectionSoc;
   usInitHeaderConfirmation confirmHeader;
 
-  bool initWithoutUpdate;
-
   usSequenceReader<usImagePostScan2D <unsigned char> > m_sequenceReaderPostScan;
   usSequenceReader<usImagePreScan2D <unsigned char> > m_sequenceReaderPreScan;
   usMHDSequenceReader m_MHDSequenceReader;
@@ -225,6 +223,10 @@ private:
   unsigned int m_pauseImageNumber;
   uint64_t m_pauseDurationOffset;
   unsigned int m_pauseIndexOffset;
+  // memory for pause on volumes (sending V, V+1, V, V+1 ...)
+  usImagePreScan3D <unsigned char> m_preScanImage3dTemp;
+  usImageRF3D <short int> m_rfImage3dTemp;
+  std::vector<uint64_t> m_timestampsTemp;
 
   // For user inputs in console
   usConsoleListener m_consoleListener;

@@ -148,8 +148,17 @@ void usMHDSequenceReader::acquire(usImagePostScan2D<unsigned char> & image, uint
   usImagePreScanSettings settings;
   image.setTransducerRadius(mhdHeader.transducerRadius);
   image.setScanLinePitch(mhdHeader.scanLinePitch);
-  image.setTransducerConvexity(mhdHeader.isTransducerConvex);;
-  image.setDepth(settings.getAxialResolution()*mhdHeader.dim[1]);
+  image.setTransducerConvexity(mhdHeader.isTransducerConvex);
+
+  //computing image depth from the pixel size and the transducer settings
+  if(mhdHeader.isTransducerConvex) {
+    //distance
+    double deltaDepthPostScan2D = mhdHeader.transducerRadius * (1 - std::cos( (double) ((mhdHeader.scanLineNumber - 1) * mhdHeader.scanLinePitch / 2.0)));
+    image.setDepth(mhdHeader.elementSpacing[1]*mhdHeader.dim[1] - deltaDepthPostScan2D);
+  }
+  else // linear transducer
+    image.setDepth(mhdHeader.elementSpacing[1]*mhdHeader.dim[1]);
+
   image.setWidthResolution(mhdHeader.dim[0]);
   image.setWidthResolution(mhdHeader.dim[1]);
   image.setSamplingFrequency(mhdHeader.samplingFrequency);
@@ -368,4 +377,12 @@ std::vector<uint64_t> usMHDSequenceReader::getNextTimeStamps() {
   if(m_imageCounter % 2 == 0) // current volume is even => next volume is odd
     std::reverse(timestamps.begin(),timestamps.end());
   return timestamps;
+}
+
+/**
+* Returns the current image number, of last image acquired.
+* @return The image number (volume number for 3D sequences, frame number for 2D sequences).
+*/
+int usMHDSequenceReader::getImageNumber() const {
+  return m_imageCounter;
 }
