@@ -27,36 +27,45 @@
 #
 # Authors:
 # Fabien Spindler
+# Marc Pouliquen
 #
 #############################################################################
 
-project(visp-apps-ustk)
+project(ustk-ultrasonix-server)
 
 cmake_minimum_required(VERSION 2.8.12)
 
-find_package(VISP REQUIRED visp_ustk_io visp_ustk_grabber)
+set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
-if(MSVC)
-  if(NOT VISP_SHARED)
-    foreach(flag_var
-            CMAKE_C_FLAGS CMAKE_C_FLAGS_DEBUG CMAKE_C_FLAGS_RELEASE
-            CMAKE_C_FLAGS_MINSIZEREL CMAKE_C_FLAGS_RELWITHDEBINFO
-            CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
-            CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
-      if(${flag_var} MATCHES "/MD")
-        string(REGEX REPLACE "/MD" "/MT" ${flag_var} "${${flag_var}}")
-      endif()
-      if(${flag_var} MATCHES "/MDd")
-        string(REGEX REPLACE "/MDd" "/MTd" ${flag_var} "${${flag_var}}")
-      endif()
-    endforeach(flag_var)
+#if(POLICY CMP0020)
+  #cmake_policy(SET CMP0020 NEW)
+#endif()
 
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:atlthunk.lib /NODEFAULTLIB:msvcrt.lib /NODEFAULTLIB:msvcrtd.lib")
-    set(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} /NODEFAULTLIB:libcmt.lib")
-    set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} /NODEFAULTLIB:libcmtd.lib")
+find_package(Porta)
+
+if(Porta_FOUND)
+  OPTION(USE_SONIXTOUCH "Set to ON if you want to use the Sonixtouch" ON)
+  if(USE_SONIXTOUCH)
+    add_definitions(-DSONIXTOUCH)
   endif()
+  include_directories(${Porta_INCLUDE_DIRS})
+  add_definitions(-DSETTINGS_PATH=\"${Porta_SETTINGS_PATH}/\")
+  add_definitions(-DFIRMWARE_PATH=\"${Porta_FIRMWARE_PATH}/\")
+  
+  find_package(VISP REQUIRED visp_core)
+  find_package(Qt5Widgets)
+  find_package(Qt5Network)
+
+  include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
+  include_directories(${VISP_INCLUDE_DIRS})
+
+  file(GLOB UI_FILES *.ui)
+  file(GLOB QT_WRAP *.h)
+  file(GLOB CPP_FILES *.cpp)
+
+  QT5_WRAP_UI(UISrcs ${UI_FILES})
+  QT5_WRAP_CPP(MOCSrcs ${QT_WRAP})
+  add_executable(ustk-ultrasonixServer MACOSX_BUNDLE ${CPP_FILES} ${UISrcs} ${MOCSrcs})
+
+  target_link_libraries(ustk-ultrasonixServer Qt5::Widgets Qt5::Network ${Porta_LIBRARIES} )
 endif()
-
-visp_add_subdirectory(ultrasonix-server REQUIRED_DEPS visp_core)
-visp_add_subdirectory(virtual-server    REQUIRED_DEPS visp_ustk_io visp_ustk_confidence_map)
-
