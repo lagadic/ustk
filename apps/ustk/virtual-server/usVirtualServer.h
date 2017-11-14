@@ -191,8 +191,12 @@ private:
   QTcpSocket * connectionSoc;
   usInitHeaderConfirmation confirmHeader;
 
+  bool initWithoutUpdate;
+  
+#ifdef VISP_HAVE_XML2
   usSequenceReader<usImagePostScan2D <unsigned char> > m_sequenceReaderPostScan;
   usSequenceReader<usImagePreScan2D <unsigned char> > m_sequenceReaderPreScan;
+#endif
   usMHDSequenceReader m_MHDSequenceReader;
 
   usImageHeader imageHeader;

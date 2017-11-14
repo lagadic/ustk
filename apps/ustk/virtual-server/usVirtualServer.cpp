@@ -165,8 +165,10 @@ void usVirtualServer::connectionAboutToClose()
   connectionSoc->close();
 
   //delete sequcence reader and reset frame count (to prepare them for a potential new connection)
+#ifdef VISP_HAVE_XML2
   m_sequenceReaderPostScan = usSequenceReader<usImagePostScan2D <unsigned char> > ();
   m_sequenceReaderPreScan = usSequenceReader<usImagePreScan2D <unsigned char> > ();
+#endif
   imageHeader.frameCount = 0;
 
   // Re-open the sequence to prepare next connection incomming (the server is still running)
@@ -275,10 +277,10 @@ void usVirtualServer::setSequencePath(const std::string sequencePath) {
   if(vpIoTools::checkFilename(sequencePath)) { // xml file pointing on a sequence of 2d images (pre-scan or post-scan)
 
     m_sequencePath = sequencePath;
+#ifdef VISP_HAVE_XML2
     m_sequenceReaderPostScan.setSequenceFileName(sequencePath);
     m_sequenceReaderPreScan.setSequenceFileName(sequencePath);
-
-    //try to open post-scan sequence
+	//try to open post-scan sequence
     try {
       uint64_t timestampTmp;
       m_sequenceReaderPostScan.open(m_postScanImage2d,timestampTmp);
@@ -307,7 +309,9 @@ void usVirtualServer::setSequencePath(const std::string sequencePath) {
         throw(vpException(vpException::badValue), "usVirtualServer error : trying to open a xml image sequence not managed (neither pre-scan 2D nor post-scan 2D)or with no timestamp associated");
       }
     }
+#endif
   }
+
   // case of a directory containing a sequence of mhd/raw images
   else if(vpIoTools::checkDirectory(sequencePath) && usImageIo::getHeaderFormat(vpIoTools::getDirFiles(sequencePath).front()) == usImageIo::FORMAT_MHD) {
     m_MHDSequenceReader.setSequenceDirectory(sequencePath);
@@ -387,7 +391,7 @@ void usVirtualServer::startSendingLoop() {
 * Method to send the image sequence through the network in case of xml sequence as input.
 */
 void usVirtualServer::sendingLoopSequenceXml() {
-
+#ifdef VISP_HAVE_XML2
   bool endOfSequence = false;
   while(m_serverIsSendingImages && ! endOfSequence ) {
     //manage first frame sent (already aquired with open() method)
@@ -534,6 +538,9 @@ void usVirtualServer::sendingLoopSequenceXml() {
     //WAITING PROCESS (to respect sequence timestamps)
     vpTime::wait((double) (m_nextImageTimestamp - imageHeader.timeStamp));
   }
+#else
+	throw(vpException(vpException::badValue), "usVirtualServer error : cannot use xml sequence, xml2 dependency is missing !");
+#endif
 }
 
 /**

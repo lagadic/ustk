@@ -30,33 +30,23 @@
 #
 #############################################################################
 
-project(visp-apps-ustk)
-
 cmake_minimum_required(VERSION 2.8.12)
 
+set(CMAKE_AUTOMOC ON)
+
 find_package(VISP REQUIRED visp_ustk_io)
+find_package(Qt5Widgets)
+find_package(Qt5Network)
 
-if(MSVC)
-  if(NOT VISP_SHARED)
-    foreach(flag_var
-            CMAKE_C_FLAGS CMAKE_C_FLAGS_DEBUG CMAKE_C_FLAGS_RELEASE
-            CMAKE_C_FLAGS_MINSIZEREL CMAKE_C_FLAGS_RELWITHDEBINFO
-            CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
-            CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
-      if(${flag_var} MATCHES "/MD")
-        string(REGEX REPLACE "/MD" "/MT" ${flag_var} "${${flag_var}}")
-      endif()
-      if(${flag_var} MATCHES "/MDd")
-        string(REGEX REPLACE "/MDd" "/MTd" ${flag_var} "${${flag_var}}")
-      endif()
-    endforeach(flag_var)
+if(Qt5Widgets_FOUND AND Qt5Network_FOUND)
 
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:atlthunk.lib /NODEFAULTLIB:msvcrt.lib /NODEFAULTLIB:msvcrtd.lib")
-    set(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} /NODEFAULTLIB:libcmt.lib")
-    set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} /NODEFAULTLIB:libcmtd.lib")
-  endif()
+  include_directories(${VISP_INCLUDE_DIRS})
+
+  set(HEADER_FILES usVirtualServer.h usConsoleListener.h)
+  set(CPP_FILES usVirtualServer.cpp virtualServer.cpp usConsoleListener.cpp)
+
+  add_executable(ustk-virtualServer ${CPP_FILES} ${HEADER_FILES})
+
+  target_link_libraries(ustk-virtualServer Qt5::Widgets Qt5::Network ${VISP_LIBRARIES})
+
 endif()
-
-visp_add_subdirectory(ultrasonix-server REQUIRED_DEPS visp_core)
-visp_add_subdirectory(virtual-server    REQUIRED_DEPS visp_ustk_io)
-
