@@ -25,7 +25,7 @@ int main(int argc, char** argv)
 
   // setting acquisition parameters
   usNetworkGrabber::usInitHeaderSent header;
-  header.probeId = 14; // 4DC7 id = 15
+  header.probeId = 15; // 4DC7 id = 15
   header.slotId = 0; //top slot id = 0
   header.imagingMode = 0; //B-mode = 0
 

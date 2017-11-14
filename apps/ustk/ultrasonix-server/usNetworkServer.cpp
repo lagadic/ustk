@@ -252,7 +252,7 @@ bool portaCallback(void* param, unsigned char* addr, int blockIndex, int)
 
 	}
 	else if (server->imageHeader.imageType == 0) { //pre scan
-		server->imageHeader.dataLength = portaInstance->getFrameSize() - 4;
+		server->imageHeader.dataLength = portaInstance->getParam(prmBNumLines) * portaInstance->getParam(prmBNumSamples);
 		beginImage = addr + 4;
 	    server->imageHeader.pixelHeight = 0;
 		server->imageHeader.pixelWidth = 0;

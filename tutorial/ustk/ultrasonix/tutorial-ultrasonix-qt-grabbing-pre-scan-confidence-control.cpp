@@ -230,7 +230,7 @@ int main(int argc, char** argv)
   QThread * grabbingThread = new QThread();
 
   usNetworkGrabberPreScan2D * qtGrabber = new usNetworkGrabberPreScan2D();
-  qtGrabber->setConnection(true);
+  qtGrabber->connectToServer();
 
   // setting acquisition parameters
   usNetworkGrabber::usInitHeaderSent header;
