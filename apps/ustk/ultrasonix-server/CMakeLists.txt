@@ -68,4 +68,6 @@ if(Porta_FOUND)
   add_executable(ustk-ultrasonixServer MACOSX_BUNDLE ${CPP_FILES} ${UISrcs} ${MOCSrcs})
 
   target_link_libraries(ustk-ultrasonixServer Qt5::Widgets Qt5::Network ${Porta_LIBRARIES} )
+
+  configure_file("cmake/templates/usPortaConfig.h.in" "usPortaConfig.h")
 endif()

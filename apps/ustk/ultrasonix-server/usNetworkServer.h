@@ -22,6 +22,7 @@
 #include <ctime>
 #include <iostream>
 
+#include <usPortaConfig.h>
 	
 class usNetworkServer : public QObject
 {

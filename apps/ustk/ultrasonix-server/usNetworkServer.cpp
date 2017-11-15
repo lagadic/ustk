@@ -12,10 +12,10 @@ usNetworkServer::usNetworkServer(QObject *parent) : QObject(parent)
 	std::cout << "porta instance created" << std::endl;
 
 	//porta settings
-	char* portaFirmware = "D:/Common/soft/Ultrasonix/SDK/SDK-5.6.0/porta/fw/";
-	char* portaSettings = "D:/Common/soft/Ultrasonix/SDK/SDK-5.6.0/porta/dat/";
-	char* portaLicense = "D:/Ultrasonix Settings";
-	char* portaLut = "C:/luts/";
+	char* portaFirmware = USTK_PORTA_FIRMWARE_PATH;
+	char* portaSettings = USTK_PORTA_SETTINGS_PATH;
+	char* portaLicense = USTK_PORTA_LICENCE_PATH;
+	char* portaLut = "";
 
 	int usm = 3; //us module version 3 (MDP/TOUCH)
 	int pci = 3;
@@ -251,6 +251,7 @@ bool portaCallback(void* param, unsigned char* addr, int blockIndex, int)
 		server->imageHeader.pixelWidth = mx / 1000000.0;
 
 	}
+	//data contains a 4 bytes header before image data
 	else if (server->imageHeader.imageType == 0) { //pre scan
 		server->imageHeader.dataLength = portaInstance->getParam(prmBNumLines) * portaInstance->getParam(prmBNumSamples);
 		beginImage = addr + 4;
@@ -265,7 +266,6 @@ bool portaCallback(void* param, unsigned char* addr, int blockIndex, int)
 		server->imageHeader.pixelWidth = 0;
 	}
 	
-	//data contains a 4 bytes header before image data
 	QByteArray block;
 	std::cout << "writing header" << std::endl;
 	QDataStream out(&block,QIODevice::WriteOnly);
@@ -398,8 +398,7 @@ void usNetworkServer::initPorta(usNetworkServer::usInitHeaderIncomming header)
 				{
 					std::cout << "detected probe : " << name << std::endl;
 				}
-
-				QString settingsPath("D:/Common/soft/Ultrasonix/SDK/SDK-5.6.0/porta/dat/presets/imaging/");
+				QString settingsPath = QString(USTK_PORTA_SETTINGS_PATH) + QString("presets/imaging/");
 				settingsPath += getProbeSettingsFromId(code);
 				m_porta->loadPreset(settingsPath.toStdString().c_str());
 				
