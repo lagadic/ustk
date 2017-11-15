@@ -119,9 +119,6 @@ public:
 	
 	//for bi-plane
 	unsigned char * secondBiplaneImage;
-	
-	QFile * debugFile;
-	QTextStream stream;
 
 	bool motorOffsetSkipped;
 

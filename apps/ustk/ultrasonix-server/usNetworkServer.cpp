@@ -2,9 +2,6 @@
 
 usNetworkServer::usNetworkServer(QObject *parent) : QObject(parent)
 {
-	debugFile = new QFile(QString("log.txt"));
-	debugFile->open(QIODevice::ReadWrite);
-	stream.setDevice(debugFile);
 	//init porta hardware
 	
 	//creating porta object
@@ -26,7 +23,6 @@ usNetworkServer::usNetworkServer(QObject *parent) : QObject(parent)
 	if(!initPortaSucess) {
 		std::cout << "error initializing porta sdk !" << std::endl;
 	}
-
 
 	//init TCP server
     // set : acceptTheConnection() will be called whenever there is a new connection
@@ -226,13 +222,6 @@ bool portaCallback(void* param, unsigned char* addr, int blockIndex, int)
 	server->imageHeader.timeStamp =  QDateTime::currentMSecsSinceEpoch();
 
 	server->imageHeader.dataRate = 1000.0 / (server->imageHeader.timeStamp - oldTimeStamp);
-	
-	server->stream << server->imageHeader.timeStamp - oldTimeStamp;
-	server->stream << "\t";
-	server->stream << server->imageHeader.frameCount;
-	server->stream << "\t";
-	server->stream << portaInstance->getFrameCount(0);
-	server->stream << QString("\n");
 
 	if(server->imageHeader.imageType == 1) { //post scan
 		server->imageHeader.dataLength = server->imageHeader.frameWidth * server->imageHeader.frameHeight;

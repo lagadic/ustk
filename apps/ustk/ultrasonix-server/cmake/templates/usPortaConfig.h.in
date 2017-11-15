@@ -40,6 +40,6 @@
 #define USTK_PORTA_SETTINGS_PATH "${Porta_SETTINGS_PATH}/"
 
 // porta licence path
-#define USTK_PORTA_LICENCE_PATH "${Porta_LICENCE_PATH}" // TODO !
+#define USTK_PORTA_LICENCE_PATH "${Porta_LICENCE_PATH}"
 
 #endif

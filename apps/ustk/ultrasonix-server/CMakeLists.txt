@@ -48,6 +48,8 @@ if(Porta_FOUND)
   if(USE_SONIXTOUCH)
     add_definitions(-DSONIXTOUCH)
   endif()
+  set(Porta_LICENCE_PATH "" CACHE PATH "Path to the licenses_web.txt file containing your licence")
+
   include_directories(${Porta_INCLUDE_DIRS})
   add_definitions(-DSETTINGS_PATH=\"${Porta_SETTINGS_PATH}/\")
   add_definitions(-DFIRMWARE_PATH=\"${Porta_FIRMWARE_PATH}/\")
