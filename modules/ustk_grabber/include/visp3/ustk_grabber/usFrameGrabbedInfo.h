@@ -80,7 +80,8 @@ private:
 * Constructor.
 */
 template <class Type>
-usFrameGrabbedInfo<Type>::usFrameGrabbedInfo() : Type(), m_frameCount(0), m_timeStamp(0), m_framesPerVolume(0)
+usFrameGrabbedInfo<Type>::usFrameGrabbedInfo()
+  : Type(), m_frameCount(0), m_timeStamp(0), m_framesPerVolume(0)
 {
 }
 

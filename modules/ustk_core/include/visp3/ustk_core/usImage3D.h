@@ -326,7 +326,8 @@ template <class Type> inline void usImage3D<Type>::init(unsigned int dimX, unsig
 }
 
 template <class Type>
-usImage3D<Type>::usImage3D() : m_dimX(0), m_dimY(0), m_dimZ(0), m_size(0), bitmap(NULL), planesIndex(NULL)
+usImage3D<Type>::usImage3D()
+  : m_dimX(0), m_dimY(0), m_dimZ(0), m_size(0), bitmap(NULL), planesIndex(NULL)
 {
 }
 

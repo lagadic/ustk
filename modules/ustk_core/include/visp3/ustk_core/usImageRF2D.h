@@ -148,7 +148,8 @@ usImageRF2D<Type>::usImageRF2D(const vpImage<Type> &image, const usImagePreScanS
 * @param other 2D RF image to copy
 */
 template <class Type>
-usImageRF2D<Type>::usImageRF2D(const usImageRF2D &other) : vpImage<Type>(other), usImagePreScanSettings(other)
+usImageRF2D<Type>::usImageRF2D(const usImageRF2D &other)
+  : vpImage<Type>(other), usImagePreScanSettings(other)
 {
 }
 

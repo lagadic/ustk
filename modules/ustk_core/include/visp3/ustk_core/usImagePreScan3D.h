@@ -172,7 +172,8 @@ public:
 * Basic constructor, all settings set to default values.
 */
 template <class Type>
-usImagePreScan3D<Type>::usImagePreScan3D() : usImage3D<Type>(), usImagePreScanSettings(), usMotorSettings()
+usImagePreScan3D<Type>::usImagePreScan3D()
+  : usImage3D<Type>(), usImagePreScanSettings(), usMotorSettings()
 {
 }
 
