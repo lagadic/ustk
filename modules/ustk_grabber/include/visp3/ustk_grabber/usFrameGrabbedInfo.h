@@ -32,12 +32,12 @@
 
 /**
  * @file usFrameGrabbedInfo.h
- * @brief Class to store additionnal informations arriving on the network with ultrasound images grabbed (frame count, timestamp ...).
+ * @brief Class to store additionnal informations arriving on the network with ultrasound images grabbed (frame count,
+ * timestamp ...).
  */
 
 #ifndef __usFrameGrabbedInfo_h_
 #define __usFrameGrabbedInfo_h_
-
 
 #include <visp3/ustk_core/usConfig.h>
 
@@ -51,15 +51,14 @@
 
 /**
  * @class usFrameGrabbedInfo
- * @brief Class to store additionnal informations arriving on the network with ultrasound images grabbed, such as frame count, timestamp.
+ * @brief Class to store additionnal informations arriving on the network with ultrasound images grabbed, such as frame
+ * count, timestamp.
  * Usefull to do real-time process.
  * @ingroup module_ustk_grabber
  */
-template<class Type>
-class usFrameGrabbedInfo : public Type
+template <class Type> class usFrameGrabbedInfo : public Type
 {
 public:
-
   explicit usFrameGrabbedInfo();
   ~usFrameGrabbedInfo();
 
@@ -72,72 +71,54 @@ public:
   void setTimeStamp(quint64 timeStamp);
 
 private:
-  quint32 m_frameCount; //from the beginning of acquisition
-  quint64 m_timeStamp; //msecs since epoch (on ultrasond machine)
-  int m_framesPerVolume; //number of frames in a volume (for 3D case)
+  quint32 m_frameCount;  // from the beginning of acquisition
+  quint64 m_timeStamp;   // msecs since epoch (on ultrasond machine)
+  int m_framesPerVolume; // number of frames in a volume (for 3D case)
 };
 
 /**
 * Constructor.
 */
-template<class Type>
-usFrameGrabbedInfo<Type>::usFrameGrabbedInfo() :
-  Type(), m_frameCount(0), m_timeStamp(0), m_framesPerVolume(0)
+template <class Type>
+usFrameGrabbedInfo<Type>::usFrameGrabbedInfo() : Type(), m_frameCount(0), m_timeStamp(0), m_framesPerVolume(0)
 {
-
 }
 
 /**
 * Destructor.
 */
-template<class Type>
-usFrameGrabbedInfo<Type>::~usFrameGrabbedInfo()
-{
-
-}
+template <class Type> usFrameGrabbedInfo<Type>::~usFrameGrabbedInfo() {}
 
 /**
 * Frame count getter.
 * @return The frame number since beginning of acquisition.
 */
-template<class Type>
-quint32 usFrameGrabbedInfo<Type>::getFrameCount() const {
-  return m_frameCount;
-}
+template <class Type> quint32 usFrameGrabbedInfo<Type>::getFrameCount() const { return m_frameCount; }
 
 /**
 * Frame per volume getter.
 * @return The number of frames per volume acquired. Used to reconstruct 3D volumes.
 */
-template<class Type>
-int usFrameGrabbedInfo<Type>::getFramesPerVolume() const{
-  return m_framesPerVolume;
-}
+template <class Type> int usFrameGrabbedInfo<Type>::getFramesPerVolume() const { return m_framesPerVolume; }
 
 /**
 * Time stamp getter.
 * @return The time stamp of ultrasound station when the frame was acquired.
 */
-template<class Type>
-quint64 usFrameGrabbedInfo<Type>::getTimeStamp() const{
-  return m_timeStamp;
-}
+template <class Type> quint64 usFrameGrabbedInfo<Type>::getTimeStamp() const { return m_timeStamp; }
 
 /**
 * Frame count setter.
 * @param frameCount The frame number since beginning of acquisition.
 */
-template<class Type>
-void usFrameGrabbedInfo<Type>::setFrameCount(quint32 frameCount) {
-  m_frameCount = frameCount;
-}
+template <class Type> void usFrameGrabbedInfo<Type>::setFrameCount(quint32 frameCount) { m_frameCount = frameCount; }
 
 /**
 * Frame per volume setter.
 * @param framesPerVolume The number of frames per volume acquired. Used to reconstruct 3D volumes.
 */
-template<class Type>
-void usFrameGrabbedInfo<Type>::setFramesPerVolume(int framesPerVolume){
+template <class Type> void usFrameGrabbedInfo<Type>::setFramesPerVolume(int framesPerVolume)
+{
   m_framesPerVolume = framesPerVolume;
 }
 
@@ -145,10 +126,7 @@ void usFrameGrabbedInfo<Type>::setFramesPerVolume(int framesPerVolume){
 * Time stamp setter.
 * @param timeStamp The time stamp of ultrasound station when the frame was acquired.
 */
-template<class Type>
-void usFrameGrabbedInfo<Type>::setTimeStamp(quint64 timeStamp){
-  m_timeStamp = timeStamp;
-}
+template <class Type> void usFrameGrabbedInfo<Type>::setTimeStamp(quint64 timeStamp) { m_timeStamp = timeStamp; }
 
 /*!
   Print data grabbed information in a ostream.
@@ -158,8 +136,7 @@ void usFrameGrabbedInfo<Type>::setTimeStamp(quint64 timeStamp){
   std::cout << myDataGrabbed << std::endl;
   \endcode
 */
-template<class Type>
-std::ostream& operator<<(std::ostream& out, const usFrameGrabbedInfo<Type> &other)
+template <class Type> std::ostream &operator<<(std::ostream &out, const usFrameGrabbedInfo<Type> &other)
 {
   out << "timestamp : " << other.getTimeStamp() << std::endl
       << "frameCount : " << other.getFrameCount() << std::endl

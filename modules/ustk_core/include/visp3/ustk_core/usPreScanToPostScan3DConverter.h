@@ -42,9 +42,8 @@
 #include <cmath>
 #include <vector>
 
-#include <visp3/ustk_core/usImagePreScan3D.h>
 #include <visp3/ustk_core/usImagePostScan3D.h>
-
+#include <visp3/ustk_core/usImagePreScan3D.h>
 
 /**
  * @class usPreScanToPostScan3DConverter
@@ -126,15 +125,17 @@ protected:
   bool m_initDone;
 
 public:
-
   usPreScanToPostScan3DConverter();
   usPreScanToPostScan3DConverter(const usImagePreScan3D<unsigned char> &preScanImage, int down);
   virtual ~usPreScanToPostScan3DConverter();
 
-  void convert(usImagePostScan3D<unsigned char> &postScanImage, const usImagePreScan3D<unsigned char> &preScanImage, int downSamplingFactor = 1);
+  void convert(usImagePostScan3D<unsigned char> &postScanImage, const usImagePreScan3D<unsigned char> &preScanImage,
+               int downSamplingFactor = 1);
 
-  void convertPreScanCoordToPostScanCoord(double i, double j, double k, double *x=NULL, double *y=NULL, double *z=NULL, bool sweepInZdirection=true);
-  void convertPostScanCoordToPreScanCoord(double x, double y, double z, double *i=NULL, double *j=NULL, double *k=NULL, bool sweepInZdirection=true);
+  void convertPreScanCoordToPostScanCoord(double i, double j, double k, double *x = NULL, double *y = NULL,
+                                          double *z = NULL, bool sweepInZdirection = true);
+  void convertPostScanCoordToPreScanCoord(double x, double y, double z, double *i = NULL, double *j = NULL,
+                                          double *k = NULL, bool sweepInZdirection = true);
 
   void init(const usImagePreScan3D<unsigned char> &preScanImage, int down = 1);
 
@@ -143,9 +144,9 @@ public:
   void getVolume(usImagePostScan3D<unsigned char> &V);
   usImagePostScan3D<unsigned char> getVolume();
 
-  double getResolution() {return m_resolution;}
+  double getResolution() { return m_resolution; }
 
-  void SweepInZdirection(bool flag) {m_SweepInZdirection = flag;}
+  void SweepInZdirection(bool flag) { m_SweepInZdirection = flag; }
 };
 
 #endif // US_SCAN_CONVERTER_3D_H

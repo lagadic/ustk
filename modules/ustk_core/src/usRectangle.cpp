@@ -34,9 +34,11 @@
 
 #include <cmath>
 
-usRectangle::usRectangle() : m_cx(0.0), m_cy(0.0), m_width(0.0), m_height(0.0), m_theta(0.0),
-           m_x1(0.0), m_x2(0.0), m_x3(0.0), m_x4(0.0),
-           m_y1(0.0), m_y2(0.0), m_y3(0.0), m_y4(0.0) {}
+usRectangle::usRectangle()
+  : m_cx(0.0), m_cy(0.0), m_width(0.0), m_height(0.0), m_theta(0.0), m_x1(0.0), m_x2(0.0), m_x3(0.0), m_x4(0.0),
+    m_y1(0.0), m_y2(0.0), m_y3(0.0), m_y4(0.0)
+{
+}
 
 usRectangle::usRectangle(double cx, double cy, double width, double height, double theta)
 {
@@ -55,8 +57,7 @@ usRectangle::usRectangle(double cx, double cy, double width, double height, doub
   m_y4 = m_cy + m_height * sin(m_theta) / 2.0 + m_width * cos(m_theta) / 2.0;
 }
 
-void usRectangle::setPoints(double x1, double y1, double x2, double y2,
-          double x3, double y3, double x4, double y4)
+void usRectangle::setPoints(double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4)
 {
   m_x1 = x1;
   m_x2 = x2;
@@ -147,7 +148,7 @@ bool usRectangle::isLeft(double x, double y, double x1, double y1, double x2, do
 {
   double a = y1 - y2;
   double b = x2 - x1;
-  double c = - (a * x1 + b * y1);
+  double c = -(a * x1 + b * y1);
   double d = a * x + b * y + c;
   return (d > 0);
 }

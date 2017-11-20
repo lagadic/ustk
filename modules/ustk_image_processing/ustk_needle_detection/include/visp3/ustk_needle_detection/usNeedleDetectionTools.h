@@ -34,20 +34,20 @@
 #ifndef __usNeedleDetectionTools_h_
 #define __usNeedleDetectionTools_h_
 
+#include <algorithm>
+#include <float.h>
+#include <iostream>
+#include <math.h>
 #include <stdio.h>
 #include <string.h>
 #include <vector>
-#include <algorithm>
-#include <iostream>
-#include <math.h>
-#include <float.h>
 
 // ViSP
-#include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpList.h>
+#include <visp3/core/vpMatrix.h>
 
-//UsTK
+// UsTK
 #include <visp3/ustk_core/usConfig.h>
 
 /**
@@ -101,31 +101,24 @@ vpMatrix approximateCoordinates(vpMatrix X, vpMatrix MSS, unsigned int s);
    * @param npts Number of points.
    * @param d Dimension.
    */
-void arithmeticMean(const vpMatrix points, double *mean, unsigned int npts,
-                    unsigned int d);
+void arithmeticMean(const vpMatrix points, double *mean, unsigned int npts, unsigned int d);
 
-
-void computeQuantile(unsigned char *data, unsigned int dataSize,
-                     unsigned int nDesired, unsigned int &q,
+void computeQuantile(unsigned char *data, unsigned int dataSize, unsigned int nDesired, unsigned int &q,
                      unsigned int &nThresholded);
-void computeQuantile(short *data, unsigned int dataSize,
-                     unsigned int nDesired, unsigned int &q,
+void computeQuantile(short *data, unsigned int dataSize, unsigned int nDesired, unsigned int &q,
                      unsigned int &nThresholded);
-void computeQuantile(const unsigned int *data, unsigned int dataSize,
-                     unsigned int nDesired, unsigned int &q,
+void computeQuantile(const unsigned int *data, unsigned int dataSize, unsigned int nDesired, unsigned int &q,
                      unsigned int &nThresholded);
 
-void computeControlPoints(const vpMatrix &model, vpMatrix &mss, double **points,
-                          const unsigned int &nPoints);
+void computeControlPoints(const vpMatrix &model, vpMatrix &mss, double **points, const unsigned int &nPoints);
 
 /**
    * Compute the euclidean distance between two 3D points.
    */
 double dist3(double *x, double *y);
 
-
-bool findEntry(const vpMatrix &model, double *entry, unsigned int nPoints,
-               const vpColVector &origin, const vpColVector &entryPlane, int VOI[6]);
+bool findEntry(const vpMatrix &model, double *entry, unsigned int nPoints, const vpColVector &origin,
+               const vpColVector &entryPlane, int VOI[6]);
 
 /**
    * Compute the geometric median of a set of d-dimensional points.
@@ -133,22 +126,19 @@ bool findEntry(const vpMatrix &model, double *entry, unsigned int nPoints,
    * @param npts Number of points.
    * @param d Dimension.
    */
-vpColVector geometricMedian(const vpMatrix points, unsigned int npts,
-                            unsigned int d);
+vpColVector geometricMedian(const vpMatrix points, unsigned int npts, unsigned int d);
 
 bool inside(const vpColVector point, int *VOI);
 
 /**
    * Get the intersection between a plane and a straight line.
    */
-bool intersectionLinePlane(vpMatrix line, const vpColVector &plane, double offset,
-                           double &x, double &y, double &z);
+bool intersectionLinePlane(vpMatrix line, const vpColVector &plane, double offset, double &x, double &y, double &z);
 
 /**
    * Performs linear regression on a set of 3D points.
    */
-void linearRegression(vpMatrix &points, double &x, double &y, double &z,
-                      double &u, double &v, double &w);
+void linearRegression(vpMatrix &points, double &x, double &y, double &z, double &u, double &v, double &w);
 void linearRegression(vpMatrix &points, double &a, double &b, double &u, double &v, double &w);
 
 short quantile(short *data, unsigned int num, unsigned int n);
@@ -157,7 +147,6 @@ short quantile(short *data, unsigned int num, unsigned int n);
    * Compute the variance of a set of d-dimensional points.
    */
 double variance(vpMatrix points, unsigned int npts, unsigned int d);
-
 }
 
 #endif // US_NEEDLE_DETECTION_TOOLS_H

@@ -44,16 +44,15 @@
 * Constructor.
 * @param decimationFactor Decimation factor : keep only 1 pre-scan sample every N sample (N = decimationFactor)
 */
-usRFToPostScan2DConverter::usRFToPostScan2DConverter(int decimationFactor) : m_RFConverter(decimationFactor),
-  m_scanConverter() {
+usRFToPostScan2DConverter::usRFToPostScan2DConverter(int decimationFactor)
+  : m_RFConverter(decimationFactor), m_scanConverter()
+{
 }
 
 /**
 * Destructor.
 */
-usRFToPostScan2DConverter::~usRFToPostScan2DConverter() {
-
-}
+usRFToPostScan2DConverter::~usRFToPostScan2DConverter() {}
 
 /**
 * Convert method : performs the conversion from RF frame to a post-scan frame using the following processes :
@@ -65,10 +64,12 @@ usRFToPostScan2DConverter::~usRFToPostScan2DConverter() {
 * @param rfImage RF frame to convert
 * @param postScanImage post-scan image : result of convertion
 */
-void usRFToPostScan2DConverter::convert(const usImageRF2D<short int> &rfImage, usImagePostScan2D<unsigned char> &postScanImage) {
+void usRFToPostScan2DConverter::convert(const usImageRF2D<short int> &rfImage,
+                                        usImagePostScan2D<unsigned char> &postScanImage)
+{
   usImagePreScan2D<unsigned char> preScanImage;
-  m_RFConverter.convert(rfImage,preScanImage);
-  m_scanConverter.convert(preScanImage,postScanImage);
+  m_RFConverter.convert(rfImage, preScanImage);
+  m_scanConverter.convert(preScanImage, postScanImage);
 }
 
 /**
@@ -76,12 +77,15 @@ void usRFToPostScan2DConverter::convert(const usImageRF2D<short int> &rfImage, u
 * @param inputSettings Post-scan settings : transducer radius, pitch, depth, and resolutions.
 * @param BModeSampleNumber Number of samples along a scan line in pre-scan image.
 * @param scanLineNumber Number of scan lines : width of the RF image to convert.
-* @param decimationFactor Decimation factor : keep only 1 pre-scan sample every N sample from RF signal (N = decimationFactor).
+* @param decimationFactor Decimation factor : keep only 1 pre-scan sample every N sample from RF signal (N =
+* decimationFactor).
 * @warning Make sure RFsampleNumer / decimationFactor = BModeSampleNumber
 */
-void usRFToPostScan2DConverter::setConversionParameters(const usImagePostScan2D<unsigned char> &inputSettings, const int BModeSampleNumber,
-                                                            const int scanLineNumber, const int decimationFactor) {
-  m_scanConverter.init(inputSettings,BModeSampleNumber,scanLineNumber);
+void usRFToPostScan2DConverter::setConversionParameters(const usImagePostScan2D<unsigned char> &inputSettings,
+                                                        const int BModeSampleNumber, const int scanLineNumber,
+                                                        const int decimationFactor)
+{
+  m_scanConverter.init(inputSettings, BModeSampleNumber, scanLineNumber);
   m_RFConverter.setDecimationFactor(decimationFactor);
 }
 #endif

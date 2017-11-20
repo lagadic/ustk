@@ -20,7 +20,7 @@ if ! command_exists $clang_format ; then
     exit 0
 fi
 
-echo "Apply coding-style to this project: " $root
+echo "\nApply coding-style to this project: " $root
 
 read -r -p "Are you sure? [Y/n] " answer
 answer="$(echo ${answer} | tr 'A-Z' 'a-z')"

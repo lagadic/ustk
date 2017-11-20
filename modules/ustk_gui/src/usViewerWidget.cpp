@@ -40,34 +40,25 @@
 #ifdef USTK_HAVE_VTK_QT
 
 // VTK includes
-#include <vtkSmartPointer.h>
 #include <vtkDistanceWidget.h>
-#include <vtkResliceImageViewerMeasurements.h>
-#include <vtkResliceImageViewer.h>
 #include <vtkImagePlaneWidget.h>
+#include <vtkResliceImageViewer.h>
+#include <vtkResliceImageViewerMeasurements.h>
+#include <vtkSmartPointer.h>
 
-#include <QPainter>
 #include <QPaintEngine>
+#include <QPainter>
 
 /**
 * Constructor.
 */
-usViewerWidget::usViewerWidget(QWidget* parent, Qt::WindowFlags f) : QVTKWidget(parent,f)
-{
+usViewerWidget::usViewerWidget(QWidget *parent, Qt::WindowFlags f) : QVTKWidget(parent, f) {}
 
-}
-
-usViewerWidget::~usViewerWidget()
-{
-
-}
+usViewerWidget::~usViewerWidget() {}
 
 /**
 * Qt paint event overload if needed to update Qt widget
 * @param event QPAintEvent.
 */
-void usViewerWidget::paintEvent( QPaintEvent* event )
-{
-  QVTKWidget::paintEvent( event );
-}
+void usViewerWidget::paintEvent(QPaintEvent *event) { QVTKWidget::paintEvent(event); }
 #endif

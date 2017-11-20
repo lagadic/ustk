@@ -135,42 +135,37 @@ int main()
   \endcode
 
 */
-template<class Type>
-class usImageRF3D : public usImage3D<Type>, public usImagePreScanSettings, public usMotorSettings
+template <class Type> class usImageRF3D : public usImage3D<Type>, public usImagePreScanSettings, public usMotorSettings
 {
 public:
-
   usImageRF3D();
-  usImageRF3D(const usImage3D<Type> &image3D, const usImagePreScanSettings &imageSettings, const usMotorSettings &motorSettings);
+  usImageRF3D(const usImage3D<Type> &image3D, const usImagePreScanSettings &imageSettings,
+              const usMotorSettings &motorSettings);
   usImageRF3D(const usImageRF3D<Type> &other);
   virtual ~usImageRF3D();
 
   void getFrame(usImageRF2D<Type> &image, unsigned int index) const;
 
-  unsigned int getRFSampleNumber() const ;
+  unsigned int getRFSampleNumber() const;
 
   void insertFrame(vpImage<Type> frame, unsigned int index);
 
-  usImageRF3D<Type>& operator=(const usImageRF3D<Type> &other);
+  usImageRF3D<Type> &operator=(const usImageRF3D<Type> &other);
   bool operator==(const usImageRF3D<Type> &other);
 
   void setData(const usImage3D<Type> &image);
   void setFrameNumber(unsigned int frameNumber);
   void setScanLineNumber(unsigned int scanLineNumber);
 
-
-  //Filtering before calling vpImage::resize() to update scanLineNumber
-  void resize(unsigned int dimX,unsigned int dimY,unsigned int dimZ);
+  // Filtering before calling vpImage::resize() to update scanLineNumber
+  void resize(unsigned int dimX, unsigned int dimY, unsigned int dimZ);
 };
 
 /**
 * Basic constructor.
 */
-template<class Type>
-usImageRF3D<Type>::usImageRF3D()
-  : usImage3D<Type>(), usImagePreScanSettings(), usMotorSettings()
+template <class Type> usImageRF3D<Type>::usImageRF3D() : usImage3D<Type>(), usImagePreScanSettings(), usMotorSettings()
 {
-
 }
 
 /**
@@ -179,9 +174,8 @@ usImageRF3D<Type>::usImageRF3D()
 * @param preScanSettings Pre-scan settings to copy.
 * @param motorSettings Motor settings to copy.
 */
-template<class Type>
-usImageRF3D<Type>::usImageRF3D(const usImage3D<Type> &image3D,
-                               const usImagePreScanSettings &preScanSettings,
+template <class Type>
+usImageRF3D<Type>::usImageRF3D(const usImage3D<Type> &image3D, const usImagePreScanSettings &preScanSettings,
                                const usMotorSettings &motorSettings)
   : usImage3D<Type>(image3D), usImagePreScanSettings(preScanSettings), usMotorSettings(motorSettings)
 {
@@ -195,36 +189,30 @@ usImageRF3D<Type>::usImageRF3D(const usImage3D<Type> &image3D,
 * Copy constructor.
 * @param other 3D RF image to copy.
 */
-template<class Type>
-usImageRF3D<Type>::usImageRF3D(const usImageRF3D& other)
+template <class Type>
+usImageRF3D<Type>::usImageRF3D(const usImageRF3D &other)
   : usImage3D<Type>(other), usImagePreScanSettings(other), usMotorSettings(other)
 {
-
 }
 
 /**
 * Destructor.
 */
-template<class Type>
-usImageRF3D<Type>::~usImageRF3D()
-{
-
-}
+template <class Type> usImageRF3D<Type>::~usImageRF3D() {}
 
 /**
 * Copy operator.
 * @param other 3D RF image to copy.
 */
-template<class Type>
-usImageRF3D<Type>& usImageRF3D<Type>::operator=(const usImageRF3D<Type> &other)
+template <class Type> usImageRF3D<Type> &usImageRF3D<Type>::operator=(const usImageRF3D<Type> &other)
 {
-  //from vpImage
+  // from vpImage
   usImage3D<Type>::operator=(other);
 
-  //from usImageSettings
+  // from usImageSettings
   usImagePreScanSettings::operator=(other);
 
-  //from usMotorSettings
+  // from usMotorSettings
   usMotorSettings::operator=(other);
 
   return *this;
@@ -234,32 +222,25 @@ usImageRF3D<Type>& usImageRF3D<Type>::operator=(const usImageRF3D<Type> &other)
 * Comparison operator.
 * @param other 3D RF image to compare with.
 */
-template<class Type>
-bool usImageRF3D<Type>::operator==(const usImageRF3D<Type> &other)
+template <class Type> bool usImageRF3D<Type>::operator==(const usImageRF3D<Type> &other)
 {
-  return(usImage3D<Type>::operator== (other) &&
-         usImagePreScanSettings::operator ==(other) &&
-         usMotorSettings::operator ==(other));
+  return (usImage3D<Type>::operator==(other) && usImagePreScanSettings::operator==(other) &&
+          usMotorSettings::operator==(other));
 }
 
 /**
 * Operator to print 3D RF image information on a stream.
 */
-template<class Type>
-std::ostream& operator<<(std::ostream& out, const usImageRF3D<Type> &other)
+template <class Type> std::ostream &operator<<(std::ostream &out, const usImageRF3D<Type> &other)
 {
-  return out << static_cast<const usImage3D<Type> &>(other) <<
-                static_cast<const usImagePreScanSettings &>(other) <<
-                static_cast<const usMotorSettings &>(other);
+  return out << static_cast<const usImage3D<Type> &>(other) << static_cast<const usImagePreScanSettings &>(other)
+             << static_cast<const usMotorSettings &>(other);
 }
 
 /**
 * Gets the number of RF samples along a scan line.
 */
-template<class Type>
-unsigned int usImageRF3D<Type>::getRFSampleNumber() const {
-  return usImage3D<Type>::getDimY();
-}
+template <class Type> unsigned int usImageRF3D<Type>::getRFSampleNumber() const { return usImage3D<Type>::getDimY(); }
 
 /**
 * Setter for 3D RF image data.
@@ -268,8 +249,7 @@ unsigned int usImageRF3D<Type>::getRFSampleNumber() const {
 * and the motor frame number that corresponds to the image Z-size.
 * @param image The 3D data to set.
 */
-template<class Type>
-void usImageRF3D<Type>::setData(const usImage3D<Type> &image)
+template <class Type> void usImageRF3D<Type>::setData(const usImage3D<Type> &image)
 {
   usImage3D<Type>::operator=(image);
   setScanLineNumber(image.getDimX());
@@ -282,8 +262,7 @@ void usImageRF3D<Type>::setData(const usImage3D<Type> &image)
  * Resize also the image X-size that is equal to the scan line number.
  * \param scanLineNumber Number of scan lines acquired by the transducer.
  */
-template<class Type>
-void usImageRF3D<Type>::setScanLineNumber(unsigned int scanLineNumber)
+template <class Type> void usImageRF3D<Type>::setScanLineNumber(unsigned int scanLineNumber)
 {
   usImage3D<Type>::resize(scanLineNumber, usImage3D<Type>::getDimY(), usImage3D<Type>::getDimZ());
   usTransducerSettings::setScanLineNumber(scanLineNumber);
@@ -295,8 +274,7 @@ void usImageRF3D<Type>::setScanLineNumber(unsigned int scanLineNumber)
  * Resize also the image Z-size that is equal to the frame number.
  * \param frameNumber Number of frames in the 3D volume.
  */
-template<class Type>
-void usImageRF3D<Type>::setFrameNumber(unsigned int frameNumber)
+template <class Type> void usImageRF3D<Type>::setFrameNumber(unsigned int frameNumber)
 {
   usImage3D<Type>::resize(usImage3D<Type>::getDimX(), usImage3D<Type>::getDimY(), frameNumber);
   usMotorSettings::setFrameNumber(frameNumber);
@@ -311,8 +289,7 @@ void usImageRF3D<Type>::setFrameNumber(unsigned int frameNumber)
  * \param dimY Image Y-size.
  * \param dimZ Image Z-size.
  */
-template<class Type>
-void usImageRF3D<Type>::resize(unsigned int dimX, unsigned int dimY, unsigned int dimZ)
+template <class Type> void usImageRF3D<Type>::resize(unsigned int dimX, unsigned int dimY, unsigned int dimZ)
 {
   usMotorSettings::setFrameNumber(dimZ);
   usTransducerSettings::setScanLineNumber(dimX);
@@ -324,23 +301,22 @@ void usImageRF3D<Type>::resize(unsigned int dimX, unsigned int dimY, unsigned in
  * @param frame The 2D frame to insert.
  * @param index Position to insert the frame in the volume.
  */
-template<class Type>
-void usImageRF3D<Type>::insertFrame(vpImage<Type> frame, unsigned int index)
+template <class Type> void usImageRF3D<Type>::insertFrame(vpImage<Type> frame, unsigned int index)
 {
-  //Dimentions checks
-  if(index > this->getDimZ())
-    throw(vpException(vpException::badValue,"usImage3D::insertFrame : frame index out of volume"));
+  // Dimentions checks
+  if (index > this->getDimZ())
+    throw(vpException(vpException::badValue, "usImage3D::insertFrame : frame index out of volume"));
 
-  if(frame.getHeight() != this->getDimY() || frame.getWidth() != this->getDimX())
-    throw(vpException(vpException::badValue,"usImage3D::insertFrame : frame size don't match volume size"));
+  if (frame.getHeight() != this->getDimY() || frame.getWidth() != this->getDimX())
+    throw(vpException(vpException::badValue, "usImage3D::insertFrame : frame size don't match volume size"));
 
-  //offset to access the frame in the volume
+  // offset to access the frame in the volume
   int offset = index * this->getDimY() * this->getDimX();
-  Type* frameBeginning = this->getData() + offset;
+  Type *frameBeginning = this->getData() + offset;
 
-  //copy
-  for(unsigned int i=0; i<this->getDimX(); i++) {
-    for(unsigned int j=0; j<this->getDimY(); j++) {
+  // copy
+  for (unsigned int i = 0; i < this->getDimX(); i++) {
+    for (unsigned int j = 0; j < this->getDimY(); j++) {
       frameBeginning[i + this->getDimX() * j] = frame[j][i];
     }
   }
@@ -351,23 +327,22 @@ void usImageRF3D<Type>::insertFrame(vpImage<Type> frame, unsigned int index)
  * @param [out] image The 2D frame.
  * @param [in] index Position of the frame to extract in the volume.
  */
-template<class Type>
-void usImageRF3D<Type>::getFrame(usImageRF2D<Type> &image, unsigned int index) const {
+template <class Type> void usImageRF3D<Type>::getFrame(usImageRF2D<Type> &image, unsigned int index) const
+{
 
-  //Dimentions checks
-  if(index > this->getDimZ() - 1)
-    throw(vpException(vpException::badValue,"usImageRF3D::getFrame : frame index out of volume"));
+  // Dimentions checks
+  if (index > this->getDimZ() - 1)
+    throw(vpException(vpException::badValue, "usImageRF3D::getFrame : frame index out of volume"));
 
-  image.resize(this->getDimY(),this->getDimX());
+  image.resize(this->getDimY(), this->getDimX());
 
-
-  //offset to access the frame in the volume
+  // offset to access the frame in the volume
   int offset = index * this->getDimY() * this->getDimX();
-  Type* frameBeginning = this->getConstData() + offset;
+  Type *frameBeginning = this->getConstData() + offset;
 
-  //copy
-  for(unsigned int i=0; i<this->getDimX(); i++) {
-    for(unsigned int j=0; j<this->getDimY(); j++) {
+  // copy
+  for (unsigned int i = 0; i < this->getDimX(); i++) {
+    for (unsigned int j = 0; j < this->getDimY(); j++) {
       image[j][i] = frameBeginning[i + this->getDimX() * j];
     }
   }

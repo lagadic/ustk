@@ -44,44 +44,52 @@
 * Constructor.
 * @param decimationFactor Decimation factor : keep only 1 pre-scan sample every N sample (N = decimationFactor)
 */
-usRFToPreScan2DConverter::usRFToPreScan2DConverter(int decimationFactor) : m_logCompressor(),
-  m_decimationFactor(decimationFactor), m_isInit(false) {
-
+usRFToPreScan2DConverter::usRFToPreScan2DConverter(int decimationFactor)
+  : m_logCompressor(), m_decimationFactor(decimationFactor), m_isInit(false)
+{
 }
 
 /**
 * Destructor.
 */
-usRFToPreScan2DConverter::~usRFToPreScan2DConverter() {
+usRFToPreScan2DConverter::~usRFToPreScan2DConverter()
+{
   if (m_isInit) {
-    fftw_free(m_fft_in); fftw_free(m_fft_out); fftw_free(m_fft_conv); fftw_free(m_fft_out_inv);
-    fftw_destroy_plan(m_p); fftw_destroy_plan(m_pinv);
-	delete m_env;
-	delete m_comp;
+    fftw_free(m_fft_in);
+    fftw_free(m_fft_out);
+    fftw_free(m_fft_conv);
+    fftw_free(m_fft_out_inv);
+    fftw_destroy_plan(m_p);
+    fftw_destroy_plan(m_pinv);
+    delete m_env;
+    delete m_comp;
   }
 }
-
 
 /**
 * Init method, to pre-allocate memory for all the processes (fft inputs/outputs, log compression output).
 * @param widthRF Width of the RF frames to convert : number of scanlines.
 * @param heigthRF Height of the RF frames to convert : number of RF samples.
 */
-void usRFToPreScan2DConverter::init(int widthRF, int heigthRF) {
+void usRFToPreScan2DConverter::init(int widthRF, int heigthRF)
+{
   if (m_isInit && (m_signalSize != heigthRF || m_scanLineNumber != widthRF)) {
-    fftw_free(m_fft_in); fftw_free(m_fft_out); fftw_free(m_fft_conv); fftw_free(m_fft_out_inv);
-    fftw_destroy_plan(m_p); fftw_destroy_plan(m_pinv);
-	delete m_env;
-	delete m_comp;
-  }
-  else if(m_signalSize == heigthRF && m_scanLineNumber == heigthRF)
+    fftw_free(m_fft_in);
+    fftw_free(m_fft_out);
+    fftw_free(m_fft_conv);
+    fftw_free(m_fft_out_inv);
+    fftw_destroy_plan(m_p);
+    fftw_destroy_plan(m_pinv);
+    delete m_env;
+    delete m_comp;
+  } else if (m_signalSize == heigthRF && m_scanLineNumber == heigthRF)
     return;
 
   // for FFT
-  m_fft_in = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * heigthRF);
-  m_fft_out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * heigthRF);
-  m_fft_conv = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * heigthRF);
-  m_fft_out_inv = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * heigthRF);
+  m_fft_in = (fftw_complex *)fftw_malloc(sizeof(fftw_complex) * heigthRF);
+  m_fft_out = (fftw_complex *)fftw_malloc(sizeof(fftw_complex) * heigthRF);
+  m_fft_conv = (fftw_complex *)fftw_malloc(sizeof(fftw_complex) * heigthRF);
+  m_fft_out_inv = (fftw_complex *)fftw_malloc(sizeof(fftw_complex) * heigthRF);
 
   // log compression
   m_env = new double[heigthRF * widthRF];
@@ -102,15 +110,14 @@ void usRFToPreScan2DConverter::init(int widthRF, int heigthRF) {
  * \param s: Signal of 16-bit values
  * \return std::vector<std::complex<double> > that contains the Hilbert transform
  */
-void usRFToPreScan2DConverter::enveloppeDetection(const short int *s, double* out)
+void usRFToPreScan2DConverter::enveloppeDetection(const short int *s, double *out)
 {
-  ///time of Hilbert transform
-  //const clock_t begin_time = clock();
+  /// time of Hilbert transform
+  // const clock_t begin_time = clock();
   int N = m_signalSize;
 
   // Put signal data s into in
-  for(int i = 0; i < N; i++)
-  {
+  for (int i = 0; i < N; i++) {
     m_fft_in[i][0] = (double)s[i];
     m_fft_in[i][1] = 0.0;
   }
@@ -118,27 +125,23 @@ void usRFToPreScan2DConverter::enveloppeDetection(const short int *s, double* ou
   // Obtain the FFT
   fftw_execute(m_p);
 
-  for(int i= 0; i < N; i++)
-  {
+  for (int i = 0; i < N; i++) {
 
-    if(i<N/2)
-      m_fft_out[i][1]=-m_fft_out[i][1];
-    else if(i==N/2)
-    {
-      m_fft_out[i][0]=0;
-      m_fft_out[i][1]=0;
-    }
-    else if(i>N/2)
-      m_fft_out[i][0]=-m_fft_out[i][0];
-    if(i==0)
-    {
-      m_fft_out[i][0]=0;
-      m_fft_out[i][1]=0;
+    if (i < N / 2)
+      m_fft_out[i][1] = -m_fft_out[i][1];
+    else if (i == N / 2) {
+      m_fft_out[i][0] = 0;
+      m_fft_out[i][1] = 0;
+    } else if (i > N / 2)
+      m_fft_out[i][0] = -m_fft_out[i][0];
+    if (i == 0) {
+      m_fft_out[i][0] = 0;
+      m_fft_out[i][1] = 0;
     }
 
-    double z=m_fft_out[i][1];
-    m_fft_out[i][1]=m_fft_out[i][0];
-    m_fft_out[i][0]=z;
+    double z = m_fft_out[i][1];
+    m_fft_out[i][1] = m_fft_out[i][0];
+    m_fft_out[i][0] = z;
   }
 
   // FFT Inverse
@@ -147,9 +150,8 @@ void usRFToPreScan2DConverter::enveloppeDetection(const short int *s, double* ou
   fftw_execute(m_pinv);
   // Put the iFFT output in sa
   double Ndouble = (double)N;
-  for(int i = 0; i < N; i++)
-  {
-    out[i] = (unsigned char) sqrt(abs(std::complex<double> (m_fft_in[i][0], -m_fft_out_inv[i][0]/ Ndouble)));
+  for (int i = 0; i < N; i++) {
+    out[i] = (unsigned char)sqrt(abs(std::complex<double>(m_fft_in[i][0], -m_fft_out_inv[i][0] / Ndouble)));
   }
 }
 
@@ -162,12 +164,14 @@ void usRFToPreScan2DConverter::enveloppeDetection(const short int *s, double* ou
 * @param rfImage RF frame to convert
 * @param preScanImage pre-scan image : result of convertion
 */
-void usRFToPreScan2DConverter::convert(const usImageRF2D<short int> &rfImage, usImagePreScan2D<unsigned char> &preScanImage) {
+void usRFToPreScan2DConverter::convert(const usImageRF2D<short int> &rfImage,
+                                       usImagePreScan2D<unsigned char> &preScanImage)
+{
 
-  if(!m_isInit || ((int)rfImage.getWidth()) != m_scanLineNumber || ((int)rfImage.getHeight()) != m_signalSize) {
+  if (!m_isInit || ((int)rfImage.getWidth()) != m_scanLineNumber || ((int)rfImage.getHeight()) != m_signalSize) {
     init(rfImage.getWidth(), rfImage.getHeight());
   }
-  preScanImage.resize(rfImage.getHeight() / m_decimationFactor,rfImage.getWidth());
+  preScanImage.resize(rfImage.getHeight() / m_decimationFactor, rfImage.getWidth());
 
   // First we copy the transducer settings
   preScanImage.setImagePreScanSettings(rfImage);
@@ -175,17 +179,17 @@ void usRFToPreScan2DConverter::convert(const usImageRF2D<short int> &rfImage, us
   int w = rfImage.getWidth();
   int h = rfImage.getHeight();
 
-  unsigned int frameSize = w*h;
+  unsigned int frameSize = w * h;
 
   // Run envelope detector
   for (int i = 0; i < w; ++i) {
-    enveloppeDetection(rfImage.bitmap + i*h, m_env + i * h);
+    enveloppeDetection(rfImage.bitmap + i * h, m_env + i * h);
   }
 
   // Log-compress
   m_logCompressor.run(m_comp, m_env, frameSize);
 
-  //find min & max values
+  // find min & max values
   double min = 1e8;
   double max = -1e8;
   for (unsigned int i = 0; i < frameSize; ++i) {
@@ -194,18 +198,19 @@ void usRFToPreScan2DConverter::convert(const usImageRF2D<short int> &rfImage, us
     if (m_comp[i] > max)
       max = m_comp[i];
   }
-  //max-min computation
+  // max-min computation
   double maxMinDiff = max - min;
 
-  //Decimate and normalize
+  // Decimate and normalize
   unsigned int k = 0;
-  for (int i = 0; i < h; i+=m_decimationFactor) {
-    for (int j = 0; j < w ; ++j) {
-      unsigned int  vcol = (unsigned int) (((m_comp[i + h * j] - min) / maxMinDiff) * 255);
-      preScanImage[k][j] = (vcol>255)?255:vcol;
+  for (int i = 0; i < h; i += m_decimationFactor) {
+    for (int j = 0; j < w; ++j) {
+      unsigned int vcol = (unsigned int)(((m_comp[i + h * j] - min) / maxMinDiff) * 255);
+      preScanImage[k][j] = (vcol > 255) ? 255 : vcol;
     }
     k++;
-    if(k==preScanImage.getHeight()) //prevent overflow for k at last iteration (index given to operator[] on vpImage goes from 0 to N-1)
+    if (k == preScanImage.getHeight()) // prevent overflow for k at last iteration (index given to operator[] on vpImage
+                                       // goes from 0 to N-1)
       return;
   }
 }
@@ -214,16 +219,12 @@ void usRFToPreScan2DConverter::convert(const usImageRF2D<short int> &rfImage, us
 * Decimation factor getter.
 * @return Decimation factor : keep only 1 pre-scan sample every N sample (N = decimationFactor)
 */
-int usRFToPreScan2DConverter::getDecimationFactor() {
-  return m_decimationFactor;
-}
+int usRFToPreScan2DConverter::getDecimationFactor() { return m_decimationFactor; }
 
 /**
 * Decimation factor setter.
 * @param  decimationFactor : keep only 1 pre-scan sample every N sample (N = decimationFactor)
 */
-void usRFToPreScan2DConverter::setDecimationFactor(int decimationFactor) {
-  m_decimationFactor = decimationFactor;
-}
+void usRFToPreScan2DConverter::setDecimationFactor(int decimationFactor) { m_decimationFactor = decimationFactor; }
 
 #endif

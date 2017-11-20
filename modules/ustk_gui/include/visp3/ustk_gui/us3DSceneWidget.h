@@ -35,7 +35,6 @@
  * @brief Class used to render a 3D vtk scene containing a vtkImageData in a QWidget (based on QVTKWidget)
  */
 
-
 #ifndef __us3DSceneWidget_h_
 #define __us3DSceneWidget_h_
 
@@ -46,31 +45,31 @@
 
 #include <visp3/ustk_gui/usViewerWidget.h>
 
-//VTK includes
-#include <vtkPlane.h>
-#include <vtkImageSlice.h>
-#include <vtkImageResliceMapper.h>
-#include <vtkSmartPointer.h>
-#include <vtkImageData.h>
-#include <vtkRenderer.h>
-#include <vtkRenderWindow.h>
+// VTK includes
 #include <vtkAxesActor.h>
-#include <vtkPolyDataMapper.h>
-#include <vtkImagePlaneWidget.h>
-#include <vtkCutter.h>
 #include <vtkCubeSource.h>
+#include <vtkCutter.h>
+#include <vtkImageData.h>
+#include <vtkImagePlaneWidget.h>
+#include <vtkImageResliceMapper.h>
+#include <vtkImageSlice.h>
+#include <vtkPlane.h>
+#include <vtkPolyDataMapper.h>
+#include <vtkRenderWindow.h>
+#include <vtkRenderer.h>
+#include <vtkSmartPointer.h>
 
 // Qt includes
 #if defined(USTK_HAVE_VTK_QT4)
-#  include <QApplication>
-#  include <QtGui/QMainWindow>
-#  include <QtGui/QGridLayout>
-#  include <QtGui/QPushButton>
+#include <QApplication>
+#include <QtGui/QGridLayout>
+#include <QtGui/QMainWindow>
+#include <QtGui/QPushButton>
 #elif defined USTK_HAVE_VTK_QT5
-#  include <QApplication>
-#  include <QtWidgets/QMainWindow>
-#  include <QtWidgets/QGridLayout>
-#  include <QtWidgets/QPushButton>
+#include <QApplication>
+#include <QtWidgets/QGridLayout>
+#include <QtWidgets/QMainWindow>
+#include <QtWidgets/QPushButton>
 #endif
 
 #include <QVTKWidget.h>
@@ -117,45 +116,44 @@ class VISP_EXPORT us3DSceneWidget : public usViewerWidget
 {
   Q_OBJECT
 public:
-
   // Constructor/Destructor
-  us3DSceneWidget(QWidget* parent = NULL, Qt::WindowFlags f = 0);
+  us3DSceneWidget(QWidget *parent = NULL, Qt::WindowFlags f = 0);
   ~us3DSceneWidget() {}
 
-  vtkPolyData* getContour1();
-  vtkPolyData* getContour2();
-  vtkPolyData* getContour3();
+  vtkPolyData *getContour1();
+  vtkPolyData *getContour2();
+  vtkPolyData *getContour3();
 
-  vtkImageData* getImageData();
+  vtkImageData *getImageData();
 
-  vtkPolyData* getMeshInPlane1();
-  vtkPolyData* getMeshInPlane2();
-  vtkPolyData* getMeshInPlane3();
+  vtkPolyData *getMeshInPlane1();
+  vtkPolyData *getMeshInPlane2();
+  vtkPolyData *getMeshInPlane3();
 
-  vtkPlane* getPlane1();
-  vtkPlane* getPlane2();
-  vtkPlane* getPlane3();
+  vtkPlane *getPlane1();
+  vtkPlane *getPlane2();
+  vtkPlane *getPlane3();
 
   void init();
 
-  //Catch paint events, in case we want to display some informations (writing in this widget) over the vtk scene
-  void paintEvent( QPaintEvent* event );
+  // Catch paint events, in case we want to display some informations (writing in this widget) over the vtk scene
+  void paintEvent(QPaintEvent *event);
 
-  //Set image to display
-  void setImageData(vtkImageData* imageData);
+  // Set image to display
+  void setImageData(vtkImageData *imageData);
 
-  //Set planes
-  void setPlane1(vtkPlane* plane);
-  void setPlane2(vtkPlane* plane);
-  void setPlane3(vtkPlane* plane);
-  void setPlanes(vtkPlane* plane1,vtkPlane* plane2,vtkPlane* plane3);
+  // Set planes
+  void setPlane1(vtkPlane *plane);
+  void setPlane2(vtkPlane *plane);
+  void setPlane3(vtkPlane *plane);
+  void setPlanes(vtkPlane *plane1, vtkPlane *plane2, vtkPlane *plane3);
 
 public slots:
   //
-  void updateImageData(vtkImageData* imageData);
-  void updateMatrix1(vtkMatrix4x4* matrix);
-  void updateMatrix2(vtkMatrix4x4* matrix);
-  void updateMatrix3(vtkMatrix4x4* matrix);
+  void updateImageData(vtkImageData *imageData);
+  void updateMatrix1(vtkMatrix4x4 *matrix);
+  void updateMatrix2(vtkMatrix4x4 *matrix);
+  void updateMatrix3(vtkMatrix4x4 *matrix);
 
 signals:
   void plane1Changed();
@@ -163,45 +161,45 @@ signals:
   void plane3Changed();
 
 private:
-  //image
-  vtkImageData* imageData;
+  // image
+  vtkImageData *imageData;
 
-  //Cube for image bounds
+  // Cube for image bounds
   vtkSmartPointer<vtkCubeSource> imageBoundsCube;
 
-  //planes (containing geometrical informations)
-  vtkPlane* plane1;
-  vtkPlane* plane2;
-  vtkPlane* plane3;
+  // planes (containing geometrical informations)
+  vtkPlane *plane1;
+  vtkPlane *plane2;
+  vtkPlane *plane3;
 
-  //mesh polydata
-  vtkPolyData* meshPolyData;
+  // mesh polydata
+  vtkPolyData *meshPolyData;
 
-  //vtk mappers
-  vtkImageResliceMapper* imageResliceMapper1;
-  vtkImageResliceMapper* imageResliceMapper2;
-  vtkImageResliceMapper* imageResliceMapper3;
+  // vtk mappers
+  vtkImageResliceMapper *imageResliceMapper1;
+  vtkImageResliceMapper *imageResliceMapper2;
+  vtkImageResliceMapper *imageResliceMapper3;
 
-  //vtk actors
-  vtkImageSlice* imageSlice1;
-  vtkImageSlice* imageSlice2;
-  vtkImageSlice* imageSlice3;
+  // vtk actors
+  vtkImageSlice *imageSlice1;
+  vtkImageSlice *imageSlice2;
+  vtkImageSlice *imageSlice3;
 
   // Cutters for intersections between plane and volume borders
   vtkSmartPointer<vtkCutter> cutter1;
   vtkSmartPointer<vtkCutter> cutter2;
   vtkSmartPointer<vtkCutter> cutter3;
 
-  //Cutters for intersections between planes and mesh
+  // Cutters for intersections between planes and mesh
   vtkSmartPointer<vtkCutter> cutterPolyDataPlane1;
   vtkSmartPointer<vtkCutter> cutterPolyDataPlane2;
   vtkSmartPointer<vtkCutter> cutterPolyDataPlane3;
 
-  //axes representation
+  // axes representation
   vtkSmartPointer<vtkAxesActor> m_axesActor;
 
-  //vtk renderer
-  vtkRenderer* renderer;
+  // vtk renderer
+  vtkRenderer *renderer;
 };
 #endif
 #endif // __us3DSceneWidget_h_

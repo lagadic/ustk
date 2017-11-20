@@ -35,15 +35,14 @@
  * @brief Input/output operations between ultrasound image settings and the assiciated xml files.
  */
 
-#include<visp3/ustk_io/usImageHeaderXmlParser.h>
+#include <visp3/ustk_io/usImageHeaderXmlParser.h>
 
-#if defined(VISP_HAVE_XML2) && (defined(USTK_HAVE_QT5) ||defined(USTK_HAVE_VTK_QT))
+#if defined(VISP_HAVE_XML2) && (defined(USTK_HAVE_QT5) || defined(USTK_HAVE_VTK_QT))
 
 /**
  * Default constructor.
  */
-usImageHeaderXmlParser::usImageHeaderXmlParser()
-  : m_imageHeader(), m_sequence_name()
+usImageHeaderXmlParser::usImageHeaderXmlParser() : m_imageHeader(), m_sequence_name()
 {
   nodeMap["frame_count"] = CODE_XML_FRAME_COUNT;
   nodeMap["time_stamp"] = CODE_XML_TIME_STAMP;
@@ -71,22 +70,18 @@ usImageHeaderXmlParser::usImageHeaderXmlParser()
 /**
 * Destructor.
 */
-usImageHeaderXmlParser::~usImageHeaderXmlParser()
-{
-  
-}
+usImageHeaderXmlParser::~usImageHeaderXmlParser() {}
 
 /**
 * Reading method, called by vpXmlParser::parse().
 * @param doc a pointer representing the document
 * @param node : the root node of the document
 */
-void
-usImageHeaderXmlParser::readMainClass (xmlDocPtr doc, xmlNodePtr node)
+void usImageHeaderXmlParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
 {
-  for(xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;  dataNode = dataNode->next)  {
-    if(dataNode->type == XML_ELEMENT_NODE){
-      std::map<std::string, int>::iterator iter_data= this->nodeMap.find((char*)dataNode->name);
+  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL; dataNode = dataNode->next) {
+    if (dataNode->type == XML_ELEMENT_NODE) {
+      std::map<std::string, int>::iterator iter_data = this->nodeMap.find((char *)dataNode->name);
       if (iter_data != nodeMap.end()) {
         switch (iter_data->second) {
         case CODE_XML_FRAME_COUNT:
@@ -165,8 +160,7 @@ usImageHeaderXmlParser::readMainClass (xmlDocPtr doc, xmlNodePtr node)
 * Writing method, called by vpXmlParser::save().
 * @param node : the root node of the document
 */
-void 
-usImageHeaderXmlParser::writeMainClass(xmlNodePtr node)
+void usImageHeaderXmlParser::writeMainClass(xmlNodePtr node)
 {
   xmlWriteUInt32Child(node, "frame_count", this->m_imageHeader.frameCount);
   xmlWriteUInt64Child(node, "time_stamp", this->m_imageHeader.timeStamp);
@@ -191,63 +185,65 @@ usImageHeaderXmlParser::writeMainClass(xmlNodePtr node)
   xmlWriteStringChild(node, "sequence_name", this->m_sequence_name);
 }
 
-uint32_t usImageHeaderXmlParser::xmlReadUInt32Child(xmlDocPtr doc, xmlNodePtr node) {
-  if(node ->xmlChildrenNode == NULL){
-    std::string errorMsg = "Empty node " + std::string((char*)node->name) + ", cannot read int";
+uint32_t usImageHeaderXmlParser::xmlReadUInt32Child(xmlDocPtr doc, xmlNodePtr node)
+{
+  if (node->xmlChildrenNode == NULL) {
+    std::string errorMsg = "Empty node " + std::string((char *)node->name) + ", cannot read int";
     std::cerr << errorMsg << std::endl;
     throw vpException(vpException::fatalError, errorMsg);
   }
-  char * val_char;
-  char * control_convert;
+  char *val_char;
+  char *control_convert;
   uint32_t val_int;
 
-  val_char = (char *) xmlNodeListGetString(doc, node ->xmlChildrenNode, 1);
-  val_int = (uint32_t)strtol ((char *)val_char, &control_convert, 10);
+  val_char = (char *)xmlNodeListGetString(doc, node->xmlChildrenNode, 1);
+  val_int = (uint32_t)strtol((char *)val_char, &control_convert, 10);
 
-  if (val_char == control_convert){
-    xmlFree((xmlChar*) val_char);
+  if (val_char == control_convert) {
+    xmlFree((xmlChar *)val_char);
     throw vpException(vpException::ioError, "cannot parse entry to quint32");
   }
-  xmlFree((xmlChar*) val_char);
+  xmlFree((xmlChar *)val_char);
 
   return val_int;
 }
 
-uint64_t usImageHeaderXmlParser::xmlReadUInt64Child(xmlDocPtr doc, xmlNodePtr node) {
-  if(node ->xmlChildrenNode == NULL){
-    std::string errorMsg = "Empty node " + std::string((char*)node->name) + ", cannot read int";
+uint64_t usImageHeaderXmlParser::xmlReadUInt64Child(xmlDocPtr doc, xmlNodePtr node)
+{
+  if (node->xmlChildrenNode == NULL) {
+    std::string errorMsg = "Empty node " + std::string((char *)node->name) + ", cannot read int";
     std::cerr << errorMsg << std::endl;
     throw vpException(vpException::fatalError, errorMsg);
   }
-  char * val_char;
-  char * control_convert;
+  char *val_char;
+  char *control_convert;
   uint64_t val_int;
 
-  val_char = (char *) xmlNodeListGetString(doc, node ->xmlChildrenNode, 1);
+  val_char = (char *)xmlNodeListGetString(doc, node->xmlChildrenNode, 1);
   val_int = (uint64_t)strtoull((char *)val_char, &control_convert, 10);
 
-  if (val_char == control_convert){
-    xmlFree((xmlChar*) val_char);
+  if (val_char == control_convert) {
+    xmlFree((xmlChar *)val_char);
     throw vpException(vpException::ioError, "cannot parse entry to quint64");
   }
-  xmlFree((xmlChar*) val_char);
+  xmlFree((xmlChar *)val_char);
 
   return val_int;
 }
 
-void usImageHeaderXmlParser::xmlWriteUInt32Child(xmlNodePtr node, const char* label, const uint32_t value)
-{
-  std::ostringstream os; 
-  os << value;
-  xmlNodePtr tmp = xmlNewChild(node, NULL, (xmlChar*)label, (xmlChar*)os.str().c_str());
-  xmlAddChild(node, tmp);
-}
-
-void usImageHeaderXmlParser::xmlWriteUInt64Child(xmlNodePtr node, const char* label, const uint64_t value)
+void usImageHeaderXmlParser::xmlWriteUInt32Child(xmlNodePtr node, const char *label, const uint32_t value)
 {
   std::ostringstream os;
   os << value;
-  xmlNodePtr tmp = xmlNewChild(node, NULL, (xmlChar*)label, (xmlChar*)os.str().c_str());
+  xmlNodePtr tmp = xmlNewChild(node, NULL, (xmlChar *)label, (xmlChar *)os.str().c_str());
   xmlAddChild(node, tmp);
 }
-#endif //VISP_HAVE_XML2 && QT
+
+void usImageHeaderXmlParser::xmlWriteUInt64Child(xmlNodePtr node, const char *label, const uint64_t value)
+{
+  std::ostringstream os;
+  os << value;
+  xmlNodePtr tmp = xmlNewChild(node, NULL, (xmlChar *)label, (xmlChar *)os.str().c_str());
+  xmlAddChild(node, tmp);
+}
+#endif // VISP_HAVE_XML2 && QT

@@ -40,10 +40,10 @@
 #ifndef __usSequenceWriter_h_
 #define __usSequenceWriter_h_
 
+#include <algorithm>
 #include <cstring>
 #include <iostream>
 #include <vector>
-#include <algorithm>
 
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpException.h>
@@ -60,11 +60,9 @@
 *
 * This class is used to write ultrasound images from a sequence.
 */
-template <class ImageType>
-class usSequenceWriter
+template <class ImageType> class usSequenceWriter
 {
 public:
-
   usSequenceWriter();
   virtual ~usSequenceWriter();
 
@@ -101,7 +99,6 @@ private:
   /** Top know if the sequence is already open*/
   bool is_open;
 
-
   void open(const ImageType &image, uint64_t timestamp = 0);
 };
 
@@ -112,65 +109,53 @@ private:
 /**
 * Default constructor.
 */
-template<class ImageType>
-usSequenceWriter<ImageType>::usSequenceWriter() : m_frame(), m_frameRate(0.0), m_firstFrame(0), m_firstFrameIsSet(false),
-  m_frameCount(0), m_sequenceFileName(""),m_genericImageFileName(""), m_headerFileNameIsSet(false), m_imageFileNameIsSet(false), is_open(false)
+template <class ImageType>
+usSequenceWriter<ImageType>::usSequenceWriter()
+  : m_frame(), m_frameRate(0.0), m_firstFrame(0), m_firstFrameIsSet(false), m_frameCount(0), m_sequenceFileName(""),
+    m_genericImageFileName(""), m_headerFileNameIsSet(false), m_imageFileNameIsSet(false), is_open(false)
 {
-
 }
 
 /**
 * Destructor.
 */
-template<class ImageType>
-usSequenceWriter<ImageType>::~usSequenceWriter()
-{
-  close();
-}
+template <class ImageType> usSequenceWriter<ImageType>::~usSequenceWriter() { close(); }
 
 /**
 * FrameRate setter.
 * @param frameRate Frame rate to set.
 */
-template<class ImageType>
-void usSequenceWriter<ImageType>::setFrameRate(double frameRate)
-{
-  m_frameRate = frameRate;
-}
+template <class ImageType> void usSequenceWriter<ImageType>::setFrameRate(double frameRate) { m_frameRate = frameRate; }
 
 /**
 * FrameRate getter.
 * @return frameRate Frame rate of the sequence.
 */
-template<class ImageType>
-double usSequenceWriter<ImageType>::getFrameRate() const
-{
-  return m_frameRate;
-}
+template <class ImageType> double usSequenceWriter<ImageType>::getFrameRate() const { return m_frameRate; }
 
 /**
 * File name setter, with parents direcotries (relative or absolute).
 * @param sequenceFileName File name, ex : "../../myheader.xml", or : "/tmp/myheader.xml".
 */
-template<class ImageType>
-void usSequenceWriter<ImageType>::setSequenceFileName(const std::string &sequenceFileName)
+template <class ImageType> void usSequenceWriter<ImageType>::setSequenceFileName(const std::string &sequenceFileName)
 {
   m_sequenceFileName = sequenceFileName;
   m_headerFileNameIsSet = true;
 }
 
 /**
-* Image generic file name setter. ex : "rf2d%04d.png". If you want to write the images in a subdirectory of where the header is,
-* add the subdirs names in the file name (ex :"mySubDir/myserie%04d.png". Otherwise the images will be written in the same directory as the header.
+* Image generic file name setter. ex : "rf2d%04d.png". If you want to write the images in a subdirectory of where the
+* header is,
+* add the subdirs names in the file name (ex :"mySubDir/myserie%04d.png". Otherwise the images will be written in the
+* same directory as the header.
 * @param imageFileName Image file name, relatively to the header.
 */
-template<class ImageType>
-void usSequenceWriter<ImageType>::setImageFileName(const std::string &imageFileName)
+template <class ImageType> void usSequenceWriter<ImageType>::setImageFileName(const std::string &imageFileName)
 {
-  //create subdirectory if there is one
-  if(m_headerFileNameIsSet) {
+  // create subdirectory if there is one
+  if (m_headerFileNameIsSet) {
     std::string relativePathToHeader = vpIoTools::getParent(imageFileName);
-    if(!relativePathToHeader.empty()) {
+    if (!relativePathToHeader.empty()) {
       std::string fullDirName = vpIoTools::getParent(m_sequenceFileName) + vpIoTools::path("/") + relativePathToHeader;
       vpIoTools::makeDirectory(fullDirName);
     }
@@ -183,8 +168,7 @@ void usSequenceWriter<ImageType>::setImageFileName(const std::string &imageFileN
 * Sequence first index setter.
 * @param firstIndex Sequence first index.
 */
-template<class ImageType>
-void usSequenceWriter<ImageType>::setFirstFrameIndex(long firstIndex)
+template <class ImageType> void usSequenceWriter<ImageType>::setFirstFrameIndex(long firstIndex)
 {
   m_firstFrame = firstIndex;
   m_firstFrameIsSet = true;
@@ -194,34 +178,34 @@ void usSequenceWriter<ImageType>::setFirstFrameIndex(long firstIndex)
 * Sequence opening.
 * @param image First image to write.
 */
-template<class ImageType>
-void usSequenceWriter<ImageType>::open(const ImageType &image, uint64_t timestamp)
+template <class ImageType> void usSequenceWriter<ImageType>::open(const ImageType &image, uint64_t timestamp)
 {
-  if(!m_headerFileNameIsSet || !m_imageFileNameIsSet )
+  if (!m_headerFileNameIsSet || !m_imageFileNameIsSet)
     throw(vpException(vpException::badValue, "file names not set"));
 
-  //if not first index set, we begin at index 0
-  if(!m_firstFrameIsSet) {
+  // if not first index set, we begin at index 0
+  if (!m_firstFrameIsSet) {
     m_firstFrame = 0;
     m_frameCount = 0;
     m_firstFrameIsSet = true;
   }
 
-  //saving the settings for all the sequence
+  // saving the settings for all the sequence
   m_frame = image;
 
-  //Reading image
+  // Reading image
   char buffer[FILENAME_MAX];
-  sprintf(buffer, m_genericImageFileName.c_str(),m_frameCount);
+  sprintf(buffer, m_genericImageFileName.c_str(), m_frameCount);
 
-  //case of timestamp to add
-  if(timestamp != 0){
+  // case of timestamp to add
+  if (timestamp != 0) {
     std::vector<std::string> splitted = vpIoTools::splitChain(std::string(buffer), std::string("."));
     std::string base = splitted.at(0);
     base.append(std::string(".%lld."));
     base.append(splitted.at(1));
-    sprintf(buffer, base.c_str(),timestamp);
-    std::vector<std::string> splittedGeneric = vpIoTools::splitChain(std::string(m_genericImageFileName), std::string("."));
+    sprintf(buffer, base.c_str(), timestamp);
+    std::vector<std::string> splittedGeneric =
+        vpIoTools::splitChain(std::string(m_genericImageFileName), std::string("."));
     m_genericImageFileName = splittedGeneric.at(0) + std::string(".TIMESTAMP.") + splittedGeneric.at(1);
   }
 
@@ -235,82 +219,66 @@ void usSequenceWriter<ImageType>::open(const ImageType &image, uint64_t timestam
 
 /**
 * Sequence closing : writes sequence settings in the header.
-* @warning Implemented only for usImageRF2D < unsigned char >, usImagePreScan2D < unsigned char > and usImagePostScan2D < unsigned char >
+* @warning Implemented only for usImageRF2D < unsigned char >, usImagePreScan2D < unsigned char > and usImagePostScan2D
+* < unsigned char >
 */
-template<class ImageType>
-void usSequenceWriter<ImageType>::close()
+template <class ImageType> void usSequenceWriter<ImageType>::close()
 {
   throw(vpException(vpException::notImplementedError));
 }
 
-template<>
-inline void usSequenceWriter< usImageRF2D < unsigned char > >::close()
+template <> inline void usSequenceWriter<usImageRF2D<unsigned char> >::close()
 {
-  if(!is_open)
+  if (!is_open)
     return;
 
-  //saving settings
+  // saving settings
   usImageSettingsXmlParser xmlParser;
-  xmlParser.setImageSettings(m_frame.getTransducerRadius(),
-    m_frame.getScanLinePitch(),
-    m_frame.isTransducerConvex(),
-    m_frame.getAxialResolution(),
-    us::RF_2D,
-    m_frame.getSamplingFrequency(),
-    m_frame.getTransmitFrequency());
+  xmlParser.setImageSettings(m_frame.getTransducerRadius(), m_frame.getScanLinePitch(), m_frame.isTransducerConvex(),
+                             m_frame.getAxialResolution(), us::RF_2D, m_frame.getSamplingFrequency(),
+                             m_frame.getTransmitFrequency());
   xmlParser.setSequenceFrameRate(m_frameRate);
   xmlParser.setSequenceStartNumber(m_firstFrame);
-  xmlParser.setSequenceStopNumber(m_frameCount-1);
+  xmlParser.setSequenceStopNumber(m_frameCount - 1);
   xmlParser.setImageFileName(m_genericImageFileName);
   xmlParser.save(m_sequenceFileName);
   vpXmlParser::cleanup();
 }
 
-template<>
-inline void usSequenceWriter < usImagePreScan2D < unsigned char > >::close()
+template <> inline void usSequenceWriter<usImagePreScan2D<unsigned char> >::close()
 {
-  if(!is_open)
+  if (!is_open)
     return;
 
-  //saving settings
+  // saving settings
   usImageSettingsXmlParser xmlParser;
-  xmlParser.setImageSettings(m_frame.getTransducerRadius(),
-    m_frame.getScanLinePitch(),
-    m_frame.isTransducerConvex(),
-    m_frame.getAxialResolution(),
-    us::PRESCAN_2D,
-    m_frame.getSamplingFrequency(),
-    m_frame.getTransmitFrequency());
+  xmlParser.setImageSettings(m_frame.getTransducerRadius(), m_frame.getScanLinePitch(), m_frame.isTransducerConvex(),
+                             m_frame.getAxialResolution(), us::PRESCAN_2D, m_frame.getSamplingFrequency(),
+                             m_frame.getTransmitFrequency());
   xmlParser.setImageType(us::PRESCAN_2D);
   xmlParser.setSequenceFrameRate(m_frameRate);
   xmlParser.setSequenceStartNumber(m_firstFrame);
-  xmlParser.setSequenceStopNumber(m_frameCount-1);
+  xmlParser.setSequenceStopNumber(m_frameCount - 1);
   xmlParser.setImageFileName(m_genericImageFileName);
   xmlParser.save(m_sequenceFileName);
   vpXmlParser::cleanup();
 }
 
-template<>
-inline void usSequenceWriter<usImagePostScan2D<unsigned char> >::close()
+template <> inline void usSequenceWriter<usImagePostScan2D<unsigned char> >::close()
 {
-  if(!is_open)
+  if (!is_open)
     return;
 
-  //saving settings
+  // saving settings
   usImageSettingsXmlParser xmlParser;
-  xmlParser.setImageSettings(m_frame.getTransducerRadius(),
-    m_frame.getScanLinePitch(),
-    m_frame.isTransducerConvex(),
-    m_frame.getScanLineNumber(),
-    m_frame.getWidthResolution(),
-    m_frame.getHeightResolution(),
-    m_frame.getSamplingFrequency(),
-    m_frame.getTransmitFrequency());
+  xmlParser.setImageSettings(m_frame.getTransducerRadius(), m_frame.getScanLinePitch(), m_frame.isTransducerConvex(),
+                             m_frame.getScanLineNumber(), m_frame.getWidthResolution(), m_frame.getHeightResolution(),
+                             m_frame.getSamplingFrequency(), m_frame.getTransmitFrequency());
 
   xmlParser.setImageType(us::POSTSCAN_2D);
   xmlParser.setSequenceFrameRate(m_frameRate);
   xmlParser.setSequenceStartNumber(m_firstFrame);
-  xmlParser.setSequenceStopNumber(m_frameCount-1);
+  xmlParser.setSequenceStopNumber(m_frameCount - 1);
   xmlParser.setImageFileName(m_genericImageFileName);
   xmlParser.save(m_sequenceFileName);
   vpXmlParser::cleanup();
@@ -321,25 +289,24 @@ inline void usSequenceWriter<usImagePostScan2D<unsigned char> >::close()
 * @param image Next image to write.
 * @param timestamp timestamp of the image (optionnal).
 */
-template<class ImageType>
-void usSequenceWriter<ImageType>::saveImage(const ImageType &image, uint64_t timestamp)
+template <class ImageType> void usSequenceWriter<ImageType>::saveImage(const ImageType &image, uint64_t timestamp)
 {
   if (!is_open) {
-    open(image,timestamp);
-    return; //first image has been written by open();
+    open(image, timestamp);
+    return; // first image has been written by open();
   }
 
-  //Writing image
+  // Writing image
   char buffer[FILENAME_MAX];
-  sprintf(buffer, m_genericImageFileName.c_str(),m_frameCount);
+  sprintf(buffer, m_genericImageFileName.c_str(), m_frameCount);
 
-  //case of timestamp to add
-  if(timestamp != 0){
+  // case of timestamp to add
+  if (timestamp != 0) {
     std::vector<std::string> splitted = vpIoTools::splitChain(std::string(buffer), std::string("."));
     std::string base = splitted.at(0);
     base.append(std::string(".%lld."));
     base.append(splitted.at(2));
-    sprintf(buffer, base.c_str(),timestamp);
+    sprintf(buffer, base.c_str(), timestamp);
   }
 
   std::string imageFileName = vpIoTools::getParent(m_sequenceFileName) + vpIoTools::path("/") + buffer;
@@ -349,4 +316,4 @@ void usSequenceWriter<ImageType>::saveImage(const ImageType &image, uint64_t tim
   m_frameCount = m_frameCount + 1;
 }
 
-#endif //US_SEQUENCE_WRITER_H
+#endif // US_SEQUENCE_WRITER_H

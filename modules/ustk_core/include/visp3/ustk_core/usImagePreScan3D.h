@@ -90,7 +90,8 @@
   The following figure summarize these settings and shows the structure of an usImagePreScan3D image:
   \image html img-usImagePreScan3D.png
 
-  The following example shows how to build a 3D pre-scan ultrasound image from an usImage3D, and from acquisiton settings.
+  The following example shows how to build a 3D pre-scan ultrasound image from an usImage3D, and from acquisiton
+settings.
 
   \code
 #include <visp3/ustk_core/usImagePreScan3D.h>
@@ -133,17 +134,19 @@ int main()
 }
   \endcode
 */
-template<class Type>
-class usImagePreScan3D : public usImage3D<Type>, public usImagePreScanSettings, public usMotorSettings {
+template <class Type>
+class usImagePreScan3D : public usImage3D<Type>, public usImagePreScanSettings, public usMotorSettings
+{
 public:
-  //default constructors
+  // default constructors
   usImagePreScan3D();
-  //All parameters initialisation constructors
-  usImagePreScan3D(const usImage3D<Type> &image, const usImagePreScanSettings &preScanSettings, const usMotorSettings &motorSettings);
-  //usImagePreScan3D copy constructor
+  // All parameters initialisation constructors
+  usImagePreScan3D(const usImage3D<Type> &image, const usImagePreScanSettings &preScanSettings,
+                   const usMotorSettings &motorSettings);
+  // usImagePreScan3D copy constructor
   usImagePreScan3D(const usImagePreScan3D &other);
 
-  //destructor
+  // destructor
   virtual ~usImagePreScan3D();
 
   unsigned int getBModeSampleNumber() const;
@@ -152,27 +155,25 @@ public:
 
   void insertFrame(vpImage<Type> frame, unsigned int index);
 
-  //assignement
-  usImagePreScan3D<Type>& operator=(const usImagePreScan3D<Type> &other);
-  //comparison
+  // assignement
+  usImagePreScan3D<Type> &operator=(const usImagePreScan3D<Type> &other);
+  // comparison
   bool operator==(const usImagePreScan3D<Type> &other);
 
   void setData(const usImage3D<Type> &image);
   void setFrameNumber(unsigned int frameNumber);
   void setScanLineNumber(unsigned int scanLineNumber);
 
-  //Filtering before calling vpImage::resize() to update scanLineNumber
-  void resize(unsigned int dimX,unsigned int dimY,unsigned int dimZ);
+  // Filtering before calling vpImage::resize() to update scanLineNumber
+  void resize(unsigned int dimX, unsigned int dimY, unsigned int dimZ);
 };
 
 /**
 * Basic constructor, all settings set to default values.
 */
-template<class Type>
-usImagePreScan3D<Type>::usImagePreScan3D()
-  : usImage3D<Type>(), usImagePreScanSettings(), usMotorSettings()
+template <class Type>
+usImagePreScan3D<Type>::usImagePreScan3D() : usImage3D<Type>(), usImagePreScanSettings(), usMotorSettings()
 {
-
 }
 
 /**
@@ -181,9 +182,8 @@ usImagePreScan3D<Type>::usImagePreScan3D()
 * @param preScanSettings Pre-scan settings you want to copy.
 * @param motorSettings Motor settings you want to copy.
 */
-template<class Type>
-usImagePreScan3D<Type>::usImagePreScan3D(const usImage3D<Type> &image,
-                                         const usImagePreScanSettings &preScanSettings,
+template <class Type>
+usImagePreScan3D<Type>::usImagePreScan3D(const usImage3D<Type> &image, const usImagePreScanSettings &preScanSettings,
                                          const usMotorSettings &motorSettings)
   : usImage3D<Type>(image), usImagePreScanSettings(preScanSettings), usMotorSettings(motorSettings)
 {
@@ -197,33 +197,30 @@ usImagePreScan3D<Type>::usImagePreScan3D(const usImage3D<Type> &image,
 * Copy constructor.
 * @param other 3D pre-scan image you want to copy.
 */
-template<class Type>
+template <class Type>
 usImagePreScan3D<Type>::usImagePreScan3D(const usImagePreScan3D &other)
   : usImage3D<Type>(other), usImagePreScanSettings(other), usMotorSettings(other)
 {
-
 }
 
 /**
 * Destructor.
 */
-template<class Type>
-usImagePreScan3D<Type>::~usImagePreScan3D() {}
+template <class Type> usImagePreScan3D<Type>::~usImagePreScan3D() {}
 
 /**
 * Copy operator.
 */
-template<class Type>
-usImagePreScan3D<Type>& usImagePreScan3D<Type>::operator=(const usImagePreScan3D<Type> &other)
+template <class Type> usImagePreScan3D<Type> &usImagePreScan3D<Type>::operator=(const usImagePreScan3D<Type> &other)
 {
-  //from vpImage
+  // from vpImage
   usImage3D<Type>::operator=(other);
 
-  //from usImageSettings
+  // from usImageSettings
   usImagePreScanSettings::operator=(other);
 
-  //for motor settings
-  usMotorSettings::operator =(other);
+  // for motor settings
+  usMotorSettings::operator=(other);
 
   return *this;
 }
@@ -231,30 +228,26 @@ usImagePreScan3D<Type>& usImagePreScan3D<Type>::operator=(const usImagePreScan3D
 /**
 * Comparison operator.
 */
-template<class Type>
-bool usImagePreScan3D<Type>::operator==(const usImagePreScan3D<Type> &other)
+template <class Type> bool usImagePreScan3D<Type>::operator==(const usImagePreScan3D<Type> &other)
 {
-  return(usImage3D<Type>::operator== (other) &&
-         usImagePreScanSettings::operator== (other) &&
-         usMotorSettings::operator ==(other));
+  return (usImage3D<Type>::operator==(other) && usImagePreScanSettings::operator==(other) &&
+          usMotorSettings::operator==(other));
 }
 
 /**
 * Operator to print 3D pre-scan image information on a stream.
 */
-template<class Type>
-std::ostream& operator<<(std::ostream& out, const usImagePreScan3D<Type> &other)
+template <class Type> std::ostream &operator<<(std::ostream &out, const usImagePreScan3D<Type> &other)
 {
-  return out << static_cast<const usImage3D<Type> &>(other) <<
-                static_cast<const usImagePreScanSettings &>(other) <<
-                static_cast<const usMotorSettings &>(other);
+  return out << static_cast<const usImage3D<Type> &>(other) << static_cast<const usImagePreScanSettings &>(other)
+             << static_cast<const usMotorSettings &>(other);
 }
 
 /**
 * Gets the number of B-mode samples along a scan line. This value corresponds to the 3D image Y-size.
 */
-template<class Type>
-unsigned int usImagePreScan3D<Type>::getBModeSampleNumber() const {
+template <class Type> unsigned int usImagePreScan3D<Type>::getBModeSampleNumber() const
+{
   return usImage3D<Type>::getDimY();
 }
 
@@ -262,8 +255,7 @@ unsigned int usImagePreScan3D<Type>::getBModeSampleNumber() const {
 * Setter for the 3D pre-scan image data.
 * @param image Data to set.
 */
-template<class Type>
-void usImagePreScan3D<Type>::setData(const usImage3D<Type> &image)
+template <class Type> void usImagePreScan3D<Type>::setData(const usImage3D<Type> &image)
 {
   usImage3D<Type>::operator=(image);
   setScanLineNumber(image.getDimX());
@@ -276,8 +268,7 @@ void usImagePreScan3D<Type>::setData(const usImage3D<Type> &image)
  * Resize also the image X-size that is equal to the scan line number.
  * \param scanLineNumber Number of scan lines acquired by the transducer.
  */
-template<class Type>
-void usImagePreScan3D<Type>::setScanLineNumber(unsigned int scanLineNumber)
+template <class Type> void usImagePreScan3D<Type>::setScanLineNumber(unsigned int scanLineNumber)
 {
   usImage3D<Type>::resize(scanLineNumber, usImage3D<Type>::getDimY(), usImage3D<Type>::getDimZ());
   usTransducerSettings::setScanLineNumber(scanLineNumber);
@@ -289,8 +280,7 @@ void usImagePreScan3D<Type>::setScanLineNumber(unsigned int scanLineNumber)
  * Resize also the image Z-size that is equal to the frame number.
  * \param frameNumber Number of frames in the 3D volume.
  */
-template<class Type>
-void usImagePreScan3D<Type>::setFrameNumber(unsigned int frameNumber)
+template <class Type> void usImagePreScan3D<Type>::setFrameNumber(unsigned int frameNumber)
 {
   usImage3D<Type>::resize(usImage3D<Type>::getDimX(), usImage3D<Type>::getDimY(), frameNumber);
   usMotorSettings::setFrameNumber(frameNumber);
@@ -305,8 +295,7 @@ void usImagePreScan3D<Type>::setFrameNumber(unsigned int frameNumber)
  * \param dimY Image Y-size.
  * \param dimZ Image Z-size.
  */
-template<class Type>
-void usImagePreScan3D<Type>::resize(unsigned int dimX, unsigned int dimY, unsigned int dimZ)
+template <class Type> void usImagePreScan3D<Type>::resize(unsigned int dimX, unsigned int dimY, unsigned int dimZ)
 {
   usImage3D<Type>::resize(dimX, dimY, dimZ);
   usMotorSettings::setFrameNumber(dimZ);
@@ -318,23 +307,22 @@ void usImagePreScan3D<Type>::resize(unsigned int dimX, unsigned int dimY, unsign
  * @param frame The 2D frame to insert.
  * @param index Position to insert the frame in the volume.
  */
-template<class Type>
-void usImagePreScan3D<Type>::insertFrame(vpImage<Type> frame, unsigned int index)
+template <class Type> void usImagePreScan3D<Type>::insertFrame(vpImage<Type> frame, unsigned int index)
 {
-  //Dimentions checks
-  if(index > this->getDimZ())
-    throw(vpException(vpException::badValue,"usImage3D::insertFrame : frame index out of volume"));
+  // Dimentions checks
+  if (index > this->getDimZ())
+    throw(vpException(vpException::badValue, "usImage3D::insertFrame : frame index out of volume"));
 
-  if(frame.getHeight() != this->getDimY() || frame.getWidth() != this->getDimX())
-    throw(vpException(vpException::badValue,"usImage3D::insertFrame : frame size don't match volume size"));
+  if (frame.getHeight() != this->getDimY() || frame.getWidth() != this->getDimX())
+    throw(vpException(vpException::badValue, "usImage3D::insertFrame : frame size don't match volume size"));
 
-  //offset to access the frame in the volume
+  // offset to access the frame in the volume
   int offset = index * this->getDimY() * this->getDimX();
-  Type* frameBeginning = this->getData() + offset;
+  Type *frameBeginning = this->getData() + offset;
 
-  //copy
-  for(unsigned int i=0; i<this->getDimX(); i++) {
-    for(unsigned int j=0; j<this->getDimY(); j++) {
+  // copy
+  for (unsigned int i = 0; i < this->getDimX(); i++) {
+    for (unsigned int j = 0; j < this->getDimY(); j++) {
       frameBeginning[i + this->getDimX() * j] = frame[j][i];
     }
   }
@@ -345,22 +333,22 @@ void usImagePreScan3D<Type>::insertFrame(vpImage<Type> frame, unsigned int index
  * @param [out] image The 2D frame to insert.
  * @param [in] index Position of the frame to extract in the volume.
  */
-template<class Type>
-void usImagePreScan3D<Type>::getFrame(vpImage<Type> &image, unsigned int index) {
+template <class Type> void usImagePreScan3D<Type>::getFrame(vpImage<Type> &image, unsigned int index)
+{
 
-  //Dimentions checks
-  if(index > this->getDimZ() - 1)
-    throw(vpException(vpException::badValue,"usImage3D::getFrame : frame index out of volume"));
+  // Dimentions checks
+  if (index > this->getDimZ() - 1)
+    throw(vpException(vpException::badValue, "usImage3D::getFrame : frame index out of volume"));
 
-  image.resize(this->getDimY(),this->getDimX());
+  image.resize(this->getDimY(), this->getDimX());
 
-  //offset to access the frame in the volume
+  // offset to access the frame in the volume
   int offset = index * this->getDimY() * this->getDimX();
-  Type* frameBeginning = this->getData() + offset;
+  Type *frameBeginning = this->getData() + offset;
 
-  //copy
-  for(unsigned int i=0; i<this->getDimX(); i++) {
-    for(unsigned int j=0; j<this->getDimY(); j++) {
+  // copy
+  for (unsigned int i = 0; i < this->getDimX(); i++) {
+    for (unsigned int j = 0; j < this->getDimY(); j++) {
       image[j][i] = frameBeginning[i + this->getDimX() * j];
     }
   }

@@ -38,9 +38,9 @@
 #ifndef US_MHD_SEQUENCE_READER_H
 #define US_MHD_SEQUENCE_READER_H
 
-#include <vector>
 #include <iostream>
 #include <stdint.h>
+#include <vector>
 
 #include <visp3/ustk_io/usImageIo.h>
 #include <visp3/ustk_io/usRawFileParser.h>
@@ -48,9 +48,11 @@
 /**
  * @class usMHDSequenceReader
  * @brief Reader for a sequence of images stored as mhd/raw files in a directory
- * Image sequence files order have to respect alphabetical order in the directory, and be the same for corresponding mhd and raw files.
+ * Image sequence files order have to respect alphabetical order in the directory, and be the same for corresponding mhd
+and raw files.
  * For example : image1.mhd, image1.raw, image2.mhd, image2.raw, ...
- * The directory must contain exactly the same number of images as the number of images contained in the sequence (1 mhd file and 1 raw file per image of the sequence).
+ * The directory must contain exactly the same number of images as the number of images contained in the sequence (1 mhd
+file and 1 raw file per image of the sequence).
  *
  * Here is an example code of a basic use of this class:
  * @code
@@ -98,16 +100,15 @@ int main(int argc, char** argv)
 class VISP_EXPORT usMHDSequenceReader
 {
 public:
-
   usMHDSequenceReader();
   ~usMHDSequenceReader();
 
-  void acquire(usImageRF2D<short int> & image, uint64_t & timestamp);
-  void acquire(usImagePreScan2D<unsigned char> & image, uint64_t & timestamp);
-  void acquire(usImagePostScan2D<unsigned char> & image, uint64_t & timestamp);
-  void acquire(usImageRF3D<short int> & image, std::vector<uint64_t> & timestamp);
-  void acquire(usImagePreScan3D<unsigned char> & image, std::vector<uint64_t> & timestamp);
-  void acquire(usImagePostScan3D<unsigned char> & image, uint64_t & timestamp);
+  void acquire(usImageRF2D<short int> &image, uint64_t &timestamp);
+  void acquire(usImagePreScan2D<unsigned char> &image, uint64_t &timestamp);
+  void acquire(usImagePostScan2D<unsigned char> &image, uint64_t &timestamp);
+  void acquire(usImageRF3D<short int> &image, std::vector<uint64_t> &timestamp);
+  void acquire(usImagePreScan3D<unsigned char> &image, std::vector<uint64_t> &timestamp);
+  void acquire(usImagePostScan3D<unsigned char> &image, uint64_t &timestamp);
 
   bool end();
 
@@ -121,7 +122,6 @@ public:
   void setSequenceDirectory(const std::string sequenceDirectory);
 
 private:
-
   std::string m_sequenceDirectory;
 
   us::ImageType m_sequenceImageType;

@@ -43,17 +43,16 @@
 * Constructor.
 * @param decimationFactor Decimation factor for RF conversion (keeping 1 RF sample every decimationFactor samples)
 */
-usRFToPostScan3DConverter::usRFToPostScan3DConverter(int decimationFactor) : m_RFConverter(), m_scanConverter(), m_scanConverterIsInit(false),
-                                                         m_inputImageChanged(false), m_intermediateImage() {
+usRFToPostScan3DConverter::usRFToPostScan3DConverter(int decimationFactor)
+  : m_RFConverter(), m_scanConverter(), m_scanConverterIsInit(false), m_inputImageChanged(false), m_intermediateImage()
+{
   m_RFConverter.setDecimationFactor(decimationFactor);
 }
 
 /**
 * Destructor.
 */
-usRFToPostScan3DConverter::~usRFToPostScan3DConverter() {
-
-}
+usRFToPostScan3DConverter::~usRFToPostScan3DConverter() {}
 
 /**
 * Convert method : performs the conversion from RF frame to a post-scan volume.
@@ -61,8 +60,10 @@ usRFToPostScan3DConverter::~usRFToPostScan3DConverter() {
 * @param rfImage RF frame to convert
 * @param postScanImage post-scan image : result of convertion. But make sure
 */
-void usRFToPostScan3DConverter::convert(const usImageRF3D<short int> &rfImage, usImagePostScan3D<unsigned char> &postScanImage) {
-  m_RFConverter.convert(rfImage,m_intermediateImage);
+void usRFToPostScan3DConverter::convert(const usImageRF3D<short int> &rfImage,
+                                        usImagePostScan3D<unsigned char> &postScanImage)
+{
+  m_RFConverter.convert(rfImage, m_intermediateImage);
 
   // this init method checks if parameters are the same, to avoid recomputing all the init proccess if not necessarry
   m_scanConverter.init(m_intermediateImage);

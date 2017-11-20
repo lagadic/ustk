@@ -31,7 +31,7 @@
 
 /*                                                                -*-c++-*-
 #----------------------------------------------------------------------------
-#  
+#
 #	Example file for needle detection.
 #
 #       Pierre Chatelain
@@ -40,20 +40,19 @@
 #----------------------------------------------------------------------------
 */
 
-
 // visp
-#include <visp3/gui/vpDisplayX.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayD3D.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/io/vpParseArgv.h>
 #include <visp3/core/vpIoTools.h>
-#include <visp3/io/vpImageIo.h>
 #include <visp3/core/vpMatrix.h>
+#include <visp3/gui/vpDisplayD3D.h>
+#include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayGTK.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayX.h>
 #include <visp3/gui/vpPlot.h>
+#include <visp3/io/vpImageIo.h>
+#include <visp3/io/vpParseArgv.h>
 
-//ustk
+// ustk
 #include <visp3/ustk_io/usSequenceReader3D.h>
 #include <visp3/ustk_needle_detection/usNeedleTrackerSIR2D.h>
 
@@ -64,10 +63,10 @@ using namespace std;
 /* -------------------------------------------------------------------------- */
 
 // List of allowed command line options
-#define GETOPTARGS	"cdo:h"
+#define GETOPTARGS "cdo:h"
 
-void usage(const char *name, const char *badparam, const std::string& opath, const std::string& user);
-bool getOptions(int argc, const char **argv, std::string &opath, const std::string& user);
+void usage(const char *name, const char *badparam, const std::string &opath, const std::string &user);
+bool getOptions(int argc, const char **argv, std::string &opath, const std::string &user);
 
 /*!
 
@@ -79,15 +78,16 @@ Print the program options.
 \param user : Username.
 
  */
-void usage(const char *name, const char *badparam, const std::string& opath, const std::string& user)
+void usage(const char *name, const char *badparam, const std::string &opath, const std::string &user)
 {
   fprintf(stdout, "\n\
           Write and read ultrasound sequences in 2d image files, and the associated xml settings file.\n\
           \n\
           SYNOPSIS\n\
-          %s [-o <output image path>] [-h]\n", name);
+          %s [-o <output image path>] [-h]\n",
+          name);
 
-      fprintf(stdout, "\n\
+  fprintf(stdout, "\n\
               OPTIONS:                                               Default\n\
               -o <output data path>                               %s\n\
               Set data output path.\n\
@@ -96,12 +96,13 @@ void usage(const char *name, const char *badparam, const std::string& opath, con
               sequenceRF2D.xml file is written.\n\
               \n\
               -h\n\
-              Print the help.\n\n", opath.c_str(), user.c_str());
+              Print the help.\n\n",
+          opath.c_str(), user.c_str());
 
-              if (badparam) {
-                fprintf(stderr, "ERROR: \n" );
-                fprintf(stderr, "\nBad parameter [%s]\n", badparam);
-              }
+  if (badparam) {
+    fprintf(stderr, "ERROR: \n");
+    fprintf(stderr, "\nBad parameter [%s]\n", badparam);
+  }
 }
 
 /*!
@@ -113,22 +114,29 @@ void usage(const char *name, const char *badparam, const std::string& opath, con
   \param user : Username.
   \return false if the program has to be stopped, true otherwise.
 */
-bool getOptions(int argc, const char **argv, std::string &opath, const std::string& user)
+bool getOptions(int argc, const char **argv, std::string &opath, const std::string &user)
 {
   const char *optarg_;
-  int	c;
+  int c;
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
     switch (c) {
-    case 'o': opath = optarg_; break;
-    case 'h': usage(argv[0], NULL, opath, user); return false; break;
+    case 'o':
+      opath = optarg_;
+      break;
+    case 'h':
+      usage(argv[0], NULL, opath, user);
+      return false;
+      break;
 
     case 'c':
     case 'd':
       break;
 
     default:
-      usage(argv[0], optarg_, opath, user); return false; break;
+      usage(argv[0], optarg_, opath, user);
+      return false;
+      break;
     }
   }
 
@@ -143,15 +151,14 @@ bool getOptions(int argc, const char **argv, std::string &opath, const std::stri
   return true;
 }
 
-
 int main(int argc, const char *argv[])
 {
 
   std::string vol_filename;
 
-  for (int i=0; i<argc; i++) {
+  for (int i = 0; i < argc; i++) {
     if (std::string(argv[i]) == "--input")
-      vol_filename = std::string(argv[i+1]);
+      vol_filename = std::string(argv[i + 1]);
     else if (std::string(argv[i]) == "--help") {
       std::cout << "\nUsage: " << argv[0] << " [--input <file.vol>] [--help]\n" << std::endl;
       return 0;
@@ -161,7 +168,7 @@ int main(int argc, const char *argv[])
   // Get the ustk-dataset package path or USTK_DATASET_PATH environment variable value
   if (vol_filename.empty()) {
     std::string env_ipath = us::getDataSetPath();
-    if (! env_ipath.empty())
+    if (!env_ipath.empty())
       vol_filename = env_ipath + "/vol/01.vol";
     else {
       std::cout << "You should set USTK_DATASET_PATH environment var to access to ustk dataset" << std::endl;
@@ -171,7 +178,7 @@ int main(int argc, const char *argv[])
 
   usImagePreScan3D<unsigned char> image;
 
-  //usImageIo::read(image, vol_filename);
+  // usImageIo::read(image, vol_filename);
   usSequenceReader3D<usImagePreScan3D<unsigned char> > reader;
   reader.setSequenceFileName(vol_filename);
 
@@ -180,8 +187,8 @@ int main(int argc, const char *argv[])
 
   std::string base = "vol%d-frame%d.png";
 
-  //reading 10th volume with getVolume method, and writing the 1st frame to check it
-  reader.getVolume(image,10);
+  // reading 10th volume with getVolume method, and writing the 1st frame to check it
+  reader.getVolume(image, 10);
   firstFrame.resize(image.getBModeSampleNumber(), image.getScanLineNumber());
   for (unsigned int i = 0; i < image.getBModeSampleNumber(); i++) {
     for (unsigned int j = 0; j < image.getScanLineNumber(); j++) {
@@ -191,7 +198,7 @@ int main(int argc, const char *argv[])
   sprintf(buffer, base.c_str(), 10, 0);
   vpImageIo::write(firstFrame, buffer);
 
-  //Reading all the sequence with the  reader
+  // Reading all the sequence with the  reader
   /*
   while(!reader.end()) {
     reader.acquire(image);

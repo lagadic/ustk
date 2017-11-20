@@ -38,9 +38,9 @@
 #ifndef US_MHD_SEQUENCE_WRITER_H
 #define US_MHD_SEQUENCE_WRITER_H
 
-#include <vector>
 #include <iostream>
 #include <stdint.h>
+#include <vector>
 
 #include <visp3/ustk_io/usImageIo.h>
 #include <visp3/ustk_io/usRawFileParser.h>
@@ -49,13 +49,13 @@
  * @class usMHDSequenceWriter
  * @brief Writer for a sequence of images stored as mhd/raw files in a directory
  * Image filenames are set based on the following format: "image%05d.mhd" and "image%05d.raw".
- * An internal counter is incremented every time write() is called, to update the filename of the new image in the sequence.
+ * An internal counter is incremented every time write() is called, to update the filename of the new image in the
+ * sequence.
  * @ingroup module_ustk_io
  */
 class VISP_EXPORT usMHDSequenceWriter
 {
 public:
-
   usMHDSequenceWriter();
   ~usMHDSequenceWriter();
 
@@ -69,7 +69,6 @@ public:
   void write(const usImagePostScan3D<unsigned char> &image, const uint64_t timestamp);
 
 private:
-
   std::string m_sequenceDirectory;
 
   us::ImageType m_sequenceImageType;

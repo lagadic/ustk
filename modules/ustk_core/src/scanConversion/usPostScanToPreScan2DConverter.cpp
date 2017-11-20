@@ -46,18 +46,19 @@ usPostScanToPreScan2DConverter::usPostScanToPreScan2DConverter() : m_isInit(fals
 * @param scanLineNumber Number of scan lines : width of the pre-scan image built by run().
  */
 usPostScanToPreScan2DConverter::usPostScanToPreScan2DConverter(const usImagePostScan2D<unsigned char> &inputSettings,
- const int BModeSampleNumber, const int scanLineNumber)
- {
- init(inputSettings,BModeSampleNumber,scanLineNumber);
- }
+                                                               const int BModeSampleNumber, const int scanLineNumber)
+{
+  init(inputSettings, BModeSampleNumber, scanLineNumber);
+}
 
 /**
  * Default constructor.
  */
 usPostScanToPreScan2DConverter::usPostScanToPreScan2DConverter(const usTransducerSettings &transducerSettings,
- const int BModeSampleNumber, const int scanLineNumber,const double xResolution, const double yResolution)
+                                                               const int BModeSampleNumber, const int scanLineNumber,
+                                                               const double xResolution, const double yResolution)
 {
-init(transducerSettings, BModeSampleNumber, scanLineNumber, xResolution, yResolution);
+  init(transducerSettings, BModeSampleNumber, scanLineNumber, xResolution, yResolution);
 }
 
 /**
@@ -71,32 +72,33 @@ usPostScanToPreScan2DConverter::~usPostScanToPreScan2DConverter() {}
 * @param BModeSampleNumber Number of samples along a scan line : height of the pre-scan image built by run().
 * @param scanLineNumber Number of scan lines : width of the pre-scan image built by run().
 */
-void usPostScanToPreScan2DConverter::init(const usImagePostScan2D<unsigned char> &inputSettings, const int BModeSampleNumber,
-                                 const int scanLineNumber)
+void usPostScanToPreScan2DConverter::init(const usImagePostScan2D<unsigned char> &inputSettings,
+                                          const int BModeSampleNumber, const int scanLineNumber)
 {
-  //check if init is necessary
-  if (m_initSettings == (usTransducerSettings)inputSettings && m_xResolution == inputSettings.getWidthResolution() && m_yResolution == inputSettings.getHeightResolution() && m_scanLineNumber == scanLineNumber && m_BModeSampleNumber == BModeSampleNumber) {
+  // check if init is necessary
+  if (m_initSettings == (usTransducerSettings)inputSettings && m_xResolution == inputSettings.getWidthResolution() &&
+      m_yResolution == inputSettings.getHeightResolution() && m_scanLineNumber == scanLineNumber &&
+      m_BModeSampleNumber == BModeSampleNumber) {
     return;
   }
 
-  //check resolution to avoir errors
-  if(inputSettings.getHeightResolution() == 0.0 || inputSettings.getWidthResolution() == 0.0)
+  // check resolution to avoir errors
+  if (inputSettings.getHeightResolution() == 0.0 || inputSettings.getWidthResolution() == 0.0)
     throw(vpException(vpException::notInitialized, "Please fill the post-scan resplution before init the conversion."));
 
-
-  //convex transducer scan conversion
-  if(inputSettings.isTransducerConvex()) {
+  // convex transducer scan conversion
+  if (inputSettings.isTransducerConvex()) {
     double APitch = inputSettings.getDepth() / (double)(BModeSampleNumber);
     double LPitch = inputSettings.getScanLinePitch() * inputSettings.getTransducerRadius();
 
     double r_min = inputSettings.getTransducerRadius();
     double r_max = (inputSettings.getTransducerRadius() + APitch * BModeSampleNumber);
-    double t_min = - inputSettings.getFieldOfView() / 2.0;
-    //double t_max = - t_min;
+    double t_min = -inputSettings.getFieldOfView() / 2.0;
+    // double t_max = - t_min;
     double x_min = r_min * cos(t_min);
-    //double x_max = r_max;
+    // double x_max = r_max;
     double y_min = r_max * sin(t_min);
-    //double y_max = r_max * sin(t_max);
+    // double y_max = r_max * sin(t_max);
 
     m_iMap.resize(BModeSampleNumber, scanLineNumber);
     m_jMap.resize(BModeSampleNumber, scanLineNumber);
@@ -106,17 +108,18 @@ void usPostScanToPreScan2DConverter::init(const usImagePostScan2D<unsigned char>
       for (int v = 0; v < scanLineNumber; ++v) {
         r = inputSettings.getTransducerRadius() + APitch * u;
         t = (v - (scanLineNumber - 1) / 2.0) * LPitch / inputSettings.getTransducerRadius();
-        m_iMap[u][v] = (r * cos(t) - x_min) / inputSettings.getHeightResolution(); //resolution to check
-        m_jMap[u][v] = (r * sin(t) - y_min) / inputSettings.getWidthResolution(); //resolution to check
+        m_iMap[u][v] = (r * cos(t) - x_min) / inputSettings.getHeightResolution(); // resolution to check
+        m_jMap[u][v] = (r * sin(t) - y_min) / inputSettings.getWidthResolution();  // resolution to check
       }
     }
-  m_isInit = true;
+    m_isInit = true;
   }
-  //linear transducer scan-conversion
+  // linear transducer scan-conversion
   else {
-    throw(vpException(vpException::notImplementedError, "Back-scan conversion is not implemented for linear transducer."));
+    throw(vpException(vpException::notImplementedError,
+                      "Back-scan conversion is not implemented for linear transducer."));
   }
-  //saving settings
+  // saving settings
   m_initSettings = inputSettings;
   m_xResolution = inputSettings.getWidthResolution();
   m_yResolution = inputSettings.getHeightResolution();
@@ -133,26 +136,28 @@ void usPostScanToPreScan2DConverter::init(const usImagePostScan2D<unsigned char>
 * @param scanLineNumber Number of scan lines you want in output of back conversion.
 */
 void usPostScanToPreScan2DConverter::init(const usTransducerSettings &transducerSettings, const int BModeSampleNumber,
- const int scanLineNumber,const double xResolution, const double yResolution)
+                                          const int scanLineNumber, const double xResolution, const double yResolution)
 {
-  //check if init is necessary
-  if (m_initSettings == transducerSettings && m_xResolution == xResolution && m_yResolution == yResolution && m_scanLineNumber == scanLineNumber && m_BModeSampleNumber == BModeSampleNumber) {
+  // check if init is necessary
+  if (m_initSettings == transducerSettings && m_xResolution == xResolution && m_yResolution == yResolution &&
+      m_scanLineNumber == scanLineNumber && m_BModeSampleNumber == BModeSampleNumber) {
     return;
   }
 
-  //convex transducer scan conversion
-  if(transducerSettings.isTransducerConvex()) {
+  // convex transducer scan conversion
+  if (transducerSettings.isTransducerConvex()) {
     double APitch = transducerSettings.getDepth() / BModeSampleNumber;
-    double LPitch = transducerSettings.getFieldOfView() * transducerSettings.getTransducerRadius() / (scanLineNumber -1);
+    double LPitch =
+        transducerSettings.getFieldOfView() * transducerSettings.getTransducerRadius() / (scanLineNumber - 1);
 
     double r_min = transducerSettings.getTransducerRadius();
     double r_max = (transducerSettings.getTransducerRadius() + APitch * BModeSampleNumber);
-    double t_min = - transducerSettings.getFieldOfView() / 2.0;
-    //double t_max = - t_min;
+    double t_min = -transducerSettings.getFieldOfView() / 2.0;
+    // double t_max = - t_min;
     double x_min = r_min * cos(t_min);
-    //double x_max = r_max;
+    // double x_max = r_max;
     double y_min = r_max * sin(t_min);
-    //double y_max = r_max * sin(t_max);
+    // double y_max = r_max * sin(t_max);
     m_iMap.resize(BModeSampleNumber, scanLineNumber);
     m_jMap.resize(BModeSampleNumber, scanLineNumber);
 
@@ -161,17 +166,17 @@ void usPostScanToPreScan2DConverter::init(const usTransducerSettings &transducer
       for (int v = 0; v < scanLineNumber; ++v) {
         r = transducerSettings.getTransducerRadius() + APitch * u;
         t = (v - (scanLineNumber - 1) / 2.0) * LPitch / transducerSettings.getTransducerRadius();
-        m_iMap[u][v] = (r * cos(t) - x_min) / yResolution; //to check
-        m_jMap[u][v] = (r * sin(t) - y_min) / xResolution; //to check
+        m_iMap[u][v] = (r * cos(t) - x_min) / yResolution; // to check
+        m_jMap[u][v] = (r * sin(t) - y_min) / xResolution; // to check
       }
     }
-  m_isInit = true;
+    m_isInit = true;
   }
-  //linear transducer scan-conversion
+  // linear transducer scan-conversion
   else {
-    //not implemented
+    // not implemented
   }
-  //saving settings
+  // saving settings
   m_initSettings = transducerSettings;
   m_xResolution = xResolution;
   m_yResolution = yResolution;
@@ -184,22 +189,23 @@ void usPostScanToPreScan2DConverter::init(const usTransducerSettings &transducer
 * @param [in] imageToConvert Post-scan image to convert back.
 * @param [out] imageConverted Pre-scan image obtained after back conversion.
 */
-void usPostScanToPreScan2DConverter::convert(const usImagePostScan2D<unsigned char> &imageToConvert, usImagePreScan2D<unsigned char> &imageConverted)
+void usPostScanToPreScan2DConverter::convert(const usImagePostScan2D<unsigned char> &imageToConvert,
+                                             usImagePreScan2D<unsigned char> &imageConverted)
 {
   if (!m_isInit) {
-    init(imageToConvert, (int)(imageToConvert.getDepth() / imageToConvert.getHeightResolution()), imageToConvert.getScanLineNumber());
+    init(imageToConvert, (int)(imageToConvert.getDepth() / imageToConvert.getHeightResolution()),
+         imageToConvert.getScanLineNumber());
   }
 
   imageConverted.setImagePreScanSettings(usImagePreScanSettings(m_initSettings, m_yResolution));
 
-
   imageConverted.setScanLineNumber(m_scanLineNumber);
   imageConverted.setFieldOfView(m_initSettings.getFieldOfView());
-  imageConverted.setAxialResolution(m_initSettings.getDepth()/m_BModeSampleNumber);
+  imageConverted.setAxialResolution(m_initSettings.getDepth() / m_BModeSampleNumber);
   imageConverted.setTransducerConvexity(m_initSettings.isTransducerConvex());
   imageConverted.setTransducerRadius(m_initSettings.getTransducerRadius());
 
-  imageConverted.resize(m_BModeSampleNumber,m_scanLineNumber);
+  imageConverted.resize(m_BModeSampleNumber, m_scanLineNumber);
   double i, j;
   for (unsigned int u = 0; u < imageConverted.getBModeSampleNumber(); ++u)
     for (unsigned int v = 0; v < imageConverted.getScanLineNumber(); ++v) {
@@ -209,7 +215,7 @@ void usPostScanToPreScan2DConverter::convert(const usImagePostScan2D<unsigned ch
     }
 }
 
-double usPostScanToPreScan2DConverter::interpolateLinear(const vpImage<unsigned char>& I, double x, double y)
+double usPostScanToPreScan2DConverter::interpolateLinear(const vpImage<unsigned char> &I, double x, double y)
 {
   int x1 = (int)floor(x);
   int x2 = (int)ceil(x);
@@ -219,25 +225,27 @@ double usPostScanToPreScan2DConverter::interpolateLinear(const vpImage<unsigned 
   if ((0 <= x) && (x < I.getHeight()) && (0 <= y) && (y < I.getWidth())) {
     double val1, val2;
     // Check whether the indices are within the image extent
-    if (x1 < 0) ++x1;
-    if (y1 < 0) ++y1;
-    if (x2 >= static_cast<int>(I.getHeight())) --x2;
-    if (y2 >= static_cast<int>(I.getWidth())) --y2;
+    if (x1 < 0)
+      ++x1;
+    if (y1 < 0)
+      ++y1;
+    if (x2 >= static_cast<int>(I.getHeight()))
+      --x2;
+    if (y2 >= static_cast<int>(I.getWidth()))
+      --y2;
 
     // Check whether the target is on the grid
-    if (x1==x2) {
+    if (x1 == x2) {
       val1 = I(x1, y1);
       val2 = I(x1, y2);
-    }
-    else {
+    } else {
       val1 = (x2 - x) * I(x1, y1) + (x - x1) * I(x2, y1);
       val2 = (x2 - x) * I(x1, y2) + (x - x1) * I(x2, y2);
     }
-    if (y1==y2)
+    if (y1 == y2)
       return val1;
     else
       return (y2 - y) * val1 + (y - y1) * val2;
   }
   return 0.0;
 }
-

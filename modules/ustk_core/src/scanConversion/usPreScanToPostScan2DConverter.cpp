@@ -30,8 +30,8 @@
  *
  *****************************************************************************/
 
-#include <visp3/ustk_core/usPreScanToPostScan2DConverter.h>
 #include <visp/vpMath.h>
+#include <visp3/ustk_core/usPreScanToPostScan2DConverter.h>
 
 usPreScanToPostScan2DConverter::usPreScanToPostScan2DConverter() : m_initDone(false) {}
 
@@ -44,14 +44,14 @@ usPreScanToPostScan2DConverter::~usPreScanToPostScan2DConverter() {}
 * @param scanLineNumber Number of scan lines : width of the pre-scan image to convert.
 */
 
-void usPreScanToPostScan2DConverter::init(const usImagePostScan2D<unsigned char> &inputSettings, const int BModeSampleNumber,
-            const int scanLineNumber)
+void usPreScanToPostScan2DConverter::init(const usImagePostScan2D<unsigned char> &inputSettings,
+                                          const int BModeSampleNumber, const int scanLineNumber)
 {
-  //check resolution to avoir errors
-  if(inputSettings.getHeightResolution() == 0.0 || inputSettings.getWidthResolution() == 0.0)
+  // check resolution to avoir errors
+  if (inputSettings.getHeightResolution() == 0.0 || inputSettings.getWidthResolution() == 0.0)
     throw(vpException(vpException::notInitialized, "Please fill the post-scan resolution before init the conversion."));
 
-  if(inputSettings.isTransducerConvex()) {
+  if (inputSettings.isTransducerConvex()) {
     m_scanLineNumber = scanLineNumber;
     m_BModeSampleNumber = BModeSampleNumber;
     m_xResolution = inputSettings.getWidthResolution();
@@ -59,12 +59,12 @@ void usPreScanToPostScan2DConverter::init(const usImagePostScan2D<unsigned char>
     m_settings = inputSettings;
 
     double APitch = inputSettings.getDepth() / (double)(BModeSampleNumber);
-    double LPitch = inputSettings.getFieldOfView() * inputSettings.getTransducerRadius() / (double)(scanLineNumber -1);
+    double LPitch = inputSettings.getFieldOfView() * inputSettings.getTransducerRadius() / (double)(scanLineNumber - 1);
 
     double r_min = inputSettings.getTransducerRadius();
     double r_max = (inputSettings.getTransducerRadius() + APitch * BModeSampleNumber);
-    double t_min = - ( (double)(scanLineNumber-1) * LPitch) / (2.0 * inputSettings.getTransducerRadius());
-    double t_max = - t_min;
+    double t_min = -((double)(scanLineNumber - 1) * LPitch) / (2.0 * inputSettings.getTransducerRadius());
+    double t_max = -t_min;
     double x_min = r_min * cos(t_min);
     double x_max = r_max;
     double y_min = r_max * sin(t_min);
@@ -82,11 +82,10 @@ void usPreScanToPostScan2DConverter::init(const usImagePostScan2D<unsigned char>
         x = x_min + i * m_yResolution;
         y = y_min + j * m_xResolution;
         m_rMap[i][j] = (sqrt(x * x + y * y) - inputSettings.getTransducerRadius()) / APitch;
-        m_tMap[i][j] = atan2(y, x) * inputSettings.getTransducerRadius() / LPitch + (scanLineNumber-1) / 2.0;
+        m_tMap[i][j] = atan2(y, x) * inputSettings.getTransducerRadius() / LPitch + (scanLineNumber - 1) / 2.0;
       }
     }
-  }
-  else{
+  } else {
     m_scanLineNumber = scanLineNumber;
     m_BModeSampleNumber = BModeSampleNumber;
     m_xResolution = inputSettings.getWidthResolution();
@@ -95,7 +94,7 @@ void usPreScanToPostScan2DConverter::init(const usImagePostScan2D<unsigned char>
 
     double APitch = inputSettings.getDepth() / (double)(BModeSampleNumber);
     m_height = vpMath::round((APitch * BModeSampleNumber) / m_yResolution);
-    m_width = vpMath::round( inputSettings.getScanLinePitch() * (scanLineNumber - 1) / m_xResolution);
+    m_width = vpMath::round(inputSettings.getScanLinePitch() * (scanLineNumber - 1) / m_xResolution);
 
     m_rMap.resize(m_height, m_width);
     m_tMap.resize(m_height, m_width);
@@ -123,7 +122,7 @@ void usPreScanToPostScan2DConverter::init(const usImagePostScan2D<unsigned char>
 void usPreScanToPostScan2DConverter::init(const usTransducerSettings &inputSettings, const int BModeSampleNumber,
                                           const int scanLineNumber, const double xResolution, const double yResolution)
 {
-  if(inputSettings.isTransducerConvex()) {
+  if (inputSettings.isTransducerConvex()) {
     m_scanLineNumber = scanLineNumber;
     m_BModeSampleNumber = BModeSampleNumber;
     m_xResolution = xResolution;
@@ -131,12 +130,12 @@ void usPreScanToPostScan2DConverter::init(const usTransducerSettings &inputSetti
     m_settings = inputSettings;
 
     double APitch = inputSettings.getDepth() / (double)(BModeSampleNumber);
-    double LPitch = inputSettings.getFieldOfView() * inputSettings.getTransducerRadius() / (double)(scanLineNumber -1);
+    double LPitch = inputSettings.getFieldOfView() * inputSettings.getTransducerRadius() / (double)(scanLineNumber - 1);
 
     double r_min = inputSettings.getTransducerRadius();
     double r_max = (inputSettings.getTransducerRadius() + APitch * BModeSampleNumber);
-    double t_min = - ( (double)(scanLineNumber-1) * LPitch) / (2.0 * inputSettings.getTransducerRadius());
-    double t_max = - t_min;
+    double t_min = -((double)(scanLineNumber - 1) * LPitch) / (2.0 * inputSettings.getTransducerRadius());
+    double t_max = -t_min;
     double x_min = r_min * cos(t_min);
     double x_max = r_max;
     double y_min = r_max * sin(t_min);
@@ -154,11 +153,10 @@ void usPreScanToPostScan2DConverter::init(const usTransducerSettings &inputSetti
         x = x_min + i * m_yResolution;
         y = y_min + j * m_xResolution;
         m_rMap[i][j] = (sqrt(x * x + y * y) - inputSettings.getTransducerRadius()) / APitch;
-        m_tMap[i][j] = atan2(y, x) * inputSettings.getTransducerRadius() / LPitch + (scanLineNumber-1) / 2.0;
+        m_tMap[i][j] = atan2(y, x) * inputSettings.getTransducerRadius() / LPitch + (scanLineNumber - 1) / 2.0;
       }
     }
-  }
-  else{
+  } else {
     m_scanLineNumber = scanLineNumber;
     m_BModeSampleNumber = BModeSampleNumber;
     m_xResolution = xResolution;
@@ -167,13 +165,13 @@ void usPreScanToPostScan2DConverter::init(const usTransducerSettings &inputSetti
 
     double APitch = inputSettings.getDepth() / (double)(BModeSampleNumber);
     m_height = vpMath::round(inputSettings.getDepth() / m_yResolution);
-    m_width = vpMath::round( inputSettings.getScanLinePitch() * (scanLineNumber - 1) / m_xResolution);
+    m_width = vpMath::round(inputSettings.getScanLinePitch() * (scanLineNumber - 1) / m_xResolution);
 
     m_rMap.resize(m_height, m_width);
     m_tMap.resize(m_height, m_width);
 
     double ratio1 = m_xResolution / inputSettings.getScanLinePitch();
-    double ratio2 = m_yResolution/APitch ;
+    double ratio2 = m_yResolution / APitch;
 
     for (unsigned int i = 0; i < m_height; ++i) {
       for (unsigned int j = 0; j < m_width; ++j) {
@@ -193,21 +191,23 @@ void usPreScanToPostScan2DConverter::init(const usTransducerSettings &inputSetti
 * @param [in] xResolution Size of a pixel along x axis in post-scan image built (optionnal).
 * @param [in] yResolution Size of a pixel along y axis in post-scan image built (optionnal).
 */
-void usPreScanToPostScan2DConverter::convert(const usImagePreScan2D<unsigned char> &preScanImage, usImagePostScan2D<unsigned char> &postScanImage,double xResolution, double yResolution)
+void usPreScanToPostScan2DConverter::convert(const usImagePreScan2D<unsigned char> &preScanImage,
+                                             usImagePostScan2D<unsigned char> &postScanImage, double xResolution,
+                                             double yResolution)
 {
   // if user specified the resolution wanted
-  if(xResolution != 0. && yResolution != 0.) {
+  if (xResolution != 0. && yResolution != 0.) {
     init(preScanImage, preScanImage.getBModeSampleNumber(), preScanImage.getScanLineNumber(), xResolution, yResolution);
   }
 
-  //check if init is done
+  // check if init is done
   if (!m_initDone) {
-    if(preScanImage.isTransducerConvex()) {
+    if (preScanImage.isTransducerConvex()) {
       double resolution = preScanImage.getAxialResolution();
       init(preScanImage, preScanImage.getBModeSampleNumber(), preScanImage.getScanLineNumber(), resolution, resolution);
-    }
-    else {
-      init(preScanImage, preScanImage.getBModeSampleNumber(), preScanImage.getScanLineNumber(), preScanImage.getScanLinePitch(), preScanImage.getAxialResolution());
+    } else {
+      init(preScanImage, preScanImage.getBModeSampleNumber(), preScanImage.getScanLineNumber(),
+           preScanImage.getScanLinePitch(), preScanImage.getAxialResolution());
     }
   }
 
@@ -218,7 +218,7 @@ void usPreScanToPostScan2DConverter::convert(const usImagePreScan2D<unsigned cha
       double v = m_tMap[i][j];
       postScanImage(i, j, (unsigned char)interpolateLinear(preScanImage, u, v));
     }
-  //saving settings in postScanImage
+  // saving settings in postScanImage
   postScanImage.setHeightResolution(m_yResolution);
   postScanImage.setWidthResolution(m_xResolution);
   postScanImage.setScanLineNumber(m_scanLineNumber);
@@ -227,8 +227,7 @@ void usPreScanToPostScan2DConverter::convert(const usImagePreScan2D<unsigned cha
   postScanImage.setTransducerRadius(m_settings.getTransducerRadius());
 }
 
-
-double usPreScanToPostScan2DConverter::interpolateLinear(const vpImage<unsigned char>& I, double x, double y)
+double usPreScanToPostScan2DConverter::interpolateLinear(const vpImage<unsigned char> &I, double x, double y)
 {
   int x1 = (int)floor(x);
   int x2 = (int)ceil(x);
@@ -238,21 +237,24 @@ double usPreScanToPostScan2DConverter::interpolateLinear(const vpImage<unsigned 
   if ((0 <= x) && (x < I.getHeight()) && (0 <= y) && (y < I.getWidth())) {
     double val1, val2;
     // Check whether the indices are within the image extent
-    if (x1 < 0) ++x1;
-    if (y1 < 0) ++y1;
-    if (x2 >= static_cast<int>(I.getHeight())) --x2;
-    if (y2 >= static_cast<int>(I.getWidth())) --y2;
+    if (x1 < 0)
+      ++x1;
+    if (y1 < 0)
+      ++y1;
+    if (x2 >= static_cast<int>(I.getHeight()))
+      --x2;
+    if (y2 >= static_cast<int>(I.getWidth()))
+      --y2;
 
     // Check whether the target is on the grid
-    if (x1==x2) {
+    if (x1 == x2) {
       val1 = I(x1, y1);
       val2 = I(x1, y2);
-    }
-    else {
+    } else {
       val1 = (x2 - x) * I(x1, y1) + (x - x1) * I(x2, y1);
       val2 = (x2 - x) * I(x1, y2) + (x - x1) * I(x2, y2);
     }
-    if (y1==y2)
+    if (y1 == y2)
       return val1;
     else
       return (y2 - y) * val1 + (y - y1) * val2;

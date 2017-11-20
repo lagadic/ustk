@@ -44,11 +44,11 @@
 #if defined(USTK_HAVE_FFTW)
 
 // visp/ustk includes
-#include <visp3/ustk_core/usImageRF2D.h>
-#include <visp3/ustk_core/usImagePreScan2D.h>
 #include <visp3/ustk_core/usImagePostScan2D.h>
-#include <visp3/ustk_core/usRFToPreScan2DConverter.h>
+#include <visp3/ustk_core/usImagePreScan2D.h>
+#include <visp3/ustk_core/usImageRF2D.h>
 #include <visp3/ustk_core/usPreScanToPostScan2DConverter.h>
+#include <visp3/ustk_core/usRFToPreScan2DConverter.h>
 
 /**
  * @class usRFToPostScan2DConverter
@@ -94,16 +94,16 @@ int main()
  */
 class VISP_EXPORT usRFToPostScan2DConverter
 {
- public:
-
-  usRFToPostScan2DConverter(int decimationFactor=10);
+public:
+  usRFToPostScan2DConverter(int decimationFactor = 10);
 
   ~usRFToPostScan2DConverter();
 
   void convert(const usImageRF2D<short int> &rfImage, usImagePostScan2D<unsigned char> &postScanImage);
 
   void setConversionParameters(const usImagePostScan2D<unsigned char> &inputSettings, const int BModeSampleNumber,
-                                                            const int scanLineNumber, const int decimationFactor);
+                               const int scanLineNumber, const int decimationFactor);
+
 private:
   usRFToPreScan2DConverter m_RFConverter;
   usPreScanToPostScan2DConverter m_scanConverter;

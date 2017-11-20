@@ -39,14 +39,14 @@
 #ifndef __usImagePreScanSettings_h_
 #define __usImagePreScanSettings_h_
 
-//std includes
+// std includes
 #include <iostream>
 
-//visp includes
+// visp includes
 #include <visp3/core/vpConfig.h>
 
-//ustk includes
-#include<visp3/ustk_core/usTransducerSettings.h>
+// ustk includes
+#include <visp3/ustk_core/usTransducerSettings.h>
 
 /**
   @class usImagePreScanSettings
@@ -77,7 +77,8 @@
     may differ for RF images and pre-scan images.
 
  */
-class VISP_EXPORT usImagePreScanSettings : public usTransducerSettings {
+class VISP_EXPORT usImagePreScanSettings : public usTransducerSettings
+{
 public:
   usImagePreScanSettings();
   usImagePreScanSettings(const usTransducerSettings &transducerSettings, double axialResolution);
@@ -89,18 +90,18 @@ public:
 
   double getAxialResolution() const;
 
-  usImagePreScanSettings getImagePreScanSettings()const;
+  usImagePreScanSettings getImagePreScanSettings() const;
 
-  usImagePreScanSettings& operator=(const usImagePreScanSettings& other);
-  bool operator==(const usImagePreScanSettings& other);
+  usImagePreScanSettings &operator=(const usImagePreScanSettings &other);
+  bool operator==(const usImagePreScanSettings &other);
 
   void setAxialResolution(const double axialResolution);
-  void setImagePreScanSettings(const usImagePreScanSettings& preScanSettings);
+  void setImagePreScanSettings(const usImagePreScanSettings &preScanSettings);
 
   //@}
 
 private:
-  //Settings from the probe
+  // Settings from the probe
   double m_axialResolution;
 };
 #endif // US_IMAGE_PRESCAN_SETTINGS_H

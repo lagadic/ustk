@@ -46,8 +46,9 @@
  * This class represents a needle modeled as a 2D polynomial curve.
  *
  */
-class VISP_EXPORT usPolynomialCurve2D {
- public:
+class VISP_EXPORT usPolynomialCurve2D
+{
+public:
   /**
    * Default constructor. Requires a call to setOrder().
    */
@@ -148,7 +149,7 @@ class VISP_EXPORT usPolynomialCurve2D {
    */
   void setOrder(unsigned int order);
 
- private:
+private:
   unsigned int m_order;
   unsigned int m_nRenderingLines;
   vpMatrix m_controlPoints;

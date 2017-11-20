@@ -54,7 +54,7 @@
  */
 class usLogCompressor
 {
- public:
+public:
   /// Constructor
   usLogCompressor();
 
@@ -65,10 +65,9 @@ class usLogCompressor
 
   void run(unsigned char *dst, const double *src, unsigned int size);
 
- private:
-  double m_alpha; /// Contrast parameter
+private:
+  double m_alpha;                    /// Contrast parameter
   unsigned char *m_compressionTable; /// Compression table
-
 };
 
 #endif // have fftw

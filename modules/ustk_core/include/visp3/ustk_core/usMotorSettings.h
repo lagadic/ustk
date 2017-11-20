@@ -38,13 +38,13 @@
 #ifndef __usMotorSettings_h_
 #define __usMotorSettings_h_
 
-//std includes
+// std includes
 #include <iostream>
 
-//visp includes
+// visp includes
 #include <visp3/core/vpConfig.h>
 
-//ustk includes
+// ustk includes
 #include <visp3/ustk_core/usTransducerSettings.h>
 
 /**
@@ -74,13 +74,14 @@
 
    \image html img-usMotorSettings.png
  */
-class VISP_EXPORT usMotorSettings {
+class VISP_EXPORT usMotorSettings
+{
 public:
   /*! Enumerator for motor type*/
   typedef enum {
-    LinearMotor = 0,/*!< Case of a linear motor. */
-    TiltingMotor = 1,/*!< Case of a tilting motor (small rotation). */
-    RotationalMotor = 2/*!< Case of a roatational motor (360&deg; rotation). */
+    LinearMotor = 0,    /*!< Case of a linear motor. */
+    TiltingMotor = 1,   /*!< Case of a tilting motor (small rotation). */
+    RotationalMotor = 2 /*!< Case of a roatational motor (360&deg; rotation). */
   } usMotorType;
 
   usMotorSettings();
@@ -99,9 +100,9 @@ public:
 
   bool frameNumberIsSet() const;
 
-  usMotorSettings& operator=(const usMotorSettings& other);
-  bool operator==(const usMotorSettings& other);
-  bool operator!=(const usMotorSettings& other);
+  usMotorSettings &operator=(const usMotorSettings &other);
+  bool operator==(const usMotorSettings &other);
+  bool operator!=(const usMotorSettings &other);
 
   // Settings from the 3D probe
   void setFrameNumber(unsigned int frameNumber);
@@ -113,10 +114,10 @@ public:
 
   //@}
 
-  friend VISP_EXPORT std::ostream& operator<<(std::ostream& out, const usMotorSettings& other);
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &out, const usMotorSettings &other);
 
 private:
-  //Settings from the 3D probe
+  // Settings from the 3D probe
   double m_motorRadius;
   double m_framePitch;
   unsigned int m_frameNumber;

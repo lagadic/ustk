@@ -44,9 +44,9 @@
 
 #include <vector>
 
-#include <visp3/ustk_grabber/usNetworkGrabber.h>
 #include <visp3/ustk_core/usImageRF2D.h>
 #include <visp3/ustk_grabber/usFrameGrabbedInfo.h>
+#include <visp3/ustk_grabber/usNetworkGrabber.h>
 #include <visp3/ustk_io/usMHDSequenceWriter.h>
 
 /**
@@ -54,7 +54,8 @@
  * @brief Specific class to grab RF frames from the ultrasound station on the network.
  * @ingroup module_ustk_grabber
  *
- * The following figure details the network communication process and summarizes the steps to follow to acquire ultrasound images :
+ * The following figure details the network communication process and summarizes the steps to follow to acquire
+ * ultrasound images :
  * \image html img-usNetworkGrabber.png
  *
  * This grabber manages a buffer system to avoid multiple copy of the frames.
@@ -67,17 +68,16 @@ class VISP_EXPORT usNetworkGrabberRF2D : public usNetworkGrabber
 {
   Q_OBJECT
 public:
-
   explicit usNetworkGrabberRF2D(usNetworkGrabber *parent = 0);
   ~usNetworkGrabberRF2D();
 
   void activateRecording(std::string path);
 
-  usFrameGrabbedInfo<usImageRF2D<short int> > * acquire();
+  usFrameGrabbedInfo<usImageRF2D<short int> > *acquire();
 
   void dataArrived();
 
-  bool isFirstFrameAvailable() {return m_firstFrameAvailable;}
+  bool isFirstFrameAvailable() { return m_firstFrameAvailable; }
 
   void stopRecording();
 
@@ -89,10 +89,10 @@ private:
   std::vector<usFrameGrabbedInfo<usImageRF2D<short int> > *> m_outputBuffer;
   bool m_firstFrameAvailable;
 
-  //to manage ptrs switch init
+  // to manage ptrs switch init
   bool m_swichOutputInit;
 
-  //to manage the recording process
+  // to manage the recording process
   bool m_recordingOn;
   usMHDSequenceWriter m_sequenceWriter;
 };

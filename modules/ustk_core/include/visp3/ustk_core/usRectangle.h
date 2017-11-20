@@ -46,8 +46,9 @@
  *
  * This class implements a (possibly inclined) rectangle of the plane.
  */
-class VISP_EXPORT usRectangle {
- public:
+class VISP_EXPORT usRectangle
+{
+public:
   /// Default constructor.
   usRectangle();
 
@@ -68,8 +69,7 @@ class VISP_EXPORT usRectangle {
    *  @warning This method doesn't check whether the 4 points actually form a rectangle!
    *  The behaviour is undefined if it is not the case.
    */
-  void setPoints(double x1, double y1, double x2, double y2,
-		 double x3, double y3, double x4, double y4);
+  void setPoints(double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4);
 
   /// Get the center x-axis.
   double getCx() const;
@@ -119,7 +119,7 @@ class VISP_EXPORT usRectangle {
   /// Check whether the point (x,y) is inside the rectangle.
   bool isInside(double x, double y) const;
 
- private:
+private:
   double m_cx;
   double m_cy;
   double m_width;
@@ -137,4 +137,3 @@ class VISP_EXPORT usRectangle {
 };
 
 #endif // US_RECTANGLE_H
-

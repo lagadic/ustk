@@ -35,7 +35,6 @@
  * @brief Graphical main window to move a plane in a 3D view using QSliders for origin and normal components.
  */
 
-
 #ifndef __us3DSceneSlicing_h_
 #define __us3DSceneSlicing_h_
 
@@ -46,32 +45,31 @@
 
 // USTK includes
 
-#include <visp3/ustk_io/usImageIo.h>
 #include <visp3/ustk_gui/us3DSceneWidget.h>
+#include <visp3/ustk_io/usImageIo.h>
 
 // VTK includes
-#include <vtkSmartPointer.h>
+#include <vtkDistanceWidget.h>
+#include <vtkImageMapper3D.h>
+#include <vtkImagePlaneWidget.h>
 #include <vtkPlane.h>
 #include <vtkResliceImageViewer.h>
-#include <vtkImagePlaneWidget.h>
-#include <vtkDistanceWidget.h>
 #include <vtkResliceImageViewerMeasurements.h>
-#include <vtkImageMapper3D.h>
-
+#include <vtkSmartPointer.h>
 
 // Qt includes
 #if defined(USTK_HAVE_VTK_QT4)
-#  include <QtGui/QApplication>
-#  include <QtGui/QMainWindow>
-#  include <QtGui/QGridLayout>
-#  include <QtGui/QPushButton>
-#  include <QtGui/QSlider>
+#include <QtGui/QApplication>
+#include <QtGui/QGridLayout>
+#include <QtGui/QMainWindow>
+#include <QtGui/QPushButton>
+#include <QtGui/QSlider>
 #elif defined(USTK_HAVE_VTK_QT5)
-#  include <QtWidgets/QApplication>
-#  include <QtWidgets/QMainWindow>
-#  include <QtWidgets/QGridLayout>
-#  include <QtWidgets/QPushButton>
-#  include <QtWidgets/QSlider>
+#include <QtWidgets/QApplication>
+#include <QtWidgets/QGridLayout>
+#include <QtWidgets/QMainWindow>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QSlider>
 #endif
 
 /**
@@ -84,12 +82,11 @@ class VISP_EXPORT us3DSceneSlicing : public QMainWindow
 {
   Q_OBJECT
 public:
-
   // Constructor/Destructor
   us3DSceneSlicing(std::string imageFileName);
   ~us3DSceneSlicing() {}
 
-  void resizeEvent(QResizeEvent* event);
+  void resizeEvent(QResizeEvent *event);
 
 public slots:
   void updateX(int x);
@@ -105,36 +102,36 @@ public slots:
   virtual void slotExit();
 
 private:
-    void setupUi();
+  void setupUi();
 
-    QWidget *centralwidget;
-    QWidget *gridLayoutWidget;
-    QGridLayout *gridLayout_2;
-    us3DSceneWidget *view;
+  QWidget *centralwidget;
+  QWidget *gridLayoutWidget;
+  QGridLayout *gridLayout_2;
+  us3DSceneWidget *view;
 
-    //plane 1 modifiers
-    //translations
-    QSlider *sliderXplane1;
-    QSlider *sliderYplane1;
-    QSlider *sliderZplane1;
-    //rotations
-    QSlider *rotXplane1;
-    QSlider *rotYplane1;
-    QSlider *rotZplane1;
+  // plane 1 modifiers
+  // translations
+  QSlider *sliderXplane1;
+  QSlider *sliderYplane1;
+  QSlider *sliderZplane1;
+  // rotations
+  QSlider *rotXplane1;
+  QSlider *rotYplane1;
+  QSlider *rotZplane1;
 
-    //VTK planes
-    vtkPlane *plane1;
-    vtkPlane *plane2;
-    vtkPlane *plane3;
+  // VTK planes
+  vtkPlane *plane1;
+  vtkPlane *plane2;
+  vtkPlane *plane3;
 
-    //transformation
-    vtkMatrix4x4 *vtkMatrix1;
-    vtkMatrix4x4 *vtkMatrix2;
-    vtkMatrix4x4 *vtkMatrix3;
+  // transformation
+  vtkMatrix4x4 *vtkMatrix1;
+  vtkMatrix4x4 *vtkMatrix2;
+  vtkMatrix4x4 *vtkMatrix3;
 
-    //image
-    usImagePostScan3D<unsigned char> postScanImage;
-    vtkSmartPointer<vtkImageData> vtkImage;
+  // image
+  usImagePostScan3D<unsigned char> postScanImage;
+  vtkSmartPointer<vtkImageData> vtkImage;
 };
 #endif
 #endif // __us3DSceneSlicing_h_

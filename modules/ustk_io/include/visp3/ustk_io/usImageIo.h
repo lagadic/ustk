@@ -41,14 +41,14 @@
 
 #include <string>
 
-#include <visp3/ustk_core/usImageRF2D.h>
-#include <visp3/ustk_core/usImageRF3D.h>
-#include <visp3/ustk_core/usImagePreScan2D.h>
-#include <visp3/ustk_core/usImagePreScan3D.h>
 #include <visp3/ustk_core/usImagePostScan2D.h>
 #include <visp3/ustk_core/usImagePostScan3D.h>
-#include <visp3/ustk_io/usMetaHeaderParser.h>
+#include <visp3/ustk_core/usImagePreScan2D.h>
+#include <visp3/ustk_core/usImagePreScan3D.h>
+#include <visp3/ustk_core/usImageRF2D.h>
+#include <visp3/ustk_core/usImageRF3D.h>
 #include <visp3/ustk_io/usImageSettingsXmlParser.h>
+#include <visp3/ustk_io/usMetaHeaderParser.h>
 
 /**
  * @class usImageIo
@@ -59,11 +59,9 @@
 class VISP_EXPORT usImageIo
 {
 private:
-
   static std::string getExtension(const std::string &filename);
 
 public:
-
   /** @name RF io */
   //@{
   static void read(usImageRF2D<short int> &imageRf2D, const std::string &headerFileName);
@@ -80,12 +78,12 @@ public:
 
   /** @name Pre-scan io */
   //@{
-  static void read(usImagePreScan2D<unsigned char> &preScanImage,const std::string &headerFileName);
+  static void read(usImagePreScan2D<unsigned char> &preScanImage, const std::string &headerFileName);
   static void read(usImagePreScan3D<unsigned char> &preScanImage3D, const std::string &headerFileName);
 
-  //Doubles types writing not implemented
-  static void read(usImagePreScan2D<double> &preScanImage,const std::string &headerFileName);
-  static void read(usImagePreScan3D<double> &preScanImage3D,const std::string &headerFileName);
+  // Doubles types writing not implemented
+  static void read(usImagePreScan2D<double> &preScanImage, const std::string &headerFileName);
+  static void read(usImagePreScan3D<double> &preScanImage3D, const std::string &headerFileName);
 
   static void write(const usImagePreScan2D<unsigned char> &preScanImage, const std::string &headerFileName,
                     const std::string &imageExtension2D);
@@ -95,7 +93,7 @@ public:
                     const std::string &imageExtension2D);
   static void write(const usImagePreScan3D<unsigned char> &preScanImage3D, const std::string &headerFileName);
 
-  //Doubles types writing not implemented
+  // Doubles types writing not implemented
   static void write(const usImagePreScan2D<double> &preScanImage, const std::string &headerFileName,
                     const std::string &imageExtension2D);
   static void write(const usImagePreScan2D<double> &preScanImage, const std::string &headerFileName);
@@ -115,11 +113,10 @@ public:
   static void write(const usImagePostScan3D<unsigned char> &postScanImage3D, const std::string &headerFileName,
                     const std::string &imageExtension2D);
   static void write(const usImagePostScan3D<unsigned char> &postScanImage3D, const std::string &headerFileName);
-  //@}
+//@}
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-  struct VolHeader
-  {
+  struct VolHeader {
     int type;     // Data type(0: prescan B, 1 : postscan B, 2 : rf, 3 : vel / var, 5 = B + flow RGB)
     int volumes;  // Number of volumes in the file
     int fpv;      // Number of frames per volumes
@@ -129,40 +126,32 @@ public:
     int degPerFr; // degree step between frames
   };
 
-  struct FrameHeader
-  {
-    int type;	// data type
-    int frames;	// number of frames in file
-    int w;		// width (number of scanlines or pixels)
-    int h;		// height (number of samples or pixels)
-    int ss;		// sample size in bits
-    int ulx;	// roi - upper left (x) (unused in Propello)
-    int uly;	// roi - upper left (y) (unused in Propello)
-    int urx;	// roi - upper right (x) (unused in Propello)
-    int ury;	// roi - upper right (y) (unused in Propello)
-    int brx;	// roi - bottom right (x) (unused in Propello)
-    int bry;	// roi - bottom right (y) (unused in Propello)
-    int blx;	// roi - bottom left (x) (unused in Propello)
-    int bly;	// roi - bottom left (y) (unused in Propello)
-    int probe;	// probe identifier
-    int txf;	// transmit frequency in Hz
-    int sf;    	// sampling frequency in Hz
-    int dr;		// data rate (always fps)
-    int ld;		// line density (number of scanlines at 100% sector)
-    int extra; 	// extra information (always 0 in Propello)
+  struct FrameHeader {
+    int type;   // data type
+    int frames; // number of frames in file
+    int w;      // width (number of scanlines or pixels)
+    int h;      // height (number of samples or pixels)
+    int ss;     // sample size in bits
+    int ulx;    // roi - upper left (x) (unused in Propello)
+    int uly;    // roi - upper left (y) (unused in Propello)
+    int urx;    // roi - upper right (x) (unused in Propello)
+    int ury;    // roi - upper right (y) (unused in Propello)
+    int brx;    // roi - bottom right (x) (unused in Propello)
+    int bry;    // roi - bottom right (y) (unused in Propello)
+    int blx;    // roi - bottom left (x) (unused in Propello)
+    int bly;    // roi - bottom left (y) (unused in Propello)
+    int probe;  // probe identifier
+    int txf;    // transmit frequency in Hz
+    int sf;     // sampling frequency in Hz
+    int dr;     // data rate (always fps)
+    int ld;     // line density (number of scanlines at 100% sector)
+    int extra;  // extra information (always 0 in Propello)
   };
-#endif //DOXYGEN_SHOULD_SKIP_THIS
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
-  typedef enum
-  {
-    FORMAT_XML,
-    FORMAT_MHD,
-    FORMAT_VOL,
-    FORMAT_RF,
-    HEADER_FORMAT_UNKNOWN
-  } usHeaderFormatType;
+  typedef enum { FORMAT_XML, FORMAT_MHD, FORMAT_VOL, FORMAT_RF, HEADER_FORMAT_UNKNOWN } usHeaderFormatType;
 
   static usHeaderFormatType getHeaderFormat(const std::string &headerfilename);
 };
 
-#endif //US_IMAGE_IO_H
+#endif // US_IMAGE_IO_H

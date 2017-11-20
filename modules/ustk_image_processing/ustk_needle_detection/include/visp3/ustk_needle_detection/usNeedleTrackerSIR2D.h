@@ -35,8 +35,8 @@
 #define __usNeedleTrackerSIR2D_h_
 
 // ViSP
-#include <visp3/core/vpNoise.h>
 #include <visp3/core/vpImage.h>
+#include <visp3/core/vpNoise.h>
 
 // UsNeedleDetection
 #include <visp3/ustk_needle_detection/usPolynomialCurve2D.h>
@@ -52,7 +52,7 @@
  */
 class VISP_EXPORT usNeedleTrackerSIR2D
 {
- public:
+public:
   /**
    * Default constructor.
    */
@@ -97,8 +97,7 @@ class VISP_EXPORT usNeedleTrackerSIR2D
    * Initializes the particle filter.
    * Should be called before to start the detection.
    */
-  void init(unsigned int dims[2], unsigned int nPoints, unsigned int nParticles,
-      const usPolynomialCurve2D &needle);
+  void init(unsigned int dims[2], unsigned int nPoints, unsigned int nParticles, const usPolynomialCurve2D &needle);
 
   /**
    * Initialization method.
@@ -110,8 +109,8 @@ class VISP_EXPORT usNeedleTrackerSIR2D
    * @param nParticles The number of particles.
    * @param needle The initial needle model.
    */
-  void init(const vpImage<unsigned char>& I, unsigned int nPoints, unsigned int nParticles,
-      const usPolynomialCurve2D &needle);
+  void init(const vpImage<unsigned char> &I, unsigned int nPoints, unsigned int nParticles,
+            const usPolynomialCurve2D &needle);
 
   /**
    * Resample the particles proportionnaly to their weights.
@@ -124,11 +123,11 @@ class VISP_EXPORT usNeedleTrackerSIR2D
    * @param I The input image.
    * @param v The insertion velocity.
    */
-  void run(vpImage<unsigned char>& I, double v);
+  void run(vpImage<unsigned char> &I, double v);
 
-/**
-   * Set the standard deviation for the update noise.
-   */
+  /**
+     * Set the standard deviation for the update noise.
+     */
   void setSigma(double s);
 
   /**
@@ -141,7 +140,7 @@ class VISP_EXPORT usNeedleTrackerSIR2D
    */
   void setSigma2(double s);
 
- private:
+private:
   unsigned int m_nParticles;
   unsigned int m_nPoints;
   unsigned int m_nPointsCurrent;

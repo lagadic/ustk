@@ -3,24 +3,22 @@
 /**
 * Constructor, initializes the member attribues.
 */
-usMHDSequenceReader::usMHDSequenceReader() : m_sequenceDirectory(), m_sequenceImageType(us::NOT_SET),
-  m_sequenceFiles(), m_totalImageNumber(0), m_imageCounter(0)
+usMHDSequenceReader::usMHDSequenceReader()
+  : m_sequenceDirectory(), m_sequenceImageType(us::NOT_SET), m_sequenceFiles(), m_totalImageNumber(0), m_imageCounter(0)
 {
-
 }
 
 /**
 * Destructor.
 */
-usMHDSequenceReader::~usMHDSequenceReader() {
-
-}
+usMHDSequenceReader::~usMHDSequenceReader() {}
 
 /**
 * Setter for the directory containing the mhd sequence to read. To call before calling acquire !
 * @param sequenceDirectory The directory path.
 */
-void usMHDSequenceReader::setSequenceDirectory(const std::string sequenceDirectory) {
+void usMHDSequenceReader::setSequenceDirectory(const std::string sequenceDirectory)
+{
   m_sequenceFiles = vpIoTools::getDirFiles(sequenceDirectory);
   m_sequenceDirectory = sequenceDirectory;
   m_totalImageNumber = m_sequenceFiles.size() / 2; // we have mhd and raw in the directory (2 * m_totalImageNumber)
@@ -32,16 +30,19 @@ void usMHDSequenceReader::setSequenceDirectory(const std::string sequenceDirecto
 * @param [out] image The usImageRF2D image acquired.
 * @param [out] timestamp The timestamp of the image (0 if not present in the sequence parameters).
 */
-void usMHDSequenceReader::acquire(usImageRF2D<short int> & image, uint64_t & timestamp) {
+void usMHDSequenceReader::acquire(usImageRF2D<short int> &image, uint64_t &timestamp)
+{
 
-  if(m_imageCounter > m_totalImageNumber)
+  if (m_imageCounter > m_totalImageNumber)
     throw(vpException(vpException::fatalError, "usMHDSequenceReader : end of sequence reached !"));
 
-  if(usImageIo::getHeaderFormat(m_sequenceFiles.at(2*m_imageCounter)) != usImageIo::FORMAT_MHD) //check file extention
+  if (usImageIo::getHeaderFormat(m_sequenceFiles.at(2 * m_imageCounter)) !=
+      usImageIo::FORMAT_MHD) // check file extention
     throw(vpException(vpException::fatalError, "usMHDSequenceReader trying to open a non-mhd file !"));
 
   usMetaHeaderParser mhdParser;
-  mhdParser.read(m_sequenceDirectory + vpIoTools::path("/") + m_sequenceFiles.at(2*m_imageCounter)); // we skip raw files
+  mhdParser.read(m_sequenceDirectory + vpIoTools::path("/") +
+                 m_sequenceFiles.at(2 * m_imageCounter)); // we skip raw files
   m_sequenceImageType = mhdParser.getImageType();
   if (m_sequenceImageType != us::RF_2D && m_sequenceImageType != us::NOT_SET) {
     throw(vpException(vpException::badValue, "Reading a non rf 2D image!"));
@@ -58,19 +59,19 @@ void usMHDSequenceReader::acquire(usImageRF2D<short int> & image, uint64_t & tim
   settings.setScanLinePitch(mhdHeader.scanLinePitch);
   settings.setTransducerConvexity(mhdHeader.isTransducerConvex);
   settings.setAxialResolution(mhdParser.getAxialResolution());
-  settings.setDepth(settings.getAxialResolution()*mhdHeader.dim[1]);
+  settings.setDepth(settings.getAxialResolution() * mhdHeader.dim[1]);
   settings.setSamplingFrequency(mhdHeader.samplingFrequency);
   settings.setTransmitFrequency(mhdHeader.transmitFrequency);
   image.setImagePreScanSettings(settings);
 
-  //resizing image in memory
+  // resizing image in memory
   image.resize(mhdHeader.dim[1], mhdHeader.dim[0]);
 
-  //data parsing
+  // data parsing
   usRawFileParser rawParser;
-  rawParser.read(image, m_sequenceDirectory + vpIoTools::path("/") + m_sequenceFiles.at(2*m_imageCounter + 1));
+  rawParser.read(image, m_sequenceDirectory + vpIoTools::path("/") + m_sequenceFiles.at(2 * m_imageCounter + 1));
 
-  m_imageCounter ++;
+  m_imageCounter++;
 }
 
 /**
@@ -78,16 +79,19 @@ void usMHDSequenceReader::acquire(usImageRF2D<short int> & image, uint64_t & tim
 * @param [out] image The usImagePreScan2D image acquired.
 * @param [out] timestamp The timestamp of the image (0 if not present in the sequence parameters).
 */
-void usMHDSequenceReader::acquire(usImagePreScan2D<unsigned char> & image, uint64_t & timestamp) {
+void usMHDSequenceReader::acquire(usImagePreScan2D<unsigned char> &image, uint64_t &timestamp)
+{
 
-  if(m_imageCounter > m_totalImageNumber)
+  if (m_imageCounter > m_totalImageNumber)
     throw(vpException(vpException::fatalError, "usMHDSequenceReader : end of sequence reached !"));
 
-  if(usImageIo::getHeaderFormat(m_sequenceFiles.at(2*m_imageCounter)) != usImageIo::FORMAT_MHD) //check file extention
+  if (usImageIo::getHeaderFormat(m_sequenceFiles.at(2 * m_imageCounter)) !=
+      usImageIo::FORMAT_MHD) // check file extention
     throw(vpException(vpException::fatalError, "usMHDSequenceReader trying to open a non-mhd file !"));
 
   usMetaHeaderParser mhdParser;
-  mhdParser.read(m_sequenceDirectory + vpIoTools::path("/") + m_sequenceFiles.at(2*m_imageCounter)); // we skip raw files
+  mhdParser.read(m_sequenceDirectory + vpIoTools::path("/") +
+                 m_sequenceFiles.at(2 * m_imageCounter)); // we skip raw files
   m_sequenceImageType = mhdParser.getImageType();
   if (m_sequenceImageType != us::PRESCAN_2D && m_sequenceImageType != us::NOT_SET) {
     throw(vpException(vpException::badValue, "Reading a non pre-scan 2D image!"));
@@ -104,19 +108,19 @@ void usMHDSequenceReader::acquire(usImagePreScan2D<unsigned char> & image, uint6
   settings.setScanLinePitch(mhdHeader.scanLinePitch);
   settings.setTransducerConvexity(mhdHeader.isTransducerConvex);
   settings.setAxialResolution(mhdParser.getAxialResolution());
-  settings.setDepth(settings.getAxialResolution()*mhdHeader.dim[1]);
+  settings.setDepth(settings.getAxialResolution() * mhdHeader.dim[1]);
   settings.setSamplingFrequency(mhdHeader.samplingFrequency);
   settings.setTransmitFrequency(mhdHeader.transmitFrequency);
   image.setImagePreScanSettings(settings);
 
-  //resizing image in memory
+  // resizing image in memory
   image.resize(mhdHeader.dim[1], mhdHeader.dim[0]);
 
-  //data parsing
+  // data parsing
   usRawFileParser rawParser;
-  rawParser.read(image, m_sequenceDirectory + vpIoTools::path("/") + m_sequenceFiles.at(2*m_imageCounter + 1));
+  rawParser.read(image, m_sequenceDirectory + vpIoTools::path("/") + m_sequenceFiles.at(2 * m_imageCounter + 1));
 
-  m_imageCounter ++;
+  m_imageCounter++;
 }
 
 /**
@@ -124,16 +128,19 @@ void usMHDSequenceReader::acquire(usImagePreScan2D<unsigned char> & image, uint6
 * @param [out] image The usImagePostScan2D image acquired.
 * @param [out] timestamp The timestamp of the image (0 if not present in the sequence parameters).
 */
-void usMHDSequenceReader::acquire(usImagePostScan2D<unsigned char> & image, uint64_t & timestamp) {
+void usMHDSequenceReader::acquire(usImagePostScan2D<unsigned char> &image, uint64_t &timestamp)
+{
 
-  if(m_imageCounter > m_totalImageNumber)
+  if (m_imageCounter > m_totalImageNumber)
     throw(vpException(vpException::fatalError, "usMHDSequenceReader : end of sequence reached !"));
 
-  if(usImageIo::getHeaderFormat(m_sequenceFiles.at(2*m_imageCounter)) != usImageIo::FORMAT_MHD) //check file extention
+  if (usImageIo::getHeaderFormat(m_sequenceFiles.at(2 * m_imageCounter)) !=
+      usImageIo::FORMAT_MHD) // check file extention
     throw(vpException(vpException::fatalError, "usMHDSequenceReader trying to open a non-mhd file !"));
 
   usMetaHeaderParser mhdParser;
-  mhdParser.read(m_sequenceDirectory + vpIoTools::path("/") + m_sequenceFiles.at(2*m_imageCounter)); // we skip raw files
+  mhdParser.read(m_sequenceDirectory + vpIoTools::path("/") +
+                 m_sequenceFiles.at(2 * m_imageCounter)); // we skip raw files
   m_sequenceImageType = mhdParser.getImageType();
   if (m_sequenceImageType != us::POSTSCAN_2D && m_sequenceImageType != us::NOT_SET) {
     throw(vpException(vpException::badValue, "Reading a non p-scan 2D image!"));
@@ -150,47 +157,53 @@ void usMHDSequenceReader::acquire(usImagePostScan2D<unsigned char> & image, uint
   image.setScanLinePitch(mhdHeader.scanLinePitch);
   image.setTransducerConvexity(mhdHeader.isTransducerConvex);
 
-  //computing image depth from the pixel size and the transducer settings
-  if(mhdHeader.isTransducerConvex) {
-    //distance
-    double deltaDepthPostScan2D = mhdHeader.transducerRadius * (1 - std::cos( (double) ((mhdHeader.scanLineNumber - 1) * mhdHeader.scanLinePitch / 2.0)));
-    image.setDepth(mhdHeader.elementSpacing[1]*mhdHeader.dim[1] - deltaDepthPostScan2D);
-  }
-  else // linear transducer
-    image.setDepth(mhdHeader.elementSpacing[1]*mhdHeader.dim[1]);
+  // computing image depth from the pixel size and the transducer settings
+  if (mhdHeader.isTransducerConvex) {
+    // distance
+    double deltaDepthPostScan2D =
+        mhdHeader.transducerRadius *
+        (1 - std::cos((double)((mhdHeader.scanLineNumber - 1) * mhdHeader.scanLinePitch / 2.0)));
+    image.setDepth(mhdHeader.elementSpacing[1] * mhdHeader.dim[1] - deltaDepthPostScan2D);
+  } else // linear transducer
+    image.setDepth(mhdHeader.elementSpacing[1] * mhdHeader.dim[1]);
 
   image.setWidthResolution(mhdHeader.dim[0]);
   image.setWidthResolution(mhdHeader.dim[1]);
   image.setSamplingFrequency(mhdHeader.samplingFrequency);
   image.setTransmitFrequency(mhdHeader.transmitFrequency);
 
-  //resizing image in memory
+  // resizing image in memory
   image.resize(mhdHeader.dim[1], mhdHeader.dim[0]);
 
-  //data parsing
+  // data parsing
   usRawFileParser rawParser;
-  rawParser.read(image, m_sequenceDirectory + vpIoTools::path("/") + m_sequenceFiles.at(2*m_imageCounter + 1));
+  rawParser.read(image, m_sequenceDirectory + vpIoTools::path("/") + m_sequenceFiles.at(2 * m_imageCounter + 1));
 
-  m_imageCounter ++;
+  m_imageCounter++;
 }
 
 /**
 * Acquisition method for usImageRF3D : fills the output image with the next volume in the sequence.
 * @param [out] image The usImageRF3D image acquired.
-* @param [out] timestamp The timestamps of the image (0 if not present in the sequence parameters). Every frame of the volume contains an associated timesamp.
-* If the volume number in the sequence is odd, the timestamp vector is reversed : to fit the real conditions of the sweeping motor of a 3D probe (along + / - Z axis every new volume).
+* @param [out] timestamp The timestamps of the image (0 if not present in the sequence parameters). Every frame of the
+* volume contains an associated timesamp.
+* If the volume number in the sequence is odd, the timestamp vector is reversed : to fit the real conditions of the
+* sweeping motor of a 3D probe (along + / - Z axis every new volume).
 * First volume of a sequence is considered going along Z axis, and the second along -Z, etc...
 */
-void usMHDSequenceReader::acquire(usImageRF3D<short int> & image, std::vector<uint64_t> & timestamp) {
+void usMHDSequenceReader::acquire(usImageRF3D<short int> &image, std::vector<uint64_t> &timestamp)
+{
 
-  if(m_imageCounter > m_totalImageNumber)
+  if (m_imageCounter > m_totalImageNumber)
     throw(vpException(vpException::fatalError, "usMHDSequenceReader : end of sequence reached !"));
 
-  if(usImageIo::getHeaderFormat(m_sequenceFiles.at(2*m_imageCounter)) != usImageIo::FORMAT_MHD) //check file extention
+  if (usImageIo::getHeaderFormat(m_sequenceFiles.at(2 * m_imageCounter)) !=
+      usImageIo::FORMAT_MHD) // check file extention
     throw(vpException(vpException::fatalError, "usMHDSequenceReader trying to open a non-mhd file !"));
 
   usMetaHeaderParser mhdParser;
-  mhdParser.read(m_sequenceDirectory + vpIoTools::path("/") + m_sequenceFiles.at(2*m_imageCounter)); // we skip raw files
+  mhdParser.read(m_sequenceDirectory + vpIoTools::path("/") +
+                 m_sequenceFiles.at(2 * m_imageCounter)); // we skip raw files
   m_sequenceImageType = mhdParser.getImageType();
   if (m_sequenceImageType != us::RF_3D && m_sequenceImageType != us::NOT_SET) {
     throw(vpException(vpException::badValue, "Reading a non rf 3D image!"));
@@ -201,15 +214,15 @@ void usMHDSequenceReader::acquire(usImageRF3D<short int> & image, std::vector<ui
 
   usMetaHeaderParser::MHDHeader mhdHeader = mhdParser.getMHDHeader();
   timestamp = mhdHeader.timestamp;
-  if(m_imageCounter%2 == 1) // odd volume: we reverse it
-    std::reverse(timestamp.begin(),timestamp.end());
+  if (m_imageCounter % 2 == 1) // odd volume: we reverse it
+    std::reverse(timestamp.begin(), timestamp.end());
 
   usImagePreScanSettings settings;
   settings.setTransducerRadius(mhdHeader.transducerRadius);
   settings.setScanLinePitch(mhdHeader.scanLinePitch);
   settings.setTransducerConvexity(mhdHeader.isTransducerConvex);
   settings.setAxialResolution(mhdParser.getAxialResolution());
-  settings.setDepth(settings.getAxialResolution()*mhdHeader.dim[1]);
+  settings.setDepth(settings.getAxialResolution() * mhdHeader.dim[1]);
   settings.setSamplingFrequency(mhdHeader.samplingFrequency);
   settings.setTransmitFrequency(mhdHeader.transmitFrequency);
   image.setImagePreScanSettings(settings);
@@ -221,33 +234,38 @@ void usMHDSequenceReader::acquire(usImageRF3D<short int> & image, std::vector<ui
   motorSettings.setFrameNumber(mhdHeader.dim[2]);
   image.setMotorSettings(motorSettings);
 
-  //resizing image in memory
-  image.resize(mhdHeader.dim[0], mhdHeader.dim[1],mhdHeader.dim[2]);
+  // resizing image in memory
+  image.resize(mhdHeader.dim[0], mhdHeader.dim[1], mhdHeader.dim[2]);
 
-  //data parsing
+  // data parsing
   usRawFileParser rawParser;
-  rawParser.read(image, m_sequenceDirectory + vpIoTools::path("/") + m_sequenceFiles.at(2*m_imageCounter + 1));
+  rawParser.read(image, m_sequenceDirectory + vpIoTools::path("/") + m_sequenceFiles.at(2 * m_imageCounter + 1));
 
-  m_imageCounter ++;
+  m_imageCounter++;
 }
 
 /**
 * Acquisition method for usImagePreScan3D : fills the output image with the next volume in the sequence.
 * @param [out] image The usImagePreScan3D image acquired.
-* @param [out] timestamp The timestamps of the image (0 if not present in the sequence parameters). Every frame of the volume contains an associated timesamp.
-* If the volume number in the sequence is odd, the timestamp vector is reversed : to fit the real conditions of the sweeping motor of a 3D probe (along + / - Z axis every new volume).
+* @param [out] timestamp The timestamps of the image (0 if not present in the sequence parameters). Every frame of the
+* volume contains an associated timesamp.
+* If the volume number in the sequence is odd, the timestamp vector is reversed : to fit the real conditions of the
+* sweeping motor of a 3D probe (along + / - Z axis every new volume).
 * First volume of a sequence is considered going along Z axis, and the second along -Z, etc...
 */
-void usMHDSequenceReader::acquire(usImagePreScan3D<unsigned char> & image, std::vector<uint64_t> & timestamp) {
+void usMHDSequenceReader::acquire(usImagePreScan3D<unsigned char> &image, std::vector<uint64_t> &timestamp)
+{
 
-  if(m_imageCounter > m_totalImageNumber)
+  if (m_imageCounter > m_totalImageNumber)
     throw(vpException(vpException::fatalError, "usMHDSequenceReader : end of sequence reached !"));
 
-  if(usImageIo::getHeaderFormat(m_sequenceFiles.at(2*m_imageCounter)) != usImageIo::FORMAT_MHD) //check file extention
+  if (usImageIo::getHeaderFormat(m_sequenceFiles.at(2 * m_imageCounter)) !=
+      usImageIo::FORMAT_MHD) // check file extention
     throw(vpException(vpException::fatalError, "usMHDSequenceReader trying to open a non-mhd file !"));
 
   usMetaHeaderParser mhdParser;
-  mhdParser.read(m_sequenceDirectory + vpIoTools::path("/") + m_sequenceFiles.at(2*m_imageCounter)); // we skip raw files
+  mhdParser.read(m_sequenceDirectory + vpIoTools::path("/") +
+                 m_sequenceFiles.at(2 * m_imageCounter)); // we skip raw files
   m_sequenceImageType = mhdParser.getImageType();
   if (m_sequenceImageType != us::PRESCAN_3D && m_sequenceImageType != us::NOT_SET) {
     throw(vpException(vpException::badValue, "Reading a non pre-scan 3D image!"));
@@ -258,15 +276,15 @@ void usMHDSequenceReader::acquire(usImagePreScan3D<unsigned char> & image, std::
 
   usMetaHeaderParser::MHDHeader mhdHeader = mhdParser.getMHDHeader();
   timestamp = mhdHeader.timestamp;
-  if(m_imageCounter%2 == 1) // odd volume: we reverse it
-    std::reverse(timestamp.begin(),timestamp.end());
+  if (m_imageCounter % 2 == 1) // odd volume: we reverse it
+    std::reverse(timestamp.begin(), timestamp.end());
 
   usImagePreScanSettings settings;
   settings.setTransducerRadius(mhdHeader.transducerRadius);
   settings.setScanLinePitch(mhdHeader.scanLinePitch);
   settings.setTransducerConvexity(mhdHeader.isTransducerConvex);
   settings.setAxialResolution(mhdParser.getAxialResolution());
-  settings.setDepth(settings.getAxialResolution()*mhdHeader.dim[1]);
+  settings.setDepth(settings.getAxialResolution() * mhdHeader.dim[1]);
   settings.setSamplingFrequency(mhdHeader.samplingFrequency);
   settings.setTransmitFrequency(mhdHeader.transmitFrequency);
   image.setImagePreScanSettings(settings);
@@ -278,14 +296,14 @@ void usMHDSequenceReader::acquire(usImagePreScan3D<unsigned char> & image, std::
   motorSettings.setFrameNumber(mhdHeader.dim[2]);
   image.setMotorSettings(motorSettings);
 
-  //resizing image in memory
-  image.resize(mhdHeader.dim[0], mhdHeader.dim[1],mhdHeader.dim[2]);
+  // resizing image in memory
+  image.resize(mhdHeader.dim[0], mhdHeader.dim[1], mhdHeader.dim[2]);
 
-  //data parsing
+  // data parsing
   usRawFileParser rawParser;
-  rawParser.read(image, m_sequenceDirectory + vpIoTools::path("/") + m_sequenceFiles.at(2*m_imageCounter + 1));
+  rawParser.read(image, m_sequenceDirectory + vpIoTools::path("/") + m_sequenceFiles.at(2 * m_imageCounter + 1));
 
-  m_imageCounter ++;
+  m_imageCounter++;
 }
 
 /**
@@ -293,16 +311,19 @@ void usMHDSequenceReader::acquire(usImagePreScan3D<unsigned char> & image, std::
 * @param [out] image The usImagePostScan3D image acquired.
 * @param [out] timestamp The usImagePostScan3D timestamp (0 if not present in mhd file).
 */
-void usMHDSequenceReader::acquire(usImagePostScan3D<unsigned char> & image, uint64_t & timestamp) {
+void usMHDSequenceReader::acquire(usImagePostScan3D<unsigned char> &image, uint64_t &timestamp)
+{
 
-  if(m_imageCounter > m_totalImageNumber)
+  if (m_imageCounter > m_totalImageNumber)
     throw(vpException(vpException::fatalError, "usMHDSequenceReader : end of sequence reached !"));
 
-  if(usImageIo::getHeaderFormat(m_sequenceFiles.at(2*m_imageCounter)) != usImageIo::FORMAT_MHD) //check file extention
+  if (usImageIo::getHeaderFormat(m_sequenceFiles.at(2 * m_imageCounter)) !=
+      usImageIo::FORMAT_MHD) // check file extention
     throw(vpException(vpException::fatalError, "usMHDSequenceReader trying to open a non-mhd file !"));
 
   usMetaHeaderParser mhdParser;
-  mhdParser.read(m_sequenceDirectory + vpIoTools::path("/") + m_sequenceFiles.at(2*m_imageCounter)); // we skip raw files
+  mhdParser.read(m_sequenceDirectory + vpIoTools::path("/") +
+                 m_sequenceFiles.at(2 * m_imageCounter)); // we skip raw files
   m_sequenceImageType = mhdParser.getImageType();
   if (m_sequenceImageType != us::POSTSCAN_3D && m_sequenceImageType != us::NOT_SET) {
     throw(vpException(vpException::badValue, "Reading a non pre-scan 3D image!"));
@@ -313,11 +334,11 @@ void usMHDSequenceReader::acquire(usImagePostScan3D<unsigned char> & image, uint
 
   usMetaHeaderParser::MHDHeader mhdHeader = mhdParser.getMHDHeader();
   timestamp = 0;
-  if(mhdHeader.timestamp.size()>0)
+  if (mhdHeader.timestamp.size() > 0)
     timestamp = mhdHeader.timestamp.at(0);
 
-  //resizing image in memory
-  image.resize(mhdHeader.dim[0], mhdHeader.dim[1],mhdHeader.dim[2]);
+  // resizing image in memory
+  image.resize(mhdHeader.dim[0], mhdHeader.dim[1], mhdHeader.dim[2]);
 
   image.setTransducerRadius(mhdHeader.transducerRadius);
   image.setScanLinePitch(mhdHeader.scanLinePitch);
@@ -333,36 +354,34 @@ void usMHDSequenceReader::acquire(usImagePostScan3D<unsigned char> & image, uint
   image.setSamplingFrequency(mhdHeader.samplingFrequency);
   image.setTransmitFrequency(mhdHeader.transmitFrequency);
 
-  //data parsing
+  // data parsing
   usRawFileParser rawParser;
-  rawParser.read(image, m_sequenceDirectory + vpIoTools::path("/") + m_sequenceFiles.at(2*m_imageCounter + 1));
+  rawParser.read(image, m_sequenceDirectory + vpIoTools::path("/") + m_sequenceFiles.at(2 * m_imageCounter + 1));
 
-  m_imageCounter ++;
+  m_imageCounter++;
 }
 
 /**
 * Tells the used if the end of the sequence is reached.
 * @return True if the end of the sequence is reached.
 */
-bool usMHDSequenceReader::end() {
-  return m_imageCounter >= m_totalImageNumber;
-}
+bool usMHDSequenceReader::end() { return m_imageCounter >= m_totalImageNumber; }
 
 /**
 * Returns the current type of image acquired.
 * @return The image type of the sequence currently read.
 */
-us::ImageType usMHDSequenceReader::getImageType() const {
-  return m_sequenceImageType;
-}
+us::ImageType usMHDSequenceReader::getImageType() const { return m_sequenceImageType; }
 
 /**
 * Returns the timestamp of next frame (use only for 2D sequence).
 * @return The timestamp of next frame.
 */
-uint64_t usMHDSequenceReader::getNextTimeStamp() {
+uint64_t usMHDSequenceReader::getNextTimeStamp()
+{
   usMetaHeaderParser mhdParser;
-  mhdParser.read(m_sequenceDirectory + vpIoTools::path("/") + m_sequenceFiles.at(2* m_imageCounter)); // we skip raw files, imagecounter already incremented
+  mhdParser.read(m_sequenceDirectory + vpIoTools::path("/") +
+                 m_sequenceFiles.at(2 * m_imageCounter)); // we skip raw files, imagecounter already incremented
   return mhdParser.getMHDHeader().timestamp.at(0);
 }
 
@@ -370,12 +389,14 @@ uint64_t usMHDSequenceReader::getNextTimeStamp() {
 * Returns the timestamps of next volume.
 * @return The timestamps of next volume.
 */
-std::vector<uint64_t> usMHDSequenceReader::getNextTimeStamps() {
+std::vector<uint64_t> usMHDSequenceReader::getNextTimeStamps()
+{
   usMetaHeaderParser mhdParser;
-  mhdParser.read(m_sequenceDirectory + vpIoTools::path("/") + m_sequenceFiles.at(2* m_imageCounter)); // we skip raw files, imagecounter already incremented
+  mhdParser.read(m_sequenceDirectory + vpIoTools::path("/") +
+                 m_sequenceFiles.at(2 * m_imageCounter)); // we skip raw files, imagecounter already incremented
   std::vector<uint64_t> timestamps = mhdParser.getMHDHeader().timestamp;
-  if(m_imageCounter % 2 == 0) // current volume is even => next volume is odd
-    std::reverse(timestamps.begin(),timestamps.end());
+  if (m_imageCounter % 2 == 0) // current volume is even => next volume is odd
+    std::reverse(timestamps.begin(), timestamps.end());
   return timestamps;
 }
 
@@ -383,6 +404,4 @@ std::vector<uint64_t> usMHDSequenceReader::getNextTimeStamps() {
 * Returns the current image number, of last image acquired.
 * @return The image number (volume number for 3D sequences, frame number for 2D sequences).
 */
-int usMHDSequenceReader::getImageNumber() const {
-  return m_imageCounter;
-}
+int usMHDSequenceReader::getImageNumber() const { return m_imageCounter; }

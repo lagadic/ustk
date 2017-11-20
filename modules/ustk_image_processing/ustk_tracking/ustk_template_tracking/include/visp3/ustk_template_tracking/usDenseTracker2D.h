@@ -43,7 +43,6 @@
 
 #include <visp3/ustk_core/usRectangle.h>
 
-
 /**
  * @class usDenseTracker2D
  * @brief 2D region tracker
@@ -57,7 +56,6 @@
 class VISP_EXPORT usDenseTracker2D
 {
 public:
-
   vpImage<unsigned char> &getRegion();
 
   usRectangle getTarget() const;
@@ -81,8 +79,6 @@ private:
   unsigned int m_height;
   unsigned int m_width;
   unsigned int m_size;
-
 };
 
 #endif // US_DENSE_TRACKER_2D_H
-

@@ -48,76 +48,72 @@
 class VISP_EXPORT usAcquisitionParameters
 {
 public:
-
   /// For 4DC7 3D probe motor movement
-  typedef enum
-    {
-      /// motor not moving (2D case)
-      US_STATIC_MOTOR = 0,
+  typedef enum {
+    /// motor not moving (2D case)
+    US_STATIC_MOTOR = 0,
 
-      /// 2 motor steps per frame = 0.36585 degrees. Not working for 4DC7 probe !
-      US_ANGLE_PITCH_1 = 2,
+    /// 2 motor steps per frame = 0.36585 degrees. Not working for 4DC7 probe !
+    US_ANGLE_PITCH_1 = 2,
 
-      /// 4 motor steps per frame = 0.7317 degrees
-      US_ANGLE_PITCH_2 = 4,
+    /// 4 motor steps per frame = 0.7317 degrees
+    US_ANGLE_PITCH_2 = 4,
 
-      /// 8 motor steps per frame = 1.4634 degrees
-      US_ANGLE_PITCH_3 = 8,
+    /// 8 motor steps per frame = 1.4634 degrees
+    US_ANGLE_PITCH_3 = 8,
 
-      /// 8 motor steps per frame = 2.9268 degrees. Not working for 4DC7 probe !
-      US_ANGLE_PITCH_4 = 16,
+    /// 8 motor steps per frame = 2.9268 degrees. Not working for 4DC7 probe !
+    US_ANGLE_PITCH_4 = 16,
 
-      /// 8 motor steps per frame = 5.8536 degrees. Not working for 4DC7 probe !
-      US_ANGLE_PITCH_5 = 32
-    } usMotorStep;
-
+    /// 8 motor steps per frame = 5.8536 degrees. Not working for 4DC7 probe !
+    US_ANGLE_PITCH_5 = 32
+  } usMotorStep;
 
   usAcquisitionParameters();
   ~usAcquisitionParameters();
 
-  //values
-  bool getActivateMotor() const {return m_activateMotor;}
+  // values
+  bool getActivateMotor() const { return m_activateMotor; }
 
-  usMotorStep getSepsPerFrame () const {return m_motorSteps;}
-  usMotorStep getSepsPerFrameMax () const {return m_motorStepsMax;}
-  usMotorStep getSepsPerFrameMin () const {return m_motorStepsMin;}
+  usMotorStep getSepsPerFrame() const { return m_motorSteps; }
+  usMotorStep getSepsPerFrameMax() const { return m_motorStepsMax; }
+  usMotorStep getSepsPerFrameMin() const { return m_motorStepsMin; }
 
-  int getFramesPerVolume () const {return m_framesPerVolume;}
-  int getFramesPerVolumeMax () const {return m_framesPerVolumeMax;}
-  int getFramesPerVolumeMin () const {return m_framesPerVolumeMin;}
+  int getFramesPerVolume() const { return m_framesPerVolume; }
+  int getFramesPerVolumeMax() const { return m_framesPerVolumeMax; }
+  int getFramesPerVolumeMin() const { return m_framesPerVolumeMin; }
 
-  int getImageDepth () const {return m_imageDepth;}
-  int getImageDepthMax () const {return m_imageDepthMax;}
-  int getImageDepthMin () const {return m_imageDepthMin;}
+  int getImageDepth() const { return m_imageDepth; }
+  int getImageDepthMax() const { return m_imageDepthMax; }
+  int getImageDepthMin() const { return m_imageDepthMin; }
 
+  int getImagingMode() const { return m_imagingMode; }
+  int getImagingModeMax() const { return m_imagingModeMax; }
+  int getImagingModeMin() const { return m_imagingModeMin; }
 
-  int getImagingMode () const {return m_imagingMode;}
-  int getImagingModeMax () const {return m_imagingModeMax;}
-  int getImagingModeMin () const {return m_imagingModeMin;}
+  int getMotorPosition() const { return m_motorPosition; }
+  int getMotorPositionMax() const { return m_motorPositionMax; }
+  int getMotorPositionMin() const { return m_motorPositionMin; }
 
-  int getMotorPosition () const {return m_motorPosition;}
-  int getMotorPositionMax () const {return m_motorPositionMax;}
-  int getMotorPositionMin () const {return m_motorPositionMin;}
+  int getPostScanHeigh() const { return m_postScanHeigh; }
 
-  int getPostScanHeigh () const {return m_postScanHeigh;}
+  bool getPostScanMode() const { return m_postScanMode; }
 
-  bool getPostScanMode () const {return m_postScanMode;}
+  int getPostScanWidth() const { return m_postScanWidth; }
 
-  int getPostScanWidth () const {return m_postScanWidth;}
+  int getSamplingFrequency() const { return m_samplingFrequency; }
+  int getSamplingFrequencyMax() const { return m_samplingFrequencyMax; }
+  int getSamplingFrequencyMin() const { return m_samplingFrequencyMin; }
 
-  int getSamplingFrequency () const {return m_samplingFrequency;}
-  int getSamplingFrequencyMax () const {return m_samplingFrequencyMax;}
-  int getSamplingFrequencyMin () const {return m_samplingFrequencyMin;}
+  int getSector() const { return m_sector; }
+  int getSectorMax() const { return m_sectorMax; }
+  int getSectorMin() const { return m_sectorMin; }
 
-  int getSector () const {return m_sector;}
-  int getSectorMax () const {return m_sectorMax;}
-  int getSectorMin () const {return m_sectorMin;}
+  int getTransmitFrequency() const { return m_transmitFrequency; }
+  int getTransmitFrequencyMax() const { return m_transmitFrequencyMax; }
+  int getTransmitFrequencyMin() const { return m_transmitFrequencyMin; }
 
-  int getTransmitFrequency () const {return m_transmitFrequency;}
-  int getTransmitFrequencyMax () const {return m_transmitFrequencyMax;}
-  int getTransmitFrequencyMin () const {return m_transmitFrequencyMin;}
-
-  //setters
+  // setters
   void setActivateMotor(bool activateMotor);
 
   void setSepsPerFrame(usMotorStep anglePerFrame);
@@ -131,7 +127,6 @@ public:
   void setImageDepth(int imageDepth);
   void setImageDepthMax(int imageDepthMax);
   void setImageDepthMin(int imageDepthMin);
-
 
   void setImagingMode(int imagingMode);
   void setImagingModeMax(int imagingModeMax);
@@ -159,29 +154,30 @@ public:
   void setTransmitFrequencyMax(int transmitFrequencyMax);
   void setTransmitFrequencyMin(int transmitFrequencyMin);
 
-private :
-  //frequencies
+private:
+  // frequencies
   int m_transmitFrequency;
   int m_samplingFrequency;
 
-  //image type
-  int m_imagingMode; // see ImagingModes.h
-  bool m_postScanMode; //performs scan conversion on ultrasound station if true
+  // image type
+  int m_imagingMode;   // see ImagingModes.h
+  bool m_postScanMode; // performs scan conversion on ultrasound station if true
   int m_postScanHeigh; // if post-scan mode, height of the frame (px)
   int m_postScanWidth; // if post-scan mode, width of the frame (px)
 
-  int m_imageDepth; //in mm
-  int m_sector; // in %
+  int m_imageDepth; // in mm
+  int m_sector;     // in %
 
-  //motor settings
-  bool m_activateMotor; //to sweep the motor permanently
+  // motor settings
+  bool m_activateMotor; // to sweep the motor permanently
 
   // position of the motor in degrees : 0° = side of the fixation system for 4DC7 probe
   int m_motorPosition; // (used if activateMotor = false)
 
   // motor movement parameters
   int m_framesPerVolume; // (must be odd : always a central frame)
-  usMotorStep m_motorSteps; // steps between two frames (see motor info between total steps and fov to convert in degrees)
+  usMotorStep
+      m_motorSteps; // steps between two frames (see motor info between total steps and fov to convert in degrees)
 
   // min values
   int m_transmitFrequencyMin;

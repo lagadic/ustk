@@ -30,23 +30,19 @@
  *
  *****************************************************************************/
 
-//std includes
+// std includes
 #include <iostream>
 
-//visp includes
+// visp includes
 #include <visp3/core/vpConfig.h>
 
-//ustk includes
-#include<visp3/ustk_core/usImagePreScanSettings.h>
+// ustk includes
+#include <visp3/ustk_core/usImagePreScanSettings.h>
 
 /**
 * Default constructor, all parameters set with default values.
 */
-usImagePreScanSettings::usImagePreScanSettings()
-  : usTransducerSettings(), m_axialResolution(0.0)
-{
-
-}
+usImagePreScanSettings::usImagePreScanSettings() : usTransducerSettings(), m_axialResolution(0.0) {}
 
 /**
 * Copy constructor.
@@ -55,7 +51,6 @@ usImagePreScanSettings::usImagePreScanSettings()
 usImagePreScanSettings::usImagePreScanSettings(const usImagePreScanSettings &other)
   : usTransducerSettings(other), m_axialResolution(other.getAxialResolution())
 {
-
 }
 
 /**
@@ -67,14 +62,13 @@ usImagePreScanSettings::usImagePreScanSettings(const usImagePreScanSettings &oth
 usImagePreScanSettings::usImagePreScanSettings(const usTransducerSettings &transducerSettings, double axialResolution)
   : usTransducerSettings(transducerSettings), m_axialResolution(axialResolution)
 {
-
 }
 
 /**
 * Copy constructor.
 * @param preScanSettings Pre-scan settings to copy.
 */
-void usImagePreScanSettings::setImagePreScanSettings(const usImagePreScanSettings& preScanSettings)
+void usImagePreScanSettings::setImagePreScanSettings(const usImagePreScanSettings &preScanSettings)
 {
   *this = preScanSettings;
 }
@@ -88,7 +82,7 @@ usImagePreScanSettings::~usImagePreScanSettings() {}
 * Assignement operator.
 * @param other usImagePreScanSettings to copy.
 */
-usImagePreScanSettings& usImagePreScanSettings::operator=(const usImagePreScanSettings& other)
+usImagePreScanSettings &usImagePreScanSettings::operator=(const usImagePreScanSettings &other)
 {
   usTransducerSettings::operator=(other);
   m_axialResolution = other.getAxialResolution();
@@ -100,43 +94,33 @@ usImagePreScanSettings& usImagePreScanSettings::operator=(const usImagePreScanSe
 * Comparison operator.
 * @param other usImagePreScanSettings to compare with.
 */
-bool usImagePreScanSettings::operator==(const usImagePreScanSettings& other)
+bool usImagePreScanSettings::operator==(const usImagePreScanSettings &other)
 {
-  return(usTransducerSettings::operator==(other) &&
-    m_axialResolution == other.getAxialResolution());
+  return (usTransducerSettings::operator==(other) && m_axialResolution == other.getAxialResolution());
 }
 
 /**
 * Prints information in a stream.
 */
-template<class T> VISP_EXPORT
-std::ostream& operator<<(std::ostream& out, const usImagePreScanSettings &other)
+template <class T> VISP_EXPORT std::ostream &operator<<(std::ostream &out, const usImagePreScanSettings &other)
 {
   return out << "Axial resolution : " << other.getAxialResolution() << std::endl
-             << static_cast<const usTransducerSettings &>(other) <<std::endl;
+             << static_cast<const usTransducerSettings &>(other) << std::endl;
 }
 
 /**
 * Axial resolution setter.
 * @param axialResolution Axial resloution to assign to the settings.
 */
-void usImagePreScanSettings::setAxialResolution(const double axialResolution)
-{
-  m_axialResolution = axialResolution;
-}
+void usImagePreScanSettings::setAxialResolution(const double axialResolution) { m_axialResolution = axialResolution; }
 
 /**
 * Axial resolution getter.
 */
-double usImagePreScanSettings::getAxialResolution() const
-{
-  return (m_axialResolution);
-}
+double usImagePreScanSettings::getAxialResolution() const { return (m_axialResolution); }
 
-
-usImagePreScanSettings usImagePreScanSettings::getImagePreScanSettings()const
+usImagePreScanSettings usImagePreScanSettings::getImagePreScanSettings() const
 {
   usImagePreScanSettings ret = *this;
   return ret;
 }
-

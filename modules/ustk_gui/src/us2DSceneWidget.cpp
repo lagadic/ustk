@@ -40,17 +40,17 @@
 #ifdef USTK_HAVE_VTK_QT
 #include <visp3/ustk_gui/usViewerWidget.h>
 
-//USTK includes
-#include <visp3/ustk_gui/us2DSceneWidget.h>
+// USTK includes
 #include <visp3/ustk_core/usImagePostScan2D.h>
-
+#include <visp3/ustk_gui/us2DSceneWidget.h>
 
 /**
 * Constructor.
 * @param parent The QWidget parent.
 * @param f Qt window flags.
 */
-us2DSceneWidget::us2DSceneWidget(QWidget* parent, Qt::WindowFlags f) : usViewerWidget(parent,f) {
+us2DSceneWidget::us2DSceneWidget(QWidget *parent, Qt::WindowFlags f) : usViewerWidget(parent, f)
+{
 
   m_imageData = NULL;
   m_resliceMatrix = NULL;
@@ -67,11 +67,11 @@ us2DSceneWidget::us2DSceneWidget(QWidget* parent, Qt::WindowFlags f) : usViewerW
 
   m_polydataPlaneContour = vtkPolyData::New();
   m_polyDataPlaneContourMapper = vtkPolyDataMapper::New();
-  m_polydataPlaneContourActor= vtkActor::New();
+  m_polydataPlaneContourActor = vtkActor::New();
 
   m_polydataMeshContour = vtkPolyData::New();
   m_polyDataMeshContourMapper = vtkPolyDataMapper::New();
-  m_polydataMeshContourActor= vtkActor::New();
+  m_polydataMeshContourActor = vtkActor::New();
 
   // Picker to pick pixels
   m_propPicker = vtkPropPicker::New();
@@ -80,7 +80,7 @@ us2DSceneWidget::us2DSceneWidget(QWidget* parent, Qt::WindowFlags f) : usViewerW
   m_pPressed = false;
   m_mousePressed = false;
 
-  //disable tracking to receive only mouse move events if a button is pressed
+  // disable tracking to receive only mouse move events if a button is pressed
   setMouseTracking(false);
 
   m_pickingState = false;
@@ -90,51 +90,44 @@ us2DSceneWidget::us2DSceneWidget(QWidget* parent, Qt::WindowFlags f) : usViewerW
 * Paint event catcher.
 * @param event The event caught.
 */
-void us2DSceneWidget::paintEvent( QPaintEvent* event ) {
-
-  usViewerWidget::paintEvent(event);
-}
+void us2DSceneWidget::paintEvent(QPaintEvent *event) { usViewerWidget::paintEvent(event); }
 
 /**
 * Image data getter.
 * @return The vtkImageData in wich we are slicing.
 */
-vtkImageData* us2DSceneWidget::getImageData() {
-  return m_imageData;
-}
+vtkImageData *us2DSceneWidget::getImageData() { return m_imageData; }
 
 /**
 * Homogeneous matrix getter.
 * @return The matrix defining the current slice (position and orientation).
 */
-vtkMatrix4x4* us2DSceneWidget::getResliceMatrix() {
-  return m_resliceMatrix;
-}
+vtkMatrix4x4 *us2DSceneWidget::getResliceMatrix() { return m_resliceMatrix; }
 
 /**
 * Init method, to call after image and matrix setters. Initializes the vtk workflow to display the image slice.
 */
-void us2DSceneWidget::init() {
+void us2DSceneWidget::init()
+{
 
-  //verify imageData and reslice matrix are set
-  if(m_imageData == NULL)
-    throw(vpException(vpException::fatalError,"No imageData provided in us2DSceneWidget"));
+  // verify imageData and reslice matrix are set
+  if (m_imageData == NULL)
+    throw(vpException(vpException::fatalError, "No imageData provided in us2DSceneWidget"));
 
-  if(m_resliceMatrix == NULL)
-    throw(vpException(vpException::fatalError,"No reslice matrix provided in us2DSceneWidget"));
+  if (m_resliceMatrix == NULL)
+    throw(vpException(vpException::fatalError, "No reslice matrix provided in us2DSceneWidget"));
 
   m_reslice->SetInputData(m_imageData);
   m_reslice->SetOutputDimensionality(2);
   m_reslice->SetResliceAxes(m_resliceMatrix);
   m_reslice->SetInterpolationModeToLinear();
 
-
-  //To ensure no part of the image will be cropped
+  // To ensure no part of the image will be cropped
   m_reslice->AutoCropOutputOn();
 
   // Create a greyscale lookup table
-  m_table->SetRange(0, 255); // image intensity range
-  m_table->SetValueRange(0.0, 1.0); // from black to white
+  m_table->SetRange(0, 255);             // image intensity range
+  m_table->SetValueRange(0.0, 1.0);      // from black to white
   m_table->SetSaturationRange(0.0, 0.0); // no color saturation
   m_table->SetRampToLinear();
   m_table->Build();
@@ -150,48 +143,43 @@ void us2DSceneWidget::init() {
   m_renderer->AddActor(m_actor);
 
   // Setup render window
-  vtkRenderWindow* renderWindow = this->GetRenderWindow();
+  vtkRenderWindow *renderWindow = this->GetRenderWindow();
   renderWindow->AddRenderer(m_renderer);
 
-
   // Set up the interaction
-  vtkSmartPointer<vtkInteractorStyleImage> imageStyle =
-      vtkSmartPointer<vtkInteractorStyleImage>::New();
+  vtkSmartPointer<vtkInteractorStyleImage> imageStyle = vtkSmartPointer<vtkInteractorStyleImage>::New();
   imageStyle->SetInteractionModeToImageSlicing();
   renderWindow->GetInteractor()->SetInteractorStyle(imageStyle);
-  //imageStyle->EnabledOff();
+  // imageStyle->EnabledOff();
 
-  //picker
+  // picker
   m_propPicker->PickFromListOn();
 
   // Give the picker a prop to pick
-  m_propPicker->AddPickList( m_actor );
+  m_propPicker->AddPickList(m_actor);
 }
 
 /**
 * Image setter.
 * @param imageData The vtkImageData to display.
 */
-void us2DSceneWidget::setImageData(vtkImageData* imageData) {
-  m_imageData = imageData;
-}
+void us2DSceneWidget::setImageData(vtkImageData *imageData) { m_imageData = imageData; }
 
 /**
 * Orientation matrix setter.
 * @param matrix The vtk matrix to place the reslice plane in the image coordinate system (rotation and translation).
 */
-void us2DSceneWidget::setResliceMatrix(vtkMatrix4x4 *matrix) {
-  m_resliceMatrix = matrix;
-}
+void us2DSceneWidget::setResliceMatrix(vtkMatrix4x4 *matrix) { m_resliceMatrix = matrix; }
 
 /**
 * Polydata plane contour setter.
 * @param polyData The vtk polydata representing the plane contour (image bounds).
 */
-void us2DSceneWidget::setPolyDataPlaneContour(vtkPolyData *polyData) {
+void us2DSceneWidget::setPolyDataPlaneContour(vtkPolyData *polyData)
+{
   m_polydataPlaneContour = polyData;
 
-  //add polygon in scene
+  // add polygon in scene
 
   m_polyDataPlaneContourMapper->SetInputData(m_polydataPlaneContour);
   m_polyDataPlaneContourMapper->SetScalarRange(m_polydataPlaneContour->GetScalarRange());
@@ -202,39 +190,38 @@ void us2DSceneWidget::setPolyDataPlaneContour(vtkPolyData *polyData) {
   m_polydataPlaneContourActor->GetProperty()->SetOpacity(1.0);
 
   vpHomogeneousMatrix mat;
-  usVTKConverter::convert(m_resliceMatrix,mat);
-  vtkMatrix4x4* matrix = vtkMatrix4x4::New();
-  usVTKConverter::convert(mat.inverse(),matrix);
+  usVTKConverter::convert(m_resliceMatrix, mat);
+  vtkMatrix4x4 *matrix = vtkMatrix4x4::New();
+  usVTKConverter::convert(mat.inverse(), matrix);
   m_polydataPlaneContourActor->SetUserMatrix(matrix);
-
 
   m_polydataPlaneContourActor->SetMapper(m_polyDataPlaneContourMapper);
 
   m_renderer->AddActor(m_polydataPlaneContourActor);
-
 }
 
 /**
 * Polydata mesh contour setter.
 * @param polyData The vtk polydata representing the mesh contour in the plane.
 */
-void us2DSceneWidget::setPolyDataMeshContour(vtkPolyData *polyData) {
+void us2DSceneWidget::setPolyDataMeshContour(vtkPolyData *polyData)
+{
   m_polydataMeshContour = polyData;
 
-  //add polygon in scene
+  // add polygon in scene
   m_polyDataMeshContourMapper->SetInputData(m_polydataMeshContour);
   m_polyDataMeshContourMapper->SetScalarRange(m_polydataMeshContour->GetScalarRange());
 
   m_polydataMeshContourActor->GetProperty()->SetOpacity(1.0);
   m_polydataMeshContourActor->GetProperty()->SetLighting(0);
   m_polydataMeshContourActor->GetProperty()->SetLineWidth(1);
-  m_polydataMeshContourActor->GetProperty()->SetColor(1.0,1.0,0.0);
+  m_polydataMeshContourActor->GetProperty()->SetColor(1.0, 1.0, 0.0);
   m_polydataMeshContourActor->GetProperty()->SetOpacity(1.0);
 
   vpHomogeneousMatrix mat;
-  usVTKConverter::convert(m_resliceMatrix,mat);
-  vtkMatrix4x4* matrix = vtkMatrix4x4::New();
-  usVTKConverter::convert(mat.inverse(),matrix);
+  usVTKConverter::convert(m_resliceMatrix, mat);
+  vtkMatrix4x4 *matrix = vtkMatrix4x4::New();
+  usVTKConverter::convert(mat.inverse(), matrix);
   m_polydataMeshContourActor->SetUserMatrix(matrix);
 
   m_polydataMeshContourActor->SetMapper(m_polyDataMeshContourMapper);
@@ -246,20 +233,21 @@ void us2DSceneWidget::setPolyDataMeshContour(vtkPolyData *polyData) {
 * Image update slot.
 * @param imageData The new vtkImageData to display.
 */
-void us2DSceneWidget::updateImageData(vtkImageData* imageData) {
+void us2DSceneWidget::updateImageData(vtkImageData *imageData)
+{
 
-  //remove actor from view to avoid rendering errors during data switch
+  // remove actor from view to avoid rendering errors during data switch
   m_renderer->RemoveActor(m_actor);
 
-  //update internal pointer
+  // update internal pointer
   m_imageData = imageData;
-  //update image reslice with the new image data
+  // update image reslice with the new image data
   m_reslice->SetInputData(imageData);
 
-  //add the actor (modified with vtk because m_reslice input data has changed)
+  // add the actor (modified with vtk because m_reslice input data has changed)
   m_renderer->AddActor(m_actor);
 
-  //render the view with the new actor
+  // render the view with the new actor
   GetRenderWindow()->Render();
 }
 
@@ -267,8 +255,9 @@ void us2DSceneWidget::updateImageData(vtkImageData* imageData) {
 * Orientation matrix update slot for vpMatrix.
 * @param matrix The new matrix defining rotation and translation in image coordinates system.
 */
-void us2DSceneWidget::changeMatrix(vpHomogeneousMatrix matrix) {
-  usVTKConverter::convert(matrix,m_resliceMatrix);
+void us2DSceneWidget::changeMatrix(vpHomogeneousMatrix matrix)
+{
+  usVTKConverter::convert(matrix, m_resliceMatrix);
   update();
   emit(matrixChanged(m_resliceMatrix));
 }
@@ -276,7 +265,8 @@ void us2DSceneWidget::changeMatrix(vpHomogeneousMatrix matrix) {
 /**
 * Mouse wheel event catcher. Updates the translation along the plane normal.
 */
-void us2DSceneWidget::wheelEvent(QWheelEvent *event) {
+void us2DSceneWidget::wheelEvent(QWheelEvent *event)
+{
   int increment = event->delta() / 120;
 
   // To improve : mean of the 3 spacings according to the plane orientation
@@ -288,27 +278,26 @@ void us2DSceneWidget::wheelEvent(QWheelEvent *event) {
   tVec.data[2] = sliceSpacing * increment;
 
   vpHomogeneousMatrix MTrans;
-  MTrans.buildFrom(tVec,vpThetaUVector(0,0,0));
+  MTrans.buildFrom(tVec, vpThetaUVector(0, 0, 0));
 
   vpHomogeneousMatrix MCurrrent;
   usVTKConverter::convert(m_resliceMatrix, MCurrrent);
 
   vpHomogeneousMatrix Mnew = MCurrrent * MTrans;
 
-  usVTKConverter::convert(Mnew,m_resliceMatrix);
+  usVTKConverter::convert(Mnew, m_resliceMatrix);
 
-  //update contour polydata
-  vtkMatrix4x4* vtkMat = vtkMatrix4x4::New();
-  usVTKConverter::convert(Mnew.inverse(),vtkMat);
+  // update contour polydata
+  vtkMatrix4x4 *vtkMat = vtkMatrix4x4::New();
+  usVTKConverter::convert(Mnew.inverse(), vtkMat);
   m_polydataPlaneContourActor->SetUserMatrix(vtkMat);
   m_polydataMeshContourActor->SetUserMatrix(vtkMat);
 
   update();
   m_renderer->Render();
 
-  //emit signal to inform other views the reslice matrix changed
+  // emit signal to inform other views the reslice matrix changed
   emit(matrixChanged(m_resliceMatrix));
-
 
   event->accept();
 }
@@ -316,11 +305,11 @@ void us2DSceneWidget::wheelEvent(QWheelEvent *event) {
 /**
 * Key press event catcher. H key to enable rotation mode, P key to pick a voxel.
 */
-void us2DSceneWidget::keyPressEvent(QKeyEvent *event) {
-  if(event->key() == Qt::Key_H) {
+void us2DSceneWidget::keyPressEvent(QKeyEvent *event)
+{
+  if (event->key() == Qt::Key_H) {
     m_rPressed = true;
-  }
-  else if(event->key() == Qt::Key_P) {
+  } else if (event->key() == Qt::Key_P) {
     m_pPressed = true;
   }
   event->accept();
@@ -329,11 +318,11 @@ void us2DSceneWidget::keyPressEvent(QKeyEvent *event) {
 /**
 * Key press event catcher. H key to enable rotation mode, P key to pick a voxel.
 */
-void us2DSceneWidget::keyReleaseEvent(QKeyEvent *event) {
-  if(event->key() == Qt::Key_H) {
+void us2DSceneWidget::keyReleaseEvent(QKeyEvent *event)
+{
+  if (event->key() == Qt::Key_H) {
     m_rPressed = false;
-  }
-  else if(event->key() == Qt::Key_P) {
+  } else if (event->key() == Qt::Key_P) {
     m_pPressed = false;
   }
   event->accept();
@@ -342,8 +331,9 @@ void us2DSceneWidget::keyReleaseEvent(QKeyEvent *event) {
 /**
 * Mouse move event catcher, used to calculate the rotation to apply on reslice view plane.
 */
-void 	us2DSceneWidget::mouseMoveEvent(QMouseEvent * event) {
-  if(m_rPressed) {
+void us2DSceneWidget::mouseMoveEvent(QMouseEvent *event)
+{
+  if (m_rPressed) {
     int dx = m_lastmouserPosX - event->pos().x();
     int dy = m_lastmouserPosY - event->pos().y();
 
@@ -352,27 +342,27 @@ void 	us2DSceneWidget::mouseMoveEvent(QMouseEvent * event) {
 
     vpThetaUVector tuVec;
 
-    //when we move along x we rotate around y (z is normal to the view).
-    if(abs(dx) < 16) {
-      tuVec.data[1] = vpMath::rad(dx*.1);
+    // when we move along x we rotate around y (z is normal to the view).
+    if (abs(dx) < 16) {
+      tuVec.data[1] = vpMath::rad(dx * .1);
     }
-    //when we move along y we rotate around x.
-    if(abs(dy) < 16) {
-      tuVec.data[0] = vpMath::rad(dy*.1);
+    // when we move along y we rotate around x.
+    if (abs(dy) < 16) {
+      tuVec.data[0] = vpMath::rad(dy * .1);
     }
 
     vpHomogeneousMatrix MRot;
-    MRot.buildFrom(vpTranslationVector(0,0,0),tuVec);
+    MRot.buildFrom(vpTranslationVector(0, 0, 0), tuVec);
 
     vpHomogeneousMatrix finalMat = currentMat * MRot;
 
     usVTKConverter::convert(finalMat, m_resliceMatrix);
 
-    //update contour polydata
-    vtkMatrix4x4* vtkMat = vtkMatrix4x4::New();
-    usVTKConverter::convert(finalMat.inverse(),vtkMat);
+    // update contour polydata
+    vtkMatrix4x4 *vtkMat = vtkMatrix4x4::New();
+    usVTKConverter::convert(finalMat.inverse(), vtkMat);
     m_polydataPlaneContourActor->SetUserMatrix(vtkMat);
-  m_polydataMeshContourActor->SetUserMatrix(vtkMat);
+    m_polydataMeshContourActor->SetUserMatrix(vtkMat);
 
     emit(matrixChanged(m_resliceMatrix));
     update();
@@ -381,9 +371,8 @@ void 	us2DSceneWidget::mouseMoveEvent(QMouseEvent * event) {
     m_lastmouserPosX = event->pos().x();
     m_lastmouserPosY = event->pos().y();
     event->accept();
-  }
-  else {
-    //propagate event to allow colormap change in vtk
+  } else {
+    // propagate event to allow colormap change in vtk
     usViewerWidget::mouseMoveEvent(event);
   }
 }
@@ -391,9 +380,9 @@ void 	us2DSceneWidget::mouseMoveEvent(QMouseEvent * event) {
 /**
 * Slot to save the current image displayed in the view.
 */
-void 	us2DSceneWidget::saveViewSlot() {
-    vtkSmartPointer<vtkPNGWriter> writer =
-    vtkSmartPointer<vtkPNGWriter>::New();
+void us2DSceneWidget::saveViewSlot()
+{
+  vtkSmartPointer<vtkPNGWriter> writer = vtkSmartPointer<vtkPNGWriter>::New();
   std::string absFileName = us::getDataSetPath() + "/sceenshot.png";
   std::cout << "saving slice in file : " << absFileName << std::endl;
   writer->SetFileName(absFileName.c_str());
@@ -405,85 +394,85 @@ void 	us2DSceneWidget::saveViewSlot() {
 * Getter for current 2D slice.
 * @param [out] image2D Slice to extract.
 */
-void 	us2DSceneWidget::getCurrentSlice(usImagePostScan2D<unsigned char> & image2D) {
-  //Render to update the view and avoid getting an empty 2D image at reslice output
+void us2DSceneWidget::getCurrentSlice(usImagePostScan2D<unsigned char> &image2D)
+{
+  // Render to update the view and avoid getting an empty 2D image at reslice output
   this->GetRenderWindow()->Render();
 
-  //convert current VTK slice to a usImagePostScan2D
+  // convert current VTK slice to a usImagePostScan2D
   vtkSmartPointer<vtkImageData> vtkImage2D;
   vtkImage2D = m_reslice->GetOutput();
-  usVTKConverter::convert(vtkImage2D,image2D);
+  usVTKConverter::convert(vtkImage2D, image2D);
 }
 
 /**
 * Mouse press event filter. Used to pick voxels.
 */
-void us2DSceneWidget::mousePressEvent(QMouseEvent *event) {
-if(m_pPressed|| m_pickingState) {
-  int x = event->pos().x();
-  int y = this->height() - event->pos().y(); // change for VTK window coordinate system, Y axis is inverted
+void us2DSceneWidget::mousePressEvent(QMouseEvent *event)
+{
+  if (m_pPressed || m_pickingState) {
+    int x = event->pos().x();
+    int y = this->height() - event->pos().y(); // change for VTK window coordinate system, Y axis is inverted
 
-  m_propPicker->Pick( x, y, 0.0,  m_renderer);
+    m_propPicker->Pick(x, y, 0.0, m_renderer);
 
-  if(m_propPicker->GetPath()) {
-    double p[3];
-    m_propPicker->GetPickPosition(p);
+    if (m_propPicker->GetPath()) {
+      double p[3];
+      m_propPicker->GetPickPosition(p);
 
-    //transform in 3D image coordinate system
-    vpHomogeneousMatrix MCurrrent;
-    usVTKConverter::convert(m_resliceMatrix, MCurrrent);
+      // transform in 3D image coordinate system
+      vpHomogeneousMatrix MCurrrent;
+      usVTKConverter::convert(m_resliceMatrix, MCurrrent);
 
-    vpColVector vector(4);
-    vector.data[0] = p[0];
-    vector.data[1] = p[1];
-    vector.data[2] = p[2];
-    vector.data[3] = 1;
+      vpColVector vector(4);
+      vector.data[0] = p[0];
+      vector.data[1] = p[1];
+      vector.data[2] = p[2];
+      vector.data[3] = 1;
 
-    vector = MCurrrent * vector;
-    std::cout << "Picked value = " << vector.data[0] << " " << vector.data[1] << " " << vector.data[2]  << std::endl;
-    m_pickedVoxel = vector;
-    emit (voxelPicked(vector));
-  }
-  else
-    std::cout << "Pick out of image" << std::endl;
+      vector = MCurrrent * vector;
+      std::cout << "Picked value = " << vector.data[0] << " " << vector.data[1] << " " << vector.data[2] << std::endl;
+      m_pickedVoxel = vector;
+      emit(voxelPicked(vector));
+    } else
+      std::cout << "Pick out of image" << std::endl;
   }
   usViewerWidget::mousePressEvent(event);
 }
 
-void us2DSceneWidget::setColor(double r,double g,double b) {
-  //m_renderer->SetBackground(r,g,b);
-  m_polydataPlaneContourActor->GetProperty()->SetColor(r,g,b);
+void us2DSceneWidget::setColor(double r, double g, double b)
+{
+  // m_renderer->SetBackground(r,g,b);
+  m_polydataPlaneContourActor->GetProperty()->SetColor(r, g, b);
 }
 
 /**
 * Draw a red line between (u1,v1,w1) and (u2,v2,w2) over the image.
 */
-void us2DSceneWidget::drawLine(double u1, double v1, double w1, double u2, double v2, double w2) {
+void us2DSceneWidget::drawLine(double u1, double v1, double w1, double u2, double v2, double w2)
+{
   // Setup points
-  vtkSmartPointer<vtkPoints> points =
-    vtkSmartPointer<vtkPoints>::New();
-  points->InsertNextPoint(u1,v1,w1);
-  points->InsertNextPoint(u2,v2,w2);
+  vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
+  points->InsertNextPoint(u1, v1, w1);
+  points->InsertNextPoint(u2, v2, w2);
 
-  //create a line between each pair of points
+  // create a line between each pair of points
   vtkSmartPointer<vtkLine> line0 = vtkSmartPointer<vtkLine>::New();
-  line0->GetPointIds()->SetId ( 0,0 );
-  line0->GetPointIds()->SetId ( 1,1 );
+  line0->GetPointIds()->SetId(0, 0);
+  line0->GetPointIds()->SetId(1, 1);
 
-  //create a cell array to store the line in
+  // create a cell array to store the line in
   vtkSmartPointer<vtkCellArray> lines = vtkSmartPointer<vtkCellArray>::New();
-  lines->InsertNextCell ( line0 );
+  lines->InsertNextCell(line0);
 
-  //create a polydata to store everything in
+  // create a polydata to store everything in
   vtkSmartPointer<vtkPolyData> polydata = vtkSmartPointer<vtkPolyData>::New();
 
-  //add the points and lines to the polydata
-  polydata->SetPoints ( points );
-  polydata->SetLines ( lines );
+  // add the points and lines to the polydata
+  polydata->SetPoints(points);
+  polydata->SetLines(lines);
 
-
-
-  //add polygon in scene
+  // add polygon in scene
   vtkSmartPointer<vtkPolyDataMapper> lineMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
   lineMapper->SetInputData(polydata);
   lineMapper->SetScalarRange(polydata->GetScalarRange());
@@ -492,41 +481,38 @@ void us2DSceneWidget::drawLine(double u1, double v1, double w1, double u2, doubl
   lineActor->GetProperty()->SetOpacity(1.0);
   lineActor->GetProperty()->SetLighting(0);
   lineActor->GetProperty()->SetLineWidth(1);
-  lineActor->GetProperty()->SetColor(1.0,0.0,0.0);
+  lineActor->GetProperty()->SetColor(1.0, 0.0, 0.0);
   lineActor->GetProperty()->SetOpacity(1.0);
   lineActor->SetMapper(lineMapper);
 
-
   vpHomogeneousMatrix mat;
-  usVTKConverter::convert(m_resliceMatrix,mat);
-  vtkMatrix4x4* matrix = vtkMatrix4x4::New();
-  usVTKConverter::convert(mat.inverse(),matrix);
+  usVTKConverter::convert(m_resliceMatrix, mat);
+  vtkMatrix4x4 *matrix = vtkMatrix4x4::New();
+  usVTKConverter::convert(mat.inverse(), matrix);
   lineActor->SetUserMatrix(matrix);
-
 
   m_renderer->AddActor(lineActor);
   GetRenderWindow()->Render();
 }
 
-
 /**
 * Slot used to recompute the view (if something shared changed in another view)
 */
-void us2DSceneWidget::updateView(){
-  GetRenderWindow()->Render();
-}
+void us2DSceneWidget::updateView() { GetRenderWindow()->Render(); }
 
 /**
-* Blocking getClick method : waits for user to pick a voxel, and return the voxel coordinates in (u,v,w) coordinates system.
+* Blocking getClick method : waits for user to pick a voxel, and return the voxel coordinates in (u,v,w) coordinates
+* system.
 */
-void us2DSceneWidget::getClick(vpColVector & vec) {
+void us2DSceneWidget::getClick(vpColVector &vec)
+{
   m_pickingState = true;
   QEventLoop loop;
-  connect(this,  SIGNAL(voxelPicked(vpColVector)), &loop, SLOT(quit()));
+  connect(this, SIGNAL(voxelPicked(vpColVector)), &loop, SLOT(quit()));
   loop.exec();
 
   vec = m_pickedVoxel;
   m_pickingState = false;
 }
 
-#endif //USTK_HAVE_VTK_QT
+#endif // USTK_HAVE_VTK_QT

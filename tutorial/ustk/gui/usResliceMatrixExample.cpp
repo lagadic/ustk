@@ -5,13 +5,13 @@
 #include <visp3/ustk_core/us.h>
 #include <visp3/ustk_gui/usResliceMatrixViewer.h>
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
   std::string mhd_filename;
 
-  for (int i=0; i<argc; i++) {
+  for (int i = 0; i < argc; i++) {
     if (std::string(argv[i]) == "--input")
-      mhd_filename = std::string(argv[i+1]);
+      mhd_filename = std::string(argv[i + 1]);
     else if (std::string(argv[i]) == "--help") {
       std::cout << "\nUsage: " << argv[0] << " [--input <3D volume.mhd>] [--help]\n" << std::endl;
       return 0;
@@ -21,9 +21,9 @@ int main(int argc, char** argv)
   // Get the ustk-dataset package path or USTK_DATASET_PATH environment variable value
   if (mhd_filename.empty()) {
     std::string env_ipath = us::getDataSetPath();
-    if (! env_ipath.empty())
+    if (!env_ipath.empty())
       mhd_filename = env_ipath + "/post-scan/3D_mhd/volume.mhd";
-      //mhd_filename = env_ipath + "/needle/postScanMHDNeedleInsertion/postscan-vol0.mhd";
+    // mhd_filename = env_ipath + "/needle/postScanMHDNeedleInsertion/postscan-vol0.mhd";
     else {
       std::cout << "You should set USTK_DATASET_PATH environment var to access to ustk dataset" << std::endl;
       return 0;
@@ -31,7 +31,7 @@ int main(int argc, char** argv)
   }
 
   // QT application
-  QApplication app( argc, argv );
+  QApplication app(argc, argv);
 
   usResliceMatrixViewer viewer(mhd_filename);
   viewer.show();
@@ -41,9 +41,6 @@ int main(int argc, char** argv)
 #else
 #include <iostream>
 
-int main()
-{
-  std::cout << "Install vtk with qt4 or qt5 support to run this tutorial." << std::endl;
-}
+int main() { std::cout << "Install vtk with qt4 or qt5 support to run this tutorial." << std::endl; }
 
 #endif

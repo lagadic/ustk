@@ -32,12 +32,12 @@
 
 /**
  * @file usVolumeGrabbedInfo.h
- * @brief Class to store additionnal informations arriving on the network with ultrasound volume grabbed (volume count, timestamps ...).
+ * @brief Class to store additionnal informations arriving on the network with ultrasound volume grabbed (volume count,
+ * timestamps ...).
  */
 
 #ifndef __usVolumeGrabbedInfo_h_
 #define __usVolumeGrabbedInfo_h_
-
 
 #include <visp3/ustk_core/usConfig.h>
 
@@ -49,15 +49,14 @@
 
 /**
  * @class usVolumeGrabbedInfo
- * @brief Class to store additionnal informations arriving on the network with ultrasound volumes grabbed, such as volume count, timestamps.
+ * @brief Class to store additionnal informations arriving on the network with ultrasound volumes grabbed, such as
+ * volume count, timestamps.
  * Usefull to do real-time process.
  * @ingroup module_ustk_grabber
  */
-template<class Type>
-class usVolumeGrabbedInfo : public Type
+template <class Type> class usVolumeGrabbedInfo : public Type
 {
 public:
-
   explicit usVolumeGrabbedInfo();
   ~usVolumeGrabbedInfo();
 
@@ -69,44 +68,32 @@ public:
   void setVolumeCount(quint32 volumeCount);
 
 private:
-  quint32 m_volumeCount; //from the beginning of acquisition
-  std::vector<uint64_t> m_timestamps; //msecs since epoch (on ultrasond machine)
+  quint32 m_volumeCount;              // from the beginning of acquisition
+  std::vector<uint64_t> m_timestamps; // msecs since epoch (on ultrasond machine)
 };
 
 /**
 * Constructor.
 */
-template<class Type>
-usVolumeGrabbedInfo<Type>::usVolumeGrabbedInfo() :
-  Type(), m_volumeCount(0), m_timestamps()
-{
-
-}
+template <class Type> usVolumeGrabbedInfo<Type>::usVolumeGrabbedInfo() : Type(), m_volumeCount(0), m_timestamps() {}
 
 /**
 * Destructor.
 */
-template<class Type>
-usVolumeGrabbedInfo<Type>::~usVolumeGrabbedInfo()
-{
-
-}
+template <class Type> usVolumeGrabbedInfo<Type>::~usVolumeGrabbedInfo() {}
 
 /**
 * Volume count getter.
 * @return The volume number since beginning of acquisition.
 */
-template<class Type>
-quint32 usVolumeGrabbedInfo<Type>::getVolumeCount() const {
-  return m_volumeCount;
-}
+template <class Type> quint32 usVolumeGrabbedInfo<Type>::getVolumeCount() const { return m_volumeCount; }
 
 /**
 * Volume count setter.
 * @param volumeCount The volume number since beginning of acquisition.
 */
-template<class Type>
-void usVolumeGrabbedInfo<Type>::setVolumeCount(quint32 volumeCount) {
+template <class Type> void usVolumeGrabbedInfo<Type>::setVolumeCount(quint32 volumeCount)
+{
   m_volumeCount = volumeCount;
 }
 
@@ -115,26 +102,23 @@ void usVolumeGrabbedInfo<Type>::setVolumeCount(quint32 volumeCount) {
 * @param timestamp The new timestamp when the first frame in the volume was acquired.
 * @param position The new timestamp position in the array (from O to array size - 1).
 */
-template<class Type>
-void usVolumeGrabbedInfo<Type>::addTimeStamp(quint64 timestamp, unsigned int position){
-  if(position == m_timestamps.size())
+template <class Type> void usVolumeGrabbedInfo<Type>::addTimeStamp(quint64 timestamp, unsigned int position)
+{
+  if (position == m_timestamps.size())
     m_timestamps.push_back(timestamp);
-  else if(position > m_timestamps.size()){
-    m_timestamps.resize(position+1);
+  else if (position > m_timestamps.size()) {
+    m_timestamps.resize(position + 1);
     m_timestamps.at(position) = timestamp;
-  }
-  else
+  } else
     m_timestamps.at(position) = timestamp;
 }
 
 /**
 * Getter for the timestamps array.
-* @return The vector of timestamps (make sure you filled it with addTimeStamp() at every new frame before call this method.
+* @return The vector of timestamps (make sure you filled it with addTimeStamp() at every new frame before call this
+* method.
 */
-template<class Type>
-std::vector<uint64_t> usVolumeGrabbedInfo<Type>::getTimeStamps() const {
-  return m_timestamps;
-}
+template <class Type> std::vector<uint64_t> usVolumeGrabbedInfo<Type>::getTimeStamps() const { return m_timestamps; }
 
 /*!
   Print volume grabbed information in a ostream.
@@ -144,8 +128,7 @@ std::vector<uint64_t> usVolumeGrabbedInfo<Type>::getTimeStamps() const {
   std::cout << myVolumeGrabbed << std::endl;
   \endcode
 */
-template<class Type>
-std::ostream& operator<<(std::ostream& out, const usVolumeGrabbedInfo<Type> &other)
+template <class Type> std::ostream &operator<<(std::ostream &out, const usVolumeGrabbedInfo<Type> &other)
 {
   out << "volumeCount : " << other.getTimeStamp() << std::endl
       << "firstFrameTimeStamp : " << other.getFistFrameTimeStamp() << std::endl

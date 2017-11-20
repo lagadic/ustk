@@ -30,12 +30,11 @@
  *
  *****************************************************************************/
 
-
 /*!
   \example testUsImagePostScan3DMhdParser.cpp
 
   USTK MHD parser example.
-  
+
   This example contains the declaration of a class used to read and write data
   in a mhd file like:
   \code
@@ -47,17 +46,16 @@ ElementByteOrderMSB = False
 ElementDataFile = postscan3d.raw
 UltrasoundImageType = POSTSCAN_3D
   \endcode
-  
-*/
 
+*/
 
 #include <visp3/core/vpConfig.h>
 
 #include <iostream>
 
-#include <visp3/core/vpXmlParser.h>
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpIoTools.h>
+#include <visp3/core/vpXmlParser.h>
 #include <visp3/io/vpParseArgv.h>
 
 #include <visp3/ustk_io/usMetaHeaderParser.h>
@@ -71,10 +69,10 @@ UltrasoundImageType = POSTSCAN_3D
 /* -------------------------------------------------------------------------- */
 
 // List of allowed command line options
-#define GETOPTARGS	"cdo:h"
+#define GETOPTARGS "cdo:h"
 
-void usage(const char *name, const char *badparam, const std::string& opath, const std::string& user);
-bool getOptions(int argc, const char **argv, std::string &opath, const std::string& user);
+void usage(const char *name, const char *badparam, const std::string &opath, const std::string &user);
+bool getOptions(int argc, const char **argv, std::string &opath, const std::string &user);
 
 /*!
 
@@ -86,15 +84,16 @@ Print the program options.
 \param user : Username.
 
  */
-void usage(const char *name, const char *badparam, const std::string& opath, const std::string& user)
+void usage(const char *name, const char *badparam, const std::string &opath, const std::string &user)
 {
   fprintf(stdout, "\n\
 Write and read data in a mhd file.\n\
 \n\
 SYNOPSIS\n\
-  %s [-o <output image path>] [-h]\n", name);
+  %s [-o <output image path>] [-h]\n",
+          name);
 
-      fprintf(stdout, "\n\
+  fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
   -o <output data path>                                %s\n\
      Set data output path.\n\
@@ -103,10 +102,11 @@ OPTIONS:                                               Default\n\
      postscan3D.mhd file is written.\n\
 \n\
   -h\n\
-     Print the help.\n\n", opath.c_str(), user.c_str());
+     Print the help.\n\n",
+          opath.c_str(), user.c_str());
 
   if (badparam) {
-    fprintf(stderr, "ERROR: \n" );
+    fprintf(stderr, "ERROR: \n");
     fprintf(stderr, "\nBad parameter [%s]\n", badparam);
   }
 }
@@ -120,22 +120,29 @@ OPTIONS:                                               Default\n\
   \param user : Username.
   \return false if the program has to be stopped, true otherwise.
 */
-bool getOptions(int argc, const char **argv, std::string &opath, const std::string& user)
+bool getOptions(int argc, const char **argv, std::string &opath, const std::string &user)
 {
   const char *optarg_;
-  int	c;
+  int c;
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
     switch (c) {
-    case 'o': opath = optarg_; break;
-    case 'h': usage(argv[0], NULL, opath, user); return false; break;
+    case 'o':
+      opath = optarg_;
+      break;
+    case 'h':
+      usage(argv[0], NULL, opath, user);
+      return false;
+      break;
 
     case 'c':
     case 'd':
       break;
 
     default:
-      usage(argv[0], optarg_, opath, user); return false; break;
+      usage(argv[0], optarg_, opath, user);
+      return false;
+      break;
     }
   }
 
@@ -154,7 +161,7 @@ bool getOptions(int argc, const char **argv, std::string &opath, const std::stri
 /*                               MAIN FUNCTION                                */
 /* -------------------------------------------------------------------------- */
 
-int main(int argc, const char** argv)
+int main(int argc, const char **argv)
 {
   try {
     std::string opt_opath;
@@ -164,13 +171,13 @@ int main(int argc, const char** argv)
 
     usMetaHeaderParser testReferenceSettings;
 
-    std::cout <<  "-------------------------------------------------------" << std::endl ;
-    std::cout <<  "  testUsImagePostScan3DMhdParser.cpp" <<std::endl << std::endl ;
-    std::cout <<  "  writing and reading ultrasound data (usImagePostScan3D) using a the US mhd parser" << std::endl ;
-    std::cout <<  "-------------------------------------------------------" << std::endl ;
-    std::cout << std::endl ;
+    std::cout << "-------------------------------------------------------" << std::endl;
+    std::cout << "  testUsImagePostScan3DMhdParser.cpp" << std::endl << std::endl;
+    std::cout << "  writing and reading ultrasound data (usImagePostScan3D) using a the US mhd parser" << std::endl;
+    std::cout << "-------------------------------------------------------" << std::endl;
+    std::cout << std::endl;
 
-    // Set the default output path
+// Set the default output path
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
     opt_opath = "/tmp";
 #elif defined(_WIN32)
@@ -182,7 +189,7 @@ int main(int argc, const char** argv)
 
     // Read the command line options
     if (getOptions(argc, argv, opt_opath, username) == false) {
-      exit (-1);
+      exit(-1);
     }
 
     // Get the option values
@@ -197,11 +204,9 @@ int main(int argc, const char** argv)
       try {
         // Create the dirname
         vpIoTools::makeDirectory(dirname);
-      }
-      catch (...) {
+      } catch (...) {
         usage(argv[0], NULL, opath, username);
-        std::cerr << std::endl
-                  << "ERROR:" << std::endl;
+        std::cerr << std::endl << "ERROR:" << std::endl;
         std::cerr << "  Cannot create " << dirname << std::endl;
         std::cerr << "  Check your -o " << opath << " option " << std::endl;
         exit(-1);
@@ -209,10 +214,10 @@ int main(int argc, const char** argv)
     }
     filename = dirname + vpIoTools::path("/") + "postscan3d.mhd";
 
-    //Init values in reference parser (same values in file read in test)
+    // Init values in reference parser (same values in file read in test)
     usImagePostScan3D<unsigned char> postscan3DReference;
-    //settings initialisation
-    postscan3DReference.resize(186,233,163);
+    // settings initialisation
+    postscan3DReference.resize(186, 233, 163);
     postscan3DReference.setElementSpacingX(1);
     postscan3DReference.setElementSpacingY(1);
     postscan3DReference.setElementSpacingZ(1);
@@ -229,32 +234,31 @@ int main(int argc, const char** argv)
     postscan3DReference.setElementSpacingX(0.0058);
     postscan3DReference.setElementSpacingY(0.0058);
     postscan3DReference.setElementSpacingZ(0.01058);
-    //image initialisation
+    // image initialisation
     postscan3DReference.initData(255);
 
-    std::cout << "Written in " << filename << std::endl ;
+    std::cout << "Written in " << filename << std::endl;
     std::cout << postscan3DReference;
 
-    //write image
-    usImageIo::write(postscan3DReference,filename);
+    // write image
+    usImageIo::write(postscan3DReference, filename);
 
-    //read the image we just wrote
+    // read the image we just wrote
     usImagePostScan3D<unsigned char> postscan3D;
     filename = dirname + vpIoTools::path("/") + "postscan3d.mhd";
-    usImageIo::read(postscan3D,filename);
+    usImageIo::read(postscan3D, filename);
 
-    std::cout << "Read from " << filename << std::endl ;
+    std::cout << "Read from " << filename << std::endl;
     std::cout << postscan3D;
 
-    if(postscan3D==postscan3DReference) {
+    if (postscan3D == postscan3DReference) {
       std::cout << "Test passed !" << std::endl;
       return 0;
     }
 
     std::cout << "Test failed !" << std::endl;
     return 1;
-  }
-  catch(const vpException &e) {
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
     return 1;
   }

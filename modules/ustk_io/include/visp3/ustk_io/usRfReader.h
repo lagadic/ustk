@@ -41,10 +41,10 @@
 #ifndef __usRfReader_h_
 #define __usRfReader_h_
 
+#include <algorithm>
 #include <cstring>
 #include <iostream>
 #include <vector>
-#include <algorithm>
 
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpException.h>
@@ -64,7 +64,6 @@
 class VISP_EXPORT usRfReader
 {
 public:
-
   usRfReader();
 
   virtual ~usRfReader();

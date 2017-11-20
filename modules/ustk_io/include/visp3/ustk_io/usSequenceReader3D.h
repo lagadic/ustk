@@ -40,10 +40,10 @@
 #ifndef __usSequenceReader3D_h_
 #define __usSequenceReader3D_h_
 
+#include <algorithm>
 #include <cstring>
 #include <iostream>
 #include <vector>
-#include <algorithm>
 
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpException.h>
@@ -60,18 +60,17 @@
 * @warning This class reads .vol files which don't contain transducer/motor informations. If yout want
 * to use the volumes grabbed by this class make sure to complete them by yourself.
 */
-template <class ImageType>
-class usSequenceReader3D
+template <class ImageType> class usSequenceReader3D
 {
 private:
-
   void open(ImageType &image);
 
   /** Count the frame number when the class is used as a grabber (from 0 to volume number - 1).
    * Incremented directly after grabbing an image (contains next index) */
   long m_frameCount;
 
-  /** file name of sequence settings file (ex : sequence.xml), images files names are deduced from information contained in it.*/
+  /** file name of sequence settings file (ex : sequence.xml), images files names are deduced from information contained
+   * in it.*/
   std::string m_fileName;
   bool m_fileNameIsSet;
 
@@ -85,22 +84,22 @@ private:
   std::ifstream m_volFile;
 
 public:
-
   usSequenceReader3D();
 
   virtual ~usSequenceReader3D();
 
-  //get images in grabber style
+  // get images in grabber style
   void acquire(ImageType &image);
 
-  //get image with its number in the sequence
-  void getVolume(usImagePreScan3D<unsigned char> &preScanImage,int volumeNumberInSequence);
+  // get image with its number in the sequence
+  void getVolume(usImagePreScan3D<unsigned char> &preScanImage, int volumeNumberInSequence);
 
   /*!
     \return true if the end of the sequence is reached.
   */
-  inline bool end() {
-    if(!is_open) {
+  inline bool end()
+  {
+    if (!is_open) {
       ImageType image;
       open(image);
       m_frameCount--;
@@ -110,7 +109,7 @@ public:
     return false;
   }
 
-  long getImageNumber() const {return m_frameCount;}
+  long getImageNumber() const { return m_frameCount; }
 
   void setSequenceFileName(const std::string &sequenceFileName);
 };
@@ -122,28 +121,22 @@ public:
 /**
 * Default constructor.
 */
-template<class ImageType>
-usSequenceReader3D<ImageType>::usSequenceReader3D() : m_frameCount(0),
-  m_fileName(""), m_fileNameIsSet(false), is_open(false), m_volHeader()
+template <class ImageType>
+usSequenceReader3D<ImageType>::usSequenceReader3D()
+  : m_frameCount(0), m_fileName(""), m_fileNameIsSet(false), is_open(false), m_volHeader()
 {
-
 }
 
 /**
 * Destructor.
 */
-template<class ImageType>
-usSequenceReader3D<ImageType>::~usSequenceReader3D()
-{
-
-}
+template <class ImageType> usSequenceReader3D<ImageType>::~usSequenceReader3D() {}
 
 /**
 * FileName setter.
 * @param fileName Name of the .vol file.
 */
-template<class ImageType>
-void usSequenceReader3D<ImageType>::setSequenceFileName(const std::string &fileName)
+template <class ImageType> void usSequenceReader3D<ImageType>::setSequenceFileName(const std::string &fileName)
 {
   m_fileName = fileName;
   m_fileNameIsSet = true;
@@ -153,10 +146,9 @@ void usSequenceReader3D<ImageType>::setSequenceFileName(const std::string &fileN
 * Sequence opening.
 * @param image First image of the sequence to read.
 */
-template<class ImageType>
-void usSequenceReader3D<ImageType>::open(ImageType &image)
+template <class ImageType> void usSequenceReader3D<ImageType>::open(ImageType &image)
 {
-  (void) image;
+  (void)image;
   throw(vpException(vpException::notImplementedError));
 }
 /*
@@ -195,50 +187,49 @@ void usSequenceReader3D<usImageRF2D<short> >::open(usImageRF2D<short> &image)
   is_open = true;
 }*/
 
-template<>
-void usSequenceReader3D<usImagePreScan3D<unsigned char> >::open(usImagePreScan3D<unsigned char> &image)
+template <> void usSequenceReader3D<usImagePreScan3D<unsigned char> >::open(usImagePreScan3D<unsigned char> &image)
 {
-  if(!m_fileNameIsSet) {
+  if (!m_fileNameIsSet) {
     throw(vpException(vpException::badValue, "Sequence file name not set"));
   }
 
-  if(usImageIo::getHeaderFormat(m_fileName) != usImageIo::FORMAT_VOL)
+  if (usImageIo::getHeaderFormat(m_fileName) != usImageIo::FORMAT_VOL)
     throw(vpException(vpException::ioError, "only .vol files are supported for 3D sequence reading"));
 
-  //INIT
+  // INIT
   int szHeader = sizeof(usImageIo::VolHeader);
   int n = 0;
   char byte;
 
-  //FILE OPENING
-  m_volFile.open( m_fileName.c_str(), std::ios::in|std::ios::binary);
+  // FILE OPENING
+  m_volFile.open(m_fileName.c_str(), std::ios::in | std::ios::binary);
 
-  //READING HEADER
+  // READING HEADER
   while (n < szHeader) {
     m_volFile.read(&byte, 1);
-    ((char*)&m_volHeader)[n] = byte;
+    ((char *)&m_volHeader)[n] = byte;
     n++;
   }
   std::cout << "fpv " << m_volHeader.fpv << std::endl;
   std::cout << "w " << m_volHeader.w << std::endl;
   std::cout << "h " << m_volHeader.h << std::endl;
 
-  //CHECK IMAGE TYPE
+  // CHECK IMAGE TYPE
   if (m_volHeader.type != 0)
     throw(vpException(vpException::badValue, "trying to read non-prescan in .vol file"));
 
-  //CHECK DATA TYPE
+  // CHECK DATA TYPE
   if (m_volHeader.ss != 8)
     throw(vpException(vpException::badValue, ".vol file doesn't contain unsigned char data"));
 
-  //READING DATA
+  // READING DATA
   image.resize(m_volHeader.w, m_volHeader.h, m_volHeader.fpv);
   n = 0;
   unsigned char voxel;
   for (int k = 0; k < m_volHeader.fpv; k++) {
     for (int j = 0; j < m_volHeader.w; j++) {
       for (int i = 0; i < m_volHeader.h; i++) {
-        m_volFile.read((char*)&voxel, 1);
+        m_volFile.read((char *)&voxel, 1);
         image(j, i, k, voxel);
       }
     }
@@ -248,50 +239,49 @@ void usSequenceReader3D<usImagePreScan3D<unsigned char> >::open(usImagePreScan3D
   is_open = true;
 }
 
-template<>
-void usSequenceReader3D<usImagePostScan3D<unsigned char> >::open(usImagePostScan3D<unsigned char> &image)
+template <> void usSequenceReader3D<usImagePostScan3D<unsigned char> >::open(usImagePostScan3D<unsigned char> &image)
 {
-  if(!m_fileNameIsSet) {
+  if (!m_fileNameIsSet) {
     throw(vpException(vpException::badValue, "Sequence file name not set"));
   }
 
-  if(usImageIo::getHeaderFormat(m_fileName) != usImageIo::FORMAT_VOL)
+  if (usImageIo::getHeaderFormat(m_fileName) != usImageIo::FORMAT_VOL)
     throw(vpException(vpException::ioError, "only .vol files are supported for 3D sequence reading"));
 
-  //INIT
+  // INIT
   int szHeader = sizeof(usImageIo::VolHeader);
   int n = 0;
   char byte;
 
-  //FILE OPENING
-  m_volFile.open( m_fileName.c_str(), std::ios::in|std::ios::binary);
+  // FILE OPENING
+  m_volFile.open(m_fileName.c_str(), std::ios::in | std::ios::binary);
 
-  //READING HEADER
+  // READING HEADER
   while (n < szHeader) {
     m_volFile.read(&byte, 1);
-    ((char*)&m_volHeader)[n] = byte;
+    ((char *)&m_volHeader)[n] = byte;
     n++;
   }
   std::cout << "fpv " << m_volHeader.fpv << std::endl;
   std::cout << "w " << m_volHeader.w << std::endl;
   std::cout << "h " << m_volHeader.h << std::endl;
 
-  //CHECK IMAGE TYPE
+  // CHECK IMAGE TYPE
   if (m_volHeader.type != 1)
     throw(vpException(vpException::badValue, "trying to read non-postscan in .vol file"));
 
-  //CHECK DATA TYPE
+  // CHECK DATA TYPE
   if (m_volHeader.ss != 8)
     throw(vpException(vpException::badValue, ".vol file doesn't contain unsigned char data"));
 
-  //READING DATA
+  // READING DATA
   image.resize(m_volHeader.w, m_volHeader.h, m_volHeader.fpv);
   n = 0;
   unsigned char voxel;
   for (int k = 0; k < m_volHeader.fpv; k++) {
     for (int i = 0; i < m_volHeader.h; i++) {
       for (int j = 0; j < m_volHeader.w; j++) {
-        m_volFile.read((char*)&voxel, 1);
+        m_volFile.read((char *)&voxel, 1);
         image(j, i, k, voxel);
       }
     }
@@ -305,74 +295,75 @@ void usSequenceReader3D<usImagePostScan3D<unsigned char> >::open(usImagePostScan
 * Sequence image acquisition (grabber-style : an internal counter is incremented to open next image at the next call).
 * @param image Image of the sequence to read.
 */
-template<>
-void usSequenceReader3D<usImagePreScan3D<unsigned char> >::acquire(usImagePreScan3D<unsigned char> &image)
+template <> void usSequenceReader3D<usImagePreScan3D<unsigned char> >::acquire(usImagePreScan3D<unsigned char> &image)
 {
   if (!is_open) {
     this->open(image);
     return;
   }
-  //READING DATA
+  // READING DATA
   image.resize(m_volHeader.w, m_volHeader.h, m_volHeader.fpv);
   unsigned char voxel;
   for (int k = 0; k < m_volHeader.fpv; k++) {
     for (int j = 0; j < m_volHeader.w; j++) {
       for (int i = 0; i < m_volHeader.h; i++) {
-        m_volFile.read((char*)&voxel, 1);
+        m_volFile.read((char *)&voxel, 1);
         image(j, i, k, voxel);
       }
     }
   }
 
-  m_frameCount ++;
+  m_frameCount++;
 }
 
 /**
 * Sequence image acquisition (grabber-style : an internal counter is incremented to open next image at the next call).
 * @param image Image of the sequence to read.
 */
-template<>
-void usSequenceReader3D<usImagePostScan3D<unsigned char> >::acquire(usImagePostScan3D<unsigned char> &image)
+template <> void usSequenceReader3D<usImagePostScan3D<unsigned char> >::acquire(usImagePostScan3D<unsigned char> &image)
 {
   if (!is_open) {
     this->open(image);
     return;
   }
-  //READING DATA
+  // READING DATA
   image.resize(m_volHeader.w, m_volHeader.h, m_volHeader.fpv);
   unsigned char voxel;
   for (int k = 0; k < m_volHeader.fpv; k++) {
     for (int i = 0; i < m_volHeader.h; i++) {
       for (int j = 0; j < m_volHeader.w; j++) {
-        m_volFile.read((char*)&voxel, 1);
+        m_volFile.read((char *)&voxel, 1);
         image(j, i, k, voxel);
       }
     }
   }
 
-  m_frameCount ++;
+  m_frameCount++;
 }
 
 /**
 * Read a 3D unsigned char pre-scan ultrasound image contained in a sequence. Works only for .vol files.
 * @param [out] preScanImage The pre-scan image to read.
-* @param [in] volumeNumberInSequence The image number of the image to read in the sequence (from 0 to total volume Number - 1).
+* @param [in] volumeNumberInSequence The image number of the image to read in the sequence (from 0 to total volume
+* Number - 1).
 *
-* @warning Using this method between 2 calls of acquire() breaks the sequence grabbing system (the offset in the vol file is broken by calling this method).
+* @warning Using this method between 2 calls of acquire() breaks the sequence grabbing system (the offset in the vol
+* file is broken by calling this method).
 */
-template<>
-void usSequenceReader3D<usImagePreScan3D<unsigned char> >::getVolume(usImagePreScan3D<unsigned char> &preScanImage,int volumeNumberInSequence)
+template <>
+void usSequenceReader3D<usImagePreScan3D<unsigned char> >::getVolume(usImagePreScan3D<unsigned char> &preScanImage,
+                                                                     int volumeNumberInSequence)
 {
   if (!is_open) {
     this->open(preScanImage);
     return;
   }
 
-  //CHECK IMAGE TYPE
+  // CHECK IMAGE TYPE
   if (m_volHeader.type != 0)
     throw(vpException(vpException::badValue, "trying to read non-prescan in .vol file"));
 
-  //CHECK DATA TYPE
+  // CHECK DATA TYPE
   if (m_volHeader.ss != 8)
     throw(vpException(vpException::badValue, ".vol file doesn't contain unsigned char data"));
 
@@ -382,13 +373,13 @@ void usSequenceReader3D<usImagePreScan3D<unsigned char> >::getVolume(usImagePreS
   int offset = szHeader + volumeNumberInSequence * m_volHeader.fpv * m_volHeader.w * m_volHeader.h;
   m_volFile.seekg(offset);
 
-  //READING DATA
+  // READING DATA
   preScanImage.resize(m_volHeader.w, m_volHeader.h, m_volHeader.fpv);
   unsigned char voxel;
   for (int k = 0; k < m_volHeader.fpv; k++) {
     for (int j = 0; j < m_volHeader.w; j++) {
       for (int i = 0; i < m_volHeader.h; i++) {
-        m_volFile.read((char*)&voxel, 1);
+        m_volFile.read((char *)&voxel, 1);
         preScanImage(j, i, k, voxel);
       }
     }

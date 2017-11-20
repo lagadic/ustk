@@ -41,10 +41,9 @@
 /**
 * Constructor. Inititializes the image, and manages Qt signal.
 */
-usNetworkGrabberPostScan2D::usNetworkGrabberPostScan2D(usNetworkGrabber *parent) :
-  usNetworkGrabber(parent)
+usNetworkGrabberPostScan2D::usNetworkGrabberPostScan2D(usNetworkGrabber *parent) : usNetworkGrabber(parent)
 {
-  //buffer of size 3
+  // buffer of size 3
   m_outputBuffer.push_back(new usFrameGrabbedInfo<usImagePostScan2D<unsigned char> >);
   m_outputBuffer.push_back(new usFrameGrabbedInfo<usImagePostScan2D<unsigned char> >);
   m_outputBuffer.push_back(new usFrameGrabbedInfo<usImagePostScan2D<unsigned char> >);
@@ -61,10 +60,7 @@ usNetworkGrabberPostScan2D::usNetworkGrabberPostScan2D(usNetworkGrabber *parent)
 /**
 * Destructor.
 */
-usNetworkGrabberPostScan2D::~usNetworkGrabberPostScan2D()
-{
-
-}
+usNetworkGrabberPostScan2D::~usNetworkGrabberPostScan2D() {}
 
 /**
 * Slot called when data is coming on the network.
@@ -80,40 +76,39 @@ void usNetworkGrabberPostScan2D::dataArrived()
 #elif defined(USTK_HAVE_VTK_QT4)
   in.setVersion(QDataStream::Qt_4_8);
 #else
-  throw(vpException(vpException::fatalError,"your Qt version is not managed in ustk"));
+  throw(vpException(vpException::fatalError, "your Qt version is not managed in ustk"));
 #endif
 
   int headerType;
-  if(m_bytesLeftToRead == 0 ) { // do not try to read a header if last frame was not complete
+  if (m_bytesLeftToRead == 0) { // do not try to read a header if last frame was not complete
     in >> headerType;
-    if(m_verbose)
+    if (m_verbose)
       std::cout << "header received, type = " << headerType << std::endl;
-  }
-  else {
+  } else {
     headerType = 0; // not a header received, but a part of a frame
   }
-  //init confirm header received
-  if(headerType == m_confirmHeader.headerId) {
-    //read whole header
+  // init confirm header received
+  if (headerType == m_confirmHeader.headerId) {
+    // read whole header
     in >> m_confirmHeader.initOk;
     in >> m_confirmHeader.probeId;
 
-    if(m_confirmHeader.initOk == 0) {
+    if (m_confirmHeader.initOk == 0) {
       m_tcpSocket->close();
       throw(vpException(vpException::fatalError, "porta initialisation error, closing connection."));
     }
-    if(m_verbose)
+    if (m_verbose)
       std::cout << "porta init sucess, detected probe id = " << m_confirmHeader.probeId << std::endl;
 
-    //read all acquisition parameters received
+    // read all acquisition parameters received
     readAcquisitionParameters(in);
 
     emit(serverUpdateEnded(m_confirmHeader.initOk));
   }
 
-  //image header received
-  else if(headerType == m_imageHeader.headerId) {
-    //read whole header
+  // image header received
+  else if (headerType == m_imageHeader.headerId) {
+    // read whole header
     in >> m_imageHeader.frameCount;
     quint64 timestamp;
     in >> timestamp;
@@ -138,106 +133,117 @@ void usNetworkGrabberPostScan2D::dataArrived()
     in >> m_imageHeader.motorRadius;
     in >> m_imageHeader.motorType;
 
-    if(m_verbose) {
-      std::cout << "frameCount = " <<  m_imageHeader.frameCount << std::endl;
-      std::cout << "timeStamp = " <<  m_imageHeader.timeStamp << std::endl;
-      std::cout << "dataRate = " <<  m_imageHeader.dataRate << std::endl;
-      std::cout << "dataLength = " <<  m_imageHeader.dataLength << std::endl;
-      std::cout << "ss = " <<  m_imageHeader.ss << std::endl;
-      std::cout << "imageType = " <<  m_imageHeader.imageType << std::endl;
-      std::cout << "frameWidth = " <<  m_imageHeader.frameWidth << std::endl;
-      std::cout << "frameHeight = " <<  m_imageHeader.frameHeight << std::endl;
-      std::cout << "pixelWidth = " <<  m_imageHeader.pixelWidth << std::endl;
-      std::cout << "pixelHeight = " <<  m_imageHeader.pixelHeight << std::endl;
-      std::cout << "transmitFrequency = " <<  m_imageHeader.transmitFrequency << std::endl;
-      std::cout << "samplingFrequency = " <<  m_imageHeader.samplingFrequency << std::endl;
-      std::cout << "transducerRadius = " <<  m_imageHeader.transducerRadius << std::endl;
-      std::cout << "scanLinePitch = " <<  m_imageHeader.scanLinePitch << std::endl;
-      std::cout << "scanLineNumber = " <<  m_imageHeader.scanLineNumber << std::endl;
-      std::cout << "imageDepth = " <<  m_imageHeader.imageDepth << std::endl;
-      std::cout << "anglePerFr = " <<  m_imageHeader.anglePerFr << std::endl;
-      std::cout << "framesPerVolume = " <<  m_imageHeader.framesPerVolume << std::endl;
-      std::cout << "motorRadius = " <<  m_imageHeader.motorRadius << std::endl;
-      std::cout << "motorType = " <<  m_imageHeader.motorType << std::endl;
+    if (m_verbose) {
+      std::cout << "frameCount = " << m_imageHeader.frameCount << std::endl;
+      std::cout << "timeStamp = " << m_imageHeader.timeStamp << std::endl;
+      std::cout << "dataRate = " << m_imageHeader.dataRate << std::endl;
+      std::cout << "dataLength = " << m_imageHeader.dataLength << std::endl;
+      std::cout << "ss = " << m_imageHeader.ss << std::endl;
+      std::cout << "imageType = " << m_imageHeader.imageType << std::endl;
+      std::cout << "frameWidth = " << m_imageHeader.frameWidth << std::endl;
+      std::cout << "frameHeight = " << m_imageHeader.frameHeight << std::endl;
+      std::cout << "pixelWidth = " << m_imageHeader.pixelWidth << std::endl;
+      std::cout << "pixelHeight = " << m_imageHeader.pixelHeight << std::endl;
+      std::cout << "transmitFrequency = " << m_imageHeader.transmitFrequency << std::endl;
+      std::cout << "samplingFrequency = " << m_imageHeader.samplingFrequency << std::endl;
+      std::cout << "transducerRadius = " << m_imageHeader.transducerRadius << std::endl;
+      std::cout << "scanLinePitch = " << m_imageHeader.scanLinePitch << std::endl;
+      std::cout << "scanLineNumber = " << m_imageHeader.scanLineNumber << std::endl;
+      std::cout << "imageDepth = " << m_imageHeader.imageDepth << std::endl;
+      std::cout << "anglePerFr = " << m_imageHeader.anglePerFr << std::endl;
+      std::cout << "framesPerVolume = " << m_imageHeader.framesPerVolume << std::endl;
+      std::cout << "motorRadius = " << m_imageHeader.motorRadius << std::endl;
+      std::cout << "motorType = " << m_imageHeader.motorType << std::endl;
     }
 
-    //update transducer settings with image header received
+    // update transducer settings with image header received
     m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setTransducerRadius(m_imageHeader.transducerRadius);
     m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setScanLinePitch(m_imageHeader.scanLinePitch);
     m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setScanLineNumber(m_imageHeader.scanLineNumber);
     m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setDepth(m_imageHeader.imageDepth / 1000.0);
-    m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setTransducerConvexity(m_imageHeader.transducerRadius != 0.);
+    m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)
+        ->setTransducerConvexity(m_imageHeader.transducerRadius != 0.);
     m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setTransmitFrequency(m_imageHeader.transmitFrequency);
     m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setSamplingFrequency(m_imageHeader.samplingFrequency);
 
-    //set data info
+    // set data info
     m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setFrameCount(m_imageHeader.frameCount);
     m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setFramesPerVolume(m_imageHeader.framesPerVolume);
     m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setTimeStamp(m_imageHeader.timeStamp);
 
-    //warning if timestamps are close (< 1 ms)
+    // warning if timestamps are close (< 1 ms)
     if (m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getTimeStamp() -
-        m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getTimeStamp() < 1) {
-          std::cout << "WARNING : new image received with an acquisition timestamp close to previous image" << std::endl;
-        }
+            m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getTimeStamp() <
+        1) {
+      std::cout << "WARNING : new image received with an acquisition timestamp close to previous image" << std::endl;
+    }
 
-    m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->resize(m_imageHeader.frameHeight, m_imageHeader.frameWidth);
+    m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)
+        ->resize(m_imageHeader.frameHeight, m_imageHeader.frameWidth);
 
-    //pixel size
-    if(m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getTransducerRadius() > 0) { //convex probe
+    // pixel size
+    if (m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getTransducerRadius() > 0) { // convex probe
       m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setWidthResolution(m_imageHeader.pixelWidth);
 
       m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setHeightResolution(m_imageHeader.pixelHeight);
-    }
-    else { //linear probe
-      m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setWidthResolution(
-            m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getScanLinePitch() /
-            m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getWidth());
+    } else { // linear probe
+      m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)
+          ->setWidthResolution(m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getScanLinePitch() /
+                               m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getWidth());
 
-      m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setHeightResolution(
-            m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getDepth() /
-            m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getHeight());
+      m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)
+          ->setHeightResolution(m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getDepth() /
+                                m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getHeight());
     }
-    //read image content
+    // read image content
     m_bytesLeftToRead = m_imageHeader.dataLength;
 
-    m_bytesLeftToRead -= in.readRawData((char*)m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->bitmap, m_imageHeader.dataLength);
+    m_bytesLeftToRead -= in.readRawData((char *)m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->bitmap,
+                                        m_imageHeader.dataLength);
 
-    if(m_bytesLeftToRead == 0 ) { // we've read all the frame in 1 packet.
+    if (m_bytesLeftToRead == 0) { // we've read all the frame in 1 packet.
       // Now CURRENT_FILLED_FRAME_POSITION_IN_VEC has become the last frame received
       // So we switch pointers beween MOST_RECENT_FRAME_POSITION_IN_VEC and CURRENT_FILLED_FRAME_POSITION_IN_VEC
       {
-        usFrameGrabbedInfo<usImagePostScan2D<unsigned char> >* savePtr = m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC);
+        usFrameGrabbedInfo<usImagePostScan2D<unsigned char> > *savePtr =
+            m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC);
         m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
         m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
-        if(m_recordingOn)
-          m_sequenceWriter.write(*m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC),m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getTimeStamp());
+        if (m_recordingOn)
+          m_sequenceWriter.write(*m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC),
+                                 m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getTimeStamp());
       }
       m_firstFrameAvailable = true;
       emit(newFrameAvailable());
     }
-    if(m_verbose)
+    if (m_verbose)
       std::cout << "Bytes left to read for whole frame = " << m_bytesLeftToRead << std::endl;
 
   }
 
-  //we have a part of the image still not read (arrived with next tcp packet)
+  // we have a part of the image still not read (arrived with next tcp packet)
   else {
-    if(m_verbose) {
+    if (m_verbose) {
       std::cout << "reading following part of the frame, left to read = " << m_bytesLeftToRead << std::endl;
-      std::cout << "local image size = " << m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getSize() << std::endl;
+      std::cout << "local image size = " << m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getSize()
+                << std::endl;
     }
-    m_bytesLeftToRead -= in.readRawData((char*)m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->bitmap+(m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getSize()-m_bytesLeftToRead), m_bytesLeftToRead);
+    m_bytesLeftToRead -=
+        in.readRawData((char *)m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->bitmap +
+                           (m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getSize() - m_bytesLeftToRead),
+                       m_bytesLeftToRead);
 
-    if(m_bytesLeftToRead==0) { // we've read the last part of the frame.
+    if (m_bytesLeftToRead == 0) { // we've read the last part of the frame.
       // Now CURRENT_FILLED_FRAME_POSITION_IN_VEC has become the last frame received
       // So we switch pointers beween MOST_RECENT_FRAME_POSITION_IN_VEC and CURRENT_FILLED_FRAME_POSITION_IN_VEC
-      usFrameGrabbedInfo<usImagePostScan2D<unsigned char> >* savePtr = m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC);
+      usFrameGrabbedInfo<usImagePostScan2D<unsigned char> > *savePtr =
+          m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC);
       m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
       m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
 
-      if(m_recordingOn)
-        m_sequenceWriter.write(*m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC),m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getTimeStamp());
+      if (m_recordingOn)
+        m_sequenceWriter.write(*m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC),
+                               m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getTimeStamp());
 
       m_firstFrameAvailable = true;
       emit(newFrameAvailable());
@@ -246,34 +252,39 @@ void usNetworkGrabberPostScan2D::dataArrived()
 }
 
 /**
-* Method to get the last frame received. The grabber is designed to avoid data copy (it is why you get a pointer on the data).
+* Method to get the last frame received. The grabber is designed to avoid data copy (it is why you get a pointer on the
+* data).
 * @note This method is designed to be thread-safe, you can call it from another thread.
 * @return Pointer to the last frame acquired.
 */
-usFrameGrabbedInfo<usImagePostScan2D<unsigned char> >* usNetworkGrabberPostScan2D::acquire() {
-  //check if the first frame is arrived
+usFrameGrabbedInfo<usImagePostScan2D<unsigned char> > *usNetworkGrabberPostScan2D::acquire()
+{
+  // check if the first frame is arrived
   if (!m_firstFrameAvailable) {
     throw(vpException(vpException::fatalError, "first frame not yet grabbed, cannot acquire"));
   }
 
-  //user grabs too fast
-  if(m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC)->getFrameCount() == m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getFrameCount() + 1) {
-    //we wait until a new frame is available
+  // user grabs too fast
+  if (m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC)->getFrameCount() ==
+      m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getFrameCount() + 1) {
+    // we wait until a new frame is available
     QEventLoop loop;
     loop.connect(this, SIGNAL(newFrameAvailable()), SLOT(quit()));
     loop.exec();
 
-    //switch pointers
-    usFrameGrabbedInfo<usImagePostScan2D<unsigned char> >* savePtr = m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC);
+    // switch pointers
+    usFrameGrabbedInfo<usImagePostScan2D<unsigned char> > *savePtr = m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC);
     m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
     m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
     m_swichOutputInit = true;
   }
 
   // if more recent frame available
-  else if(m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC)->getFrameCount() < m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getFrameCount() || !m_swichOutputInit) {
-    //switch pointers (output <-> mostRecentFilled)
-    usFrameGrabbedInfo<usImagePostScan2D<unsigned char> >* savePtr = m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC);
+  else if (m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC)->getFrameCount() <
+               m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getFrameCount() ||
+           !m_swichOutputInit) {
+    // switch pointers (output <-> mostRecentFilled)
+    usFrameGrabbedInfo<usImagePostScan2D<unsigned char> > *savePtr = m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC);
     m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
     m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
     m_swichOutputInit = true;
@@ -282,11 +293,13 @@ usFrameGrabbedInfo<usImagePostScan2D<unsigned char> >* usNetworkGrabberPostScan2
 }
 
 /**
-* Method to link every image of the internal buffer to the vpDisplay you want to use. To call before any display operation using vpDisplay.
+* Method to link every image of the internal buffer to the vpDisplay you want to use. To call before any display
+* operation using vpDisplay.
 * @param display The vpDisplay used to display your images.
 */
-void usNetworkGrabberPostScan2D::useVpDisplay(vpDisplay * display) {
-  for(unsigned int i=0; i<m_outputBuffer.size(); i++)
+void usNetworkGrabberPostScan2D::useVpDisplay(vpDisplay *display)
+{
+  for (unsigned int i = 0; i < m_outputBuffer.size(); i++)
     m_outputBuffer.at(i)->display = display;
 }
 
@@ -294,7 +307,8 @@ void usNetworkGrabberPostScan2D::useVpDisplay(vpDisplay * display) {
 * Method to record the sequence received, to replay it later with the virtual server for example.
 * @param path The path where the sequence will be saved.
 */
-void usNetworkGrabberPostScan2D::activateRecording(std::string path) {
+void usNetworkGrabberPostScan2D::activateRecording(std::string path)
+{
   m_recordingOn = true;
   m_sequenceWriter.setSequenceDirectory(path);
 }
@@ -302,8 +316,6 @@ void usNetworkGrabberPostScan2D::activateRecording(std::string path) {
 /**
 * Stop recording process.
 */
-void usNetworkGrabberPostScan2D::stopRecording() {
-  m_recordingOn = false;
-}
+void usNetworkGrabberPostScan2D::stopRecording() { m_recordingOn = false; }
 
 #endif

@@ -44,16 +44,17 @@
 
 #include <vector>
 
-#include <visp3/ustk_grabber/usNetworkGrabber.h>
 #include <visp3/ustk_core/usImagePostScan2D.h>
 #include <visp3/ustk_grabber/usFrameGrabbedInfo.h>
+#include <visp3/ustk_grabber/usNetworkGrabber.h>
 
 /**
  * @class usNetworkGrabberPostScanBiPlan
  * @brief Specific class to grab post-scan frames from the ultrasound station on the network with the bi-plane probe.
  * @ingroup module_ustk_grabber
  *
- * The following figure details the network communication process and summarizes the steps to follow to acquire ultrasound images :
+ * The following figure details the network communication process and summarizes the steps to follow to acquire
+ * ultrasound images :
  * \image html img-usNetworkGrabber.png
  *
  * This grabber manages a buffer system to avoid multiple copy of the frames.
@@ -66,7 +67,6 @@ class VISP_EXPORT usNetworkGrabberPostScanBiPlan : public usNetworkGrabber
 {
   Q_OBJECT
 public:
-
   explicit usNetworkGrabberPostScanBiPlan(usNetworkGrabber *parent = 0);
   ~usNetworkGrabberPostScanBiPlan();
 
@@ -74,7 +74,7 @@ public:
 
   void dataArrived();
 
-  bool isFirstFrameAvailable() {return m_firstFrameAvailable;}
+  bool isFirstFrameAvailable() { return m_firstFrameAvailable; }
 
 signals:
   void newFrameAvailable();
@@ -88,7 +88,7 @@ private:
 
   bool m_firstFrameAvailable;
 
-  //to manage ptrs switch init
+  // to manage ptrs switch init
   bool m_swichOutputInit;
 };
 

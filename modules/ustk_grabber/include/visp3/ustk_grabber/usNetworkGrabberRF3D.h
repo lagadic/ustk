@@ -44,10 +44,10 @@
 
 #include <vector>
 
-#include <visp3/ustk_grabber/usNetworkGrabber.h>
 #include <visp3/ustk_core/usImageRF2D.h>
 #include <visp3/ustk_core/usImageRF3D.h>
 #include <visp3/ustk_grabber/usFrameGrabbedInfo.h>
+#include <visp3/ustk_grabber/usNetworkGrabber.h>
 #include <visp3/ustk_grabber/usVolumeGrabbedInfo.h>
 #include <visp3/ustk_io/usMHDSequenceWriter.h>
 
@@ -56,30 +56,31 @@
  * @brief Specific class to grab RF volumes from the ultrasound station on the network.
  * @ingroup module_ustk_grabber
  *
- * The following figure details the network communication process and summarizes the steps to follow to acquire ultrasound images:
+ * The following figure details the network communication process and summarizes the steps to follow to acquire
+ * ultrasound images:
  * \image html img-usNetworkGrabber.png
  *
  * This grabber manages a buffer system to avoid multiple copy of the volumes.
  * The acquire() method returns you a pointer on a new volume, you can acess and modify the volume (it is thread-safe).
  * Acquire() can be blocking, the behaviour depends on how often you call it:
- * - If you call acquire() faster than the volumes are arriving on the network, it is blocking to wait next volume coming.
+ * - If you call acquire() faster than the volumes are arriving on the network, it is blocking to wait next volume
+ * coming.
  * - If you call it slower you will loose volumes, but you will get the last volume available.
  */
 class VISP_EXPORT usNetworkGrabberRF3D : public usNetworkGrabber
 {
   Q_OBJECT
 public:
-
   explicit usNetworkGrabberRF3D(usNetworkGrabber *parent = 0);
   ~usNetworkGrabberRF3D();
 
   void activateRecording(std::string path);
 
-  usVolumeGrabbedInfo<usImageRF3D<short int> > * acquire();
+  usVolumeGrabbedInfo<usImageRF3D<short int> > *acquire();
 
   void dataArrived();
 
-  bool isFirstFrameAvailable() {return m_firstFrameAvailable;}
+  bool isFirstFrameAvailable() { return m_firstFrameAvailable; }
 
   void stopRecording();
 
@@ -90,8 +91,8 @@ protected:
   void includeFrameInVolume();
 
 private:
-  //grabbed image (we have to "turn" it if it is a pre-scan frame):
-  //the rows and cols have to be interverted, it is not a valid image to use.
+  // grabbed image (we have to "turn" it if it is a pre-scan frame):
+  // the rows and cols have to be interverted, it is not a valid image to use.
   usFrameGrabbedInfo<usImageRF2D<short int> > m_grabbedImage;
 
   // to keep saved motor settings from one frame to next one
@@ -102,13 +103,13 @@ private:
   bool m_firstFrameAvailable;
   bool m_firstVolumeAvailable;
 
-  //to manage ptrs switch init
+  // to manage ptrs switch init
   bool m_swichOutputInit;
 
-  //to know motor sweep direction for volume grabbed
+  // to know motor sweep direction for volume grabbed
   bool m_motorSweepingInZDirection;
 
-  //to manage the recording process
+  // to manage the recording process
   bool m_recordingOn;
   usMHDSequenceWriter m_sequenceWriter;
 };

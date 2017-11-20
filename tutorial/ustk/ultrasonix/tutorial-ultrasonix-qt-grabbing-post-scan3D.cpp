@@ -5,39 +5,39 @@
 
 #if (defined(USTK_HAVE_QT5) || defined(USTK_HAVE_VTK_QT)) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
 
-#include <QtCore/QThread>
 #include <QApplication>
+#include <QtCore/QThread>
 
 #include <visp3/ustk_grabber/usNetworkGrabberPostScan2D.h>
 
-#include <visp3/gui/vpDisplayX.h>
 #include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayX.h>
 
 #include <visp3/io/vpImageIo.h>
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
   // QT application
-  QApplication app( argc, argv );
+  QApplication app(argc, argv);
 
-  QThread * grabbingThread = new QThread();
+  QThread *grabbingThread = new QThread();
 
-  usNetworkGrabberPostScan2D * qtGrabber = new usNetworkGrabberPostScan2D();
+  usNetworkGrabberPostScan2D *qtGrabber = new usNetworkGrabberPostScan2D();
   qtGrabber->connectToServer();
 
   // setting acquisition parameters
   usNetworkGrabber::usInitHeaderSent header;
-  header.probeId = 15; // 4DC7 id = 15
-  header.slotId = 0; //top slot id = 0
-  header.imagingMode = 0; //B-mode = 0
+  header.probeId = 15;    // 4DC7 id = 15
+  header.slotId = 0;      // top slot id = 0
+  header.imagingMode = 0; // B-mode = 0
 
-  usFrameGrabbedInfo<usImagePostScan2D<unsigned char> >* grabbedFrame;
+  usFrameGrabbedInfo<usImagePostScan2D<unsigned char> > *grabbedFrame;
 
-  //Prepare display
+// Prepare display
 #if defined(VISP_HAVE_X11)
-  vpDisplayX * display = NULL;
+  vpDisplayX *display = NULL;
 #elif defined(VISP_HAVE_GDI)
-  vpDisplayGDI * display = NULL;
+  vpDisplayGDI *display = NULL;
 #endif
   bool displayInit = false;
 
@@ -70,22 +70,22 @@ int main(int argc, char** argv)
 
   std::cout << "waiting ultrasound initialisation..." << std::endl;
 
-  //our local grabbing loop
+  // our local grabbing loop
   do {
-    if(qtGrabber->isFirstFrameAvailable()) {
+    if (qtGrabber->isFirstFrameAvailable()) {
       grabbedFrame = qtGrabber->acquire();
 
-      std::cout <<"MAIN THREAD received frame No : " << grabbedFrame->getFrameCount() << std::endl;
+      std::cout << "MAIN THREAD received frame No : " << grabbedFrame->getFrameCount() << std::endl;
 
       std::cout << *grabbedFrame << std::endl;
 
       char buffer[400];
-      sprintf(buffer, "frame%d.png",grabbedFrame->getFrameCount());
+      sprintf(buffer, "frame%d.png", grabbedFrame->getFrameCount());
 
-      //std::string fileName = "frame" + grabbedFrame->getFrameCount() + ".png";
-      vpImageIo::write(*grabbedFrame,buffer);
-      //init display
-      if(!displayInit && grabbedFrame->getHeight() !=0 && grabbedFrame->getWidth() !=0) {
+      // std::string fileName = "frame" + grabbedFrame->getFrameCount() + ".png";
+      vpImageIo::write(*grabbedFrame, buffer);
+      // init display
+      if (!displayInit && grabbedFrame->getHeight() != 0 && grabbedFrame->getWidth() != 0) {
 #if defined(VISP_HAVE_X11)
         display = new vpDisplayX(*grabbedFrame);
 #elif defined(VISP_HAVE_GDI)
@@ -95,17 +95,16 @@ int main(int argc, char** argv)
       }
 
       // processing display
-      if(displayInit) {
+      if (displayInit) {
         vpDisplay::display(*grabbedFrame);
         vpDisplay::flush(*grabbedFrame);
       }
-    }
-    else {
+    } else {
       vpTime::wait(10);
     }
-  }while(captureRunning);
+  } while (captureRunning);
 
-  if(displayInit) {
+  if (displayInit) {
     delete display;
   }
 
@@ -115,7 +114,8 @@ int main(int argc, char** argv)
 #else
 int main()
 {
-  std::cout << "You should intall Qt5 (with wigdets and network modules), and display X  to run this tutorial" << std::endl;
+  std::cout << "You should intall Qt5 (with wigdets and network modules), and display X  to run this tutorial"
+            << std::endl;
   return 0;
 }
 

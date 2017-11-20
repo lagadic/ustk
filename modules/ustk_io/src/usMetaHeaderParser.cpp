@@ -35,10 +35,10 @@
 * @file usMetaHeaderParser.cpp
 * @brief Input/output operations between ultrasound settings and mhd files.
 */
-#include <visp3/core/vpException.h>
-#include <visp3/ustk_io/usMetaHeaderParser.h>
 #include <algorithm>
 #include <string>
+#include <visp3/core/vpException.h>
+#include <visp3/ustk_io/usMetaHeaderParser.h>
 
 /**
 * Default constructor.
@@ -60,16 +60,13 @@ usMetaHeaderParser::usMetaHeaderParser()
 /**
 * Destructor.
 */
-usMetaHeaderParser::~usMetaHeaderParser()
-{
-
-}
+usMetaHeaderParser::~usMetaHeaderParser() {}
 
 /**
 * Reading method.
 * @param fileName the mhd file to read.
 */
-void  usMetaHeaderParser::readMHDHeader(const std::string &fileName)
+void usMetaHeaderParser::readMHDHeader(const std::string &fileName)
 {
   std::string keyword, keyval;
 
@@ -110,220 +107,166 @@ void  usMetaHeaderParser::readMHDHeader(const std::string &fileName)
   }
 
   std::string::iterator it;
-  while (file.good())
-  {
+  while (file.good()) {
     std::getline(file, keyword, '=');
-    it=keyword.end();
-    keyword.erase(std::remove(keyword.begin(),keyword.end(),' '),it);
-    if (keyword == "NDims")
-    {
+    it = keyword.end();
+    keyword.erase(std::remove(keyword.begin(), keyword.end(), ' '), it);
+    if (keyword == "NDims") {
       file >> this->header.numberOfDimensions;
       std::getline(file, keyval, '\n');
-    }
-    else if (keyword == "DimSize")
-    {
+    } else if (keyword == "DimSize") {
       for (unsigned int i = 0; i < this->header.numberOfDimensions; i++)
         file >> this->header.dim[i];
       std::getline(file, keyval, '\n');
-    }
-    else if (keyword == "ElementSpacing")
-    {
+    } else if (keyword == "ElementSpacing") {
       for (unsigned int i = 0; i < this->header.numberOfDimensions; i++)
         file >> this->header.elementSpacing[i];
       std::getline(file, keyval, '\n');
-    }
-    else if (keyword == "Position")
-    {
+    } else if (keyword == "Position") {
       for (unsigned int i = 0; i < this->header.numberOfDimensions; i++)
         file >> this->header.position[i];
       std::getline(file, keyval, '\n');
-    }
-    else if (keyword == "ImagePositionPatient")
-    {
+    } else if (keyword == "ImagePositionPatient") {
       std::getline(file, keyval, '\n');
-    }
-    else if (keyword == "ElementByteOrderMSB")
-    {
+    } else if (keyword == "ElementByteOrderMSB") {
       std::getline(file, keyval, '\n');
-      it=keyval.end();
-      keyval.erase(std::remove(keyval.begin(),keyval.end(),' '),it);
-      it=keyval.end();
-      keyval.erase(std::remove(keyval.begin(),keyval.end(),'\r'),it);
+      it = keyval.end();
+      keyval.erase(std::remove(keyval.begin(), keyval.end(), ' '), it);
+      it = keyval.end();
+      keyval.erase(std::remove(keyval.begin(), keyval.end(), '\r'), it);
       this->header.msb = ((keyval == "True") || (keyval == "1"));
-    }
-    else if (keyword == "BinaryDataByteOrderMSB")
-    {
+    } else if (keyword == "BinaryDataByteOrderMSB") {
       std::getline(file, keyval, '\n');
-      it=keyval.end();
-      keyval.erase(std::remove(keyval.begin(),keyval.end(),' '),it);
-      it=keyval.end();
-      keyval.erase(std::remove(keyval.begin(),keyval.end(),'\r'),it);
+      it = keyval.end();
+      keyval.erase(std::remove(keyval.begin(), keyval.end(), ' '), it);
+      it = keyval.end();
+      keyval.erase(std::remove(keyval.begin(), keyval.end(), '\r'), it);
       this->header.msb = ((keyval == "True") || (keyval == "1"));
-    }
-    else if (keyword == "ElementNumberOfChannels")
-    {
+    } else if (keyword == "ElementNumberOfChannels") {
       file >> this->header.numberOfChannels;
       std::getline(file, keyval, '\n');
-    }
-    else if (keyword == "ElementType")
-    {
+    } else if (keyword == "ElementType") {
       std::getline(file, keyval, '\n');
-      it=keyval.end();
-      keyval.erase(std::remove(keyval.begin(),keyval.end(),' '),it);
-      it=keyval.end();
+      it = keyval.end();
+      keyval.erase(std::remove(keyval.begin(), keyval.end(), ' '), it);
+      it = keyval.end();
       keyval.erase(std::remove(keyval.begin(), keyval.end(), '\r'), it);
       std::map<std::string, int>::iterator mapIt = elementTypeMap.find(keyval);
       this->header.elementType = ((mapIt != elementTypeMap.end()) ? (ElementType)mapIt->second : MET_UNKNOWN);
-    }
-    else if (keyword == "HeaderSize")
-    {
+    } else if (keyword == "HeaderSize") {
       file >> this->header.headerSize;
       std::getline(file, keyval, '\n');
       if ((this->header.headerSize) && (this->header.headerSize != -1)) {
-        std::cout <<   "Warning: " << this->header.headerSize << " bytes this header" << std::endl;
+        std::cout << "Warning: " << this->header.headerSize << " bytes this header" << std::endl;
       }
-    }
-    else if (keyword == "ElementDataFile")
-    {
+    } else if (keyword == "ElementDataFile") {
       std::getline(file, keyval, '\n');
-      it=keyval.end();
-      keyval.erase(std::remove(keyval.begin(),keyval.end(),' '),it);
-      it=keyval.end();
-      keyval.erase(std::remove(keyval.begin(),keyval.end(),'\r'),it);
+      it = keyval.end();
+      keyval.erase(std::remove(keyval.begin(), keyval.end(), ' '), it);
+      it = keyval.end();
+      keyval.erase(std::remove(keyval.begin(), keyval.end(), '\r'), it);
       this->header.rawFileName = keyval;
-    }
-    else if (keyword == "UltrasoundImageType")
-    {
+    } else if (keyword == "UltrasoundImageType") {
       std::getline(file, keyval, '\n');
-      it=keyval.end();
-      keyval.erase(std::remove(keyval.begin(),keyval.end(),' '),it);
-      it=keyval.end();
-      keyval.erase(std::remove(keyval.begin(),keyval.end(),'\r'),it);
+      it = keyval.end();
+      keyval.erase(std::remove(keyval.begin(), keyval.end(), ' '), it);
+      it = keyval.end();
+      keyval.erase(std::remove(keyval.begin(), keyval.end(), '\r'), it);
       std::map<std::string, int>::iterator mapIt = imageTypeMap.find(keyval);
-      this->header.imageType = ((mapIt != imageTypeMap.end()) ? (us::ImageType)mapIt->second : us::UNKNOWN );
-    }
-    else if (keyword == "ScanLinePitch")
-    {
+      this->header.imageType = ((mapIt != imageTypeMap.end()) ? (us::ImageType)mapIt->second : us::UNKNOWN);
+    } else if (keyword == "ScanLinePitch") {
       file >> this->header.scanLinePitch;
       std::getline(file, keyval, '\n');
-    }
-    else if (keyword == "ScanLineNumber")
-    {
+    } else if (keyword == "ScanLineNumber") {
       file >> this->header.scanLineNumber;
       std::getline(file, keyval, '\n');
-    }
-    else if (keyword == "TransducerRadius")
-    {
+    } else if (keyword == "TransducerRadius") {
       file >> this->header.transducerRadius;
       std::getline(file, keyval, '\n');
-    }
-    else if (keyword == "IsTransducerConvex")
-    {
+    } else if (keyword == "IsTransducerConvex") {
       std::getline(file, keyval, '\n');
-      it=keyval.end();
-      keyval.erase(std::remove(keyval.begin(),keyval.end(),' '),it);
-      it=keyval.end();
-      keyval.erase(std::remove(keyval.begin(),keyval.end(),'\r'),it);
+      it = keyval.end();
+      keyval.erase(std::remove(keyval.begin(), keyval.end(), ' '), it);
+      it = keyval.end();
+      keyval.erase(std::remove(keyval.begin(), keyval.end(), '\r'), it);
       this->header.isTransducerConvex = ((keyval == "True") || (keyval == "1"));
-    }
-    else if (keyword == "TransmitFrequency")
-    {
+    } else if (keyword == "TransmitFrequency") {
       file >> this->header.transmitFrequency;
       std::getline(file, keyval, '\n');
-    }
-    else if (keyword == "SamplingFrequency")
-    {
+    } else if (keyword == "SamplingFrequency") {
       file >> this->header.samplingFrequency;
       std::getline(file, keyval, '\n');
-    }
-    else if (keyword == "Timestamp")
-    {
-      int i=0;
-      while(i<header.dim[2]) {
+    } else if (keyword == "Timestamp") {
+      int i = 0;
+      while (i < header.dim[2]) {
         uint64_t timestamp;
         file >> timestamp;
         this->header.timestamp.push_back(timestamp);
         i++;
       }
       std::getline(file, keyval, '\n');
-    }
-    else if (keyword == "FramePitch")
-    {
+    } else if (keyword == "FramePitch") {
       file >> this->header.framePitch;
       std::getline(file, keyval, '\n');
-    }
-    else if (keyword == "FrameNumber")
-    {
+    } else if (keyword == "FrameNumber") {
       file >> this->header.frameNumber;
       std::getline(file, keyval, '\n');
-    }
-    else if (keyword == "MotorRadius")
-    {
+    } else if (keyword == "MotorRadius") {
       file >> this->header.motorRadius;
       std::getline(file, keyval, '\n');
-    }
-    else if (keyword == "MotorType")
-    {
+    } else if (keyword == "MotorType") {
       std::getline(file, keyval, '\n');
-      it=keyval.end();
-      keyval.erase(std::remove(keyval.begin(),keyval.end(),' '),it);
-      it=keyval.end();
-      keyval.erase(std::remove(keyval.begin(),keyval.end(),'\r'),it);
+      it = keyval.end();
+      keyval.erase(std::remove(keyval.begin(), keyval.end(), ' '), it);
+      it = keyval.end();
+      keyval.erase(std::remove(keyval.begin(), keyval.end(), '\r'), it);
       if (keyval == "LinearMotor") {
         this->header.motorType = usMotorSettings::LinearMotor;
-      }
-      else if (keyval == "TiltingMotor") {
+      } else if (keyval == "TiltingMotor") {
         this->header.motorType = usMotorSettings::TiltingMotor;
-      }
-      else if (keyval == "RotationalMotor") {
+      } else if (keyval == "RotationalMotor") {
         this->header.motorType = usMotorSettings::RotationalMotor;
-      }
-      else {
+      } else {
         throw(vpException(vpException::badValue, "Unknown motor type"));
       }
-    }
-    else if (keyword == "AxialResolution")
-    {
-      if(this->header.imageType == us::POSTSCAN_2D || this->header.imageType == us::POSTSCAN_3D) {
-        throw(vpException(vpException::badValue, "bad header file : trying to assign an axial resolution to a post-scan image"));
-      }
-      else {
+    } else if (keyword == "AxialResolution") {
+      if (this->header.imageType == us::POSTSCAN_2D || this->header.imageType == us::POSTSCAN_3D) {
+        throw(vpException(vpException::badValue,
+                          "bad header file : trying to assign an axial resolution to a post-scan image"));
+      } else {
         file >> this->m_axialResolution;
         std::getline(file, keyval, '\n');
       }
-    }
-    else if (keyword == "HeightResolution")
-    {
-      if(this->header.imageType == us::PRESCAN_2D || this->header.imageType == us::PRESCAN_3D || this->header.imageType == us::RF_2D || this->header.imageType == us::RF_3D) {
-        throw(vpException(vpException::badValue, "bad header file : trying to assign a height resolution to a pre-scan image"));
-      }
-      else {
+    } else if (keyword == "HeightResolution") {
+      if (this->header.imageType == us::PRESCAN_2D || this->header.imageType == us::PRESCAN_3D ||
+          this->header.imageType == us::RF_2D || this->header.imageType == us::RF_3D) {
+        throw(vpException(vpException::badValue,
+                          "bad header file : trying to assign a height resolution to a pre-scan image"));
+      } else {
         file >> this->m_heightResolution;
         std::getline(file, keyval, '\n');
       }
-    }
-    else if (keyword == "WidthResolution")
-    {
-      if(this->header.imageType == us::PRESCAN_2D || this->header.imageType == us::PRESCAN_3D || this->header.imageType == us::RF_2D || this->header.imageType == us::RF_3D) {
-        throw(vpException(vpException::badValue, "bad header file : trying to assign a width resolution to a pre-scan image"));
-      }
-      else {
+    } else if (keyword == "WidthResolution") {
+      if (this->header.imageType == us::PRESCAN_2D || this->header.imageType == us::PRESCAN_3D ||
+          this->header.imageType == us::RF_2D || this->header.imageType == us::RF_3D) {
+        throw(vpException(vpException::badValue,
+                          "bad header file : trying to assign a width resolution to a pre-scan image"));
+      } else {
         file >> this->m_widthResolution;
         std::getline(file, keyval, '\n');
       }
-    }
-    else
-    {
-      if (keyword != "")
-      {
+    } else {
+      if (keyword != "") {
         std::getline(file, keyval, '\n');
       }
     }
   }
 
-  //fill image timestamp with 0 if no timestamps specified
-  if(header.timestamp.size() == 0 && header.imageType != us::POSTSCAN_3D) { // no timestamps for post-scan 3D : the slices don't correspond to real frames.
-    for(int i = 0; i < header.dim[2]; i++)
+  // fill image timestamp with 0 if no timestamps specified
+  if (header.timestamp.size() == 0 &&
+      header.imageType !=
+          us::POSTSCAN_3D) { // no timestamps for post-scan 3D : the slices don't correspond to real frames.
+    for (int i = 0; i < header.dim[2]; i++)
       header.timestamp.push_back(uint64_t(0));
   }
 
@@ -339,10 +282,11 @@ void usMetaHeaderParser::parse()
   std::ofstream MHDfile;
   try {
     MHDfile.open(header.MHDFileName.c_str());
-    //scientific noatation for numbers
+    // scientific noatation for numbers
     MHDfile << std::scientific;
 
-    MHDfile << "NDims = " << header.numberOfDimensions << "\n";;
+    MHDfile << "NDims = " << header.numberOfDimensions << "\n";
+    ;
 
     if (header.numberOfDimensions == 2) {
       char str[100];
@@ -357,150 +301,191 @@ void usMetaHeaderParser::parse()
       sprintf(str, "DimSize = %d %d %d \n", header.dim[0], header.dim[1], header.dim[2]);
       MHDfile << str;
       char str2[100];
-      sprintf(str2, "ElementSpacing = %f %f %f \n", header.elementSpacing[0], header.elementSpacing[1], header.elementSpacing[2]);
+      sprintf(str2, "ElementSpacing = %f %f %f \n", header.elementSpacing[0], header.elementSpacing[1],
+              header.elementSpacing[2]);
       MHDfile << str2;
     }
 
     if (header.elementType == MET_SHORT)
-      MHDfile << "ElementType = " << "MET_SHORT" << "\n";
+      MHDfile << "ElementType = "
+              << "MET_SHORT"
+              << "\n";
     else if (header.elementType == MET_DOUBLE)
-      MHDfile << "ElementType = " << "MET_DOUBLE" << "\n";
+      MHDfile << "ElementType = "
+              << "MET_DOUBLE"
+              << "\n";
     else if (header.elementType == MET_UCHAR)
-      MHDfile << "ElementType = " << "MET_UCHAR" << "\n";
+      MHDfile << "ElementType = "
+              << "MET_UCHAR"
+              << "\n";
     else
-      MHDfile << "ElementType = " << "MET_UNKNOWN" << "\n";
+      MHDfile << "ElementType = "
+              << "MET_UNKNOWN"
+              << "\n";
 
     MHDfile << "ElementByteOrderMSB = " << header.msb << "\n";
 
     MHDfile << "ElementDataFile = " << header.rawFileName << "\n";
 
     if (header.imageType == us::RF_2D) {
-      MHDfile << "Comment = Availables ultrasound image types are RF_2D, RF_3D, PRESCAN_2D, PRESCAN_3D, POSTSCAN_2D and POSTSCAN_3D.\n";
-      MHDfile << "UltrasoundImageType = " << "RF_2D" << "\n";
+      MHDfile << "Comment = Availables ultrasound image types are RF_2D, RF_3D, PRESCAN_2D, PRESCAN_3D, POSTSCAN_2D "
+                 "and POSTSCAN_3D.\n";
+      MHDfile << "UltrasoundImageType = "
+              << "RF_2D"
+              << "\n";
       MHDfile << "Comment = True if probe transducer is convex, false if linear. \n";
       MHDfile << "IsTransducerConvex = " << header.isTransducerConvex << "\n";
-      MHDfile << "Comment = Radius between the scan lines intersection and the first pixel of each line acquired (in meters). 0 if linear probe.\n";
+      MHDfile << "Comment = Radius between the scan lines intersection and the first pixel of each line acquired (in "
+                 "meters). 0 if linear probe.\n";
       MHDfile << "TransducerRadius = " << header.transducerRadius << "\n";
       MHDfile << "Comment = Distance between 2 scan lines (in radians or meters).\n";
       MHDfile << "ScanLinePitch = " << header.scanLinePitch << "\n";
       MHDfile << "Comment = Frequency of the ultrasound wave sent (Hz).\n";
-      MHDfile << "TransmitFrequency = " << header.transmitFrequency<< "\n";
+      MHDfile << "TransmitFrequency = " << header.transmitFrequency << "\n";
       MHDfile << "Comment = Frequency used to sample the ultrasound wave received (Hz).\n";
       MHDfile << "SamplingFrequency = " << header.samplingFrequency << "\n";
-      MHDfile << "Comment = The axial resolution is the distance in meters between two successives RF-samples in a scan line.\n";
+      MHDfile << "Comment = The axial resolution is the distance in meters between two successives RF-samples in a "
+                 "scan line.\n";
       MHDfile << "AxialResolution = " << this->m_axialResolution << "\n";
       MHDfile << "Comment = The timestamp is expressed in ms since epoch.\n";
       MHDfile << "Timestamp = ";
-      for(unsigned int i = 0; i<header.timestamp.size();i++ ) {
+      for (unsigned int i = 0; i < header.timestamp.size(); i++) {
         MHDfile << header.timestamp.at(i) << " ";
       }
       MHDfile << "\n";
-    }
-    else if (header.imageType == us::RF_3D) {
-      MHDfile << "Comment = Availables ultrasound image types are RF_2D, RF_3D, PRESCAN_2D, PRESCAN_3D, POSTSCAN_2D and POSTSCAN_3D.\n";
-      MHDfile << "UltrasoundImageType = " << "RF_3D" << "\n";
+    } else if (header.imageType == us::RF_3D) {
+      MHDfile << "Comment = Availables ultrasound image types are RF_2D, RF_3D, PRESCAN_2D, PRESCAN_3D, POSTSCAN_2D "
+                 "and POSTSCAN_3D.\n";
+      MHDfile << "UltrasoundImageType = "
+              << "RF_3D"
+              << "\n";
       MHDfile << "Comment = True if probe transducer is convex, false if linear. \n";
       MHDfile << "IsTransducerConvex = " << header.isTransducerConvex << "\n";
-      MHDfile << "Comment = Radius between the scan lines intersection and the first pixel of each line acquired. 0 if linear probe.\n";
+      MHDfile << "Comment = Radius between the scan lines intersection and the first pixel of each line acquired. 0 if "
+                 "linear probe.\n";
       MHDfile << "TransducerRadius = " << header.transducerRadius << "\n";
       MHDfile << "Comment = Distance between 2 scan lines.\n";
       MHDfile << "ScanLinePitch = " << header.scanLinePitch << "\n";
       MHDfile << "Comment = Frequency of the ultrasound wave sent (Hz).\n";
-      MHDfile << "TransmitFrequency = " << header.transmitFrequency<< "\n";
+      MHDfile << "TransmitFrequency = " << header.transmitFrequency << "\n";
       MHDfile << "Comment = Frequency used to sample the ultrasound wave received (Hz).\n";
       MHDfile << "SamplingFrequency = " << header.samplingFrequency << "\n";
-      MHDfile << "Comment = Probe motor type : LinearMotor, TiltingMotor (for small roatations), or RotationalMotor (for 360 deg rotation).\n";
+      MHDfile << "Comment = Probe motor type : LinearMotor, TiltingMotor (for small roatations), or RotationalMotor "
+                 "(for 360 deg rotation).\n";
       if (header.motorType == usMotorSettings::LinearMotor) {
-        MHDfile << "MotorType = " << "LinearMotor" << "\n";
+        MHDfile << "MotorType = "
+                << "LinearMotor"
+                << "\n";
+      } else if (header.motorType == usMotorSettings::TiltingMotor) {
+        MHDfile << "MotorType = "
+                << "TiltingMotor"
+                << "\n";
+      } else if (header.motorType == usMotorSettings::RotationalMotor) {
+        MHDfile << "MotorType = "
+                << "RotationalMotor"
+                << "\n";
       }
-      else if (header.motorType == usMotorSettings::TiltingMotor) {
-        MHDfile << "MotorType = " << "TiltingMotor" << "\n";
-      }
-      else if (header.motorType == usMotorSettings::RotationalMotor) {
-        MHDfile << "MotorType = " << "RotationalMotor" << "\n";
-      }
-      MHDfile << "Comment = Only in 3d. Radius between the probe motor center and the first pixel of each line acquired. 0 if linear motor.\n";
+      MHDfile << "Comment = Only in 3d. Radius between the probe motor center and the first pixel of each line "
+                 "acquired. 0 if linear motor.\n";
       MHDfile << "MotorRadius = " << header.motorRadius << "\n";
       MHDfile << "Comment = Only in 3d. Distance between 2 successive frames.\n";
       MHDfile << "FramePitch = " << header.framePitch << "\n";
-      MHDfile << "Comment = The axial resolution is the distance in meters between two successives RF-samples in a scan line.\n";
+      MHDfile << "Comment = The axial resolution is the distance in meters between two successives RF-samples in a "
+                 "scan line.\n";
       MHDfile << "AxialResolution = " << this->m_axialResolution << "\n";
       MHDfile << "Comment = The frame timestamps are expressed in ms since epoch.\n";
       MHDfile << "Timestamp = ";
-      for(unsigned int i = 0; i<header.timestamp.size();i++ ) {
+      for (unsigned int i = 0; i < header.timestamp.size(); i++) {
         MHDfile << header.timestamp.at(i) << " ";
       }
       MHDfile << "\n";
-    }
-    else if (header.imageType == us::PRESCAN_2D) {
-      MHDfile << "Comment = Availables ultrasound image types are RF_2D, RF_3D, PRESCAN_2D, PRESCAN_3D, POSTSCAN_2D and POSTSCAN_3D.\n";
-      MHDfile << "UltrasoundImageType = " << "PRESCAN_2D" << "\n";
+    } else if (header.imageType == us::PRESCAN_2D) {
+      MHDfile << "Comment = Availables ultrasound image types are RF_2D, RF_3D, PRESCAN_2D, PRESCAN_3D, POSTSCAN_2D "
+                 "and POSTSCAN_3D.\n";
+      MHDfile << "UltrasoundImageType = "
+              << "PRESCAN_2D"
+              << "\n";
       MHDfile << "Comment = True if probe transducer is convex, false if linear. \n";
       MHDfile << "IsTransducerConvex = " << header.isTransducerConvex << "\n";
-      MHDfile << "Comment = Radius between the scan lines intersection and the first pixel of each line acquired. 0 if linear probe.\n";
+      MHDfile << "Comment = Radius between the scan lines intersection and the first pixel of each line acquired. 0 if "
+                 "linear probe.\n";
       MHDfile << "TransducerRadius = " << header.transducerRadius << "\n";
       MHDfile << "Comment = Distance between 2 scanlines.\n";
       MHDfile << "ScanLinePitch = " << header.scanLinePitch << "\n";
       MHDfile << "Comment = Frequency of the ultrasound wave sent (Hz).\n";
-      MHDfile << "TransmitFrequency = " << header.transmitFrequency<< "\n";
+      MHDfile << "TransmitFrequency = " << header.transmitFrequency << "\n";
       MHDfile << "Comment = Frequency used to sample the ultrasound wave received (Hz).\n";
       MHDfile << "SamplingFrequency = " << header.samplingFrequency << "\n";
-      MHDfile << "Comment = The axial resolution is the distance in meters between two successives A-samples in a scan line.\n";
+      MHDfile << "Comment = The axial resolution is the distance in meters between two successives A-samples in a scan "
+                 "line.\n";
       MHDfile << "AxialResolution = " << this->m_axialResolution << "\n";
       MHDfile << "Comment = The timestamp is expressed in ms since epoch.\n";
       MHDfile << "Timestamp = ";
-      for(unsigned int i = 0; i<header.timestamp.size();i++ ) {
+      for (unsigned int i = 0; i < header.timestamp.size(); i++) {
         MHDfile << header.timestamp.at(i) << " ";
       }
       MHDfile << "\n";
-    }
-    else if (header.imageType == us::PRESCAN_3D) {
-      MHDfile << "Comment = Availables ultrasound image types are RF_2D, RF_3D, PRESCAN_2D, PRESCAN_3D, POSTSCAN_2D and POSTSCAN_3D.\n";
-      MHDfile << "UltrasoundImageType = " << "PRESCAN_3D" << "\n";
+    } else if (header.imageType == us::PRESCAN_3D) {
+      MHDfile << "Comment = Availables ultrasound image types are RF_2D, RF_3D, PRESCAN_2D, PRESCAN_3D, POSTSCAN_2D "
+                 "and POSTSCAN_3D.\n";
+      MHDfile << "UltrasoundImageType = "
+              << "PRESCAN_3D"
+              << "\n";
       MHDfile << "Comment = True if probe transducer is convex, false if linear. \n";
       MHDfile << "IsTransducerConvex = " << header.isTransducerConvex << "\n";
-      MHDfile << "Comment = Radius between the scan lines intersection and the first pixel of each line acquired. 0 if linear probe.\n";
+      MHDfile << "Comment = Radius between the scan lines intersection and the first pixel of each line acquired. 0 if "
+                 "linear probe.\n";
       MHDfile << "TransducerRadius = " << header.transducerRadius << "\n";
       MHDfile << "Comment = Distance between 2 scan lines.\n";
       MHDfile << "ScanLinePitch = " << header.scanLinePitch << "\n";
       MHDfile << "Comment = Frequency of the ultrasound wave sent (Hz).\n";
-      MHDfile << "TransmitFrequency = " << header.transmitFrequency<< "\n";
+      MHDfile << "TransmitFrequency = " << header.transmitFrequency << "\n";
       MHDfile << "Comment = Frequency used to sample the ultrasound wave received (Hz).\n";
       MHDfile << "SamplingFrequency = " << header.samplingFrequency << "\n";
-      MHDfile << "Comment = Probe motor type : LinearMotor, TiltingMotor (for small roatations), or RotationalMotor (for 360 deg rotation).\n";
+      MHDfile << "Comment = Probe motor type : LinearMotor, TiltingMotor (for small roatations), or RotationalMotor "
+                 "(for 360 deg rotation).\n";
       if (header.motorType == usMotorSettings::LinearMotor) {
-        MHDfile << "MotorType = " << "LinearMotor" << "\n";
+        MHDfile << "MotorType = "
+                << "LinearMotor"
+                << "\n";
+      } else if (header.motorType == usMotorSettings::TiltingMotor) {
+        MHDfile << "MotorType = "
+                << "TiltingMotor"
+                << "\n";
+      } else if (header.motorType == usMotorSettings::RotationalMotor) {
+        MHDfile << "MotorType = "
+                << "RotationalMotor"
+                << "\n";
       }
-      else if (header.motorType == usMotorSettings::TiltingMotor) {
-        MHDfile << "MotorType = " << "TiltingMotor" << "\n";
-      }
-      else if (header.motorType == usMotorSettings::RotationalMotor) {
-        MHDfile << "MotorType = " << "RotationalMotor" << "\n";
-      }
-      MHDfile << "Comment = Only in 3d. Radius between the probe motor center and the first pixel of each line acquired. 0 if linear motor.\n";
+      MHDfile << "Comment = Only in 3d. Radius between the probe motor center and the first pixel of each line "
+                 "acquired. 0 if linear motor.\n";
       MHDfile << "MotorRadius = " << header.motorRadius << "\n";
       MHDfile << "Comment = Only in 3d. Distance between 2 successive frames.\n";
       MHDfile << "FramePitch = " << header.framePitch << "\n";
-      MHDfile << "Comment = The axial resolution is the distance in meters between two successives A-samples in a scan line.\n";
+      MHDfile << "Comment = The axial resolution is the distance in meters between two successives A-samples in a scan "
+                 "line.\n";
       MHDfile << "AxialResolution = " << this->m_axialResolution << "\n";
       MHDfile << "Comment = The frame timestamps are expressed in ms since epoch.\n";
       MHDfile << "Timestamp = ";
-      for(unsigned int i = 0; i<header.timestamp.size();i++ ) {
+      for (unsigned int i = 0; i < header.timestamp.size(); i++) {
         MHDfile << header.timestamp.at(i) << " ";
       }
       MHDfile << "\n";
-    }
-    else if (header.imageType == us::POSTSCAN_2D) {
-      MHDfile << "Comment = Availables ultrasound image types are RF_2D, RF_3D, PRESCAN_2D, PRESCAN_3D, POSTSCAN_2D and POSTSCAN_3D.\n";
-      MHDfile << "UltrasoundImageType = " << "POSTSCAN_2D" << "\n";
+    } else if (header.imageType == us::POSTSCAN_2D) {
+      MHDfile << "Comment = Availables ultrasound image types are RF_2D, RF_3D, PRESCAN_2D, PRESCAN_3D, POSTSCAN_2D "
+                 "and POSTSCAN_3D.\n";
+      MHDfile << "UltrasoundImageType = "
+              << "POSTSCAN_2D"
+              << "\n";
       MHDfile << "Comment = True if probe transducer is convex, false if linear. \n";
       MHDfile << "IsTransducerConvex = " << header.isTransducerConvex << "\n";
-      MHDfile << "Comment = Radius between the scan lines intersection and the first pixel of each line acquired. 0 if linear probe.\n";
+      MHDfile << "Comment = Radius between the scan lines intersection and the first pixel of each line acquired. 0 if "
+                 "linear probe.\n";
       MHDfile << "TransducerRadius = " << header.transducerRadius << "\n";
       MHDfile << "Comment = Distance between 2 scan lines.\n";
       MHDfile << "ScanLinePitch = " << header.scanLinePitch << "\n";
       MHDfile << "Comment = Frequency of the ultrasound wave sent (Hz).\n";
-      MHDfile << "TransmitFrequency = " << header.transmitFrequency<< "\n";
+      MHDfile << "TransmitFrequency = " << header.transmitFrequency << "\n";
       MHDfile << "Comment = Frequency used to sample the ultrasound wave received (Hz).\n";
       MHDfile << "SamplingFrequency = " << header.samplingFrequency << "\n";
       MHDfile << "HeightResolution = " << this->m_heightResolution << "\n";
@@ -508,35 +493,44 @@ void usMetaHeaderParser::parse()
       MHDfile << "ScanLineNumber = " << header.scanLineNumber << "\n";
       MHDfile << "Comment = The timestamp is expressed in ms since epoch.\n";
       MHDfile << "Timestamp = ";
-      for(unsigned int i = 0; i<header.timestamp.size();i++ ) {
+      for (unsigned int i = 0; i < header.timestamp.size(); i++) {
         MHDfile << header.timestamp.at(i) << " ";
       }
       MHDfile << "\n";
-    }
-    else if (header.imageType == us::POSTSCAN_3D) {
-      MHDfile << "Comment = Availables ultrasound image types are RF_2D, RF_3D, PRESCAN_2D, PRESCAN_3D, POSTSCAN_2D and POSTSCAN_3D.\n";
-      MHDfile << "UltrasoundImageType = " << "POSTSCAN_3D" << "\n";
+    } else if (header.imageType == us::POSTSCAN_3D) {
+      MHDfile << "Comment = Availables ultrasound image types are RF_2D, RF_3D, PRESCAN_2D, PRESCAN_3D, POSTSCAN_2D "
+                 "and POSTSCAN_3D.\n";
+      MHDfile << "UltrasoundImageType = "
+              << "POSTSCAN_3D"
+              << "\n";
       MHDfile << "Comment = True if probe transducer is convex, false if linear. \n";
       MHDfile << "IsTransducerConvex = " << header.isTransducerConvex << "\n";
-      MHDfile << "Comment = Radius between the scan lines intersection and the first pixel of each line acquired. 0 if linear probe.\n";
+      MHDfile << "Comment = Radius between the scan lines intersection and the first pixel of each line acquired. 0 if "
+                 "linear probe.\n";
       MHDfile << "TransducerRadius = " << header.transducerRadius << "\n";
       MHDfile << "Comment = Distance between 2 scan lines.\n";
       MHDfile << "ScanLinePitch = " << header.scanLinePitch << "\n";
       MHDfile << "Comment = Frequency of the ultrasound wave sent (Hz).\n";
-      MHDfile << "TransmitFrequency = " << header.transmitFrequency<< "\n";
+      MHDfile << "TransmitFrequency = " << header.transmitFrequency << "\n";
       MHDfile << "Comment = Frequency used to sample the ultrasound wave received (Hz).\n";
       MHDfile << "SamplingFrequency = " << header.samplingFrequency << "\n";
-      MHDfile << "Comment = Probe motor type : LinearMotor, TiltingMotor (for small roatations), or RotationalMotor (for 360 deg rotation).\n";
+      MHDfile << "Comment = Probe motor type : LinearMotor, TiltingMotor (for small roatations), or RotationalMotor "
+                 "(for 360 deg rotation).\n";
       if (header.motorType == usMotorSettings::LinearMotor) {
-        MHDfile << "MotorType = " << "LinearMotor" << "\n";
+        MHDfile << "MotorType = "
+                << "LinearMotor"
+                << "\n";
+      } else if (header.motorType == usMotorSettings::TiltingMotor) {
+        MHDfile << "MotorType = "
+                << "TiltingMotor"
+                << "\n";
+      } else if (header.motorType == usMotorSettings::RotationalMotor) {
+        MHDfile << "MotorType = "
+                << "RotationalMotor"
+                << "\n";
       }
-      else if (header.motorType == usMotorSettings::TiltingMotor) {
-        MHDfile << "MotorType = " << "TiltingMotor" << "\n";
-      }
-      else if (header.motorType == usMotorSettings::RotationalMotor) {
-        MHDfile << "MotorType = " << "RotationalMotor" << "\n";
-      }
-      MHDfile << "Comment = Only in 3d. Radius between the probe motor center and the first pixel of each line acquired. 0 if linear motor.\n";
+      MHDfile << "Comment = Only in 3d. Radius between the probe motor center and the first pixel of each line "
+                 "acquired. 0 if linear motor.\n";
       MHDfile << "MotorRadius = " << header.motorRadius << "\n";
       MHDfile << "Comment = Only in 3d. Distance between 2 successive frames.\n";
       MHDfile << "FramePitch = " << header.framePitch << "\n";
@@ -545,13 +539,13 @@ void usMetaHeaderParser::parse()
       MHDfile << "ScanLineNumber = " << header.scanLineNumber << "\n";
       MHDfile << "FrameNumber = " << header.frameNumber << "\n";
       MHDfile << "\n";
-    }
-    else
-      MHDfile << "UltrasoundImageType = " << "MET_UNKNOWN" << "\n";
+    } else
+      MHDfile << "UltrasoundImageType = "
+              << "MET_UNKNOWN"
+              << "\n";
 
     MHDfile.close();
-  }
-  catch (std::exception &e) {
+  } catch (std::exception &e) {
     std::cout << "Error opening file : " << e.what() << std::endl;
   }
 }
@@ -560,11 +554,11 @@ void usMetaHeaderParser::parse()
 * Reading method.
 * @param filename the mhd file to read.
 */
-void usMetaHeaderParser::read(const std::string& filename)
+void usMetaHeaderParser::read(const std::string &filename)
 {
   readMHDHeader(filename);
 
-  //basic transducer settings
+  // basic transducer settings
   this->m_transducerSettings.setTransducerRadius(header.transducerRadius);
   this->m_transducerSettings.setScanLinePitch(header.scanLinePitch);
   this->m_transducerSettings.setTransducerConvexity(header.isTransducerConvex);
@@ -572,7 +566,8 @@ void usMetaHeaderParser::read(const std::string& filename)
   this->m_transducerSettings.setTransmitFrequency(header.transmitFrequency);
   this->m_transducerSettings.setTransmitFrequency(header.transmitFrequency);
 
-  if(this->header.imageType == us::RF_3D || this->header.imageType == us::PRESCAN_3D || this->header.imageType == us::POSTSCAN_3D) {
+  if (this->header.imageType == us::RF_3D || this->header.imageType == us::PRESCAN_3D ||
+      this->header.imageType == us::POSTSCAN_3D) {
     this->m_motorSettings.setMotorRadius(header.motorRadius);
     this->m_motorSettings.setFramePitch(header.framePitch);
     this->m_motorSettings.setMotorType(header.motorType);
@@ -592,55 +587,37 @@ void usMetaHeaderParser::setTransducerSettings(const usTransducerSettings &trans
 * Motor settings setter (for 3D images).
 * @param motorSettings usMotorSettings to set.
 */
-void usMetaHeaderParser::setMotorSettings(const usMotorSettings &motorSettings)
-{
-  m_motorSettings = motorSettings;
-}
+void usMetaHeaderParser::setMotorSettings(const usMotorSettings &motorSettings) { m_motorSettings = motorSettings; }
 
 /**
 * Image file name setter.
 * @param imageFileName Image file name (with .raw extesion).
 */
-void usMetaHeaderParser::setRawFileName(const std::string &imageFileName)
-{
-  header.rawFileName = imageFileName;
-}
+void usMetaHeaderParser::setRawFileName(const std::string &imageFileName) { header.rawFileName = imageFileName; }
 
 /**
 * Image axial resolution setter (for rf or pre-scan images).
 * @param axialresolution Image axial resolution.
 */
-void usMetaHeaderParser::setAxialResolution(const double axialresolution)
-{
-  m_axialResolution = axialresolution;
-}
+void usMetaHeaderParser::setAxialResolution(const double axialresolution) { m_axialResolution = axialresolution; }
 
 /**
 * Image height resolution setter (for post-scan images).
 * @param heightResolution Image height resolution.
 */
-void usMetaHeaderParser::setHeightResolution(const double heightResolution)
-{
-  m_heightResolution = heightResolution;
-}
+void usMetaHeaderParser::setHeightResolution(const double heightResolution) { m_heightResolution = heightResolution; }
 
 /**
 * Image width resolution setter (for post-scan images).
 * @param widthResolution Image width resolution.
 */
-void usMetaHeaderParser::setWidthResolution(const double widthResolution)
-{
-  m_widthResolution = widthResolution;
-}
+void usMetaHeaderParser::setWidthResolution(const double widthResolution) { m_widthResolution = widthResolution; }
 
 /**
 * Mhd header setter (to set all information contained in the mhd file).
 * @param header MHDHeader to set.
 */
-void usMetaHeaderParser::setMHDHeader(const MHDHeader header)
-{
-  this->header = header;
-}
+void usMetaHeaderParser::setMHDHeader(const MHDHeader header) { this->header = header; }
 
 /**
 * Image timestamp setter
@@ -650,4 +627,4 @@ void usMetaHeaderParser::setImageTimestamp(const std::vector<uint64_t> timestamp
 {
   this->header.timestamp = timestamps;
 }
-#endif //DOXYGEN_SHOULD_SKIP_THIS
+#endif // DOXYGEN_SHOULD_SKIP_THIS

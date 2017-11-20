@@ -41,18 +41,12 @@
 /**
 * Default constructor.
 */
-usRfReader::usRfReader() : m_fileName(""), m_fileNameIsSet(false), m_header()
-{
-
-}
+usRfReader::usRfReader() : m_fileName(""), m_fileNameIsSet(false), m_header() {}
 
 /**
 * Destructor.
 */
-usRfReader::~usRfReader()
-{
-
-}
+usRfReader::~usRfReader() {}
 
 /**
 * FileName setter.
@@ -70,37 +64,37 @@ void usRfReader::setFileName(const std::string &fileName)
 */
 void usRfReader::open(usImageRF2D<short int> &image)
 {
-  if(!m_fileNameIsSet) {
+  if (!m_fileNameIsSet) {
     throw(vpException(vpException::badValue, "Sequence settings file name not set"));
   }
 
-  if(usImageIo::getHeaderFormat(m_fileName) != usImageIo::FORMAT_RF)
+  if (usImageIo::getHeaderFormat(m_fileName) != usImageIo::FORMAT_RF)
     throw(vpException(vpException::ioError, "only .rf files are supported"));
 
-  //INIT
+  // INIT
   int szHeader = sizeof(usImageIo::FrameHeader);
   int n = 0;
   char byte;
 
-  //FILE OPENING
-  m_dataFile.open( m_fileName.c_str(), std::ios::in|std::ios::binary);
+  // FILE OPENING
+  m_dataFile.open(m_fileName.c_str(), std::ios::in | std::ios::binary);
 
-  //READING HEADER
+  // READING HEADER
   while (n < szHeader) {
     m_dataFile.read(&byte, 1);
-    ((char*)&m_header)[n] = byte;
+    ((char *)&m_header)[n] = byte;
     n++;
   }
 
-  //CHECK IMAGE TYPE
+  // CHECK IMAGE TYPE
   if (m_header.type != 16)
     throw(vpException(vpException::badValue, "trying to read non-rf data in .rf file"));
 
-  //CHECK DATA TYPE
+  // CHECK DATA TYPE
   if (m_header.ss != 16)
     throw(vpException(vpException::badValue, ".vol file doesn't contain short data"));
 
-  image.resize( m_header.h, m_header.w);
+  image.resize(m_header.h, m_header.w);
   short sample;
   for (int i = 0; i < m_header.h; i++) {
     for (int j = 0; j < m_header.w; j++) {
@@ -110,4 +104,4 @@ void usRfReader::open(usImageRF2D<short int> &image)
   }
   m_dataFile.close();
 }
-#endif //DOXYGEN_SHOULD_SKIP_THIS
+#endif // DOXYGEN_SHOULD_SKIP_THIS

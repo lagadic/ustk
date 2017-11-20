@@ -39,19 +39,20 @@
 #ifndef __usTransducerSettings_h_
 #define __usTransducerSettings_h_
 
-//std includes
+// std includes
 #include <iostream>
 #include <string>
 
-//visp includes
+// visp includes
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>
 
-//ustk includes
+// ustk includes
 
 /*!
    @class usTransducerSettings
-   @brief Generic class for 2D ultrasound data common settings associated to the type of probe transducer used during acquisition.
+   @brief Generic class for 2D ultrasound data common settings associated to the type of probe transducer used during
+   acquisition.
    @ingroup module_ustk_core
 
    This class represents ultrasound transducer common settings which are:
@@ -76,10 +77,12 @@
 
    \image html img-usTransducerSettings.png
  */
-class VISP_EXPORT usTransducerSettings {
+class VISP_EXPORT usTransducerSettings
+{
 public:
   usTransducerSettings();
-  usTransducerSettings(double transducerRadius, double scanLinePitch, unsigned int scanLineNumber, bool transducerConvex, double depth, int transmitFrequency=0, int samplingFrequency=0);
+  usTransducerSettings(double transducerRadius, double scanLinePitch, unsigned int scanLineNumber,
+                       bool transducerConvex, double depth, int transmitFrequency = 0, int samplingFrequency = 0);
   usTransducerSettings(const usTransducerSettings &other);
 
   virtual ~usTransducerSettings();
@@ -99,12 +102,12 @@ public:
 
   bool isTransducerConvex() const;
 
-  usTransducerSettings& operator=(const usTransducerSettings& other);
-  bool operator==(usTransducerSettings const& other);
-  bool operator!=(usTransducerSettings const& other);
+  usTransducerSettings &operator=(const usTransducerSettings &other);
+  bool operator==(usTransducerSettings const &other);
+  bool operator!=(usTransducerSettings const &other);
 
   bool scanLineNumberIsSet() const;
-  //Settings for the probe transducer
+  // Settings for the probe transducer
   void setDepth(double depth);
   void setFieldOfView(double fieldOfView);
   void setProbeName(std::string probeName);
@@ -112,16 +115,16 @@ public:
   void setScanLineNumber(unsigned int scanLineNumber);
   void setScanLinePitch(const double scanLinePitch);
   void setTransducerConvexity(const bool isTransducerConvex);
-  void setTransducerSettings(const usTransducerSettings& other);
+  void setTransducerSettings(const usTransducerSettings &other);
   void setTransducerRadius(const double transducerRadius);
   void setTransmitFrequency(const int transmitFrequency);
 
   //@}
 
-  friend VISP_EXPORT std::ostream& operator<<(std::ostream& out, const usTransducerSettings &other);
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &out, const usTransducerSettings &other);
 
 private:
-  //Settings for the probe transducer
+  // Settings for the probe transducer
   double m_transducerRadius;
   double m_scanLinePitch;
   unsigned int m_scanLineNumber;

@@ -58,19 +58,20 @@
  *  -The scan line number : number of scan lines used when you acqired the image.
  *  -The scan line pitch : angle (radians) between two successive scan lines in acquisition.
  */
-void usPixelMeterConversion::convert(const usImagePostScan2D<unsigned char> &image,
-                                     const double &u, const double &v,
-                                     double &x,  double &y)
+void usPixelMeterConversion::convert(const usImagePostScan2D<unsigned char> &image, const double &u, const double &v,
+                                     double &x, double &y)
 {
-  //checking transducer settings to apply corresponding transformation
-  //First convex probe type
-  if(image.isTransducerConvex()) {
-    x = image.getWidthResolution() * u - (((double)image.getWidth()*image.getWidthResolution())/2.0);
-    y = image.getHeightResolution() * v + image.getTransducerRadius() * std::cos(((double)image.getScanLineNumber()-1)*image.getScanLinePitch()/2.0);
+  // checking transducer settings to apply corresponding transformation
+  // First convex probe type
+  if (image.isTransducerConvex()) {
+    x = image.getWidthResolution() * u - (((double)image.getWidth() * image.getWidthResolution()) / 2.0);
+    y = image.getHeightResolution() * v +
+        image.getTransducerRadius() *
+            std::cos(((double)image.getScanLineNumber() - 1) * image.getScanLinePitch() / 2.0);
   }
-  //Then linear probe type
+  // Then linear probe type
   else {
-    x = image.getWidthResolution() * u - (((double)image.getWidth()*image.getWidthResolution())/2.0);
+    x = image.getWidthResolution() * u - (((double)image.getWidth() * image.getWidthResolution()) / 2.0);
     y = image.getHeightResolution() * v;
   }
 }
@@ -85,7 +86,8 @@ void usPixelMeterConversion::convert(const usImagePostScan2D<unsigned char> &ima
  * @param [out] v Converted position in pixels along y axis.
  * @param [out] w Converted position in pixels along z axis.
  *
- * @warning Make sure you completed the following transducer settings, the motor settings, and the image settings before the conversion.
+ * @warning Make sure you completed the following transducer settings, the motor settings, and the image settings before
+ * the conversion.
  * Settings needed in case of linear transducer and linear motor :
  *  -The image dimensions (normally set when you filled your image).
  *  -The 3 elements spacing (x,y and z).
@@ -106,45 +108,43 @@ void usPixelMeterConversion::convert(const usImagePostScan2D<unsigned char> &ima
  *
  *  Settings needed in case of convewx transducer and tilting motor :
  */
-void usPixelMeterConversion::convert(const usImagePostScan3D<unsigned char> &image,
-                                     const double &u, const double &v, const double &w,
-                                     double &x,  double &y, double &z)
+void usPixelMeterConversion::convert(const usImagePostScan3D<unsigned char> &image, const double &u, const double &v,
+                                     const double &w, double &x, double &y, double &z)
 {
-  //checking transducer/motor settings to apply corresponding transformation
-    if(!image.isTransducerConvex()) { //linear transducer
-      if(image.getMotorType() == usMotorSettings::LinearMotor) { //linear motor
-        x = image.getElementSpacingX() * u - ((image.getDimX() * image.getElementSpacingX()) / 2.0);
-        y = image.getElementSpacingY() * v;
-        z = image.getElementSpacingZ() * w - (image.getDimZ() * image.getElementSpacingZ() / 2.0);
-      }
-      else if (image.getMotorType() == usMotorSettings::TiltingMotor) { //tilting motor
-        x = image.getElementSpacingX() * u - ((image.getDimX() * image.getElementSpacingX()) / 2.0);
-        y = image.getElementSpacingY() * v + image.getMotorRadius() * std::cos((image.getFrameNumber() - 1) * image.getFramePitch() / 2.0) - image.getMotorRadius();
-        z = image.getElementSpacingZ() * w - (image.getDimZ() * image.getElementSpacingZ() / 2.0);
-      }
-      else
-        throw(vpException(vpException::notImplementedError, "Rotationnal Motor is not available yet."));
-  }
-  //Then convex transducer
-  else {
-    if(image.getMotorType() == usMotorSettings::LinearMotor) { //linear motor
-      x = image.getElementSpacingX() * u - (image.getDimX() * image.getElementSpacingX() / 2.0);
-      y = image.getElementSpacingY() * v + image.getTransducerRadius() * std::cos((image.getScanLineNumber() - 1) * image.getScanLinePitch() / 2.0);
+  // checking transducer/motor settings to apply corresponding transformation
+  if (!image.isTransducerConvex()) {                            // linear transducer
+    if (image.getMotorType() == usMotorSettings::LinearMotor) { // linear motor
+      x = image.getElementSpacingX() * u - ((image.getDimX() * image.getElementSpacingX()) / 2.0);
+      y = image.getElementSpacingY() * v;
       z = image.getElementSpacingZ() * w - (image.getDimZ() * image.getElementSpacingZ() / 2.0);
-    }
-    else if (image.getMotorType() == usMotorSettings::TiltingMotor) { //tilting motor
+    } else if (image.getMotorType() == usMotorSettings::TiltingMotor) { // tilting motor
+      x = image.getElementSpacingX() * u - ((image.getDimX() * image.getElementSpacingX()) / 2.0);
+      y = image.getElementSpacingY() * v +
+          image.getMotorRadius() * std::cos((image.getFrameNumber() - 1) * image.getFramePitch() / 2.0) -
+          image.getMotorRadius();
+      z = image.getElementSpacingZ() * w - (image.getDimZ() * image.getElementSpacingZ() / 2.0);
+    } else
+      throw(vpException(vpException::notImplementedError, "Rotationnal Motor is not available yet."));
+  }
+  // Then convex transducer
+  else {
+    if (image.getMotorType() == usMotorSettings::LinearMotor) { // linear motor
+      x = image.getElementSpacingX() * u - (image.getDimX() * image.getElementSpacingX() / 2.0);
+      y = image.getElementSpacingY() * v +
+          image.getTransducerRadius() * std::cos((image.getScanLineNumber() - 1) * image.getScanLinePitch() / 2.0);
+      z = image.getElementSpacingZ() * w - (image.getDimZ() * image.getElementSpacingZ() / 2.0);
+    } else if (image.getMotorType() == usMotorSettings::TiltingMotor) { // tilting motor
       x = image.getElementSpacingX() * u - (image.getDimX() * image.getElementSpacingX() / 2.0);
 
       y = image.getElementSpacingY() * v +
-      (image.getTransducerRadius() * //Rmin
-      std::cos((image.getScanLineNumber()-1)*image.getScanLinePitch()/2) //cos (FOV/2)
-      - (image.getTransducerRadius() - image.getMotorRadius()))//Delta R
-      * std::cos((image.getFrameNumber()-1) * image.getFramePitch() / 2) //cos(Phi/2)
-      + (image.getTransducerRadius() - image.getMotorRadius());//Delta R
+          (image.getTransducerRadius() *                                                // Rmin
+               std::cos((image.getScanLineNumber() - 1) * image.getScanLinePitch() / 2) // cos (FOV/2)
+           - (image.getTransducerRadius() - image.getMotorRadius()))                    // Delta R
+              * std::cos((image.getFrameNumber() - 1) * image.getFramePitch() / 2)      // cos(Phi/2)
+          + (image.getTransducerRadius() - image.getMotorRadius());                     // Delta R
 
       z = image.getElementSpacingZ() * w - (image.getDimZ() * image.getElementSpacingZ() / 2.0);
-    }
-    else
+    } else
       throw(vpException(vpException::notImplementedError, "Rotationnal Motor is not available yet."));
   }
 }

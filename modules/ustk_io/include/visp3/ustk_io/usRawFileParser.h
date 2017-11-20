@@ -39,14 +39,14 @@
 #ifndef __usRawFileParser_h_
 #define __usRawFileParser_h_
 
-#include<string>
-#include<map>
 #include <cstdlib>
-#include <string>
+#include <fstream>
 #include <ios>
 #include <iostream>
-#include <fstream>
+#include <map>
 #include <sstream>
+#include <string>
+#include <string>
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
@@ -57,10 +57,10 @@
  * @brief Raw data parser.
  * @ingroup module_ustk_io
  */
-class VISP_EXPORT usRawFileParser {
+class VISP_EXPORT usRawFileParser
+{
 
 public:
-
   /** @name 2D io */
   //@{
   void read(vpImage<unsigned char> &image2D, const std::string &mhdFileName);
@@ -77,5 +77,5 @@ public:
   void write(const usImage3D<short> &image3D, const std::string &rawFileName);
   //@}
 };
-#endif //US_RAW_FILE_PARSER_H
-#endif //DOXYGEN_SHOULD_SKIP_THIS
+#endif // US_RAW_FILE_PARSER_H
+#endif // DOXYGEN_SHOULD_SKIP_THIS

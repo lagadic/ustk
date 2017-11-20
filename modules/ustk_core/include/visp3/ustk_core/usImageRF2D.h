@@ -50,7 +50,8 @@
   @ingroup module_ustk_core
 
   This class represents a 2D RF ultrasound image. This image is nothing more than a vpImage that
-  contains 2D RF data and additional settings that give information about the acquisition process done by the transducer.
+  contains 2D RF data and additional settings that give information about the acquisition process done by the
+transducer.
 
   The settings associated to an usImageRF2D image are the one implemented in usImagePreScanSettings.
   We recall that these settings are:
@@ -103,10 +104,9 @@ int main()
 }
   \endcode
  */
-template<class Type>
-class usImageRF2D : public vpImage<Type>, public usImagePreScanSettings {
+template <class Type> class usImageRF2D : public vpImage<Type>, public usImagePreScanSettings
+{
 public:
-  
   usImageRF2D();
   usImageRF2D(const vpImage<Type> &image, const usImagePreScanSettings &preScanSettings);
   usImageRF2D(const usImageRF2D &other);
@@ -114,13 +114,13 @@ public:
 
   unsigned int getRFSampleNumber() const;
 
-  usImageRF2D<Type>& operator=(const usImageRF2D<Type> &other);
+  usImageRF2D<Type> &operator=(const usImageRF2D<Type> &other);
   bool operator==(const usImageRF2D<Type> &other);
 
   void setData(const vpImage<Type> &image);
   void setScanLineNumber(unsigned int scanLineNumber);
 
-  //Filtering before calling vpImage::resize() to update scanLineNumber
+  // Filtering before calling vpImage::resize() to update scanLineNumber
   void resize(const unsigned int h, const unsigned int w);
   void resize(const unsigned int h, const unsigned int w, const Type val);
 };
@@ -128,19 +128,14 @@ public:
 /**
 * Default constructor.
 */
-template<class Type>
-usImageRF2D<Type>::usImageRF2D()
-  : vpImage<Type>(), usImagePreScanSettings()
-{
-
-}
+template <class Type> usImageRF2D<Type>::usImageRF2D() : vpImage<Type>(), usImagePreScanSettings() {}
 
 /**
 * Initializing constructor.
 * @param image 2D RF image.
 * @param preScanSettings Pre-scan image settings.
 */
-template<class Type>
+template <class Type>
 usImageRF2D<Type>::usImageRF2D(const vpImage<Type> &image, const usImagePreScanSettings &preScanSettings)
   : vpImage<Type>(image), usImagePreScanSettings(preScanSettings)
 {
@@ -152,32 +147,25 @@ usImageRF2D<Type>::usImageRF2D(const vpImage<Type> &image, const usImagePreScanS
 * Copy constructor.
 * @param other 2D RF image to copy
 */
-template<class Type>
-usImageRF2D<Type>::usImageRF2D(const usImageRF2D& other)
-  : vpImage<Type>(other), usImagePreScanSettings(other)
+template <class Type>
+usImageRF2D<Type>::usImageRF2D(const usImageRF2D &other) : vpImage<Type>(other), usImagePreScanSettings(other)
 {
-
 }
 
 /**
 * Destructor.
 */
-template<class Type>
-usImageRF2D<Type>::~usImageRF2D()
-{
-
-}
+template <class Type> usImageRF2D<Type>::~usImageRF2D() {}
 
 /**
 * Copy operator.
 */
-template<class Type>
-usImageRF2D<Type>& usImageRF2D<Type>::operator=(const usImageRF2D<Type> &other)
+template <class Type> usImageRF2D<Type> &usImageRF2D<Type>::operator=(const usImageRF2D<Type> &other)
 {
-  //from vpImage
+  // from vpImage
   vpImage<Type>::operator=(other);
 
-  //from usImagePreScanSettings
+  // from usImagePreScanSettings
   usImagePreScanSettings::operator=(other);
 
   return *this;
@@ -186,32 +174,28 @@ usImageRF2D<Type>& usImageRF2D<Type>::operator=(const usImageRF2D<Type> &other)
 /**
 * Comparison operator.
 */
-template<class Type>
-bool usImageRF2D<Type>::operator==(const usImageRF2D<Type> &other)
+template <class Type> bool usImageRF2D<Type>::operator==(const usImageRF2D<Type> &other)
 {
-  return(vpImage<Type>::operator== (other) &&
-         usImagePreScanSettings::operator ==(other));
+  return (vpImage<Type>::operator==(other) && usImagePreScanSettings::operator==(other));
 }
 
 /**
 * Operator to print 2D RF image information on a stream.
 */
-template<class Type>
-std::ostream& operator<<(std::ostream& out, const usImageRF2D<Type> &other)
+template <class Type> std::ostream &operator<<(std::ostream &out, const usImageRF2D<Type> &other)
 {
-  return out << static_cast<const usImagePreScanSettings &>(other) <<
-    "image height : " << other.getHeight() << std::endl <<
-    "image width : " << other.getWidth() << std::endl <<
-    "number of A-samples in a scan line : " << other.getRFSampleNumber() << std::endl <<
-    "number of scan lines : " << other.getScanLineNumber() << std::endl;
+  return out << static_cast<const usImagePreScanSettings &>(other) << "image height : " << other.getHeight()
+             << std::endl
+             << "image width : " << other.getWidth() << std::endl
+             << "number of A-samples in a scan line : " << other.getRFSampleNumber() << std::endl
+             << "number of scan lines : " << other.getScanLineNumber() << std::endl;
 }
 
 /**
 * Get the number of RF samples in a scan line.
 * @return Number of RF samples in a scan line.
 */
-template<class Type>
-unsigned int usImageRF2D<Type>::getRFSampleNumber() const { return vpImage<Type>::getHeight(); }
+template <class Type> unsigned int usImageRF2D<Type>::getRFSampleNumber() const { return vpImage<Type>::getHeight(); }
 
 /**
 * Setter for the 2D RF image data.
@@ -219,8 +203,7 @@ unsigned int usImageRF2D<Type>::getRFSampleNumber() const { return vpImage<Type>
 * Updates also the transducer scan line number that corresponds to the image width.
 * @param image The image to set.
 */
-template<class Type>
-void usImageRF2D<Type>::setData(const vpImage<Type> &image)
+template <class Type> void usImageRF2D<Type>::setData(const vpImage<Type> &image)
 {
   vpImage<Type>::operator=(image);
   setScanLineNumber(image.getWidth());
@@ -232,8 +215,7 @@ void usImageRF2D<Type>::setData(const vpImage<Type> &image)
  * Resize also the image width that is equal to the scan line number.
  * \param scanLineNumber Number of scan lines acquired by the transducer.
  */
-template<class Type>
-void usImageRF2D<Type>::setScanLineNumber(unsigned int scanLineNumber)
+template <class Type> void usImageRF2D<Type>::setScanLineNumber(unsigned int scanLineNumber)
 {
   vpImage<Type>::resize(vpImage<Type>::getHeight(), scanLineNumber);
   usTransducerSettings::setScanLineNumber(scanLineNumber);
@@ -246,8 +228,7 @@ void usImageRF2D<Type>::setScanLineNumber(unsigned int scanLineNumber)
  * \param h Image height.
  * \param w Image width.
  */
-template<class Type>
-void usImageRF2D<Type>::resize(const unsigned int h, const unsigned int w)
+template <class Type> void usImageRF2D<Type>::resize(const unsigned int h, const unsigned int w)
 {
   usTransducerSettings::setScanLineNumber(w);
   vpImage<Type>::resize(h, w);
@@ -261,8 +242,7 @@ void usImageRF2D<Type>::resize(const unsigned int h, const unsigned int w)
  * \param w Image width.
  * \param val Value set to each pixel.
  */
-template<class Type>
-void usImageRF2D<Type>::resize(const unsigned int h, const unsigned int w, const Type val)
+template <class Type> void usImageRF2D<Type>::resize(const unsigned int h, const unsigned int w, const Type val)
 {
   usTransducerSettings::setScanLineNumber(w);
   vpImage<Type>::resize(h, w, val);

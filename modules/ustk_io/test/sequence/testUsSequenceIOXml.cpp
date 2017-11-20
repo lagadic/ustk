@@ -35,27 +35,27 @@
 #include <iostream>
 #if defined(VISP_HAVE_XML2)
 
-#include <visp3/core/vpXmlParser.h>
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpIoTools.h>
+#include <visp3/core/vpXmlParser.h>
 #include <visp3/io/vpParseArgv.h>
 
 #include <visp3/ustk_io/usSequenceReader.h>
 #include <visp3/ustk_io/usSequenceWriter.h>
 
 #include <string>
-#include <vector>
 #include <time.h>
+#include <vector>
 
 /* -------------------------------------------------------------------------- */
 /*                         COMMAND LINE OPTIONS                               */
 /* -------------------------------------------------------------------------- */
 
 // List of allowed command line options
-#define GETOPTARGS	"cdo:h"
+#define GETOPTARGS "cdo:h"
 
-void usage(const char *name, const char *badparam, const std::string& opath, const std::string& user);
-bool getOptions(int argc, const char **argv, std::string &opath, const std::string& user);
+void usage(const char *name, const char *badparam, const std::string &opath, const std::string &user);
+bool getOptions(int argc, const char **argv, std::string &opath, const std::string &user);
 
 /*!
 
@@ -67,13 +67,14 @@ Print the program options.
 \param user : Username.
 
  */
-void usage(const char *name, const char *badparam, const std::string& opath, const std::string& user)
+void usage(const char *name, const char *badparam, const std::string &opath, const std::string &user)
 {
   fprintf(stdout, "\n\
 Write and read ultrasound sequences in 2d image files, and the associated xml settings file.\n\
 \n\
 SYNOPSIS\n\
-  %s [-o <output image path>] [-h]\n", name);
+  %s [-o <output image path>] [-h]\n",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -84,10 +85,11 @@ OPTIONS:                                               Default\n\
      sequencepreScan2D.xml file is written.\n\
               \n\
   -h\n\
-     Print the help.\n\n", opath.c_str(), user.c_str());
+     Print the help.\n\n",
+          opath.c_str(), user.c_str());
 
   if (badparam) {
-    fprintf(stderr, "ERROR: \n" );
+    fprintf(stderr, "ERROR: \n");
     fprintf(stderr, "\nBad parameter [%s]\n", badparam);
   }
 }
@@ -101,22 +103,29 @@ OPTIONS:                                               Default\n\
   \param user : Username.
   \return false if the program has to be stopped, true otherwise.
 */
-bool getOptions(int argc, const char **argv, std::string &opath, const std::string& user)
+bool getOptions(int argc, const char **argv, std::string &opath, const std::string &user)
 {
   const char *optarg_;
-  int	c;
+  int c;
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
     switch (c) {
-    case 'o': opath = optarg_; break;
-    case 'h': usage(argv[0], NULL, opath, user); return false; break;
+    case 'o':
+      opath = optarg_;
+      break;
+    case 'h':
+      usage(argv[0], NULL, opath, user);
+      return false;
+      break;
 
     case 'c':
     case 'd':
       break;
 
     default:
-      usage(argv[0], optarg_, opath, user); return false; break;
+      usage(argv[0], optarg_, opath, user);
+      return false;
+      break;
     }
   }
 
@@ -131,13 +140,11 @@ bool getOptions(int argc, const char **argv, std::string &opath, const std::stri
   return true;
 }
 
-
-
 /* -------------------------------------------------------------------------- */
 /*                               MAIN FUNCTION                                */
 /* -------------------------------------------------------------------------- */
 
-int main(int argc, const char** argv)
+int main(int argc, const char **argv)
 {
   try {
     std::string opt_opath;
@@ -145,13 +152,13 @@ int main(int argc, const char** argv)
     std::string filename;
     std::string username;
 
-    std::cout <<  "-------------------------------------------------------" << std::endl ;
-    std::cout <<  "  testUSSequenceIOXml.cpp" <<std::endl << std::endl ;
-    std::cout <<  "  writing and reading ultrasound sequences using usSequenceReader and usSequenceWriter" << std::endl ;
-    std::cout <<  "-------------------------------------------------------" << std::endl ;
-    std::cout << std::endl ;
+    std::cout << "-------------------------------------------------------" << std::endl;
+    std::cout << "  testUSSequenceIOXml.cpp" << std::endl << std::endl;
+    std::cout << "  writing and reading ultrasound sequences using usSequenceReader and usSequenceWriter" << std::endl;
+    std::cout << "-------------------------------------------------------" << std::endl;
+    std::cout << std::endl;
 
-    // Set the default output path
+// Set the default output path
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
     opt_opath = "/tmp";
 #elif defined(_WIN32)
@@ -163,7 +170,7 @@ int main(int argc, const char** argv)
 
     // Read the command line options
     if (getOptions(argc, argv, opt_opath, username) == false) {
-      exit (-1);
+      exit(-1);
     }
 
     // Get the option values
@@ -178,11 +185,9 @@ int main(int argc, const char** argv)
       try {
         // Create the dirname
         vpIoTools::makeDirectory(dirname);
-      }
-      catch (...) {
+      } catch (...) {
         usage(argv[0], NULL, opath, username);
-        std::cerr << std::endl
-                  << "ERROR:" << std::endl;
+        std::cerr << std::endl << "ERROR:" << std::endl;
         std::cerr << "  Cannot create " << dirname << std::endl;
         std::cerr << "  Check your -o " << opath << " option " << std::endl;
         exit(-1);
@@ -191,12 +196,12 @@ int main(int argc, const char** argv)
 
     filename = dirname + vpIoTools::path("/") + "sequencepreScan2D.xml";
 
-    //Init values in reference image
+    // Init values in reference image
     usImagePreScan2D<unsigned char> preScan2DReference;
-    //init image
+    // init image
     vpImage<unsigned char> image;
-    image.resize(320,128,123);
-    //init settings
+    image.resize(320, 128, 123);
+    // init settings
     preScan2DReference.setAxialResolution(0.0005);
     preScan2DReference.setDepth(0.0005 * 319);
     preScan2DReference.setScanLinePitch(0.0045);
@@ -207,7 +212,7 @@ int main(int argc, const char** argv)
     preScan2DReference.setData(image);
 
     std::vector<usImagePreScan2D<unsigned char> > ImageBufferRef;
-    for(int i=0;i<4;i++) {
+    for (int i = 0; i < 4; i++) {
       ImageBufferRef.push_back(preScan2DReference);
     }
 
@@ -215,8 +220,8 @@ int main(int argc, const char** argv)
     writer.setSequenceFileName(filename);
     writer.setImageFileName(std::string("mysubdir/sequencepreScan2D%04d.png"));
     writer.setFrameRate(15);
-    int i=0;
-    while( i<4) {
+    int i = 0;
+    while (i < 4) {
       writer.saveImage(ImageBufferRef.at(i));
       i++;
     }
@@ -226,27 +231,27 @@ int main(int argc, const char** argv)
     std::cout << preScan2DReference;
     std::cout << "height resolution : " << preScan2DReference.getAxialResolution() << std::endl;
 
-    //read the image we just wrote    
+    // read the image we just wrote
     usSequenceReader<usImagePreScan2D<unsigned char> > reader;
 
     std::vector<usImagePreScan2D<unsigned char> > ImageBuffer;
 
     reader.setSequenceFileName(filename);
     i = 0;
-    while(!reader.end()) {
+    while (!reader.end()) {
       usImagePreScan2D<unsigned char> preScan2D;
       reader.acquire(preScan2D);
       ImageBuffer.push_back(preScan2D);
       i++;
     }
 
-    std::cout << "Read from " << filename << std::endl ;
+    std::cout << "Read from " << filename << std::endl;
     std::cout << ImageBuffer.at(0);
     std::cout << "height resolution : " << ImageBuffer.at(0).getAxialResolution() << std::endl;
 
     bool testPassed = true;
 
-    if(reader.getFrameRate() != writer.getFrameRate() || ImageBuffer.size() != ImageBufferRef.size()){
+    if (reader.getFrameRate() != writer.getFrameRate() || ImageBuffer.size() != ImageBufferRef.size()) {
       testPassed = false;
       std::cout << "reader framerate : " << reader.getFrameRate() << std::endl;
       std::cout << "writer framerate : " << writer.getFrameRate() << std::endl;
@@ -254,9 +259,9 @@ int main(int argc, const char** argv)
       std::cout << "size buff ref :  " << ImageBufferRef.size() << std::endl;
     }
 
-    //checking every image
-    for(unsigned int i = 0; i < ImageBuffer.size();i++) {
-      if(ImageBuffer.at(i) != ImageBufferRef.at(i) ) {
+    // checking every image
+    for (unsigned int i = 0; i < ImageBuffer.size(); i++) {
+      if (ImageBuffer.at(i) != ImageBufferRef.at(i)) {
         testPassed = false;
         std::cout << "images not equal at index : " << i << std::endl;
       }
@@ -264,23 +269,23 @@ int main(int argc, const char** argv)
 
     //-----------------Testing loop cycling-----------------
 
-    //read the image we just wrote
+    // read the image we just wrote
     usSequenceReader<usImagePreScan2D<unsigned char> > readerCycling;
 
-    //ref timer
+    // ref timer
     time_t refTimer;
     time(&refTimer);
 
     readerCycling.setSequenceFileName(filename);
     readerCycling.setLoopCycling(true);
     i = 0;
-    while(!readerCycling.end()) {
+    while (!readerCycling.end()) {
       usImagePreScan2D<unsigned char> preScan2D;
       readerCycling.acquire(preScan2D);
       time_t testTimer;
       time(&testTimer);
-      double seconds = difftime(testTimer,refTimer);
-      if(seconds>1) //after 1 second we stop the cycle
+      double seconds = difftime(testTimer, refTimer);
+      if (seconds > 1) // after 1 second we stop the cycle
         readerCycling.setLoopCycling(false);
       i++;
     }
@@ -291,8 +296,7 @@ int main(int argc, const char** argv)
     vpXmlParser::cleanup();
     std::cout << "Test exit code : " << (int)!testPassed << std::endl;
     return !testPassed;
-  }
-  catch(const vpException &e) {
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
     return 1;
   }

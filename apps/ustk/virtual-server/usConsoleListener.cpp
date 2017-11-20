@@ -38,8 +38,8 @@
  */
 usConsoleListener::usConsoleListener()
 {
-    m_notifier = new QSocketNotifier(fileno(stdin), QSocketNotifier::Read, this);
-    connect(m_notifier, SIGNAL(activated(int)), this, SLOT(readCommand()));
+  m_notifier = new QSocketNotifier(fileno(stdin), QSocketNotifier::Read, this);
+  connect(m_notifier, SIGNAL(activated(int)), this, SLOT(readCommand()));
 }
 
 /**
@@ -48,11 +48,11 @@ usConsoleListener::usConsoleListener()
  */
 void usConsoleListener::readCommand()
 {
-    std::string line;
-    std::getline(std::cin, line);
-    if (line == "p") {
-        emit quitPause();
-    } else {
-        std::cout << "Unknow console command : " << line << std::endl << std::flush;
-    }
+  std::string line;
+  std::getline(std::cin, line);
+  if (line == "p") {
+    emit quitPause();
+  } else {
+    std::cout << "Unknow console command : " << line << std::endl << std::flush;
+  }
 }

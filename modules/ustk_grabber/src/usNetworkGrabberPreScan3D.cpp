@@ -40,12 +40,12 @@
 /**
 * Constructor. Inititializes the image, and manages Qt signal.
 */
-usNetworkGrabberPreScan3D::usNetworkGrabberPreScan3D(usNetworkGrabber *parent) :
-  usNetworkGrabber(parent),m_motorSettings()
+usNetworkGrabberPreScan3D::usNetworkGrabberPreScan3D(usNetworkGrabber *parent)
+  : usNetworkGrabber(parent), m_motorSettings()
 {
-  m_grabbedImage.init(0,0);
+  m_grabbedImage.init(0, 0);
 
-  //allocating buffer of size 3
+  // allocating buffer of size 3
   m_outputBuffer.push_back(new usVolumeGrabbedInfo<usImagePreScan3D<unsigned char> >);
   m_outputBuffer.push_back(new usVolumeGrabbedInfo<usImagePreScan3D<unsigned char> >);
   m_outputBuffer.push_back(new usVolumeGrabbedInfo<usImagePreScan3D<unsigned char> >);
@@ -58,16 +58,13 @@ usNetworkGrabberPreScan3D::usNetworkGrabberPreScan3D(usNetworkGrabber *parent) :
 
   m_recordingOn = false;
 
-  connect(m_tcpSocket ,SIGNAL(readyRead()),this, SLOT(dataArrived()));
+  connect(m_tcpSocket, SIGNAL(readyRead()), this, SLOT(dataArrived()));
 }
 
 /**
 * Destructor.
 */
-usNetworkGrabberPreScan3D::~usNetworkGrabberPreScan3D()
-{
-
-}
+usNetworkGrabberPreScan3D::~usNetworkGrabberPreScan3D() {}
 
 /**
 * Slot called when data is coming on the network.
@@ -83,41 +80,39 @@ void usNetworkGrabberPreScan3D::dataArrived()
 #elif defined(USTK_HAVE_VTK_QT4)
   in.setVersion(QDataStream::Qt_4_8);
 #else
-  throw(vpException(vpException::fatalError,"your Qt version is not managed in ustk"));
+  throw(vpException(vpException::fatalError, "your Qt version is not managed in ustk"));
 #endif
 
   int headerType;
-  if(m_bytesLeftToRead == 0 ) { // do not try to read a header if last frame was not complete
+  if (m_bytesLeftToRead == 0) { // do not try to read a header if last frame was not complete
     in >> headerType;
-    if(m_verbose)
+    if (m_verbose)
       std::cout << "header received, type = " << headerType << std::endl;
-  }
-  else {
+  } else {
     headerType = 0; // not a header received, but a part of a frame
   }
-  //init confirm header received
-  if(headerType == m_confirmHeader.headerId) {
-    //read whole header
+  // init confirm header received
+  if (headerType == m_confirmHeader.headerId) {
+    // read whole header
     in >> m_confirmHeader.initOk;
     in >> m_confirmHeader.probeId;
 
-    if(m_confirmHeader.initOk == 0) {
+    if (m_confirmHeader.initOk == 0) {
       m_tcpSocket->close();
       throw(vpException(vpException::fatalError, "porta initialisation error closing connection."));
     }
-    if(m_verbose)
+    if (m_verbose)
       std::cout << "porta init sucess, detected probe id = " << m_confirmHeader.probeId << std::endl;
 
-    //read all acquisition parameters received
+    // read all acquisition parameters received
     readAcquisitionParameters(in);
-
 
     emit(serverUpdateEnded(m_confirmHeader.initOk));
   }
 
-  //image header received
-  else if(headerType == m_imageHeader.headerId) {
-    //read whole header
+  // image header received
+  else if (headerType == m_imageHeader.headerId) {
+    // read whole header
     in >> m_imageHeader.frameCount;
     quint64 timestamp;
     in >> timestamp;
@@ -142,30 +137,30 @@ void usNetworkGrabberPreScan3D::dataArrived()
     in >> m_imageHeader.motorRadius;
     in >> m_imageHeader.motorType;
 
-    if(m_verbose) {
-      std::cout << "frameCount = " <<  m_imageHeader.frameCount << std::endl;
-      std::cout << "timeStamp = " <<  m_imageHeader.timeStamp << std::endl;
-      std::cout << "dataRate = " <<  m_imageHeader.dataRate << std::endl;
-      std::cout << "dataLength = " <<  m_imageHeader.dataLength << std::endl;
-      std::cout << "ss = " <<  m_imageHeader.ss << std::endl;
-      std::cout << "imageType = " <<  m_imageHeader.imageType << std::endl;
-      std::cout << "frameWidth = " <<  m_imageHeader.frameWidth << std::endl;
-      std::cout << "frameHeight = " <<  m_imageHeader.frameHeight << std::endl;
-      std::cout << "pixelWidth = " <<  m_imageHeader.pixelWidth << std::endl;
-      std::cout << "pixelHeight = " <<  m_imageHeader.pixelHeight << std::endl;
-      std::cout << "transmitFrequency = " <<  m_imageHeader.transmitFrequency << std::endl;
-      std::cout << "samplingFrequency = " <<  m_imageHeader.samplingFrequency << std::endl;
-      std::cout << "transducerRadius = " <<  m_imageHeader.transducerRadius << std::endl;
-      std::cout << "scanLinePitch = " <<  m_imageHeader.scanLinePitch << std::endl;
-      std::cout << "scanLineNumber = " <<  m_imageHeader.scanLineNumber << std::endl;
-      std::cout << "imageDepth = " <<  m_imageHeader.imageDepth << std::endl;
-      std::cout << "anglePerFr = " <<  m_imageHeader.anglePerFr << std::endl;
-      std::cout << "framesPerVolume = " <<  m_imageHeader.framesPerVolume << std::endl;
-      std::cout << "motorRadius = " <<  m_imageHeader.motorRadius << std::endl;
-      std::cout << "motorType = " <<  m_imageHeader.motorType << std::endl;
+    if (m_verbose) {
+      std::cout << "frameCount = " << m_imageHeader.frameCount << std::endl;
+      std::cout << "timeStamp = " << m_imageHeader.timeStamp << std::endl;
+      std::cout << "dataRate = " << m_imageHeader.dataRate << std::endl;
+      std::cout << "dataLength = " << m_imageHeader.dataLength << std::endl;
+      std::cout << "ss = " << m_imageHeader.ss << std::endl;
+      std::cout << "imageType = " << m_imageHeader.imageType << std::endl;
+      std::cout << "frameWidth = " << m_imageHeader.frameWidth << std::endl;
+      std::cout << "frameHeight = " << m_imageHeader.frameHeight << std::endl;
+      std::cout << "pixelWidth = " << m_imageHeader.pixelWidth << std::endl;
+      std::cout << "pixelHeight = " << m_imageHeader.pixelHeight << std::endl;
+      std::cout << "transmitFrequency = " << m_imageHeader.transmitFrequency << std::endl;
+      std::cout << "samplingFrequency = " << m_imageHeader.samplingFrequency << std::endl;
+      std::cout << "transducerRadius = " << m_imageHeader.transducerRadius << std::endl;
+      std::cout << "scanLinePitch = " << m_imageHeader.scanLinePitch << std::endl;
+      std::cout << "scanLineNumber = " << m_imageHeader.scanLineNumber << std::endl;
+      std::cout << "imageDepth = " << m_imageHeader.imageDepth << std::endl;
+      std::cout << "anglePerFr = " << m_imageHeader.anglePerFr << std::endl;
+      std::cout << "framesPerVolume = " << m_imageHeader.framesPerVolume << std::endl;
+      std::cout << "motorRadius = " << m_imageHeader.motorRadius << std::endl;
+      std::cout << "motorType = " << m_imageHeader.motorType << std::endl;
     }
 
-    //update transducer settings with image header received
+    // update transducer settings with image header received
     m_grabbedImage.setTransducerRadius(m_imageHeader.transducerRadius);
     m_grabbedImage.setScanLinePitch(m_imageHeader.scanLinePitch);
     m_grabbedImage.setDepth(m_imageHeader.imageDepth / 1000.0);
@@ -174,52 +169,54 @@ void usNetworkGrabberPreScan3D::dataArrived()
     m_grabbedImage.setTransmitFrequency(m_imageHeader.transmitFrequency);
     m_grabbedImage.setSamplingFrequency(m_imageHeader.samplingFrequency);
 
-    //update motor settings
+    // update motor settings
     m_motorSettings.setFrameNumber(m_imageHeader.framesPerVolume);
     m_motorSettings.setFramePitch(m_imageHeader.anglePerFr);
 
-    if(m_imageHeader.motorType == 0)
+    if (m_imageHeader.motorType == 0)
       m_motorSettings.setMotorType(usMotorSettings::LinearMotor);
-    else if(m_imageHeader.motorType == 1)
+    else if (m_imageHeader.motorType == 1)
       m_motorSettings.setMotorType(usMotorSettings::TiltingMotor);
-    else if(m_imageHeader.motorType == 2)
+    else if (m_imageHeader.motorType == 2)
       m_motorSettings.setMotorType(usMotorSettings::RotationalMotor);
 
     m_motorSettings.setMotorRadius(m_imageHeader.motorRadius);
 
-    //set data info
+    // set data info
     m_grabbedImage.setFrameCount(m_imageHeader.frameCount);
     m_grabbedImage.setFramesPerVolume(m_imageHeader.framesPerVolume);
 
-    //warning if timestamps are close (< 10 ms)
+    // warning if timestamps are close (< 10 ms)
     if (m_imageHeader.timeStamp - m_grabbedImage.getTimeStamp() < 10) {
-      std::cout << "WARNING : new image received with an acquisition timestamp close to previous image (<10ms)" << std::endl;
+      std::cout << "WARNING : new image received with an acquisition timestamp close to previous image (<10ms)"
+                << std::endl;
     }
     m_grabbedImage.setTimeStamp(m_imageHeader.timeStamp);
 
-    m_grabbedImage.resize(m_imageHeader.frameWidth,m_imageHeader.frameHeight);
+    m_grabbedImage.resize(m_imageHeader.frameWidth, m_imageHeader.frameHeight);
 
     m_bytesLeftToRead = m_imageHeader.dataLength;
 
-    m_bytesLeftToRead -= in.readRawData((char*)m_grabbedImage.bitmap,m_imageHeader.dataLength);
+    m_bytesLeftToRead -= in.readRawData((char *)m_grabbedImage.bitmap, m_imageHeader.dataLength);
 
-    if(m_bytesLeftToRead == 0 ) { // we've read all the frame in 1 packet.
+    if (m_bytesLeftToRead == 0) { // we've read all the frame in 1 packet.
       includeFrameInVolume();
     }
-    if(m_verbose)
+    if (m_verbose)
       std::cout << "Bytes left to read for whole frame = " << m_bytesLeftToRead << std::endl;
 
   }
 
-  //we have a part of the image still not read (arrived with next tcp packet)
+  // we have a part of the image still not read (arrived with next tcp packet)
   else {
-    if(m_verbose) {
+    if (m_verbose) {
       std::cout << "reading following part of the frame" << std::endl;
       std::cout << "local image size = " << m_grabbedImage.getSize() << std::endl;
     }
-    m_bytesLeftToRead -= in.readRawData((char*)m_grabbedImage.bitmap+(m_grabbedImage.getSize()-m_bytesLeftToRead),m_bytesLeftToRead);
+    m_bytesLeftToRead -= in.readRawData((char *)m_grabbedImage.bitmap + (m_grabbedImage.getSize() - m_bytesLeftToRead),
+                                        m_bytesLeftToRead);
 
-    if(m_bytesLeftToRead==0) { // we've read the last part of the frame.
+    if (m_bytesLeftToRead == 0) { // we've read the last part of the frame.
       includeFrameInVolume();
     }
   }
@@ -228,20 +225,22 @@ void usNetworkGrabberPreScan3D::dataArrived()
 /**
 * Method to include the frame grabbed in the right volume.
 */
-void usNetworkGrabberPreScan3D::includeFrameInVolume() {
+void usNetworkGrabberPreScan3D::includeFrameInVolume()
+{
   // At this point, CURRENT_FILLED_FRAME_POSITION_IN_VEC is going to be filled
-  if(m_firstFrameAvailable) {
-    //we test if the image settings are still the same for the new frame arrived
-      usImagePreScanSettings currentSettings= m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getImagePreScanSettings();
-    if(currentSettings.getAxialResolution() != m_grabbedImage.getAxialResolution() ||
-       currentSettings.getTransducerRadius() != m_grabbedImage.getTransducerRadius() ||
-       currentSettings.getScanLinePitch() != m_grabbedImage.getScanLinePitch() ||
-       currentSettings.getDepth() != m_grabbedImage.getDepth() ||
-       currentSettings.getScanLineNumber() != m_grabbedImage.getHeight()) { // m_grabbedImage is "turned" so the height corresponds to the scanline numer.
+  if (m_firstFrameAvailable) {
+    // we test if the image settings are still the same for the new frame arrived
+    usImagePreScanSettings currentSettings =
+        m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getImagePreScanSettings();
+    if (currentSettings.getAxialResolution() != m_grabbedImage.getAxialResolution() ||
+        currentSettings.getTransducerRadius() != m_grabbedImage.getTransducerRadius() ||
+        currentSettings.getScanLinePitch() != m_grabbedImage.getScanLinePitch() ||
+        currentSettings.getDepth() != m_grabbedImage.getDepth() ||
+        currentSettings.getScanLineNumber() !=
+            m_grabbedImage.getHeight()) { // m_grabbedImage is "turned" so the height corresponds to the scanline numer.
       throw(vpException(vpException::badValue, "Transducer settings changed during acquisition, somethink went wrong"));
     }
-  }
-  else { // init case
+  } else { // init case
     m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC)->setImagePreScanSettings(m_grabbedImage);
     m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC)->setScanLineNumber(m_grabbedImage.getHeight());
     m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->setImagePreScanSettings(m_grabbedImage);
@@ -250,47 +249,50 @@ void usNetworkGrabberPreScan3D::includeFrameInVolume() {
   m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setImagePreScanSettings(m_grabbedImage);
   m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setScanLineNumber(m_grabbedImage.getHeight());
 
-  if(m_firstFrameAvailable) {
-    if(m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getMotorSettings() != m_motorSettings)
+  if (m_firstFrameAvailable) {
+    if (m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getMotorSettings() != m_motorSettings)
       throw(vpException(vpException::badValue, "Motor settings changed during acquisition, somethink went wrong"));
-  }
-  else { // init case
+  } else { // init case
     m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC)->setMotorSettings(m_motorSettings);
     m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->setMotorSettings(m_motorSettings);
   }
   m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setMotorSettings(m_motorSettings);
 
-  m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->resize(m_grabbedImage.getHeight(),m_grabbedImage.getWidth(),m_motorSettings.getFrameNumber());
+  m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)
+      ->resize(m_grabbedImage.getHeight(), m_grabbedImage.getWidth(), m_motorSettings.getFrameNumber());
 
-  //Inserting frame in volume by inverting rows and cols voxels (along x and y axis), to match ustk volume storage
-  int volumeIndex = (m_grabbedImage.getFrameCount() / m_grabbedImage.getFramesPerVolume()); // from 0
+  // Inserting frame in volume by inverting rows and cols voxels (along x and y axis), to match ustk volume storage
+  int volumeIndex = (m_grabbedImage.getFrameCount() / m_grabbedImage.getFramesPerVolume());    // from 0
   int framePostition = (m_grabbedImage.getFrameCount() % m_grabbedImage.getFramesPerVolume()); // from 0 to FPV-1
 
-  //setting timestamps
-  if (volumeIndex % 2 != 0) //case of backward moving motor (opposite to Z direction)
+  // setting timestamps
+  if (volumeIndex % 2 != 0) // case of backward moving motor (opposite to Z direction)
     framePostition = m_grabbedImage.getFramesPerVolume() - framePostition - 1; // inverting frames order
 
-  m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->addTimeStamp(m_grabbedImage.getTimeStamp(),framePostition);
+  m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->addTimeStamp(m_grabbedImage.getTimeStamp(), framePostition);
   m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setVolumeCount(volumeIndex);
 
-  for(unsigned int i=0; i<m_grabbedImage.getHeight(); i++)
-    for (unsigned int j=0; j<m_grabbedImage.getWidth(); j++) {
-      (*m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC))(i,j,framePostition,m_grabbedImage(i,j));
+  for (unsigned int i = 0; i < m_grabbedImage.getHeight(); i++)
+    for (unsigned int j = 0; j < m_grabbedImage.getWidth(); j++) {
+      (*m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC))(i, j, framePostition, m_grabbedImage(i, j));
     }
 
-  //we reach the end of a volume
-  if(m_firstFrameAvailable && ((framePostition == 0 && !m_motorSweepingInZDirection)
-                               || (framePostition == (int) m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getFrameNumber()-1 && m_motorSweepingInZDirection))) {
+  // we reach the end of a volume
+  if (m_firstFrameAvailable &&
+      ((framePostition == 0 && !m_motorSweepingInZDirection) ||
+       (framePostition == (int)m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getFrameNumber() - 1 &&
+        m_motorSweepingInZDirection))) {
     // Now CURRENT_FILLED_FRAME_POSITION_IN_VEC has become the last frame received
     // So we switch pointers beween MOST_RECENT_FRAME_POSITION_IN_VEC and CURRENT_FILLED_FRAME_POSITION_IN_VEC
-    usVolumeGrabbedInfo<usImagePreScan3D<unsigned char> > * savePtr = m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC);
+    usVolumeGrabbedInfo<usImagePreScan3D<unsigned char> > *savePtr =
+        m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC);
     m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
     m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
-    if(m_recordingOn)
-      m_sequenceWriter.write(*m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC),m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getTimeStamps());
+    if (m_recordingOn)
+      m_sequenceWriter.write(*m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC),
+                             m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getTimeStamps());
 
-
-    if (volumeIndex % 2 != 0) //case of backward moving motor (opposite to Z direction)
+    if (volumeIndex % 2 != 0) // case of backward moving motor (opposite to Z direction)
       m_motorSweepingInZDirection = true;
     else
       m_motorSweepingInZDirection = false;
@@ -301,44 +303,49 @@ void usNetworkGrabberPreScan3D::includeFrameInVolume() {
 }
 
 /**
-* Method to get the last frame received. The grabber is designed to avoid data copy (it is why you get a pointer on the data).
+* Method to get the last frame received. The grabber is designed to avoid data copy (it is why you get a pointer on the
+* data).
 * @note This method is designed to be thread-safe, you can call it from another thread.
-* @warning Make sure to lock the usFrameGrabbedInfo::mutex when you access/modify usFrameGrabbedInfo::frameCount attribute, wich is acessed in this method.
+* @warning Make sure to lock the usFrameGrabbedInfo::mutex when you access/modify usFrameGrabbedInfo::frameCount
+* attribute, wich is acessed in this method.
 * @return Pointer to the last frame acquired.
 */
-usVolumeGrabbedInfo<usImagePreScan3D<unsigned char> > *usNetworkGrabberPreScan3D::acquire() {
-  //manage first volume
+usVolumeGrabbedInfo<usImagePreScan3D<unsigned char> > *usNetworkGrabberPreScan3D::acquire()
+{
+  // manage first volume
   if (!m_firstVolumeAvailable) {
-    //we wait until the first is available
+    // we wait until the first is available
     QEventLoop loop;
     loop.connect(this, SIGNAL(newVolumeAvailable()), SLOT(quit()));
     loop.exec();
 
-    //switch pointers
-    usVolumeGrabbedInfo<usImagePreScan3D<unsigned char> >* savePtr = m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC);
+    // switch pointers
+    usVolumeGrabbedInfo<usImagePreScan3D<unsigned char> > *savePtr = m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC);
     m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
     m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
     m_swichOutputInit = true;
-  }
-  else {
-    //user grabs too fast
-    if(m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC)->getVolumeCount() == m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getVolumeCount() + 1) {
-      //we wait until a new frame is available
+  } else {
+    // user grabs too fast
+    if (m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC)->getVolumeCount() ==
+        m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getVolumeCount() + 1) {
+      // we wait until a new frame is available
       QEventLoop loop;
       loop.connect(this, SIGNAL(newVolumeAvailable()), SLOT(quit()));
       loop.exec();
 
-      //switch pointers
-      usVolumeGrabbedInfo<usImagePreScan3D<unsigned char> >* savePtr = m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC);
+      // switch pointers
+      usVolumeGrabbedInfo<usImagePreScan3D<unsigned char> > *savePtr = m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC);
       m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
       m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
       m_swichOutputInit = true;
     }
 
     // if more recent frame available
-    else if(m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC)->getVolumeCount() < m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getVolumeCount() || !m_swichOutputInit) {
-      //switch pointers (output <-> mostRecentFilled)
-      usVolumeGrabbedInfo<usImagePreScan3D<unsigned char> >* savePtr = m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC);
+    else if (m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC)->getVolumeCount() <
+                 m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getVolumeCount() ||
+             !m_swichOutputInit) {
+      // switch pointers (output <-> mostRecentFilled)
+      usVolumeGrabbedInfo<usImagePreScan3D<unsigned char> > *savePtr = m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC);
       m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
       m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
       m_swichOutputInit = true;
@@ -352,7 +359,8 @@ usVolumeGrabbedInfo<usImagePreScan3D<unsigned char> > *usNetworkGrabberPreScan3D
 * Method to record the sequence received, to replay it later with the virtual server for example.
 * @param path The path where the sequence will be saved.
 */
-void usNetworkGrabberPreScan3D::activateRecording(std::string path) {
+void usNetworkGrabberPreScan3D::activateRecording(std::string path)
+{
   m_recordingOn = true;
   m_sequenceWriter.setSequenceDirectory(path);
 }
@@ -360,8 +368,6 @@ void usNetworkGrabberPreScan3D::activateRecording(std::string path) {
 /**
 * Stop recording process.
 */
-void usNetworkGrabberPreScan3D::stopRecording() {
-  m_recordingOn = false;
-}
+void usNetworkGrabberPreScan3D::stopRecording() { m_recordingOn = false; }
 
 #endif

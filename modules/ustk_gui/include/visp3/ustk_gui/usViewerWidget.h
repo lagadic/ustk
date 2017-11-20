@@ -35,7 +35,6 @@
  * @brief View used to render a vtk scene in a QWidget (based on QVTKWidget)
  */
 
-
 #ifndef __usViewerWidget_h_
 #define __usViewerWidget_h_
 
@@ -46,19 +45,18 @@
 
 // Qt includes
 #if defined(USTK_HAVE_VTK_QT4)
-#  include <QApplication>
-#  include <QtGui/QMainWindow>
-#  include <QtGui/QGridLayout>
-#  include <QtGui/QPushButton>
+#include <QApplication>
+#include <QtGui/QGridLayout>
+#include <QtGui/QMainWindow>
+#include <QtGui/QPushButton>
 #elif defined USTK_HAVE_VTK_QT5
-#  include <QApplication>
-#  include <QtWidgets/QMainWindow>
-#  include <QtWidgets/QGridLayout>
-#  include <QtWidgets/QPushButton>
+#include <QApplication>
+#include <QtWidgets/QGridLayout>
+#include <QtWidgets/QMainWindow>
+#include <QtWidgets/QPushButton>
 #endif
-//VTK includes
+// VTK includes
 #include <QVTKWidget.h>
-
 
 /**
  * @class usViewerWidget
@@ -71,10 +69,10 @@ class VISP_EXPORT usViewerWidget : public QVTKWidget
   Q_OBJECT
 public:
   // Constructor/Destructor
-  usViewerWidget(QWidget* parent = NULL, Qt::WindowFlags f = 0);
+  usViewerWidget(QWidget *parent = NULL, Qt::WindowFlags f = 0);
   virtual ~usViewerWidget();
 
-  void paintEvent( QPaintEvent* event );
+  void paintEvent(QPaintEvent *event);
 };
 #endif
 #endif // US_VIEWER_WIDGET

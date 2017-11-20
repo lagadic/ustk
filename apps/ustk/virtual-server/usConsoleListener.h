@@ -44,19 +44,18 @@
 
 class usConsoleListener : public QObject
 {
-    Q_OBJECT;
+  Q_OBJECT;
 
 public:
-    usConsoleListener();
+  usConsoleListener();
 
 signals:
-    void quitPause();
+  void quitPause();
 
 private:
-    QSocketNotifier *m_notifier;
+  QSocketNotifier *m_notifier;
 
 private slots:
-    void readCommand();
+  void readCommand();
 };
 #endif // US_CONSOLE_LISTENER_H*/
-

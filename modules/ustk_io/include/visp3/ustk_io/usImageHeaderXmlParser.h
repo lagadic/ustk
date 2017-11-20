@@ -40,22 +40,22 @@
 
 #include <visp3/ustk_core/usConfig.h>
 
-#if defined(VISP_HAVE_XML2) && (defined(USTK_HAVE_QT5) ||defined(USTK_HAVE_VTK_QT))
+#if defined(VISP_HAVE_XML2) && (defined(USTK_HAVE_QT5) || defined(USTK_HAVE_VTK_QT))
 
 #include <iostream>
-#include <visp3/ustk_core/us.h>
-#include <visp3/core/vpXmlParser.h>
+#include <string>
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpIoTools.h>
+#include <visp3/core/vpXmlParser.h>
 #include <visp3/io/vpParseArgv.h>
-#include <string>
+#include <visp3/ustk_core/us.h>
 
 /**
  * @class usImageHeaderXmlParser
  * @brief Input/output operations between ultrasound image header and the assiciated xml files. Used for virtual server.
  * @ingroup module_ustk_grabber
  */
-class VISP_EXPORT usImageHeaderXmlParser: public vpXmlParser
+class VISP_EXPORT usImageHeaderXmlParser : public vpXmlParser
 {
 public:
   usImageHeaderXmlParser();
@@ -86,33 +86,28 @@ public:
     CODE_XML_SEQUENCE_NAME,
   } vpXmlCodeType;
 
-  typedef enum
-  {
-    SEQUENCE_OK,
-    SEQUENCE_ERROR
-  } vpXmlCodeSequenceType;
+  typedef enum { SEQUENCE_OK, SEQUENCE_ERROR } vpXmlCodeSequenceType;
 
-  //getters
-  us::usImageHeader const getImageHeader() {return m_imageHeader;}
-  std::string getSequenceFileName() const {return m_sequence_name;}
-  
-  //Data setters
-  void setImageHeader(const us::usImageHeader imageHeader) {m_imageHeader = imageHeader;}
-  void setSequenceFileName(const std::string sequence_name) {m_sequence_name = sequence_name;}
+  // getters
+  us::usImageHeader const getImageHeader() { return m_imageHeader; }
+  std::string getSequenceFileName() const { return m_sequence_name; }
+
+  // Data setters
+  void setImageHeader(const us::usImageHeader imageHeader) { m_imageHeader = imageHeader; }
+  void setSequenceFileName(const std::string sequence_name) { m_sequence_name = sequence_name; }
 
 private:
   uint32_t xmlReadUInt32Child(xmlDocPtr doc, xmlNodePtr node);
   uint64_t xmlReadUInt64Child(xmlDocPtr doc, xmlNodePtr node);
-  void xmlWriteUInt32Child(xmlNodePtr node, const char* label, const uint32_t value);
-  void xmlWriteUInt64Child(xmlNodePtr node, const char* label, const uint64_t value);
+  void xmlWriteUInt32Child(xmlNodePtr node, const char *label, const uint32_t value);
+  void xmlWriteUInt64Child(xmlNodePtr node, const char *label, const uint64_t value);
 
   us::usImageHeader m_imageHeader;
   std::string m_sequence_name;
 
 protected:
-  void readMainClass (xmlDocPtr doc, xmlNodePtr node);
-  void writeMainClass (xmlNodePtr node);
+  void readMainClass(xmlDocPtr doc, xmlNodePtr node);
+  void writeMainClass(xmlNodePtr node);
 };
-#endif //US_IMAGE_HEADER_XML_PARSER_H
-#endif //VISP_HAVE_XML2 || QT
-
+#endif // US_IMAGE_HEADER_XML_PARSER_H
+#endif // VISP_HAVE_XML2 || QT

@@ -7,24 +7,20 @@
 #include <visp3/core/vpThread.h>
 #include <visp3/core/vpTime.h>
 #include <visp3/gui/vpDisplayX.h>
-#include <visp3/sensor/vpV4l2Grabber.h>
 #include <visp3/io/vpImageIo.h>
+#include <visp3/sensor/vpV4l2Grabber.h>
 
-#include <visp3/ustk_core/usImageRF2D.h>
-#include <visp3/ustk_core/usImagePreScan2D.h>
 #include <visp3/ustk_core/usImagePostScan2D.h>
+#include <visp3/ustk_core/usImagePreScan2D.h>
+#include <visp3/ustk_core/usImageRF2D.h>
 
-#include <visp3/ustk_grabber/usGrabberUltrasonix.h>
 #include <visp3/ustk_grabber/usGrabberFrame.h>
+#include <visp3/ustk_grabber/usGrabberUltrasonix.h>
 
 #if defined(VISP_HAVE_V4L2) && defined(VISP_HAVE_PTHREAD)
 
 // Shared vars
-typedef enum {
-  capture_waiting,
-  capture_started,
-  capture_stopped
-} t_CaptureState;
+typedef enum { capture_waiting, capture_started, capture_stopped } t_CaptureState;
 t_CaptureState s_capture_state = capture_waiting;
 int s_imageType;
 vpMutex s_mutex_imageType;
@@ -37,29 +33,27 @@ int s_frameIdx;
 //! [capture-multi-threaded captureFunction]
 vpThread::Return captureFunction(vpThread::Args args)
 {
-  usGrabberUltrasonix grabber = *((usGrabberUltrasonix *) args);
+  usGrabberUltrasonix grabber = *((usGrabberUltrasonix *)args);
   usImagePreScan2D<unsigned char> m_frame_prescan;
   usImagePostScan2D<unsigned char> m_frame_postscan;
 
-  //resizing images and saving image type in s_imageType
-  if(grabber.getImageType() == us::PRESCAN_2D) {
+  // resizing images and saving image type in s_imageType
+  if (grabber.getImageType() == us::PRESCAN_2D) {
     s_imageType = us::PRESCAN_2D;
     m_frame_prescan.resize(grabber.getCommunicationsInformations()->m_header.height,
                            grabber.getCommunicationsInformations()->m_header.width);
-  }
-  else if(grabber.getImageType() == us::POSTSCAN_2D) {
+  } else if (grabber.getImageType() == us::POSTSCAN_2D) {
     s_imageType = us::POSTSCAN_2D;
     m_frame_postscan.resize(grabber.getCommunicationsInformations()->m_header.height,
                             grabber.getCommunicationsInformations()->m_header.width);
-  }
-  else
-    throw(vpException(vpException::badValue,"unknown type of grabbed image"));
+  } else
+    throw(vpException(vpException::badValue, "unknown type of grabbed image"));
 
   s_mutex_imageType.unlock();
 
   bool stop_capture_ = false;
 
-  //init grabbers (only one used but they have to be defined at global scope)
+  // init grabbers (only one used but they have to be defined at global scope)
   usGrabberFrame<usImagePreScan2D<unsigned char> > grabberFramePreScan;
   grabberFramePreScan.setCommunicationInformation(grabber.getCommunicationsInformations());
   grabberFramePreScan.setTransducerSettings(grabber.getTransducerSettings());
@@ -67,15 +61,13 @@ vpThread::Return captureFunction(vpThread::Args args)
   grabberFramePostScan.setCommunicationInformation(grabber.getCommunicationsInformations());
   grabberFramePostScan.setTransducerSettings(grabber.getTransducerSettings());
 
-  while (! stop_capture_) {
+  while (!stop_capture_) {
     // Capture in progress
-    if(grabber.getImageType() == us::PRESCAN_2D) {
+    if (grabber.getImageType() == us::PRESCAN_2D) {
       grabberFramePreScan.grabFrame(&m_frame_prescan);
-    }
-    else if(grabber.getImageType() == us::POSTSCAN_2D) {
+    } else if (grabber.getImageType() == us::POSTSCAN_2D) {
       grabberFramePostScan.grabFrame(&m_frame_postscan);
     }
-
 
     // Update shared data
     {
@@ -85,10 +77,9 @@ vpThread::Return captureFunction(vpThread::Args args)
       else
         s_capture_state = capture_started;
       s_frameIdx = grabber.getCommunicationsInformations()->m_totFrmIdx;
-      if(grabber.getImageType() == us::PRESCAN_2D) {
+      if (grabber.getImageType() == us::PRESCAN_2D) {
         s_frame_prescan = m_frame_prescan;
-      }
-      else if(grabber.getImageType() == us::POSTSCAN_2D) {
+      } else if (grabber.getImageType() == us::POSTSCAN_2D) {
         s_frame_postscan = m_frame_postscan;
       }
     }
@@ -129,38 +120,35 @@ vpThread::Return displayFunction(vpThread::Args args)
         vpMutex::vpScopedLock lock(s_mutex_imageType);
         m_imageType = s_imageType;
       }
-      //capture started
+      // capture started
       // Create a copy of the captured frame
       {
         vpMutex::vpScopedLock lock(s_mutex_capture);
         frameIdx = s_frameIdx;
-       if(m_imageType == us::PRESCAN_2D) {
-         preScan_ = s_frame_prescan;
-       }
-       else if(m_imageType == us::POSTSCAN_2D) {
-         postScan_ = s_frame_postscan;
-       }
+        if (m_imageType == us::PRESCAN_2D) {
+          preScan_ = s_frame_prescan;
+        } else if (m_imageType == us::POSTSCAN_2D) {
+          postScan_ = s_frame_postscan;
+        }
       }
 
-
       // Check if we need to initialize the display with the first frame
-      if (! display_initialized_) {
-        // Initialize the display
+      if (!display_initialized_) {
+// Initialize the display
 #if defined(VISP_HAVE_X11)
-        if(m_imageType == us::PRESCAN_2D) {
+        if (m_imageType == us::PRESCAN_2D) {
           d_ = new vpDisplayX(preScan_);
           display_initialized_ = true;
-        }
-        else if(m_imageType == us::POSTSCAN_2D) {
+        } else if (m_imageType == us::POSTSCAN_2D) {
           d_ = new vpDisplayX(postScan_);
           display_initialized_ = true;
         }
 #endif
       }
-      if(m_imageType == us::PRESCAN_2D) {
+      if (m_imageType == us::PRESCAN_2D) {
         vpDisplay::display(preScan_);
 
-        //save the image
+        // save the image
 
         sprintf(buffer, base.c_str(), frameIdx);
         vpImageIo::write(preScan_, buffer);
@@ -173,8 +161,7 @@ vpThread::Return displayFunction(vpThread::Args args)
         }
         // Update the display
         vpDisplay::flush(preScan_);
-      }
-      else if(m_imageType == us::POSTSCAN_2D) {
+      } else if (m_imageType == us::POSTSCAN_2D) {
         vpDisplay::display(postScan_);
         // Trigger end of acquisition with a mouse click
         vpDisplay::displayText(postScan_, 10, 10, "Click to exit...", vpColor::red);
@@ -186,12 +173,10 @@ vpThread::Return displayFunction(vpThread::Args args)
         vpDisplay::flush(postScan_);
       }
 
-
-    }
-    else {
+    } else {
       vpTime::wait(2); // Sleep 2ms
     }
-  } while(capture_state_ != capture_stopped);
+  } while (capture_state_ != capture_stopped);
 
 #if defined(VISP_HAVE_X11)
   delete d_;
@@ -203,10 +188,10 @@ vpThread::Return displayFunction(vpThread::Args args)
 //! [capture-multi-threaded displayFunction]
 
 //! [capture-multi-threaded mainFunction]
-int main(int argc, const char* argv[])
+int main(int argc, const char *argv[])
 {
-  (void) argc;
-  (void) argv;
+  (void)argc;
+  (void)argv;
   // Instantiate the grabber
   usGrabberUltrasonix grabber;
 
@@ -227,13 +212,13 @@ int main(int argc, const char* argv[])
 #else
 int main()
 {
-#  ifndef VISP_HAVE_V4L2
+#ifndef VISP_HAVE_V4L2
   std::cout << "You should enable V4L2 to make this example working..." << std::endl;
-#  elif !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#elif !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   std::cout << "You should enable pthread usage and rebuild ViSP..." << std::endl;
-#  else
+#else
   std::cout << "Multi-threading seems not supported on this platform" << std::endl;
-#  endif
+#endif
 }
 
 #endif

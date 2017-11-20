@@ -105,8 +105,8 @@ int main()
 }
   \endcode
  */
-template<class Type>
-class usImagePostScan2D : public vpImage<Type>, public usTransducerSettings {
+template <class Type> class usImagePostScan2D : public vpImage<Type>, public usTransducerSettings
+{
 public:
   usImagePostScan2D();
   usImagePostScan2D(const vpImage<Type> &image, const usTransducerSettings &transducerSettings,
@@ -117,8 +117,8 @@ public:
   double getHeightResolution() const;
   double getWidthResolution() const;
 
-  usImagePostScan2D<Type> & operator =(const usImagePostScan2D<Type> &other);
-  bool operator ==(const usImagePostScan2D<Type> &other);
+  usImagePostScan2D<Type> &operator=(const usImagePostScan2D<Type> &other);
+  bool operator==(const usImagePostScan2D<Type> &other);
 
   void setData(const vpImage<Type> &image);
   void setHeightResolution(double heightResolution);
@@ -132,23 +132,21 @@ private:
 /**
 * Basic constructor, all parameters set to default values.
 */
-template<class Type>
+template <class Type>
 usImagePostScan2D<Type>::usImagePostScan2D()
   : vpImage<Type>(), usTransducerSettings(), m_widthResolution(0.0), m_heightResolution(0.0)
 {
-
 }
 
 /**
 * Copy constructor from an other 2D post-scan image.
 * @param other 2D post-scan image to copy.
 */
-template<class Type>
+template <class Type>
 usImagePostScan2D<Type>::usImagePostScan2D(const usImagePostScan2D<Type> &other)
-: vpImage<Type>(other), usTransducerSettings(other), 
-  m_widthResolution(other.getWidthResolution()), m_heightResolution(other.getHeightResolution())
+  : vpImage<Type>(other), usTransducerSettings(other), m_widthResolution(other.getWidthResolution()),
+    m_heightResolution(other.getHeightResolution())
 {
-
 }
 
 /**
@@ -158,35 +156,31 @@ usImagePostScan2D<Type>::usImagePostScan2D(const usImagePostScan2D<Type> &other)
 * @param heightResolution Height (in meters) of a pixel.
 * @param widthResolution Width (in meters) of a pixel.
 */
-template<class Type>
-usImagePostScan2D<Type>::usImagePostScan2D(const vpImage<Type> &image,
-                                           const usTransducerSettings &transducerSettings,
+template <class Type>
+usImagePostScan2D<Type>::usImagePostScan2D(const vpImage<Type> &image, const usTransducerSettings &transducerSettings,
                                            double widthResolution, double heightResolution)
-: vpImage<Type>(image), usTransducerSettings(transducerSettings),
-  m_widthResolution(widthResolution), m_heightResolution(heightResolution)
+  : vpImage<Type>(image), usTransducerSettings(transducerSettings), m_widthResolution(widthResolution),
+    m_heightResolution(heightResolution)
 {
-
 }
 
 /**
 * Destructor.
 */
-template<class Type>
-usImagePostScan2D<Type>::~usImagePostScan2D() {}
+template <class Type> usImagePostScan2D<Type>::~usImagePostScan2D() {}
 
 /**
 * Assignement operator.
 */
-template<class Type>
-usImagePostScan2D<Type> & usImagePostScan2D<Type>::operator =(const usImagePostScan2D<Type> &other)
+template <class Type> usImagePostScan2D<Type> &usImagePostScan2D<Type>::operator=(const usImagePostScan2D<Type> &other)
 {
-  //from vpImage
+  // from vpImage
   vpImage<Type>::operator=(other);
 
-  //from usTransducerSettings
+  // from usTransducerSettings
   usTransducerSettings::operator=(other);
 
-  //from this class
+  // from this class
   m_heightResolution = other.getHeightResolution();
   m_widthResolution = other.getWidthResolution();
 
@@ -196,23 +190,18 @@ usImagePostScan2D<Type> & usImagePostScan2D<Type>::operator =(const usImagePostS
 /**
 * Comparison operator.
 */
-template<class Type>
-bool usImagePostScan2D<Type>::operator ==(const usImagePostScan2D<Type> &other)
+template <class Type> bool usImagePostScan2D<Type>::operator==(const usImagePostScan2D<Type> &other)
 {
-  return(vpImage<Type>::operator== (other) &&
-      usTransducerSettings::operator== (other) &&
-      m_heightResolution == other.getHeightResolution() &&
-      m_widthResolution == other.getWidthResolution());
+  return (vpImage<Type>::operator==(other) && usTransducerSettings::operator==(other) &&
+          m_heightResolution == other.getHeightResolution() && m_widthResolution == other.getWidthResolution());
 }
 
 /**
 * Operator to print 2D post-scan image information on a stream.
 */
-template<class Type>
-std::ostream& operator<<(std::ostream& out, const usImagePostScan2D<Type> &other)
+template <class Type> std::ostream &operator<<(std::ostream &out, const usImagePostScan2D<Type> &other)
 {
-  return out << static_cast<const usTransducerSettings &>(other)
-             << "image width : " << other.getWidth() << std::endl
+  return out << static_cast<const usTransducerSettings &>(other) << "image width : " << other.getWidth() << std::endl
              << "image height : " << other.getHeight() << std::endl
              << "image width resolution : " << other.getWidthResolution() << std::endl
              << "image height resolution : " << other.getHeightResolution() << std::endl;
@@ -222,8 +211,7 @@ std::ostream& operator<<(std::ostream& out, const usImagePostScan2D<Type> &other
 * Setter that updates 2D post-scan image data.
 * @param image Data to set.
 */
-template<class Type>
-void usImagePostScan2D<Type>::setData(const vpImage<Type> &image)
+template <class Type> void usImagePostScan2D<Type>::setData(const vpImage<Type> &image)
 {
   vpImage<Type>::operator=(image);
 }
@@ -232,28 +220,19 @@ void usImagePostScan2D<Type>::setData(const vpImage<Type> &image)
 * Getter for pixel height resolution.
 * @return Height of a pixel (in meters).
 */
-template<class Type>
-double usImagePostScan2D<Type>::getHeightResolution() const
-{
-  return m_heightResolution;
-}
+template <class Type> double usImagePostScan2D<Type>::getHeightResolution() const { return m_heightResolution; }
 
 /**
 * Getter for pixel width resolution.
 * @return Width of a pixel (in meters).
 */
-template<class Type>
-double usImagePostScan2D<Type>::getWidthResolution() const
-{
-  return m_widthResolution;
-}
+template <class Type> double usImagePostScan2D<Type>::getWidthResolution() const { return m_widthResolution; }
 
 /**
 * Setter for pixel height resolution.
 * @param heightResolution Height of a pixel (in meters).
 */
-template<class Type>
-void usImagePostScan2D<Type>::setHeightResolution(double heightResolution)
+template <class Type> void usImagePostScan2D<Type>::setHeightResolution(double heightResolution)
 {
   m_heightResolution = heightResolution;
 }
@@ -262,8 +241,7 @@ void usImagePostScan2D<Type>::setHeightResolution(double heightResolution)
 * Setter for pixel width resolution.
 * @param widthResolution Width of a pixel (in meters).
 */
-template<class Type>
-void usImagePostScan2D<Type>::setWidthResolution(double widthResolution)
+template <class Type> void usImagePostScan2D<Type>::setWidthResolution(double widthResolution)
 {
   m_widthResolution = widthResolution;
 }
