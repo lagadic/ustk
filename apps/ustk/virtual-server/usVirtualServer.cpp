@@ -43,6 +43,7 @@ usVirtualServer::usVirtualServer(std::string sequencePath, QObject *parent)
 {
   m_usePause = false;
   m_pauseOn = false;
+  m_volumePauseTmp = false;
   m_pauseDurationOffset = 0;
   m_pauseIndexOffset = 0;
   if (qApp->arguments().contains(QString("--pause"))) {
@@ -848,10 +849,13 @@ void usVirtualServer::sendingLoopSequenceMHD()
           if (imageHeader.frameCount % (2 * m_rfImage3d.getFrameNumber()) >= m_rfImage3d.getFrameNumber() - 1) { // V+1
             m_rfImage3dTemp.getFrame(m_rfImage2d, framePositionInVolume);
             imageHeader.timeStamp = m_timestampsTemp.at(currentFrameInVolume) + m_pauseDurationOffset;
-            if (m_rfImage3dTemp.getFrameNumber() == currentFrameInVolume + 1) // we're sending last frame of the volume
+            if (m_rfImage3dTemp.getFrameNumber() ==
+                currentFrameInVolume + 1) { // we're sending last frame of the volume
               m_nextImageTimestamp =
                   imageHeader.timeStamp + 40; // next delta is 40ms (we don't know timestamp of first image of V+2
-            else
+              if (m_volumePauseTmp)
+                m_pauseOn = false;
+            } else
               m_nextImageTimestamp = m_timestampsTemp.at(currentFrameInVolume + 1) + m_pauseDurationOffset;
           } else {
             m_rfImage3d.getFrame(m_rfImage2d, framePositionInVolume);
@@ -947,10 +951,12 @@ void usVirtualServer::sendingLoopSequenceMHD()
             m_preScanImage3dTemp.getFrame(m_preScanImage2d, framePositionInVolume);
             imageHeader.timeStamp = m_timestampsTemp.at(currentFrameInVolume) + m_pauseDurationOffset;
             if (m_preScanImage3dTemp.getFrameNumber() ==
-                currentFrameInVolume + 1) // we're sending last frame of the volume
+                currentFrameInVolume + 1) { // we're sending last frame of the volume
               m_nextImageTimestamp =
                   imageHeader.timeStamp + 40; // next delta is 40ms (we don't know timestamp of first image of V+2
-            else
+              if (m_volumePauseTmp)
+                m_pauseOn = false;
+            } else
               m_nextImageTimestamp = m_timestampsTemp.at(currentFrameInVolume + 1) + m_pauseDurationOffset;
           } else {
             m_preScanImage3d.getFrame(m_preScanImage2d, framePositionInVolume);
@@ -1061,4 +1067,11 @@ void usVirtualServer::runAcquisition(bool run)
 /**
 * Slot called when the user un-pauses the server (stop sending the same image).
 */
-void usVirtualServer::quitPause() { m_pauseOn = false; }
+void usVirtualServer::quitPause()
+{
+  if (m_imageType == us::RF_2D || m_imageType == us::PRESCAN_2D || m_imageType == us::POSTSCAN_2D) { //(2D case)
+    m_pauseOn = false;
+  } else { // we wait the volume (V & V+1) is totally sent
+    m_volumePauseTmp = true;
+  }
+}

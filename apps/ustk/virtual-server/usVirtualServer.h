@@ -149,6 +149,7 @@ public:
   ~usVirtualServer();
 
 signals:
+
   void runAcquisitionSignal(bool run);
 
   void startSendingLoopSignal();
@@ -232,6 +233,7 @@ private:
   usImagePreScan3D<unsigned char> m_preScanImage3dTemp;
   usImageRF3D<short int> m_rfImage3dTemp;
   std::vector<uint64_t> m_timestampsTemp;
+  bool m_volumePauseTmp;
 
   // For user inputs in console
   usConsoleListener m_consoleListener;
