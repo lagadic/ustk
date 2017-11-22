@@ -326,7 +326,7 @@ int main(int argc, const char *argv[])
     ofile << std::endl;
 
     // Display
-    char *noChar = new char[(int)ceil(log10(n0 + 1))];
+    char *noChar = new char[(int)ceil(log10(n0 + 1)) + 1];
     sprintf(noChar, "%d", n0);
     windowTitle = std::string("Frame ") + std::string(noChar);
     delete[] noChar;

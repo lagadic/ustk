@@ -46,10 +46,18 @@ usVirtualServer::usVirtualServer(std::string sequencePath, QObject *parent)
   m_volumePauseTmp = false;
   m_pauseDurationOffset = 0;
   m_pauseIndexOffset = 0;
+
+  m_useRewind = false;
+
   if (qApp->arguments().contains(QString("--pause"))) {
     m_usePause = true;
     m_pauseImageNumber = qApp->arguments().at(qApp->arguments().indexOf(QString("--pause")) + 1).toInt();
     std::cout << "Pause activated on image N. : " << m_pauseImageNumber << "\n";
+  }
+
+  if (qApp->arguments().contains(QString("--rewind"))) {
+    m_useRewind = true;
+    std::cout << "Rewind option activated\n";
   }
 
   imageHeader.frameCount = 0;

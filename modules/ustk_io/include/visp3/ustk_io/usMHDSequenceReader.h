@@ -112,6 +112,13 @@ public:
 
   bool end();
 
+  void getImage(unsigned int imageNumber, usImageRF2D<short int> &image, uint64_t &timestamp);
+  void getImage(unsigned int imageNumber, usImagePreScan2D<unsigned char> &image, uint64_t &timestamp);
+  void getImage(unsigned int imageNumber, usImagePostScan2D<unsigned char> &image, uint64_t &timestamp);
+  void getImage(unsigned int imageNumber, usImageRF3D<short int> &image, std::vector<uint64_t> &timestamp);
+  void getImage(unsigned int imageNumber, usImagePreScan3D<unsigned char> &image, std::vector<uint64_t> &timestamp);
+  void getImage(unsigned int imageNumber, usImagePostScan3D<unsigned char> &image, uint64_t &timestamp);
+
   us::ImageType getImageType() const;
 
   int getImageNumber() const;

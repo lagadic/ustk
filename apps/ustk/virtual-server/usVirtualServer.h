@@ -235,6 +235,9 @@ private:
   std::vector<uint64_t> m_timestampsTemp;
   bool m_volumePauseTmp;
 
+  // rewind option
+  bool m_useRewind;
+
   // For user inputs in console
   usConsoleListener m_consoleListener;
 };
