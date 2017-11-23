@@ -722,8 +722,8 @@ void usVirtualServer::sendingLoopSequenceMHD()
       out << (int)m_rfImage2d.getHeight() * m_rfImage2d.getWidth() * 2; // datalength in bytes
       out << (int)16;                                                   // sample size in bits
       out << (int)2;                                                    // image type
-      out << m_rfImage2d.getHeight();
       out << m_rfImage2d.getWidth();
+      out << m_rfImage2d.getHeight();
       out << (double).0; // pixelWidth
       out << (double).0; // pixelHeight
       out << m_rfImage2d.getTransmitFrequency();
