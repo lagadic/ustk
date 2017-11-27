@@ -95,7 +95,8 @@ public:
 
   ~usPostScanToPreScan2DConverter();
 
-  void convert(const usImagePostScan2D<unsigned char> &imageToConvert, usImagePreScan2D<unsigned char> &imageConverted);
+  void convert(const usImagePostScan2D<unsigned char> &imageToConvert, usImagePreScan2D<unsigned char> &imageConverted,
+               int preScanSamples);
 
 protected:
   void init(const usImagePostScan2D<unsigned char> &inputSettings, const int BModeSampleNumber,

@@ -225,6 +225,7 @@ void usPreScanToPostScan2DConverter::convert(const usImagePreScan2D<unsigned cha
   postScanImage.setTransducerConvexity(preScanImage.isTransducerConvex());
   postScanImage.setScanLinePitch(m_settings.getScanLinePitch());
   postScanImage.setTransducerRadius(m_settings.getTransducerRadius());
+  postScanImage.setDepth(m_settings.getDepth());
 }
 
 double usPreScanToPostScan2DConverter::interpolateLinear(const vpImage<unsigned char> &I, double x, double y)

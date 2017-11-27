@@ -33,7 +33,6 @@
 #include <visp3/ustk_core/usPostScanToPreScan2DConverter.h>
 
 //#include <visp/vpMath.h>
-
 /**
  * Default constructor.
  */
@@ -188,13 +187,13 @@ void usPostScanToPreScan2DConverter::init(const usTransducerSettings &transducer
 * Run the back-scan converter.
 * @param [in] imageToConvert Post-scan image to convert back.
 * @param [out] imageConverted Pre-scan image obtained after back conversion.
+* @param [in] preScanSamples Pre-scan samples number wanted in output.
 */
 void usPostScanToPreScan2DConverter::convert(const usImagePostScan2D<unsigned char> &imageToConvert,
-                                             usImagePreScan2D<unsigned char> &imageConverted)
+                                             usImagePreScan2D<unsigned char> &imageConverted, int preScanSamples)
 {
   if (!m_isInit) {
-    init(imageToConvert, (int)(imageToConvert.getDepth() / imageToConvert.getHeightResolution()),
-         imageToConvert.getScanLineNumber());
+    init(imageToConvert, preScanSamples, imageToConvert.getScanLineNumber());
   }
 
   imageConverted.setImagePreScanSettings(usImagePreScanSettings(m_initSettings, m_yResolution));
