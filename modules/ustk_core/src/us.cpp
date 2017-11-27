@@ -35,44 +35,43 @@
  * @brief us namespace.
  */
 
-
 #include <visp3/ustk_core/us.h>
 
-namespace us {
+namespace us
+{
 
-  /*!
-   Get UsTK data set path. UsTK data set can be downloaded from https://gitlab.inria.fr/lagadic/ustk-dataset.
+/*!
+ Get UsTK data set path. UsTK data set can be downloaded from https://gitlab.inria.fr/lagadic/ustk-dataset.
 
-   This function returns the path to the folder that contains the data.
-   - It checks first if the data set is installed in \c /usr/share/ustk-dataset. In that case returns then \c "/usr/share/ustk-dataset".
-   - Then it checks if USTK_DATASET_PATH environment variable that gives the location of the data is set. In that
-     case returns the content of this environment var.
+ This function returns the path to the folder that contains the data.
+ - It checks first if the data set is installed in \c /usr/share/ustk-dataset. In that case returns then \c
+ "/usr/share/ustk-dataset".
+ - Then it checks if USTK_DATASET_PATH environment variable that gives the location of the data is set. In that
+   case returns the content of this environment var.
 
-   If the path is not found, returns an empty string.
-   */
-  std::string getDataSetPath()
-  {
-    std::string data_path;
-    std::string file_to_test("post-scan/3D_mhd/volume.mhd");
-    std::string filename;
+ If the path is not found, returns an empty string.
+ */
+std::string getDataSetPath()
+{
+  std::string data_path;
+  std::string file_to_test("post-scan/3D_mhd/volume.mhd");
+  std::string filename;
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-    // Test if ustk-data package is installed (Ubuntu and Debian)
-    data_path = "/usr/share/ustk-dataset";
+  // Test if ustk-data package is installed (Ubuntu and Debian)
+  data_path = "/usr/share/ustk-dataset";
+  filename = data_path + "/" + file_to_test;
+  if (vpIoTools::checkFilename(filename))
+    return data_path;
+#endif
+  // Test if USTK_DATASET_PATH env var is set
+  try {
+    data_path = vpIoTools::getenv("USTK_DATASET_PATH");
     filename = data_path + "/" + file_to_test;
     if (vpIoTools::checkFilename(filename))
       return data_path;
-#endif
-    // Test if USTK_DATASET_PATH env var is set
-    try {
-      data_path = vpIoTools::getenv("USTK_DATASET_PATH");
-      filename = data_path + "/" + file_to_test;
-      if (vpIoTools::checkFilename(filename))
-        return data_path;
-    }
-    catch(...) {
-    }
-    data_path = "";
-    return data_path;
+  } catch (...) {
   }
+  data_path = "";
+  return data_path;
+}
 };
-

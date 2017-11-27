@@ -34,7 +34,7 @@
   \example testUsImagePreScan2DXmlParser.cpp
 
   USTK XML parser example.
-  
+
   This example contains the declaration of a class used to read and write data
   in a xml file like:
   \code
@@ -48,18 +48,17 @@
   <image_file_name>prescan2D.png</image_file_name>
 </config>
   \endcode
-  
-*/
 
+*/
 
 #include <visp3/core/vpConfig.h>
 
 #include <iostream>
 #if defined(VISP_HAVE_XML2)
 
-#include <visp3/core/vpXmlParser.h>
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpIoTools.h>
+#include <visp3/core/vpXmlParser.h>
 #include <visp3/io/vpParseArgv.h>
 
 #include <visp3/ustk_io/usImageIo.h>
@@ -71,10 +70,10 @@
 /* -------------------------------------------------------------------------- */
 
 // List of allowed command line options
-#define GETOPTARGS	"cdo:h"
+#define GETOPTARGS "cdo:h"
 
-void usage(const char *name, const char *badparam, const std::string& opath, const std::string& user);
-bool getOptions(int argc, const char **argv, std::string &opath, const std::string& user);
+void usage(const char *name, const char *badparam, const std::string &opath, const std::string &user);
+bool getOptions(int argc, const char **argv, std::string &opath, const std::string &user);
 
 /*!
 
@@ -86,13 +85,14 @@ Print the program options.
 \param user : Username.
 
  */
-void usage(const char *name, const char *badparam, const std::string& opath, const std::string& user)
+void usage(const char *name, const char *badparam, const std::string &opath, const std::string &user)
 {
   fprintf(stdout, "\n\
 Write and read data in a xml file.\n\
 \n\
 SYNOPSIS\n\
-  %s [-o <output image path>] [-h]\n", name);
+  %s [-o <output image path>] [-h]\n",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -103,10 +103,11 @@ OPTIONS:                                               Default\n\
      prescan2D.xml file is written.\n\
 \n\
   -h\n\
-     Print the help.\n\n", opath.c_str(), user.c_str());
+     Print the help.\n\n",
+          opath.c_str(), user.c_str());
 
   if (badparam) {
-    fprintf(stderr, "ERROR: \n" );
+    fprintf(stderr, "ERROR: \n");
     fprintf(stderr, "\nBad parameter [%s]\n", badparam);
   }
 }
@@ -120,22 +121,29 @@ OPTIONS:                                               Default\n\
   \param user : Username.
   \return false if the program has to be stopped, true otherwise.
 */
-bool getOptions(int argc, const char **argv, std::string &opath, const std::string& user)
+bool getOptions(int argc, const char **argv, std::string &opath, const std::string &user)
 {
   const char *optarg_;
-  int	c;
+  int c;
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
     switch (c) {
-    case 'o': opath = optarg_; break;
-    case 'h': usage(argv[0], NULL, opath, user); return false; break;
+    case 'o':
+      opath = optarg_;
+      break;
+    case 'h':
+      usage(argv[0], NULL, opath, user);
+      return false;
+      break;
 
     case 'c':
     case 'd':
       break;
 
     default:
-      usage(argv[0], optarg_, opath, user); return false; break;
+      usage(argv[0], optarg_, opath, user);
+      return false;
+      break;
     }
   }
 
@@ -150,13 +158,11 @@ bool getOptions(int argc, const char **argv, std::string &opath, const std::stri
   return true;
 }
 
-
-
 /* -------------------------------------------------------------------------- */
 /*                               MAIN FUNCTION                                */
 /* -------------------------------------------------------------------------- */
 
-int main(int argc, const char** argv)
+int main(int argc, const char **argv)
 {
   try {
     std::string opt_opath;
@@ -164,13 +170,13 @@ int main(int argc, const char** argv)
     std::string filename;
     std::string username;
 
-    std::cout <<  "-------------------------------------------------------" << std::endl ;
-    std::cout <<  "  testUSXmlParser.cpp" <<std::endl << std::endl ;
-    std::cout <<  "  writing and reading ultrasound data using a the US xml parser" << std::endl ;
-    std::cout <<  "-------------------------------------------------------" << std::endl ;
-    std::cout << std::endl ;
+    std::cout << "-------------------------------------------------------" << std::endl;
+    std::cout << "  testUSXmlParser.cpp" << std::endl << std::endl;
+    std::cout << "  writing and reading ultrasound data using a the US xml parser" << std::endl;
+    std::cout << "-------------------------------------------------------" << std::endl;
+    std::cout << std::endl;
 
-    // Set the default output path
+// Set the default output path
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
     opt_opath = "/tmp";
 #elif defined(_WIN32)
@@ -182,7 +188,7 @@ int main(int argc, const char** argv)
 
     // Read the command line options
     if (getOptions(argc, argv, opt_opath, username) == false) {
-      exit (-1);
+      exit(-1);
     }
 
     // Get the option values
@@ -197,11 +203,9 @@ int main(int argc, const char** argv)
       try {
         // Create the dirname
         vpIoTools::makeDirectory(dirname);
-      }
-      catch (...) {
+      } catch (...) {
         usage(argv[0], NULL, opath, username);
-        std::cerr << std::endl
-                  << "ERROR:" << std::endl;
+        std::cerr << std::endl << "ERROR:" << std::endl;
         std::cerr << "  Cannot create " << dirname << std::endl;
         std::cerr << "  Check your -o " << opath << " option " << std::endl;
         exit(-1);
@@ -210,7 +214,7 @@ int main(int argc, const char** argv)
 
     filename = dirname + vpIoTools::path("/") + "prescan2D.xml";
 
-    //Init values in reference parser (same values in file read in test)
+    // Init values in reference parser (same values in file read in test)
     vpImage<unsigned char> data(320, 128, 128); // Set pixel intensity to 128
     usImagePreScan2D<unsigned char> prescan2DReference;
     prescan2DReference.setData(data);
@@ -221,32 +225,29 @@ int main(int argc, const char** argv)
     prescan2DReference.setTransmitFrequency(300000);
     prescan2DReference.setSamplingFrequency(2000000);
 
-    usImageIo::write(prescan2DReference,filename);
+    usImageIo::write(prescan2DReference, filename);
 
     std::cout << "Written in " << filename << std::endl;
     std::cout << prescan2DReference;
 
-    //read the image we just wrote
+    // read the image we just wrote
     usImagePreScan2D<unsigned char> prescan2D;
     filename = dirname + vpIoTools::path("/") + "prescan2D.xml";
-    usImageIo::read(prescan2D,filename);
+    usImageIo::read(prescan2D, filename);
 
-
-    std::cout << "Read from " << filename << std::endl ;
+    std::cout << "Read from " << filename << std::endl;
     std::cout << prescan2D;
 
-    if(prescan2D==prescan2DReference) {
+    if (prescan2D == prescan2DReference) {
       std::cout << "Test passed !" << std::endl;
       return 0;
     }
-
 
     // Clean up memory allocated by the xml library
     vpXmlParser::cleanup();
     std::cout << "Test failed !" << std::endl;
     return 1;
-  }
-  catch(const vpException &e) {
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
     return 1;
   }

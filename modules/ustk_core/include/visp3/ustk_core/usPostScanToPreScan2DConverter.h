@@ -38,9 +38,8 @@
 #ifndef __usPostScanToPreScan2DConverter_h_
 #define __usPostScanToPreScan2DConverter_h_
 
-#include <visp3/ustk_core/usImagePreScan2D.h>
 #include <visp3/ustk_core/usImagePostScan2D.h>
-
+#include <visp3/ustk_core/usImagePreScan2D.h>
 
 /**
  * @class usPostScanToPreScan2DConverter
@@ -85,26 +84,26 @@ int main()
  */
 class VISP_EXPORT usPostScanToPreScan2DConverter
 {
- public:
-
+public:
   usPostScanToPreScan2DConverter();
 
-  //initialisations constructors
-  usPostScanToPreScan2DConverter(const usImagePostScan2D<unsigned char> &inputSettings,
-  const int BModeSampleNumber, const int scanLineNumber);
-  usPostScanToPreScan2DConverter(const usTransducerSettings &transducerSettings,
-  const int BModeSampleNumber, const int scanLineNumber,const double xResolution, const double yResolution);
+  // initialisations constructors
+  usPostScanToPreScan2DConverter(const usImagePostScan2D<unsigned char> &inputSettings, const int BModeSampleNumber,
+                                 const int scanLineNumber);
+  usPostScanToPreScan2DConverter(const usTransducerSettings &transducerSettings, const int BModeSampleNumber,
+                                 const int scanLineNumber, const double xResolution, const double yResolution);
 
   ~usPostScanToPreScan2DConverter();
 
   void convert(const usImagePostScan2D<unsigned char> &imageToConvert, usImagePreScan2D<unsigned char> &imageConverted);
 
 protected:
+  void init(const usImagePostScan2D<unsigned char> &inputSettings, const int BModeSampleNumber,
+            const int scanLineNumber);
+  void init(const usTransducerSettings &inputSettings, const int BModeSampleNumber, const int scanLineNumber,
+            const double xResolution, const double yResolution);
 
-  void init(const usImagePostScan2D<unsigned char> &inputSettings, const int BModeSampleNumber, const int scanLineNumber);
-  void init(const usTransducerSettings &inputSettings, const int BModeSampleNumber,
-            const int scanLineNumber,const double xResolution, const double yResolution);
- private:
+private:
   vpMatrix m_iMap;
   vpMatrix m_jMap;
   double m_xResolution;
@@ -115,7 +114,7 @@ protected:
 
   bool m_isInit;
 
-  double interpolateLinear(const vpImage<unsigned char>& I, double x, double y);
+  double interpolateLinear(const vpImage<unsigned char> &I, double x, double y);
 };
 
 #endif // US_BACK_SCAN_CONVERTER_2D_H

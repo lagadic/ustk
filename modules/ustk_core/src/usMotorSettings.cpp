@@ -36,33 +36,35 @@
  * @brief Generic ultrasound 3D image settings.
  */
 
-//std includes
+// std includes
 #include <iostream>
 
-//visp includes
+// visp includes
 #include <visp3/ustk_core/usMotorSettings.h>
 
-//ustk includes
+// ustk includes
 
 /**
 * Basic Constructor, all settings set to default.
 */
 usMotorSettings::usMotorSettings()
-  : m_motorRadius(0.0), m_framePitch(0.0), m_frameNumberIsSet(false),m_motorType(LinearMotor)
-{}
+  : m_motorRadius(0.0), m_framePitch(0.0), m_frameNumberIsSet(false), m_motorType(LinearMotor)
+{
+}
 
 /**
 * Full Constructor, all settings availables
-* @param motorRadius Distance between the rotation center of the probe motor and the first pixel arc acquired, in meters (m).
+* @param motorRadius Distance between the rotation center of the probe motor and the first pixel arc acquired, in meters
+* (m).
 * @param framePitch Pitch between two sucessive frames. In meters if motorType is linear, in radians (rad) otherwise.
 * @param frameNumber Number of frame acquired by the probe.
 * @param motorType Probe motor type.
 */
-usMotorSettings::usMotorSettings(double motorRadius, double framePitch,
-                                 unsigned int frameNumber, const usMotorType &motorType)
-  : m_motorRadius(motorRadius), m_framePitch(framePitch), m_frameNumber(frameNumber),m_frameNumberIsSet(true), m_motorType(motorType)
+usMotorSettings::usMotorSettings(double motorRadius, double framePitch, unsigned int frameNumber,
+                                 const usMotorType &motorType)
+  : m_motorRadius(motorRadius), m_framePitch(framePitch), m_frameNumber(frameNumber), m_frameNumberIsSet(true),
+    m_motorType(motorType)
 {
-
 }
 
 /**
@@ -70,11 +72,10 @@ usMotorSettings::usMotorSettings(double motorRadius, double framePitch,
 * @param other usMotorSettings you want to copy.
 */
 usMotorSettings::usMotorSettings(const usMotorSettings &other)
-  : m_motorRadius(other.getMotorRadius()), m_framePitch(other.getFramePitch()),
-    m_frameNumber(other.getFrameNumber()), m_frameNumberIsSet(other.frameNumberIsSet()), m_motorType(other.getMotorType())
- {
-
- }
+  : m_motorRadius(other.getMotorRadius()), m_framePitch(other.getFramePitch()), m_frameNumber(other.getFrameNumber()),
+    m_frameNumberIsSet(other.frameNumberIsSet()), m_motorType(other.getMotorType())
+{
+}
 
 /**
 * Destructor.
@@ -85,12 +86,12 @@ usMotorSettings::~usMotorSettings() {}
 * Assignment operator.
 * @param other Motor settings you want to copy.
 */
-usMotorSettings& usMotorSettings::operator=(const usMotorSettings& other)
+usMotorSettings &usMotorSettings::operator=(const usMotorSettings &other)
 {
   m_motorRadius = other.getMotorRadius();
   m_framePitch = other.getFramePitch();
   m_frameNumber = other.getFrameNumber();
-  m_frameNumberIsSet= other.frameNumberIsSet();
+  m_frameNumberIsSet = other.frameNumberIsSet();
   m_motorType = other.getMotorType();
   return *this;
 }
@@ -100,12 +101,10 @@ usMotorSettings& usMotorSettings::operator=(const usMotorSettings& other)
  * @param other Motor settings to compare.
  * @return true if settings are the same, false otherwise.
  */
-bool usMotorSettings::operator==(const usMotorSettings& other)
+bool usMotorSettings::operator==(const usMotorSettings &other)
 {
-  return (this->getFramePitch() == other.getFramePitch() &&
-          this->getFrameNumber() == other.getFrameNumber() &&
-          this->frameNumberIsSet() == other.frameNumberIsSet() &&
-          this->getMotorRadius() == other.getMotorRadius() &&
+  return (this->getFramePitch() == other.getFramePitch() && this->getFrameNumber() == other.getFrameNumber() &&
+          this->frameNumberIsSet() == other.frameNumberIsSet() && this->getMotorRadius() == other.getMotorRadius() &&
           this->getMotorType() == other.getMotorType());
 }
 
@@ -114,15 +113,12 @@ bool usMotorSettings::operator==(const usMotorSettings& other)
  * @param other Motor settings to compare.
  * @return false if settings are the same, true otherwise.
  */
-bool usMotorSettings::operator!=(const usMotorSettings& other)
-{
-  return ! operator==(other);
-}
+bool usMotorSettings::operator!=(const usMotorSettings &other) { return !operator==(other); }
 
 /**
 * Print probe settings information.
 */
-VISP_EXPORT std::ostream& operator<<(std::ostream& out, const usMotorSettings& other)
+VISP_EXPORT std::ostream &operator<<(std::ostream &out, const usMotorSettings &other)
 {
   return out << "motor radius : " << other.getMotorRadius() << std::endl
              << "frame angle : " << other.getFramePitch() << std::endl
@@ -130,56 +126,42 @@ VISP_EXPORT std::ostream& operator<<(std::ostream& out, const usMotorSettings& o
              << "motor type : " << other.getMotorType() << std::endl;
 }
 
-//probe settings getters/setters
+// probe settings getters/setters
 
 /**
 * Set the motor  radius (m).
 * @param motorRadius Motor radius in meters.
 */
-void usMotorSettings::setMotorRadius(double motorRadius)
-{
-  m_motorRadius = motorRadius;
-}
+void usMotorSettings::setMotorRadius(double motorRadius) { m_motorRadius = motorRadius; }
 
 /**
 * Get the motor radius (m).
 * @return motorRadius Motor radius in meters.
 */
-double usMotorSettings::getMotorRadius() const
-{
-  return m_motorRadius;
-}
+double usMotorSettings::getMotorRadius() const { return m_motorRadius; }
 
 /**
 * Set the frame angle (rad).
 * @param framePitch Frame angle of the probe in radians.
 */
-void usMotorSettings::setFramePitch(double framePitch)
-{
-  m_framePitch = framePitch;
-}
+void usMotorSettings::setFramePitch(double framePitch) { m_framePitch = framePitch; }
 
 /**
 * Get the frame pitch (radians or meters).
 * @return framePitch Frame pitch between two sucessive frames. In meters if motorType is linear, in radians otherwise.
 */
-double usMotorSettings::getFramePitch() const
-{
-  return m_framePitch;
-}
+double usMotorSettings::getFramePitch() const { return m_framePitch; }
 
 /**
 * Getter for frame number.
 * @return The number of frames used for 3D acquisition.
 */
-unsigned int usMotorSettings::getFrameNumber() const
-{
-  return m_frameNumber;
-}
+unsigned int usMotorSettings::getFrameNumber() const { return m_frameNumber; }
 
 /**
 * Set the motor type : convex or linear (from probe type used to acquire the image).
-* @param motorType Motor type to specify the motor type : LinearMotor, TiltingMotor (for a rotative motor), RotationalMotor (for a 360&deg; rotative motor).
+* @param motorType Motor type to specify the motor type : LinearMotor, TiltingMotor (for a rotative motor),
+* RotationalMotor (for a 360&deg; rotative motor).
 */
 void usMotorSettings::setMotorType(const usMotorType &motorType)
 {
@@ -193,19 +175,13 @@ void usMotorSettings::setMotorType(const usMotorType &motorType)
 * Get the motor type : linear, titling (small rotation angle) or rotational (360&deg; rotation).
 * @return usMotorType to get the motor type.
 */
-usMotorSettings::usMotorType usMotorSettings::getMotorType() const
-{
-  return m_motorType;
-}
+usMotorSettings::usMotorType usMotorSettings::getMotorType() const { return m_motorType; }
 
 /**
 * Set the motor settings from other motor settings.
 * @return usMotorSettings Settings to copy.
 */
-void usMotorSettings::setMotorSettings(const usMotorSettings &other)
-{
-  *this = other;
-}
+void usMotorSettings::setMotorSettings(const usMotorSettings &other) { *this = other; }
 
 /**
 * Setter for frame number.
@@ -221,18 +197,17 @@ void usMotorSettings::setFrameNumber(unsigned int frameNumber)
 * Getter to know if the scan frame is set (usefull in case of field of view setter call).
 * @return Boolean to know if the frame number is set or not.
 */
-bool usMotorSettings::frameNumberIsSet() const {
-  return m_frameNumberIsSet;
-}
+bool usMotorSettings::frameNumberIsSet() const { return m_frameNumberIsSet; }
 
 /**
 * Getter for the motor field of view (based on frame number and pitch).
 * @return The motor field of view in radians if the probe is convex, in meters if it is linear.
 */
-double usMotorSettings::getMotorFieldOfView() const {
-  if(!m_frameNumberIsSet)
+double usMotorSettings::getMotorFieldOfView() const
+{
+  if (!m_frameNumberIsSet)
     throw vpException(vpException::notInitialized, "The frame number is not set, cannot determine the field of view");
-  return m_framePitch  * (double) (m_frameNumber -1);
+  return m_framePitch * (double)(m_frameNumber - 1);
 }
 
 /**
@@ -248,13 +223,16 @@ double usMotorSettings::getMotorFieldOfView() const {
   motorSettings.setMotorFieldOfView(vpMath::rad(57.0)); // field of view is 57 deg
 \endcode
 */
-void usMotorSettings::setMotorFieldOfView(double motorFieldOfView) {
-  if(!m_frameNumberIsSet)
-    throw vpException(vpException::notInitialized, "The frame number is not set, cannot determine the pitch from the field of view");
-  m_framePitch = motorFieldOfView / (double) (m_frameNumber - 1);
+void usMotorSettings::setMotorFieldOfView(double motorFieldOfView)
+{
+  if (!m_frameNumberIsSet)
+    throw vpException(vpException::notInitialized,
+                      "The frame number is not set, cannot determine the pitch from the field of view");
+  m_framePitch = motorFieldOfView / (double)(m_frameNumber - 1);
 }
 
-usMotorSettings usMotorSettings::getMotorSettings() const {
+usMotorSettings usMotorSettings::getMotorSettings() const
+{
   usMotorSettings ret = *this;
   return ret;
 }

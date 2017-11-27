@@ -42,17 +42,17 @@
 #include <visp3/ustk_core/usConfig.h>
 
 #if defined(USTK_HAVE_FFTW)
-//external includes
+// external includes
 #include <fftw3.h>
 
 // std includes
-#include <vector>
 #include <cmath>
 #include <complex>
+#include <vector>
 
 // visp/ustk includes
-#include <visp3/ustk_core/usImageRF3D.h>
 #include <visp3/ustk_core/usImagePreScan3D.h>
+#include <visp3/ustk_core/usImageRF3D.h>
 #include <visp3/ustk_core/usLogCompressor.h>
 #include <visp3/ustk_core/usRFToPreScan2DConverter.h>
 
@@ -102,8 +102,7 @@ int main()
  */
 class VISP_EXPORT usRFToPreScan3DConverter
 {
- public:
-
+public:
   usRFToPreScan3DConverter();
 
   ~usRFToPreScan3DConverter();
@@ -118,7 +117,7 @@ protected:
   void init(int heightRF, int widthRF, int frameNumber);
 
 private:
-  usRFToPreScan2DConverter * m_converter;
+  usRFToPreScan2DConverter *m_converter;
   int m_frameNumber;
   int m_widthRF;
   int m_heightRF;

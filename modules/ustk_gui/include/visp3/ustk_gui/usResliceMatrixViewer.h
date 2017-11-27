@@ -35,7 +35,6 @@
  * @brief Graphical main window containing 2 vtk views : a 2D slice and the representation in 3D world.
  */
 
-
 #ifndef __usResliceMatrixViewer_h_
 #define __usResliceMatrixViewer_h_
 
@@ -46,31 +45,30 @@
 
 // USTK includes
 
-#include <visp3/ustk_io/usImageIo.h>
 #include <visp3/ustk_gui/us2DSceneWidget.h>
 #include <visp3/ustk_gui/us3DSceneWidget.h>
+#include <visp3/ustk_io/usImageIo.h>
 
 // VTK includes
-#include <vtkSmartPointer.h>
+#include <vtkDistanceWidget.h>
+#include <vtkImageMapper3D.h>
+#include <vtkImagePlaneWidget.h>
 #include <vtkPlane.h>
 #include <vtkResliceImageViewer.h>
-#include <vtkImagePlaneWidget.h>
-#include <vtkDistanceWidget.h>
 #include <vtkResliceImageViewerMeasurements.h>
-#include <vtkImageMapper3D.h>
-
+#include <vtkSmartPointer.h>
 
 // Qt includes
 #if defined(USTK_HAVE_VTK_QT4)
-#  include <QtGui/QApplication>
-#  include <QtGui/QMainWindow>
-#  include <QtGui/QGridLayout>
-#  include <QtGui/QPushButton>
+#include <QtGui/QApplication>
+#include <QtGui/QGridLayout>
+#include <QtGui/QMainWindow>
+#include <QtGui/QPushButton>
 #elif defined(USTK_HAVE_VTK_QT4) //  QT 5 ?
-#  include <QtWidgets/QApplication>
-#  include <QtWidgets/QMainWindow>
-#  include <QtWidgets/QGridLayout>
-#  include <QtWidgets/QPushButton>
+#include <QtWidgets/QApplication>
+#include <QtWidgets/QGridLayout>
+#include <QtWidgets/QMainWindow>
+#include <QtWidgets/QPushButton>
 #endif
 
 /**
@@ -83,12 +81,11 @@ class VISP_EXPORT usResliceMatrixViewer : public QMainWindow
 {
   Q_OBJECT
 public:
-
   // Constructor/Destructor
   usResliceMatrixViewer(std::string imageFileName);
   ~usResliceMatrixViewer() {}
 
-  void resizeEvent(QResizeEvent* event);
+  void resizeEvent(QResizeEvent *event);
 
 public slots:
 
@@ -100,40 +97,40 @@ public slots:
   void openPostScan3D();
 
 private:
-    void setupUi();
+  void setupUi();
 
-    QAction *actionOpenFile;
-    QAction *actionExit;
-    QAction *actionPrint;
-    QAction *actionHelp;
-    QAction *actionSave;
-    QWidget *centralwidget;
-    QWidget *gridLayoutWidget;
-    QGridLayout *gridLayout_2;
-    us2DSceneWidget *view1;
-    us2DSceneWidget *view4;
-    us2DSceneWidget *view3;
-    us3DSceneWidget *view2;
+  QAction *actionOpenFile;
+  QAction *actionExit;
+  QAction *actionPrint;
+  QAction *actionHelp;
+  QAction *actionSave;
+  QWidget *centralwidget;
+  QWidget *gridLayoutWidget;
+  QGridLayout *gridLayout_2;
+  us2DSceneWidget *view1;
+  us2DSceneWidget *view4;
+  us2DSceneWidget *view3;
+  us3DSceneWidget *view2;
 
-    QPushButton *resetButton;
-    QPushButton *openImageButton;
-    QPushButton *saveView1Button;
-    QPushButton *saveView4Button;
-    QPushButton *saveView3Button;
+  QPushButton *resetButton;
+  QPushButton *openImageButton;
+  QPushButton *saveView1Button;
+  QPushButton *saveView4Button;
+  QPushButton *saveView3Button;
 
-    //VTK planes
-    vtkPlane *plane1;
-    vtkPlane *plane2;
-    vtkPlane *plane3;
+  // VTK planes
+  vtkPlane *plane1;
+  vtkPlane *plane2;
+  vtkPlane *plane3;
 
-    //transformation
-    vtkMatrix4x4 *vtkMatrix1;
-    vtkMatrix4x4 *vtkMatrix2;
-    vtkMatrix4x4 *vtkMatrix3;
+  // transformation
+  vtkMatrix4x4 *vtkMatrix1;
+  vtkMatrix4x4 *vtkMatrix2;
+  vtkMatrix4x4 *vtkMatrix3;
 
-    //image
-    usImagePostScan3D<unsigned char> postScanImage;
-    vtkSmartPointer<vtkImageData> vtkImage;
+  // image
+  usImagePostScan3D<unsigned char> postScanImage;
+  vtkSmartPointer<vtkImageData> vtkImage;
 };
 #endif
 #endif // __usResliceMatrixViewer_h_

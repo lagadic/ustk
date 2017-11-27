@@ -31,9 +31,9 @@
  *
  *****************************************************************************/
 
-#include <visp3/ustk_needle_detection/usNeedleTrackerSIR2D.h>
 #include <visp3/core/vpImageFilter.h>
 #include <visp3/ustk_core/usImageMathematics.h>
+#include <visp3/ustk_needle_detection/usNeedleTrackerSIR2D.h>
 
 usNeedleTrackerSIR2D::usNeedleTrackerSIR2D()
 {
@@ -55,22 +55,21 @@ usNeedleTrackerSIR2D::~usNeedleTrackerSIR2D()
   if (m_particles) {
     for (unsigned int i = 0; i < m_nParticles; ++i) {
       if (m_particles[i]) {
-	delete m_particles[i];
-	m_particles[i] = NULL;
+        delete m_particles[i];
+        m_particles[i] = NULL;
       }
-      delete [] m_particles;
+      delete[] m_particles;
       m_particles = NULL;
     }
   }
   if (m_weights) {
-    delete [] m_weights;
+    delete[] m_weights;
     m_weights = NULL;
   }
 }
 
-void usNeedleTrackerSIR2D::init(unsigned int dims[2],
-				unsigned int nPoints, unsigned int nParticles,
-        const usPolynomialCurve2D &needle)
+void usNeedleTrackerSIR2D::init(unsigned int dims[2], unsigned int nPoints, unsigned int nParticles,
+                                const usPolynomialCurve2D &needle)
 {
   m_dims[0] = dims[0];
   m_dims[1] = dims[1];
@@ -78,7 +77,7 @@ void usNeedleTrackerSIR2D::init(unsigned int dims[2],
   m_nPointsCurrent = needle.getOrder();
   m_nParticles = nParticles;
   m_needleModel = new usPolynomialCurve2D(needle);
-  m_particles = new usPolynomialCurve2D*[m_nParticles];
+  m_particles = new usPolynomialCurve2D *[m_nParticles];
   for (unsigned int i = 0; i < m_nParticles; ++i)
     m_particles[i] = new usPolynomialCurve2D(needle);
   m_weights = new double[m_nParticles];
@@ -87,8 +86,9 @@ void usNeedleTrackerSIR2D::init(unsigned int dims[2],
   m_lengthThreshold = 50.0;
 }
 
-void usNeedleTrackerSIR2D::init(const vpImage<unsigned char>& I, unsigned int nPoints,
-        unsigned int nParticles, const usPolynomialCurve2D &needle) {
+void usNeedleTrackerSIR2D::init(const vpImage<unsigned char> &I, unsigned int nPoints, unsigned int nParticles,
+                                const usPolynomialCurve2D &needle)
+{
   unsigned int dims[2];
   dims[0] = I.getHeight();
   dims[1] = I.getWidth();
@@ -114,37 +114,33 @@ void usNeedleTrackerSIR2D::init(const vpImage<unsigned char>& I, unsigned int nP
 
 usPolynomialCurve2D *usNeedleTrackerSIR2D::getNeedle() { return m_needleModel; }
 
-usPolynomialCurve2D *usNeedleTrackerSIR2D::getParticle(unsigned int i) {
+usPolynomialCurve2D *usNeedleTrackerSIR2D::getParticle(unsigned int i)
+{
   if (i >= m_nParticles) {
     std::cerr << "Error: in usNeedleTrackerSIR2D::getParticle(): "
-	      << "Particle index is out of range." << std::endl;
+              << "Particle index is out of range." << std::endl;
     exit(EXIT_FAILURE);
   }
   return m_particles[i];
 }
 
-double usNeedleTrackerSIR2D::getWeight(unsigned int i) {
+double usNeedleTrackerSIR2D::getWeight(unsigned int i)
+{
   if (i >= m_nParticles) {
     std::cerr << "Error: in usNeedleTrackerSIR2D::getWeight(): "
-	      << "Particle index is out of range." << std::endl;
+              << "Particle index is out of range." << std::endl;
     exit(EXIT_FAILURE);
   }
   return m_weights[i];
 }
 
-void usNeedleTrackerSIR2D::setSigma(double s) {
-  m_noise.setSigmaMean(s, 0.0);  
-}
+void usNeedleTrackerSIR2D::setSigma(double s) { m_noise.setSigmaMean(s, 0.0); }
 
-void usNeedleTrackerSIR2D::setSigma1(double s) {
-  m_sigma[0][0] = s;
-}
+void usNeedleTrackerSIR2D::setSigma1(double s) { m_sigma[0][0] = s; }
 
-void usNeedleTrackerSIR2D::setSigma2(double s) {
-  m_sigma[1][1] = s;
-}
+void usNeedleTrackerSIR2D::setSigma2(double s) { m_sigma[1][1] = s; }
 
-void usNeedleTrackerSIR2D::run(vpImage<unsigned char>& I, double v)
+void usNeedleTrackerSIR2D::run(vpImage<unsigned char> &I, double v)
 {
   vpMatrix controlPoints;
   vpMatrix meanControlPoints;
@@ -152,7 +148,7 @@ void usNeedleTrackerSIR2D::run(vpImage<unsigned char>& I, double v)
   vpMatrix S_noise_tip;
   vpMatrix S_noise_inter;
   vpColVector noise(2);
-  vpMatrix U(2,2);
+  vpMatrix U(2, 2);
 
   // Sample particles
   for (unsigned int i = 0; i < m_nParticles; ++i) {
@@ -165,7 +161,7 @@ void usNeedleTrackerSIR2D::run(vpImage<unsigned char>& I, double v)
     // Compute eigen vectors
     for (unsigned int j = 0; j < 2; ++j)
       U[j][0] = direction[j];
-    U[0][1] = - direction[1];
+    U[0][1] = -direction[1];
     U[1][1] = direction[0];
 
     // Compute noise covariance
@@ -177,20 +173,20 @@ void usNeedleTrackerSIR2D::run(vpImage<unsigned char>& I, double v)
     direction *= v;
 
     // Entry point
-    //controlPoints[0][0] += m_noise();
-    //controlPoints[1][0] += m_noise();
+    // controlPoints[0][0] += m_noise();
+    // controlPoints[1][0] += m_noise();
 
     // Intermediate control points
-    for (unsigned int j = 1; j < m_nPointsCurrent-1; ++j) {
+    for (unsigned int j = 1; j < m_nPointsCurrent - 1; ++j) {
 
       // Generate noise
       for (unsigned int k = 0; k < 2; ++k)
-	noise[k] = m_noise();
+        noise[k] = m_noise();
       noise = S_noise_inter * noise;
 
       // Update control points
       for (unsigned int k = 0; k < 2; ++k)
-	controlPoints[k][j] += direction[k] / (m_nPointsCurrent-1) + noise[k] / 4.0;
+        controlPoints[k][j] += direction[k] / (m_nPointsCurrent - 1) + noise[k] / 4.0;
     }
 
     // Tip
@@ -199,10 +195,10 @@ void usNeedleTrackerSIR2D::run(vpImage<unsigned char>& I, double v)
     for (unsigned int k = 0; k < 2; ++k)
       noise[k] = m_noise();
     noise = S_noise_tip * noise;
-    
+
     // Update control points
     for (unsigned int k = 0; k < 2; ++k)
-      controlPoints[k][m_nPointsCurrent-1] += direction[k] + noise[k];
+      controlPoints[k][m_nPointsCurrent - 1] += direction[k] + noise[k];
 
     m_particles[i]->setControlPoints(controlPoints.t());
   }
@@ -213,16 +209,16 @@ void usNeedleTrackerSIR2D::run(vpImage<unsigned char>& I, double v)
     m_weights[i] *= computeLikelihood(m_particles[i], I);
     sumWeights += m_weights[i];
   }
-  
+
   // Normalize the weights and estimate the effective number of particles
   double sumSquare = 0.0;
   for (unsigned int i = 0; i < m_nParticles; ++i) {
     m_weights[i] /= sumWeights;
     sumSquare += vpMath::sqr(m_weights[i]);
   }
-  
+
   double n_eff = 1.0 / sumSquare;
-  //std::cout << "Neff = " << n_eff << std::endl;
+  // std::cout << "Neff = " << n_eff << std::endl;
 
   // Resampling
   if (n_eff < m_nParticles / 2.0) {
@@ -235,21 +231,18 @@ void usNeedleTrackerSIR2D::run(vpImage<unsigned char>& I, double v)
   for (unsigned int i = 0; i < m_nParticles; ++i) {
     meanControlPoints += m_weights[i] * m_particles[i]->getControlPoints();
   }
- 
+
   m_needleModel->setControlPoints(meanControlPoints.t());
 
   if ((m_needleModel->getLength()) > m_lengthThreshold && (m_nPoints != m_nPointsCurrent)) {
-    std::cout << "Changing polynomial order from " << m_nPointsCurrent
-        << " to " << (m_nPointsCurrent+1) << std::endl;
-    usPolynomialCurve2D *newModel =
-      new usPolynomialCurve2D(m_needleModel->changePolynomialOrder(m_nPointsCurrent));
+    std::cout << "Changing polynomial order from " << m_nPointsCurrent << " to " << (m_nPointsCurrent + 1) << std::endl;
+    usPolynomialCurve2D *newModel = new usPolynomialCurve2D(m_needleModel->changePolynomialOrder(m_nPointsCurrent));
     delete m_needleModel;
     m_needleModel = newModel;
     for (unsigned int i = 0; i < m_nParticles; ++i) {
-      usPolynomialCurve2D *newModel =
-  new usPolynomialCurve2D(m_particles[i]->changePolynomialOrder(m_nPointsCurrent));
+      usPolynomialCurve2D *newModel = new usPolynomialCurve2D(m_particles[i]->changePolynomialOrder(m_nPointsCurrent));
       delete m_particles[i];
-    m_particles[i] = newModel;
+      m_particles[i] = newModel;
     }
     m_lengthThreshold *= 2.0;
   }
@@ -272,9 +265,9 @@ double usNeedleTrackerSIR2D::computeLikelihood(usPolynomialCurve2D *model, vpIma
       ++c;
       intensity = vpImageFilter::gaussianFilter(I, x, y);
       if (intensity >= m_bgMean)
-	return 0.0;
+        return 0.0;
       if (intensity <= m_fgMean)
-	continue;
+        continue;
       l = (intensity - m_bgMean) / (m_fgMean - m_bgMean);
       ll += log(l);
     }
@@ -304,48 +297,49 @@ double usNeedleTrackerSIR2D::computeLikelihood(usPolynomialCurve2D *model, vpIma
 
 double usNeedleTrackerSIR2D::computeLikelihood(usPolynomialCurve2D *model, vpImage<unsigned char> &I)
 {
-	double l = 0.0;
-	vpColVector point;
-	unsigned int c = 0;
+  double l = 0.0;
+  vpColVector point;
+  unsigned int c = 0;
   double length = model->getLength();
-	double intensity;
+  double intensity;
 
-	for (double t = 0; t <= 1.0; t += 1.0 / length) {
+  for (double t = 0; t <= 1.0; t += 1.0 / length) {
     point = model->getPoint(t);
     unsigned int x = vpMath::round(point[0]);
     unsigned int y = vpMath::round(point[1]);
-		if ((3 <= x) && (x < m_dims[0] - 3) && (3 <= y) && (y < m_dims[1] - 3)) {
-			++c;
-			intensity = vpImageFilter::gaussianFilter(I, x, y);
-			l += intensity;
-		}
-	}
+    if ((3 <= x) && (x < m_dims[0] - 3) && (3 <= y) && (y < m_dims[1] - 3)) {
+      ++c;
+      intensity = vpImageFilter::gaussianFilter(I, x, y);
+      l += intensity;
+    }
+  }
 
-	if (c == 0)
-		return 0.0;
+  if (c == 0)
+    return 0.0;
 
-	l /= c;
+  l /= c;
 
   point = model->getPoint(1.0);
   unsigned int x = vpMath::round(point[0]);
   unsigned int y = vpMath::round(point[1]);
-	if ((3 <= x) && (x < m_dims[0] - 3) && (3 <= y) && (y < m_dims[1] - 3)) {
-		intensity = vpImageFilter::gaussianFilter(I, x, y);
-		l += intensity;
-	}
+  if ((3 <= x) && (x < m_dims[0] - 3) && (3 <= y) && (y < m_dims[1] - 3)) {
+    intensity = vpImageFilter::gaussianFilter(I, x, y);
+    l += intensity;
+  }
 
   point = model->getPoint(1.0 + 1.0 / length);
-	x = vpMath::round(point[0]);
-	y = vpMath::round(point[1]);
-	if ((3 <= x) && (x < m_dims[0] - 3) && (3 <= y) && (y < m_dims[1] - 3)) {
-		intensity = vpImageFilter::gaussianFilter(I, x, y);
-		l -= intensity;
-	}
+  x = vpMath::round(point[0]);
+  y = vpMath::round(point[1]);
+  if ((3 <= x) && (x < m_dims[0] - 3) && (3 <= y) && (y < m_dims[1] - 3)) {
+    intensity = vpImageFilter::gaussianFilter(I, x, y);
+    l -= intensity;
+  }
 
-	return l;
+  return l;
 }
 
-void usNeedleTrackerSIR2D::resample() {
+void usNeedleTrackerSIR2D::resample()
+{
   // std::cout << "Resampling..." << std::endl;
   int *idx = new int[m_nParticles];
   for (unsigned int i = 0; i < m_nParticles; ++i) {
@@ -359,7 +353,7 @@ void usNeedleTrackerSIR2D::resample() {
       sumWeights += m_weights[j];
     }
   }
-  usPolynomialCurve2D **oldParticles = new usPolynomialCurve2D*[m_nParticles];
+  usPolynomialCurve2D **oldParticles = new usPolynomialCurve2D *[m_nParticles];
   for (unsigned int i = 0; i < m_nParticles; ++i) {
     oldParticles[i] = new usPolynomialCurve2D(*m_particles[i]);
   }
@@ -371,8 +365,8 @@ void usNeedleTrackerSIR2D::resample() {
     delete oldParticles[i];
     oldParticles[i] = NULL;
   }
-  delete [] oldParticles;
-  delete [] idx;
+  delete[] oldParticles;
+  delete[] idx;
   for (unsigned int i = 0; i < m_nParticles; ++i) {
     m_weights[i] = 1.0 / m_nParticles;
   }

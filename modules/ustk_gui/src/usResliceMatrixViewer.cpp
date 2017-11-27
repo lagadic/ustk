@@ -42,75 +42,74 @@
 #include <visp3/ustk_core/usImagePostScan3D.h>
 #include <visp3/ustk_gui/usVTKConverter.h>
 
-
-#include <vtkRenderer.h>
-#include <vtkRenderWindow.h>
-#include <vtkResliceImageViewer.h>
-#include <vtkMetaImageReader.h>
-#include <vtkCellPicker.h>
-#include <vtkProperty.h>
-#include <vtkPlane.h>
-#include <vtkImageData.h>
-#include <vtkCommand.h>
-#include <vtkPlaneSource.h>
-#include <vtkLookupTable.h>
-#include <vtkImageMapToWindowLevelColors.h>
-#include <vtkInteractorStyleImage.h>
-#include <vtkImageSlabReslice.h>
-#include <vtkBoundedPlanePointPlacer.h>
-#include <vtkDistanceWidget.h>
-#include <vtkDistanceRepresentation.h>
-#include <vtkHandleRepresentation.h>
-#include <vtkResliceImageViewerMeasurements.h>
-#include <vtkDistanceRepresentation2D.h>
-#include <vtkCamera.h>
-#include <vtkRendererCollection.h>
-#include <vtkMatrix4x4.h>
 #include <vtkAbstractTransform.h>
-#include <vtkImageActor.h>
-#include <vtkMapper.h>
-#include <vtkActor2D.h>
 #include <vtkActor.h>
+#include <vtkActor2D.h>
+#include <vtkBoundedPlanePointPlacer.h>
+#include <vtkCamera.h>
+#include <vtkCellPicker.h>
+#include <vtkCommand.h>
+#include <vtkDistanceRepresentation.h>
+#include <vtkDistanceRepresentation2D.h>
+#include <vtkDistanceWidget.h>
+#include <vtkHandleRepresentation.h>
+#include <vtkImageActor.h>
+#include <vtkImageData.h>
+#include <vtkImageMapToWindowLevelColors.h>
+#include <vtkImageSlabReslice.h>
+#include <vtkInteractorStyleImage.h>
+#include <vtkLookupTable.h>
+#include <vtkMapper.h>
+#include <vtkMatrix4x4.h>
+#include <vtkMetaImageReader.h>
+#include <vtkPlane.h>
+#include <vtkPlaneSource.h>
+#include <vtkProperty.h>
+#include <vtkRenderWindow.h>
+#include <vtkRenderer.h>
+#include <vtkRendererCollection.h>
+#include <vtkResliceImageViewer.h>
+#include <vtkResliceImageViewerMeasurements.h>
 
 #include <vtkHomogeneousTransform.h>
 
 #include <QDesktopWidget>
-#include <QResizeEvent>
 #include <QFileDialog>
+#include <QResizeEvent>
 
 /**
 * Constructor.
 * @param imageFileName the mhd file to read.
 */
-usResliceMatrixViewer::usResliceMatrixViewer(std::string imageFileName )
+usResliceMatrixViewer::usResliceMatrixViewer(std::string imageFileName)
 {
   this->setupUi();
-  usImageIo::read(postScanImage,imageFileName);
-  usVTKConverter::convert(postScanImage,vtkImage);
+  usImageIo::read(postScanImage, imageFileName);
+  usVTKConverter::convert(postScanImage, vtkImage);
 
   int imageDims[3];
   double spacing[3];
   vtkImage->GetDimensions(imageDims);
   vtkImage->GetSpacing(spacing);
 
-  //matrix representing plane 3
+  // matrix representing plane 3
   vpHomogeneousMatrix matrix3;
   matrix3.eye();
-  matrix3[0][3] = imageDims[0]*spacing[0]/2;
-  matrix3[1][3] = imageDims[1]*spacing[1]/2;
-  matrix3[2][3] = imageDims[2]*spacing[2]/2;
+  matrix3[0][3] = imageDims[0] * spacing[0] / 2;
+  matrix3[1][3] = imageDims[1] * spacing[1] / 2;
+  matrix3[2][3] = imageDims[2] * spacing[2] / 2;
   matrix3[0][0] = 1;
   matrix3[1][1] = -1;
   matrix3[2][2] = -1;
   vtkMatrix3 = vtkMatrix4x4::New();
-  usVTKConverter::convert(matrix3,vtkMatrix3);
+  usVTKConverter::convert(matrix3, vtkMatrix3);
 
-  //matrix representing plane 2
+  // matrix representing plane 2
   vpHomogeneousMatrix matrix2;
   matrix2.eye();
-  matrix2[0][3] = imageDims[0]*spacing[0]/2;
-  matrix2[1][3] = imageDims[1]*spacing[1]/2;
-  matrix2[2][3] = imageDims[2]*spacing[2]/2;
+  matrix2[0][3] = imageDims[0] * spacing[0] / 2;
+  matrix2[1][3] = imageDims[1] * spacing[1] / 2;
+  matrix2[2][3] = imageDims[2] * spacing[2] / 2;
   matrix2[0][0] = 1;
   matrix2[2][1] = 1;
   matrix2[1][1] = 0;
@@ -118,21 +117,21 @@ usResliceMatrixViewer::usResliceMatrixViewer(std::string imageFileName )
   matrix2[2][2] = 0;
 
   vtkMatrix2 = vtkMatrix4x4::New();
-  usVTKConverter::convert(matrix2,vtkMatrix2);
+  usVTKConverter::convert(matrix2, vtkMatrix2);
 
-  //matrix representing plane 1
+  // matrix representing plane 1
   vpHomogeneousMatrix matrix1;
   matrix1.eye();
-  matrix1[0][3] = imageDims[0]*spacing[0]/2;
-  matrix1[1][3] = imageDims[1]*spacing[1]/2;
-  matrix1[2][3] = imageDims[2]*spacing[2]/2;
+  matrix1[0][3] = imageDims[0] * spacing[0] / 2;
+  matrix1[1][3] = imageDims[1] * spacing[1] / 2;
+  matrix1[2][3] = imageDims[2] * spacing[2] / 2;
   matrix1[0][0] = 0;
   matrix1[0][2] = 1;
   matrix1[1][1] = -1;
   matrix1[2][0] = 1;
   matrix1[2][2] = 0;
   vtkMatrix1 = vtkMatrix4x4::New();
-  usVTKConverter::convert(matrix1,vtkMatrix1);
+  usVTKConverter::convert(matrix1, vtkMatrix1);
 
   view2->setImageData(vtkImage);
   view2->updateMatrix1(vtkMatrix1);
@@ -145,39 +144,38 @@ usResliceMatrixViewer::usResliceMatrixViewer(std::string imageFileName )
   view1->setPolyDataPlaneContour(view2->getContour1());
   view1->setPolyDataMeshContour(view2->getMeshInPlane1());
   view1->init();
-  view1->setColor(1.0,0,0);
+  view1->setColor(1.0, 0, 0);
 
   view4->setImageData(vtkImage);
   view4->setResliceMatrix(vtkMatrix2);
   view4->setPolyDataPlaneContour(view2->getContour2());
   view4->setPolyDataMeshContour(view2->getMeshInPlane2());
   view4->init();
-  view4->setColor(0,1.0,0);
+  view4->setColor(0, 1.0, 0);
 
   view3->setImageData(vtkImage);
   view3->setResliceMatrix(vtkMatrix3);
   view3->setPolyDataPlaneContour(view2->getContour3());
   view3->setPolyDataMeshContour(view2->getMeshInPlane3());
   view3->init();
-  view3->setColor(0,0,1.0);
+  view3->setColor(0, 0, 1.0);
 
   // Set up action signals and slots
   connect(this->resetButton, SIGNAL(pressed()), this, SLOT(ResetViews()));
-  //connect(this->saveView1Button, SIGNAL(pressed()), view1, SLOT(saveViewSlot()));
+  // connect(this->saveView1Button, SIGNAL(pressed()), view1, SLOT(saveViewSlot()));
   connect(this->openImageButton, SIGNAL(pressed()), this, SLOT(openPostScan3D()));
   connect(this->saveView1Button, SIGNAL(pressed()), this, SLOT(getView1Slice()));
   connect(this->saveView4Button, SIGNAL(pressed()), view4, SLOT(saveViewSlot()));
   connect(this->saveView3Button, SIGNAL(pressed()), view3, SLOT(saveViewSlot()));
 
-  //updates of planes in 3D scene
-  connect(view1,SIGNAL(matrixChanged(vtkMatrix4x4*)),view2,SLOT(updateMatrix1(vtkMatrix4x4*)));
-  connect(view4,SIGNAL(matrixChanged(vtkMatrix4x4*)),view2,SLOT(updateMatrix2(vtkMatrix4x4*)));
-  connect(view3,SIGNAL(matrixChanged(vtkMatrix4x4*)),view2,SLOT(updateMatrix3(vtkMatrix4x4*)));
-  //update back 2D views (for polydata intersections)
-  connect(view2,SIGNAL(plane2Changed()),view1,SLOT(updateView()));
-  connect(view2,SIGNAL(plane2Changed()),view4,SLOT(updateView()));
-  connect(view2,SIGNAL(plane2Changed()),view3,SLOT(updateView()));
-
+  // updates of planes in 3D scene
+  connect(view1, SIGNAL(matrixChanged(vtkMatrix4x4 *)), view2, SLOT(updateMatrix1(vtkMatrix4x4 *)));
+  connect(view4, SIGNAL(matrixChanged(vtkMatrix4x4 *)), view2, SLOT(updateMatrix2(vtkMatrix4x4 *)));
+  connect(view3, SIGNAL(matrixChanged(vtkMatrix4x4 *)), view2, SLOT(updateMatrix3(vtkMatrix4x4 *)));
+  // update back 2D views (for polydata intersections)
+  connect(view2, SIGNAL(plane2Changed()), view1, SLOT(updateView()));
+  connect(view2, SIGNAL(plane2Changed()), view4, SLOT(updateView()));
+  connect(view2, SIGNAL(plane2Changed()), view3, SLOT(updateView()));
 
   ResetViews();
 }
@@ -185,10 +183,7 @@ usResliceMatrixViewer::usResliceMatrixViewer(std::string imageFileName )
 /**
 * Exit slot, to exit the QApplication.
 */
-void usResliceMatrixViewer::slotExit()
-{
-  qApp->exit();
-}
+void usResliceMatrixViewer::slotExit() { qApp->exit(); }
 
 /**
 * Reset views slot : reset the planes positions at the middle of the volume.
@@ -200,42 +195,42 @@ void usResliceMatrixViewer::ResetViews()
   vtkImage->GetDimensions(imageDims);
   vtkImage->GetSpacing(spacing);
 
-  //matrix representing plane 3
+  // matrix representing plane 3
   vpHomogeneousMatrix matrix3;
   matrix3.eye();
-  matrix3[0][3] = imageDims[0]*spacing[0]/2;
-  matrix3[1][3] = imageDims[1]*spacing[1]/2;
-  matrix3[2][3] = imageDims[2]*spacing[2]/2;
+  matrix3[0][3] = imageDims[0] * spacing[0] / 2;
+  matrix3[1][3] = imageDims[1] * spacing[1] / 2;
+  matrix3[2][3] = imageDims[2] * spacing[2] / 2;
   matrix3[0][0] = 1;
   matrix3[1][1] = -1;
   matrix3[2][2] = -1;
-  usVTKConverter::convert(matrix3,vtkMatrix3);
+  usVTKConverter::convert(matrix3, vtkMatrix3);
 
-  //matrix representing plane 2
+  // matrix representing plane 2
   vpHomogeneousMatrix matrix2;
   matrix2.eye();
-  matrix2[0][3] = imageDims[0]*spacing[0]/2;
-  matrix2[1][3] = imageDims[1]*spacing[1]/2;
-  matrix2[2][3] = imageDims[2]*spacing[2]/2;
+  matrix2[0][3] = imageDims[0] * spacing[0] / 2;
+  matrix2[1][3] = imageDims[1] * spacing[1] / 2;
+  matrix2[2][3] = imageDims[2] * spacing[2] / 2;
   matrix2[0][0] = 1;
   matrix2[2][1] = 1;
   matrix2[1][1] = 0;
   matrix2[1][2] = -1;
   matrix2[2][2] = 0;
-  usVTKConverter::convert(matrix2,vtkMatrix2);
+  usVTKConverter::convert(matrix2, vtkMatrix2);
 
-  //matrix representing plane 1
+  // matrix representing plane 1
   vpHomogeneousMatrix matrix1;
   matrix1.eye();
-  matrix1[0][3] = imageDims[0]*spacing[0]/2;
-  matrix1[1][3] = imageDims[1]*spacing[1]/2;
-  matrix1[2][3] = imageDims[2]*spacing[2]/2;
+  matrix1[0][3] = imageDims[0] * spacing[0] / 2;
+  matrix1[1][3] = imageDims[1] * spacing[1] / 2;
+  matrix1[2][3] = imageDims[2] * spacing[2] / 2;
   matrix1[0][0] = 0;
   matrix1[0][2] = 1;
   matrix1[1][1] = -1;
   matrix1[2][0] = 1;
   matrix1[2][2] = 0;
-  usVTKConverter::convert(matrix1,vtkMatrix1);
+  usVTKConverter::convert(matrix1, vtkMatrix1);
 
   view1->setResliceMatrix(vtkMatrix1);
   view4->setResliceMatrix(vtkMatrix2);
@@ -247,7 +242,6 @@ void usResliceMatrixViewer::ResetViews()
 
   this->Render();
 }
-
 
 /**
 * Render slot, to recompute all the views.
@@ -263,8 +257,9 @@ void usResliceMatrixViewer::Render()
 /**
 * Setup all the widgets in the window.
 */
-void usResliceMatrixViewer::setupUi() {
-  this->setMinimumSize(640,480);
+void usResliceMatrixViewer::setupUi()
+{
+  this->setMinimumSize(640, 480);
   QRect screenRect = QApplication::desktop()->screenGeometry();
   this->resize(screenRect.size());
 
@@ -323,10 +318,10 @@ void usResliceMatrixViewer::setupUi() {
 /**
 * Get the resize event of the window, to re-comute size and positions of all widgets/layouts.
 */
-void usResliceMatrixViewer::resizeEvent(QResizeEvent* event)
+void usResliceMatrixViewer::resizeEvent(QResizeEvent *event)
 {
-  //Min size : 640*480
-  if(event->size().width() >= 640 && event->size().height() >= 480) {
+  // Min size : 640*480
+  if (event->size().width() >= 640 && event->size().height() >= 480) {
     QMainWindow::resizeEvent(event);
     gridLayoutWidget->setGeometry(QRect(10, 10, event->size().width() - 220, event->size().height() - 20));
     resetButton->setGeometry(QRect(event->size().width() - 180, 30, 160, 31));
@@ -344,7 +339,7 @@ void usResliceMatrixViewer::getView1Slice()
 {
   usImagePostScan2D<unsigned char> postScanSlice;
   view1->getCurrentSlice(postScanSlice);
-  usImageIo::write(postScanSlice,"sliceView1.xml");
+  usImageIo::write(postScanSlice, "sliceView1.xml");
 }
 
 /**
@@ -352,22 +347,22 @@ void usResliceMatrixViewer::getView1Slice()
 */
 void usResliceMatrixViewer::openPostScan3D()
 {
-  //open file dialog to let the user select the new mhd file to display
-  QString fileName = QFileDialog::getOpenFileName(this,
-    tr("Open Image"), us::getDataSetPath().c_str(), tr("Meta header files (*.mhd)"));
+  // open file dialog to let the user select the new mhd file to display
+  QString fileName = QFileDialog::getOpenFileName(this, tr("Open Image"), us::getDataSetPath().c_str(),
+                                                  tr("Meta header files (*.mhd)"));
 
-  if(fileName.size() == 0)
+  if (fileName.size() == 0)
     return;
 
   double t0 = vpTime::measureTimeMs();
 
-  //read the image and convert it to vtkImageData
-  usImageIo::read(postScanImage,fileName.toStdString());
+  // read the image and convert it to vtkImageData
+  usImageIo::read(postScanImage, fileName.toStdString());
   double t1 = vpTime::measureTimeMs();
   std::cout << "read image time (ms) = " << t1 - t0 << std::endl;
-  usVTKConverter::convert(postScanImage,vtkImage);
+  usVTKConverter::convert(postScanImage, vtkImage);
 
-  //update the views
+  // update the views
   view2->updateImageData(vtkImage);
   view1->updateImageData(vtkImage);
   view3->updateImageData(vtkImage);

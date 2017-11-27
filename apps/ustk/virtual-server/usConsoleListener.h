@@ -30,37 +30,32 @@
  *
  *****************************************************************************/
 
-#include "usVirtualServer.h"
-#include <QApplication>
+/**
+ * @file usConsoleListener.h
+ * @brief Class to get console input from user in a Qt console app (as virtual server).
+ */
+#ifndef US_CONSOLE_LISTENER_H
+#define US_CONSOLE_LISTENER_H
 
-int main(int argc, char** argv)
+#include <QObject>
+#include <QSocketNotifier>
+#include <iostream>
+#include <stdio.h>
+
+class usConsoleListener : public QObject
 {
-  std::string filename;
+  Q_OBJECT;
 
-  for (int i=0; i<argc; i++) {
-    if (std::string(argv[i]) == "--input")
-      filename = std::string(argv[i+1]);
-    else if (std::string(argv[i]) == "--help") {
-      std::cout << "\nUsage: " << argv[0] << " [--input <mysequence.xml>] [--help]\n" << std::endl;
-      return 0;
-    }
-  }
+public:
+  usConsoleListener();
 
-  // Get the ustk-dataset package path or USTK_DATASET_PATH environment variable value
-  if (filename.empty()) {
-    std::string env_ipath = us::getDataSetPath();
-    if (! env_ipath.empty())
-      filename = env_ipath + "/pre-scan/timestampSequence/sequenceTimestamps.xml";
-    else {
-      std::cout << "You should set USTK_DATASET_PATH environment var to access to ustk dataset" << std::endl;
-      return 0;
-    }
-  }
+signals:
+  void quitPause();
 
-  QApplication app(argc, argv);
+private:
+  QSocketNotifier *m_notifier;
 
-  usVirtualServer server(filename);
-
-  //wait until user closes the window
-  return app.exec();
-}
+private slots:
+  void readCommand();
+};
+#endif // US_CONSOLE_LISTENER_H*/

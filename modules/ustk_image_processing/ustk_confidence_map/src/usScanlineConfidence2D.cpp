@@ -48,12 +48,13 @@ usScanlineConfidence2D::~usScanlineConfidence2D() {}
 * @param [out] preScanConfidence Confidence image computed.
 * @param [in] preScanImage Pre-scan image to process.
 */
-void usScanlineConfidence2D::run(usImagePreScan2D<unsigned char> &preScanConfidence, const usImagePreScan2D<unsigned char> &preScanImage)
+void usScanlineConfidence2D::run(usImagePreScan2D<unsigned char> &preScanConfidence,
+                                 const usImagePreScan2D<unsigned char> &preScanImage)
 {
   preScanConfidence.setImagePreScanSettings(preScanImage);
   unsigned int AN = preScanImage.getHeight();
   unsigned int LN = preScanImage.getWidth();
-  if(AN == 0 || LN == 0)
+  if (AN == 0 || LN == 0)
     throw(vpException(vpException::notInitialized, "pre-scan image dimension is 0"));
 
   preScanConfidence.resize(AN, LN);
@@ -63,22 +64,22 @@ void usScanlineConfidence2D::run(usImagePreScan2D<unsigned char> &preScanConfide
   double max = 0.0;
   for (unsigned int i = 0; i < AN; ++i)
     for (unsigned int j = 0; j < LN; ++j) {
-      if (static_cast<double>(preScanImage(i,j)) < min)
-        min = static_cast<double>(preScanImage(i,j));
-      if (static_cast<double>(preScanImage(i,j)) > max)
-        max = static_cast<double>(preScanImage(i,j));
+      if (static_cast<double>(preScanImage(i, j)) < min)
+        min = static_cast<double>(preScanImage(i, j));
+      if (static_cast<double>(preScanImage(i, j)) > max)
+        max = static_cast<double>(preScanImage(i, j));
     }
 
   // Integrate scan lines
   for (unsigned int j = 0; j < LN; ++j) {
     double sum = 0.0;
     for (unsigned int i = 0; i < AN; ++i)
-      sum += vpMath::sqr((preScanImage(i,j) - min) / (max - min));
+      sum += vpMath::sqr((preScanImage(i, j) - min) / (max - min));
 
     double val = sum;
     preScanConfidence(0, j, 255);
     for (unsigned int i = 1; i < AN; ++i) {
-      val -= vpMath::sqr((preScanImage(i-1, j) - min) / (max - min));
+      val -= vpMath::sqr((preScanImage(i - 1, j) - min) / (max - min));
       preScanConfidence(i, j, (unsigned char)(val / sum * 255));
     }
   }

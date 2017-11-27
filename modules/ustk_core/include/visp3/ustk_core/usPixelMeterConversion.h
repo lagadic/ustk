@@ -49,17 +49,18 @@
 * @brief Conversion between a pixel position in the ultrasound image and the real position in meters.
 * @ingroup module_ustk_core
 *
-* @warning Be sure you correctly filled your acquisition settings (probe radius, scan line pitch, etc...). Those parameters are used in the conversion !
+* @warning Be sure you correctly filled your acquisition settings (probe radius, scan line pitch, etc...). Those
+* parameters are used in the conversion !
 */
 class VISP_EXPORT usPixelMeterConversion
 {
 public:
-  //Only post-scan images can manage this kind of conversion
-  static void convert(const usImagePostScan2D<unsigned char> &image, const double &u, const double &v,
-                                                                    double &x,  double &y);
+  // Only post-scan images can manage this kind of conversion
+  static void convert(const usImagePostScan2D<unsigned char> &image, const double &u, const double &v, double &x,
+                      double &y);
 
   static void convert(const usImagePostScan3D<unsigned char> &image, const double &u, const double &v, const double &w,
-                                                                    double &x,  double &y, double &z);
+                      double &x, double &y, double &z);
 };
 
-#endif //US_PIXEL_METER_CONVERSION_H
+#endif // US_PIXEL_METER_CONVERSION_H

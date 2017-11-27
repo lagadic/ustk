@@ -38,9 +38,9 @@
 #ifndef __usPreScanToPostScan2DConverter_h_
 #define __usPreScanToPostScan2DConverter_h_
 
-#include <visp3/ustk_core/usPreScanToPostScan2DConverter.h>
 #include <visp3/ustk_core/usImagePostScan2D.h>
 #include <visp3/ustk_core/usImagePreScan2D.h>
+#include <visp3/ustk_core/usPreScanToPostScan2DConverter.h>
 
 /**
  * @class usPreScanToPostScan2DConverter
@@ -86,25 +86,25 @@ int main()
  */
 class VISP_EXPORT usPreScanToPostScan2DConverter
 {
-friend class usRFToPostScan2DConverter;
- public:
+  friend class usRFToPostScan2DConverter;
 
+public:
   usPreScanToPostScan2DConverter();
 
   ~usPreScanToPostScan2DConverter();
 
-  void convert(const usImagePreScan2D<unsigned char> &preScanImage, usImagePostScan2D<unsigned char> &postScanImage, double xResolution = 0., double yResolution = 0.);
+  void convert(const usImagePreScan2D<unsigned char> &preScanImage, usImagePostScan2D<unsigned char> &postScanImage,
+               double xResolution = 0., double yResolution = 0.);
 
 protected:
-
   void init(const usImagePostScan2D<unsigned char> &inputSettings, const int BModeSampleNumber,
             const int scanLineNumber);
 
-  void init(const usTransducerSettings &inputSettings, const int BModeSampleNumber,
-            const int scanLineNumber, const double xResolution, const double yResolution);
+  void init(const usTransducerSettings &inputSettings, const int BModeSampleNumber, const int scanLineNumber,
+            const double xResolution, const double yResolution);
 
- private:
-  double interpolateLinear(const vpImage<unsigned char>& I, double x, double y);
+private:
+  double interpolateLinear(const vpImage<unsigned char> &I, double x, double y);
 
   vpMatrix m_rMap;
   vpMatrix m_tMap;

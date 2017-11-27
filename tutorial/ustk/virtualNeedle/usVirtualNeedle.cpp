@@ -42,14 +42,13 @@
 /**
 * Constructor.
 */
-usVirtualNeedle::usVirtualNeedle(QWidget* parent, Qt::WindowFlags f) : usViewerWidget(parent,f)
+usVirtualNeedle::usVirtualNeedle(QWidget *parent, Qt::WindowFlags f) : usViewerWidget(parent, f)
 {
   // POLYDATA
   m_meshPolyData = vtkPolyData::New();
   // Create a cylinder for the needle
-  vtkSmartPointer<vtkCylinderSource> cylinderSource =
-    vtkSmartPointer<vtkCylinderSource>::New();
-  cylinderSource->SetCenter(0,0,0);
+  vtkSmartPointer<vtkCylinderSource> cylinderSource = vtkSmartPointer<vtkCylinderSource>::New();
+  cylinderSource->SetCenter(0, 0, 0);
   cylinderSource->SetRadius(0.0001);
   cylinderSource->SetHeight(0.01);
   cylinderSource->SetResolution(100);
@@ -57,22 +56,21 @@ usVirtualNeedle::usVirtualNeedle(QWidget* parent, Qt::WindowFlags f) : usViewerW
   m_meshNeedle = cylinderSource->GetOutput();
 
   // MAPPERS - ACTORS
-  vtkSmartPointer<vtkPolyDataMapper> cylinderMapper =
-    vtkSmartPointer<vtkPolyDataMapper>::New();
-  cylinderMapper->SetInputConnection( cylinderSource->GetOutputPort());
+  vtkSmartPointer<vtkPolyDataMapper> cylinderMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+  cylinderMapper->SetInputConnection(cylinderSource->GetOutputPort());
   m_needleActor = vtkSmartPointer<vtkActor>::New();
-  m_needleActor->GetProperty()->SetColor(1.0,0,0); //red
+  m_needleActor->GetProperty()->SetColor(1.0, 0, 0); // red
   m_needleActor->GetProperty()->SetOpacity(1.0);
   m_needleActor->SetMapper(cylinderMapper);
 
-  //Axes
+  // Axes
   m_axesActor = vtkSmartPointer<vtkAxesActor>::New();
 
-  //arrows of 1cm
+  // arrows of 1cm
   m_axesActor->SetXAxisLabelText("X");
   m_axesActor->SetYAxisLabelText("Y");
   m_axesActor->SetZAxisLabelText("Z");
-  m_axesActor->SetTotalLength(0.01,0.01,0.01); // 10cm each
+  m_axesActor->SetTotalLength(0.01, 0.01, 0.01); // 10cm each
 
   // Setup renderer
   renderer = vtkRenderer::New();
@@ -82,7 +80,7 @@ usVirtualNeedle::usVirtualNeedle(QWidget* parent, Qt::WindowFlags f) : usViewerW
   renderer->ResetCamera();
 
   // Setup render window
-  vtkRenderWindow* renderWindow = this->GetRenderWindow();
+  vtkRenderWindow *renderWindow = this->GetRenderWindow();
   renderWindow->AddRenderer(renderer);
 }
 /*
@@ -95,10 +93,7 @@ usVirtualNeedle::~usVirtualNeedle()
 * Qt paint event overload if needed to update Qt widget
 * @param event QPaintEvent.
 */
-void usVirtualNeedle::paintEvent( QPaintEvent* event )
-{
-  usViewerWidget::paintEvent( event );
-}
+void usVirtualNeedle::paintEvent(QPaintEvent *event) { usViewerWidget::paintEvent(event); }
 
 /**
 * Qt key press event catcher, used to move the virtual needle in the scene.
@@ -106,58 +101,50 @@ void usVirtualNeedle::paintEvent( QPaintEvent* event )
 */
 void usVirtualNeedle::keyPressEvent(QKeyEvent *event)
 {
-  if(event->key() == Qt::Key_Left) {
+  if (event->key() == Qt::Key_Left) {
     vpHomogeneousMatrix transform;
     transform.eye();
-    transform[0][3] = 0.001;// add 1mm on X axis
+    transform[0][3] = 0.001; // add 1mm on X axis
     updateNeedlePosition(transform);
-  }
-  else if(event->key() == Qt::Key_Right) {
+  } else if (event->key() == Qt::Key_Right) {
     vpHomogeneousMatrix transform;
     transform.eye();
-    transform[0][3] = -0.001;// minus 1mm on X axis
+    transform[0][3] = -0.001; // minus 1mm on X axis
     updateNeedlePosition(transform);
-  }
-  else if(event->key() == Qt::Key_Up) {
+  } else if (event->key() == Qt::Key_Up) {
     vpHomogeneousMatrix transform;
     transform.eye();
-    transform[1][3] = 0.001;// add 1mm on Y axis
+    transform[1][3] = 0.001; // add 1mm on Y axis
     updateNeedlePosition(transform);
-  }
-  else if(event->key() == Qt::Key_Down) {
+  } else if (event->key() == Qt::Key_Down) {
     vpHomogeneousMatrix transform;
     transform.eye();
-    transform[1][3] = -0.001;// remove 1mm on Y axis
+    transform[1][3] = -0.001; // remove 1mm on Y axis
     updateNeedlePosition(transform);
-  }
-  else if(event->key() == Qt::Key_PageUp) {
+  } else if (event->key() == Qt::Key_PageUp) {
     vpHomogeneousMatrix transform;
     transform.eye();
-    transform[2][3] = 0.001;// remove 1mm on Z axis
+    transform[2][3] = 0.001; // remove 1mm on Z axis
     updateNeedlePosition(transform);
-  }
-  else if(event->key() == Qt::Key_PageDown) {
+  } else if (event->key() == Qt::Key_PageDown) {
     vpHomogeneousMatrix transform;
     transform.eye();
-    transform[2][3] = -0.001;// remove 1mm on Z axis
+    transform[2][3] = -0.001; // remove 1mm on Z axis
     updateNeedlePosition(transform);
-  }
-  else if(event->key() == Qt::Key_Space) { // move first point of the mesh of 1mm along Z
-    double * point1 = m_meshPolyData->GetPoints()->GetPoint(0);
+  } else if (event->key() == Qt::Key_Space) { // move first point of the mesh of 1mm along Z
+    double *point1 = m_meshPolyData->GetPoints()->GetPoint(0);
     point1[2] += 0.001;
-    m_meshPolyData->GetPoints()->SetPoint(0,point1);
+    m_meshPolyData->GetPoints()->SetPoint(0, point1);
     m_meshPolyData->GetPoints()->Modified();
     this->GetRenderWindow()->Render();
-  }
-  else if(event->key() == Qt::Key_0) {// move first point of the mesh of - 1mm along Z
-    double * point1 = m_meshPolyData->GetPoints()->GetPoint(0);
+  } else if (event->key() == Qt::Key_0) { // move first point of the mesh of - 1mm along Z
+    double *point1 = m_meshPolyData->GetPoints()->GetPoint(0);
     point1[2] -= 0.001;
-    m_meshPolyData->GetPoints()->SetPoint(0,point1);
+    m_meshPolyData->GetPoints()->SetPoint(0, point1);
     m_meshPolyData->GetPoints()->Modified();
     this->GetRenderWindow()->Render();
-  }
-  else {
-    usViewerWidget::keyPressEvent( event );
+  } else {
+    usViewerWidget::keyPressEvent(event);
   }
 }
 
@@ -165,14 +152,14 @@ void usVirtualNeedle::keyPressEvent(QKeyEvent *event)
 * Setter for the mesh to introcuce in the scene.
 * @param mesh The mesh, under vtkPolydataFormat.
 */
-void usVirtualNeedle::setMeshInScene(vtkPolyData* mesh) {
+void usVirtualNeedle::setMeshInScene(vtkPolyData *mesh)
+{
   m_meshPolyData = mesh;
 
-  vtkSmartPointer<vtkPolyDataMapper> meshMapper =
-    vtkSmartPointer<vtkPolyDataMapper>::New();
+  vtkSmartPointer<vtkPolyDataMapper> meshMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
   meshMapper->SetInputData(mesh);
   m_meshActor = vtkSmartPointer<vtkActor>::New();
-  m_meshActor->GetProperty()->SetColor(0,0,1.0); //blue
+  m_meshActor->GetProperty()->SetColor(0, 0, 1.0); // blue
   m_meshActor->SetMapper(meshMapper);
 
   renderer->AddActor(m_meshActor);
@@ -180,27 +167,28 @@ void usVirtualNeedle::setMeshInScene(vtkPolyData* mesh) {
 
 /**
 * Slot to call every time you want to update the virtual needle positon.
-* @param transform The homogeneous matrix of the needle movement since last call (can be considered as a "delta" movement).
+* @param transform The homogeneous matrix of the needle movement since last call (can be considered as a "delta"
+* movement).
 */
-void usVirtualNeedle::updateNeedlePosition(vpHomogeneousMatrix transform) {
+void usVirtualNeedle::updateNeedlePosition(vpHomogeneousMatrix transform)
+{
 
-  if(m_needleActor->GetUserMatrix() == NULL) { //init case
+  if (m_needleActor->GetUserMatrix() == NULL) { // init case
     vtkSmartPointer<vtkMatrix4x4> vtkMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
-    usVTKConverter::convert(transform,vtkMatrix);
+    usVTKConverter::convert(transform, vtkMatrix);
     m_needleActor->SetUserMatrix(vtkMatrix);
-  }
-  else {
+  } else {
     // get current matrix
     vpHomogeneousMatrix currentTransform;
     currentTransform.eye();
-    usVTKConverter::convert(m_needleActor->GetUserMatrix(),currentTransform);
+    usVTKConverter::convert(m_needleActor->GetUserMatrix(), currentTransform);
 
     // Conversion, taking in account current transform of the needle
     vpHomogeneousMatrix newTransform = currentTransform * transform;
 
     // set new position
-    vtkMatrix4x4* vtkNewtransform = vtkMatrix4x4::New();
-    usVTKConverter::convert(newTransform,vtkNewtransform);
+    vtkMatrix4x4 *vtkNewtransform = vtkMatrix4x4::New();
+    usVTKConverter::convert(newTransform, vtkNewtransform);
 
     m_needleActor->SetUserMatrix(vtkNewtransform);
     this->GetRenderWindow()->Render();
@@ -208,18 +196,15 @@ void usVirtualNeedle::updateNeedlePosition(vpHomogeneousMatrix transform) {
 }
 
 /**
-* Point set of the mesh getter. To update a point position: call GetPoint(int ptIndex), update the coordinates, and then call SetPoint(ptIndex,yourPoint) followed by Modified() to update vtk object.
+* Point set of the mesh getter. To update a point position: call GetPoint(int ptIndex), update the coordinates, and then
+* call SetPoint(ptIndex,yourPoint) followed by Modified() to update vtk object.
 * @return The points of the mesh (pointer);
 */
-vtkPoints * usVirtualNeedle::getMeshPoints() {
-  return m_meshPolyData->GetPoints();
-}
+vtkPoints *usVirtualNeedle::getMeshPoints() { return m_meshPolyData->GetPoints(); }
 
 /**
 * To render the scene, after some updates done on objects.
 */
-void usVirtualNeedle::render() {
-  this->GetRenderWindow()->Render();
-}
+void usVirtualNeedle::render() { this->GetRenderWindow()->Render(); }
 
 #endif

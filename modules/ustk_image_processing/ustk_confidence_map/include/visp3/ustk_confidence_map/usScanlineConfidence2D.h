@@ -46,10 +46,10 @@
 *
 * See \cite Chatelain15a, \cite Chatelain16a and \cite Chatelain17a for more details.
 */
-class VISP_EXPORT usScanlineConfidence2D {
+class VISP_EXPORT usScanlineConfidence2D
+{
 
- public:
-
+public:
   usScanlineConfidence2D();
 
   virtual ~usScanlineConfidence2D();

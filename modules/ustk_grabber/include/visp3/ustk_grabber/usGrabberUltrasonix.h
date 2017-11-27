@@ -43,22 +43,22 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-#include <cmath>
-#include <sys/socket.h>
-#include <netinet/in.h>
 #include <arpa/inet.h>
+#include <cmath>
+#include <netinet/in.h>
+#include <sys/socket.h>
 
+#include <cerrno>
 #include <cstdio>
 #include <cstdlib>
-#include <iostream>
 #include <cstring>
+#include <iostream>
 #include <unistd.h> // for close(int socket_id)
-#include <cerrno>
 
 #include <visp3/core/vpTime.h>
 
 #include <visp3/ustk_core/us.h>
-//usImages
+// usImages
 #include <visp3/ustk_core/usImagePostScan2D.h>
 #include <visp3/ustk_core/usImagePreScan2D.h>
 #include <visp3/ustk_core/usImagePreScan3D.h>
@@ -67,13 +67,11 @@
 #define PORT 5555
 #define NUM_FRAME_OFFSET 2
 
-
 // 4DC7-3 probe properties
 #define US_4DC7_DEG_PER_LINE 0.608767657441f
 //#define US_4DC7_PROBE_RADIUS 0.04f // m
 //#define US_4DC7_MOTOR_RADIUS 0.02725f // m
 #define US_4DC7_BSAMPLE_DISTANCE 0.000308f // m
-
 
 /**
  * @class usGrabberUltrasonix
@@ -82,49 +80,47 @@
  *
  * Class for Ultrasonix data grabber.
  */
-class VISP_EXPORT usGrabberUltrasonix {
- public:
-
+class VISP_EXPORT usGrabberUltrasonix
+{
+public:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-  struct SocketHeader3D
-  {
+  struct SocketHeader3D {
     double startTime;
-    int imageType; // 0: prescan 1: postscan 2: rf
-    int volumeNumber; // Number of volumes in the sequence
-    int framesPerVolume; // Frames per volumes
-    int width; // Frame width (scan line number)
-    int height; // Frame height (sample number)
-    int sampleSize; // Sample size (in bits)
-    int degPerFr; // TO RENAME ! Frame pitch (check if the value is correct) (x 1000?)
-    int BSampleFreq; // Sampling frequency (Hz)
-    int ProbeElementPitch; //micron
-    int ProbeRadius; //micron
-    int MotorRadius; //micron
-    int framerate; // Frames per second
+    int imageType;         // 0: prescan 1: postscan 2: rf
+    int volumeNumber;      // Number of volumes in the sequence
+    int framesPerVolume;   // Frames per volumes
+    int width;             // Frame width (scan line number)
+    int height;            // Frame height (sample number)
+    int sampleSize;        // Sample size (in bits)
+    int degPerFr;          // TO RENAME ! Frame pitch (check if the value is correct) (x 1000?)
+    int BSampleFreq;       // Sampling frequency (Hz)
+    int ProbeElementPitch; // micron
+    int ProbeRadius;       // micron
+    int MotorRadius;       // micron
+    int framerate;         // Frames per second
   };
-#endif //DOXYGEN_SHOULD_SKIP_THIS
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
-  struct usGrabberCommunicationInformations
-  {
-  int m_serv_fd;
-  int m_cli_fd;
-  socklen_t m_clilen;
-  struct sockaddr_in m_serv_addr;
-  struct sockaddr_in m_cli_addr;
-  SocketHeader3D m_header;
-  double m_localTime;
-  double m_deviceTime;
-  int m_szFrm;
-  int m_szVol;
-  unsigned char *m_voldata;
-  int m_byteSizeFrmInf;
-  char *m_frmInf;
-  int m_totFrmIdx;
-  double m_frmTime;
-  int m_iter;
-  int m_previousFrmIdx;
-  int m_frmIdx;
-  double m_frameRate;
+  struct usGrabberCommunicationInformations {
+    int m_serv_fd;
+    int m_cli_fd;
+    socklen_t m_clilen;
+    struct sockaddr_in m_serv_addr;
+    struct sockaddr_in m_cli_addr;
+    SocketHeader3D m_header;
+    double m_localTime;
+    double m_deviceTime;
+    int m_szFrm;
+    int m_szVol;
+    unsigned char *m_voldata;
+    int m_byteSizeFrmInf;
+    char *m_frmInf;
+    int m_totFrmIdx;
+    double m_frmTime;
+    int m_iter;
+    int m_previousFrmIdx;
+    int m_frmIdx;
+    double m_frameRate;
   };
 
   /**
@@ -135,11 +131,11 @@ class VISP_EXPORT usGrabberUltrasonix {
   /**
    * Destructor.
    */
-   ~usGrabberUltrasonix();
+  ~usGrabberUltrasonix();
 
-  usGrabberCommunicationInformations* getCommunicationsInformations(){return &m_communicationInormations;}
+  usGrabberCommunicationInformations *getCommunicationsInformations() { return &m_communicationInormations; }
 
-  us::ImageType getImageType() const {return m_imageType;}
+  us::ImageType getImageType() const { return m_imageType; }
 
   /**
    * Get the frame rate.
@@ -151,7 +147,7 @@ class VISP_EXPORT usGrabberUltrasonix {
    */
   int getSocket() const;
 
-  usTransducerSettings getTransducerSettings() const {return m_transducerSettings;}
+  usTransducerSettings getTransducerSettings() const { return m_transducerSettings; }
 
   /**
    * Initialization method.
@@ -170,17 +166,16 @@ class VISP_EXPORT usGrabberUltrasonix {
    */
   void start();
 
-  usMotorSettings getMotorSettings() const {return m_motorSettings;}
+  usMotorSettings getMotorSettings() const { return m_motorSettings; }
 
-  //void grabFrame( ImageType * imageToWrite);
+  // void grabFrame( ImageType * imageToWrite);
 
   /**
    * Close input connection.
    */
   void stop();
 
- private:
-
+private:
   usTransducerSettings m_transducerSettings;
   usMotorSettings m_motorSettings;
 

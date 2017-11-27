@@ -36,10 +36,10 @@
 * @brief Input/output operations between ultrasound images and binary raw files.
 */
 
-#include <visp3/core/vpException.h>
-#include <visp3/ustk_io/usRawFileParser.h>
 #include <fstream>
 #include <iostream>
+#include <visp3/core/vpException.h>
+#include <visp3/ustk_io/usRawFileParser.h>
 
 /**
 * Reading method for unisgned char 3D images.
@@ -50,7 +50,7 @@ void usRawFileParser::read(usImage3D<unsigned char> &image3D, const std::string 
 {
   std::ifstream fileStream(rawFilename.c_str(), std::ios::in | std::ios::binary);
   unsigned int i = 0;
-  while (i<image3D.getSize()){
+  while (i < image3D.getSize()) {
     char c;
     fileStream.get(c);
     image3D[i] = c;
@@ -68,7 +68,7 @@ void usRawFileParser::write(const usImage3D<unsigned char> &image3D, const std::
 {
   std::fstream fileStream(rawFilename.c_str(), std::ios::out | std::ios::binary);
   unsigned int i = 0;
-  while (i<image3D.getSize()){
+  while (i < image3D.getSize()) {
     fileStream.put(image3D[i]);
     i++;
   }
@@ -84,8 +84,8 @@ void usRawFileParser::read(usImage3D<short> &image3D, const std::string &rawFile
 {
   std::ifstream fileStream(rawFilename.c_str(), std::ios::in | std::ios::binary);
   unsigned int i = 0;
-  while (i<image3D.getSize()){
-    fileStream.read((char*) (image3D.getData() + i),sizeof(short));
+  while (i < image3D.getSize()) {
+    fileStream.read((char *)(image3D.getData() + i), sizeof(short));
     i++;
   }
   fileStream.close();
@@ -100,8 +100,8 @@ void usRawFileParser::write(const usImage3D<short> &image3D, const std::string &
 {
   std::fstream fileStream(rawFilename.c_str(), std::ios::out | std::ios::binary);
   unsigned int i = 0;
-  while (i<image3D.getSize()){
-    fileStream.write((char*) (image3D.getConstData() + i),sizeof(short));
+  while (i < image3D.getSize()) {
+    fileStream.write((char *)(image3D.getConstData() + i), sizeof(short));
     i++;
   }
   fileStream.close();
@@ -154,4 +154,4 @@ void usRawFileParser::write(const vpImage<short> &image2D, const std::string &ra
   fileStream.write((char *)image2D.bitmap, image2D.getSize() * sizeof(short));
   fileStream.close();
 }
-#endif //DOXYGEN_SHOULD_SKIP_THIS
+#endif // DOXYGEN_SHOULD_SKIP_THIS

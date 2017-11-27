@@ -3,44 +3,45 @@
 #include <iostream>
 #include <visp3/ustk_core/usConfig.h>
 
-#if (defined(USTK_HAVE_QT5) || defined(USTK_HAVE_VTK_QT)) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(USTK_HAVE_FFTW)
+#if (defined(USTK_HAVE_QT5) || defined(USTK_HAVE_VTK_QT)) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) &&     \
+    defined(USTK_HAVE_FFTW)
 
-#include <QtCore/QThread>
 #include <QApplication>
+#include <QtCore/QThread>
 
-#include <visp3/ustk_core/usRFToPreScan2DConverter.h>
 #include <visp3/ustk_core/usPreScanToPostScan2DConverter.h>
+#include <visp3/ustk_core/usRFToPreScan2DConverter.h>
 #include <visp3/ustk_grabber/usNetworkGrabberRF2D.h>
 
-#include <visp3/gui/vpDisplayX.h>
 #include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayX.h>
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
   // QT application
-  QApplication app( argc, argv );
+  QApplication app(argc, argv);
 
-  QThread * grabbingThread = new QThread();
+  QThread *grabbingThread = new QThread();
 
-  usNetworkGrabberRF2D * qtGrabber = new usNetworkGrabberRF2D();
-  qtGrabber->setConnection(true);
+  usNetworkGrabberRF2D *qtGrabber = new usNetworkGrabberRF2D();
+  qtGrabber->connectToServer();
 
   // setting acquisition parameters
   usNetworkGrabber::usInitHeaderSent header;
-  header.probeId = 15; // 4DC7 id = 15
-  header.slotId = 0; //top slot id = 0
-  header.imagingMode = 12; //B-mode = 0, RF = 12
+  header.probeId = 15;     // 4DC7 id = 15
+  header.slotId = 0;       // top slot id = 0
+  header.imagingMode = 12; // B-mode = 0, RF = 12
 
-  //prepare image;
-  usFrameGrabbedInfo<usImageRF2D<short int> >* grabbedFrame;
+  // prepare image;
+  usFrameGrabbedInfo<usImageRF2D<short int> > *grabbedFrame;
 
-  //prepare converters
+  // prepare converters
   usImagePreScan2D<unsigned char> preScanImage;
   usImagePostScan2D<unsigned char> postscanImage;
   postscanImage.setHeightResolution(0.0005);
   postscanImage.setWidthResolution(0.0005);
 
-  //ultrasonix 4DC7 probe settings
+  // ultrasonix 4DC7 probe settings
   postscanImage.setTransducerConvexity(true);
   postscanImage.setTransducerRadius(0.04);
   postscanImage.setScanLineNumber(128);
@@ -51,11 +52,11 @@ int main(int argc, char** argv)
   usRFToPreScan2DConverter converterRF;
   usPreScanToPostScan2DConverter scanConverter;
 
-  //Prepare display
+// Prepare display
 #if defined(VISP_HAVE_X11)
-  vpDisplayX * display = NULL;
+  vpDisplayX *display = NULL;
 #elif defined(VISP_HAVE_GDI)
-  vpDisplayGDI * display = NULL;
+  vpDisplayGDI *display = NULL;
 #endif
   bool displayInit = false;
 
@@ -72,47 +73,46 @@ int main(int argc, char** argv)
 
   std::cout << "waiting ultrasound initialisation..." << std::endl;
 
-  //our local grabbing loop
+  // our local grabbing loop
   do {
-    if(qtGrabber->isFirstFrameAvailable()) {
+    if (qtGrabber->isFirstFrameAvailable()) {
       grabbedFrame = qtGrabber->acquire();
 
-      std::cout <<"MAIN THREAD received frame No : " << grabbedFrame->getFrameCount() << std::endl;
+      std::cout << "MAIN THREAD received frame No : " << grabbedFrame->getFrameCount() << std::endl;
 
       double startTime = vpTime::measureTimeMs();
-      //convert RF to pre-scan to display something ...
-      converterRF.convert(*grabbedFrame,preScanImage);
+      // convert RF to pre-scan to display something ...
+      converterRF.convert(*grabbedFrame, preScanImage);
 
       double endRFConvertTime = vpTime::measureTimeMs();
       std::cout << "RF conversion time (sec) = " << (endRFConvertTime - startTime) / 1000.0 << std::endl;
 
-      scanConverter.convert(preScanImage,postscanImage);
+      scanConverter.convert(preScanImage, postscanImage);
 
       double endScanConvertTime = vpTime::measureTimeMs();
       std::cout << "scan-conversion time (sec) = " << (endScanConvertTime - endRFConvertTime) / 1000.0 << std::endl;
 
-      //init display
-      if(!displayInit && postscanImage.getHeight() !=0 && postscanImage.getWidth() !=0) {
+      // init display
+      if (!displayInit && postscanImage.getHeight() != 0 && postscanImage.getWidth() != 0) {
 #if defined(VISP_HAVE_X11)
-		  display = new vpDisplayX(postscanImage);
+        display = new vpDisplayX(postscanImage);
 #elif defined(VISP_HAVE_GDI)
-		  display = new vpDisplayGDI(postscanImage);
+        display = new vpDisplayGDI(postscanImage);
 #endif
         displayInit = true;
       }
 
       // processing display
-      if(displayInit) {
+      if (displayInit) {
         vpDisplay::display(postscanImage);
         vpDisplay::flush(postscanImage);
       }
-    }
-    else {
+    } else {
       vpTime::wait(10);
     }
-  } while(captureRunning);
+  } while (captureRunning);
 
-  if(displayInit) {
+  if (displayInit) {
     delete display;
   }
 

@@ -35,17 +35,16 @@
  * @brief Input/output operations between ultrasound image settings and the assiciated xml files.
  */
 
-#include<visp3/ustk_io/usImageSettingsXmlParser.h>
+#include <visp3/ustk_io/usImageSettingsXmlParser.h>
 #ifdef VISP_HAVE_XML2
 
- /**
- * Default constructor.
- */
+/**
+* Default constructor.
+*/
 usImageSettingsXmlParser::usImageSettingsXmlParser()
-  : m_transducerSettings(usTransducerSettings()),
-    m_spacingX(0.0), m_spacingY(0.0), m_spacingZ(0.0),
-    m_motorSettings(usMotorSettings()), m_imageFileName(std::string("")),
-    m_image_type(us::UNKNOWN), m_is_3D(false), m_is_sequence(false)
+  : m_transducerSettings(usTransducerSettings()), m_spacingX(0.0), m_spacingY(0.0), m_spacingZ(0.0),
+    m_motorSettings(usMotorSettings()), m_imageFileName(std::string("")), m_image_type(us::UNKNOWN), m_is_3D(false),
+    m_is_sequence(false)
 {
   nodeMap["settings"] = CODE_XML_SETTINGS;
   nodeMap["image_type"] = CODE_XML_IMAGE_TYPE;
@@ -75,7 +74,7 @@ usImageSettingsXmlParser::usImageSettingsXmlParser()
 * Assignement operator.
 * @param twinparser usImageSettingsXmlParser to assign.
 */
-usImageSettingsXmlParser& usImageSettingsXmlParser::operator =(const usImageSettingsXmlParser& twinparser)
+usImageSettingsXmlParser &usImageSettingsXmlParser::operator=(const usImageSettingsXmlParser &twinparser)
 {
   m_transducerSettings = twinparser.getTransducerSettings();
   m_imageFileName = twinparser.getImageFileName();
@@ -95,99 +94,99 @@ usImageSettingsXmlParser& usImageSettingsXmlParser::operator =(const usImageSett
 /**
 * Destructor.
 */
-usImageSettingsXmlParser::~usImageSettingsXmlParser()
-{
-  
-}
+usImageSettingsXmlParser::~usImageSettingsXmlParser() {}
 
 /**
 * Reading method, called by vpXmlParser::parse().
 * @param doc a pointer representing the document
 * @param node : the root node of the document
 */
-void
-usImageSettingsXmlParser::readMainClass (xmlDocPtr doc, xmlNodePtr node)
+void usImageSettingsXmlParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
 {
   std::string value;
-  for(xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;  dataNode = dataNode->next)  {
-    if(dataNode->type == XML_ELEMENT_NODE){
-      std::map<std::string, int>::iterator iter_data= this->nodeMap.find((char*)dataNode->name);
+  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL; dataNode = dataNode->next) {
+    if (dataNode->type == XML_ELEMENT_NODE) {
+      std::map<std::string, int>::iterator iter_data = this->nodeMap.find((char *)dataNode->name);
       if (iter_data != nodeMap.end()) {
         switch (iter_data->second) {
         case CODE_XML_IMAGE_TYPE:
           value = xmlReadStringChild(doc, dataNode);
           if (strcmp(value.c_str(), "postscan") == 0) {
             this->m_image_type = us::POSTSCAN_2D;
-          }
-          else if (strcmp(value.c_str(), "prescan") == 0) {
+          } else if (strcmp(value.c_str(), "prescan") == 0) {
             this->m_image_type = us::PRESCAN_2D;
-          }
-          else if (strcmp(value.c_str(), "rf") == 0) {
+          } else if (strcmp(value.c_str(), "rf") == 0) {
             this->m_image_type = us::RF_2D;
-          }
-          else
+          } else
             throw(vpException(vpException::fatalError, std::string("unknown image type in xml file")));
           break;
         case CODE_XML_AXIAL_RESOLUTION:
           if (this->m_image_type == us::PRESCAN_2D || this->m_image_type == us::RF_2D) {
-            this->m_axialResolution =  xmlReadDoubleChild(doc, dataNode);
-          }
-          else 
-            throw(vpException(vpException::fatalError, std::string("Trying to assign an axial resolution to a post-scan image !")));
+            this->m_axialResolution = xmlReadDoubleChild(doc, dataNode);
+          } else
+            throw(vpException(vpException::fatalError,
+                              std::string("Trying to assign an axial resolution to a post-scan image !")));
           break;
         case CODE_XML_HEIGHT_RESOLUTION:
           if (this->m_image_type == us::RF_2D || this->m_image_type == us::PRESCAN_2D) {
-            throw(vpException(vpException::fatalError, std::string("Trying to assign an height resolution to a pre-scan image !")));
-          }
-          else if(this->m_is_3D) {
-            throw(vpException(vpException::fatalError, std::string("Trying to assign an height resolution to a 3D image ! Use spacing_y instead.")));
-          }
-          else 
+            throw(vpException(vpException::fatalError,
+                              std::string("Trying to assign an height resolution to a pre-scan image !")));
+          } else if (this->m_is_3D) {
+            throw(vpException(
+                vpException::fatalError,
+                std::string("Trying to assign an height resolution to a 3D image ! Use spacing_y instead.")));
+          } else
             this->m_heightResolution = xmlReadDoubleChild(doc, dataNode);
           break;
-        case CODE_XML_WIDTH_RESOLUTION :
+        case CODE_XML_WIDTH_RESOLUTION:
           if (this->m_image_type == us::RF_2D || this->m_image_type == us::PRESCAN_2D) {
-            throw(vpException(vpException::fatalError, std::string("Trying to assign an width resolution to a pre-scan image !")));
-          }
-          else if(this->m_is_3D) {
-            throw(vpException(vpException::fatalError, std::string("Trying to assign an height resolution to a 3D image ! Use spacing_x instead.")));
-          }
-          else
+            throw(vpException(vpException::fatalError,
+                              std::string("Trying to assign an width resolution to a pre-scan image !")));
+          } else if (this->m_is_3D) {
+            throw(vpException(
+                vpException::fatalError,
+                std::string("Trying to assign an height resolution to a 3D image ! Use spacing_x instead.")));
+          } else
             this->m_widthResolution = xmlReadDoubleChild(doc, dataNode);
           break;
-        case CODE_XML_SPACING_X :
+        case CODE_XML_SPACING_X:
           if (this->m_image_type == us::RF_2D || this->m_image_type == us::PRESCAN_2D) {
-            throw(vpException(vpException::fatalError, std::string("Trying to assign a spacing to a pre-scan image !")));
-          }
-          else if(!this->m_is_3D) {
-            throw(vpException(vpException::fatalError, std::string("Trying to assign a spacing to a 2D image ! Use height/width resolutions instead.")));
-          }
-          else
+            throw(
+                vpException(vpException::fatalError, std::string("Trying to assign a spacing to a pre-scan image !")));
+          } else if (!this->m_is_3D) {
+            throw(vpException(
+                vpException::fatalError,
+                std::string("Trying to assign a spacing to a 2D image ! Use height/width resolutions instead.")));
+          } else
             this->m_widthResolution = xmlReadDoubleChild(doc, dataNode);
           break;
-               case CODE_XML_SPACING_Y :
+        case CODE_XML_SPACING_Y:
           if (this->m_image_type == us::RF_2D || this->m_image_type == us::PRESCAN_2D) {
-            throw(vpException(vpException::fatalError, std::string("Trying to assign a spacing to a pre-scan image !")));
-          }
-          else if(!this->m_is_3D) {
-            throw(vpException(vpException::fatalError, std::string("Trying to assign an spacing to a 2D image ! Use height/width resolutions instead.")));
-          }
-          else
+            throw(
+                vpException(vpException::fatalError, std::string("Trying to assign a spacing to a pre-scan image !")));
+          } else if (!this->m_is_3D) {
+            throw(vpException(
+                vpException::fatalError,
+                std::string("Trying to assign an spacing to a 2D image ! Use height/width resolutions instead.")));
+          } else
             this->m_widthResolution = xmlReadDoubleChild(doc, dataNode);
           break;
-                case CODE_XML_SPACING_Z :
+        case CODE_XML_SPACING_Z:
           if (this->m_image_type == us::RF_2D || this->m_image_type == us::PRESCAN_2D) {
-            throw(vpException(vpException::fatalError, std::string("Trying to assign a spacing to a pre-scan image !")));
-          }
-          else if(!this->m_is_3D) {
-            throw(vpException(vpException::fatalError, std::string("Trying to assign an spacing to a 2D image ! Use height/width resolutions instead.")));
-          }
-          else
+            throw(
+                vpException(vpException::fatalError, std::string("Trying to assign a spacing to a pre-scan image !")));
+          } else if (!this->m_is_3D) {
+            throw(vpException(
+                vpException::fatalError,
+                std::string("Trying to assign an spacing to a 2D image ! Use height/width resolutions instead.")));
+          } else
             this->m_widthResolution = xmlReadDoubleChild(doc, dataNode);
           break;
-        case CODE_XML_SCANLINE_NUMBER :
+        case CODE_XML_SCANLINE_NUMBER:
           if (this->m_image_type == us::RF_2D || this->m_image_type == us::PRESCAN_2D) {
-            throw(vpException(vpException::fatalError, std::string("Trying to assign a scan line number to a pre-scan image (for pre-scan images scan line number is the image width) !")));
+            throw(vpException(vpException::fatalError,
+                              std::string("Trying to assign a scan line number to a pre-scan image (for pre-scan "
+                                          "images scan line number is the image width) !")));
           } else
             this->m_transducerSettings.setScanLineNumber(xmlReadIntChild(doc, dataNode));
           break;
@@ -219,14 +218,11 @@ usImageSettingsXmlParser::readMainClass (xmlDocPtr doc, xmlNodePtr node)
           value = xmlReadStringChild(doc, dataNode);
           if (strcmp(value.c_str(), "linear_motor") == 0) {
             this->m_motorSettings.setMotorType(usMotorSettings::LinearMotor);
-          }
-          else if (strcmp(value.c_str(), "tilting_motor") == 0) {
+          } else if (strcmp(value.c_str(), "tilting_motor") == 0) {
             this->m_motorSettings.setMotorType(usMotorSettings::TiltingMotor);
-          }
-          else if (strcmp(value.c_str(), "rotational_motor") == 0) {
+          } else if (strcmp(value.c_str(), "rotational_motor") == 0) {
             this->m_motorSettings.setMotorType(usMotorSettings::RotationalMotor);
-          }
-          else
+          } else
             throw(vpException(vpException::fatalError, std::string("unknown image type in xml file")));
           value = "";
           break;
@@ -242,7 +238,7 @@ usImageSettingsXmlParser::readMainClass (xmlDocPtr doc, xmlNodePtr node)
           this->m_is_sequence = true;
           break;
         case CODE_XML_SEQUENCE_LAST_IMAGE_NUMBER:
-          this->m_sequence_stop= xmlReadIntChild(doc, dataNode);
+          this->m_sequence_stop = xmlReadIntChild(doc, dataNode);
           this->m_is_sequence = true;
           break;
         default:
@@ -258,8 +254,7 @@ usImageSettingsXmlParser::readMainClass (xmlDocPtr doc, xmlNodePtr node)
 * Writing method, called by vpXmlParser::save().
 * @param node : the root node of the document
 */
-void 
-usImageSettingsXmlParser::writeMainClass(xmlNodePtr node)
+void usImageSettingsXmlParser::writeMainClass(xmlNodePtr node)
 {
   std::string imageFileName = m_imageFileName;
   xmlWriteStringChild(node, "image_file_name", imageFileName);
@@ -280,8 +275,7 @@ usImageSettingsXmlParser::writeMainClass(xmlNodePtr node)
     xmlWriteDoubleChild(node, "axial_resolution", m_axialResolution);
     xmlWriteDoubleChild(node, "transmit_frequency", m_transducerSettings.getTransmitFrequency());
     xmlWriteDoubleChild(node, "sampling_frequency", m_transducerSettings.getSamplingFrequency());
-  }
-  else if (this->m_image_type == us::POSTSCAN_2D) {
+  } else if (this->m_image_type == us::POSTSCAN_2D) {
     xmlWriteStringChild(node, "image_type", std::string("postscan"));
     xmlWriteDoubleChild(node, "scanline_pitch", m_transducerSettings.getScanLinePitch());
     xmlWriteDoubleChild(node, "probe_radius", m_transducerSettings.getTransducerRadius());
@@ -289,13 +283,12 @@ usImageSettingsXmlParser::writeMainClass(xmlNodePtr node)
     xmlWriteIntChild(node, "scanline_number", m_transducerSettings.getScanLineNumber());
     xmlWriteDoubleChild(node, "transmit_frequency", m_transducerSettings.getTransmitFrequency());
     xmlWriteDoubleChild(node, "sampling_frequency", m_transducerSettings.getSamplingFrequency());
-    if(m_is_3D) {
+    if (m_is_3D) {
       xmlWriteIntChild(node, "frame_number", m_motorSettings.getFrameNumber());
       xmlWriteDoubleChild(node, "spacing_x", m_spacingX);
       xmlWriteDoubleChild(node, "spacing_y", m_spacingY);
       xmlWriteDoubleChild(node, "spacing_z", m_spacingZ);
-    }
-    else {
+    } else {
       xmlWriteDoubleChild(node, "height_resolution", m_heightResolution);
       xmlWriteDoubleChild(node, "width_resolution", m_widthResolution);
     }
@@ -305,17 +298,15 @@ usImageSettingsXmlParser::writeMainClass(xmlNodePtr node)
     xmlWriteDoubleChild(node, "motor_radius", m_motorSettings.getMotorRadius());
     if (m_motorSettings.getMotorType() == usMotorSettings::LinearMotor) {
       xmlWriteStringChild(node, "motor_type", std::string("linear_motor"));
-    }
-    else if (m_motorSettings.getMotorType() == usMotorSettings::TiltingMotor) {
+    } else if (m_motorSettings.getMotorType() == usMotorSettings::TiltingMotor) {
       xmlWriteStringChild(node, "motor_type", std::string("tilting_motor"));
-    }
-    else if (m_motorSettings.getMotorType() == usMotorSettings::RotationalMotor) {
+    } else if (m_motorSettings.getMotorType() == usMotorSettings::RotationalMotor) {
       xmlWriteStringChild(node, "motor_type", std::string("rotational_motor"));
     }
   }
   if (m_is_sequence) {
-  std::cout << "writing sequence parameters" << std::endl;
-    //xmlWriteStringChild(node, "sequence_name", this->m_sequence_name);
+    std::cout << "writing sequence parameters" << std::endl;
+    // xmlWriteStringChild(node, "sequence_name", this->m_sequence_name);
     xmlWriteDoubleChild(node, "sequence_frame_rate", this->m_sequence_frame_rate);
     xmlWriteIntChild(node, "sequence_start_number", this->m_sequence_start);
     xmlWriteIntChild(node, "sequence_stop_number", this->m_sequence_stop);
@@ -333,10 +324,10 @@ usImageSettingsXmlParser::writeMainClass(xmlNodePtr node)
 * @param transmitFrequency : frequency of the ultrasound wave used to create the image.
 */
 void usImageSettingsXmlParser::setImageSettings(double transducerRadius, double scanLinePitch, bool isTransducerConvex,
-                                                double axialResolution, us::ImageType image_type, int samplingFrequency, int transmitFrequency)
+                                                double axialResolution, us::ImageType image_type, int samplingFrequency,
+                                                int transmitFrequency)
 {
-  if (image_type == us::PRESCAN_2D || image_type == us::RF_2D)
-  {
+  if (image_type == us::PRESCAN_2D || image_type == us::RF_2D) {
     m_transducerSettings.setTransducerConvexity(isTransducerConvex);
     m_transducerSettings.setTransducerRadius(transducerRadius);
     m_transducerSettings.setScanLinePitch(scanLinePitch);
@@ -344,8 +335,7 @@ void usImageSettingsXmlParser::setImageSettings(double transducerRadius, double 
     m_transducerSettings.setTransmitFrequency(transmitFrequency);
     m_axialResolution = axialResolution;
     m_image_type = image_type;
-  }
-  else {
+  } else {
     throw(vpException(vpException::fatalError, "trying to write axial resolution in a image not rf nor pre-scan !"));
   }
 }
@@ -361,8 +351,9 @@ void usImageSettingsXmlParser::setImageSettings(double transducerRadius, double 
 * @param samplingFrequency : frequency used to sample the ultrasound wave during the acquisition.
 * @param transmitFrequency : frequency of the ultrasound wave used to create the image.
 */
-void usImageSettingsXmlParser::setImageSettings(double transducerRadius, double scanLinePitch, bool isTransducerConvex, unsigned int scanLineNumber,
-                                                double widthResolution, double heightResolution, int samplingFrequency, int transmitFrequency)
+void usImageSettingsXmlParser::setImageSettings(double transducerRadius, double scanLinePitch, bool isTransducerConvex,
+                                                unsigned int scanLineNumber, double widthResolution,
+                                                double heightResolution, int samplingFrequency, int transmitFrequency)
 {
   m_transducerSettings.setTransducerConvexity(isTransducerConvex);
   m_transducerSettings.setTransducerRadius(transducerRadius);
@@ -389,8 +380,5 @@ void usImageSettingsXmlParser::setMotorSettings(const usMotorSettings &motorSett
 * Setter for image file name associated to the settings wrote in the xml file.
 * @param imageFileName : image file name with extestion.
 */
-void usImageSettingsXmlParser::setImageFileName(const std::string &imageFileName)
-{ 
-  m_imageFileName = imageFileName;
-}
-#endif //VISP_HAVE_XML2
+void usImageSettingsXmlParser::setImageFileName(const std::string &imageFileName) { m_imageFileName = imageFileName; }
+#endif // VISP_HAVE_XML2

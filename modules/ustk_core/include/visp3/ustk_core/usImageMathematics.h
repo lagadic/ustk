@@ -49,70 +49,65 @@
  *
  * This class implements processing tools for ultrasound images.
  */
-namespace usImageMathematics {
+namespace usImageMathematics
+{
 
-enum InterpolationType {
-  NEAREST, BILINEAR, BICUBIC
-};
+enum InterpolationType { NEAREST, BILINEAR, BICUBIC };
 
 /**
 * Return the minimum value of the image.
 */
-template <class T>
-T min(const vpImage<T>& I);
+template <class T> T min(const vpImage<T> &I);
 
 /**
 * Return the maximum value of the image.
 */
-template <class T>
-T max(const vpImage<T>& I);
+template <class T> T max(const vpImage<T> &I);
 
 /**
 * Compute the image mean.
 */
-double VISP_EXPORT mean(const vpImage<double>& I);
+double VISP_EXPORT mean(const vpImage<double> &I);
 
 /**
 * Compute the sum of image intensities.
 */
-double VISP_EXPORT sum(const vpImage<double>& I);
+double VISP_EXPORT sum(const vpImage<double> &I);
 
 /**
 * Compute the sum of image intensities.
 */
-double VISP_EXPORT sum(const vpImage<unsigned char>& I);
+double VISP_EXPORT sum(const vpImage<unsigned char> &I);
 
 /**
 * Compute the absolute difference image from two images.
 */
-void VISP_EXPORT absoluteDiff(const vpImage<double>& I, const vpImage<double>& J,
-                  vpImage<double>& D);
+void VISP_EXPORT absoluteDiff(const vpImage<double> &I, const vpImage<double> &J, vpImage<double> &D);
 
 /**
 * Compute the normalized correlation between two images.
 */
-double VISP_EXPORT normalizedCorrelation(const vpImage<double>& I, const vpImage<double>& J);
+double VISP_EXPORT normalizedCorrelation(const vpImage<double> &I, const vpImage<double> &J);
 
 /**
 * Normalize the image intensities.
 */
-void VISP_EXPORT normalize(vpImage<double>& I);
+void VISP_EXPORT normalize(vpImage<double> &I);
 
 /**
 * Compute the column-wise mean intensities.
 */
-void VISP_EXPORT computeColumnMean(const vpImage<double>& I, vpColVector& V);
+void VISP_EXPORT computeColumnMean(const vpImage<double> &I, vpColVector &V);
 
 /**
 * Compute the column-wise mean intensities.
 */
-void VISP_EXPORT computeColumnMean(const vpImage<unsigned char>& I, vpColVector& V,
-                       const bool &rescale = true);
+void VISP_EXPORT computeColumnMean(const vpImage<unsigned char> &I, vpColVector &V, const bool &rescale = true);
 
 /**
 * Compute the mean value of an image within a mask.
 */
-double VISP_EXPORT computeRegionMean(const vpImage<unsigned char>& I, const vpImage<unsigned char>& M);
+double VISP_EXPORT computeRegionMean(const vpImage<unsigned char> &I, const vpImage<unsigned char> &M);
 
 /**
 * Compute the photometric moment of the image at order (p,q).
@@ -122,8 +117,8 @@ double VISP_EXPORT computePhotometricMoment(const vpImage<unsigned char> &I, int
 /**
 * Compute the photometric moment of the object at order (p,q).
 */
-double VISP_EXPORT computePhotometricMoment(const vpImage<unsigned char> &I, const vpImage<unsigned char> &M,
-                                int p, int q);
+double VISP_EXPORT computePhotometricMoment(const vpImage<unsigned char> &I, const vpImage<unsigned char> &M, int p,
+                                            int q);
 
 /**
 * Compute the image's photometric barycenter (first-order moment).
@@ -133,8 +128,8 @@ void VISP_EXPORT computeBarycenter(const vpImage<unsigned char> &I, double &xc, 
 /**
 * Compute the object's photometric barycenter (first-order moment).
 */
-void VISP_EXPORT computeBarycenter(const vpImage<unsigned char> &I, const vpImage<unsigned char> &M,
-                       double &xc, double &yc);
+void VISP_EXPORT computeBarycenter(const vpImage<unsigned char> &I, const vpImage<unsigned char> &M, double &xc,
+                                   double &yc);
 
 /**
 * Get the interpolated value at a given location.
@@ -158,30 +153,30 @@ void VISP_EXPORT extract(const vpImage<unsigned char> &Src, vpImage<double> &Dst
 }
 
 // Template implementations
-namespace usImageMathematics {
+namespace usImageMathematics
+{
 
-template <class T>
-T min(const vpImage<T>& I)
+template <class T> T min(const vpImage<T> &I)
 {
   unsigned int size = I.getSize();
   T min = I.bitmap[0];
   for (unsigned int i = 1; i < size; ++i)
-    if (I.bitmap[i] < min) min = I.bitmap[i];
+    if (I.bitmap[i] < min)
+      min = I.bitmap[i];
 
   return min;
 }
 
-template <class T>
-T max(const vpImage<T>& I)
+template <class T> T max(const vpImage<T> &I)
 {
   unsigned int size = I.getSize();
   T max = I.bitmap[0];
   for (unsigned int i = 1; i < size; ++i)
-    if (I.bitmap[i] > max) max = I.bitmap[i];
+    if (I.bitmap[i] > max)
+      max = I.bitmap[i];
 
   return max;
 }
 }
 
 #endif // US_IMAGE_MATHEMATICS
-

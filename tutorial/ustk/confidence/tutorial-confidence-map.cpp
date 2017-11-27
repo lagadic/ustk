@@ -2,18 +2,18 @@
 //! [capture-multi-threaded declaration]
 #include <iostream>
 
-#include <visp3/ustk_io/usImageIo.h>
-#include <visp3/ustk_core/usImagePreScan2D.h>
 #include <visp3/ustk_confidence_map/usScanlineConfidence2D.h>
+#include <visp3/ustk_core/usImagePreScan2D.h>
+#include <visp3/ustk_io/usImageIo.h>
 
-int main(int argc, const char* argv[])
+int main(int argc, const char *argv[])
 {
   std::string filename;
 
   // Command line options
-  for (int i=0; i<argc; i++) {
+  for (int i = 0; i < argc; i++) {
     if (std::string(argv[i]) == "--input")
-    filename = std::string(argv[i+1]);
+      filename = std::string(argv[i + 1]);
     else if (std::string(argv[i]) == "--help") {
       std::cout << "Usage: " << argv[0] << " [--input <filename>] [--help]" << std::endl;
       return 0;
@@ -44,4 +44,3 @@ int main(int argc, const char* argv[])
 
   return 0;
 }
-

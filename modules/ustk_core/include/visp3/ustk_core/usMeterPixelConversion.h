@@ -54,12 +54,12 @@
 class VISP_EXPORT usMeterPixelConversion
 {
 public:
-  //Only post-scan images can manage this kind of conversion
-  static void convert(const usImagePostScan2D<unsigned char> &image, const double &x, const double &y,
-                                                                    double &u,  double &v);
+  // Only post-scan images can manage this kind of conversion
+  static void convert(const usImagePostScan2D<unsigned char> &image, const double &x, const double &y, double &u,
+                      double &v);
 
   static void convert(const usImagePostScan3D<unsigned char> &image, const double &x, const double &y, const double &z,
-                                                                    double &u,  double &v, double &w);
+                      double &u, double &v, double &w);
 };
 
-#endif //US_METER_PIXEL_CONVERSION_H
+#endif // US_METER_PIXEL_CONVERSION_H

@@ -3,48 +3,39 @@
 #include <iostream>
 #include <visp3/ustk_core/usConfig.h>
 
-#if (defined(USTK_HAVE_QT5) || defined(USTK_HAVE_VTK_QT)) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(USTK_HAVE_FFTW)
+#if (defined(USTK_HAVE_QT5) || defined(USTK_HAVE_VTK_QT)) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) &&     \
+    defined(USTK_HAVE_FFTW)
 
-#include <QtCore/QThread>
 #include <QApplication>
+#include <QtCore/QThread>
 
 #include <visp3/ustk_core/usRFToPreScan3DConverter.h>
 #include <visp3/ustk_grabber/usNetworkGrabberRF3D.h>
 #include <visp3/ustk_io/usImageIo.h>
 
-#include <visp3/gui/vpDisplayX.h>
-#include <visp3/gui/vpDisplayGDI.h>
-
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
   // QT application
-  QApplication app( argc, argv );
+  QApplication app(argc, argv);
 
-  QThread * grabbingThread = new QThread();
+  QThread *grabbingThread = new QThread();
 
-  usNetworkGrabberRF3D * qtGrabber = new usNetworkGrabberRF3D();
-  qtGrabber->setConnection(true);
-  //qtGrabber->setVerbose(true);
+  usNetworkGrabberRF3D *qtGrabber = new usNetworkGrabberRF3D();
+  qtGrabber->connectToServer();
+  // qtGrabber->setVerbose(true);
   // setting acquisition parameters
   usNetworkGrabber::usInitHeaderSent header;
-  header.probeId = 15; // 4DC7 id = 15
-  header.slotId = 0; //top slot id = 0
-  header.imagingMode = 12; //B-mode = 0, RF = 12
+  header.probeId = 15;     // 4DC7 id = 15
+  header.slotId = 0;       // top slot id = 0
+  header.imagingMode = 12; // B-mode = 0, RF = 12
 
-  //prepare image;
-  usVolumeGrabbedInfo<usImageRF3D<short int> >* grabbedVolume;
+  // prepare image;
+  usVolumeGrabbedInfo<usImageRF3D<short int> > *grabbedVolume;
 
-  //prepare converter
+  // prepare converter
   usImagePreScan3D<unsigned char> preScanImage;
   usRFToPreScan3DConverter converter;
 
-  //Prepare display
-#if defined(VISP_HAVE_X11)
-  vpDisplayX * display = NULL;
-#elif defined(VISP_HAVE_GDI)
-  vpDisplayGDI * display = NULL;
-#endif
-  bool displayInit = false;
   bool captureRunning = true;
 
   // sending acquisition parameters
@@ -63,27 +54,22 @@ int main(int argc, char** argv)
 
   std::cout << "waiting ultrasound initialisation..." << std::endl;
 
-  //our local grabbing loop
+  // our local grabbing loop
   do {
-    if(qtGrabber->isFirstFrameAvailable()) {
+    if (qtGrabber->isFirstFrameAvailable()) {
       grabbedVolume = qtGrabber->acquire();
 
-      std::cout <<"MAIN THREAD received volume No : " << grabbedVolume->getVolumeCount() << std::endl;
+      std::cout << "MAIN THREAD received volume No : " << grabbedVolume->getVolumeCount() << std::endl;
 
-      //convert RF to pre-scan to save the image
-      converter.convert(*grabbedVolume,preScanImage);
+      // convert RF to pre-scan to save the image
+      converter.convert(*grabbedVolume, preScanImage);
 
       QString filename = QString("volume") + QString::number(grabbedVolume->getVolumeCount()) + QString(".mhd");
-      usImageIo::write(preScanImage,filename.toStdString());
-    }
-    else {
+      usImageIo::write(preScanImage, filename.toStdString());
+    } else {
       vpTime::wait(10);
     }
-  } while(captureRunning);
-
-  if(displayInit) {
-    delete display;
-  }
+  } while (captureRunning);
 
   return app.exec();
 }
@@ -91,7 +77,8 @@ int main(int argc, char** argv)
 #else
 int main()
 {
-  std::cout << "You should intall Qt5 (with wigdets and network modules), FFTW and GDI or X11 to run this tutorial" << std::endl;
+  std::cout << "You should intall Qt5 (with wigdets and network modules), FFTW and GDI or X11 to run this tutorial"
+            << std::endl;
   return 0;
 }
 

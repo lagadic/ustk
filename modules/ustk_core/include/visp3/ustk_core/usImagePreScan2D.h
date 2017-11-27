@@ -102,57 +102,50 @@ int main()
   \endcode
 
  */
-template<class Type>
-class usImagePreScan2D : public vpImage<Type>, public usImagePreScanSettings {
+template <class Type> class usImagePreScan2D : public vpImage<Type>, public usImagePreScanSettings
+{
 public:
-  //default constructors
+  // default constructors
   usImagePreScan2D();
-  //All parameters initialisation constructors
+  // All parameters initialisation constructors
   usImagePreScan2D(const vpImage<Type> &image, const usImagePreScanSettings &preScanSettings);
-  //usImagePreScan2D copy constructor
+  // usImagePreScan2D copy constructor
   usImagePreScan2D(const usImagePreScan2D &other);
 
-  //destructor
+  // destructor
   virtual ~usImagePreScan2D();
 
-  //Those parameters have to be passed in the constructor.
+  // Those parameters have to be passed in the constructor.
   unsigned int getBModeSampleNumber() const;
 
-  //assignement
-  usImagePreScan2D<Type>& operator=(const usImagePreScan2D<Type> &other);
+  // assignement
+  usImagePreScan2D<Type> &operator=(const usImagePreScan2D<Type> &other);
 
-  //comparison
+  // comparison
   bool operator==(const usImagePreScan2D<Type> &other);
   bool operator!=(const usImagePreScan2D<Type> &other);
 
   void setData(const vpImage<Type> image);
   void setScanLineNumber(unsigned int scanLineNumber);
 
-  //Filtering before calling vpImage::resize() to update scanLineNumber
+  // Filtering before calling vpImage::resize() to update scanLineNumber
   void resize(const unsigned int h, const unsigned int w);
   void resize(const unsigned int h, const unsigned int w, const Type val);
-
 };
 
 /**
 * Basic constructor, all settings set to default values.
 */
-template<class Type>
-usImagePreScan2D<Type>::usImagePreScan2D()
-  : vpImage<Type>(), usImagePreScanSettings()
-{
-
-}
+template <class Type> usImagePreScan2D<Type>::usImagePreScan2D() : vpImage<Type>(), usImagePreScanSettings() {}
 
 /**
 * Copy constructor.
 * @param other 2D pre-scan image you want to copy.
 */
-template<class Type>
-usImagePreScan2D<Type>::usImagePreScan2D(const usImagePreScan2D &other) :
-  vpImage<Type>(other), usImagePreScanSettings(other)
+template <class Type>
+usImagePreScan2D<Type>::usImagePreScan2D(const usImagePreScan2D &other)
+  : vpImage<Type>(other), usImagePreScanSettings(other)
 {
-
 }
 
 /**
@@ -160,9 +153,9 @@ usImagePreScan2D<Type>::usImagePreScan2D(const usImagePreScan2D &other) :
 * @param image Image you want to set.
 * @param preScanSettings Pre-scan settings you want to set.
 */
-template<class Type>
-usImagePreScan2D<Type>::usImagePreScan2D(const vpImage<Type> &image, const usImagePreScanSettings &preScanSettings) :
-  vpImage<Type>(image), usImagePreScanSettings(preScanSettings)
+template <class Type>
+usImagePreScan2D<Type>::usImagePreScan2D(const vpImage<Type> &image, const usImagePreScanSettings &preScanSettings)
+  : vpImage<Type>(image), usImagePreScanSettings(preScanSettings)
 {
   if (image.getWidth() != preScanSettings.getScanLineNumber())
     throw(vpException(vpException::badValue, "Pre-scan image width differ from transducer scanline number"));
@@ -171,19 +164,17 @@ usImagePreScan2D<Type>::usImagePreScan2D(const vpImage<Type> &image, const usIma
 /**
 * Destructor.
 */
-template<class Type>
-usImagePreScan2D<Type>::~usImagePreScan2D() {}
+template <class Type> usImagePreScan2D<Type>::~usImagePreScan2D() {}
 
 /**
 * Copy operator.
 */
-template<class Type>
-usImagePreScan2D<Type>& usImagePreScan2D<Type>::operator=(const usImagePreScan2D<Type> &other)
+template <class Type> usImagePreScan2D<Type> &usImagePreScan2D<Type>::operator=(const usImagePreScan2D<Type> &other)
 {
-  //from vpImage
+  // from vpImage
   vpImage<Type>::operator=(other);
 
-  //from usImagePreScanSettings
+  // from usImagePreScanSettings
   usImagePreScanSettings::operator=(other);
 
   return *this;
@@ -192,47 +183,43 @@ usImagePreScan2D<Type>& usImagePreScan2D<Type>::operator=(const usImagePreScan2D
 /**
 * Comparison operator.
 */
-template<class Type>
-bool usImagePreScan2D<Type>::operator==(const usImagePreScan2D<Type> &other)
+template <class Type> bool usImagePreScan2D<Type>::operator==(const usImagePreScan2D<Type> &other)
 {
-  return(vpImage<Type>::operator== (other) && usImagePreScanSettings::operator ==(other));
+  return (vpImage<Type>::operator==(other) && usImagePreScanSettings::operator==(other));
 }
 
 /**
 * Comparison operator.
 */
-template<class Type>
-bool usImagePreScan2D<Type>::operator!=(const usImagePreScan2D<Type> &other)
+template <class Type> bool usImagePreScan2D<Type>::operator!=(const usImagePreScan2D<Type> &other)
 {
-  return(!operator==(other));
+  return (!operator==(other));
 }
 
 /**
 * Operator to print 2D pre-scan image information on a stream.
 */
-template<class Type>
-std::ostream& operator<<(std::ostream& out, const usImagePreScan2D<Type> &other)
+template <class Type> std::ostream &operator<<(std::ostream &out, const usImagePreScan2D<Type> &other)
 {
   return out << static_cast<const usImagePreScanSettings &>(other)
-             << "number of B-mode samples in a scan line : "
-             << other.getBModeSampleNumber() << std::endl
-             << "number of scan lines : "
-             << other.getScanLineNumber() << std::endl;
+             << "number of B-mode samples in a scan line : " << other.getBModeSampleNumber() << std::endl
+             << "number of scan lines : " << other.getScanLineNumber() << std::endl;
 }
 
 /**
 * Get the number of A-samples of B-Mode samples in a scan line.
 * @return BModeSampleNumber Number of A-samples in a scan line.
 */
-template<class Type>
-unsigned int usImagePreScan2D<Type>::getBModeSampleNumber() const { return vpImage<Type>::getHeight(); }
+template <class Type> unsigned int usImagePreScan2D<Type>::getBModeSampleNumber() const
+{
+  return vpImage<Type>::getHeight();
+}
 
 /**
 * Setter for the image data.
 * @param image The image to set.
 */
-template<class Type>
-void usImagePreScan2D<Type>::setData(const vpImage<Type> image)
+template <class Type> void usImagePreScan2D<Type>::setData(const vpImage<Type> image)
 {
   vpImage<Type>::operator=(image);
   setScanLineNumber(image.getWidth());
@@ -244,8 +231,7 @@ void usImagePreScan2D<Type>::setData(const vpImage<Type> image)
  * Resize also the image width that is equal to the scan line number.
  * \param scanLineNumber Number of scan lines acquired by the transducer.
  */
-template<class Type>
-void usImagePreScan2D<Type>::setScanLineNumber(unsigned int scanLineNumber)
+template <class Type> void usImagePreScan2D<Type>::setScanLineNumber(unsigned int scanLineNumber)
 {
   vpImage<Type>::resize(vpImage<Type>::getHeight(), scanLineNumber);
   usTransducerSettings::setScanLineNumber(scanLineNumber);
@@ -258,8 +244,7 @@ void usImagePreScan2D<Type>::setScanLineNumber(unsigned int scanLineNumber)
  * \param h Image height.
  * \param w Image width.
  */
-template<class Type>
-void usImagePreScan2D<Type>::resize(const unsigned int h, const unsigned int w)
+template <class Type> void usImagePreScan2D<Type>::resize(const unsigned int h, const unsigned int w)
 {
   usTransducerSettings::setScanLineNumber(w);
   vpImage<Type>::resize(h, w);
@@ -273,8 +258,7 @@ void usImagePreScan2D<Type>::resize(const unsigned int h, const unsigned int w)
  * \param w Image width.
  * \param val Value set to each pixel.
  */
-template<class Type>
-void usImagePreScan2D<Type>::resize(const unsigned int h, const unsigned int w, const Type val)
+template <class Type> void usImagePreScan2D<Type>::resize(const unsigned int h, const unsigned int w, const Type val)
 {
   usTransducerSettings::setScanLineNumber(w);
   vpImage<Type>::resize(h, w, val);

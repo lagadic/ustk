@@ -30,30 +30,33 @@
 #
 #############################################################################
 
-cmake_minimum_required(VERSION 2.6)
+project(visp-apps-ustk)
 
-set(CMAKE_AUTOMOC ON)
+cmake_minimum_required(VERSION 2.8.12)
 
-# If virtual server is built with VISP
-if(${CMAKE_PROJECT_NAME} STREQUAL "VISP")
-  VP_OPTION(BUILD_USTK_APPS      "" "" "Build ustk apps such as virtual server" "" OFF)
-  set(VISP_DIR ${PROJECT_BINARY_DIR})
-  #set(CMAKE_CURRENT_BINARY_DIR ${CMAKE_BINARY_DIR}/apps/ustk)
-  message(STATUS "CMAKE_CURRENT_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}")
+find_package(VISP REQUIRED visp_ustk_io)
+
+if(MSVC)
+  if(NOT VISP_SHARED)
+    foreach(flag_var
+            CMAKE_C_FLAGS CMAKE_C_FLAGS_DEBUG CMAKE_C_FLAGS_RELEASE
+            CMAKE_C_FLAGS_MINSIZEREL CMAKE_C_FLAGS_RELWITHDEBINFO
+            CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
+            CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
+      if(${flag_var} MATCHES "/MD")
+        string(REGEX REPLACE "/MD" "/MT" ${flag_var} "${${flag_var}}")
+      endif()
+      if(${flag_var} MATCHES "/MDd")
+        string(REGEX REPLACE "/MDd" "/MTd" ${flag_var} "${${flag_var}}")
+      endif()
+    endforeach(flag_var)
+
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:atlthunk.lib /NODEFAULTLIB:msvcrt.lib /NODEFAULTLIB:msvcrtd.lib")
+    set(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} /NODEFAULTLIB:libcmt.lib")
+    set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} /NODEFAULTLIB:libcmtd.lib")
+  endif()
 endif()
 
-if(BUILD_USTK_APPS)
-  find_package(VISP REQUIRED visp_ustk_io visp_ustk_grabber)
+visp_add_subdirectory(ultrasonix-server REQUIRED_DEPS visp_core)
+visp_add_subdirectory(virtual-server    REQUIRED_DEPS visp_ustk_io)
 
-  find_package(Qt5Widgets REQUIRED)
-  find_package(Qt5Network REQUIRED)
-
-  include_directories(${VISP_INCLUDE_DIRS})
-
-  set(HEADER_FILES usVirtualServer.h)
-  set(CPP_FILES usVirtualServer.cpp virtualServer.cpp)
-
-  add_executable(ustk-virtualServer ${CPP_FILES} ${HEADER_FILES})
-
-  target_link_libraries(ustk-virtualServer Qt5::Widgets Qt5::Gui visp_ustk_io visp_ustk_grabber)
-endif()

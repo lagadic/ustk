@@ -30,12 +30,11 @@
  *
  *****************************************************************************/
 
-
 /*!
   \example testUsImageRf3DMhdParser.cpp
 
   USTK MHD parser example.
-  
+
   This example contains the declaration of a class used to read and write data
   in a mhd file like:
   \code
@@ -47,9 +46,8 @@ ElementByteOrderMSB = False
 ElementDataFile = rf3d.raw
 UltrasoundImageType = RF_3D
   \endcode
-  
-*/
 
+*/
 
 #include <visp3/core/vpConfig.h>
 
@@ -70,10 +68,10 @@ UltrasoundImageType = RF_3D
 /* -------------------------------------------------------------------------- */
 
 // List of allowed command line options
-#define GETOPTARGS	"cdo:h"
+#define GETOPTARGS "cdo:h"
 
-void usage(const char *name, const char *badparam, const std::string& opath, const std::string& user);
-bool getOptions(int argc, const char **argv, std::string &opath, const std::string& user);
+void usage(const char *name, const char *badparam, const std::string &opath, const std::string &user);
+bool getOptions(int argc, const char **argv, std::string &opath, const std::string &user);
 
 /*!
 
@@ -85,13 +83,14 @@ Print the program options.
 \param user : Username.
 
  */
-void usage(const char *name, const char *badparam, const std::string& opath, const std::string& user)
+void usage(const char *name, const char *badparam, const std::string &opath, const std::string &user)
 {
   fprintf(stdout, "\n\
 Write and read data in a mhd file.\n\
 \n\
 SYNOPSIS\n\
-  %s [-o <output image path>] [-h]\n", name);
+  %s [-o <output image path>] [-h]\n",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -102,10 +101,11 @@ OPTIONS:                                               Default\n\
      rf3D.mhd file is written.\n\
 \n\
   -h\n\
-     Print the help.\n\n", opath.c_str(), user.c_str());
+     Print the help.\n\n",
+          opath.c_str(), user.c_str());
 
   if (badparam) {
-    fprintf(stderr, "ERROR: \n" );
+    fprintf(stderr, "ERROR: \n");
     fprintf(stderr, "\nBad parameter [%s]\n", badparam);
   }
 }
@@ -119,22 +119,29 @@ OPTIONS:                                               Default\n\
   \param user : Username.
   \return false if the program has to be stopped, true otherwise.
 */
-bool getOptions(int argc, const char **argv, std::string &opath, const std::string& user)
+bool getOptions(int argc, const char **argv, std::string &opath, const std::string &user)
 {
   const char *optarg_;
-  int	c;
+  int c;
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
     switch (c) {
-    case 'o': opath = optarg_; break;
-    case 'h': usage(argv[0], NULL, opath, user); return false; break;
+    case 'o':
+      opath = optarg_;
+      break;
+    case 'h':
+      usage(argv[0], NULL, opath, user);
+      return false;
+      break;
 
     case 'c':
     case 'd':
       break;
 
     default:
-      usage(argv[0], optarg_, opath, user); return false; break;
+      usage(argv[0], optarg_, opath, user);
+      return false;
+      break;
     }
   }
 
@@ -153,7 +160,7 @@ bool getOptions(int argc, const char **argv, std::string &opath, const std::stri
 /*                               MAIN FUNCTION                                */
 /* -------------------------------------------------------------------------- */
 
-int main(int argc, const char** argv)
+int main(int argc, const char **argv)
 {
   try {
     std::string opt_opath;
@@ -163,13 +170,13 @@ int main(int argc, const char** argv)
 
     usMetaHeaderParser testReferenceSettings;
 
-    std::cout <<  "-------------------------------------------------------" << std::endl ;
-    std::cout <<  "  testUsImageRf3DMhdParser.cpp" <<std::endl << std::endl ;
-    std::cout <<  "  writing and reading ultrasound data using a the US mhd parser" << std::endl ;
-    std::cout <<  "-------------------------------------------------------" << std::endl ;
-    std::cout << std::endl ;
+    std::cout << "-------------------------------------------------------" << std::endl;
+    std::cout << "  testUsImageRf3DMhdParser.cpp" << std::endl << std::endl;
+    std::cout << "  writing and reading ultrasound data using a the US mhd parser" << std::endl;
+    std::cout << "-------------------------------------------------------" << std::endl;
+    std::cout << std::endl;
 
-    // Set the default output path
+// Set the default output path
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
     opt_opath = "/tmp";
 #elif defined(_WIN32)
@@ -181,7 +188,7 @@ int main(int argc, const char** argv)
 
     // Read the command line options
     if (getOptions(argc, argv, opt_opath, username) == false) {
-      exit (-1);
+      exit(-1);
     }
 
     // Get the option values
@@ -196,11 +203,9 @@ int main(int argc, const char** argv)
       try {
         // Create the dirname
         vpIoTools::makeDirectory(dirname);
-      }
-      catch (...) {
+      } catch (...) {
         usage(argv[0], NULL, opath, username);
-        std::cerr << std::endl
-                  << "ERROR:" << std::endl;
+        std::cerr << std::endl << "ERROR:" << std::endl;
         std::cerr << "  Cannot create " << dirname << std::endl;
         std::cerr << "  Check your -o " << opath << " option " << std::endl;
         exit(-1);
@@ -208,9 +213,9 @@ int main(int argc, const char** argv)
     }
     filename = dirname + vpIoTools::path("/") + "rf3d.mhd";
 
-    //Init values in reference parser (same values in file read in test)
+    // Init values in reference parser (same values in file read in test)
     usImageRF3D<short> rf3DReference;
-    //settings initialisation
+    // settings initialisation
     rf3DReference.resize(186, 233, 163);
     rf3DReference.setScanLinePitch(0.0145);
     rf3DReference.setTransducerRadius(0.554);
@@ -219,38 +224,35 @@ int main(int argc, const char** argv)
     rf3DReference.setTransmitFrequency(300000);
     rf3DReference.setSamplingFrequency(2000000);
     rf3DReference.setDepth(rf3DReference.getAxialResolution() * rf3DReference.getDimY());
-    //image initialisation
+    // image initialisation
     rf3DReference.initData(255);
 
-    //printing settings
-    std::cout << "Written in " << filename << std::endl ;
+    // printing settings
+    std::cout << "Written in " << filename << std::endl;
     std::cout << rf3DReference;
 
-    //write image
-    usImageIo::write(rf3DReference,filename);
-    std::cout << "1" << std::endl ;
+    // write image
+    usImageIo::write(rf3DReference, filename);
+    std::cout << "1" << std::endl;
 
-    //read the image we just wrote
+    // read the image we just wrote
     usImageRF3D<short> rf3D;
     filename = dirname + vpIoTools::path("/") + "rf3d.mhd";
-    usImageIo::read(rf3D,filename);
-    std::cout << "2" << std::endl ;
+    usImageIo::read(rf3D, filename);
+    std::cout << "2" << std::endl;
 
-    //printing settings read
-    std::cout << "Read from " << filename << std::endl ;
+    // printing settings read
+    std::cout << "Read from " << filename << std::endl;
     std::cout << rf3D;
 
-
-
-    if(rf3D == rf3DReference) {
+    if (rf3D == rf3DReference) {
       std::cout << "Test passed !" << std::endl;
       return 0;
     }
 
     std::cout << "Test failed !" << std::endl;
     return 1;
-  }
-  catch(const vpException &e) {
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
     return 1;
   }

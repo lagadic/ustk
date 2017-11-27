@@ -35,7 +35,6 @@
  * @brief Graphical main window containing 4 vtk views.
  */
 
-
 #ifndef __usMedicalImageViewer_h_
 #define __usMedicalImageViewer_h_
 
@@ -46,32 +45,31 @@
 
 // USTK includes
 
-#include <visp3/ustk_io/usImageIo.h>
-#include <visp3/ustk_gui/usViewerWidget.h>
 #include <visp3/ustk_gui/us3DSceneWidget.h>
+#include <visp3/ustk_gui/usViewerWidget.h>
+#include <visp3/ustk_io/usImageIo.h>
 
 // VTK includes
-#include <vtkSmartPointer.h>
+#include <vtkDistanceWidget.h>
+#include <vtkImageMapper3D.h>
+#include <vtkImagePlaneWidget.h>
 #include <vtkPlane.h>
 #include <vtkResliceImageViewer.h>
-#include <vtkImagePlaneWidget.h>
-#include <vtkDistanceWidget.h>
 #include <vtkResliceImageViewerMeasurements.h>
-#include <vtkImageMapper3D.h>
+#include <vtkSmartPointer.h>
 
 // Qt includes
 #if defined(USTK_HAVE_VTK_QT4)
-#  include <QtGui/QApplication>
-#  include <QtGui/QMainWindow>
-#  include <QtGui/QGridLayout>
-#  include <QtGui/QPushButton>
+#include <QtGui/QApplication>
+#include <QtGui/QGridLayout>
+#include <QtGui/QMainWindow>
+#include <QtGui/QPushButton>
 #elif defined(USTK_HAVE_VTK_QT4) //  QT 5 ?
-#  include <QtWidgets/QApplication>
-#  include <QtWidgets/QMainWindow>
-#  include <QtWidgets/QGridLayout>
-#  include <QtWidgets/QPushButton>
+#include <QtWidgets/QApplication>
+#include <QtWidgets/QGridLayout>
+#include <QtWidgets/QMainWindow>
+#include <QtWidgets/QPushButton>
 #endif
-
 
 /**
  * @class usMedicalImageViewer
@@ -83,12 +81,11 @@ class VISP_EXPORT usMedicalImageViewer : public QMainWindow
 {
   Q_OBJECT
 public:
-
   // Constructor/Destructor
   usMedicalImageViewer(std::string imageFileName);
   ~usMedicalImageViewer() {}
 
-  void resizeEvent(QResizeEvent* event);
+  void resizeEvent(QResizeEvent *event);
 
 public slots:
 
@@ -96,50 +93,49 @@ public slots:
   virtual void ResetColorMap();
   virtual void Render();
   virtual void AddDistanceMeasurementToView1();
-  virtual void AddDistanceMeasurementToView( int );
+  virtual void AddDistanceMeasurementToView(int);
   virtual void slotExit();
 
 protected:
-  vtkSmartPointer< vtkResliceImageViewer > riw[3];
-  vtkSmartPointer< vtkImagePlaneWidget > planeWidget[3];
-  vtkSmartPointer< vtkDistanceWidget > DistanceWidget[3];
-  vtkSmartPointer< vtkResliceImageViewerMeasurements > ResliceMeasurements[3];
+  vtkSmartPointer<vtkResliceImageViewer> riw[3];
+  vtkSmartPointer<vtkImagePlaneWidget> planeWidget[3];
+  vtkSmartPointer<vtkDistanceWidget> DistanceWidget[3];
+  vtkSmartPointer<vtkResliceImageViewerMeasurements> ResliceMeasurements[3];
 
 protected slots:
 
 private:
-    void setupUi();
+  void setupUi();
 
-    QAction *actionOpenFile;
-    QAction *actionExit;
-    QAction *actionPrint;
-    QAction *actionHelp;
-    QAction *actionSave;
-    QWidget *centralwidget;
-    QWidget *gridLayoutWidget;
-    QGridLayout *gridLayout_2;
-    usViewerWidget *view2;
-    us3DSceneWidget *view4;
-    usViewerWidget *view3;
-    usViewerWidget *view1;
-    QPushButton *resetButton;
-    QPushButton *resetColorsButton;
-    QPushButton *AddDistance1Button;
+  QAction *actionOpenFile;
+  QAction *actionExit;
+  QAction *actionPrint;
+  QAction *actionHelp;
+  QAction *actionSave;
+  QWidget *centralwidget;
+  QWidget *gridLayoutWidget;
+  QGridLayout *gridLayout_2;
+  usViewerWidget *view2;
+  us3DSceneWidget *view4;
+  usViewerWidget *view3;
+  usViewerWidget *view1;
+  QPushButton *resetButton;
+  QPushButton *resetColorsButton;
+  QPushButton *AddDistance1Button;
 
-    //VTK planes
-    vtkPlane *plane1;
-    vtkPlane *plane2;
-    vtkPlane *plane3;
+  // VTK planes
+  vtkPlane *plane1;
+  vtkPlane *plane2;
+  vtkPlane *plane3;
 
-    //mappers (views2D)
-    vtkImageResliceMapper* imageMapper1;
-    vtkImageResliceMapper* imageMapper2;
-    vtkImageResliceMapper* imageMapper3;
+  // mappers (views2D)
+  vtkImageResliceMapper *imageMapper1;
+  vtkImageResliceMapper *imageMapper2;
+  vtkImageResliceMapper *imageMapper3;
 
-
-    //image
-    usImagePostScan3D<unsigned char> postScanImage;
-    vtkSmartPointer<vtkImageData> vtkImage;
+  // image
+  usImagePostScan3D<unsigned char> postScanImage;
+  vtkSmartPointer<vtkImageData> vtkImage;
 };
 #endif
 #endif // US_MEDICAL_IMAGE_VIEWER

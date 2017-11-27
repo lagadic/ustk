@@ -39,15 +39,15 @@
 #ifndef __usMetaHeaderParser_h_
 #define __usMetaHeaderParser_h_
 
-#include <string>
-#include <map>
 #include <cstdlib>
-#include <string>
+#include <fstream>
 #include <ios>
 #include <iostream>
-#include <fstream>
+#include <map>
 #include <sstream>
 #include <stdint.h>
+#include <string>
+#include <string>
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/ustk_core/us.h>
@@ -63,24 +63,23 @@
  * @brief Meta header data (MHD) parser.
  * @ingroup module_ustk_io
  */
-class VISP_EXPORT usMetaHeaderParser {
+class VISP_EXPORT usMetaHeaderParser
+{
 
 public:
-
   typedef enum {
     MET_UNKNOWN = -1,
     MET_UCHAR,
     MET_SHORT,
     MET_DOUBLE,
-  }ElementType;
+  } ElementType;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-  struct MHDHeader
-  {
+  struct MHDHeader {
     std::string MHDFileName;
     std::string rawFileName;
-    unsigned int  numberOfDimensions;
-    int  numberOfChannels;
+    unsigned int numberOfDimensions;
+    int numberOfChannels;
     ElementType elementType;
     int dim[4];
     double elementSpacing[4];
@@ -95,17 +94,17 @@ public:
     double motorRadius;
     double framePitch;
     unsigned int scanLineNumber; // for post-scan
-    unsigned int frameNumber; // for post-scan
+    unsigned int frameNumber;    // for post-scan
     int transmitFrequency;
     int samplingFrequency;
     std::vector<uint64_t> timestamp;
   };
-#endif //DOXYGEN_SHOULD_SKIP_THIS
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
-  //Constructor
+  // Constructor
   usMetaHeaderParser();
   usMetaHeaderParser(const std::string &MHDFilename);
-  //Desctructor
+  // Desctructor
   virtual ~usMetaHeaderParser();
 
   // Data accessors.
@@ -114,20 +113,20 @@ public:
   double getHeightResolution() const { return m_heightResolution; }
   us::ImageType getImageType() const { return header.imageType; }
   MHDHeader getMHDHeader() const { return header; }
-  usMotorSettings getMotorSettings() const {return m_motorSettings;}
-  std::string getRawFileName() const {return header.rawFileName;}
-  usTransducerSettings getTransducerSettings() const {return m_transducerSettings;}
+  usMotorSettings getMotorSettings() const { return m_motorSettings; }
+  std::string getRawFileName() const { return header.rawFileName; }
+  usTransducerSettings getTransducerSettings() const { return m_transducerSettings; }
   double getWidthResolution() const { return m_widthResolution; }
 
-  //comparison
-  bool operator ==(usMetaHeaderParser const& other);
+  // comparison
+  bool operator==(usMetaHeaderParser const &other);
 
   void parse();
 
   void read(const std::string &filename);
   void readMHDHeader(const std::string &fileName);
 
-  //Setters
+  // Setters
   void setAxialResolution(const double axialresolution);
   void setHeightResolution(const double heightResolution);
   void setImageFileName(const std::string &imageFileName);
@@ -138,7 +137,7 @@ public:
   void setTransducerSettings(const usTransducerSettings &transducerSettings);
   void setWidthResolution(const double widthResolution);
 
-private :
+private:
   usTransducerSettings m_transducerSettings;
   usMotorSettings m_motorSettings;
   double m_axialResolution;
@@ -148,8 +147,8 @@ private :
   MHDHeader header;
   std::map<std::string, int> imageTypeMap;
   std::map<std::string, int> elementTypeMap;
-  std::map<int ,std::string> imageTypeReverseMap;
-  std::map<int ,std::string> elementTypeReverseMap;
+  std::map<int, std::string> imageTypeReverseMap;
+  std::map<int, std::string> elementTypeReverseMap;
 };
 #endif // US_META_HEADER_PARSER_H
 #endif // DOXYGEN_SHOULD_SKIP_THIS

@@ -46,15 +46,15 @@
 #include <visp3/core/vpHomogeneousMatrix.h>
 
 // USTK includes
-#include <visp3/ustk_core/usImagePostScan3D.h>
 #include <visp3/ustk_core/usImagePostScan2D.h>
+#include <visp3/ustk_core/usImagePostScan3D.h>
 #include <visp3/ustk_core/usImagePreScan3D.h>
 
 // VTK includes
-#include <vtkSmartPointer.h>
 #include <vtkImageData.h>
 #include <vtkImageImport.h>
 #include <vtkMatrix4x4.h>
+#include <vtkSmartPointer.h>
 
 /**
  * @class usVTKConverter
@@ -65,13 +65,15 @@
 class VISP_EXPORT usVTKConverter
 {
 public:
-  //image types
-  static void convert(const usImagePostScan3D<unsigned char> &postScanImage, vtkSmartPointer<vtkImageData> &vtkPostScanImage, vtkSmartPointer<vtkImageImport> importer = NULL);
-  static void convert(const usImagePreScan3D<unsigned char> &preScanImage, vtkSmartPointer<vtkImageData> &vtkPreScanImage, vtkSmartPointer<vtkImageImport> importer = NULL);
+  // image types
+  static void convert(const usImagePostScan3D<unsigned char> &postScanImage,
+                      vtkSmartPointer<vtkImageData> &vtkPostScanImage, vtkSmartPointer<vtkImageImport> importer = NULL);
+  static void convert(const usImagePreScan3D<unsigned char> &preScanImage,
+                      vtkSmartPointer<vtkImageData> &vtkPreScanImage, vtkSmartPointer<vtkImageImport> importer = NULL);
 
   static void convert(vtkSmartPointer<vtkImageData> &vtkPostScanImage, usImagePostScan2D<unsigned char> &postScanImage);
 
-  //matrix types
+  // matrix types
   static void convert(const vpHomogeneousMatrix &, vtkMatrix4x4 *);
   static void convert(vtkMatrix4x4 *, vpHomogeneousMatrix &);
 };

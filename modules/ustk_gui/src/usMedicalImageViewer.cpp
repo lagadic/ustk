@@ -36,47 +36,47 @@
 */
 
 #include <visp3/ustk_core/usImagePostScan3D.h>
-#include <visp3/ustk_gui/usVTKConverter.h>
 #include <visp3/ustk_gui/usMedicalImageViewer.h>
+#include <visp3/ustk_gui/usVTKConverter.h>
 
 #ifdef USTK_HAVE_VTK_QT
 
-#include <vtkRenderer.h>
+#include <vtkAbstractTransform.h>
+#include <vtkActor.h>
+#include <vtkActor2D.h>
+#include <vtkBoundedPlanePointPlacer.h>
+#include <vtkCamera.h>
+#include <vtkCellPicker.h>
+#include <vtkCommand.h>
+#include <vtkDistanceRepresentation.h>
+#include <vtkDistanceRepresentation2D.h>
+#include <vtkDistanceWidget.h>
+#include <vtkHandleRepresentation.h>
+#include <vtkImageActor.h>
+#include <vtkImageData.h>
+#include <vtkImageMapToWindowLevelColors.h>
+#include <vtkImageSlabReslice.h>
+#include <vtkInteractorStyleImage.h>
+#include <vtkLookupTable.h>
+#include <vtkMapper.h>
+#include <vtkMatrix4x4.h>
+#include <vtkMetaImageReader.h>
+#include <vtkPlane.h>
+#include <vtkPlaneSource.h>
+#include <vtkPointHandleRepresentation2D.h>
+#include <vtkPointHandleRepresentation3D.h>
+#include <vtkProperty.h>
 #include <vtkRenderWindow.h>
-#include <vtkResliceImageViewer.h>
+#include <vtkRenderer.h>
+#include <vtkRendererCollection.h>
+#include <vtkResliceCursor.h>
+#include <vtkResliceCursorActor.h>
 #include <vtkResliceCursorLineRepresentation.h>
+#include <vtkResliceCursorPolyDataAlgorithm.h>
 #include <vtkResliceCursorThickLineRepresentation.h>
 #include <vtkResliceCursorWidget.h>
-#include <vtkResliceCursorActor.h>
-#include <vtkResliceCursorPolyDataAlgorithm.h>
-#include <vtkResliceCursor.h>
-#include <vtkMetaImageReader.h>
-#include <vtkCellPicker.h>
-#include <vtkProperty.h>
-#include <vtkPlane.h>
-#include <vtkImageData.h>
-#include <vtkCommand.h>
-#include <vtkPlaneSource.h>
-#include <vtkLookupTable.h>
-#include <vtkImageMapToWindowLevelColors.h>
-#include <vtkInteractorStyleImage.h>
-#include <vtkImageSlabReslice.h>
-#include <vtkBoundedPlanePointPlacer.h>
-#include <vtkDistanceWidget.h>
-#include <vtkDistanceRepresentation.h>
-#include <vtkHandleRepresentation.h>
+#include <vtkResliceImageViewer.h>
 #include <vtkResliceImageViewerMeasurements.h>
-#include <vtkDistanceRepresentation2D.h>
-#include <vtkPointHandleRepresentation3D.h>
-#include <vtkPointHandleRepresentation2D.h>
-#include <vtkCamera.h>
-#include <vtkRendererCollection.h>
-#include <vtkMatrix4x4.h>
-#include <vtkAbstractTransform.h>
-#include <vtkImageActor.h>
-#include <vtkMapper.h>
-#include <vtkActor2D.h>
-#include <vtkActor.h>
 
 #include <QDesktopWidget>
 #include <QResizeEvent>
@@ -86,24 +86,22 @@
 class vtkResliceCursorCallback : public vtkCommand
 {
 public:
-  static vtkResliceCursorCallback *New()
-  { return new vtkResliceCursorCallback; }
+  static vtkResliceCursorCallback *New() { return new vtkResliceCursorCallback; }
 
-  //implementing virtual method of parent class but we don't need arguments, so they've been remove to avoid warings at compilation
-  void Execute( vtkObject *, unsigned long ,
-                void * )
+  // implementing virtual method of parent class but we don't need arguments, so they've been remove to avoid warings at
+  // compilation
+  void Execute(vtkObject *, unsigned long, void *)
   {
     // Render everything
-    for (int i = 0; i < 3; i++)
-    {
+    for (int i = 0; i < 3; i++) {
       this->RIW[i]->Render();
     }
     widget3D->update();
   }
 
-  vtkResliceCursorCallback() : widget3D(),RIW() {}
-  us3DSceneWidget* widget3D;
-  vtkResliceImageViewer* RIW[3];
+  vtkResliceCursorCallback() : widget3D(), RIW() {}
+  us3DSceneWidget *widget3D;
+  vtkResliceImageViewer *RIW[3];
 };
 #endif
 
@@ -111,77 +109,66 @@ public:
 * Constructor.
 * @param imageFileName the mhd file to read.
 */
-usMedicalImageViewer::usMedicalImageViewer(std::string imageFileName )
+usMedicalImageViewer::usMedicalImageViewer(std::string imageFileName)
 {
   this->setupUi();
-  usImageIo::read(postScanImage,imageFileName);
-  usVTKConverter::convert(postScanImage,vtkImage);
+  usImageIo::read(postScanImage, imageFileName);
+  usVTKConverter::convert(postScanImage, vtkImage);
 
   int imageDims[3];
   double spacing[3];
   vtkImage->GetDimensions(imageDims);
   vtkImage->GetSpacing(spacing);
 
-  for (int i = 0; i < 3; i++)
-  {
-    riw[i] = vtkSmartPointer< vtkResliceImageViewer >::New();
+  for (int i = 0; i < 3; i++) {
+    riw[i] = vtkSmartPointer<vtkResliceImageViewer>::New();
   }
 
   this->view1->SetRenderWindow(riw[0]->GetRenderWindow());
-  riw[0]->SetupInteractor(
-        this->view1->GetRenderWindow()->GetInteractor());
+  riw[0]->SetupInteractor(this->view1->GetRenderWindow()->GetInteractor());
 
   this->view2->SetRenderWindow(riw[1]->GetRenderWindow());
-  riw[1]->SetupInteractor(
-        this->view2->GetRenderWindow()->GetInteractor());
+  riw[1]->SetupInteractor(this->view2->GetRenderWindow()->GetInteractor());
 
   this->view3->SetRenderWindow(riw[2]->GetRenderWindow());
-  riw[2]->SetupInteractor(
-        this->view3->GetRenderWindow()->GetInteractor());
+  riw[2]->SetupInteractor(this->view3->GetRenderWindow()->GetInteractor());
 
-  for (int i = 0; i < 3; i++)
-  {
+  for (int i = 0; i < 3; i++) {
     // make them all share the same reslice cursor object.
     vtkResliceCursorLineRepresentation *rep =
-        vtkResliceCursorLineRepresentation::SafeDownCast(
-          riw[i]->GetResliceCursorWidget()->GetRepresentation());
+        vtkResliceCursorLineRepresentation::SafeDownCast(riw[i]->GetResliceCursorWidget()->GetRepresentation());
     riw[i]->SetResliceCursor(riw[0]->GetResliceCursor());
 
-    rep->GetResliceCursorActor()->
-        GetCursorAlgorithm()->SetReslicePlaneNormal(i);
+    rep->GetResliceCursorActor()->GetCursorAlgorithm()->SetReslicePlaneNormal(i);
 
     riw[i]->SetInputData(vtkImage);
     riw[i]->SetSliceOrientation(i);
-    riw[i]->SetSlice(imageDims[i]/2);
+    riw[i]->SetSlice(imageDims[i] / 2);
     riw[i]->SetResliceModeToOblique();
-    riw[i]->SliceScrollOnMouseWheelOff(); // scroll on mouse wheel not working weell (differents views not synchronized), so we disable it
+    riw[i]->SliceScrollOnMouseWheelOff(); // scroll on mouse wheel not working weell (differents views not
+                                          // synchronized), so we disable it
   }
   this->view4->setImageData(vtkImage);
-  this->view4->setPlanes(riw[0]->GetResliceCursor()->GetPlane(0),riw[1]->GetResliceCursor()->GetPlane(1),riw[2]->GetResliceCursor()->GetPlane(2));
+  this->view4->setPlanes(riw[0]->GetResliceCursor()->GetPlane(0), riw[1]->GetResliceCursor()->GetPlane(1),
+                         riw[2]->GetResliceCursor()->GetPlane(2));
 
   this->view4->init();
 
-  vtkSmartPointer<vtkResliceCursorCallback> cbk =
-      vtkSmartPointer<vtkResliceCursorCallback>::New();
+  vtkSmartPointer<vtkResliceCursorCallback> cbk = vtkSmartPointer<vtkResliceCursorCallback>::New();
 
   cbk->widget3D = this->view4;
 
-  for (int i = 0; i < 3; i++)
-  {
+  for (int i = 0; i < 3; i++) {
     cbk->RIW[i] = riw[i];
-    riw[i]->GetResliceCursorWidget()->AddObserver(
-          vtkResliceCursorWidget::ResliceAxesChangedEvent, cbk );
-    riw[i]->GetResliceCursorWidget()->AddObserver(
-          vtkResliceCursorWidget::WindowLevelEvent, cbk );
-    riw[i]->GetResliceCursorWidget()->AddObserver(
-          vtkResliceCursorWidget::ResetCursorEvent, cbk );
+    riw[i]->GetResliceCursorWidget()->AddObserver(vtkResliceCursorWidget::ResliceAxesChangedEvent, cbk);
+    riw[i]->GetResliceCursorWidget()->AddObserver(vtkResliceCursorWidget::WindowLevelEvent, cbk);
+    riw[i]->GetResliceCursorWidget()->AddObserver(vtkResliceCursorWidget::ResetCursorEvent, cbk);
   }
 
-  for (int i = 0; i < 3; i++)
-  {
+  for (int i = 0; i < 3; i++) {
     riw[i]->SetResliceMode(1);
     riw[i]->GetRenderer()->ResetCamera();
-    if(i==2)
+    if (i == 2)
       riw[i]->GetRenderer()->GetActiveCamera()->SetRoll(180);
     riw[i]->Render();
   }
@@ -195,18 +182,12 @@ usMedicalImageViewer::usMedicalImageViewer(std::string imageFileName )
 /**
 * Exit slot, to exit the QApplication.
 */
-void usMedicalImageViewer::slotExit()
-{
-  qApp->exit();
-}
+void usMedicalImageViewer::slotExit() { qApp->exit(); }
 
 /**
 * Reset views slot : reset the planes positions at the middle of the volume.
 */
-void usMedicalImageViewer::ResetViews()
-{
-  this->Render();
-}
+void usMedicalImageViewer::ResetViews() { this->Render(); }
 
 /**
 * Reset color map slot : reset the color map to initial one in each view.
@@ -214,9 +195,8 @@ void usMedicalImageViewer::ResetViews()
 void usMedicalImageViewer::ResetColorMap()
 {
   // Render everything
-  for (int i = 0; i < 3; i++)
-  {
-    riw[i]->GetLookupTable()->SetRange(0,255);
+  for (int i = 0; i < 3; i++) {
+    riw[i]->GetLookupTable()->SetRange(0, 255);
     riw[i]->GetResliceCursorWidget()->Render();
   }
 }
@@ -239,10 +219,7 @@ void usMedicalImageViewer::Render()
 /**
 * Slot to add a distance measure widget to wiew 1.
 */
-void usMedicalImageViewer::AddDistanceMeasurementToView1()
-{
-  this->AddDistanceMeasurementToView(1);
-}
+void usMedicalImageViewer::AddDistanceMeasurementToView1() { this->AddDistanceMeasurementToView(1); }
 
 /**
 * Slot to add a distance measure widget to a wiew.
@@ -251,25 +228,20 @@ void usMedicalImageViewer::AddDistanceMeasurementToView1()
 void usMedicalImageViewer::AddDistanceMeasurementToView(int i)
 {
   // remove existing widgets.
-  if (this->DistanceWidget[i])
-  {
+  if (this->DistanceWidget[i]) {
     this->DistanceWidget[i]->SetEnabled(0);
     this->DistanceWidget[i] = NULL;
   }
 
   // add new widget
-  this->DistanceWidget[i] = vtkSmartPointer< vtkDistanceWidget >::New();
-  this->DistanceWidget[i]->SetInteractor(
-        this->riw[i]->GetResliceCursorWidget()->GetInteractor());
+  this->DistanceWidget[i] = vtkSmartPointer<vtkDistanceWidget>::New();
+  this->DistanceWidget[i]->SetInteractor(this->riw[i]->GetResliceCursorWidget()->GetInteractor());
 
   // Set a priority higher than our reslice cursor widget
-  this->DistanceWidget[i]->SetPriority(
-        this->riw[i]->GetResliceCursorWidget()->GetPriority() + 0.01);
+  this->DistanceWidget[i]->SetPriority(this->riw[i]->GetResliceCursorWidget()->GetPriority() + 0.01);
 
-  vtkSmartPointer< vtkPointHandleRepresentation2D > handleRep =
-      vtkSmartPointer< vtkPointHandleRepresentation2D >::New();
-  vtkSmartPointer< vtkDistanceRepresentation2D > distanceRep =
-      vtkSmartPointer< vtkDistanceRepresentation2D >::New();
+  vtkSmartPointer<vtkPointHandleRepresentation2D> handleRep = vtkSmartPointer<vtkPointHandleRepresentation2D>::New();
+  vtkSmartPointer<vtkDistanceRepresentation2D> distanceRep = vtkSmartPointer<vtkDistanceRepresentation2D>::New();
   distanceRep->SetHandleRepresentation(handleRep);
   this->DistanceWidget[i]->SetRepresentation(distanceRep);
   distanceRep->InstantiateHandleRepresentation();
@@ -287,8 +259,9 @@ void usMedicalImageViewer::AddDistanceMeasurementToView(int i)
 /**
 * Setup all the widgets in the window.
 */
-void usMedicalImageViewer::setupUi() {
-  this->setMinimumSize(640,480);
+void usMedicalImageViewer::setupUi()
+{
+  this->setMinimumSize(640, 480);
   QRect screenRect = QApplication::desktop()->screenGeometry();
   this->resize(screenRect.size());
 
@@ -332,16 +305,15 @@ void usMedicalImageViewer::setupUi() {
   AddDistance1Button->setObjectName(QString::fromUtf8("AddDistance1Button"));
   AddDistance1Button->setText(QString::fromUtf8("Add distance 1"));
   AddDistance1Button->setGeometry(QRect(screenRect.width() - 180, 130, 160, 31));
-
 }
 
 /**
 * Get the resize event of the window, to re-comute size and positions of all widgets/layouts.
 */
-void usMedicalImageViewer::resizeEvent(QResizeEvent* event)
+void usMedicalImageViewer::resizeEvent(QResizeEvent *event)
 {
-  //Min size : 640*480
-  if(event->size().width() >= 640 && event->size().height() >= 480) {
+  // Min size : 640*480
+  if (event->size().width() >= 640 && event->size().height() >= 480) {
     QMainWindow::resizeEvent(event);
     gridLayoutWidget->setGeometry(QRect(10, 10, event->size().width() - 220, event->size().height() - 20));
     resetButton->setGeometry(QRect(event->size().width() - 180, 30, 160, 31));

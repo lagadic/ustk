@@ -36,26 +36,29 @@
  * @brief Generic ultrasound image settings.
  */
 
-//std includes
+// std includes
 #include <iostream>
 
-//visp includes
+// visp includes
 #include <visp3/ustk_core/usTransducerSettings.h>
 
-//ustk includes
+// ustk includes
 
 /**
 * Basic constructor, all settings set to default.
 */
 usTransducerSettings::usTransducerSettings()
   : m_transducerRadius(0.0f), m_scanLinePitch(0.0f), m_scanLineNumber(0), m_isTransducerConvex(true),
-    m_scanLineNumberIsSet(false), m_transmitFrequency(0), m_samplingFrequency(0) {}
+    m_scanLineNumberIsSet(false), m_transmitFrequency(0), m_samplingFrequency(0)
+{
+}
 
 /**
 * Full constructor with all the settings availables:
 * @param transducerRadius Distance between the center point of the transducer and the first pixel arc acquired.
 * Value in meters (m).
-* @param scanLinePitch Radius or distance between 2 successives scan lines acquired by the probe transducer; in radians (rad)
+* @param scanLinePitch Radius or distance between 2 successives scan lines acquired by the probe transducer; in radians
+* (rad)
 * if the probe is convex, or in meters (m) if the probe is linear.
 * @param scanLineNumber Number of scan lines acquired by the probe transducer.
 * @param transducerConvex Boolean to specify if the probe transducer is convex (true) or linear (false).
@@ -63,22 +66,20 @@ usTransducerSettings::usTransducerSettings()
 * @param samplingFrequency : frequency used to sample the ultrasound wave during the acquisition.
 * @param transmitFrequency : frequency of the ultrasound wave used to create the image.
 */
-usTransducerSettings::usTransducerSettings(double transducerRadius, double scanLinePitch,
-                                           unsigned int scanLineNumber, bool transducerConvex,
-                                           double depth, int transmitFrequency, int samplingFrequency)
-  : m_transducerRadius(transducerRadius), m_scanLinePitch(scanLinePitch),
-    m_scanLineNumber(scanLineNumber), m_isTransducerConvex(transducerConvex),
-    m_depth(depth), m_scanLineNumberIsSet(true), m_transmitFrequency(transmitFrequency), m_samplingFrequency(samplingFrequency)
-{}
+usTransducerSettings::usTransducerSettings(double transducerRadius, double scanLinePitch, unsigned int scanLineNumber,
+                                           bool transducerConvex, double depth, int transmitFrequency,
+                                           int samplingFrequency)
+  : m_transducerRadius(transducerRadius), m_scanLinePitch(scanLinePitch), m_scanLineNumber(scanLineNumber),
+    m_isTransducerConvex(transducerConvex), m_depth(depth), m_scanLineNumberIsSet(true),
+    m_transmitFrequency(transmitFrequency), m_samplingFrequency(samplingFrequency)
+{
+}
 
 /**
 * Copy constructor.
 * @param other Settings to copy.
 */
-usTransducerSettings::usTransducerSettings(const usTransducerSettings &other)
-{
-  *this = other;
-}
+usTransducerSettings::usTransducerSettings(const usTransducerSettings &other) { *this = other; }
 
 /**
 * Destructor.
@@ -89,7 +90,7 @@ usTransducerSettings::~usTransducerSettings() {}
 * Assignment operator.
 * @param other Settings you want to copy.
 */
-usTransducerSettings& usTransducerSettings::operator=(const usTransducerSettings& other)
+usTransducerSettings &usTransducerSettings::operator=(const usTransducerSettings &other)
 {
   m_transducerRadius = other.getTransducerRadius();
   m_scanLinePitch = other.getScanLinePitch();
@@ -107,23 +108,21 @@ usTransducerSettings& usTransducerSettings::operator=(const usTransducerSettings
 * Compare two probe transducer settings.
 * @return True if the settings are the same, false otherwise.
 */
-bool usTransducerSettings::operator==(usTransducerSettings const& other)
+bool usTransducerSettings::operator==(usTransducerSettings const &other)
 {
-  return ( this->getTransducerRadius() == other.getTransducerRadius() &&
-           this->getScanLinePitch() == other.getScanLinePitch() &&
-           this->getScanLineNumber() == other.getScanLineNumber() &&
-           this->isTransducerConvex() == other.isTransducerConvex() &&
-           this->getSamplingFrequency() == other.getSamplingFrequency() &&
-           this->getTransmitFrequency() == other.getTransmitFrequency());
+  return (this->getTransducerRadius() == other.getTransducerRadius() &&
+          this->getScanLinePitch() == other.getScanLinePitch() &&
+          this->getScanLineNumber() == other.getScanLineNumber() &&
+          this->isTransducerConvex() == other.isTransducerConvex() &&
+          this->getSamplingFrequency() == other.getSamplingFrequency() &&
+          this->getTransmitFrequency() == other.getTransmitFrequency());
 }
 
 /**
 * Compare two probe transducer settings.
 * @return False if the settings are the same, true otherwise.
 */
-bool usTransducerSettings::operator!=(usTransducerSettings const& other) {
-  return ! operator==(other);
-}
+bool usTransducerSettings::operator!=(usTransducerSettings const &other) { return !operator==(other); }
 
 /*!
   Print transducer information in a ostream.
@@ -133,7 +132,7 @@ bool usTransducerSettings::operator!=(usTransducerSettings const& other) {
   std::cout << myTransducerSettings;
   \endcode
 */
-VISP_EXPORT std::ostream& operator<<(std::ostream& out, const usTransducerSettings &other)
+VISP_EXPORT std::ostream &operator<<(std::ostream &out, const usTransducerSettings &other)
 {
   out << "transducer radius: " << other.getTransducerRadius() << std::endl;
   if (other.isTransducerConvex())
@@ -148,7 +147,7 @@ VISP_EXPORT std::ostream& operator<<(std::ostream& out, const usTransducerSettin
   return out;
 }
 
-//Image settings getters/setters
+// Image settings getters/setters
 
 /**
 * Set the probe transducer radius (m).
@@ -187,7 +186,8 @@ double usTransducerSettings::getScanLinePitch() const { return m_scanLinePitch; 
 * @param isTransducerConvex True if the transducer is convex, false if the transducer is linear.
 * Sets the probe transducer radius to 0 in case of a linear transducer.
 */
-void usTransducerSettings::setTransducerConvexity(const bool isTransducerConvex) {
+void usTransducerSettings::setTransducerConvexity(const bool isTransducerConvex)
+{
   m_isTransducerConvex = isTransducerConvex;
   if (!isTransducerConvex) {
     m_transducerRadius = 0.0;
@@ -207,19 +207,13 @@ bool usTransducerSettings::isTransducerConvex() const { return m_isTransducerCon
  *
  * \sa operator=()
  */
-void usTransducerSettings::setTransducerSettings(const usTransducerSettings& other)
-{
-  *this = other;
-}
+void usTransducerSettings::setTransducerSettings(const usTransducerSettings &other) { *this = other; }
 
 /**
 * Getter for the scan line number.
 * @return Number of scan lines acquired by the probe transducer.
 */
-unsigned int usTransducerSettings::getScanLineNumber() const
-{
-  return m_scanLineNumber;
-}
+unsigned int usTransducerSettings::getScanLineNumber() const { return m_scanLineNumber; }
 
 /**
 * Setter for the scan line number.
@@ -228,26 +222,20 @@ unsigned int usTransducerSettings::getScanLineNumber() const
 void usTransducerSettings::setScanLineNumber(unsigned int scanLineNumber)
 {
   m_scanLineNumberIsSet = true;
-  m_scanLineNumber =  scanLineNumber;
+  m_scanLineNumber = scanLineNumber;
 }
 
 /**
 * Getter for the probe name.
 * @return Name of the probe.
 */
-std::string usTransducerSettings::getProbeName() const
-{
-  return m_probeName;
-}
+std::string usTransducerSettings::getProbeName() const { return m_probeName; }
 
 /**
 * Setter for the probe name.
 * @param probeName Name of the probe.
 */
-void usTransducerSettings::setProbeName(std::string probeName)
-{
-  m_probeName = probeName;
-}
+void usTransducerSettings::setProbeName(std::string probeName) { m_probeName = probeName; }
 
 /**
 * Getter for the transducer field of view (based on scan line number and pitch).
@@ -255,9 +243,10 @@ void usTransducerSettings::setProbeName(std::string probeName)
 */
 double usTransducerSettings::getFieldOfView() const
 {
-  if(!m_scanLineNumberIsSet)
-    throw vpException(vpException::notInitialized, "The scan line number is not set, cannot determine the field of view");
-  return m_scanLinePitch  * (double) (m_scanLineNumber -1);
+  if (!m_scanLineNumberIsSet)
+    throw vpException(vpException::notInitialized,
+                      "The scan line number is not set, cannot determine the field of view");
+  return m_scanLinePitch * (double)(m_scanLineNumber - 1);
 }
 
 /**
@@ -275,43 +264,36 @@ double usTransducerSettings::getFieldOfView() const
 */
 void usTransducerSettings::setFieldOfView(double fieldOfView)
 {
-  if(!m_scanLineNumberIsSet)
-    throw vpException(vpException::notInitialized, "The scan line number is not set, cannot determine the pitch from the field of view");
-  m_scanLinePitch = fieldOfView / (double) (m_scanLineNumber - 1);
+  if (!m_scanLineNumberIsSet)
+    throw vpException(vpException::notInitialized,
+                      "The scan line number is not set, cannot determine the pitch from the field of view");
+  m_scanLinePitch = fieldOfView / (double)(m_scanLineNumber - 1);
 }
 
 /**
 * Getter to know if the scan line number is set (usefull in case of field of view setter call).
 * @return Boolean to know if the scan line number is set or not.
 */
-bool usTransducerSettings::scanLineNumberIsSet() const
-{
-  return m_scanLineNumberIsSet;
-}
+bool usTransducerSettings::scanLineNumberIsSet() const { return m_scanLineNumberIsSet; }
 
 /**
 * Setter for depth : distance in meters between first and last pixel in a scan line.
 * @param depth Distance in meters.
 */
-void usTransducerSettings::setDepth(double depth)
-{
-  m_depth = depth;
-}
+void usTransducerSettings::setDepth(double depth) { m_depth = depth; }
 
 /**
 * Setter for depth : distance in meters between first and last pixel in a scan line.
 * @return Depth in meters.
 */
-double usTransducerSettings::getDepth() const
-{
-  return m_depth;
-}
+double usTransducerSettings::getDepth() const { return m_depth; }
 
 /**
 * Getter for transducer settings : allows heritating classes to get the transducer settings.
 * @return The transducer settings.
 */
-usTransducerSettings usTransducerSettings::getTransducerSettings() const {
+usTransducerSettings usTransducerSettings::getTransducerSettings() const
+{
   usTransducerSettings ret = *this;
   return ret;
 }
@@ -320,23 +302,20 @@ usTransducerSettings usTransducerSettings::getTransducerSettings() const {
 * Getter for sampling frequency : frequency used to sample the echo of the ultrasound wave.
 * @return Sampling frequency Frequency in Hz.
 */
-int usTransducerSettings::getSamplingFrequency() const {
-  return m_samplingFrequency;
-}
+int usTransducerSettings::getSamplingFrequency() const { return m_samplingFrequency; }
 
 /**
 * Getter for transmit frequency : frequency of the ultrasound wave used.
 * @return Transmit frequency in Hz.
 */
-int usTransducerSettings::getTransmitFrequency() const {
-  return m_transmitFrequency;
-}
+int usTransducerSettings::getTransmitFrequency() const { return m_transmitFrequency; }
 
 /**
 * Setter for sampling frequency : frequency used to sample the echo of the ultrasound wave.
 * @param samplingFrequency Frequency in Hz.
 */
-void usTransducerSettings::setSamplingFrequency(const int samplingFrequency) {
+void usTransducerSettings::setSamplingFrequency(const int samplingFrequency)
+{
   m_samplingFrequency = samplingFrequency;
 }
 
@@ -344,7 +323,7 @@ void usTransducerSettings::setSamplingFrequency(const int samplingFrequency) {
 * Setter for transmit frequency : frequency of the ultrasound wave used.
 * @param transmitFrequency Frequency in Hz.
 */
-void usTransducerSettings::setTransmitFrequency(const int transmitFrequency) {
+void usTransducerSettings::setTransmitFrequency(const int transmitFrequency)
+{
   m_transmitFrequency = transmitFrequency;
 }
-

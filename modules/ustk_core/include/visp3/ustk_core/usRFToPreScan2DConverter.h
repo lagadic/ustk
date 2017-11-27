@@ -42,17 +42,17 @@
 #include <visp3/ustk_core/usConfig.h>
 
 #if defined(USTK_HAVE_FFTW)
-//external includes
+// external includes
 #include <fftw3.h>
 
 // std includes
-#include <vector>
 #include <cmath>
 #include <complex>
+#include <vector>
 
 // visp/ustk includes
-#include <visp3/ustk_core/usImageRF2D.h>
 #include <visp3/ustk_core/usImagePreScan2D.h>
+#include <visp3/ustk_core/usImageRF2D.h>
 #include <visp3/ustk_core/usLogCompressor.h>
 
 /**
@@ -94,10 +94,10 @@ int main()
  */
 class VISP_EXPORT usRFToPreScan2DConverter
 {
- friend class usRFToPreScan3DConverter;
- public:
+  friend class usRFToPreScan3DConverter;
 
-  usRFToPreScan2DConverter(int decimationFactor=10);
+public:
+  usRFToPreScan2DConverter(int decimationFactor = 10);
 
   ~usRFToPreScan2DConverter();
 
@@ -109,7 +109,7 @@ class VISP_EXPORT usRFToPreScan2DConverter
 
 private:
   void init(int widthRF, int heigthRF);
-  void enveloppeDetection(const short *s, double* out);
+  void enveloppeDetection(const short *s, double *out);
 
   usLogCompressor m_logCompressor;
 
@@ -118,8 +118,8 @@ private:
   fftw_complex *m_fft_in, *m_fft_out, *m_fft_conv, *m_fft_out_inv;
   fftw_plan m_p, m_pinv;
 
-  double * m_env;
-  unsigned char * m_comp;
+  double *m_env;
+  unsigned char *m_comp;
 
   int m_signalSize;
   int m_scanLineNumber;

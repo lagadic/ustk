@@ -36,9 +36,20 @@ cmake_minimum_required(VERSION 2.6)
 
 find_package(VISP REQUIRED visp_ustk_grabber visp_sensor visp_robot)
 
-set(tutorial_ultrasonix_cpp
-  tutorial-ustk-virtual-server-preScan2D.cpp
-  tutorial-ustk-virtual-server-preScan3D.cpp)
+if(USE_FFTW)
+  set(tutorial_ultrasonix_cpp
+    tutorial-ustk-virtual-server-preScan2D.cpp
+    tutorial-ustk-virtual-server-postScan2D.cpp
+    tutorial-ustk-virtual-server-preScan3D.cpp
+    tutorial-ustk-virtual-server-RF2D.cpp
+    tutorial-ustk-virtual-server-RF3D.cpp)
+else()
+  set(tutorial_ultrasonix_cpp
+    tutorial-ustk-virtual-server-preScan2D.cpp
+    tutorial-ustk-virtual-server-postScan2D.cpp
+    tutorial-ustk-virtual-server-preScan3D.cpp)
+endif()
+
 
 foreach(cpp ${tutorial_ultrasonix_cpp})
   visp_add_target(${cpp})

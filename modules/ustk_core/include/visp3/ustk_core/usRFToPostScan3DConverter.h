@@ -43,8 +43,8 @@
 #if defined(USTK_HAVE_FFTW)
 
 // visp/ustk includes
-#include <visp3/ustk_core/usRFToPreScan3DConverter.h>
 #include <visp3/ustk_core/usPreScanToPostScan3DConverter.h>
+#include <visp3/ustk_core/usRFToPreScan3DConverter.h>
 
 /**
  * @class usRFToPostScan3DConverter
@@ -92,9 +92,8 @@ int main()
  */
 class VISP_EXPORT usRFToPostScan3DConverter
 {
- public:
-
-  usRFToPostScan3DConverter(int decimationFactor=10);
+public:
+  usRFToPostScan3DConverter(int decimationFactor = 10);
 
   ~usRFToPostScan3DConverter();
 
