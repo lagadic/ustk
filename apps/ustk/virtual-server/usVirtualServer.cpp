@@ -597,7 +597,7 @@ void usVirtualServer::sendingLoopSequenceMHD()
                   // then we compute the delta
                   m_nextImageTimestamp = (imageHeader.timeStamp - tmpTimpstamp) + imageHeader.timeStamp;
                 }
-                imageHeader.imageType = 0;
+                imageHeader.imageType = 2;
 
               } else if (currentNumberOfWholeSequenceSent % 2 == 0) {
                 int imageIndex =
@@ -629,7 +629,7 @@ void usVirtualServer::sendingLoopSequenceMHD()
                 }
                 m_nextImageTimestamp += deltaTimestampNext;
 
-                imageHeader.imageType = 0;
+                imageHeader.imageType = 2;
               } else {
                 int imageIndex =
                     m_MHDSequenceReader.getTotalImageNumber() - 2 -
@@ -659,7 +659,7 @@ void usVirtualServer::sendingLoopSequenceMHD()
                   deltaTimestampNext = nextTimestamp - localTimestamp;
                 }
                 m_nextImageTimestamp += deltaTimestampNext;
-                imageHeader.imageType = 0;
+                imageHeader.imageType = 2;
               }
             } else {
               uint64_t localTimestamp;
@@ -703,7 +703,7 @@ void usVirtualServer::sendingLoopSequenceMHD()
               // then we compute the delta
               m_nextImageTimestamp = (imageHeader.timeStamp - tmpTimpstamp) + imageHeader.timeStamp;
             }
-            imageHeader.imageType = 0;
+            imageHeader.imageType = 2;
 
           } else if (currentNumberOfWholeSequenceSent % 2 == 0) {
             int imageIndex = (imageHeader.frameCount - m_MHDSequenceReader.getTotalImageNumber()) %
@@ -734,7 +734,7 @@ void usVirtualServer::sendingLoopSequenceMHD()
             }
             m_nextImageTimestamp += deltaTimestampNext;
 
-            imageHeader.imageType = 0;
+            imageHeader.imageType = 2;
           } else {
             int imageIndex = m_MHDSequenceReader.getTotalImageNumber() - 2 -
                              ((imageHeader.frameCount - m_MHDSequenceReader.getTotalImageNumber()) %
@@ -763,7 +763,7 @@ void usVirtualServer::sendingLoopSequenceMHD()
               deltaTimestampNext = nextTimestamp - localTimestamp;
             }
             m_nextImageTimestamp += deltaTimestampNext;
-            imageHeader.imageType = 0;
+            imageHeader.imageType = 2;
           }
         } else {
           uint64_t localTimestamp;
@@ -990,12 +990,105 @@ void usVirtualServer::sendingLoopSequenceMHD()
       } else if (m_imageType == us::POSTSCAN_2D) {
         if (m_usePause) {
           if (!m_pauseOn) {
-            uint64_t localTimestamp;
-            m_MHDSequenceReader.acquire(m_postScanImage2d, localTimestamp);
-            imageHeader.timeStamp = localTimestamp + m_pauseDurationOffset;
-            if (!m_MHDSequenceReader.end())
-              m_nextImageTimestamp = m_MHDSequenceReader.getNextTimeStamp() + m_pauseDurationOffset;
-            imageHeader.imageType = 1;
+            if (m_useRewind) {
+              // counting the number of total sequence sent
+              unsigned int currentNumberOfWholeSequenceSent = 0;
+              if (imageHeader.frameCount - m_pauseIndexOffset >=
+                  (unsigned int)m_MHDSequenceReader.getTotalImageNumber()) {
+                currentNumberOfWholeSequenceSent =
+                    ((imageHeader.frameCount - m_pauseIndexOffset - m_MHDSequenceReader.getTotalImageNumber()) /
+                     (m_MHDSequenceReader.getTotalImageNumber() - 1)) +
+                    1;
+              }
+              if (currentNumberOfWholeSequenceSent == 0) { // sending first sequence
+                int imageIndex =
+                    (imageHeader.frameCount - m_pauseIndexOffset) % (m_MHDSequenceReader.getTotalImageNumber());
+
+                uint64_t localTimestamp;
+                m_MHDSequenceReader.acquire(m_postScanImage2d, localTimestamp);
+                imageHeader.timeStamp = localTimestamp;
+                if (imageIndex != m_MHDSequenceReader.getTotalImageNumber() - 1) {
+                  m_nextImageTimestamp = m_MHDSequenceReader.getNextTimeStamp();
+                } else { // next timestamp is the previous image, so we compute the abs diff between 2 timpestamps
+                  // first we get the timestamp of the previous image
+                  usImagePostScan2D<unsigned char> tmpImg;
+                  uint64_t tmpTimpstamp;
+                  m_MHDSequenceReader.getImage(imageIndex - 1, tmpImg, tmpTimpstamp);
+                  // then we compute the delta
+                  m_nextImageTimestamp = (imageHeader.timeStamp - tmpTimpstamp) + imageHeader.timeStamp;
+                }
+                imageHeader.imageType = 1;
+
+              } else if (currentNumberOfWholeSequenceSent % 2 == 0) {
+                int imageIndex =
+                    (imageHeader.frameCount - m_pauseIndexOffset - m_MHDSequenceReader.getTotalImageNumber()) %
+                        (m_MHDSequenceReader.getTotalImageNumber() - 1) +
+                    1;
+
+                // current real timestamp
+                uint64_t localTimestamp;
+                m_MHDSequenceReader.getImage(imageIndex, m_postScanImage2d, localTimestamp);
+                // offset (increment because of rewind)
+                uint64_t previousTimestamp;
+                usImagePostScan2D<unsigned char> tmpImg;
+                m_MHDSequenceReader.getImage(imageIndex - 1, tmpImg, previousTimestamp);
+                uint64_t deltaTimestamp = localTimestamp - previousTimestamp;
+                imageHeader.timeStamp += deltaTimestamp;
+
+                // next timestamp (for waiting process)
+                uint64_t nextTimestamp;
+                uint64_t deltaTimestampNext;
+                if (imageIndex != m_MHDSequenceReader.getTotalImageNumber() - 1) {
+                  usImagePostScan2D<unsigned char> tmpImg;
+                  m_MHDSequenceReader.getImage(imageIndex + 1, tmpImg, nextTimestamp);
+                  deltaTimestampNext = nextTimestamp - localTimestamp;
+                } else {
+                  usImagePostScan2D<unsigned char> tmpImg;
+                  m_MHDSequenceReader.getImage(imageIndex - 1, tmpImg, nextTimestamp);
+                  deltaTimestampNext = localTimestamp - nextTimestamp;
+                }
+                m_nextImageTimestamp += deltaTimestampNext;
+
+                imageHeader.imageType = 1;
+              } else {
+                int imageIndex =
+                    m_MHDSequenceReader.getTotalImageNumber() - 2 -
+                    ((imageHeader.frameCount - m_pauseIndexOffset - m_MHDSequenceReader.getTotalImageNumber()) %
+                     (m_MHDSequenceReader.getTotalImageNumber() - 1));
+
+                // current real timestamp
+                uint64_t localTimestamp;
+                m_MHDSequenceReader.getImage(imageIndex, m_postScanImage2d, localTimestamp);
+                // offset (increment because of rewind)
+                uint64_t previousTimestamp;
+                usImagePostScan2D<unsigned char> tmpImg;
+                m_MHDSequenceReader.getImage(imageIndex + 1, tmpImg, previousTimestamp);
+                uint64_t deltaTimestamp = previousTimestamp - localTimestamp;
+                imageHeader.timeStamp += deltaTimestamp;
+
+                // next timestamp (for waiting process)
+                uint64_t nextTimestamp;
+                uint64_t deltaTimestampNext;
+                if (imageIndex != 0) {
+                  usImagePostScan2D<unsigned char> tmpImg;
+                  m_MHDSequenceReader.getImage(imageIndex - 1, tmpImg, nextTimestamp);
+                  deltaTimestampNext = localTimestamp - nextTimestamp;
+                } else {
+                  usImagePostScan2D<unsigned char> tmpImg;
+                  m_MHDSequenceReader.getImage(imageIndex + 1, tmpImg, nextTimestamp);
+                  deltaTimestampNext = nextTimestamp - localTimestamp;
+                }
+                m_nextImageTimestamp += deltaTimestampNext;
+                imageHeader.imageType = 1;
+              }
+            } else {
+              uint64_t localTimestamp;
+              m_MHDSequenceReader.acquire(m_postScanImage2d, localTimestamp);
+              imageHeader.timeStamp = localTimestamp + m_pauseDurationOffset;
+              if (!m_MHDSequenceReader.end())
+                m_nextImageTimestamp = m_MHDSequenceReader.getNextTimeStamp() + m_pauseDurationOffset;
+              imageHeader.imageType = 1;
+            }
           } else { // pause activated, we continue sending the same image, and increasing timestamps
             uint64_t deltaT = m_nextImageTimestamp - imageHeader.timeStamp;
             m_nextImageTimestamp += deltaT;
@@ -1006,6 +1099,92 @@ void usVirtualServer::sendingLoopSequenceMHD()
 
           if (imageHeader.frameCount == m_pauseImageNumber)
             m_pauseOn = true;
+        } else if (m_useRewind) {
+          // counting the number of total sequence sent
+          unsigned int currentNumberOfWholeSequenceSent = 0;
+          if (imageHeader.frameCount >= (unsigned int)m_MHDSequenceReader.getTotalImageNumber()) {
+            currentNumberOfWholeSequenceSent = ((imageHeader.frameCount - m_MHDSequenceReader.getTotalImageNumber()) /
+                                                (m_MHDSequenceReader.getTotalImageNumber() - 1)) +
+                                               1;
+          }
+          if (currentNumberOfWholeSequenceSent == 0) { // sending first sequence
+            int imageIndex = (imageHeader.frameCount % (m_MHDSequenceReader.getTotalImageNumber()));
+
+            uint64_t localTimestamp;
+            m_MHDSequenceReader.acquire(m_postScanImage2d, localTimestamp);
+            imageHeader.timeStamp = localTimestamp;
+            if (imageIndex != m_MHDSequenceReader.getTotalImageNumber() - 1) {
+              m_nextImageTimestamp = m_MHDSequenceReader.getNextTimeStamp();
+            } else { // next timestamp is the previous image, so we compute the abs diff between 2 timpestamps
+              // first we get the timestamp of the previous image
+              usImagePostScan2D<unsigned char> tmpImg;
+              uint64_t tmpTimpstamp;
+              m_MHDSequenceReader.getImage(imageIndex - 1, tmpImg, tmpTimpstamp);
+              // then we compute the delta
+              m_nextImageTimestamp = (imageHeader.timeStamp - tmpTimpstamp) + imageHeader.timeStamp;
+            }
+            imageHeader.imageType = 1;
+
+          } else if (currentNumberOfWholeSequenceSent % 2 == 0) {
+            int imageIndex = (imageHeader.frameCount - m_MHDSequenceReader.getTotalImageNumber()) %
+                                 (m_MHDSequenceReader.getTotalImageNumber() - 1) +
+                             1;
+
+            // current real timestamp
+            uint64_t localTimestamp;
+            m_MHDSequenceReader.getImage(imageIndex, m_postScanImage2d, localTimestamp);
+            // offset (increment because of rewind)
+            uint64_t previousTimestamp;
+            usImagePostScan2D<unsigned char> tmpImg;
+            m_MHDSequenceReader.getImage(imageIndex - 1, tmpImg, previousTimestamp);
+            uint64_t deltaTimestamp = localTimestamp - previousTimestamp;
+            imageHeader.timeStamp += deltaTimestamp;
+
+            // next timestamp (for waiting process)
+            uint64_t nextTimestamp;
+            uint64_t deltaTimestampNext;
+            if (imageIndex != m_MHDSequenceReader.getTotalImageNumber() - 1) {
+              usImagePostScan2D<unsigned char> tmpImg;
+              m_MHDSequenceReader.getImage(imageIndex + 1, tmpImg, nextTimestamp);
+              deltaTimestampNext = nextTimestamp - localTimestamp;
+            } else {
+              usImagePostScan2D<unsigned char> tmpImg;
+              m_MHDSequenceReader.getImage(imageIndex - 1, tmpImg, nextTimestamp);
+              deltaTimestampNext = localTimestamp - nextTimestamp;
+            }
+            m_nextImageTimestamp += deltaTimestampNext;
+
+            imageHeader.imageType = 1;
+          } else {
+            int imageIndex = m_MHDSequenceReader.getTotalImageNumber() - 2 -
+                             ((imageHeader.frameCount - m_MHDSequenceReader.getTotalImageNumber()) %
+                              (m_MHDSequenceReader.getTotalImageNumber() - 1));
+
+            // current real timestamp
+            uint64_t localTimestamp;
+            m_MHDSequenceReader.getImage(imageIndex, m_postScanImage2d, localTimestamp);
+            // offset (increment because of rewind)
+            uint64_t previousTimestamp;
+            usImagePostScan2D<unsigned char> tmpImg;
+            m_MHDSequenceReader.getImage(imageIndex + 1, tmpImg, previousTimestamp);
+            uint64_t deltaTimestamp = previousTimestamp - localTimestamp;
+            imageHeader.timeStamp += deltaTimestamp;
+
+            // next timestamp (for waiting process)
+            uint64_t nextTimestamp;
+            uint64_t deltaTimestampNext;
+            if (imageIndex != 0) {
+              usImagePostScan2D<unsigned char> tmpImg;
+              m_MHDSequenceReader.getImage(imageIndex - 1, tmpImg, nextTimestamp);
+              deltaTimestampNext = localTimestamp - nextTimestamp;
+            } else {
+              usImagePostScan2D<unsigned char> tmpImg;
+              m_MHDSequenceReader.getImage(imageIndex + 1, tmpImg, nextTimestamp);
+              deltaTimestampNext = nextTimestamp - localTimestamp;
+            }
+            m_nextImageTimestamp += deltaTimestampNext;
+            imageHeader.imageType = 1;
+          }
         } else {
           uint64_t localTimestamp;
           m_MHDSequenceReader.acquire(m_postScanImage2d, localTimestamp);
@@ -1186,7 +1365,7 @@ void usVirtualServer::sendingLoopSequenceMHD()
       out.writeRawData((char *)m_postScanImage2d.bitmap,
                        (int)m_postScanImage2d.getHeight() * m_postScanImage2d.getWidth());
 
-      endOfSequence = m_MHDSequenceReader.end();
+      endOfSequence = m_MHDSequenceReader.end() && !m_useRewind;
 
       connectionSoc->write(block);
       qApp->processEvents();
