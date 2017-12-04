@@ -62,7 +62,7 @@ int main(int argc, const char **argv)
   std::cout << "-------------------------------------------------------" << std::endl;
   std::cout << "  testUsScanConversion2D.cpp" << std::endl << std::endl;
   std::cout << "  The test converts a pre-scan image to post-scan, and converts it back to pre-scan."
-               "  Then it checks if the 2 pre-scan images are equal."
+               "  Then it checks if the difference between the 2 images, using sum of square differences."
             << std::endl;
   std::cout << "-------------------------------------------------------" << std::endl;
   std::cout << std::endl;
@@ -82,18 +82,20 @@ int main(int argc, const char **argv)
   usPostScanToPreScan2DConverter backScanConverter;
   backScanConverter.convert(postscan, prescanBack, 480);
 
-  // compute the absolute difference of the reference and the result
-  vpImage<unsigned char> sub(prescanBack.getHeight(), prescanBack.getWidth());
+  // compute the sum of square difference of the reference and the result
   int inc = 0;
-  for (int i = 0; i < prescanBack.getHeight(); i++) {
-    for (int j = 0; j < prescanBack.getWidth(); j++) {
+  int pxSkipped = 0;
+  for (unsigned int i = 0; i < prescanBack.getHeight(); i++) {
+    for (unsigned int j = 0; j < prescanBack.getWidth(); j++) {
       if (i > 3 && j > 3) { // we skip top & left borders, they have huge differencies compared to the rest of the image
-        inc += abs(prescanBack[i][j] - prescanReference[i][j]);
-        sub[i][j] = abs(prescanBack[i][j] - prescanReference[i][j]);
+        inc += (prescanBack[i][j] - prescanReference[i][j]) * (prescanBack[i][j] - prescanReference[i][j]);
+      } else {
+        pxSkipped++;
       }
     }
   }
-  if ((inc / (double)sub.getSize()) < 5) // we allow a mean difference of 5 units per pixels between the images
+  if ((sqrt(inc) / (double)(prescanReference.getSize() - pxSkipped)) <
+      0.5) // we allow a mean difference of 1 units per pixels between the images
     testFailed = false;
 
   if (!testFailed)
