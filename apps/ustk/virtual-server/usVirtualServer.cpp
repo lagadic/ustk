@@ -806,7 +806,7 @@ void usVirtualServer::sendingLoopSequenceMHD()
                 }
                 imageHeader.imageType = 0;
 
-              } else if (currentNumberOfWholeSequenceSent % 2 == 0) {
+              } else if (currentNumberOfWholeSequenceSent % 2 == 0) { // sequence currently sent : from image 1 to N-1
                 int imageIndex =
                     (imageHeader.frameCount - m_pauseIndexOffset - m_MHDSequenceReader.getTotalImageNumber()) %
                         (m_MHDSequenceReader.getTotalImageNumber() - 1) +
@@ -838,7 +838,7 @@ void usVirtualServer::sendingLoopSequenceMHD()
                 m_nextImageTimestamp += deltaTimestampNext;
 
                 imageHeader.imageType = 0;
-              } else {
+              } else { // sequence currently sent : from image N-2 to 0
                 int imageIndex =
                     m_MHDSequenceReader.getTotalImageNumber() - 2 -
                     ((imageHeader.frameCount - m_pauseIndexOffset - m_MHDSequenceReader.getTotalImageNumber()) %
@@ -1217,10 +1217,52 @@ void usVirtualServer::sendingLoopSequenceMHD()
       } else if (m_imageType == us::PRESCAN_3D) {
         if (m_usePause) {
           if (!m_pauseOn) {
-            m_MHDSequenceReader.acquire(m_preScanImage3d, m_timestamps);
-            imageHeader.timeStamp = m_timestamps.at(0) + m_pauseDurationOffset;
-            m_nextImageTimestamp = m_timestamps.at(1) + m_pauseDurationOffset;
-            imageHeader.imageType = 0;
+            if (m_useRewind) {
+              // counting the number of total sequence sent
+              unsigned int currentNumberOfWholeSequenceSent = 0;
+
+              if (imageHeader.frameCount - m_pauseIndexOffset >=
+                  (unsigned int)m_MHDSequenceReader.getTotalImageNumber() * m_preScanImage3d.getFrameNumber()) {
+                currentNumberOfWholeSequenceSent =
+                    ((imageHeader.frameCount - m_pauseIndexOffset -
+                      (m_MHDSequenceReader.getTotalImageNumber() * m_preScanImage3d.getFrameNumber())) /
+                     ((m_MHDSequenceReader.getTotalImageNumber() - 1) * m_preScanImage3d.getFrameNumber())) +
+                    1;
+              }
+
+              if (currentNumberOfWholeSequenceSent == 0) { // sending first sequence
+                int volumeIndex = ((imageHeader.frameCount - m_pauseIndexOffset) / m_preScanImage3d.getFrameNumber());
+
+                m_MHDSequenceReader.getImage(volumeIndex, m_preScanImage3d, m_timestamps);
+                imageHeader.timeStamp = m_timestamps.at(0);
+                m_nextImageTimestamp = m_timestamps.at(1);
+                imageHeader.imageType = 0;
+
+              } else if (currentNumberOfWholeSequenceSent % 2 == 0) {
+                int volumeIndex = (((imageHeader.frameCount - m_pauseIndexOffset -
+                                     (m_MHDSequenceReader.getTotalImageNumber() * m_preScanImage3d.getFrameNumber())) /
+                                    m_preScanImage3d.getFrameNumber()) %
+                                   (m_MHDSequenceReader.getTotalImageNumber() - 1)) +
+                                  1;
+
+                m_MHDSequenceReader.getImage(volumeIndex, m_preScanImage3d, m_timestamps);
+                imageHeader.imageType = 0;
+              } else {
+                int volumeIndex = m_MHDSequenceReader.getTotalImageNumber() - 2 -
+                                  ((imageHeader.frameCount - m_pauseIndexOffset -
+                                    (m_MHDSequenceReader.getTotalImageNumber() * m_preScanImage3d.getFrameNumber())) /
+                                   m_preScanImage3d.getFrameNumber()) %
+                                      (m_MHDSequenceReader.getTotalImageNumber() - 1);
+
+                m_MHDSequenceReader.getImage(volumeIndex, m_preScanImage3d, m_timestamps);
+                imageHeader.imageType = 0;
+              }
+            } else {
+              m_MHDSequenceReader.acquire(m_preScanImage3d, m_timestamps);
+              imageHeader.timeStamp = m_timestamps.at(0) + m_pauseDurationOffset;
+              m_nextImageTimestamp = m_timestamps.at(1) + m_pauseDurationOffset;
+              imageHeader.imageType = 0;
+            }
           }
 
           if (imageHeader.frameCount / m_preScanImage3d.getFrameNumber() == m_pauseImageNumber &&
@@ -1228,6 +1270,46 @@ void usVirtualServer::sendingLoopSequenceMHD()
             m_MHDSequenceReader.acquire(m_preScanImage3dTemp,
                                         m_timestampsTemp); // temp attributes contains next volume and timestamps
             m_pauseOn = true;
+          }
+        } else if (m_useRewind) {
+          // counting the number of total sequence sent
+          unsigned int currentNumberOfWholeSequenceSent = 0;
+
+          if (imageHeader.frameCount >=
+              (unsigned int)m_MHDSequenceReader.getTotalImageNumber() * m_preScanImage3d.getFrameNumber()) {
+            currentNumberOfWholeSequenceSent =
+                ((imageHeader.frameCount -
+                  (m_MHDSequenceReader.getTotalImageNumber() * m_preScanImage3d.getFrameNumber())) /
+                 ((m_MHDSequenceReader.getTotalImageNumber() - 1) * m_preScanImage3d.getFrameNumber())) +
+                1;
+          }
+
+          if (currentNumberOfWholeSequenceSent == 0) { // sending first sequence
+
+            m_MHDSequenceReader.acquire(m_preScanImage3d, m_timestamps);
+            imageHeader.timeStamp = m_timestamps.at(0);
+            m_nextImageTimestamp = m_timestamps.at(1);
+            imageHeader.imageType = 0;
+
+          } else if (currentNumberOfWholeSequenceSent % 2 == 0) {
+            int volumeIndex = (((imageHeader.frameCount -
+                                 (m_MHDSequenceReader.getTotalImageNumber() * m_preScanImage3d.getFrameNumber())) /
+                                m_preScanImage3d.getFrameNumber()) %
+                               (m_MHDSequenceReader.getTotalImageNumber() - 1)) +
+                              1;
+
+            m_MHDSequenceReader.getImage(volumeIndex, m_preScanImage3d, m_timestamps);
+            usImageIo::write(m_preScanImage3d, std::string("test.mhd"));
+            imageHeader.imageType = 0;
+          } else {
+            int volumeIndex = m_MHDSequenceReader.getTotalImageNumber() - 2 -
+                              ((imageHeader.frameCount -
+                                (m_MHDSequenceReader.getTotalImageNumber() * m_preScanImage3d.getFrameNumber())) /
+                               m_preScanImage3d.getFrameNumber()) %
+                                  (m_MHDSequenceReader.getTotalImageNumber() - 1);
+
+            m_MHDSequenceReader.getImage(volumeIndex, m_preScanImage3d, m_timestamps);
+            imageHeader.imageType = 0;
           }
         } else {
           m_MHDSequenceReader.acquire(m_preScanImage3d, m_timestamps);
@@ -1242,11 +1324,11 @@ void usVirtualServer::sendingLoopSequenceMHD()
         m_pauseOn = true;
 
       if (m_usePause && m_pauseOn) {
-        uint64_t deltaT = 40; // if we pause on first image, we set the pause time to 40ms
+        uint64_t deltaT = 40; // if we pause on first image, we set the time delta between 2 same frames to 40ms
         m_nextImageTimestamp += deltaT;
         imageHeader.timeStamp += deltaT;
         m_pauseDurationOffset += deltaT;
-        if (imageHeader.frameCount != 0) // manage first case
+        if (imageHeader.frameCount != 0) // manage first image case
           m_pauseIndexOffset++;
       }
     }
@@ -1420,6 +1502,8 @@ void usVirtualServer::sendingLoopSequenceMHD()
           uint64_t deltaT = m_nextImageTimestamp - imageHeader.timeStamp;
           m_pauseDurationOffset += deltaT;
           m_pauseIndexOffset++;
+        } else if (m_useRewind) {
+
         } else {
           if ((imageHeader.frameCount / m_rfImage3d.getFrameNumber()) % 2 == 1)
             m_rfImage3d.getFrame(m_rfImage2d, m_rfImage3d.getFrameNumber() - currentFrameInVolume - 1);
@@ -1428,10 +1512,10 @@ void usVirtualServer::sendingLoopSequenceMHD()
 
           // timestamps
           imageHeader.timeStamp = m_timestamps.at(currentFrameInVolume) + m_pauseDurationOffset;
-          if (m_preScanImage3d.getFrameNumber() == currentFrameInVolume + 1) { // we're sending last frame of the volume
-            if (m_MHDSequenceReader.end())                                     // last frame of last volume
+          if (m_rfImage3d.getFrameNumber() == currentFrameInVolume + 1) { // we're sending last frame of the volume
+            if (m_MHDSequenceReader.end())                                // last frame of last volume
               m_nextImageTimestamp = imageHeader.timeStamp;
-            else if ((imageHeader.frameCount / m_preScanImage3d.getFrameNumber()) % 2 == 0) { // nex volume is odd
+            else if ((imageHeader.frameCount / m_rfImage3d.getFrameNumber()) % 2 == 0) { // nex volume is odd
               m_nextImageTimestamp =
                   m_MHDSequenceReader.getNextTimeStamps().back(); // next timestamp is last of next volume
             } else {                                              // next volume is even
@@ -1474,7 +1558,7 @@ void usVirtualServer::sendingLoopSequenceMHD()
         imageHeader.frameCount++;
         currentFrameInVolume++;
         endOfVolume = m_rfImage3d.getFrameNumber() == currentFrameInVolume;
-        endOfSequence = (m_MHDSequenceReader.end() && endOfVolume);
+        endOfSequence = (m_MHDSequenceReader.end() && endOfVolume && !m_useRewind);
 
         // WAITING PROCESS (to respect sequence timestamps)
         vpTime::wait((double)(m_nextImageTimestamp - imageHeader.timeStamp));
@@ -1523,6 +1607,98 @@ void usVirtualServer::sendingLoopSequenceMHD()
           uint64_t deltaT = m_nextImageTimestamp - imageHeader.timeStamp;
           m_pauseDurationOffset += deltaT;
           m_pauseIndexOffset++;
+        } else if (m_useRewind) {
+          // counting the number of total sequence sent
+          unsigned int currentNumberOfWholeSequenceSent = 0;
+          if (imageHeader.frameCount >=
+              (unsigned int)m_MHDSequenceReader.getTotalImageNumber() * m_preScanImage3d.getFrameNumber()) {
+            currentNumberOfWholeSequenceSent =
+                ((imageHeader.frameCount -
+                  (m_MHDSequenceReader.getTotalImageNumber() * m_preScanImage3d.getFrameNumber())) /
+                 ((m_MHDSequenceReader.getTotalImageNumber() - 1) * m_preScanImage3d.getFrameNumber())) +
+                1;
+          }
+
+          if (currentNumberOfWholeSequenceSent == 0) {
+            // get frame
+            if ((imageHeader.frameCount / m_preScanImage3d.getFrameNumber()) % 2 == 1) {
+              m_preScanImage3d.getFrame(m_preScanImage2d, m_preScanImage3d.getFrameNumber() - currentFrameInVolume - 1);
+            } else {
+              m_preScanImage3d.getFrame(m_preScanImage2d, currentFrameInVolume);
+            }
+
+            invertRowsColsOnPreScan();
+
+            // timestamp
+            imageHeader.timeStamp = m_timestamps.at(currentFrameInVolume) + m_pauseDurationOffset;
+            if (m_preScanImage3d.getFrameNumber() ==
+                currentFrameInVolume + 1) {    // we're sending last frame of the volume
+              if (m_MHDSequenceReader.end()) { // last frame of last volume
+                m_nextImageTimestamp = imageHeader.timeStamp + (m_timestamps.at(currentFrameInVolume) -
+                                                                m_timestamps.at(currentFrameInVolume - 1));
+              } else if ((imageHeader.frameCount / m_preScanImage3d.getFrameNumber()) % 2 == 0) { // nex volume is odd
+                m_nextImageTimestamp =
+                    m_MHDSequenceReader.getNextTimeStamps().back(); // next timestamp is last of next volume
+              } else {                                              // next volume is even
+                m_nextImageTimestamp =
+                    m_MHDSequenceReader.getNextTimeStamps().back(); // next timestamp is first of next volume
+              }
+            } else if (m_timestamps.size() != currentFrameInVolume + 1)
+              m_nextImageTimestamp = m_timestamps.at(currentFrameInVolume + 1);
+
+          } else if (currentNumberOfWholeSequenceSent % 2 == 0) { // we go from volume 1 to N-1
+            // get frame
+            if ((imageHeader.frameCount / m_preScanImage3d.getFrameNumber()) % 2 == 1) {
+              m_preScanImage3d.getFrame(m_preScanImage2d, m_preScanImage3d.getFrameNumber() - currentFrameInVolume - 1);
+            } else {
+              m_preScanImage3d.getFrame(m_preScanImage2d, currentFrameInVolume);
+            }
+
+            invertRowsColsOnPreScan();
+
+            // timestamp
+            uint64_t delta;
+            uint64_t deltaNext;
+            if (m_preScanImage3d.getFrameNumber() ==
+                currentFrameInVolume + 1) { // we're sending last frame of the volume
+              delta = m_timestamps.at(currentFrameInVolume) - m_timestamps.at(currentFrameInVolume - 1);
+              deltaNext = delta;                    // we consider same delta for convinience
+            } else if (currentFrameInVolume == 0) { // first frame of the volume
+              deltaNext = m_timestamps.at(currentFrameInVolume + 1) - m_timestamps.at(currentFrameInVolume);
+              delta = deltaNext; // we consider same delta for convinience
+            } else {
+              delta = m_timestamps.at(currentFrameInVolume) - m_timestamps.at(currentFrameInVolume - 1);
+              deltaNext = m_timestamps.at(currentFrameInVolume + 1) - m_timestamps.at(currentFrameInVolume);
+            }
+            imageHeader.timeStamp += delta;
+            m_nextImageTimestamp = imageHeader.timeStamp + deltaNext;
+          } else { // we go from volume N-2 to 0
+            // get frame
+            if ((imageHeader.frameCount / m_preScanImage3d.getFrameNumber()) % 2 == 1) {
+              m_preScanImage3d.getFrame(m_preScanImage2d, m_preScanImage3d.getFrameNumber() - currentFrameInVolume - 1);
+            } else {
+              m_preScanImage3d.getFrame(m_preScanImage2d, currentFrameInVolume);
+            }
+
+            invertRowsColsOnPreScan();
+
+            // timestamp
+            uint64_t delta;
+            uint64_t deltaNext;
+            if (m_preScanImage3d.getFrameNumber() ==
+                currentFrameInVolume + 1) { // we're sending last frame of the volume
+              delta = m_timestamps.at(currentFrameInVolume) - m_timestamps.at(currentFrameInVolume - 1);
+              deltaNext = delta;                    // we consider same delta for convinience
+            } else if (currentFrameInVolume == 0) { // first frame of the volume
+              deltaNext = m_timestamps.at(currentFrameInVolume + 1) - m_timestamps.at(currentFrameInVolume);
+              delta = deltaNext; // we consider same delta for convinience
+            } else {
+              delta = m_timestamps.at(currentFrameInVolume) - m_timestamps.at(currentFrameInVolume - 1);
+              deltaNext = m_timestamps.at(currentFrameInVolume + 1) - m_timestamps.at(currentFrameInVolume);
+            }
+            imageHeader.timeStamp += delta;
+            m_nextImageTimestamp = imageHeader.timeStamp + deltaNext;
+          }
         } else {
           if ((imageHeader.frameCount / m_preScanImage3d.getFrameNumber()) % 2 == 1)
             m_preScanImage3d.getFrame(m_preScanImage2d, m_preScanImage3d.getFrameNumber() - currentFrameInVolume - 1);
@@ -1580,7 +1756,7 @@ void usVirtualServer::sendingLoopSequenceMHD()
         imageHeader.frameCount++;
         currentFrameInVolume++;
         endOfVolume = m_preScanImage3d.getFrameNumber() == currentFrameInVolume;
-        endOfSequence = (m_MHDSequenceReader.end() && endOfVolume);
+        endOfSequence = (m_MHDSequenceReader.end() && endOfVolume && !m_useRewind);
 
         // WAITING PROCESS (to respect sequence timestamps)
         if (!endOfSequence)
