@@ -52,6 +52,7 @@ usNetworkGrabberRF2D::usNetworkGrabberRF2D(usNetworkGrabber *parent) : usNetwork
   m_swichOutputInit = false;
 
   m_recordingOn = false;
+  m_firstImageTimestamp = 0;
 
   connect(m_tcpSocket, SIGNAL(readyRead()), this, SLOT(dataArrived()));
 }
@@ -113,6 +114,10 @@ void usNetworkGrabberRF2D::dataArrived()
     quint64 timestamp;
     in >> timestamp;
     m_imageHeader.timeStamp = timestamp;
+
+    if (m_imageHeader.frameCount == 0) // used to save the sequence
+      m_firstImageTimestamp = timestamp;
+
     in >> m_imageHeader.dataRate;
     in >> m_imageHeader.dataLength;
     in >> m_imageHeader.ss;
@@ -199,7 +204,8 @@ void usNetworkGrabberRF2D::dataArrived()
       m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
       if (m_recordingOn)
         m_sequenceWriter.write(*m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC),
-                               m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getTimeStamp());
+                               m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getTimeStamp() -
+                                   m_firstImageTimestamp);
 
       m_firstFrameAvailable = true;
       emit(newFrameAvailable());
@@ -232,7 +238,8 @@ void usNetworkGrabberRF2D::dataArrived()
       m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
       if (m_recordingOn)
         m_sequenceWriter.write(*m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC),
-                               m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getTimeStamp());
+                               m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getTimeStamp() -
+                                   m_firstImageTimestamp);
 
       m_firstFrameAvailable = true;
       emit(newFrameAvailable());

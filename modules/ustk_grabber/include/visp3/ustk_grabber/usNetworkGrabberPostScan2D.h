@@ -98,6 +98,7 @@ private:
   bool m_recordingOn;
   std::string m_recordingPath;
   usMHDSequenceWriter m_sequenceWriter;
+  uint64_t m_firstImageTimestamp;
 };
 
 #endif // QT4 || QT5

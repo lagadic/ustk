@@ -113,6 +113,7 @@ private:
   // to manage the recording process
   bool m_recordingOn;
   usMHDSequenceWriter m_sequenceWriter;
+  uint64_t m_firstImageTimestamp;
 };
 
 #endif // QT4 || QT5

@@ -57,6 +57,7 @@ usNetworkGrabberPreScan3D::usNetworkGrabberPreScan3D(usNetworkGrabber *parent)
   m_motorSweepingInZDirection = true;
 
   m_recordingOn = false;
+  m_firstImageTimestamp = 0;
 
   connect(m_tcpSocket, SIGNAL(readyRead()), this, SLOT(dataArrived()));
 }
@@ -117,6 +118,10 @@ void usNetworkGrabberPreScan3D::dataArrived()
     quint64 timestamp;
     in >> timestamp;
     m_imageHeader.timeStamp = timestamp;
+
+    if (m_imageHeader.frameCount == 0) // used to save the sequence
+      m_firstImageTimestamp = timestamp;
+
     in >> m_imageHeader.dataRate;
     in >> m_imageHeader.dataLength;
     in >> m_imageHeader.ss;
@@ -288,10 +293,13 @@ void usNetworkGrabberPreScan3D::includeFrameInVolume()
         m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC);
     m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
     m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
-    if (m_recordingOn)
-      m_sequenceWriter.write(*m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC),
-                             m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getTimeStamps());
-
+    if (m_recordingOn) {
+      std::vector<uint64_t> timestampsToWrite;
+      for (unsigned int i = 0; i < m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getTimeStamps().size(); i++)
+        timestampsToWrite.push_back(m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getTimeStamps().at(i) -
+                                    m_firstImageTimestamp);
+      m_sequenceWriter.write(*m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC), timestampsToWrite);
+    }
     if (volumeIndex % 2 != 0) // case of backward moving motor (opposite to Z direction)
       m_motorSweepingInZDirection = true;
     else
