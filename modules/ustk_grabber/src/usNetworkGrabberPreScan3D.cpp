@@ -59,6 +59,8 @@ usNetworkGrabberPreScan3D::usNetworkGrabberPreScan3D(usNetworkGrabber *parent)
   m_recordingOn = false;
   m_firstImageTimestamp = 0;
 
+  m_volumeField = usNetworkGrabber::ODD_EVEN;
+
   connect(m_tcpSocket, SIGNAL(readyRead()), this, SLOT(dataArrived()));
 }
 
@@ -327,6 +329,27 @@ usVolumeGrabbedInfo<usImagePreScan3D<unsigned char> > *usNetworkGrabberPreScan3D
     loop.connect(this, SIGNAL(newVolumeAvailable()), SLOT(quit()));
     loop.exec();
 
+    // check parity
+    bool parityControl = false;
+    if (m_volumeField == ODD) {
+      if (m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getVolumeCount() % 2 == 1) {
+        parityControl = true;
+      }
+    } else if (m_volumeField == EVEN) {
+      if (m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getVolumeCount() % 2 == 0) {
+        parityControl = true;
+      }
+    } else {
+      parityControl = true;
+    }
+
+    // if parity not ok, we wait next volume
+    if (!parityControl) {
+      QEventLoop loop;
+      loop.connect(this, SIGNAL(newVolumeAvailable()), SLOT(quit()));
+      loop.exec();
+    }
+
     // switch pointers
     usVolumeGrabbedInfo<usImagePreScan3D<unsigned char> > *savePtr = m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC);
     m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
@@ -341,6 +364,27 @@ usVolumeGrabbedInfo<usImagePreScan3D<unsigned char> > *usNetworkGrabberPreScan3D
       loop.connect(this, SIGNAL(newVolumeAvailable()), SLOT(quit()));
       loop.exec();
 
+      // check parity
+      bool parityControl = false;
+      if (m_volumeField == ODD) {
+        if (m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getVolumeCount() % 2 == 1) {
+          parityControl = true;
+        }
+      } else if (m_volumeField == EVEN) {
+        if (m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getVolumeCount() % 2 == 0) {
+          parityControl = true;
+        }
+      } else {
+        parityControl = true;
+      }
+
+      // if parity not ok, we wait next volume
+      if (!parityControl) {
+        QEventLoop loop;
+        loop.connect(this, SIGNAL(newVolumeAvailable()), SLOT(quit()));
+        loop.exec();
+      }
+
       // switch pointers
       usVolumeGrabbedInfo<usImagePreScan3D<unsigned char> > *savePtr = m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC);
       m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
@@ -352,6 +396,28 @@ usVolumeGrabbedInfo<usImagePreScan3D<unsigned char> > *usNetworkGrabberPreScan3D
     else if (m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC)->getVolumeCount() <
                  m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getVolumeCount() ||
              !m_swichOutputInit) {
+
+      // check parity
+      bool parityControl = false;
+      if (m_volumeField == ODD) {
+        if (m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getVolumeCount() % 2 == 1) {
+          parityControl = true;
+        }
+      } else if (m_volumeField == EVEN) {
+        if (m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getVolumeCount() % 2 == 0) {
+          parityControl = true;
+        }
+      } else {
+        parityControl = true;
+      }
+
+      // if parity not ok, we wait next volume
+      if (!parityControl) {
+        QEventLoop loop;
+        loop.connect(this, SIGNAL(newVolumeAvailable()), SLOT(quit()));
+        loop.exec();
+      }
+
       // switch pointers (output <-> mostRecentFilled)
       usVolumeGrabbedInfo<usImagePreScan3D<unsigned char> > *savePtr = m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC);
       m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
@@ -377,5 +443,14 @@ void usNetworkGrabberPreScan3D::activateRecording(std::string path)
 * Stop recording process.
 */
 void usNetworkGrabberPreScan3D::stopRecording() { m_recordingOn = false; }
+
+/**
+* Set recording to specific volumes : odd, even or both.
+* @param volumeField Type of volume to acquire (see usNetworkGrabber::usVolumeField enum).
+*/
+void usNetworkGrabberPreScan3D::setVolumeField(usNetworkGrabber::usVolumeField volumeField)
+{
+  m_volumeField = volumeField;
+}
 
 #endif
