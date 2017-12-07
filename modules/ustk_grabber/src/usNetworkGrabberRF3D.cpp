@@ -58,6 +58,8 @@ usNetworkGrabberRF3D::usNetworkGrabberRF3D(usNetworkGrabber *parent) : usNetwork
   m_recordingOn = false;
   m_firstImageTimestamp = 0;
 
+  m_volumeField = usNetworkGrabber::ODD_EVEN;
+
   connect(m_tcpSocket, SIGNAL(readyRead()), this, SLOT(dataArrived()));
 }
 
@@ -325,6 +327,27 @@ usVolumeGrabbedInfo<usImageRF3D<short int> > *usNetworkGrabberRF3D::acquire()
     loop.connect(this, SIGNAL(newVolumeAvailable()), SLOT(quit()));
     loop.exec();
 
+    // check parity
+    bool parityControl = false;
+    if (m_volumeField == ODD) {
+      if (m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getVolumeCount() % 2 == 1) {
+        parityControl = true;
+      }
+    } else if (m_volumeField == EVEN) {
+      if (m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getVolumeCount() % 2 == 0) {
+        parityControl = true;
+      }
+    } else {
+      parityControl = true;
+    }
+
+    // if parity not ok, we wait next volume
+    if (!parityControl) {
+      QEventLoop loop;
+      loop.connect(this, SIGNAL(newVolumeAvailable()), SLOT(quit()));
+      loop.exec();
+    }
+
     // switch pointers
     usVolumeGrabbedInfo<usImageRF3D<short int> > *savePtr = m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC);
     m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
@@ -333,11 +356,35 @@ usVolumeGrabbedInfo<usImageRF3D<short int> > *usNetworkGrabberRF3D::acquire()
   } else {
     // user grabs too fast
     if (m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC)->getVolumeCount() ==
-        m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getVolumeCount() + 1) {
+            m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getVolumeCount() + 1 ||
+        ((m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC)->getVolumeCount() ==
+          m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getVolumeCount() + 2) &&
+         (m_volumeField == ODD || m_volumeField == EVEN))) {
       // we wait until a new frame is available
       QEventLoop loop;
       loop.connect(this, SIGNAL(newVolumeAvailable()), SLOT(quit()));
       loop.exec();
+
+      // check parity
+      bool parityControl = false;
+      if (m_volumeField == ODD) {
+        if (m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getVolumeCount() % 2 == 1) {
+          parityControl = true;
+        }
+      } else if (m_volumeField == EVEN) {
+        if (m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getVolumeCount() % 2 == 0) {
+          parityControl = true;
+        }
+      } else {
+        parityControl = true;
+      }
+
+      // if parity not ok, we wait next volume
+      if (!parityControl) {
+        QEventLoop loop;
+        loop.connect(this, SIGNAL(newVolumeAvailable()), SLOT(quit()));
+        loop.exec();
+      }
 
       // switch pointers
       usVolumeGrabbedInfo<usImageRF3D<short int> > *savePtr = m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC);
@@ -350,6 +397,28 @@ usVolumeGrabbedInfo<usImageRF3D<short int> > *usNetworkGrabberRF3D::acquire()
     else if (m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC)->getVolumeCount() <
                  m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getVolumeCount() ||
              !m_swichOutputInit) {
+
+      // check parity
+      bool parityControl = false;
+      if (m_volumeField == ODD) {
+        if (m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getVolumeCount() % 2 == 1) {
+          parityControl = true;
+        }
+      } else if (m_volumeField == EVEN) {
+        if (m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getVolumeCount() % 2 == 0) {
+          parityControl = true;
+        }
+      } else {
+        parityControl = true;
+      }
+
+      // if parity not ok, we wait next volume
+      if (!parityControl) {
+        QEventLoop loop;
+        loop.connect(this, SIGNAL(newVolumeAvailable()), SLOT(quit()));
+        loop.exec();
+      }
+
       // switch pointers (output <-> mostRecentFilled)
       usVolumeGrabbedInfo<usImageRF3D<short int> > *savePtr = m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC);
       m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
@@ -377,4 +446,9 @@ void usNetworkGrabberRF3D::activateRecording(std::string path)
 */
 void usNetworkGrabberRF3D::stopRecording() { m_recordingOn = false; }
 
+/**
+* Set recording to specific volumes : odd, even or both.
+* @param volumeField Type of volume to acquire (see usNetworkGrabber::usVolumeField enum).
+*/
+void usNetworkGrabberRF3D::setVolumeField(usNetworkGrabber::usVolumeField volumeField) { m_volumeField = volumeField; }
 #endif
