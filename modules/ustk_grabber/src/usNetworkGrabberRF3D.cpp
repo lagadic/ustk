@@ -177,7 +177,7 @@ void usNetworkGrabberRF3D::dataArrived()
 
     // update motor settings
     m_motorSettings.setFrameNumber(m_imageHeader.framesPerVolume);
-    m_motorSettings.setFramePitch(m_imageHeader.anglePerFr);
+    m_motorSettings.setFramePitch(vpMath::rad(m_imageHeader.anglePerFr));
 
     if (m_imageHeader.motorType == 0)
       m_motorSettings.setMotorType(usMotorSettings::LinearMotor);
