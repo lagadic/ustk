@@ -52,7 +52,6 @@
 // Qt Network
 #include <QtCore/QObject>
 #include <QtCore/QThread>
-#include <QtCore/QThread>
 #include <QtNetwork/QHostAddress>
 #include <QtNetwork/QTcpSocket>
 
@@ -78,6 +77,13 @@ public:
     MOST_RECENT_FRAME_POSITION_IN_VEC = 1,
     CURRENT_FILLED_FRAME_POSITION_IN_VEC = 2
   } usDataPositionInBuffer;
+
+  /*! Enum to specify types of volumes to grab*/
+  typedef enum {
+    ODD = 0,     /*!< Grab only odd volumes */
+    EVEN = 1,    /*!< Grab only even volumes */
+    ODD_EVEN = 2 /*!< Grab every volumes */
+  } usVolumeField;
 
   // Following headers must be the same in the server (ultrasound station) !
 

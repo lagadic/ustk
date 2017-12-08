@@ -428,7 +428,6 @@ void usImageIo::read(usImagePreScan2D<unsigned char> &preScanImage, const std::s
     preScanImage.setDepth(xmlSettings.getAxialResolution() * preScanImage.getHeight());
     preScanImage.setSamplingFrequency(xmlSettings.getTransducerSettings().getSamplingFrequency());
     preScanImage.setTransmitFrequency(xmlSettings.getTransducerSettings().getTransmitFrequency());
-    preScanImage.setDepth(xmlSettings.getAxialResolution() * preScanImage.getHeight());
 #else
     throw(vpException(vpException::fatalError, "Requires xml2 library"));
 #endif // VISP_HAVE_XML2

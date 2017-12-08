@@ -27,6 +27,12 @@ int main(int argc, char **argv)
   qtGrabber->setIPAddress("127.0.0.1"); // local loop, server must be running on same computer
   qtGrabber->connectToServer();
 
+  // record option
+  if (qApp->arguments().contains(QString("--output"))) {
+    qtGrabber->activateRecording(
+        qApp->arguments().at(qApp->arguments().indexOf(QString("--output")) + 1).toStdString());
+  }
+
   // setting acquisition parameters
   usNetworkGrabber::usInitHeaderSent header;
   header.probeId = 0;     // 4DC7 id = 15

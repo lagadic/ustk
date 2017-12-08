@@ -402,6 +402,12 @@ std::vector<uint64_t> usMHDSequenceReader::getNextTimeStamps()
 int usMHDSequenceReader::getImageNumber() const { return m_imageCounter; }
 
 /**
+* Returns the total image number in sequence.
+* @return The total image number (total volume number for 3D sequences, total frame number for 2D sequences).
+*/
+int usMHDSequenceReader::getTotalImageNumber() const { return m_totalImageNumber; }
+
+/**
 * Acquisition method for specific image in the sequence for usImageRF2D : fills the output image with the next volume in
 * the sequence.
 * @param [in] imageNumber Image number in sequence to acquire (from 0 to total image number - 1)

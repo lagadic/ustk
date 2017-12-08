@@ -21,16 +21,18 @@ int main(int argc, char **argv)
 {
   // QT application
   QApplication app(argc, argv);
-  QString outputPath;
-  if (app.arguments().contains(QString("--output"))) {
-    outputPath = app.arguments().at(app.arguments().indexOf(QString("--output")) + 1);
-  }
 
   QThread *grabbingThread = new QThread();
 
   usNetworkGrabberPreScan3D *qtGrabber = new usNetworkGrabberPreScan3D();
   qtGrabber->setIPAddress("127.0.0.1"); // local loop, server must be running on same computer
   qtGrabber->connectToServer();
+
+  // record option
+  if (qApp->arguments().contains(QString("--output"))) {
+    qtGrabber->activateRecording(
+        qApp->arguments().at(qApp->arguments().indexOf(QString("--output")) + 1).toStdString());
+  }
 
   // setting acquisition parameters
   usNetworkGrabber::usInitHeaderSent header;
@@ -39,11 +41,6 @@ int main(int argc, char **argv)
   header.imagingMode = 0; // B-mode = 0
 
   usVolumeGrabbedInfo<usImagePreScan3D<unsigned char> > *grabbedFrame;
-
-  usMHDSequenceWriter writer;
-  if (!outputPath.isEmpty()) {
-    writer.setSequenceDirectory(outputPath.toStdString());
-  }
 
   bool captureRunning = true;
   // qtGrabber->setVerbose(true);
@@ -64,9 +61,6 @@ int main(int argc, char **argv)
       grabbedFrame = qtGrabber->acquire();
 
       std::cout << "MAIN THREAD received volume No : " << grabbedFrame->getVolumeCount() << std::endl;
-
-      if (!outputPath.isEmpty())
-        writer.write(*grabbedFrame, grabbedFrame->getTimeStamps());
 
     } else {
       vpTime::wait(10);

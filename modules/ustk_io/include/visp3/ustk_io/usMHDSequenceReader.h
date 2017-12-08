@@ -126,6 +126,8 @@ public:
   uint64_t getNextTimeStamp();
   std::vector<uint64_t> getNextTimeStamps();
 
+  int getTotalImageNumber() const;
+
   void setSequenceDirectory(const std::string sequenceDirectory);
 
 private:

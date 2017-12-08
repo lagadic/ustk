@@ -37,8 +37,10 @@
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpIoTools.h>
 
+#include <visp3/ustk_core/us.h>
 #include <visp3/ustk_core/usPostScanToPreScan2DConverter.h>
 #include <visp3/ustk_core/usPreScanToPostScan2DConverter.h>
+#include <visp3/ustk_io/usImageIo.h>
 
 #include <string>
 #include <vector>
@@ -52,60 +54,51 @@ int main(int argc, const char **argv)
   (void)argc;
   (void)argv;
 
-  /*bool testFailed = false;
-  if (argc!=2) {
-    std::cout << "Wrong number of arguments" << argc << std::endl;
-    exit (0); //to change when we have a dataset to provide for this test
-  }
-  std::cout << "Usage : ./testUsScanConversion2D /path/to/prescan2d "<<std::endl;
-  std::cout << "In this case you're going to convert the pre-scan image into post-scan,"
-               " and then convert it back to pre-scan." <<std::endl;
+  if (us::getDataSetPath().empty())
+    throw(vpException(vpException::fatalError, "Could not find ustk-dataset"));
 
-  std::cout <<  "-------------------------------------------------------" << std::endl ;
-  std::cout <<  "  testUsScanConversion2D.cpp" <<std::endl << std::endl ;
-  std::cout <<  "  The test converts a pre-scan image to post-scan, and converts it back to pre-scan."
-                "  Then it checks if the 2 pre-scan images are equal." << std::endl ;
-  std::cout <<  "-------------------------------------------------------" << std::endl ;
-  std::cout << std::endl ;
+  bool testFailed = true;
 
-  //pre-scan reading
+  std::cout << "-------------------------------------------------------" << std::endl;
+  std::cout << "  testUsScanConversion2D.cpp" << std::endl << std::endl;
+  std::cout << "  The test converts a pre-scan image to post-scan, and converts it back to pre-scan."
+               "  Then it checks if the difference between the 2 images, using sum of square differences."
+            << std::endl;
+  std::cout << "-------------------------------------------------------" << std::endl;
+  std::cout << std::endl;
+
+  // pre-scan reading
   usImagePreScan2D<unsigned char> prescanReference;
   usImagePostScan2D<unsigned char> postscan;
   usImagePreScan2D<unsigned char> prescanBack;
 
-  usImageIo::read(prescanReference, argv[1]);
-  prescanReference.setDepth(0.14784);
+  std::string preScanPath = us::getDataSetPath() + "/pre-scan/2D_xml/prescan2d.xml";
+
+  usImageIo::read(prescanReference, preScanPath);
 
   usPreScanToPostScan2DConverter scanConverter;
-  scanConverter.init(prescanReference.getBModeSampleNumber(),prescanReference.getScanLineNumber(),
-                     ustk::defaultSpeedOfSound, 0.0005,prescanReference.getTransducerRadius(),2500000.0,0.00042168,128);
-  scanConverter.run(postscanReference,prescanReference);*/
-  /*
-radius 0.04
-depth 0.14784
-APitch 0.000308
-LPitch 0.000425
-resolution 0.0005
-AN 480
-LN 128
-
-m_APitch = m_speedOfSound / (2.0 * samplingFrequency); => frequ = speed/(2*apitch) = 1540/0.000616 = 2500000
-m_LPitch = (pitch * nElements) / (LN-1); => pitch*NElts = Lpitch * (LN-1) = 0.000425 * 127 = 0.053975
-                     => nELts = 128 && pitch = 0.00042168
-
-
-*/
-  /*postscanReference.setDepth(0.14784);
-  usImageIo::write(postscanReference,vpIoTools::getParent(argv[1]).append("/aaa.xml"));
-
+  scanConverter.convert(prescanReference, postscan, 0.0005, 0.0005);
 
   usPostScanToPreScan2DConverter backScanConverter;
-  backScanConverter.init(postscanReference,480,128);
-  backScanConverter.run(postscanReference,prescanBack);
+  backScanConverter.convert(postscan, prescanBack, 480);
 
-  usImageIo::write(prescanBack,vpIoTools::getParent(argv[1]).append("/bbb.xml"));
+  // compute the sum of square difference of the reference and the result
+  int inc = 0;
+  int pxSkipped = 0;
+  for (unsigned int i = 0; i < prescanBack.getHeight(); i++) {
+    for (unsigned int j = 0; j < prescanBack.getWidth(); j++) {
+      if (i > 3 && j > 3) { // we skip top & left borders, they have huge differencies compared to the rest of the image
+        inc += (prescanBack[i][j] - prescanReference[i][j]) * (prescanBack[i][j] - prescanReference[i][j]);
+      } else {
+        pxSkipped++;
+      }
+    }
+  }
+  if ((sqrt(inc) / (double)(prescanReference.getSize() - pxSkipped)) <
+      0.5) // we allow a mean difference of 1 units per pixels between the images
+    testFailed = false;
 
-  if(!testFailed)
-    std::cout << "Test passed !" << std::endl;*/
-  return 0;
+  if (!testFailed)
+    std::cout << "Test passed !" << std::endl;
+  return testFailed;
 }

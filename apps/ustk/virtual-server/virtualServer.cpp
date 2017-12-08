@@ -41,7 +41,9 @@ int main(int argc, char **argv)
     if (std::string(argv[i]) == "--input")
       filename = std::string(argv[i + 1]);
     else if (std::string(argv[i]) == "--help") {
-      std::cout << "\nUsage: " << argv[0] << " [--input <mysequence.xml>] [--help]\n" << std::endl;
+      std::cout << "\nUsage: " << argv[0]
+                << " [--input <mysequence.mhd>] [--help] [--rewind] [--pause <imageToPauseOn]>\n"
+                << std::endl;
       return 0;
     }
   }

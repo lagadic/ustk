@@ -83,6 +83,8 @@ public:
 
   bool isFirstFrameAvailable() { return m_firstFrameAvailable; }
 
+  void setVolumeField(usVolumeField volumeField);
+
   void stopRecording();
 
 signals:
@@ -113,6 +115,10 @@ private:
   // to manage the recording process
   bool m_recordingOn;
   usMHDSequenceWriter m_sequenceWriter;
+  uint64_t m_firstImageTimestamp;
+
+  // volume selection
+  usNetworkGrabber::usVolumeField m_volumeField;
 };
 
 #endif // QT4 || QT5
