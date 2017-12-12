@@ -103,8 +103,9 @@ if(USE_VTK)
     set(QT_MOC_EXECUTABLE ${VTK_QT_MOC_EXECUTABLE} CACHE FILEPATH "")
     set(QT_UIC_EXECUTABLE ${VTK_QT_UIC_EXECUTABLE} CACHE FILEPATH "")
 
+    list(APPEND opt_incs "${QT_INCLUDE_DIR}")
     list(APPEND opt_incs "${QT_QTGUI_INCLUDE_DIR}")
-    #list(APPEND opt_incs "${QT_INCLUDE_DIR}/QtCore") # seems not useful
+    list(APPEND opt_incs "${QT_QTCORE_INCLUDE_DIR}")
     list(APPEND opt_libs ${QT_QTGUI_LIBRARIES})
     list(APPEND opt_libs ${QT_QTCORE_LIBRARIES})
   endif()

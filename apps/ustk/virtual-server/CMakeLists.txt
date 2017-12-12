@@ -35,8 +35,8 @@ cmake_minimum_required(VERSION 2.8.12)
 set(CMAKE_AUTOMOC ON)
 
 find_package(VISP REQUIRED visp_ustk_io)
-find_package(Qt5Widgets)
-find_package(Qt5Network)
+#find_package(Qt5Widgets)
+#find_package(Qt5Network)
 
 if(Qt5Widgets_FOUND AND Qt5Network_FOUND)
 

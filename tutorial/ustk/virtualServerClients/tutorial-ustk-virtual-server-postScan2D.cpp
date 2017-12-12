@@ -7,6 +7,7 @@
     (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
 
 #include <QApplication>
+#include <QStringList>
 #include <QtCore/QThread>
 
 #include <visp3/ustk_grabber/usNetworkGrabberPostScan2D.h>
