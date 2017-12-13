@@ -273,7 +273,19 @@ void us3DSceneWidget::init()
 * Image data setter.
 * @param imageData Pointer on vtkImageData to display.
 */
-void us3DSceneWidget::setImageData(vtkImageData *imageData) { this->imageData = imageData; }
+void us3DSceneWidget::setImageData(vtkImageData *imageData)
+{
+  this->imageData = imageData;
+
+  this->imageData->Modified();
+
+  imageResliceMapper1->SetInputData(imageData);
+  imageResliceMapper2->SetInputData(imageData);
+  imageResliceMapper3->SetInputData(imageData);
+
+  // renderer->Render();
+  this->GetRenderWindow()->Render();
+}
 
 /**
 * Plane 1 setter.
