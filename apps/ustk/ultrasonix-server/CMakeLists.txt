@@ -65,6 +65,11 @@ if(Porta_FOUND)
   file(GLOB QT_WRAP *.h)
   file(GLOB CPP_FILES *.cpp)
 
+  if(Porta_VERSION_MAJOR EQUAL 6)
+    list(APPEND CPP_FILES ${PORTA_WRAPPER_DIR})
+  endif()
+
+
   QT5_WRAP_UI(UISrcs ${UI_FILES})
   QT5_WRAP_CPP(MOCSrcs ${QT_WRAP})
   add_executable(ustk-ultrasonixServer MACOSX_BUNDLE ${CPP_FILES} ${UISrcs} ${MOCSrcs})
