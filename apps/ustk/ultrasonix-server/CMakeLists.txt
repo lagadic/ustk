@@ -48,6 +48,8 @@ if(Porta_FOUND)
   if(USE_SONIXTOUCH)
     add_definitions(-DSONIXTOUCH)
   endif()
+  set(Porta_LICENCE_PATH "" CACHE PATH "Path to the licenses_web.txt file containing your licence")
+
   include_directories(${Porta_INCLUDE_DIRS})
   add_definitions(-DSETTINGS_PATH=\"${Porta_SETTINGS_PATH}/\")
   add_definitions(-DFIRMWARE_PATH=\"${Porta_FIRMWARE_PATH}/\")
@@ -63,9 +65,16 @@ if(Porta_FOUND)
   file(GLOB QT_WRAP *.h)
   file(GLOB CPP_FILES *.cpp)
 
+  if(Porta_VERSION_MAJOR EQUAL 6)
+    list(APPEND CPP_FILES ${PORTA_WRAPPER_DIR})
+  endif()
+
+
   QT5_WRAP_UI(UISrcs ${UI_FILES})
   QT5_WRAP_CPP(MOCSrcs ${QT_WRAP})
   add_executable(ustk-ultrasonixServer MACOSX_BUNDLE ${CPP_FILES} ${UISrcs} ${MOCSrcs})
 
   target_link_libraries(ustk-ultrasonixServer Qt5::Widgets Qt5::Network ${Porta_LIBRARIES} )
+
+  configure_file("cmake/templates/usPortaConfig.h.in" "usPortaConfig.h")
 endif()

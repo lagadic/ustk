@@ -1,11 +1,14 @@
 #ifndef US_NETWORK_GRABBER_H
 #define US_NETWORK_GRABBER_H
 
+#include <usPortaConfig.h>
+
 #include <QtNetwork/QTcpServer>
 #include <QtNetwork/QTcpSocket>
 #include <QtCore/QDateTime>
 #include <QtCore/QString>
 #include <QtCore/QFile>
+#include <QtWidgets/QApplication>
 
 //for URect
 #define COMPILE_PORTA_DEMO
@@ -15,7 +18,14 @@
 #include <utx_opt.h>
 #include <porta_params_def.h>
 #include <porta.h>
-#include <porta_std_includes.h>
+
+#if USTK_PORTA_VERSION_MAJOR > 5
+  #include<porta_wrapper.h>
+  #include<porta_def.h>
+  #define RfMode 12
+#else
+  #include <porta_std_includes.h>
+#endif
 
 #include <vector>
 #include <cmath>
@@ -118,16 +128,13 @@ public:
 	
 	//for bi-plane
 	unsigned char * secondBiplaneImage;
-	
-	QFile * debugFile;
-	QTextStream stream;
 
 	bool motorOffsetSkipped;
 
 private slots:
     // Called automatically when a client attempts to connect
     void acceptTheConnection();
-	
+
     // Called automatically when client has closed the connection
     void connectionAboutToClose();
 
