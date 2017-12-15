@@ -157,7 +157,7 @@ vpThread::Return displayFunction(vpThread::Args args)
       }
 
       // confidence
-      backConverter_.convert(postScan_, preScan_,480);
+      backConverter_.convert(postScan_, preScan_, 480);
       // Compute confidence map on pre-scan image
       confidenceMapProcessor_.run(confidencePreScan_, preScan_);
       // converting computed confidence map in post-scan

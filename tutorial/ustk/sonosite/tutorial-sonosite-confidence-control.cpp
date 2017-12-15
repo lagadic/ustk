@@ -137,7 +137,7 @@ vpThread::Return displayFunction(vpThread::Args args)
           (2.0 * (postScan_.getTransducerRadius() + postScan_.getDepth()) * sin(postScan_.getFieldOfView() / 2.0)) /
           postScan_.getWidth());
 
-      backConverter_.convert(postScan_, preScan_,480);
+      backConverter_.convert(postScan_, preScan_, 480);
       // Compute confidence map on pre-scan image
       confidenceMapProcessor_.run(confidencePreScan_, preScan_);
 

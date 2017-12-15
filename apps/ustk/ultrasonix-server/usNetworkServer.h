@@ -3,11 +3,11 @@
 
 #include <usPortaConfig.h>
 
-#include <QtNetwork/QTcpServer>
-#include <QtNetwork/QTcpSocket>
 #include <QtCore/QDateTime>
 #include <QtCore/QFile>
 #include <QtCore/QString>
+#include <QtNetwork/QTcpServer>
+#include <QtNetwork/QTcpSocket>
 #include <QtWidgets/QApplication>
 
 // for URect
@@ -15,16 +15,16 @@
 
 // Ultrasonix SDK includes
 #include <ImagingModes.h>
-#include <utx_opt.h>
-#include <porta_params_def.h>
 #include <porta.h>
+#include <porta_params_def.h>
+#include <utx_opt.h>
 
 #if USTK_PORTA_VERSION_MAJOR > 5
-  #include<porta_wrapper.h>
-  #include<porta_def.h>
-  #define RfMode 12
+#include <porta_def.h>
+#include <porta_wrapper.h>
+#define RfMode 12
 #else
-  #include <porta_std_includes.h>
+#include <porta_std_includes.h>
 #endif
 
 #include <cmath>
@@ -82,63 +82,62 @@ public:
     int probeId; // unique code for each probe (4DC7 = 15, C 50-62 = 10)
   };
 
+  //
+  struct usImageHeader {
+    usImageHeader() : headerId(2) {} // set header Id to 2 by default
+    int headerId;                    // to differenciate usInitHeaderConfirmation (=1) / usImageHeader (=2)
 
-	//
-	struct usImageHeader{
-		usImageHeader() : headerId(2) {} //set header Id to 2 by default
-		int headerId; //to differenciate usInitHeaderConfirmation (=1) / usImageHeader (=2)
-		
-		quint32 frameCount;
-		quint64 timeStamp;
+    quint32 frameCount;
+    quint64 timeStamp;
 
-		double dataRate; // fps
+    double dataRate; // fps
 
-		int dataLength; //image size in bytes
-		int ss; 
-		
-		int imageType; 
-		
-		int frameWidth; 
-		int frameHeight; 
+    int dataLength; // image size in bytes
+    int ss;
 
-		double pixelWidth; // width of a pixel of a post-scan frame (meters)
-		double pixelHeight; // height of a pixel of a post-scan frame (meters)
-		
-		int transmitFrequency; 
-		int samplingFrequency; 
+    int imageType;
 
-		double transducerRadius;
-		double scanLinePitch;
-		unsigned int scanLineNumber;
-		int imageDepth;
+    int frameWidth;
+    int frameHeight;
 
-		double degPerFrame;
-		int framesPerVolume;
-		double motorRadius;
-		int motorType;
-	};
+    double pixelWidth;  // width of a pixel of a post-scan frame (meters)
+    double pixelHeight; // height of a pixel of a post-scan frame (meters)
 
-    explicit usNetworkServer(QObject *parent = 0);
-    ~usNetworkServer();
-    
-	QTcpSocket* getSocket();
-	porta* getPorta();
+    int transmitFrequency;
+    int samplingFrequency;
 
-	usImageHeader imageHeader;
+    double transducerRadius;
+    double scanLinePitch;
+    unsigned int scanLineNumber;
+    int imageDepth;
 
-	unsigned char* postScanImage;
-	
-	//for bi-plane
-	unsigned char * secondBiplaneImage;
+    double degPerFrame;
+    int framesPerVolume;
+    double motorRadius;
+    int motorType;
+  };
 
-	bool motorOffsetSkipped;
+  explicit usNetworkServer(QObject *parent = 0);
+  ~usNetworkServer();
+
+  QTcpSocket *getSocket();
+  porta *getPorta();
+
+  usImageHeader imageHeader;
+
+  unsigned char *postScanImage;
+
+  // for bi-plane
+  unsigned char *secondBiplaneImage;
+
+  bool motorOffsetSkipped;
 
 private slots:
-    // Called automatically when a client attempts to connect
-    void acceptTheConnection();
+  // Called automatically when a client attempts to connect
+  void acceptTheConnection();
 
-    // Called automatically when client has closed the connection
-    void connectionAboutToClose();
+  // Called automatically when client has closed the connection
+  void connectionAboutToClose();
 
   // to get the name of the xml settings file corresponding to a probe Id
   QString getProbeSettingsFromId(int probeId);
