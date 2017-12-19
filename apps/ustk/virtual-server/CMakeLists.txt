@@ -35,18 +35,44 @@ cmake_minimum_required(VERSION 2.8.12)
 set(CMAKE_AUTOMOC ON)
 
 find_package(VISP REQUIRED visp_ustk_io)
-#find_package(Qt5Widgets)
-#find_package(Qt5Network)
 
-if(Qt5Widgets_FOUND AND Qt5Network_FOUND)
+if(${USTK_HAVE_VTK_QT4})
 
-  include_directories(${VISP_INCLUDE_DIRS})
+    find_package(Qt4 REQUIRED QtCore QtNetwork QtGui)
 
-  set(HEADER_FILES usVirtualServer.h usConsoleListener.h)
-  set(CPP_FILES usVirtualServer.cpp virtualServer.cpp usConsoleListener.cpp)
+    list(APPEND opt_incs "${QT_QTCORE_INCLUDE_DIR}")
+    list(APPEND opt_incs "${QT_QTNETWORK_INCLUDE_DIR}")
+    list(APPEND opt_incs "${QT_QTGUI_INCLUDE_DIR}")
 
-  add_executable(ustk-virtualServer ${CPP_FILES} ${HEADER_FILES})
+    list(APPEND opt_libs ${QT_QTCORE_LIBRARIES})
+    list(APPEND opt_libs ${QT_QTNETWORK_LIBRARIES})
+    list(APPEND opt_libs ${QT_QTGUILIBRARIES})
 
-  target_link_libraries(ustk-virtualServer Qt5::Widgets Qt5::Network ${VISP_LIBRARIES})
 
+    include_directories(${VISP_INCLUDE_DIRS} opt_incs)
+
+    set(HEADER_FILES usVirtualServer.h usConsoleListener.h)
+    set(CPP_FILES usVirtualServer.cpp virtualServer.cpp usConsoleListener.cpp)
+
+    add_executable(ustk-virtualServer ${CPP_FILES} ${HEADER_FILES})
+
+    target_link_libraries(ustk-virtualServer ${opt_libs} ${VISP_LIBRARIES})
+else()
+
+  find_package(Qt5Widgets)
+  find_package(Qt5Network)
+
+  if(Qt5Widgets_FOUND AND Qt5Network_FOUND)
+
+    include_directories(${VISP_INCLUDE_DIRS})
+
+    set(HEADER_FILES usVirtualServer.h usConsoleListener.h)
+    set(CPP_FILES usVirtualServer.cpp virtualServer.cpp usConsoleListener.cpp)
+
+    add_executable(ustk-virtualServer ${CPP_FILES} ${HEADER_FILES})
+
+    target_link_libraries(ustk-virtualServer Qt5::Widgets Qt5::Network ${VISP_LIBRARIES})
+
+  endif()
 endif()
+
