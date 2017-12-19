@@ -103,9 +103,6 @@ private:
   usRFToPreScan3DConverter m_RFConverter;
   usPreScanToPostScan3DConverter m_scanConverter;
 
-  bool m_scanConverterIsInit;
-  bool m_inputImageChanged;
-
   usImagePreScan3D<unsigned char> m_intermediateImage;
 };
 
