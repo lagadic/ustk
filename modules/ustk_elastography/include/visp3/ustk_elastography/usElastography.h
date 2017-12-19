@@ -148,6 +148,7 @@ private:
   // Shared Pointers
   QSharedPointer<usImageRF2D<short int> > s_RFIm;
   QSharedPointer<vpMatrix> s_StrainIm;
+  bool isSetSharedStrainMemory;
 
   QPointF GetImageCentroid(void);
 };

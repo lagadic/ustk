@@ -90,7 +90,7 @@ void usConvolution2d::run()
   fftw_execute(p1);
   fftw_execute(p2);
   // Complex product
-  for (int i = 0; i < wf * hf; ++i) {
+  for (uint i = 0; i < wf * hf; ++i) {
     outc[i][0] = (outa[i][0] * outb[i][0]) - (outa[i][1] * outb[i][1]);
     outc[i][1] = (outa[i][0] * outb[i][1]) + (outa[i][1] * outb[i][0]);
   }
@@ -116,15 +116,16 @@ void usConvolution2d::run()
 
 vpMatrix usConvolution2d::getConvolution(void)
 {
-  if (m_computed)
-    return m_R;
+  if (!m_computed)
+    throw(vpException(vpException::badValue), "Convolution not computed !");
+  return m_R;
 }
 
 void usConvolution2d::padding_zeros()
 {
   // Padding the two arrays with zeros
-  for (int i = 0; i < wf; ++i) {
-    for (int j = 0; j < hf; ++j) {
+  for (uint i = 0; i < wf; ++i) {
+    for (uint j = 0; j < hf; ++j) {
       ad[i * hf + j][0] = ((j < Am) && (i < An)) ? m_M1.data[i * Am + j] : 0.0;
       ad[i * hf + j][1] = 0.0;
 

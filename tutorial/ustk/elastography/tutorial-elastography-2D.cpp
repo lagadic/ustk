@@ -22,7 +22,7 @@ int main(int argc, char **argv)
   QApplication app(argc, argv);
 
   usElastography *elastography = new usElastography;
-  elastography->setROI(10, 10, 50, 400);
+  elastography->setROI(10, 900, 50, 400);
   elastography->start();
 
   QThread *grabbingThread = new QThread();
@@ -41,9 +41,7 @@ int main(int argc, char **argv)
   usFrameGrabbedInfo<usImageRF2D<short int> > *grabbedFrame;
 
   // prepare converter
-  usImagePreScan2D<unsigned char> preScanImage;
   vpImage<unsigned char> strainImage;
-  usRFToPreScan2DConverter converter;
 
 // Prepare display
 #if defined(VISP_HAVE_X11)
@@ -67,7 +65,6 @@ int main(int argc, char **argv)
   // our local grabbing loop
   do {
     if (qtGrabber->isFirstFrameAvailable()) {
-      std::cout << "test " << std::endl;
       grabbedFrame = qtGrabber->acquire();
 
       std::cout << "MAIN THREAD received frame No : " << grabbedFrame->getFrameCount() << std::endl;
@@ -82,26 +79,19 @@ int main(int argc, char **argv)
         }
       }
 
-      std::cout << "strainImage size : " << strainImage.getCols() << ", " << strainImage.getRows() << "\n";
-
       // init display
       if (!displayInit && strainImage.getHeight() != 0 && strainImage.getWidth() != 0) {
-        std::cout << "Test!\n";
 #if defined(VISP_HAVE_X11)
         display = new vpDisplayX(strainImage);
 #elif defined(VISP_HAVE_GDI)
         display = new vpDisplayGDI(strainImage);
 #endif
         displayInit = true;
-
-        std::cout << "display init !\n";
       }
 
       // processing display
       if (displayInit) {
-        std::cout << "display !\n";
         vpDisplay::display(strainImage);
-        std::cout << "flush !\n";
         vpDisplay::flush(strainImage);
       }
     }

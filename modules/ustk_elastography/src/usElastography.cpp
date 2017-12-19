@@ -64,6 +64,8 @@ usElastography::usElastography(bool t_isFiles)
   // Avoiding leaking memory with the convolutions on cpu
   for (uint i = 0; i < 6; i++)
     cC.push_back(new usConvolution2d);
+
+  isSetSharedStrainMemory = false;
 }
 
 usElastography::usElastography(usImageRF2D<short int> &Pre, usImageRF2D<short int> &Post)
@@ -89,6 +91,8 @@ usElastography::usElastography(usImageRF2D<short int> &Pre, usImageRF2D<short in
   // Avoiding leaking memory with the convolutions on cpu
   for (uint i = 0; i < 6; i++)
     cC.push_back(new usConvolution2d);
+
+  isSetSharedStrainMemory = false;
 }
 
 usElastography::~usElastography()
@@ -289,7 +293,11 @@ void usElastography::useFiles(bool t_state) { m_isFiles = t_state; }
 
 void usElastography::setCommonSharedRFImage(QSharedPointer<usImageRF2D<short int> > t_RFIm) { s_RFIm = t_RFIm; }
 
-void usElastography::setCommonSharedStrainImage(QSharedPointer<vpMatrix> t_StrainIm) { s_StrainIm = t_StrainIm; }
+void usElastography::setCommonSharedStrainImage(QSharedPointer<vpMatrix> t_StrainIm)
+{
+  isSetSharedStrainMemory = true;
+  s_StrainIm = t_StrainIm;
+}
 
 inline usImageRF2D<short int> usImageRF_ROI(const usImageRF2D<short int> &M, uint r, uint c, uint nrows, uint ncols)
 {
@@ -457,8 +465,9 @@ void usElastography::run()
             std::isnan(*(m_StrainMap.data + i)) ? 0.0 : fabs(*(m_StrainMap.data + i)) / (m_max_abs);
         //(*(m_StrainMap.data + i) - min_str)/(max_abs);
       }
+      if (isSetSharedStrainMemory)
+        *(s_StrainIm.data()) = m_StrainMap;
 
-      *(s_StrainIm.data()) = m_StrainMap;
       m_isStrainComp = true;
       if (!m_isFiles) {
         m_isloadPre = false;
@@ -472,5 +481,4 @@ void usElastography::run()
     }
   }
 }
-
 #endif // QT && OPENCV
