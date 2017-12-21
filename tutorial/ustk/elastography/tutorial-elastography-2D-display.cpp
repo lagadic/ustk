@@ -8,8 +8,8 @@
 
 #include <QApplication>
 #include <QtCore/QThread>
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QToolBar>
+#include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QToolBar>
 
 #include <visp3/ustk_core/usRFToPreScan2DConverter.h>
 #include <visp3/ustk_elastography/UsQtDisplay.h>
@@ -72,7 +72,6 @@ int main(int argc, char **argv)
 
   usNetworkGrabberRF2D *qtGrabber = new usNetworkGrabberRF2D();
   qtGrabber->setIPAddress("127.0.0.1");
-  qtGrabber->activateRecording("/home/mpouliqu/Documents/usData/RFElasto");
   qtGrabber->connectToServer();
 
   // setting acquisition parameters
@@ -92,10 +91,6 @@ int main(int argc, char **argv)
 
   // sending acquisition parameters
   qtGrabber->initAcquisition(header);
-
-  // update motor position
-  qtGrabber->setMotorPosition(37);
-  qtGrabber->sendAcquisitionParameters();
 
   qtGrabber->runAcquisition();
 
