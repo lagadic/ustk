@@ -28,7 +28,8 @@ int main(int argc, char **argv)
   QThread *grabbingThread = new QThread();
 
   usNetworkGrabberRF2D *qtGrabber = new usNetworkGrabberRF2D();
-  qtGrabber->setIPAddress("127.0.0.1");
+  // qtGrabber->setIPAddress("127.0.0.1");
+  qtGrabber->activateRecording("/home/mpouliqu/Documents/usData/RFElasto");
   qtGrabber->connectToServer();
 
   // setting acquisition parameters
@@ -54,6 +55,11 @@ int main(int argc, char **argv)
 
   // sending acquisition parameters
   qtGrabber->initAcquisition(header);
+
+  // update motor position
+  qtGrabber->setMotorPosition(37);
+  qtGrabber->sendAcquisitionParameters();
+
   qtGrabber->runAcquisition();
 
   // Move the grabber object to another thread

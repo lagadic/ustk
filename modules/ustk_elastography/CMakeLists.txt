@@ -44,6 +44,7 @@ if(USE_QT5)
   list(APPEND opt_incs "${Qt5Core_INCLUDE_DIRS}")
   list(APPEND opt_incs "${Qt5Network_INCLUDE_DIRS}")
   list(APPEND opt_incs "${Qt5Widgets_INCLUDE_DIRS}")
+  list(APPEND opt_incs "${Qt5PrintSupport_INCLUDE_DIRS}")
 
   if(${Qt5Network_FOUND})
     list(APPEND opt_libs Qt5::Core Qt5::Network)
@@ -51,6 +52,10 @@ if(USE_QT5)
 
   if(${Qt5Widgets_FOUND})
     list(APPEND opt_libs Qt5::Widgets)
+  endif()
+
+  if(${Qt5PrintSupport_FOUND})
+    list(APPEND opt_libs Qt5::PrintSupport)
   endif()
 endif()
 
@@ -62,11 +67,17 @@ if(USE_VTK)
 
   # Find Qt version corresponding to the Qt version used to compile VTK (4 or 5)
   if(VTK_QT_VERSION VERSION_EQUAL "5") # Qt5 not working yet
-    find_package(Qt5 COMPONENTS Widgets Network REQUIRED QUIET)
+    find_package(Qt5 COMPONENTS Widgets Network PrintSupport OpenGL REQUIRED QUIET)
     qt5_wrap_ui(UI_Srcs ${UIs})
 
     list(APPEND opt_incs "${Qt5Widgets_INCLUDE_DIRS}")
     list(APPEND opt_libs Qt5::Widgets Qt5::Network)
+
+    list(APPEND opt_incs "${Qt5PrintSupport_INCLUDE_DIRS}")
+    list(APPEND opt_libs Qt5::PrintSupport)
+
+    list(APPEND opt_incs "${Qt5OpenGL_INCLUDE_DIRS}")
+    list(APPEND opt_libs Qt5::OpenGL)
 
     foreach(lib_ ${Qt5Network_LIBRARIES})
       foreach(imp_config_ ${config_})

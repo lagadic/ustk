@@ -37,13 +37,12 @@ cmake_minimum_required(VERSION 2.8.12)
 find_package(VISP REQUIRED visp_ustk_elastography)
 
 set(tutorial_cpp
-  tutorial-elastography-2D.cpp)
+  tutorial-elastography-2D.cpp
+  tutorial-elastography-2D-display.cpp)
 
 foreach(cpp ${tutorial_cpp})
   visp_add_target(${cpp})
   if(COMMAND visp_add_dependency)
     visp_add_dependency(${cpp} "tutorials")
   endif()
-  # Add specific build flag to turn off warnings coming from VTK 3rd party
-  visp_set_source_file_compile_flag(${cpp} -Wno-inconsistent-missing-override)
 endforeach()
