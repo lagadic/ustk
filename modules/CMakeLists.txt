@@ -48,6 +48,7 @@ set(USTK_BINARY_DIR "${CMAKE_BINARY_DIR}")
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/ustk_core/cmake")
 
 VP_OPTION(USE_FFTW "FFTW" "" "Include fftw support" "" ON)
+VP_OPTION(USE_ARMADILLO "Armadillo" "" "Include armadillo support" "" ON)
 VP_OPTION(USE_VTK  "VTK"  QUIET "Include vtk support"  "" ON)
 
 if(USE_VTK)
@@ -84,8 +85,9 @@ if(USE_VTK)
   endif()
 endif()
 
-VP_SET(USTK_HAVE_QT5  TRUE IF USE_QT5)
-VP_SET(USTK_HAVE_FFTW TRUE IF USE_FFTW)
+VP_SET(USTK_HAVE_QT5  TRUE IF (BUILD_MODULE_visp_ustk_core AND USE_QT5))
+VP_SET(USTK_HAVE_FFTW TRUE IF (BUILD_MODULE_visp_ustk_core AND USE_FFTW))
+VP_SET(USTK_HAVE_ARMADILLO TRUE IF (BUILD_MODULE_visp_ustk_core AND USE_ARMADILLO))
 
 #----------------------------------------------------------------------
 # Use "make ustk_doc" target to generate the documentation

@@ -37,6 +37,11 @@ if(USE_FFTW)
   list(APPEND opt_libs ${FFTW_LIBRARIES})
 endif()
 
+if(USE_ARMADILLO)
+  list(APPEND opt_incs ${ARMADILLO_INCLUDE_DIRS})
+  list(APPEND opt_libs ${ARMADILLO_LIBRARIES})
+endif()
+
 if(USE_QT5)
   # Instruct CMake to run moc automatically when needed.
   set(CMAKE_AUTOMOC ON)
