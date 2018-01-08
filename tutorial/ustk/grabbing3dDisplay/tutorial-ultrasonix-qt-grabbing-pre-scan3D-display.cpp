@@ -1,4 +1,4 @@
-//! \example tutorial-ultrasonix-qt-grabbing-pre-scan3D.cpp
+//! \example tutorial-ultrasonix-qt-grabbing-pre-scan3D-display.cpp
 
 #include <iostream>
 #include <visp3/ustk_core/usConfig.h>
