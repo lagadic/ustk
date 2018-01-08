@@ -3,8 +3,7 @@
 #include <iostream>
 #include <visp3/ustk_core/usConfig.h>
 
-#if (defined(USTK_HAVE_QT5) || defined(USTK_HAVE_VTK_QT)) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) &&     \
-    defined(USTK_HAVE_FFTW)
+#if (defined(USTK_HAVE_QT5) || defined(USTK_HAVE_VTK_QT)) && defined(USTK_HAVE_FFTW)
 
 #include <QApplication>
 #include <QtCore/QThread>
@@ -105,6 +104,7 @@ int main(int argc, char **argv)
   // our local grabbing loop
   do {
     if (qtGrabber->isFirstFrameAvailable()) {
+
       grabbedFrame = qtGrabber->acquire();
 
       std::cout << "MAIN THREAD received frame No : " << grabbedFrame->getFrameCount() << std::endl;
