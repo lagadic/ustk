@@ -62,8 +62,8 @@ int main(int argc, char **argv)
   window->setLayout(L0);
 
   // End acq
-  QObject::connect(elastography, SIGNAL(StrainMapComp()), usDisp, SLOT(DrawElasto()));
-  QObject::connect(usDisp, SIGNAL(sPattern(int, int, int, int)), elastography, SLOT(setROI(int, int, int, int)));
+  // QObject::connect(elastography, SIGNAL(StrainMapComp()), usDisp, SLOT(DrawElasto()));
+  // QObject::connect(usDisp, SIGNAL(sPattern(int, int, int, int)), elastography, SLOT(setROI(int, int, int, int)));
 
   elastography->start();
 
@@ -107,16 +107,16 @@ int main(int argc, char **argv)
 
       grabbedFrame = qtGrabber->acquire();
 
+      usDisp->DrawElasto();
       std::cout << "MAIN THREAD received frame No : " << grabbedFrame->getFrameCount() << std::endl;
 
-      *(s_RFIm.data()) = *grabbedFrame;
+      //*(s_RFIm.data()) = *grabbedFrame;
       // elastography->setRF(*grabbedFrame);
 
       converter.convert(*grabbedFrame, preScanImage);
-
       *(s_PreScanIm.data()) = preScanImage;
       usDisp->chgImage();
-      elastography->setRF();
+      // elastography->setRF();
 
     }
 

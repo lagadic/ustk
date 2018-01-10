@@ -22,14 +22,13 @@ int main(int argc, char **argv)
   QApplication app(argc, argv);
 
   usElastography *elastography = new usElastography;
-  elastography->setROI(10, 900, 50, 400);
+  elastography->setROI(40, 2500, 50, 500);
   elastography->start();
 
   QThread *grabbingThread = new QThread();
 
   usNetworkGrabberRF2D *qtGrabber = new usNetworkGrabberRF2D();
-  // qtGrabber->setIPAddress("127.0.0.1");
-  qtGrabber->activateRecording("/home/mpouliqu/Documents/usData/RFElasto");
+  qtGrabber->setIPAddress("127.0.0.1");
   qtGrabber->connectToServer();
 
   // setting acquisition parameters
@@ -40,15 +39,20 @@ int main(int argc, char **argv)
 
   // prepare image;
   usFrameGrabbedInfo<usImageRF2D<short int> > *grabbedFrame;
+  usImagePreScan2D<unsigned char> preScanImage;
+
+  usRFToPreScan2DConverter converter;
 
   // prepare converter
   vpImage<unsigned char> strainImage;
 
 // Prepare display
 #if defined(VISP_HAVE_X11)
-  vpDisplayX *display = NULL;
+  vpDisplayX *displayEcho = NULL;
+  vpDisplayX *displayElas = NULL;
 #elif defined(VISP_HAVE_GDI)
-  vpDisplayGDI *display = NULL;
+  vpDisplayGDI *displayEcho = NULL;
+  vpDisplayGDI *displayElas = NULL;
 #endif
   bool displayInit = false;
   bool captureRunning = true;
@@ -57,8 +61,8 @@ int main(int argc, char **argv)
   qtGrabber->initAcquisition(header);
 
   // update motor position
-  qtGrabber->setMotorPosition(37);
-  qtGrabber->sendAcquisitionParameters();
+  // qtGrabber->setMotorPosition(37);
+  // qtGrabber->sendAcquisitionParameters();
 
   qtGrabber->runAcquisition();
 
@@ -77,26 +81,41 @@ int main(int argc, char **argv)
 
       elastography->setRF(*grabbedFrame);
       vpMatrix strainMap = elastography->getStrainMap();
+      // std::cout << "strain rows: " << strainMap.getRows() << ", strain cols: " << strainMap.getCols() << std::endl;
       strainImage.resize(strainMap.getRows(), strainMap.getCols());
+      std::cout << "strain img height: " << strainImage.getHeight() << ", strain width: " << strainImage.getWidth()
+                << std::endl;
 
       for (unsigned int i = 0; i < strainImage.getHeight(); i++) {
         for (unsigned int j = 0; j < strainImage.getWidth(); j++) {
-          strainImage[i][j] = strainMap[i][j] * 255;
+          strainImage[i][j] = (unsigned char)(strainMap[i][j] * 254);
+          // if (strainImage[i][j] < 30)
+          // std::cout << "black at : " << i << ", " << j << std::endl;
         }
       }
+
+      converter.convert(*grabbedFrame, preScanImage);
+      std::cout << "RF dims : " << grabbedFrame->getHeight() << ", " << grabbedFrame->getWidth() << std::endl;
+      std::cout << "PS dims : " << preScanImage.getHeight() << ", " << preScanImage.getWidth() << std::endl;
 
       // init display
       if (!displayInit && strainImage.getHeight() != 0 && strainImage.getWidth() != 0) {
 #if defined(VISP_HAVE_X11)
-        display = new vpDisplayX(strainImage);
+        displayEcho = new vpDisplayX(preScanImage);
+        displayElas = new vpDisplayX(strainImage);
 #elif defined(VISP_HAVE_GDI)
-        display = new vpDisplayGDI(strainImage);
+        displayEcho = new vpDisplayGDI(preScanImage);
+        displayElas = new vpDisplayGDI(strainImage);
 #endif
         displayInit = true;
       }
 
       // processing display
       if (displayInit) {
+
+        vpDisplay::display(preScanImage);
+        vpDisplay::displayRectangle(preScanImage, 250, 40, 50, 50, vpColor::red);
+        vpDisplay::flush(preScanImage);
         vpDisplay::display(strainImage);
         vpDisplay::flush(strainImage);
       }
@@ -108,7 +127,8 @@ int main(int argc, char **argv)
   } while (captureRunning);
 
   if (displayInit) {
-    delete display;
+    delete displayElas;
+    delete displayEcho;
   }
   return app.exec();
 }
