@@ -60,10 +60,6 @@ int main(int argc, char **argv)
   // sending acquisition parameters
   qtGrabber->initAcquisition(header);
 
-  // update motor position
-  // qtGrabber->setMotorPosition(37);
-  // qtGrabber->sendAcquisitionParameters();
-
   qtGrabber->runAcquisition();
 
   // Move the grabber object to another thread
@@ -80,23 +76,9 @@ int main(int argc, char **argv)
       std::cout << "MAIN THREAD received frame No : " << grabbedFrame->getFrameCount() << std::endl;
 
       elastography->setRF(*grabbedFrame);
-      vpMatrix strainMap = elastography->getStrainMap();
-      // std::cout << "strain rows: " << strainMap.getRows() << ", strain cols: " << strainMap.getCols() << std::endl;
-      strainImage.resize(strainMap.getRows(), strainMap.getCols());
-      std::cout << "strain img height: " << strainImage.getHeight() << ", strain width: " << strainImage.getWidth()
-                << std::endl;
-
-      for (unsigned int i = 0; i < strainImage.getHeight(); i++) {
-        for (unsigned int j = 0; j < strainImage.getWidth(); j++) {
-          strainImage[i][j] = (unsigned char)(strainMap[i][j] * 254);
-          // if (strainImage[i][j] < 30)
-          // std::cout << "black at : " << i << ", " << j << std::endl;
-        }
-      }
+      strainImage = elastography->getStrainMap();
 
       converter.convert(*grabbedFrame, preScanImage);
-      std::cout << "RF dims : " << grabbedFrame->getHeight() << ", " << grabbedFrame->getWidth() << std::endl;
-      std::cout << "PS dims : " << preScanImage.getHeight() << ", " << preScanImage.getWidth() << std::endl;
 
       // init display
       if (!displayInit && strainImage.getHeight() != 0 && strainImage.getWidth() != 0) {
@@ -136,7 +118,7 @@ int main(int argc, char **argv)
 #else
 int main()
 {
-  std::cout << "You should intall Qt5 (with wigdets and network modules), FFTW to run this tutorial" << std::endl;
+  std::cout << "You should intall Qt5 (with wigdets and network modules), FFTW and a display graphic system (GDI or X11) to run this tutorial" << std::endl;
   return 0;
 }
 

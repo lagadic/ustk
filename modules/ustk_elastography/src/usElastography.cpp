@@ -156,8 +156,7 @@ QPointF usElastography::GetImageCentroid()
   if (vpMath::abs(m_min_str - m_max_str) > (0.6 * m_max_abs)) {
     for (uint m = 0; m < GrIm.getCols(); m++)
       for (uint n = 0; n < GrIm.getRows(); n++) {
-        double cVal = m_StrainMap.data[m * m_StrainMap.getRows() + n] * 255.0;
-        GrIm(n, m, (uchar)cVal);
+        GrIm(n, m, (uchar)m_StrainMap[n][m]); /// TO CHECK n<->m !
       }
 
     cv::Mat Image(GrIm.getRows(), GrIm.getCols(), CV_8UC1, GrIm.bitmap);
@@ -221,7 +220,7 @@ usImageRF2D<short int> usElastography::getPostCompression(void)
   return m_Postcomp;
 }
 
-vpMatrix usElastography::getStrainMap(void)
+vpImage<unsigned char> usElastography::getStrainMap(void)
 {
   assert(m_isStrainComp);
   return m_StrainMap;
@@ -293,7 +292,7 @@ void usElastography::useFiles(bool t_state) { m_isFiles = t_state; }
 
 void usElastography::setCommonSharedRFImage(QSharedPointer<usImageRF2D<short int> > t_RFIm) { s_RFIm = t_RFIm; }
 
-void usElastography::setCommonSharedStrainImage(QSharedPointer<vpMatrix> t_StrainIm)
+void usElastography::setCommonSharedStrainImage(QSharedPointer<vpImage<unsigned char> > t_StrainIm)
 {
   isSetSharedStrainMemory = true;
   s_StrainIm = t_StrainIm;
@@ -455,15 +454,20 @@ void usElastography::run()
         cC[5]->init(vV, h);
       cC[5]->run();
       /// Strain matrix S
-      m_StrainMap = cC[5]->getConvolution();
+      vpMatrix strainMapInvert = cC[5]->getConvolution();
 
-      m_min_str = qAbs(m_StrainMap.getMinValue());
-      m_max_str = qAbs(m_StrainMap.getMaxValue());
+      m_StrainMap.resize(strainMapInvert.getRows(),strainMapInvert.getCols());
+
+      m_min_str = qAbs(strainMapInvert.getMinValue());
+      m_max_str = qAbs(strainMapInvert.getMaxValue());
       m_max_abs = (m_min_str > m_max_str) ? m_min_str : m_max_str;
-      for (uint i = 0; i < m_StrainMap.size(); i++) {
-        *(m_StrainMap.data + i) =
-            std::isnan(*(m_StrainMap.data + i)) ? 0.0 : fabs(*(m_StrainMap.data + i)) / (m_max_abs);
-        //(*(m_StrainMap.data + i) - min_str)/(max_abs);
+      for (unsigned int xIndex=0; xIndex<strainMapInvert.getCols(); ++xIndex)
+      {
+        for (unsigned int yIndex=0; yIndex< strainMapInvert.getRows(); ++yIndex)
+        {
+          m_StrainMap[yIndex][xIndex] =
+              std::isnan(*(strainMapInvert.data + xIndex*strainMapInvert.getRows() + yIndex)) ? 0.0 : 254 * (fabs(*(strainMapInvert.data + xIndex*strainMapInvert.getRows() + yIndex)) / (m_max_abs));
+        }
       }
       if (isSetSharedStrainMemory)
         *(s_StrainIm.data()) = m_StrainMap;

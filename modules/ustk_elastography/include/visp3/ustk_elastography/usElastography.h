@@ -69,13 +69,13 @@ public:
   usElastography(usImageRF2D<short int> &Pre, usImageRF2D<short int> &Post);
   virtual ~usElastography();
   void setCommonSharedRFImage(QSharedPointer<usImageRF2D<short int> > t_RFIm);
-  void setCommonSharedStrainImage(QSharedPointer<vpMatrix> t_StrainIm);
+  void setCommonSharedStrainImage(QSharedPointer<vpImage<unsigned char> > t_StrainIm);
   void setPreCompression(usImageRF2D<short int> &Pre);
   void setPostCompression(usImageRF2D<short int> &Post);
   void setMotionEstimator(MotionEstimator t_mest) { m_mEstimatior = t_mest; }
   usImageRF2D<short int> getPreCompression(void);
   usImageRF2D<short int> getPostCompression(void);
-  vpMatrix getStrainMap(void);
+  vpImage<unsigned char> getStrainMap(void);
   void setLSQpercentage(double per);
   void setPRF(double prf);
   void setfs(double fs);
@@ -104,7 +104,7 @@ private:
   QMutex m_mutex;
   QWaitCondition m_cond;
   usImageRF2D<short int> m_receivedRF;
-  vpMatrix m_StrainMap;
+  vpImage<unsigned char> m_StrainMap;
   usImageRF2D<short int> m_Precomp;
   usImageRF2D<short int> m_Postcomp;
   vpMatrix m_Elasto;
@@ -147,7 +147,7 @@ private:
 
   // Shared Pointers
   QSharedPointer<usImageRF2D<short int> > s_RFIm;
-  QSharedPointer<vpMatrix> s_StrainIm;
+  QSharedPointer<vpImage<unsigned char > > s_StrainIm;
   bool isSetSharedStrainMemory;
 
   QPointF GetImageCentroid(void);
