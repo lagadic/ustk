@@ -115,7 +115,7 @@ void usImageIo::write(const usImageRF2D<short> &imageRf2D, const std::string &he
     // filling header
     usMetaHeaderParser::MHDHeader header;
     header.numberOfDimensions = 2;
-    header.elementType = usMetaHeaderParser::MET_UCHAR;
+    header.elementType = usMetaHeaderParser::MET_SHORT;
     header.imageType = us::RF_2D;
     header.elementSpacing[0] = 1;
     header.elementSpacing[1] = 1;
@@ -164,8 +164,8 @@ void usImageIo::read(usImageRF2D<short int> &imageRf2D, const std::string &heade
     if (mhdParser.getImageType() != us::RF_2D && mhdParser.getImageType() != us::NOT_SET) {
       throw(vpException(vpException::badValue, "Reading a non rf 2D image!"));
     }
-    if (mhdParser.getElementType() != usMetaHeaderParser::MET_UCHAR) {
-      throw(vpException(vpException::badValue, "Reading a non unsigned char image!"));
+    if (mhdParser.getElementType() != usMetaHeaderParser::MET_SHORT) {
+      throw(vpException(vpException::badValue, "Reading a non short image!"));
     }
 
     usMetaHeaderParser::MHDHeader mhdHeader = mhdParser.getMHDHeader();
@@ -227,7 +227,7 @@ void usImageIo::write(const usImageRF3D<short> &imageRf3D, const std::string &he
     // filling header
     usMetaHeaderParser::MHDHeader header;
     header.numberOfDimensions = 3;
-    header.elementType = usMetaHeaderParser::MET_UCHAR;
+    header.elementType = usMetaHeaderParser::MET_SHORT;
     header.imageType = us::RF_3D;
     header.elementSpacing[0] = 1;
     header.elementSpacing[1] = 1;
@@ -276,8 +276,8 @@ void usImageIo::read(usImageRF3D<short> &imageRf3, const std::string &headerFile
     if (mhdParser.getImageType() != us::RF_3D && mhdParser.getImageType() != us::NOT_SET) {
       throw(vpException(vpException::badValue, "Reading a non rf 3D image!"));
     }
-    if (mhdParser.getElementType() != usMetaHeaderParser::MET_UCHAR) {
-      throw(vpException(vpException::badValue, "Reading a non unsigned char image!"));
+    if (mhdParser.getElementType() != usMetaHeaderParser::MET_SHORT) {
+      throw(vpException(vpException::badValue, "Reading a non short image!"));
     }
 
     usMetaHeaderParser::MHDHeader mhdHeader = mhdParser.getMHDHeader();
