@@ -78,6 +78,8 @@ int main(int argc, char **argv)
       elastography->setRF(*grabbedFrame);
       strainImage = elastography->getStrainMap();
 
+      std::cout << "size : " << strainImage.getHeight() << ", " << strainImage.getWidth() << std::endl;
+
       converter.convert(*grabbedFrame, preScanImage);
 
       // init display
@@ -118,7 +120,9 @@ int main(int argc, char **argv)
 #else
 int main()
 {
-  std::cout << "You should intall Qt5 (with wigdets and network modules), FFTW and a display graphic system (GDI or X11) to run this tutorial" << std::endl;
+  std::cout << "You should intall Qt5 (with wigdets and network modules), FFTW and a display graphic system (GDI or "
+               "X11) to run this tutorial"
+            << std::endl;
   return 0;
 }
 

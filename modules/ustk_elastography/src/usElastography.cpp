@@ -307,8 +307,8 @@ inline usImageRF2D<short int> usImageRF_ROI(const usImageRF2D<short int> &M, uin
   t_Mout.resize(nrows, ncols);
   for (unsigned int i = c; i < cncols; i++)
     for (unsigned int j = r; j < rnrows; j++)
-      t_Mout.bitmap[(i - c) * nrows + (j - r)] = M.bitmap[i * M.getRows() + j];
-  // t_Mout[j - r][i - c] = M[j][i];
+      t_Mout[j - r][i - c] = M[j][i];
+  // t_Mout.bitmap[(i - c) * nrows + (j - r)] = M.bitmap[i * M.getRows() + j];
 
   return t_Mout;
 }
@@ -411,11 +411,16 @@ void usElastography::run()
             double sgdty_w = 0.0;
             for (uint i = m; i < (m + Wsizey); i++) {
               for (uint j = n; j < (n + Wsizex); j++) {
-                sgdx2_w += gdx2.data[j * m_h_m + i];
-                sgdy2_w += gdy2.data[j * m_h_m + i];
-                sgdxy_w += gdxy.data[j * m_h_m + i];
-                sgdtx_w += gdtx.data[j * m_h_m + i];
-                sgdty_w += gdty.data[j * m_h_m + i];
+                // sgdx2_w += gdx2.data[j * m_h_m + i];
+                sgdx2_w += gdx2[i][j];
+                // sgdy2_w += gdy2.data[j * m_h_m + i];
+                sgdy2_w += gdy2[i][j];
+                // sgdxy_w += gdxy.data[j * m_h_m + i];
+                sgdxy_w += gdxy[i][j];
+                // sgdtx_w += gdtx.data[j * m_h_m + i];
+                sgdtx_w += gdtx[i][j];
+                // sgdty_w += gdty.data[j * m_h_m + i];
+                sgdty_w += gdty[i][j];
               }
             }
             M.data[0] = sgdx2_w;
@@ -425,8 +430,8 @@ void usElastography::run()
             b.data[0] = -sgdtx_w;
             b.data[1] = -sgdty_w;
             X = M.pseudoInverse() * b;
-            U.data[k + l * h_w] = X.data[0] * (m_c * (m_PRF / (2.0 * m_fs)));
-            V.data[k + l * h_w] = X.data[1] * (m_c * (m_PRF / (2.0 * m_fs)));
+            U[l][k] = X.data[0] * (m_c * (m_PRF / (2.0 * m_fs)));
+            V[l][k] = X.data[1] * (m_c * (m_PRF / (2.0 * m_fs)));
             l++;
           }
           k++;
@@ -457,17 +462,16 @@ void usElastography::run()
       /// Strain matrix S
       vpMatrix strainMapInvert = cC[5]->getConvolution();
 
-      m_StrainMap.resize(strainMapInvert.getRows(),strainMapInvert.getCols());
+      m_StrainMap.resize(strainMapInvert.getRows(), strainMapInvert.getCols());
 
       m_min_str = qAbs(strainMapInvert.getMinValue());
       m_max_str = qAbs(strainMapInvert.getMaxValue());
       m_max_abs = (m_min_str > m_max_str) ? m_min_str : m_max_str;
-      for (unsigned int xIndex=0; xIndex<strainMapInvert.getCols(); ++xIndex)
-      {
-        for (unsigned int yIndex=0; yIndex< strainMapInvert.getRows(); ++yIndex)
-        {
-          m_StrainMap[yIndex][xIndex] =
-              std::isnan(*(strainMapInvert.data + xIndex*strainMapInvert.getRows() + yIndex)) ? 0.0 : 254 * (fabs(*(strainMapInvert.data + xIndex*strainMapInvert.getRows() + yIndex)) / (m_max_abs));
+      for (unsigned int xIndex = 0; xIndex < strainMapInvert.getCols(); ++xIndex) {
+        for (unsigned int yIndex = 0; yIndex < strainMapInvert.getRows(); ++yIndex) {
+          m_StrainMap[yIndex][xIndex] = std::isnan(strainMapInvert[yIndex][xIndex])
+                                            ? 0.0
+                                            : 254 * (fabs(strainMapInvert[yIndex][xIndex]) / (m_max_abs));
         }
       }
       if (isSetSharedStrainMemory)

@@ -94,7 +94,7 @@ vpMatrix usSignalProcessing::GaussianFilter(int ny, int nx, double sigma)
   for (i = -a; i <= a; i++) {
     for (j = -b; j <= b; j++) {
       mul = (exp((-1.0 * ((i * i) + (j * j))) / (2.0 * sigma * sigma))) / (2 * M_PI * sigma);
-      t_out.data[(i + a) * ny + (j + b)] = mul;
+      t_out[j + b][i + a] = mul;
     }
   }
   t_out = t_out / t_out.getMaxValue();
@@ -142,18 +142,17 @@ vpMatrix usSignalProcessing::GetGx(usImageRF2D<short int> F)
 {
   assert(F.getCols() >= 0);
   vpMatrix t_out(F.getRows(), F.getCols());
-  // Computing the edges of the gradient
-  for (uint i = 0; i < F.getRows(); i++) {
-    *(t_out.data + i) = *(F.bitmap + i + F.getRows()) - *(F.bitmap + i);
 
-    *(t_out.data + (F.getCols() - 1) * F.getRows() + i) =
-        *(F.bitmap + (F.getCols() - 2) * F.getRows() + i) - *(F.bitmap + (F.getCols() - 1) * F.getRows() + i);
+  // manage first and last of each column
+  for (uint i = 0; i < F.getRows(); i++) {
+    t_out[i][0] = F[i][1] - F[i][0];
+    t_out[i][F.getCols() - 1] = F[i][F.getCols() - 1] - F[i][F.getCols() - 2];
   }
-  //#pragma omp parallel for collapse(2)
-  for (uint i = 1; i < F.getCols() - 1; i++)
-    for (uint j = 0; j < F.getRows(); j++)
-      *(t_out.data + i * F.getRows() + j) =
-          (double)(*(F.bitmap + (i + 1) * F.getRows() + j) - *(F.bitmap + (i - 1) * F.getRows() + j)) * 0.5;
+
+  for (uint i = 0; i < F.getRows(); i++)
+    for (uint j = 1; j < F.getCols() - 1; j++)
+      t_out[i][j] = (F[i][j + 1] - F[i][j - 1]) * 0.5;
+
   return t_out;
 }
 
@@ -162,16 +161,15 @@ vpMatrix usSignalProcessing::GetGy(usImageRF2D<short int> F)
   assert(F.getCols() >= 0);
   vpMatrix t_out(F.getRows(), F.getCols());
   // Computing the edges of the gradient
-  for (uint i = 0; i < F.getCols(); i++) {
-    *(t_out.data + i * F.getRows()) = *(F.bitmap + i * F.getRows() + 1) - *(F.bitmap + i * F.getRows());
-    *(t_out.data + (F.getRows() - 1) + i * F.getRows()) =
-        *(F.bitmap + (F.getRows() - 1) + i * F.getRows()) - *(F.bitmap + (F.getRows() - 2) + i * F.getRows());
+  for (uint j = 0; j < F.getCols(); j++) {
+    t_out[0][j] = F[1][j] - F[0][j];
+    t_out[F.getRows() - 1][j] = F[F.getRows() - 1][j] - F[F.getRows() - 2][j];
   }
   //#pragma omp parallel for collapse(2)
   for (uint i = 1; i < F.getRows() - 1; i++)
     for (uint j = 0; j < F.getCols(); j++)
-      *(t_out.data + j * F.getRows() + i) =
-          (double)(*(F.bitmap + j * F.getRows() + i + 1) - *(F.bitmap + j * F.getRows() + i - 1)) * 0.5;
+      t_out[i][j] = (F[i + 1][j] - F[i - 1][j]) * 0.5;
+
   return t_out;
 }
 
@@ -199,14 +197,14 @@ vpMatrix usSignalProcessing::BilinearInterpolation(vpMatrix In, uint newW, uint 
       x_diff = ((tx * j) - x);
       y_diff = ((ty * i) - y);
 
-      A = In.data[x * In.getRows() + y];
-      B = In.data[(x + 1) * In.getRows() + y];
-      C = In.data[x * In.getRows() + (y + 1)];
-      D = In.data[(x + 1) * In.getRows() + (y + 1)];
+      A = In[y][x];
+      B = In[y][x + 1];
+      C = In[y + 1][x];
+      D = In[y + 1][x + 1];
 
       double vi = (double)(A * (1.0 - x_diff) * (1.0 - y_diff) + B * (x_diff) * (1.0 - y_diff) +
                            C * (y_diff) * (1.0 - x_diff) + D * (x_diff * y_diff));
-      ivec.data[j * newH + i] = vi;
+      ivec[i][j] = vi;
     }
   }
   return ivec;
@@ -219,9 +217,9 @@ vpMatrix usSignalProcessing::HadamardProd(vpMatrix in_array1, vpMatrix in_array2
   uint t_rows = in_array2.getRows();
   uint t_cols = in_array2.getCols();
   vpMatrix t_out(t_rows, t_cols);
-  for (uint i = 0; i < t_cols; i++)
-    for (uint j = 0; j < t_rows; j++)
-      *(t_out.data + i * t_rows + j) = (*(in_array1.data + (i * t_rows) + j)) * (*(in_array2.data + (i * t_rows) + j));
+  for (uint i = 0; i < t_rows; i++)
+    for (uint j = 0; j < t_cols; j++)
+      t_out[i][j] = in_array1[i][j] * in_array2[i][j];
   return t_out;
 }
 
