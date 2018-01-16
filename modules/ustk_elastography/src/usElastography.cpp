@@ -308,6 +308,7 @@ inline usImageRF2D<short int> usImageRF_ROI(const usImageRF2D<short int> &M, uin
   for (unsigned int i = c; i < cncols; i++)
     for (unsigned int j = r; j < rnrows; j++)
       t_Mout.bitmap[(i - c) * nrows + (j - r)] = M.bitmap[i * M.getRows() + j];
+  // t_Mout[j - r][i - c] = M[j][i];
 
   return t_Mout;
 }
