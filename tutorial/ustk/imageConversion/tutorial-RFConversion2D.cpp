@@ -14,7 +14,7 @@ int main(int argc, char **argv)
     if (std::string(argv[i]) == "--input")
       filename = std::string(argv[i + 1]);
     else if (std::string(argv[i]) == "--help") {
-      std::cout << "\nUsage: " << argv[0] << " [--input <RF2D.rf>] [--help]\n" << std::endl;
+      std::cout << "\nUsage: " << argv[0] << " [--input <RF2D.rf> | <RF2D.mhd>] [--help]\n" << std::endl;
       return 0;
     }
   }
@@ -32,38 +32,33 @@ int main(int argc, char **argv)
 
   usImageRF2D<short int> rfImage;
 
-  usImagePostScan2D<unsigned char> postscanImage;
-  postscanImage.setHeightResolution(0.0005);
-  postscanImage.setWidthResolution(0.0005);
+  usImagePreScan2D<unsigned char> prescanImage;
 
+  // Warning : if you read .rf files, you have to fill the image settings by yourself after reading it.
   usImageIo::read(rfImage, filename);
-
-  postscanImage.setTransducerSettings(rfImage);
 
   std::cout << "end reading" << std::endl;
 
   // scan-conversion
-  usRFToPostScan2DConverter converter;
+  usRFToPreScan2DConverter converter;
 
   double startTime = vpTime::measureTimeMs();
   std::cout << "init converter..." << std::endl;
-
-  converter.setConversionParameters(postscanImage, rfImage.getRFSampleNumber() / 10, rfImage.getScanLineNumber(), 10);
 
   double endInitTime = vpTime::measureTimeMs();
   std::cout << "init time (sec) = " << (endInitTime - startTime) / 1000.0 << std::endl;
 
   std::cout << "converting..." << std::endl;
-  converter.convert(rfImage, postscanImage);
+  converter.convert(rfImage, prescanImage);
 
-  std::cout << postscanImage;
+  std::cout << prescanImage;
 
   double endConvertTime = vpTime::measureTimeMs();
   std::cout << "convert time (sec) = " << (endConvertTime - endInitTime) / 1000.0 << std::endl;
 
-  std::cout << "writing post-scan..." << std::endl;
-  std::string outFileName = "postscan.xml";
-  usImageIo::write(postscanImage, outFileName);
+  std::cout << "writing pre-scan..." << std::endl;
+  std::string outFileName = "prescan.xml";
+  usImageIo::write(prescanImage, outFileName);
 
   return 0;
 }
