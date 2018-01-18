@@ -84,8 +84,14 @@ public:
 signals:
   void newFrameAvailable();
 
+protected:
+  void invertRowsCols();
+
 private:
-  // Image buffer
+  // Grabbed image
+  usFrameGrabbedInfo<usImageRF2D<short int> > m_grabbedImage;
+
+  // Output images : we have to invert (i <-> j) in the image grabbed
   std::vector<usFrameGrabbedInfo<usImageRF2D<short int> > *> m_outputBuffer;
   bool m_firstFrameAvailable;
 

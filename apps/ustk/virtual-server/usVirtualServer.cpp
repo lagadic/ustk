@@ -340,6 +340,8 @@ void usVirtualServer::setSequencePath(const std::string sequencePath)
       m_nextImageTimestamp = m_MHDSequenceReader.getNextTimeStamp();
       if (imageHeader.timeStamp == m_nextImageTimestamp) // timestamps are supposed to be different for different frames
         throw(vpException(vpException::fatalError), "usVirtualServer error : successives timestamps are equal !");
+
+      invertRowsColsOnRF();
     } catch (...) { // if we have an exception, it's not a RF 2D image. So we try a pre-scan 2D
       try {
         uint64_t timestampTmp;
@@ -598,6 +600,7 @@ void usVirtualServer::sendingLoopSequenceMHD()
 
                 uint64_t localTimestamp;
                 m_MHDSequenceReader.acquire(m_rfImage2d, localTimestamp);
+                invertRowsColsOnRF(); // to fit with ultrasonix grabbers (pre-scan image is inverted in porta SDK)
                 imageHeader.timeStamp = localTimestamp;
                 if (imageIndex != m_MHDSequenceReader.getTotalImageNumber() - 1) {
                   m_nextImageTimestamp = m_MHDSequenceReader.getNextTimeStamp();
@@ -620,6 +623,7 @@ void usVirtualServer::sendingLoopSequenceMHD()
                 // current real timestamp
                 uint64_t localTimestamp;
                 m_MHDSequenceReader.getImage(imageIndex, m_rfImage2d, localTimestamp);
+                invertRowsColsOnRF(); // to fit with ultrasonix grabbers (pre-scan image is inverted in porta SDK)
                 // offset (increment because of rewind)
                 uint64_t previousTimestamp;
                 usImageRF2D<short int> tmpImg;
@@ -651,6 +655,7 @@ void usVirtualServer::sendingLoopSequenceMHD()
                 // current real timestamp
                 uint64_t localTimestamp;
                 m_MHDSequenceReader.getImage(imageIndex, m_rfImage2d, localTimestamp);
+                invertRowsColsOnRF(); // to fit with ultrasonix grabbers (pre-scan image is inverted in porta SDK)
                 // offset (increment because of rewind)
                 uint64_t previousTimestamp;
                 usImageRF2D<short int> tmpImg;
@@ -676,6 +681,7 @@ void usVirtualServer::sendingLoopSequenceMHD()
             } else {
               uint64_t localTimestamp;
               m_MHDSequenceReader.acquire(m_rfImage2d, localTimestamp);
+              invertRowsColsOnRF(); // to fit with ultrasonix grabbers (pre-scan image is inverted in porta SDK)
               imageHeader.timeStamp = localTimestamp + m_pauseDurationOffset;
               if (!m_MHDSequenceReader.end())
                 m_nextImageTimestamp = m_MHDSequenceReader.getNextTimeStamp() + m_pauseDurationOffset;
@@ -704,6 +710,7 @@ void usVirtualServer::sendingLoopSequenceMHD()
 
             uint64_t localTimestamp;
             m_MHDSequenceReader.acquire(m_rfImage2d, localTimestamp);
+            invertRowsColsOnRF(); // to fit with ultrasonix grabbers (pre-scan image is inverted in porta SDK)
             imageHeader.timeStamp = localTimestamp;
             if (imageIndex != m_MHDSequenceReader.getTotalImageNumber() - 1) {
               m_nextImageTimestamp = m_MHDSequenceReader.getNextTimeStamp();
@@ -725,6 +732,7 @@ void usVirtualServer::sendingLoopSequenceMHD()
             // current real timestamp
             uint64_t localTimestamp;
             m_MHDSequenceReader.getImage(imageIndex, m_rfImage2d, localTimestamp);
+            invertRowsColsOnRF(); // to fit with ultrasonix grabbers (pre-scan image is inverted in porta SDK)
             // offset (increment because of rewind)
             uint64_t previousTimestamp;
             usImageRF2D<short int> tmpImg;
@@ -759,6 +767,7 @@ void usVirtualServer::sendingLoopSequenceMHD()
             uint64_t previousTimestamp;
             usImageRF2D<short int> tmpImg;
             m_MHDSequenceReader.getImage(imageIndex + 1, tmpImg, previousTimestamp);
+            invertRowsColsOnRF(); // to fit with ultrasonix grabbers (pre-scan image is inverted in porta SDK)
             uint64_t deltaTimestamp = previousTimestamp - localTimestamp;
             imageHeader.timeStamp += deltaTimestamp;
 
@@ -780,6 +789,7 @@ void usVirtualServer::sendingLoopSequenceMHD()
         } else {
           uint64_t localTimestamp;
           m_MHDSequenceReader.acquire(m_rfImage2d, localTimestamp);
+          invertRowsColsOnRF(); // to fit with ultrasonix grabbers (pre-scan image is inverted in porta SDK)
           imageHeader.timeStamp = localTimestamp;
           if (!m_MHDSequenceReader.end())
             m_nextImageTimestamp = m_MHDSequenceReader.getNextTimeStamp();
@@ -1442,8 +1452,8 @@ void usVirtualServer::sendingLoopSequenceMHD()
       out << (int)m_rfImage2d.getHeight() * m_rfImage2d.getWidth() * 2; // datalength in bytes
       out << (int)16;                                                   // sample size in bits
       out << (int)2;                                                    // image type
-      out << m_rfImage2d.getWidth();
       out << m_rfImage2d.getHeight();
+      out << m_rfImage2d.getWidth();
       out << (double).0; // pixelWidth
       out << (double).0; // pixelHeight
       out << m_rfImage2d.getTransmitFrequency();
@@ -1604,6 +1614,7 @@ void usVirtualServer::sendingLoopSequenceMHD()
             else
               m_nextImageTimestamp = m_timestamps.at(currentFrameInVolume + 1) + m_pauseDurationOffset;
           }
+          invertRowsColsOnRF(); // to fit with ultrasonix grabbers (pre-scan image is inverted in porta SDK)
           // time offset due to pause
           uint64_t deltaT = m_nextImageTimestamp - imageHeader.timeStamp;
           m_pauseDurationOffset += deltaT;
@@ -1626,6 +1637,8 @@ void usVirtualServer::sendingLoopSequenceMHD()
             } else {
               m_rfImage3d.getFrame(m_rfImage2d, currentFrameInVolume);
             }
+
+            invertRowsColsOnRF(); // to fit with ultrasonix grabbers (pre-scan image is inverted in porta SDK)
 
             // timestamp
             imageHeader.timeStamp = m_timestamps.at(currentFrameInVolume) + m_pauseDurationOffset;
@@ -1651,6 +1664,8 @@ void usVirtualServer::sendingLoopSequenceMHD()
               m_rfImage3d.getFrame(m_rfImage2d, currentFrameInVolume);
             }
 
+            invertRowsColsOnRF(); // to fit with ultrasonix grabbers (pre-scan image is inverted in porta SDK)
+
             // timestamp
             uint64_t delta;
             uint64_t deltaNext;
@@ -1674,6 +1689,8 @@ void usVirtualServer::sendingLoopSequenceMHD()
               m_rfImage3d.getFrame(m_rfImage2d, currentFrameInVolume);
             }
 
+            invertRowsColsOnRF(); // to fit with ultrasonix grabbers (pre-scan image is inverted in porta SDK)
+
             // timestamp
             uint64_t delta;
             uint64_t deltaNext;
@@ -1696,6 +1713,7 @@ void usVirtualServer::sendingLoopSequenceMHD()
           else
             m_rfImage3d.getFrame(m_rfImage2d, currentFrameInVolume);
 
+          invertRowsColsOnRF(); // to fit with ultrasonix grabbers (pre-scan image is inverted in porta SDK)
           // timestamps
           imageHeader.timeStamp = m_timestamps.at(currentFrameInVolume) + m_pauseDurationOffset;
           if (m_rfImage3d.getFrameNumber() == currentFrameInVolume + 1) { // we're sending last frame of the volume
@@ -1967,6 +1985,19 @@ void usVirtualServer::invertRowsColsOnPreScan()
   for (unsigned int i = 0; i < m_preScanImage2d.getHeight(); i++)
     for (unsigned int j = 0; j < m_preScanImage2d.getWidth(); j++)
       m_preScanImage2d(i, j, temp(j, i));
+}
+
+/**
+* Method to invert rows and columns in the image (case of RF frames) : to fit real server behaviour.
+*/
+void usVirtualServer::invertRowsColsOnRF()
+{
+  usImageRF2D<short int> temp = m_rfImage2d;
+  m_rfImage2d.resize(temp.getWidth(), temp.getHeight());
+
+  for (unsigned int i = 0; i < m_rfImage2d.getHeight(); i++)
+    for (unsigned int j = 0; j < m_rfImage2d.getWidth(); j++)
+      m_rfImage2d(i, j, temp(j, i));
 }
 
 /**

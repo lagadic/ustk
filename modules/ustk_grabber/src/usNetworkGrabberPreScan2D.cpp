@@ -178,9 +178,7 @@ void usNetworkGrabberPreScan2D::dataArrived()
     m_grabbedImage.setTimeStamp(m_imageHeader.timeStamp);
 
     // warning if timestamps are close (< 1 ms)
-    if (m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getTimeStamp() -
-            m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getTimeStamp() <
-        1) {
+    if (m_imageHeader.timeStamp - m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getTimeStamp() < 1) {
       std::cout << "WARNING : new image received with an acquisition timestamp close to previous image" << std::endl;
     }
 

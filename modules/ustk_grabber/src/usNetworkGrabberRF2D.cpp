@@ -162,44 +162,35 @@ void usNetworkGrabberRF2D::dataArrived()
     }
 
     // update transducer settings with image header received
-    m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setTransducerRadius(m_imageHeader.transducerRadius);
-    if (m_imageHeader.transducerRadius != 0.) {
-      m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setScanLinePitch(m_imageHeader.scanLinePitch);
-      m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setTransducerConvexity(true);
-    } else { // linear transducer
-      m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setScanLinePitch(0.);
-      m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setTransducerConvexity(false);
-    }
-    m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setDepth(m_imageHeader.imageDepth / 1000.0);
-    m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)
-        ->setAxialResolution((m_imageHeader.imageDepth / 1000.0) / m_imageHeader.frameHeight);
-    m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setTransmitFrequency(m_imageHeader.transmitFrequency);
-    m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setSamplingFrequency(m_imageHeader.samplingFrequency);
+    m_grabbedImage.setTransducerRadius(m_imageHeader.transducerRadius);
+    m_grabbedImage.setScanLinePitch(m_imageHeader.scanLinePitch);
+    m_grabbedImage.setDepth(m_imageHeader.imageDepth / 1000.0);
+    m_grabbedImage.setTransducerConvexity(m_imageHeader.transducerRadius != 0.);
+    m_grabbedImage.setTransmitFrequency(m_imageHeader.transmitFrequency);
+    m_grabbedImage.setSamplingFrequency(m_imageHeader.samplingFrequency);
 
     // set data info
-    m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setFrameCount(m_imageHeader.frameCount);
-    m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setFramesPerVolume(m_imageHeader.framesPerVolume);
-    m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setTimeStamp(m_imageHeader.timeStamp);
+    m_grabbedImage.setFrameCount(m_imageHeader.frameCount);
+    m_grabbedImage.setFramesPerVolume(m_imageHeader.framesPerVolume);
+    m_grabbedImage.setTimeStamp(m_imageHeader.timeStamp);
 
     // warning if timestamps are close (< 1 ms)
-    if (m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getTimeStamp() -
-            m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getTimeStamp() <
-        1) {
+    if (m_imageHeader.timeStamp - m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getTimeStamp() < 1) {
       std::cout << "WARNING : new image received with an acquisition timestamp close to previous image" << std::endl;
     }
 
-    m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)
-        ->resize(m_imageHeader.frameHeight, m_imageHeader.frameWidth);
+    m_grabbedImage.resize(m_imageHeader.frameWidth, m_imageHeader.frameHeight);
 
     m_bytesLeftToRead = m_imageHeader.dataLength;
 
-    m_bytesLeftToRead -= in.readRawData((char *)m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->bitmap,
-                                        m_imageHeader.dataLength);
+    m_bytesLeftToRead -= in.readRawData((char *)m_grabbedImage.bitmap, m_imageHeader.dataLength);
 
     if (m_bytesLeftToRead == 0) { // we've read all the frame in 1 packet.
+
+      invertRowsCols();
       // Now CURRENT_FILLED_FRAME_POSITION_IN_VEC has become the last frame received
       // So we switch pointers beween MOST_RECENT_FRAME_POSITION_IN_VEC and CURRENT_FILLED_FRAME_POSITION_IN_VEC
-      usFrameGrabbedInfo<usImageRF2D<short int> > *savePtr = m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC);
+      /*usFrameGrabbedInfo<usImageRF2D<short int> > *savePtr = m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC);
       m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
       m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
       if (m_recordingOn)
@@ -208,7 +199,7 @@ void usNetworkGrabberRF2D::dataArrived()
                                    m_firstImageTimestamp);
 
       m_firstFrameAvailable = true;
-      emit(newFrameAvailable());
+      emit(newFrameAvailable());*/
     }
     if (m_verbose)
       std::cout << "Bytes left to read for whole frame = " << m_bytesLeftToRead << std::endl;
@@ -231,6 +222,9 @@ void usNetworkGrabberRF2D::dataArrived()
       std::cout << "Bytes left to read for whole frame = " << m_bytesLeftToRead << std::endl;
 
     if (m_bytesLeftToRead == 0) { // we've read the last part of the frame.
+
+      // invertRowsCols();
+
       // Now CURRENT_FILLED_FRAME_POSITION_IN_VEC has become the last frame received
       // So we switch pointers beween MOST_RECENT_FRAME_POSITION_IN_VEC and CURRENT_FILLED_FRAME_POSITION_IN_VEC
       usFrameGrabbedInfo<usImageRF2D<short int> > *savePtr = m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC);
@@ -245,6 +239,39 @@ void usNetworkGrabberRF2D::dataArrived()
       emit(newFrameAvailable());
     }
   }
+}
+
+/**
+* Method to invert rows and columns in the image.
+*/
+void usNetworkGrabberRF2D::invertRowsCols()
+{
+  // At this point, CURRENT_FILLED_FRAME_POSITION_IN_VEC is going to be filled
+  m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setTransducerSettings(m_grabbedImage);
+
+  m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setFrameCount(m_grabbedImage.getFrameCount());
+  m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setFramesPerVolume(m_grabbedImage.getFramesPerVolume());
+  m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setTimeStamp(m_grabbedImage.getTimeStamp());
+
+  m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)
+      ->resize(m_grabbedImage.getWidth(), m_grabbedImage.getHeight());
+
+  for (unsigned int i = 0; i < m_grabbedImage.getHeight(); i++)
+    for (unsigned int j = 0; j < m_grabbedImage.getWidth(); j++)
+      (*m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC))(j, i, m_grabbedImage(i, j));
+
+  // Now CURRENT_FILLED_FRAME_POSITION_IN_VEC has become the last frame received
+  // So we switch pointers beween MOST_RECENT_FRAME_POSITION_IN_VEC and CURRENT_FILLED_FRAME_POSITION_IN_VEC
+  usFrameGrabbedInfo<usImageRF2D<short int> > *savePtr = m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC);
+  m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
+  m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
+  if (m_recordingOn)
+    m_sequenceWriter.write(*m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC),
+                           m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getTimeStamp() -
+                               m_firstImageTimestamp);
+
+  m_firstFrameAvailable = true;
+  emit(newFrameAvailable());
 }
 
 /**
