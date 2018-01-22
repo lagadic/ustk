@@ -136,10 +136,10 @@ void usRawFileParser::write(const vpImage<unsigned char> &image2D, const std::st
 * @param[out] image2D 2D-image to fill.
 * @param[in] rawFilename File name of the image to read (with .raw extension).
 */
-void usRawFileParser::read(vpImage<short> &image2D, const std::string &rawFilename)
+void usRawFileParser::read(usImageRF2D<short> &image2D, const std::string &rawFilename)
 {
   std::fstream fileStream(rawFilename.c_str(), std::ios::in | std::ios::binary);
-  fileStream.read((char *)image2D.bitmap, image2D.getSize() * sizeof(short));
+  fileStream.read((char *)image2D.bitmap, image2D.getNumberOfPixel() * sizeof(short));
   fileStream.close();
 }
 
@@ -148,10 +148,10 @@ void usRawFileParser::read(vpImage<short> &image2D, const std::string &rawFilena
 * @param image2D 2D-image to write.
 * @param rawFilename File name of the image to write (with .raw extension).
 */
-void usRawFileParser::write(const vpImage<short> &image2D, const std::string &rawFilename)
+void usRawFileParser::write(const usImageRF2D<short> &image2D, const std::string &rawFilename)
 {
   std::fstream fileStream(rawFilename.c_str(), std::ios::out | std::ios::binary);
-  fileStream.write((char *)image2D.bitmap, image2D.getSize() * sizeof(short));
+  fileStream.write((char *)image2D.bitmap, image2D.getNumberOfPixel() * sizeof(short));
   fileStream.close();
 }
 #endif // DOXYGEN_SHOULD_SKIP_THIS

@@ -217,10 +217,11 @@ void usNetworkGrabberRF3D::dataArrived()
   else {
     if (m_verbose) {
       std::cout << "reading following part of the frame" << std::endl;
-      std::cout << "local image size = " << m_grabbedImage.getSize() << std::endl;
+      std::cout << "local image size = " << m_grabbedImage.getNumberOfPixel() << std::endl;
     }
-    m_bytesLeftToRead -= in.readRawData(
-        (char *)m_grabbedImage.bitmap + ((m_grabbedImage.getSize() * 2) - m_bytesLeftToRead), m_bytesLeftToRead);
+    m_bytesLeftToRead -=
+        in.readRawData((char *)m_grabbedImage.bitmap + ((m_grabbedImage.getNumberOfPixel() * 2) - m_bytesLeftToRead),
+                       m_bytesLeftToRead);
 
     if (m_bytesLeftToRead == 0) { // we've read the last part of the frame.
       includeFrameInVolume();
@@ -279,7 +280,8 @@ void usNetworkGrabberRF3D::includeFrameInVolume()
 
   for (unsigned int i = 0; i < m_grabbedImage.getHeight(); i++)
     for (unsigned int j = 0; j < m_grabbedImage.getWidth(); j++) {
-      (*m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC))(j, i, framePostition, m_grabbedImage(i, j));
+      /// TODO (after modifs in usImageRF3D
+      ///(*m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC))(j, i, framePostition, m_grabbedImage(i, j));
     }
 
   // we reach the end of a volume

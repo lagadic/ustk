@@ -29,7 +29,8 @@ int main()
   for (int i = 0; i < 10; i++) {
     sprintf(buffer, filename.c_str(), i);
     usImageIo::read(rfImage, filename);
-    rfImage3D.insertFrame(rfImage, i);
+    /// TODO
+    /// rfImage3D.insertFrame(rfImage, i);
   }
 
   // settings used for rf file in ustk-dataset

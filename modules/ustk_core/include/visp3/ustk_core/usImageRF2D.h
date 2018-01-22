@@ -40,8 +40,6 @@
 
 #include <cstring>
 
-#include <visp3/core/vpImage.h>
-
 #include <visp3/ustk_core/usImagePreScanSettings.h>
 
 /*!
@@ -104,31 +102,73 @@ int main()
 }
   \endcode
  */
-template <class Type> class usImageRF2D : public vpImage<Type>, public usImagePreScanSettings
+
+template <class Type> class usImageRF2D : public usImagePreScanSettings
 {
+  friend class usRawFileParser;
+  friend class usNetworkGrabberRF2D;
+  friend class usNetworkGrabberRF3D;
+  friend class usVirtualServer;
+
 public:
   usImageRF2D();
-  usImageRF2D(const vpImage<Type> &image, const usImagePreScanSettings &preScanSettings);
+  usImageRF2D(unsigned int height, unsigned int width);
+  usImageRF2D(unsigned int height, unsigned int width, const usImagePreScanSettings &preScanSettings);
   usImageRF2D(const usImageRF2D &other);
   virtual ~usImageRF2D();
 
+  const Type *const getBitmap() const;
+
+  unsigned int getHeight() const;
+  unsigned int getNumberOfPixel() const;
   unsigned int getRFSampleNumber() const;
+  unsigned int getWidth() const;
+
+  //! Set the size of the image
+  void init(unsigned int height, unsigned int width);
 
   usImageRF2D<Type> &operator=(const usImageRF2D<Type> &other);
   bool operator==(const usImageRF2D<Type> &other);
 
-  void setData(const vpImage<Type> &image);
+  //! operator[] allows operation like I[i] = x.
+  inline Type *operator[](const unsigned int i) { return col[i]; }
+  inline Type *operator[](const int i) { return col[i]; }
+
+  //! operator[] allows operation like x = I[i]
+  inline const Type *operator[](unsigned int i) const { return col[i]; }
+  inline const Type *operator[](int i) const { return col[i]; }
+
   void setScanLineNumber(unsigned int scanLineNumber);
 
-  // Filtering before calling vpImage::resize() to update scanLineNumber
   void resize(const unsigned int h, const unsigned int w);
   void resize(const unsigned int h, const unsigned int w, const Type val);
+
+private:
+  Type *bitmap;
+  unsigned int npixels;
+  unsigned int width;
+  unsigned int height;
+  Type **col;
 };
 
-/**
-* Default constructor.
+/*!
+  \brief Constructor
+
+  No memory allocation is done
 */
-template <class Type> usImageRF2D<Type>::usImageRF2D() : vpImage<Type>(), usImagePreScanSettings() {}
+template <class Type>
+usImageRF2D<Type>::usImageRF2D() : usImagePreScanSettings(), bitmap(NULL), npixels(0), width(0), height(0), col(NULL)
+{
+}
+
+/**
+* Initializing constructor.
+* @param image 2D RF image.
+*/
+template <class Type> usImageRF2D<Type>::usImageRF2D(unsigned int height, unsigned int width) : usImagePreScanSettings()
+{
+  init(height, width);
+}
 
 /**
 * Initializing constructor.
@@ -136,11 +176,14 @@ template <class Type> usImageRF2D<Type>::usImageRF2D() : vpImage<Type>(), usImag
 * @param preScanSettings Pre-scan image settings.
 */
 template <class Type>
-usImageRF2D<Type>::usImageRF2D(const vpImage<Type> &image, const usImagePreScanSettings &preScanSettings)
-  : vpImage<Type>(image), usImagePreScanSettings(preScanSettings)
+usImageRF2D<Type>::usImageRF2D(unsigned int height, unsigned int width, const usImagePreScanSettings &preScanSettings)
+  : usImagePreScanSettings(preScanSettings)
 {
-  if (image.getWidth() != preScanSettings.getScanLineNumber())
+  if (width != preScanSettings.getScanLineNumber())
     throw(vpException(vpException::badValue, "RF image width differ from transducer scan line number"));
+
+  init(height, width);
+  setImagePreScanSettings(preScanSettings);
 }
 
 /**
@@ -148,22 +191,39 @@ usImageRF2D<Type>::usImageRF2D(const vpImage<Type> &image, const usImagePreScanS
 * @param other 2D RF image to copy
 */
 template <class Type>
-usImageRF2D<Type>::usImageRF2D(const usImageRF2D &other) : vpImage<Type>(other), usImagePreScanSettings(other)
+usImageRF2D<Type>::usImageRF2D(const usImageRF2D &other)
+  : usImagePreScanSettings(other), npixels(0), width(0), height(0)
 {
+  // allocation and resize
+  resize(other.getHeight(), other.getWidth());
+
+  // filling pixels values
+  memcpy(bitmap, other.getBitmap(), (size_t)(height * width * sizeof(usImageRF2D<Type>)));
 }
 
 /**
 * Destructor.
 */
-template <class Type> usImageRF2D<Type>::~usImageRF2D() {}
+template <class Type> usImageRF2D<Type>::~usImageRF2D()
+{
+  if (bitmap != NULL) {
+    delete[] bitmap;
+    bitmap = NULL;
+  }
+
+  if (col != NULL) {
+    delete[] col;
+    col = NULL;
+  }
+}
 
 /**
 * Copy operator.
 */
 template <class Type> usImageRF2D<Type> &usImageRF2D<Type>::operator=(const usImageRF2D<Type> &other)
 {
-  // from vpImage
-  vpImage<Type>::operator=(other);
+  resize(other.getHeight(), other.getWidth());
+  memcpy(bitmap, other.getBitmap(), height * width * sizeof(Type));
 
   // from usImagePreScanSettings
   usImagePreScanSettings::operator=(other);
@@ -176,7 +236,18 @@ template <class Type> usImageRF2D<Type> &usImageRF2D<Type>::operator=(const usIm
 */
 template <class Type> bool usImageRF2D<Type>::operator==(const usImageRF2D<Type> &other)
 {
-  return (vpImage<Type>::operator==(other) && usImagePreScanSettings::operator==(other));
+
+  if (this->width != other.getWidth())
+    return false;
+  if (this->height != other.getHeight())
+    return false;
+
+  for (unsigned int i = 0; i < npixels; i++) {
+    if (bitmap[i] != other.bitmap[i]) {
+      return false;
+    }
+  }
+  return usImagePreScanSettings::operator==(other);
 }
 
 /**
@@ -195,19 +266,7 @@ template <class Type> std::ostream &operator<<(std::ostream &out, const usImageR
 * Get the number of RF samples in a scan line.
 * @return Number of RF samples in a scan line.
 */
-template <class Type> unsigned int usImageRF2D<Type>::getRFSampleNumber() const { return vpImage<Type>::getHeight(); }
-
-/**
-* Setter for the 2D RF image data.
-*
-* Updates also the transducer scan line number that corresponds to the image width.
-* @param image The image to set.
-*/
-template <class Type> void usImageRF2D<Type>::setData(const vpImage<Type> &image)
-{
-  vpImage<Type>::operator=(image);
-  setScanLineNumber(image.getWidth());
-}
+template <class Type> unsigned int usImageRF2D<Type>::getRFSampleNumber() const { return getHeight(); }
 
 /**
  * Set the transducer scan line number.
@@ -217,7 +276,7 @@ template <class Type> void usImageRF2D<Type>::setData(const vpImage<Type> &image
  */
 template <class Type> void usImageRF2D<Type>::setScanLineNumber(unsigned int scanLineNumber)
 {
-  vpImage<Type>::resize(vpImage<Type>::getHeight(), scanLineNumber);
+  resize(this->getHeight(), scanLineNumber);
   usTransducerSettings::setScanLineNumber(scanLineNumber);
 }
 
@@ -230,22 +289,72 @@ template <class Type> void usImageRF2D<Type>::setScanLineNumber(unsigned int sca
  */
 template <class Type> void usImageRF2D<Type>::resize(const unsigned int h, const unsigned int w)
 {
-  usTransducerSettings::setScanLineNumber(w);
-  vpImage<Type>::resize(h, w);
+  this->setScanLineNumber(w);
+  this->init(h, w);
 }
 
 /*!
- * Resize the 2D RF image and set all the pixel to a given value.
- *
- * Updates also the transducer scan line number that corresponds to the image width.
- * \param h Image height.
- * \param w Image width.
- * \param val Value set to each pixel.
- */
-template <class Type> void usImageRF2D<Type>::resize(const unsigned int h, const unsigned int w, const Type val)
+  \brief Image initialization
+
+  Allocate memory for an [h x w] image, using column major image convention.
+
+  \param w : Image width.
+  \param h : Image height.
+
+  Element of the bitmap are not initialized
+
+  If the image has been already initialized, memory allocation is done
+  only if the new image size is different, else we re-use the same
+  memory space.
+
+  \exception vpException::memoryAllocationError
+
+*/
+template <class Type> void usImageRF2D<Type>::init(unsigned int h, unsigned int w)
 {
-  usTransducerSettings::setScanLineNumber(w);
-  vpImage<Type>::resize(h, w, val);
+  if (w != this->width) {
+    if (col != NULL) {
+      delete[] col;
+      col = NULL;
+    }
+  }
+
+  if ((h != this->height) || (w != this->width)) {
+    if (bitmap != NULL) {
+      delete[] bitmap;
+      bitmap = NULL;
+    }
+  }
+
+  this->width = w;
+  this->height = h;
+
+  npixels = width * height;
+
+  if (bitmap == NULL)
+    bitmap = new Type[npixels];
+
+  if (bitmap == NULL) {
+    throw(vpException(vpException::memoryAllocationError, "cannot allocate bitmap "));
+  }
+
+  if (col == NULL)
+    col = new Type *[width];
+  if (col == NULL) {
+    throw(vpException(vpException::memoryAllocationError, "cannot allocate col "));
+  }
+
+  unsigned int j;
+  for (j = 0; j < width; j++)
+    col[j] = bitmap + j * height;
 }
+
+template <class Type> unsigned int usImageRF2D<Type>::getHeight() const { return height; }
+
+template <class Type> unsigned int usImageRF2D<Type>::getNumberOfPixel() const { return npixels; }
+
+template <class Type> unsigned int usImageRF2D<Type>::getWidth() const { return width; }
+
+template <class Type> const Type *const usImageRF2D<Type>::getBitmap() const { return bitmap; }
 
 #endif // US_IMAGE_RF_2D_H
