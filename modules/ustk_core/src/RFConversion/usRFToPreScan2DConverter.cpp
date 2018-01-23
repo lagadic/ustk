@@ -183,7 +183,7 @@ void usRFToPreScan2DConverter::convert(const usImageRF2D<short int> &rfImage,
 
   // Run envelope detector
   for (int i = 0; i < w; ++i) {
-    enveloppeDetection(rfImage.[i], m_env + i * h);
+    enveloppeDetection(rfImage[i], m_env + i * h);
   }
 
   // Log-compress

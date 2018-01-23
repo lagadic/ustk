@@ -47,8 +47,8 @@
   @brief 2D Radio Frequence (RF) ultrasound image.
   @ingroup module_ustk_core
 
-  This class represents a 2D RF ultrasound image. This image is nothing more than a vpImage that
-  contains 2D RF data and additional settings that give information about the acquisition process done by the
+  This class represents a 2D RF ultrasound image. This image is nothing more than an image (respecting column major
+bitmap storage) that  contains additional settings that give information about the acquisition process done by the
 transducer.
 
   The settings associated to an usImageRF2D image are the one implemented in usImagePreScanSettings.
@@ -75,33 +75,38 @@ transducer.
   The following figure summarize these settings and shows the structure of an usImageRF2D image:
   \image html img-usImageRF2D.png
 
-  The following example shows how to build a 2D RF ultrasound image from a vpImage, and from
-  acquisition settings.
+  The following example shows how to read a 2D RF ultrasound image, and set the image settings of your choice.
 
   \code
 #include <visp3/ustk_core/usImageRF2D.h>
+#include <visp3/ustk_io/usImageIo.h>
 
 int main()
 {
   // 2D RF image settings
-  unsigned int RFSampleNumber = 200;
+  unsigned int RFSampleNumber = 2000;
   double transducerRadius = 0.007;
   double scanLinePitch = 0.0006;
   unsigned int scanLineNumber = 256;
   bool isTransducerConvex = true;
   double axialResolution = 0.002;
 
-  vpImage<unsigned char> I(RFSampleNumber, scanLineNumber);
-  usImageRF2D<short> rf2d;
-  rf2d.setTransducerRadius(transducerRadius);
-  rf2d.setScanLinePitch(scanLinePitch);
-  rf2d.setScanLineNumber(scanLineNumber);
-  rf2d.setTransducerConvexity(isTransducerConvex);
-  rf2d.setAxialResolution(axialResolution);
-  rf2d.setData(I);
+  usImageRF2D<short> rf2d(RFSampleNumber, scanLineNumber);
+
+// sets the RF samples values contained in the .raw file in the bitmap of
+//the usImageRF2D, and the settings contained in the mhd header.
+usImageIo::read(rf2d, "path/to/file.mhd");
+
+//sets your own settings
+rf2d.setTransducerRadius(transducerRadius);
+rf2d.setScanLinePitch(scanLinePitch);
+rf2d.setScanLineNumber(scanLineNumber);
+rf2d.setTransducerConvexity(isTransducerConvex);
+rf2d.setAxialResolution(axialResolution);
+
+return 0;
 }
-  \endcode
- */
+\endcode */
 
 template <class Type> class usImageRF2D : public usImagePreScanSettings
 {
@@ -276,7 +281,9 @@ template <class Type> unsigned int usImageRF2D<Type>::getRFSampleNumber() const 
  */
 template <class Type> void usImageRF2D<Type>::setScanLineNumber(unsigned int scanLineNumber)
 {
-  resize(this->getHeight(), scanLineNumber);
+  if (scanLineNumber != getWidth())
+    resize(this->getHeight(), scanLineNumber);
+
   usTransducerSettings::setScanLineNumber(scanLineNumber);
 }
 
@@ -289,8 +296,8 @@ template <class Type> void usImageRF2D<Type>::setScanLineNumber(unsigned int sca
  */
 template <class Type> void usImageRF2D<Type>::resize(const unsigned int h, const unsigned int w)
 {
-  this->setScanLineNumber(w);
   this->init(h, w);
+  this->setScanLineNumber(w);
 }
 
 /*!
@@ -325,12 +332,10 @@ template <class Type> void usImageRF2D<Type>::init(unsigned int h, unsigned int 
       bitmap = NULL;
     }
   }
-
   this->width = w;
   this->height = h;
 
   npixels = width * height;
-
   if (bitmap == NULL)
     bitmap = new Type[npixels];
 
