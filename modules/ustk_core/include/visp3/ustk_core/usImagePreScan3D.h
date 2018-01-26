@@ -40,6 +40,7 @@
 #define __usImagePreScan3D_h_
 
 #include <visp3/ustk_core/usImage3D.h>
+#include <visp3/ustk_core/usImagePreScan2D.h>
 
 #include <visp3/ustk_core/usImagePreScanSettings.h>
 
@@ -151,9 +152,9 @@ public:
 
   unsigned int getBModeSampleNumber() const;
 
-  void getFrame(vpImage<Type> &image, unsigned int index);
+  void getFrame(usImagePreScan2D<Type> &image, unsigned int index);
 
-  void insertFrame(vpImage<Type> frame, unsigned int index);
+  void insertFrame(const usImagePreScan2D<Type> &frame, unsigned int index);
 
   // assignement
   usImagePreScan3D<Type> &operator=(const usImagePreScan3D<Type> &other);
@@ -307,7 +308,7 @@ template <class Type> void usImagePreScan3D<Type>::resize(unsigned int dimX, uns
  * @param frame The 2D frame to insert.
  * @param index Position to insert the frame in the volume.
  */
-template <class Type> void usImagePreScan3D<Type>::insertFrame(vpImage<Type> frame, unsigned int index)
+template <class Type> void usImagePreScan3D<Type>::insertFrame(const usImagePreScan2D<Type> &frame, unsigned int index)
 {
   // Dimentions checks
   if (index > this->getDimZ())
@@ -333,7 +334,7 @@ template <class Type> void usImagePreScan3D<Type>::insertFrame(vpImage<Type> fra
  * @param [out] image The 2D frame to insert.
  * @param [in] index Position of the frame to extract in the volume.
  */
-template <class Type> void usImagePreScan3D<Type>::getFrame(vpImage<Type> &image, unsigned int index)
+template <class Type> void usImagePreScan3D<Type>::getFrame(usImagePreScan2D<Type> &image, unsigned int index)
 {
 
   // Dimentions checks

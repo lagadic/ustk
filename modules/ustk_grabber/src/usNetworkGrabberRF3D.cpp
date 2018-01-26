@@ -278,11 +278,11 @@ void usNetworkGrabberRF3D::includeFrameInVolume()
   m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->addTimeStamp(m_grabbedImage.getTimeStamp(), framePostition);
   m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setVolumeCount(volumeIndex);
 
-  for (unsigned int i = 0; i < m_grabbedImage.getHeight(); i++)
+  for (unsigned int i = 0; i < m_grabbedImage.getHeight(); i++) {
     for (unsigned int j = 0; j < m_grabbedImage.getWidth(); j++) {
-      /// TODO (after modifs in usImageRF3D
-      ///(*m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC))(j, i, framePostition, m_grabbedImage(i, j));
+      (*m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC))(j, i, framePostition, m_grabbedImage[j][i]);
     }
+  }
 
   // we reach the end of a volume
   if (m_firstFrameAvailable &&

@@ -122,7 +122,7 @@ public:
   usImageRF2D(const usImageRF2D &other);
   virtual ~usImageRF2D();
 
-  const Type *const getBitmap() const;
+  const Type *getBitmap() const;
 
   unsigned int getHeight() const;
   unsigned int getNumberOfPixel() const;
@@ -360,6 +360,6 @@ template <class Type> unsigned int usImageRF2D<Type>::getNumberOfPixel() const {
 
 template <class Type> unsigned int usImageRF2D<Type>::getWidth() const { return width; }
 
-template <class Type> const Type *const usImageRF2D<Type>::getBitmap() const { return bitmap; }
+template <class Type> const Type *usImageRF2D<Type>::getBitmap() const { return bitmap; }
 
 #endif // US_IMAGE_RF_2D_H

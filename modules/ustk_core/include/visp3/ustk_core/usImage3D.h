@@ -255,7 +255,6 @@ private:
   unsigned int m_size; /**< Volume size : number of voxels in the whole volume*/
 
   Type *bitmap; /**< Data container */
-  Type **planesIndex;
 };
 
 /****************************************************************************
@@ -280,14 +279,6 @@ private:
 */
 template <class Type> inline void usImage3D<Type>::init(unsigned int dimX, unsigned int dimY, unsigned int dimZ)
 {
-  if ((dimX != this->m_dimX) || (dimY != this->m_dimY)) {
-    if (planesIndex != NULL) {
-      vpDEBUG_TRACE(10, "Destruction index[]");
-      delete[] planesIndex;
-      planesIndex = NULL;
-    }
-  }
-
   if ((dimX != this->m_dimX) || (dimY != this->m_dimY) || (dimZ != this->m_dimZ)) {
     if (bitmap != NULL) {
       vpDEBUG_TRACE(10, "Destruction bitmap[]");
@@ -310,29 +301,13 @@ template <class Type> inline void usImage3D<Type>::init(unsigned int dimX, unsig
     vpERROR_TRACE("cannot allocate bitmap ");
     throw(vpException(vpException::memoryAllocationError, "cannot allocate bitmap "));
   }
-
-  if (planesIndex == NULL)
-    planesIndex = new Type *[m_dimX];
-  //  vpERROR_TRACE("Allocate row %p",row) ;
-  if (planesIndex == NULL) {
-    vpERROR_TRACE("cannot allocate index ");
-    throw(vpException(vpException::memoryAllocationError, "cannot allocate index "));
-  }
-
-  // filling planesIndex
-  unsigned int i;
-  for (i = 0; i < m_dimZ; i++)
-    planesIndex[i] = bitmap + i * m_dimX * m_dimY;
 }
 
-template <class Type>
-usImage3D<Type>::usImage3D() : m_dimX(0), m_dimY(0), m_dimZ(0), m_size(0), bitmap(NULL), planesIndex(NULL)
-{
-}
+template <class Type> usImage3D<Type>::usImage3D() : m_dimX(0), m_dimY(0), m_dimZ(0), m_size(0), bitmap(NULL) {}
 
 template <class Type>
 usImage3D<Type>::usImage3D(unsigned int dimX, unsigned int dimY, unsigned int dimZ)
-  : m_dimX(dimX), m_dimY(dimY), m_dimZ(dimZ), m_size(dimX * dimY * dimZ), bitmap(NULL), planesIndex(NULL)
+  : m_dimX(dimX), m_dimY(dimY), m_dimZ(dimZ), m_size(dimX * dimY * dimZ), bitmap(NULL)
 {
   init(dimX, dimY, dimZ);
   initData(0);
@@ -351,10 +326,6 @@ template <class Type> usImage3D<Type>::usImage3D(const usImage3D<Type> &volume, 
 
 template <class Type> usImage3D<Type>::~usImage3D()
 {
-  if (planesIndex) {
-    delete[] planesIndex;
-    planesIndex = NULL;
-  }
   if (bitmap) {
     delete[] bitmap;
     bitmap = NULL;
@@ -392,21 +363,24 @@ template <class Type> bool usImage3D<Type>::operator==(const usImage3D<Type> &ot
   return true;
 }
 
-template <class Type> std::ostream &operator<<(std::ostream &out, const usImage3D<Type> &other)
+template <class Type> std::ostream &operator<<(std::ostream &out, const usImage3D<Type> &image)
 {
-  return out << "dim x: " << other.getDimX() << std::endl
-             << "dim y: " << other.getDimY() << std::endl
-             << "dim z: " << other.getDimZ() << std::endl;
+  return out << "dim x: " << image.getDimX() << std::endl
+             << "dim y: " << image.getDimY() << std::endl
+             << "dim z: " << image.getDimZ() << std::endl;
 }
 
 template <class Type> void usImage3D<Type>::setData(Type *data, int numberOfVoxels)
 {
   try {
     m_size = numberOfVoxels;
+    if (m_size != numberOfVoxels) {
+      throw(vpException(vpException::fatalError, "usImage3D::setData() error, bitmap dimensions mismatch."));
+    }
     memcpy(bitmap, data, m_size * sizeof(Type));
   } catch (std::exception e) {
+    std::cout << "usImage3D::setData(), error when trying to copy the data :" << std::endl;
     std::cout << e.what() << std::endl;
-    std::cout << "Bad allocation using std::fill_n() method." << std::endl;
   }
 }
 

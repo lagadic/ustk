@@ -51,6 +51,7 @@
 #include <visp3/core/vpImage.h>
 #include <visp3/ustk_core/usImage3D.h>
 #include <visp3/ustk_core/usImageRF2D.h>
+#include <visp3/ustk_core/usImageRF3D.h>
 
 /**
  * @class usRawFileParser
@@ -72,8 +73,8 @@ public:
   //@{
   void read(usImage3D<unsigned char> &image3D, const std::string &mhdFileName);
   void write(const usImage3D<unsigned char> &image3D, const std::string &rawFileName);
-  void read(usImage3D<short> &image3D, const std::string &mhdFileName);
-  void write(const usImage3D<short> &image3D, const std::string &rawFileName);
+  void read(usImageRF3D<short> &image3D, const std::string &mhdFileName);
+  void write(const usImageRF3D<short> &image3D, const std::string &rawFileName);
   //@}
 };
 #endif // US_RAW_FILE_PARSER_H
