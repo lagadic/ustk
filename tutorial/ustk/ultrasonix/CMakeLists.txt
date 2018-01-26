@@ -37,9 +37,6 @@ cmake_minimum_required(VERSION 2.6)
 find_package(VISP REQUIRED visp_ustk_grabber visp_sensor visp_robot)
 
 set(tutorial_ultrasonix_cpp
-  tutorial-ultrasonix-grabber.cpp
-  tutorial-ultrasonix-confidence-2D.cpp
-  tutorial-ultrasonix-servo-confidence-3D.cpp
   tutorial-ultrasonix-qt-grabbing-pre-scan.cpp
   tutorial-ultrasonix-qt-grabbing-pre-scan3D.cpp
   tutorial-ultrasonix-qt-grabbing-post-scan.cpp
