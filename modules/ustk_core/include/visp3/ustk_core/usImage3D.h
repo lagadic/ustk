@@ -109,7 +109,7 @@ public:
   */
   Type *getData(unsigned int indexU, unsigned int indexV, unsigned int indexW)
   {
-    return bitmap + (m_dimU * m_dimV) * indexW + m_dimU * indexV + indexU;
+    return framPointer[indexW] + m_dimU * indexV + indexU;
   }
 
   /**
@@ -162,7 +162,7 @@ public:
   */
   inline Type operator()(unsigned int indexU, unsigned int indexV, unsigned int indexW) const
   {
-    return bitmap[(m_dimU * m_dimV) * indexW + m_dimU * indexV + indexU];
+    return framPointer[indexW][m_dimU * indexV + indexU];
   }
 
   /**
@@ -174,7 +174,7 @@ public:
   */
   inline void operator()(unsigned int indexU, unsigned int indexV, unsigned int indexW, Type value)
   {
-    bitmap[(m_dimU * m_dimV) * indexW + m_dimU * indexV + indexU] = value;
+    framPointer[indexW][m_dimU * indexV + indexU] = value;
   }
 
   /**
@@ -209,7 +209,8 @@ private:
   unsigned int m_dimW; /**< Volume size in 3d dimension (number of voxels on the w-axis)*/
   unsigned int m_size; /**< Volume size : number of voxels in the whole volume*/
 
-  Type *bitmap; /**< Data container */
+  Type *bitmap;       /**< Data container */
+  Type **framPointer; /**< contains pointers on every first voxel of all frames in the volume */
 };
 
 /****************************************************************************
@@ -240,6 +241,11 @@ template <class Type> inline void usImage3D<Type>::init(unsigned int dimU, unsig
       delete[] bitmap;
       bitmap = NULL;
     }
+    if (framPointer != NULL) {
+      vpDEBUG_TRACE(10, "Destruction framPointer[]");
+      delete[] framPointer;
+      framPointer = NULL;
+    }
   }
 
   this->m_dimU = dimU;
@@ -251,6 +257,12 @@ template <class Type> inline void usImage3D<Type>::init(unsigned int dimU, unsig
   if (bitmap == NULL)
     bitmap = new Type[m_size];
 
+  if (framPointer == NULL)
+    framPointer = new Type *[dimW];
+
+  for (unsigned int k = 0; k < dimW; k++)
+    framPointer[k] = bitmap + m_dimU * m_dimV * k;
+
   //  vpERROR_TRACE("Allocate bitmap %p",bitmap) ;
   if (bitmap == NULL) {
     vpERROR_TRACE("cannot allocate bitmap ");
@@ -258,11 +270,14 @@ template <class Type> inline void usImage3D<Type>::init(unsigned int dimU, unsig
   }
 }
 
-template <class Type> usImage3D<Type>::usImage3D() : m_dimU(0), m_dimV(0), m_dimW(0), m_size(0), bitmap(NULL) {}
+template <class Type>
+usImage3D<Type>::usImage3D() : m_dimU(0), m_dimV(0), m_dimW(0), m_size(0), bitmap(NULL), framPointer(NULL)
+{
+}
 
 template <class Type>
 usImage3D<Type>::usImage3D(unsigned int dimU, unsigned int dimV, unsigned int dimW)
-  : m_dimU(dimU), m_dimV(dimV), m_dimW(dimW), m_size(dimU * dimV * dimW), bitmap(NULL)
+  : m_dimU(dimU), m_dimV(dimV), m_dimW(dimW), m_size(dimU * dimV * dimW), bitmap(NULL), framPointer(NULL)
 {
   init(dimU, dimV, dimW);
   initData(0);
@@ -285,19 +300,15 @@ template <class Type> usImage3D<Type>::~usImage3D()
     delete[] bitmap;
     bitmap = NULL;
   }
+  if (framPointer) {
+    delete[] framPointer;
+    framPointer = NULL;
+  }
 }
 
 template <class Type> usImage3D<Type> &usImage3D<Type>::operator=(const usImage3D<Type> &other)
 {
-  if (m_dimU != other.m_dimU || m_dimV != other.m_dimV || m_dimW != other.m_dimW) {
-    m_dimU = other.m_dimU;
-    m_dimV = other.m_dimV;
-    m_dimW = other.m_dimW;
-    m_size = m_dimU * m_dimV * m_dimW;
-    if (bitmap)
-      delete[] bitmap;
-    bitmap = new Type[m_size];
-  }
+  init(other.m_dimU, other.m_dimV, other.m_dimW);
 
   memcpy(bitmap, other.bitmap, m_size * sizeof(Type));
   return *this;
