@@ -1717,11 +1717,11 @@ void usVirtualServer::sendingLoopSequenceMHD()
         out << imageHeader.frameCount;
         out << imageHeader.timeStamp;
         out << imageHeader.dataRate;
-        out << (int)m_rfImage3d.getDimX() * m_rfImage3d.getDimY() * 2; // datalength in bytes
+        out << (int)m_rfImage3d.getDimU() * m_rfImage3d.getDimV() * 2; // datalength in bytes
         out << (int)16;                                                // sample size in bits
         out << (int)2;                                                 // image type
-        out << m_rfImage3d.getDimX();
-        out << m_rfImage3d.getDimY();
+        out << m_rfImage3d.getDimU();
+        out << m_rfImage3d.getDimV();
         out << (double).0; // pixelWidth
         out << (double).0; // pixelHeight
         out << m_rfImage3d.getTransmitFrequency();
@@ -1917,11 +1917,11 @@ void usVirtualServer::sendingLoopSequenceMHD()
         out << imageHeader.frameCount;
         out << imageHeader.timeStamp;
         out << imageHeader.dataRate;
-        out << (int)m_preScanImage3d.getDimX() * m_preScanImage3d.getDimY(); // datalength in bytes
+        out << (int)m_preScanImage3d.getDimU() * m_preScanImage3d.getDimV(); // datalength in bytes
         out << (int)8;                                                       // sample size in bits
         out << (int)0;
-        out << m_preScanImage3d.getDimX();
-        out << m_preScanImage3d.getDimY();
+        out << m_preScanImage3d.getDimU();
+        out << m_preScanImage3d.getDimV();
         out << (double).0; // pixelWidth
         out << (double).0; // pixelHeight
         out << m_preScanImage3d.getTransmitFrequency();

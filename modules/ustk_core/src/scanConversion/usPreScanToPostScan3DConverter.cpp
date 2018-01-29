@@ -70,8 +70,8 @@ void usPreScanToPostScan3DConverter::init(const usImagePreScan3D<unsigned char> 
   // compare pre-scan image parameters, to avoid recomputing all the init process if parameters are the same
   if (((usMotorSettings)m_VpreScan) == ((usMotorSettings)preScanImage) &&
       ((usImagePreScanSettings)m_VpreScan) == ((usImagePreScanSettings)preScanImage) &&
-      m_VpreScan.getDimX() == preScanImage.getDimX() && m_VpreScan.getDimY() == preScanImage.getDimY() &&
-      m_VpreScan.getDimZ() == preScanImage.getDimZ() && m_resolution == down * m_VpreScan.getAxialResolution()) {
+      m_VpreScan.getDimU() == preScanImage.getDimU() && m_VpreScan.getDimV() == preScanImage.getDimV() &&
+      m_VpreScan.getDimW() == preScanImage.getDimW() && m_resolution == down * m_VpreScan.getAxialResolution()) {
     m_VpreScan = preScanImage; // update image content
     return;
   }
@@ -79,9 +79,9 @@ void usPreScanToPostScan3DConverter::init(const usImagePreScan3D<unsigned char> 
   m_VpreScan = preScanImage;
   m_resolution = down * m_VpreScan.getAxialResolution();
 
-  int X = m_VpreScan.getDimX();
-  int Y = m_VpreScan.getDimY();
-  int Z = m_VpreScan.getDimZ();
+  int X = m_VpreScan.getDimU();
+  int Y = m_VpreScan.getDimV();
+  int Z = m_VpreScan.getDimW();
 
   double xmax;
   double ymin;

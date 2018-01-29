@@ -232,9 +232,9 @@ void usImageIo::write(const usImageRF3D<short> &imageRf3D, const std::string &he
     header.elementSpacing[0] = 1;
     header.elementSpacing[1] = 1;
     header.elementSpacing[2] = 1;
-    header.dim[0] = imageRf3D.getDimX();
-    header.dim[1] = imageRf3D.getDimY();
-    header.dim[2] = imageRf3D.getDimZ();
+    header.dim[0] = imageRf3D.getDimU();
+    header.dim[1] = imageRf3D.getDimV();
+    header.dim[2] = imageRf3D.getDimW();
     header.msb = false;
     header.MHDFileName = headerFileName;
     // remove full path for image file name (located in the same directory as the mhd
@@ -515,9 +515,9 @@ void usImageIo::write(const usImagePreScan3D<unsigned char> &preScanImage, const
     header.elementSpacing[0] = 1;
     header.elementSpacing[1] = 1;
     header.elementSpacing[2] = 1;
-    header.dim[0] = preScanImage.getDimX();
-    header.dim[1] = preScanImage.getDimY();
-    header.dim[2] = preScanImage.getDimZ();
+    header.dim[0] = preScanImage.getDimU();
+    header.dim[1] = preScanImage.getDimV();
+    header.dim[2] = preScanImage.getDimW();
     header.msb = false;
     header.MHDFileName = headerFileName;
     // remove full path for image file name (located in the same directory as the mhd)
@@ -941,9 +941,9 @@ void usImageIo::write(const usImagePostScan3D<unsigned char> &postScanImage, con
     header.elementSpacing[0] = postScanImage.getElementSpacingX();
     header.elementSpacing[1] = postScanImage.getElementSpacingY();
     header.elementSpacing[2] = postScanImage.getElementSpacingZ();
-    header.dim[0] = postScanImage.getDimX();
-    header.dim[1] = postScanImage.getDimY();
-    header.dim[2] = postScanImage.getDimZ();
+    header.dim[0] = postScanImage.getDimU();
+    header.dim[1] = postScanImage.getDimV();
+    header.dim[2] = postScanImage.getDimW();
     header.msb = false;
     header.MHDFileName = headerFileName;
     // remove full path for image file name (located in the same directory as the mhd

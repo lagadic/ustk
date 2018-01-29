@@ -66,14 +66,14 @@ usRFToPreScan3DConverter::~usRFToPreScan3DConverter() {}
 void usRFToPreScan3DConverter::convert(const usImageRF3D<short int> &rfImage,
                                        usImagePreScan3D<unsigned char> &preScanImage)
 {
-  if (!m_isInit || (((int)rfImage.getDimZ()) != m_frameNumber) || (((int)rfImage.getDimY()) != m_heightRF) ||
-      (((int)rfImage.getDimX()) != m_widthRF)) {
-    init(rfImage.getDimY(), rfImage.getDimX(), rfImage.getDimZ());
+  if (!m_isInit || (((int)rfImage.getDimW()) != m_frameNumber) || (((int)rfImage.getDimV()) != m_heightRF) ||
+      (((int)rfImage.getDimU()) != m_widthRF)) {
+    init(rfImage.getDimV(), rfImage.getDimU(), rfImage.getDimW());
   }
-  preScanImage.resize(rfImage.getDimX(), rfImage.getDimY() / getDecimationFactor(), rfImage.getDimZ());
+  preScanImage.resize(rfImage.getDimU(), rfImage.getDimV() / getDecimationFactor(), rfImage.getDimW());
   // First we copy the transducer/motor settings
   preScanImage.setImagePreScanSettings(rfImage);
-  preScanImage.setAxialResolution(rfImage.getDepth() / preScanImage.getDimY());
+  preScanImage.setAxialResolution(rfImage.getDepth() / preScanImage.getDimV());
   preScanImage.setMotorSettings(rfImage);
   std::vector<usImagePreScan2D<unsigned char> > preScanFrame;
   preScanFrame.resize(m_frameNumber);
@@ -86,7 +86,7 @@ void usRFToPreScan3DConverter::convert(const usImageRF3D<short int> &rfImage,
   }
 
   if (!m_isInit) {
-    init(rfImage.getDimY(), rfImage.getDimZ(), rfImage.getDimZ());
+    init(rfImage.getDimV(), rfImage.getDimU(), rfImage.getDimW());
   }
 
 #ifdef VISP_HAVE_OPENMP

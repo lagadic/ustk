@@ -67,11 +67,11 @@ public:
 
   /**
   * Constructor. Set the dimensions of the volume.
-  * @param dimX Volume width.
-  * @param dimY Volume height.
-  * @param dimZ Volume size in the third dimension (orthogonal to ultrasound 2D frames).
+  * @param dimU Volume width.
+  * @param dimV Volume height.
+  * @param dimW Volume size in the third dimension (orthogonal to ultrasound 2D frames).
   */
-  usImage3D(unsigned int dimX, unsigned int dimY, unsigned int dimZ);
+  usImage3D(unsigned int dimU, unsigned int dimV, unsigned int dimW);
 
   /**
   * Copy constructor. By default performs a deep copy.
@@ -102,33 +102,33 @@ public:
 
   /**
   * Get the pointer to the data container for specified position in the volume.
-  * @param indexX Index on x-axis to acess
-  * @param indexY Index on y-axis to acess
-  * @param indexZ Index on z-axis to acess
+  * @param indexU Index on u-axis to acess
+  * @param indexV Index on v-axis to acess
+  * @param indexW Index on w-axis to acess
   * @return The pointer to the voxel specified indexes.
   */
-  Type *getData(unsigned int indexX, unsigned int indexY, unsigned int indexZ)
+  Type *getData(unsigned int indexU, unsigned int indexV, unsigned int indexW)
   {
-    return bitmap + (m_dimX * m_dimY) * indexZ + m_dimX * indexY + indexX;
+    return bitmap + (m_dimU * m_dimV) * indexW + m_dimU * indexV + indexU;
   }
 
   /**
   * Get the volume width.
   * @return The volume width, in number of voxels.
   */
-  unsigned int getDimX() const { return m_dimX; }
+  unsigned int getDimU() const { return m_dimU; }
 
   /**
   * Get the volume height.
   * @return The volume height, in number of voxels.
   */
-  unsigned int getDimY() const { return m_dimY; }
+  unsigned int getDimV() const { return m_dimV; }
 
   /**
-  * Get the volume size along the z-axis.
-  * @return The z-axis size in voxels, in number of voxels.
+  * Get the volume size along the w-axis (frame nubmer).
+  * @return The w-axis size in voxels, in number of voxels.
   */
-  unsigned int getDimZ() const { return m_dimZ; }
+  unsigned int getDimW() const { return m_dimW; }
 
   /**
   * Get the volume size.
@@ -156,79 +156,34 @@ public:
 
   /**
   * Access operator.
-  * @param index Index of the data to acess.
+  * @param indexU Index on u-axis to acess
+  * @param indexV Index on v-axis to acess
+  * @param indexW Index on w-axis to acess
   */
-  inline Type operator()(unsigned int index) const { return bitmap[index]; }
-
-  //! operator[] allows operation like I[i] = x.
-  Type &operator[](const unsigned int i)
+  inline Type operator()(unsigned int indexU, unsigned int indexV, unsigned int indexW) const
   {
-    if (i < m_size) {
-      return bitmap[i];
-    }
-    throw(vpException::badValue);
-  }
-  Type &operator[](const int i)
-  {
-    if ((unsigned int)i < m_size) {
-      return bitmap[i];
-    }
-    throw(vpException::badValue);
-  }
-
-  //! operator[] allows operation like x = I[i]
-  const Type &operator[](unsigned int i) const
-  {
-    if (i < m_size) {
-      return bitmap[i];
-    }
-    throw(vpException::badValue);
-  }
-  const Type &operator[](int i) const
-  {
-    if (i < m_size) {
-      return bitmap[i];
-    }
-    throw(vpException::badValue);
+    return bitmap[(m_dimU * m_dimV) * indexW + m_dimU * indexV + indexU];
   }
 
   /**
   * Modification operator.
-  * @param index Index of the data to modify.
-  * @param value New value to set.
-  */
-  inline void operator()(unsigned int index, Type value) { bitmap[index] = value; }
-
-  /**
-  * Access operator.
-  * @param indexX Index on x-axis to acess
-  * @param indexY Index on y-axis to acess
-  * @param indexZ Index on z-axis to acess
-  */
-  inline Type operator()(unsigned int indexX, unsigned int indexY, unsigned int indexZ) const
-  {
-    return bitmap[(m_dimX * m_dimY) * indexZ + m_dimX * indexY + indexX];
-  }
-
-  /**
-  * Modification operator.
-  * @param indexX Index on x-axis to modify
-  * @param indexY Index on y-axis to modify
-  * @param indexZ Index on z-axis to modify
+  * @param indexU Index on u-axis to modify
+  * @param indexV Index on v-axis to modify
+  * @param indexW Index on w-axis to modify
   * @param value Value to insert at the desired index
   */
-  inline void operator()(unsigned int indexX, unsigned int indexY, unsigned int indexZ, Type value)
+  inline void operator()(unsigned int indexU, unsigned int indexV, unsigned int indexW, Type value)
   {
-    bitmap[(m_dimX * m_dimY) * indexZ + m_dimX * indexY + indexX] = value;
+    bitmap[(m_dimU * m_dimV) * indexW + m_dimU * indexV + indexU] = value;
   }
 
   /**
   * Resize the image if needed (if new dimensions differ from old ones).
-  * @param dimX The volume size along x axis.
-  * @param dimY The volume size along y axis.
-  * @param dimZ The volume size along z axis.
+  * @param dimU The volume size along u axis.
+  * @param dimV The volume size along v axis.
+  * @param dimW The volume size along w axis.
   */
-  void resize(unsigned int dimX, unsigned int dimY, unsigned int dimZ);
+  void resize(unsigned int dimU, unsigned int dimV, unsigned int dimW);
 
   /**
   * Set the data container.
@@ -243,15 +198,15 @@ protected:
 private:
   /**
   * Initiation of the image.
-  * @param dimX Volume width (number of voxels).
-  * @param dimY Volume height (number of voxels).
-  * @param dimZ Volume size (number of voxels) in the third dimension (orthogonal to ultrasound 2D frames).
+  * @param dimU Volume width (number of voxels).
+  * @param dimV Volume height (number of voxels).
+  * @param dimW Volume size (number of voxels) in the third dimension (orthogonal to ultrasound 2D frames).
   */
-  void init(unsigned int dimX, unsigned int dimY, unsigned int dimZ);
+  void init(unsigned int dimU, unsigned int dimV, unsigned int dimW);
 
-  unsigned int m_dimX; /**< Volume width in pixels (number of pixels on the x-axis)*/
-  unsigned int m_dimY; /**< Volume height in pixels (number of pixels on the y-axis)*/
-  unsigned int m_dimZ; /**< Volume size in 3d dimension (number of pixels on the z-axis)*/
+  unsigned int m_dimU; /**< Volume width in voxels (number of voxels on the u-axis)*/
+  unsigned int m_dimV; /**< Volume height in voxels (number of voxels on the v-axis)*/
+  unsigned int m_dimW; /**< Volume size in 3d dimension (number of voxels on the w-axis)*/
   unsigned int m_size; /**< Volume size : number of voxels in the whole volume*/
 
   Type *bitmap; /**< Data container */
@@ -263,10 +218,10 @@ private:
 /*!
   \brief Image initialization
 
-  Allocate memory for an [dimX x dimY x dimZ] image.
-  \param dimX : Width of the 2D planes contained in the volume.
-  \param dimY : Height of the 2D planes contained in the volume.
-  \param dimZ : Volume dimension in the 3rd dimension.
+  Allocate memory for an [dimU x dimV x dimW] image.
+  \param dimU : Width of the 2D planes contained in the volume.
+  \param dimV : Height of the 2D planes contained in the volume.
+  \param dimW : Volume dimension in the 3rd dimension.
 
   Element of the bitmap are not initialized
 
@@ -277,9 +232,9 @@ private:
   \exception vpException::memoryAllocationError
 
 */
-template <class Type> inline void usImage3D<Type>::init(unsigned int dimX, unsigned int dimY, unsigned int dimZ)
+template <class Type> inline void usImage3D<Type>::init(unsigned int dimU, unsigned int dimV, unsigned int dimW)
 {
-  if ((dimX != this->m_dimX) || (dimY != this->m_dimY) || (dimZ != this->m_dimZ)) {
+  if ((dimU != this->m_dimU) || (dimV != this->m_dimV) || (dimW != this->m_dimW)) {
     if (bitmap != NULL) {
       vpDEBUG_TRACE(10, "Destruction bitmap[]");
       delete[] bitmap;
@@ -287,11 +242,11 @@ template <class Type> inline void usImage3D<Type>::init(unsigned int dimX, unsig
     }
   }
 
-  this->m_dimX = dimX;
-  this->m_dimY = dimY;
-  this->m_dimZ = dimZ;
+  this->m_dimU = dimU;
+  this->m_dimV = dimV;
+  this->m_dimW = dimW;
 
-  m_size = m_dimX * m_dimY * m_dimZ;
+  m_size = m_dimU * m_dimV * m_dimW;
 
   if (bitmap == NULL)
     bitmap = new Type[m_size];
@@ -303,21 +258,21 @@ template <class Type> inline void usImage3D<Type>::init(unsigned int dimX, unsig
   }
 }
 
-template <class Type> usImage3D<Type>::usImage3D() : m_dimX(0), m_dimY(0), m_dimZ(0), m_size(0), bitmap(NULL) {}
+template <class Type> usImage3D<Type>::usImage3D() : m_dimU(0), m_dimV(0), m_dimW(0), m_size(0), bitmap(NULL) {}
 
 template <class Type>
-usImage3D<Type>::usImage3D(unsigned int dimX, unsigned int dimY, unsigned int dimZ)
-  : m_dimX(dimX), m_dimY(dimY), m_dimZ(dimZ), m_size(dimX * dimY * dimZ), bitmap(NULL)
+usImage3D<Type>::usImage3D(unsigned int dimU, unsigned int dimV, unsigned int dimW)
+  : m_dimU(dimU), m_dimV(dimV), m_dimW(dimW), m_size(dimU * dimV * dimW), bitmap(NULL)
 {
-  init(dimX, dimY, dimZ);
+  init(dimU, dimV, dimW);
   initData(0);
 }
 
 template <class Type> usImage3D<Type>::usImage3D(const usImage3D<Type> &volume, const bool copy)
 {
-  init(volume.getDimX(), volume.getDimY(), volume.getDimZ());
+  init(volume.getDimU(), volume.getDimV(), volume.getDimW());
 
-  m_size = m_dimX * m_dimY * m_dimZ;
+  m_size = m_dimU * m_dimV * m_dimW;
 
   // deep copy
   if (copy)
@@ -334,11 +289,11 @@ template <class Type> usImage3D<Type>::~usImage3D()
 
 template <class Type> usImage3D<Type> &usImage3D<Type>::operator=(const usImage3D<Type> &other)
 {
-  if (m_dimX != other.m_dimX || m_dimY != other.m_dimY || m_dimZ != other.m_dimZ) {
-    m_dimX = other.m_dimX;
-    m_dimY = other.m_dimY;
-    m_dimZ = other.m_dimZ;
-    m_size = m_dimX * m_dimY * m_dimZ;
+  if (m_dimU != other.m_dimU || m_dimV != other.m_dimV || m_dimW != other.m_dimW) {
+    m_dimU = other.m_dimU;
+    m_dimV = other.m_dimV;
+    m_dimW = other.m_dimW;
+    m_size = m_dimU * m_dimV * m_dimW;
     if (bitmap)
       delete[] bitmap;
     bitmap = new Type[m_size];
@@ -351,7 +306,7 @@ template <class Type> usImage3D<Type> &usImage3D<Type>::operator=(const usImage3
 template <class Type> bool usImage3D<Type>::operator==(const usImage3D<Type> &other)
 {
   bool settingsOk =
-      this->getDimX() == other.getDimX() && this->getDimY() == other.getDimY() && this->getDimZ() == other.getDimZ();
+      this->getDimU() == other.getDimU() && this->getDimV() == other.getDimV() && this->getDimW() == other.getDimW();
 
   if (settingsOk) {
     for (unsigned int i = 0; i < m_size; i++) {
@@ -365,9 +320,9 @@ template <class Type> bool usImage3D<Type>::operator==(const usImage3D<Type> &ot
 
 template <class Type> std::ostream &operator<<(std::ostream &out, const usImage3D<Type> &image)
 {
-  return out << "dim x: " << image.getDimX() << std::endl
-             << "dim y: " << image.getDimY() << std::endl
-             << "dim z: " << image.getDimZ() << std::endl;
+  return out << "dim x: " << image.getDimU() << std::endl
+             << "dim y: " << image.getDimV() << std::endl
+             << "dim z: " << image.getDimW() << std::endl;
 }
 
 template <class Type> void usImage3D<Type>::setData(Type *data, int numberOfVoxels)
@@ -393,8 +348,8 @@ template <class Type> void usImage3D<Type>::initData(Type value)
   }
 }
 
-template <class Type> void usImage3D<Type>::resize(unsigned int dimx, unsigned int dimy, unsigned int dimz)
+template <class Type> void usImage3D<Type>::resize(unsigned int dimU, unsigned int dimV, unsigned int dimW)
 {
-  init(dimx, dimy, dimz);
+  init(dimU, dimV, dimW);
 }
 #endif // US_IMAGE_3D_H

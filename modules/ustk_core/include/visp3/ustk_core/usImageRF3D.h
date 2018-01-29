@@ -125,7 +125,7 @@ int main()
   rf3d.setFrameNumber(frameNumber);
   rf3d.setMotorType(motorType);
 
-  //fill a value in the bitmap, at x=5, y=6,z=7
+  //fill a value in the bitmap, at u=5, v=6, w=7
   rf3d(5,6,7,10);
 
 }
@@ -138,8 +138,8 @@ template <class Type> class usImageRF3D : public usImagePreScanSettings, public 
 
 public:
   usImageRF3D();
-  usImageRF3D(unsigned int dimX, unsigned int dimY, unsigned int dimZ);
-  usImageRF3D(unsigned int dimX, unsigned int dimY, unsigned int dimZ, const usImagePreScanSettings &imageSettings,
+  usImageRF3D(unsigned int dimU, unsigned int dimV, unsigned int dimW);
+  usImageRF3D(unsigned int dimU, unsigned int dimV, unsigned int dimZ, const usImagePreScanSettings &imageSettings,
               const usMotorSettings &motorSettings);
   usImageRF3D(const usImageRF3D<Type> &other);
   virtual ~usImageRF3D();
@@ -148,9 +148,9 @@ public:
 
   const Type *getConstData() const;
 
-  unsigned int getDimX() const;
-  unsigned int getDimY() const;
-  unsigned int getDimZ() const;
+  unsigned int getDimU() const;
+  unsigned int getDimV() const;
+  unsigned int getDimW() const;
 
   unsigned int getRFSampleNumber() const;
 
@@ -161,20 +161,20 @@ public:
   usImageRF3D<Type> &operator=(const usImageRF3D<Type> &other);
   bool operator==(const usImageRF3D<Type> &other);
 
-  Type operator()(unsigned int indexX, unsigned int indexY, unsigned int indexZ) const;
-  void operator()(unsigned int indexX, unsigned int indexY, unsigned int indexZ, Type value);
+  Type operator()(unsigned int indexU, unsigned int indexV, unsigned int indexW) const;
+  void operator()(unsigned int indexU, unsigned int indexV, unsigned int indexW, Type value);
 
   void setFrameNumber(unsigned int frameNumber);
   void setScanLineNumber(unsigned int scanLineNumber);
 
-  void resize(unsigned int dimX, unsigned int dimY, unsigned int dimZ);
+  void resize(unsigned int dimU, unsigned int dimV, unsigned int dimW);
 
 private:
-  void init(unsigned int dimX, unsigned int dimY, unsigned int dimZ);
+  void init(unsigned int dimU, unsigned int dimV, unsigned int dimW);
 
-  unsigned int m_dimX; /**< Volume width in pixels (number of pixels on the x-axis)*/
-  unsigned int m_dimY; /**< Volume height in pixels (number of pixels on the y-axis)*/
-  unsigned int m_dimZ; /**< Volume size in 3d dimension (number of pixels on the z-axis)*/
+  unsigned int m_dimU; /**< Volume width in pixels (number of pixels on the u-axis)*/
+  unsigned int m_dimV; /**< Volume height in pixels (number of pixels on the v-axis)*/
+  unsigned int m_dimW; /**< Volume size in 3d dimension (number of frames in the volume)*/
   unsigned int m_size; /**< Volume size : number of voxels in the whole volume*/
 
   Type *bitmap; /**< Data container */
@@ -185,7 +185,7 @@ private:
 */
 template <class Type>
 usImageRF3D<Type>::usImageRF3D()
-  : usImagePreScanSettings(), usMotorSettings(), m_dimX(0), m_dimY(0), m_dimZ(0), m_size(0), bitmap(NULL)
+  : usImagePreScanSettings(), usMotorSettings(), m_dimU(0), m_dimV(0), m_dimW(0), m_size(0), bitmap(NULL)
 {
 }
 
@@ -193,10 +193,10 @@ usImageRF3D<Type>::usImageRF3D()
 * Basic constructor.
 */
 template <class Type>
-usImageRF3D<Type>::usImageRF3D(unsigned int dimX, unsigned int dimY, unsigned int dimZ)
-  : usImagePreScanSettings(), usMotorSettings(), m_dimX(0), m_dimY(0), m_dimZ(0), m_size(0), bitmap(NULL)
+usImageRF3D<Type>::usImageRF3D(unsigned int dimU, unsigned int dimV, unsigned int dimW)
+  : usImagePreScanSettings(), usMotorSettings(), m_dimU(0), m_dimV(0), m_dimW(0), m_size(0), bitmap(NULL)
 {
-  resize(dimX, dimY, dimZ);
+  resize(dimU, dimV, dimW);
 }
 
 /**
@@ -206,17 +206,17 @@ usImageRF3D<Type>::usImageRF3D(unsigned int dimX, unsigned int dimY, unsigned in
 * @param motorSettings Motor settings to copy.
 */
 template <class Type>
-usImageRF3D<Type>::usImageRF3D(unsigned int dimX, unsigned int dimY, unsigned int dimZ,
+usImageRF3D<Type>::usImageRF3D(unsigned int dimU, unsigned int dimV, unsigned int dimW,
                                const usImagePreScanSettings &preScanSettings, const usMotorSettings &motorSettings)
-  : usImagePreScanSettings(preScanSettings), usMotorSettings(motorSettings), m_dimX(0), m_dimY(0), m_dimZ(0), m_size(0),
+  : usImagePreScanSettings(preScanSettings), usMotorSettings(motorSettings), m_dimU(0), m_dimV(0), m_dimW(0), m_size(0),
     bitmap(NULL)
 {
-  if (dimX != preScanSettings.getScanLineNumber())
-    throw(vpException(vpException::badValue, "3D RF image X-size differ from transducer scanline number"));
-  if (dimZ != motorSettings.getFrameNumber())
-    throw(vpException(vpException::badValue, "3D RF image Z-size differ from motor frame number"));
+  if (dimU != preScanSettings.getScanLineNumber())
+    throw(vpException(vpException::badValue, "3D RF image U-size differ from transducer scanline number"));
+  if (dimW != motorSettings.getFrameNumber())
+    throw(vpException(vpException::badValue, "3D RF image W-size differ from motor frame number"));
 
-  init(dimX, dimY, dimZ);
+  init(dimU, dimV, dimW);
 }
 
 /**
@@ -225,10 +225,10 @@ usImageRF3D<Type>::usImageRF3D(unsigned int dimX, unsigned int dimY, unsigned in
 */
 template <class Type>
 usImageRF3D<Type>::usImageRF3D(const usImageRF3D &other)
-  : usImagePreScanSettings(other), usMotorSettings(other), m_dimX(0), m_dimY(0), m_dimZ(0), m_size(0), bitmap(NULL)
+  : usImagePreScanSettings(other), usMotorSettings(other), m_dimU(0), m_dimV(0), m_dimW(0), m_size(0), bitmap(NULL)
 {
-  init(other.getDimX(), other.getDimY(), other.getDimZ());
-  memcpy(bitmap, other.getConstData(), (size_t)(m_dimX * m_dimY * m_dimZ * sizeof(Type)));
+  init(other.getDimU(), other.getDimV(), other.getDimW());
+  memcpy(bitmap, other.getConstData(), (size_t)(m_dimU * m_dimV * m_dimW * sizeof(Type)));
 }
 
 /**
@@ -249,10 +249,10 @@ template <class Type> usImageRF3D<Type>::~usImageRF3D()
 template <class Type> usImageRF3D<Type> &usImageRF3D<Type>::operator=(const usImageRF3D<Type> &other)
 {
   // allocation and resize
-  resize(other.getDimX(), other.getDimY(), other.getDimZ());
+  resize(other.getDimU(), other.getDimV(), other.getDimW());
 
   // filling voxel values
-  memcpy(bitmap, other.getConstData(), (size_t)(m_dimX * m_dimY * m_dimZ * sizeof(Type)));
+  memcpy(bitmap, other.getConstData(), (size_t)(m_dimU * m_dimV * m_dimW * sizeof(Type)));
 
   // from usImageSettings
   usImagePreScanSettings::operator=(other);
@@ -276,11 +276,11 @@ template <class Type> bool usImageRF3D<Type>::operator==(const usImageRF3D<Type>
     return false;
 
   // test dimentions
-  if (this->m_dimX != other.getDimX())
+  if (this->m_dimU != other.getDimU())
     return false;
-  if (this->m_dimY != other.getDimY())
+  if (this->m_dimV != other.getDimV())
     return false;
-  if (this->m_dimZ != other.getDimZ())
+  if (this->m_dimW != other.getDimW())
     return false;
 
   // test bitmap
@@ -298,7 +298,7 @@ template <class Type> bool usImageRF3D<Type>::operator==(const usImageRF3D<Type>
 */
 template <class Type> std::ostream &operator<<(std::ostream &out, const usImageRF3D<Type> &image)
 {
-  return out << "dimX : " << image.getDimX() << "\ndimY : " << image.getDimY() << "\ndimZ : " << image.getDimZ()
+  return out << "dimU : " << image.getDimU() << "\ndimV : " << image.getDimV() << "\ndimW : " << image.getDimW()
              << std::endl
              << static_cast<const usImagePreScanSettings &>(image) << static_cast<const usMotorSettings &>(image);
 }
@@ -306,48 +306,48 @@ template <class Type> std::ostream &operator<<(std::ostream &out, const usImageR
 /**
 * Gets the number of RF samples along a scan line.
 */
-template <class Type> unsigned int usImageRF3D<Type>::getRFSampleNumber() const { return getDimY(); }
+template <class Type> unsigned int usImageRF3D<Type>::getRFSampleNumber() const { return getDimV(); }
 
 /**
  * Set the transducer scan line number.
  *
- * Resize also the image X-size that is equal to the scan line number.
+ * Resize also the image U-size that is equal to the scan line number.
  * \param scanLineNumber Number of scan lines acquired by the transducer.
  */
 template <class Type> void usImageRF3D<Type>::setScanLineNumber(unsigned int scanLineNumber)
 {
-  if (scanLineNumber != m_dimX)
-    resize(scanLineNumber, getDimY(), getDimZ());
+  if (scanLineNumber != m_dimU)
+    resize(scanLineNumber, getDimV(), getDimW());
   usTransducerSettings::setScanLineNumber(scanLineNumber);
 }
 
 /**
  * Set the motor frame number.
  *
- * Resize also the image Z-size that is equal to the frame number.
+ * Resize also the image W-size that is equal to the frame number.
  * \param frameNumber Number of frames in the 3D volume.
  */
 template <class Type> void usImageRF3D<Type>::setFrameNumber(unsigned int frameNumber)
 {
-  if (frameNumber != m_dimZ)
-    resize(getDimX(), getDimY(), frameNumber);
+  if (frameNumber != m_dimW)
+    resize(getDimU(), getDimV(), frameNumber);
   usMotorSettings::setFrameNumber(frameNumber);
 }
 
 /*!
  * Resize the 3D RF image.
  *
- * Updates also the transducer scan line number that corresponds to the image X-size and
- * the motor frame number that corresponds to the image Z-size.
- * \param dimX Image X-size.
- * \param dimY Image Y-size.
- * \param dimZ Image Z-size.
+ * Updates also the transducer scan line number that corresponds to the image U-size and
+ * the motor frame number that corresponds to the image W-size.
+ * \param dimU Image U-size.
+ * \param dimV Image V-size.
+ * \param dimW Image W-size.
  */
-template <class Type> void usImageRF3D<Type>::resize(unsigned int dimX, unsigned int dimY, unsigned int dimZ)
+template <class Type> void usImageRF3D<Type>::resize(unsigned int dimU, unsigned int dimV, unsigned int dimW)
 {
-  init(dimX, dimY, dimZ);
-  usMotorSettings::setFrameNumber(dimZ);
-  usTransducerSettings::setScanLineNumber(dimX);
+  init(dimU, dimV, dimW);
+  usMotorSettings::setFrameNumber(dimW);
+  usTransducerSettings::setScanLineNumber(dimU);
 }
 
 /**
@@ -358,20 +358,20 @@ template <class Type> void usImageRF3D<Type>::resize(unsigned int dimX, unsigned
 template <class Type> void usImageRF3D<Type>::insertFrame(const usImageRF2D<short> &frame, unsigned int index)
 {
   // Dimentions checks
-  if (index > this->getDimZ())
+  if (index > this->getDimW())
     throw(vpException(vpException::badValue, "usImageRF3D::insertFrame : frame index out of volume"));
 
-  if (frame.getHeight() != this->getDimY() || frame.getWidth() != this->getDimX())
+  if (frame.getHeight() != this->getDimV() || frame.getWidth() != this->getDimU())
     throw(vpException(vpException::badValue, "usImageRF3D::insertFrame : frame size don't match volume size"));
 
   // offset to access the frame in the volume
-  int offset = index * this->getDimY() * this->getDimX();
+  int offset = index * this->getDimV() * this->getDimU();
   Type *frameBeginning = bitmap + offset;
 
   // copy
-  for (unsigned int i = 0; i < this->getDimY(); i++) {
-    for (unsigned int j = 0; j < this->getDimX(); j++) {
-      frameBeginning[i + this->getDimY() * j] = frame[j][i];
+  for (unsigned int i = 0; i < this->getDimV(); i++) {
+    for (unsigned int j = 0; j < this->getDimU(); j++) {
+      frameBeginning[i + this->getDimV() * j] = frame[j][i];
     }
   }
 }
@@ -384,19 +384,19 @@ template <class Type> void usImageRF3D<Type>::insertFrame(const usImageRF2D<shor
 template <class Type> void usImageRF3D<Type>::getFrame(usImageRF2D<Type> &image, unsigned int index) const
 {
   // Dimentions checks
-  if (index > this->getDimZ())
+  if (index > this->getDimW())
     throw(vpException(vpException::badValue, "usImageRF3D::getFrame : frame index out of volume"));
 
-  image.resize(this->getDimY(), this->getDimX());
+  image.resize(this->getDimV(), this->getDimU());
 
   // offset to access the frame beginning in the volume
-  int offset = index * this->getDimY() * this->getDimX();
+  int offset = index * this->getDimV() * this->getDimU();
   const Type *frameBeginning = this->getConstData() + offset;
 
   // copy
-  for (unsigned int i = 0; i < this->getDimY(); i++) {
-    for (unsigned int j = 0; j < this->getDimX(); j++) {
-      image[j][i] = frameBeginning[i + this->getDimY() * j];
+  for (unsigned int i = 0; i < this->getDimV(); i++) {
+    for (unsigned int j = 0; j < this->getDimU(); j++) {
+      image[j][i] = frameBeginning[i + this->getDimV() * j];
     }
   }
 }
@@ -404,10 +404,10 @@ template <class Type> void usImageRF3D<Type>::getFrame(usImageRF2D<Type> &image,
 /*!
   \brief Image initialization
 
-  Allocate memory for an [dimX x dimY x dimZ] image.
-  \param dimX : Width of the 2D planes contained in the volume.
-  \param dimY : Height of the 2D planes contained in the volume.
-  \param dimZ : Volume dimension in the 3rd dimension.
+  Allocate memory for an [dimU x dimV x dimW] image.
+  \param dimU : Width of the 2D planes contained in the volume.
+  \param dimV : Height of the 2D planes contained in the volume.
+  \param dimW : Volume dimension in the 3rd dimension.
 
   Element of the bitmap are not initialized
 
@@ -418,20 +418,20 @@ template <class Type> void usImageRF3D<Type>::getFrame(usImageRF2D<Type> &image,
   \exception vpException::memoryAllocationError
 
 */
-template <class Type> void usImageRF3D<Type>::init(unsigned int dimX, unsigned int dimY, unsigned int dimZ)
+template <class Type> void usImageRF3D<Type>::init(unsigned int dimU, unsigned int dimV, unsigned int dimW)
 {
-  if ((dimX != this->m_dimX) || (dimY != this->m_dimY) || (dimZ != this->m_dimZ)) {
+  if ((dimU != this->m_dimU) || (dimV != this->m_dimV) || (dimW != this->m_dimW)) {
     if (bitmap != NULL) {
       delete[] bitmap;
       bitmap = NULL;
     }
   }
 
-  this->m_dimX = dimX;
-  this->m_dimY = dimY;
-  this->m_dimZ = dimZ;
+  this->m_dimU = dimU;
+  this->m_dimV = dimV;
+  this->m_dimW = dimW;
 
-  m_size = m_dimX * m_dimY * m_dimZ;
+  m_size = m_dimU * m_dimV * m_dimW;
 
   if (bitmap == NULL)
     bitmap = new Type[m_size];
@@ -446,19 +446,19 @@ template <class Type> void usImageRF3D<Type>::init(unsigned int dimX, unsigned i
 * Get the volume width.
 * @return The volume width, in number of voxels.
 */
-template <class Type> unsigned int usImageRF3D<Type>::getDimX() const { return m_dimX; }
+template <class Type> unsigned int usImageRF3D<Type>::getDimU() const { return m_dimU; }
 
 /**
 * Get the volume height.
 * @return The volume height, in number of voxels.
 */
-template <class Type> unsigned int usImageRF3D<Type>::getDimY() const { return m_dimY; }
+template <class Type> unsigned int usImageRF3D<Type>::getDimV() const { return m_dimV; }
 
 /**
-* Get the volume size along the z-axis.
-* @return The z-axis size in voxels, in number of voxels.
+* Get the volume size along the w-axis.
+* @return The w-axis size in voxels, in number of voxels.
 */
-template <class Type> unsigned int usImageRF3D<Type>::getDimZ() const { return m_dimZ; }
+template <class Type> unsigned int usImageRF3D<Type>::getDimW() const { return m_dimW; }
 
 /**
 * Get the volume size.
@@ -473,34 +473,34 @@ template <class Type> unsigned int usImageRF3D<Type>::getSize() const { return m
 template <class Type> const Type *usImageRF3D<Type>::getConstData() const { return bitmap; }
 
 /**
-* @brief Access operator for value in voxel (indexX, indexY, indexZ)
-* @param indexX Index along x-axis to access (from 0 to dimX-1).
-* @param indexY Index along y-axis to access (from 0 to dimY-1).
-* @param indexZ Index along z-axis to access (from 0 to dimZ-1).
+* @brief Access operator for value in voxel (indexU, indexV, indexW)
+* @param indexU Index along u-axis to access (from 0 to dimU-1).
+* @param indexV Index along v-axis to access (from 0 to dimV-1).
+* @param indexW Index along w-axis to access (from 0 to dimW-1).
 */
 template <class Type>
-Type usImageRF3D<Type>::operator()(unsigned int indexX, unsigned int indexY, unsigned int indexZ) const
+Type usImageRF3D<Type>::operator()(unsigned int indexU, unsigned int indexV, unsigned int indexW) const
 {
-  bool indexOK = indexX < m_dimX && indexY < m_dimY && indexZ < m_dimZ;
+  bool indexOK = indexU < m_dimU && indexV < m_dimV && indexW < m_dimW;
   if (!indexOK)
     throw(vpException(vpException::dimensionError, "usImageRF3D : accessing a voxel out of range !"));
-  return bitmap[indexY + indexX * m_dimY + indexZ * m_dimY * m_dimX];
+  return bitmap[indexV + indexU * m_dimV + indexW * m_dimV * m_dimU];
 }
 
 /**
-* @brief Set value in voxel (indexX, indexY, indexZ)
-* @param indexX Index along x-axis to write in (from 0 to dimX-1).
-* @param indexY Index along y-axis to write in (from 0 to dimY-1).
-* @param indexZ Index along z-axis to write in (from 0 to dimZ-1).
+* @brief Set value in voxel (indexU, indexV, indexW)
+* @param indexU Index along u-axis to write in (from 0 to dimU-1).
+* @param indexV Index along v-axis to write in (from 0 to dimV-1).
+* @param indexW Index along w-axis to write in (from 0 to dimW-1).
 * @param value Value to insert.
 */
 template <class Type>
-void usImageRF3D<Type>::operator()(unsigned int indexX, unsigned int indexY, unsigned int indexZ, Type value)
+void usImageRF3D<Type>::operator()(unsigned int indexU, unsigned int indexV, unsigned int indexW, Type value)
 {
-  bool indexOK = indexX < m_dimX && indexY < m_dimY && indexZ < m_dimZ;
+  bool indexOK = indexU < m_dimU && indexV < m_dimV && indexW < m_dimW;
   if (!indexOK)
     throw(vpException(vpException::dimensionError, "usImageRF3D : trying to write in a voxel out of range !"));
-  bitmap[indexY + indexX * m_dimY + indexZ * m_dimY * m_dimX] = value;
+  bitmap[indexV + indexU * m_dimV + indexW * m_dimV * m_dimU] = value;
 }
 
 #endif // US_IMAGE_RF_3D_H
