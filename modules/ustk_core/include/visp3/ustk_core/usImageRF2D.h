@@ -127,6 +127,9 @@ public:
   unsigned int getHeight() const;
   unsigned int getNumberOfPixel() const;
   unsigned int getRFSampleNumber() const;
+
+  const Type *getSignal(unsigned int scanlineIndex) const;
+
   unsigned int getWidth() const;
 
   //! Set the size of the image
@@ -135,13 +138,9 @@ public:
   usImageRF2D<Type> &operator=(const usImageRF2D<Type> &other);
   bool operator==(const usImageRF2D<Type> &other);
 
-  //! operator[] allows operation like I[i] = x.
-  inline Type *operator[](const unsigned int i) { return col[i]; }
-  inline Type *operator[](const int i) { return col[i]; }
-
-  //! operator[] allows operation like x = I[i]
-  inline const Type *operator[](unsigned int i) const { return col[i]; }
-  inline const Type *operator[](int i) const { return col[i]; }
+  //! operator() allows to access/modify RF samples values in the image.
+  Type operator()(unsigned int i, unsigned int j) const;
+  void operator()(unsigned int i, unsigned int j, Type value);
 
   void setScanLineNumber(unsigned int scanLineNumber);
 
@@ -256,6 +255,25 @@ template <class Type> bool usImageRF2D<Type>::operator==(const usImageRF2D<Type>
 }
 
 /**
+* Access operator.
+* @param i Row index of the pixel to access.
+* @param j Column index of the pixel to access.
+* @return The value of the pixel.
+*/
+template <class Type> Type usImageRF2D<Type>::operator()(unsigned int i, unsigned int j) const { return col[j][i]; }
+
+/**
+* Pixel writing operator.
+* @param i Row index of the pixel to write.
+* @param j Column index of the pixel to write.
+* @param value The value to write.
+*/
+template <class Type> void usImageRF2D<Type>::operator()(unsigned int i, unsigned int j, Type value)
+{
+  col[j][i] = value;
+}
+
+/**
 * Operator to print 2D RF image information on a stream.
 */
 template <class Type> std::ostream &operator<<(std::ostream &out, const usImageRF2D<Type> &other)
@@ -354,12 +372,37 @@ template <class Type> void usImageRF2D<Type>::init(unsigned int h, unsigned int 
     col[j] = bitmap + j * height;
 }
 
+/*!
+ * Getter for the height of the image
+ * \return Image height.
+ */
 template <class Type> unsigned int usImageRF2D<Type>::getHeight() const { return height; }
 
+/*!
+ * Getter for the number of pixels in the image.
+ * \return Total count of pixels in the image.
+ */
 template <class Type> unsigned int usImageRF2D<Type>::getNumberOfPixel() const { return npixels; }
 
+/*!
+ * Getter for the width of the image
+ * \return Image width.
+ */
 template <class Type> unsigned int usImageRF2D<Type>::getWidth() const { return width; }
 
+/*!
+ * Getter for a const pointer on the image bitmap.
+ * \return Pointer on image bitmap.
+ */
 template <class Type> const Type *usImageRF2D<Type>::getBitmap() const { return bitmap; }
 
+/*!
+ * Getter for the RF signal at a certain scanline index.
+ * \param scanlineIndex The index of the scanline to acess.
+ * \return The RF signal.
+ */
+template <class Type> const Type *usImageRF2D<Type>::getSignal(unsigned int scanlineIndex) const
+{
+  return col[scanlineIndex];
+}
 #endif // US_IMAGE_RF_2D_H

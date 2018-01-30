@@ -378,7 +378,7 @@ template <class Type> void usImageRF3D<Type>::insertFrame(const usImageRF2D<shor
   // copy
   for (unsigned int i = 0; i < this->getDimV(); i++) {
     for (unsigned int j = 0; j < this->getDimU(); j++) {
-      frameBeginning[i + this->getDimV() * j] = frame[j][i];
+      frameBeginning[i + this->getDimV() * j] = frame(i, j);
     }
   }
 }
@@ -403,7 +403,7 @@ template <class Type> void usImageRF3D<Type>::getFrame(usImageRF2D<Type> &image,
   // copy
   for (unsigned int i = 0; i < this->getDimV(); i++) {
     for (unsigned int j = 0; j < this->getDimU(); j++) {
-      image[j][i] = frameBeginning[i + this->getDimV() * j];
+      image(i, j, frameBeginning[i + this->getDimV() * j]);
     }
   }
 }

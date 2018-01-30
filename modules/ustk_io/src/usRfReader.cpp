@@ -99,7 +99,7 @@ void usRfReader::open(usImageRF2D<short int> &image)
   for (int i = 0; i < m_header.h; i++) {
     for (int j = 0; j < m_header.w; j++) {
       m_dataFile.read((char *)&sample, sizeof(short));
-      image[j][i] = sample;
+      image(i, j, sample);
     }
   }
   m_dataFile.close();
