@@ -223,9 +223,7 @@ int main(int argc, const char **argv)
     rf3DReference.setAxialResolution(0.0058);
     rf3DReference.setTransmitFrequency(300000);
     rf3DReference.setSamplingFrequency(2000000);
-    rf3DReference.setDepth(rf3DReference.getAxialResolution() * rf3DReference.getDimY());
-    // image initialisation
-    rf3DReference.initData(255);
+    rf3DReference.setDepth(rf3DReference.getAxialResolution() * rf3DReference.getDimV());
 
     // printing settings
     std::cout << "Written in " << filename << std::endl;

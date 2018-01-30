@@ -321,7 +321,7 @@ template <class Type> bool usImage3D<Type>::operator==(const usImage3D<Type> &ot
 
   if (settingsOk) {
     for (unsigned int i = 0; i < m_size; i++) {
-      if (bitmap[i] != other[i])
+      if (bitmap[i] != other.getConstData()[i])
         return false;
     }
   } else

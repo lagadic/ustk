@@ -176,6 +176,7 @@ void usImageIo::read(usImageRF2D<short int> &imageRf2D, const std::string &heade
     settings.setTransducerConvexity(mhdHeader.isTransducerConvex);
     settings.setAxialResolution(mhdParser.getAxialResolution());
     settings.setDepth(settings.getAxialResolution() * mhdHeader.dim[1]);
+    std::cout << "dim 1 : " << mhdHeader.dim[1] << std::endl;
     settings.setSamplingFrequency(mhdHeader.samplingFrequency);
     settings.setTransmitFrequency(mhdHeader.transmitFrequency);
     imageRf2D.setImagePreScanSettings(settings);
