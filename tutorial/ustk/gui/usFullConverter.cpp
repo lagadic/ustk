@@ -65,8 +65,8 @@ int main(int argc, char **argv)
   vtkImageImport *importer = vtkImageImport::New();
   importer->SetDataScalarTypeToUnsignedChar();
   importer->SetImportVoidPointer((void *)postScanImage.getConstData());
-  importer->SetWholeExtent(0, postScanImage.getDimX() - 1, 0, postScanImage.getDimY() - 1, 0,
-                           postScanImage.getDimZ() - 1);
+  importer->SetWholeExtent(0, postScanImage.getDimU() - 1, 0, postScanImage.getDimV() - 1, 0,
+                           postScanImage.getDimW() - 1);
   importer->SetDataExtentToWholeExtent();
   importer->SetNumberOfScalarComponents(1);
 

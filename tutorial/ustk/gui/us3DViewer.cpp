@@ -52,7 +52,7 @@ int main(int argc, char **argv)
 
   vtkSmartPointer<vtkImageImport> importer = vtkSmartPointer<vtkImageImport>::New();
   importer->SetDataScalarTypeToUnsignedChar();
-  importer->SetWholeExtent(0, postScan3D.getDimX() - 1, 0, postScan3D.getDimY() - 1, 0, postScan3D.getDimZ() - 1);
+  importer->SetWholeExtent(0, postScan3D.getDimU() - 1, 0, postScan3D.getDimV() - 1, 0, postScan3D.getDimW() - 1);
   importer->SetDataExtentToWholeExtent();
   importer->SetNumberOfScalarComponents(1);
   usVTKConverter::convert(postScan3D, vtkImage, importer);
@@ -68,13 +68,13 @@ int main(int argc, char **argv)
 
   vtkSmartPointer<vtkPlane> planeX = vtkSmartPointer<vtkPlane>::New();
   planeX->SetNormal(1, 0, 0);
-  planeX->SetOrigin(postScan3D.getDimX() * spacing[0] / 2.0, 0, 0);
+  planeX->SetOrigin(postScan3D.getDimU() * spacing[0] / 2.0, 0, 0);
   vtkSmartPointer<vtkPlane> planeY = vtkSmartPointer<vtkPlane>::New();
   planeY->SetNormal(0, 1, 0);
-  planeY->SetOrigin(0, postScan3D.getDimY() * spacing[1] / 2.0, 0);
+  planeY->SetOrigin(0, postScan3D.getDimV() * spacing[1] / 2.0, 0);
   vtkSmartPointer<vtkPlane> planeZ = vtkSmartPointer<vtkPlane>::New();
   planeZ->SetNormal(0, 0, 1);
-  planeZ->SetOrigin(0, 0, postScan3D.getDimZ() * spacing[2] / 2.0);
+  planeZ->SetOrigin(0, 0, postScan3D.getDimW() * spacing[2] / 2.0);
   scene.setPlanes(planeX, planeY, planeZ);
 
   std::cout << "planeZ origin Z" << planeZ->GetOrigin()[2] << std::endl;
