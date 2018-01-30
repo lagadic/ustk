@@ -177,7 +177,8 @@ private:
   unsigned int m_dimW; /**< Volume size in 3d dimension (number of frames in the volume)*/
   unsigned int m_size; /**< Volume size : number of voxels in the whole volume*/
 
-  Type *bitmap; /**< Data container */
+  Type *bitmap;       /**< Data container */
+  Type **framPointer; /**< contains pointers on every first voxel of all frames in the volume */
 };
 
 /**
@@ -185,7 +186,8 @@ private:
 */
 template <class Type>
 usImageRF3D<Type>::usImageRF3D()
-  : usImagePreScanSettings(), usMotorSettings(), m_dimU(0), m_dimV(0), m_dimW(0), m_size(0), bitmap(NULL)
+  : usImagePreScanSettings(), usMotorSettings(), m_dimU(0), m_dimV(0), m_dimW(0), m_size(0), bitmap(NULL),
+    framPointer(NULL)
 {
 }
 
@@ -194,7 +196,8 @@ usImageRF3D<Type>::usImageRF3D()
 */
 template <class Type>
 usImageRF3D<Type>::usImageRF3D(unsigned int dimU, unsigned int dimV, unsigned int dimW)
-  : usImagePreScanSettings(), usMotorSettings(), m_dimU(0), m_dimV(0), m_dimW(0), m_size(0), bitmap(NULL)
+  : usImagePreScanSettings(), usMotorSettings(), m_dimU(0), m_dimV(0), m_dimW(0), m_size(0), bitmap(NULL),
+    framPointer(NULL)
 {
   resize(dimU, dimV, dimW);
 }
@@ -209,7 +212,7 @@ template <class Type>
 usImageRF3D<Type>::usImageRF3D(unsigned int dimU, unsigned int dimV, unsigned int dimW,
                                const usImagePreScanSettings &preScanSettings, const usMotorSettings &motorSettings)
   : usImagePreScanSettings(preScanSettings), usMotorSettings(motorSettings), m_dimU(0), m_dimV(0), m_dimW(0), m_size(0),
-    bitmap(NULL)
+    bitmap(NULL), framPointer(NULL)
 {
   if (dimU != preScanSettings.getScanLineNumber())
     throw(vpException(vpException::badValue, "3D RF image U-size differ from transducer scanline number"));
@@ -239,6 +242,10 @@ template <class Type> usImageRF3D<Type>::~usImageRF3D()
   if (bitmap) {
     delete[] bitmap;
     bitmap = NULL;
+  }
+  if (framPointer) {
+    delete[] framPointer;
+    framPointer = NULL;
   }
 }
 
@@ -425,6 +432,10 @@ template <class Type> void usImageRF3D<Type>::init(unsigned int dimU, unsigned i
       delete[] bitmap;
       bitmap = NULL;
     }
+    if (framPointer != NULL) {
+      delete[] framPointer;
+      framPointer = NULL;
+    }
   }
 
   this->m_dimU = dimU;
@@ -436,7 +447,12 @@ template <class Type> void usImageRF3D<Type>::init(unsigned int dimU, unsigned i
   if (bitmap == NULL)
     bitmap = new Type[m_size];
 
-  //  vpERROR_TRACE("Allocate bitmap %p",bitmap) ;
+  if (framPointer == NULL)
+    framPointer = new Type *[dimW];
+
+  for (unsigned int k = 0; k < dimW; k++)
+    framPointer[k] = bitmap + m_dimU * m_dimV * k;
+
   if (bitmap == NULL) {
     throw(vpException(vpException::memoryAllocationError, "cannot allocate bitmap "));
   }
@@ -484,7 +500,8 @@ Type usImageRF3D<Type>::operator()(unsigned int indexU, unsigned int indexV, uns
   bool indexOK = indexU < m_dimU && indexV < m_dimV && indexW < m_dimW;
   if (!indexOK)
     throw(vpException(vpException::dimensionError, "usImageRF3D : accessing a voxel out of range !"));
-  return bitmap[indexV + indexU * m_dimV + indexW * m_dimV * m_dimU];
+
+  return framPointer[indexW][m_dimV * indexU + indexV];
 }
 
 /**
@@ -500,7 +517,7 @@ void usImageRF3D<Type>::operator()(unsigned int indexU, unsigned int indexV, uns
   bool indexOK = indexU < m_dimU && indexV < m_dimV && indexW < m_dimW;
   if (!indexOK)
     throw(vpException(vpException::dimensionError, "usImageRF3D : trying to write in a voxel out of range !"));
-  bitmap[indexV + indexU * m_dimV + indexW * m_dimV * m_dimU] = value;
+  framPointer[indexW][m_dimV * indexU + indexV] = value;
 }
 
 #endif // US_IMAGE_RF_3D_H
