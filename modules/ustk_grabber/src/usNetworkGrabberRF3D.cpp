@@ -199,7 +199,7 @@ void usNetworkGrabberRF3D::dataArrived()
     }
     m_grabbedImage.setTimeStamp(m_imageHeader.timeStamp);
 
-    m_grabbedImage.resize(m_imageHeader.frameWidth, m_imageHeader.frameHeight);
+    m_grabbedImage.resize(m_imageHeader.frameHeight, m_imageHeader.frameWidth);
 
     m_bytesLeftToRead = m_imageHeader.dataLength;
 
@@ -243,18 +243,17 @@ void usNetworkGrabberRF3D::includeFrameInVolume()
         currentSettings.getTransducerRadius() != m_grabbedImage.getTransducerRadius() ||
         currentSettings.getScanLinePitch() != m_grabbedImage.getScanLinePitch() ||
         currentSettings.getDepth() != m_grabbedImage.getDepth() ||
-        currentSettings.getScanLineNumber() !=
-            m_grabbedImage.getHeight()) { // m_grabbedImage is "turned" so the height corresponds to the scanline numer.
+        currentSettings.getScanLineNumber() != m_grabbedImage.getScanLineNumber()) {
+      std::cout << m_grabbedImage;
+      std::cout << currentSettings;
+
       throw(vpException(vpException::badValue, "Transducer settings changed during acquisition, somethink went wrong"));
     }
   } else { // init case
     m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC)->setImagePreScanSettings(m_grabbedImage);
-    m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC)->setScanLineNumber(m_grabbedImage.getHeight());
     m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->setImagePreScanSettings(m_grabbedImage);
-    m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->setScanLineNumber(m_grabbedImage.getHeight());
   }
   m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setImagePreScanSettings(m_grabbedImage);
-  m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setScanLineNumber(m_grabbedImage.getHeight());
 
   if (m_firstFrameAvailable) {
     if (m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getMotorSettings() != m_motorSettings)
@@ -266,7 +265,7 @@ void usNetworkGrabberRF3D::includeFrameInVolume()
   m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setMotorSettings(m_motorSettings);
 
   m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)
-      ->resize(m_grabbedImage.getHeight(), m_grabbedImage.getWidth(), m_motorSettings.getFrameNumber());
+      ->resize(m_grabbedImage.getWidth(), m_grabbedImage.getHeight(), m_motorSettings.getFrameNumber());
 
   // Inserting frame in volume
   int volumeIndex = m_grabbedImage.getFrameCount() / m_grabbedImage.getFramesPerVolume();    // from 0
@@ -281,7 +280,7 @@ void usNetworkGrabberRF3D::includeFrameInVolume()
 
   for (unsigned int i = 0; i < m_grabbedImage.getHeight(); i++) {
     for (unsigned int j = 0; j < m_grabbedImage.getWidth(); j++) {
-      (*m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC))(i, j, framePostition, m_grabbedImage(i, j));
+      (*m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC))(j, i, framePostition, m_grabbedImage(i, j));
     }
   }
 

@@ -177,7 +177,6 @@ private:
   void initServer(usInitHeaderIncomming header);
 
   void invertRowsColsOnPreScan();
-  void invertRowsColsOnRF();
 
   void setSequencePath(const std::string sequencePath);
 
