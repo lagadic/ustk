@@ -176,7 +176,6 @@ void usImageIo::read(usImageRF2D<short int> &imageRf2D, const std::string &heade
     settings.setTransducerConvexity(mhdHeader.isTransducerConvex);
     settings.setAxialResolution(mhdParser.getAxialResolution());
     settings.setDepth(settings.getAxialResolution() * mhdHeader.dim[1]);
-    std::cout << "dim 1 : " << mhdHeader.dim[1] << std::endl;
     settings.setSamplingFrequency(mhdHeader.samplingFrequency);
     settings.setTransmitFrequency(mhdHeader.transmitFrequency);
     imageRf2D.setImagePreScanSettings(settings);
@@ -902,13 +901,11 @@ void usImageIo::read(usImagePostScan2D<unsigned char> &postScanImage, const std:
 */
 void usImageIo::write(const usImagePostScan3D<unsigned char> &postScanImage, const std::string &headerFileName)
 {
-  std::cout << "writing postScan3D" << std::endl;
   // checking header type
   usImageIo::usHeaderFormatType headerFormat = getHeaderFormat(headerFileName);
   if (headerFormat == FORMAT_XML) {
     write(postScanImage, headerFileName, std::string(".png"));
   } else if (headerFormat == FORMAT_MHD) {
-    std::cout << "writing mhd" << std::endl;
     write(postScanImage, headerFileName, std::string(".raw"));
   }
 }
