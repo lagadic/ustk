@@ -70,8 +70,8 @@ public:
   virtual ~usElastography();
   void setCommonSharedRFImage(QSharedPointer<usImageRF2D<short int> > t_RFIm);
   void setCommonSharedStrainImage(QSharedPointer<vpImage<unsigned char> > t_StrainIm);
-  void setPreCompression(usImageRF2D<short int> &Pre);
-  void setPostCompression(usImageRF2D<short int> &Post);
+  void setPreCompression(const usImageRF2D<short> &Pre);
+  void setPostCompression(const usImageRF2D<short> &Post);
   void setMotionEstimator(MotionEstimator t_mest) { m_mEstimatior = t_mest; }
   usImageRF2D<short int> getPreCompression(void);
   usImageRF2D<short int> getPostCompression(void);
@@ -85,7 +85,7 @@ public:
 public slots:
   // void getImageStrain(void);
   void setPairRF(usImageRF2D<short int> Pre, usImageRF2D<short int> Post);
-  void setRF(usImageRF2D<short int> t_RfArray);
+  void setRF(const usImageRF2D<short int> &t_RfArray);
   void setRF(void);
   void getCentroid(bool t_c);
   void reset(void) { m_Idx = 0; }
@@ -101,6 +101,8 @@ signals:
   void roiSet(bool);
 
 private:
+  usImageRF2D<short int> usImageRF_ROI(const usImageRF2D<short int> &M, uint r, uint c, uint nrows, uint ncols);
+
   QMutex m_mutex;
   QWaitCondition m_cond;
   usImageRF2D<short int> m_receivedRF;
@@ -147,7 +149,7 @@ private:
 
   // Shared Pointers
   QSharedPointer<usImageRF2D<short int> > s_RFIm;
-  QSharedPointer<vpImage<unsigned char > > s_StrainIm;
+  QSharedPointer<vpImage<unsigned char> > s_StrainIm;
   bool isSetSharedStrainMemory;
 
   QPointF GetImageCentroid(void);

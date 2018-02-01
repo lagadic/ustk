@@ -274,10 +274,10 @@ void usMotionEstimation::saveV(const char *t_s) { m_V.save(t_s, raw_ascii); }
 
 mat usMotionEstimation::convert_usImageRF2mat(usImageRF2D<short int> vI)
 {
-  mat I(vI.getRows(), vI.getCols());
-  for (uint y = 0; y < vI.getRows(); y++)
-    for (uint x = 0; x < vI.getCols(); x++)
-      (*(I.memptr() + y * vI.getCols() + x)) = (double)(*(vI.bitmap + y * vI.getCols() + x));
+  mat I(vI.getHeight(), vI.getWidth());
+  for (uint i = 0; i < vI.getHeight(); i++)
+    for (uint j = 0; j < vI.getWidth(); j++)
+      (*(I.memptr() + i * vI.getWidth() + j)) = (double)vI(i, j);
   return I;
 }
 

@@ -71,10 +71,10 @@ public:
   /// Computation of gradients
   static vpMatrix GetGx(vpMatrix F);
   static vpMatrix GetGy(vpMatrix F);
-  static vpMatrix GetGx(usImageRF2D<short int> F);
-  static vpMatrix GetGy(usImageRF2D<short int> F);
+  static vpMatrix GetGx(const usImageRF2D<short> &F);
+  static vpMatrix GetGy(const usImageRF2D<short int> &F);
   // Diference between usImageRF2D
-  static vpMatrix Difference(usImageRF2D<short int> A, usImageRF2D<short int> B);
+  static vpMatrix Difference(const usImageRF2D<short int> &A, const usImageRF2D<short int> &B);
   /// Bilinear Interpolation
   static vpMatrix BilinearInterpolation(vpMatrix In, uint newW, uint newH);
   /// Element-wise product

@@ -196,13 +196,13 @@ void usElastography::getCentroid(bool t_c)
   m_mutex.unlock();
 }
 
-void usElastography::setPreCompression(usImageRF2D<short int> &Pre)
+void usElastography::setPreCompression(const usImageRF2D<short int> &Pre)
 {
   m_Precomp = Pre;
   m_isloadPre = true;
 }
 
-void usElastography::setPostCompression(usImageRF2D<short int> &Post)
+void usElastography::setPostCompression(const usImageRF2D<short int> &Post)
 {
   m_Postcomp = Post;
   m_isloadPost = true;
@@ -242,11 +242,11 @@ void usElastography::setPairRF(usImageRF2D<short int> Pre, usImageRF2D<short int
   m_mutex.unlock();
 }
 
-void usElastography::setRF(usImageRF2D<short int> t_RfArray)
+void usElastography::setRF(const usImageRF2D<short> &t_RfArray)
 {
-  if (m_Idx == 0)
+  if (m_Idx == 0) {
     setPreCompression(t_RfArray);
-  else {
+  } else {
     if (m_Idx > 1)
       setPreCompression(m_Postcomp);
     setPostCompression(t_RfArray);
@@ -298,17 +298,17 @@ void usElastography::setCommonSharedStrainImage(QSharedPointer<vpImage<unsigned 
   s_StrainIm = t_StrainIm;
 }
 
-inline usImageRF2D<short int> usImageRF_ROI(const usImageRF2D<short int> &M, uint r, uint c, uint nrows, uint ncols)
+usImageRF2D<short int> usElastography::usImageRF_ROI(const usImageRF2D<short int> &M, uint r, uint c, uint nrows,
+                                                     uint ncols)
 {
   uint rnrows = r + nrows;
   uint cncols = c + ncols;
   usImageRF2D<short int> t_Mout;
-  assert(rnrows < M.getRows() || cncols < M.getCols());
+  assert(rnrows < M.getHeight() || cncols < M.getWidth());
   t_Mout.resize(nrows, ncols);
-  for (unsigned int i = c; i < cncols; i++)
-    for (unsigned int j = r; j < rnrows; j++)
-      t_Mout[j - r][i - c] = M[j][i];
-  // t_Mout.bitmap[(i - c) * nrows + (j - r)] = M.bitmap[i * M.getRows() + j];
+  for (unsigned int i = r; i < rnrows; i++)
+    for (unsigned int j = c; j < cncols; j++)
+      t_Mout(i - r, j - c, M(i, j));
 
   return t_Mout;
 }
@@ -319,27 +319,24 @@ void usElastography::run()
   forever
   {
     if (m_stopped) {
+
       qDebug("Stoping thread Elasto ");
       emit stopped();
       // break;
     }
     if (m_isloadPre == true && m_isloadPost == true && m_setROI == true) {
-      // cout << "Pre or Post frames loaded" << endl;
-      /*vpImageTools::crop<short int>(m_Precomp, m_iy, m_ix, m_rh, m_rw, m_PreROI);
-      vpImageTools::crop<short int>(m_Postcomp, m_iy, m_ix, m_rh, m_rw, m_PostROI);*/
       m_PreROI = usImageRF_ROI(m_Precomp, m_iy, m_ix, m_rh, m_rw);
       m_PostROI = usImageRF_ROI(m_Postcomp, m_iy, m_ix, m_rh, m_rw);
-      assert(m_PreROI.getCols() == m_PostROI.getCols());
-      assert(m_PreROI.getRows() == m_PostROI.getRows());
+      assert(m_PreROI.getWidth() == m_PostROI.getWidth());
+      assert(m_PreROI.getHeight() == m_PostROI.getHeight());
       if (m_mEstimatior == BMA_TAYLOR) {
         // Step 0: BMA
         m_ME.init(m_PreROI, m_PostROI, 2, 20, 2, 120);
         m_ME.run();
-        // m_ME.saveV("dispV.dat");
         U = m_ME.getU_vp() * (m_c * (m_PRF / (2.0 * m_fs)));
         V = m_ME.getV_vp() * (m_c * (m_PRF / (2.0 * m_fs)));
-        m_h_m = m_PreROI.getRows();
-        m_w_m = m_PreROI.getCols();
+        m_h_m = m_PreROI.getHeight();
+        m_w_m = m_PreROI.getWidth();
       } else {
         // Step 1: Numerical gradients
         vpMatrix Fx = usSignalProcessing::GetGx(m_PreROI);
@@ -411,15 +408,10 @@ void usElastography::run()
             double sgdty_w = 0.0;
             for (uint i = m; i < (m + Wsizey); i++) {
               for (uint j = n; j < (n + Wsizex); j++) {
-                // sgdx2_w += gdx2.data[j * m_h_m + i];
                 sgdx2_w += gdx2[i][j];
-                // sgdy2_w += gdy2.data[j * m_h_m + i];
                 sgdy2_w += gdy2[i][j];
-                // sgdxy_w += gdxy.data[j * m_h_m + i];
                 sgdxy_w += gdxy[i][j];
-                // sgdtx_w += gdtx.data[j * m_h_m + i];
                 sgdtx_w += gdtx[i][j];
-                // sgdty_w += gdty.data[j * m_h_m + i];
                 sgdty_w += gdty[i][j];
               }
             }
@@ -429,9 +421,10 @@ void usElastography::run()
             M.data[3] = sgdy2_w;
             b.data[0] = -sgdtx_w;
             b.data[1] = -sgdty_w;
+
             X = M.pseudoInverse() * b;
-            U[l][k] = X.data[0] * (m_c * (m_PRF / (2.0 * m_fs)));
-            V[l][k] = X.data[1] * (m_c * (m_PRF / (2.0 * m_fs)));
+            U.data[k + l * h_w] = X.data[0] * (m_c * (m_PRF / (2.0 * m_fs)));
+            V.data[k + l * h_w] = X.data[1] * (m_c * (m_PRF / (2.0 * m_fs)));
             l++;
           }
           k++;
@@ -482,7 +475,6 @@ void usElastography::run()
         m_isloadPre = false;
         m_isloadPost = false;
       }
-      // std::cout <<"Achieved " << std::endl;
       emit StrainMapComp();
       if (m_centroid)
         emit Centroid(this->GetImageCentroid());

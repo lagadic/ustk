@@ -38,6 +38,7 @@
 #include <cmath>
 #include <iostream>
 #include <map>
+#include <visp3/core/vpMatrix.h>
 #include <visp3/ustk_core/usImageRF2D.h>
 
 // Armadillo

@@ -105,7 +105,7 @@ void usConvolution2d::run()
   for (int i = startX; i < endX; ++i) {
     l = 0;
     for (int j = startY; j < endY; ++j) {
-      m_R[l][k] = out[j * wf + i][0] / (double)(wf * hf);
+      m_R[l][k] = out[j + i * hf][0] / (double)(wf * hf);
       l++;
     }
     k++;
@@ -126,11 +126,11 @@ void usConvolution2d::padding_zeros()
   // Padding the two arrays with zeros
   for (uint i = 0; i < wf; ++i) {
     for (uint j = 0; j < hf; ++j) {
-      ad[j * wf + i][0] = ((j < Am) && (i < An)) ? m_M1.data[i + j * An] : 0.0;
-      ad[j * wf + i][1] = 0.0;
+      ad[j + i * hf][0] = ((j < Am) && (i < An)) ? m_M1[j][i] : 0.0;
+      ad[j + i * hf][1] = 0.0;
 
-      bd[j * wf + i][0] = ((j < Bm) && (i < Bn)) ? m_M2.data[i + j * Bn] : 0.0;
-      bd[j * wf + i][1] = 0.0;
+      bd[j + i * hf][0] = ((j < Bm) && (i < Bn)) ? m_M2[j][i] : 0.0;
+      bd[j + i * hf][1] = 0.0;
     }
   }
 }

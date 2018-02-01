@@ -138,47 +138,46 @@ vpMatrix usSignalProcessing::GetGy(vpMatrix F)
   return t_out;
 }
 
-vpMatrix usSignalProcessing::GetGx(usImageRF2D<short int> F)
+vpMatrix usSignalProcessing::GetGx(const usImageRF2D<short int> &F)
 {
-  assert(F.getCols() >= 0);
-  vpMatrix t_out(F.getRows(), F.getCols());
+  vpMatrix t_out(F.getHeight(), F.getWidth());
 
   // manage first and last of each column
-  for (uint i = 0; i < F.getRows(); i++) {
-    t_out[i][0] = F[i][1] - F[i][0];
-    t_out[i][F.getCols() - 1] = F[i][F.getCols() - 1] - F[i][F.getCols() - 2];
+  for (uint i = 0; i < F.getHeight(); i++) {
+    t_out[i][0] = F(i, 1) - F(i, 0);
+    t_out[i][F.getWidth() - 1] = F(i, F.getWidth() - 2) - F(i, F.getWidth() - 1);
   }
 
-  for (uint i = 0; i < F.getRows(); i++)
-    for (uint j = 1; j < F.getCols() - 1; j++)
-      t_out[i][j] = (F[i][j + 1] - F[i][j - 1]) * 0.5;
+  for (uint i = 0; i < F.getHeight(); i++)
+    for (uint j = 1; j < F.getWidth() - 1; j++)
+      t_out[i][j] = (F(i, j + 1) - F(i, j - 1)) * 0.5;
 
   return t_out;
 }
 
-vpMatrix usSignalProcessing::GetGy(usImageRF2D<short int> F)
+vpMatrix usSignalProcessing::GetGy(const usImageRF2D<short> &F)
 {
-  assert(F.getCols() >= 0);
-  vpMatrix t_out(F.getRows(), F.getCols());
+  vpMatrix t_out(F.getHeight(), F.getWidth());
   // Computing the edges of the gradient
-  for (uint j = 0; j < F.getCols(); j++) {
-    t_out[0][j] = F[1][j] - F[0][j];
-    t_out[F.getRows() - 1][j] = F[F.getRows() - 1][j] - F[F.getRows() - 2][j];
+  for (uint j = 0; j < F.getWidth(); j++) {
+    t_out[0][j] = F(1, j) - F(0, j);
+    t_out[F.getHeight() - 1][j] = F(F.getHeight() - 1, j) - F(F.getHeight() - 2, j);
   }
   //#pragma omp parallel for collapse(2)
-  for (uint i = 1; i < F.getRows() - 1; i++)
-    for (uint j = 0; j < F.getCols(); j++)
-      t_out[i][j] = (F[i + 1][j] - F[i - 1][j]) * 0.5;
+  for (uint i = 1; i < F.getHeight() - 1; i++)
+    for (uint j = 0; j < F.getWidth(); j++)
+      t_out[i][j] = (F(i + 1, j) - F(i - 1, j)) * 0.5;
 
   return t_out;
 }
 
-vpMatrix usSignalProcessing::Difference(usImageRF2D<short int> A, usImageRF2D<short int> B)
+vpMatrix usSignalProcessing::Difference(const usImageRF2D<short int> &A, const usImageRF2D<short int> &B)
 {
-  assert((A.getCols() == B.getCols()) && (A.getCols() == B.getCols()));
-  vpMatrix t_out(A.getRows(), A.getCols());
-  for (uint i = 0; i < A.getSize(); i++)
-    *(t_out.data + i) = *(A.bitmap + i) - *(B.bitmap + i);
+  vpMatrix t_out(A.getHeight(), A.getWidth());
+
+  for (uint i = 0; i < A.getHeight(); i++)
+    for (uint j = 0; j < A.getWidth(); j++)
+      t_out[i][j] = A(i, j) - B(i, j);
   return t_out;
 }
 
@@ -197,17 +196,42 @@ vpMatrix usSignalProcessing::BilinearInterpolation(vpMatrix In, uint newW, uint 
       x_diff = ((tx * j) - x);
       y_diff = ((ty * i) - y);
 
-      A = In[y][x];
-      B = In[y][x + 1];
-      C = In[y + 1][x];
-      D = In[y + 1][x + 1];
+      A = In.data[x * In.getRows() + y];
+      B = In.data[(x + 1) * In.getRows() + y];
+      C = In.data[x * In.getRows() + (y + 1)];
+      D = In.data[(x + 1) * In.getRows() + (y + 1)];
 
       double vi = (double)(A * (1.0 - x_diff) * (1.0 - y_diff) + B * (x_diff) * (1.0 - y_diff) +
                            C * (y_diff) * (1.0 - x_diff) + D * (x_diff * y_diff));
-      ivec[i][j] = vi;
+      ivec.data[j + i * newW] = vi;
     }
   }
   return ivec;
+  /*
+    vpMatrix ivec(newH, newW);
+    double tx = (double)(In.getCols() - 1.0) / newW;
+    double ty = (double)(In.getRows() - 1.0) / newH;
+    double x_diff, y_diff;
+    double A, B, C, D;
+    //#pragma omp parallel for collapse(2)
+    for (uint i = 0; i < newH; i++) {
+      for (uint j = 0; j < newW; j++) {
+        int x = (int)(tx * j);
+        int y = (int)(ty * i);
+        x_diff = ((tx * j) - x);
+        y_diff = ((ty * i) - y);
+
+        A = In[y][x];
+        B = In[y][x + 1];
+        C = In[y + 1][x];
+        D = In[y + 1][x + 1];
+
+        double vi = (double)(A * (1.0 - x_diff) * (1.0 - y_diff) + B * (x_diff) * (1.0 - y_diff) +
+                             C * (y_diff) * (1.0 - x_diff) + D * (x_diff * y_diff));
+        ivec[i][j] = vi;
+      }
+    }
+    return ivec;*/
 }
 
 vpMatrix usSignalProcessing::HadamardProd(vpMatrix in_array1, vpMatrix in_array2)
