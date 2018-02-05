@@ -49,7 +49,7 @@
 
   This class represents a 2D pre-scan ultrasound image. This image is nothing more than a vpImage that
   contains ultrasound 2D pre-scan data and additional settings that give information about the
-  acquisition process done by the transducer.
+  acquisition process done by the transducer. The bitmap storage is done in row-major.
 
   The settings associated to an usImagePreScan2D image are the one implemented in usImagePreScanSettings.
   We recall that these settings are:

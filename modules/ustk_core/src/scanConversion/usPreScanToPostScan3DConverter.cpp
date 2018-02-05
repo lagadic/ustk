@@ -70,8 +70,9 @@ void usPreScanToPostScan3DConverter::init(const usImagePreScan3D<unsigned char> 
   // compare pre-scan image parameters, to avoid recomputing all the init process if parameters are the same
   if (((usMotorSettings)m_VpreScan) == ((usMotorSettings)preScanImage) &&
       ((usImagePreScanSettings)m_VpreScan) == ((usImagePreScanSettings)preScanImage) &&
-      m_VpreScan.getDimU() == preScanImage.getDimU() && m_VpreScan.getDimV() == preScanImage.getDimV() &&
-      m_VpreScan.getDimW() == preScanImage.getDimW() && m_resolution == down * m_VpreScan.getAxialResolution()) {
+      m_VpreScan.getWidth() == preScanImage.getWidth() && m_VpreScan.getHeight() == preScanImage.getHeight() &&
+      m_VpreScan.getNumberOfFrames() == preScanImage.getNumberOfFrames() &&
+      m_resolution == down * m_VpreScan.getAxialResolution()) {
     m_VpreScan = preScanImage; // update image content
     return;
   }
@@ -79,19 +80,19 @@ void usPreScanToPostScan3DConverter::init(const usImagePreScan3D<unsigned char> 
   m_VpreScan = preScanImage;
   m_resolution = down * m_VpreScan.getAxialResolution();
 
-  int X = m_VpreScan.getDimU();
-  int Y = m_VpreScan.getDimV();
-  int Z = m_VpreScan.getDimW();
+  int X = m_VpreScan.getWidth();
+  int Y = m_VpreScan.getHeight();
+  int Z = m_VpreScan.getNumberOfFrames();
 
   double xmax;
   double ymin;
   double ymax;
   double zmax;
 
-  usPreScanToPostScan3DConverter::convertPreScanCoordToPostScanCoord(X, 0.0, Z, NULL, &ymin, NULL);
-  usPreScanToPostScan3DConverter::convertPreScanCoordToPostScanCoord(X / 2.0, (double)Y, Z / 2.0, NULL, &ymax, NULL);
-  usPreScanToPostScan3DConverter::convertPreScanCoordToPostScanCoord((double)X, (double)Y, Z / 2.0, &xmax, NULL, NULL);
-  usPreScanToPostScan3DConverter::convertPreScanCoordToPostScanCoord(X / 2.0, (double)Y, Z, NULL, NULL, &zmax);
+  usPreScanToPostScan3DConverter::convertPreScanCoordToPostScanCoord(0.0, X, Z, &ymin, NULL, NULL);
+  usPreScanToPostScan3DConverter::convertPreScanCoordToPostScanCoord((double)Y, X / 2.0, Z / 2.0, &ymax, NULL, NULL);
+  usPreScanToPostScan3DConverter::convertPreScanCoordToPostScanCoord((double)Y, (double)X, Z / 2.0, NULL, &xmax, NULL);
+  usPreScanToPostScan3DConverter::convertPreScanCoordToPostScanCoord((double)Y, X / 2.0, Z, NULL, NULL, &zmax);
 
   m_nbX = (unsigned int)ceil(2 * xmax / m_resolution);
   m_nbY = (unsigned int)ceil((ymax - ymin) / m_resolution);
@@ -113,7 +114,7 @@ void usPreScanToPostScan3DConverter::init(const usImagePreScan3D<unsigned char> 
       for (unsigned int z = 0; z < m_nbZ; z++) {
         double zz = m_resolution * z - zmax;
         double i, j, k;
-        usPreScanToPostScan3DConverter::convertPostScanCoordToPreScanCoord(xx, yy, zz, &i, &j, &k, true);
+        usPreScanToPostScan3DConverter::convertPostScanCoordToPreScanCoord(yy, xx, zz, &j, &i, &k, true);
 
         double ii = floor(i);
         double jj = floor(j);
@@ -162,7 +163,7 @@ void usPreScanToPostScan3DConverter::init(const usImagePreScan3D<unsigned char> 
           m_lookupTable1.push_back(m);
         }
 
-        usPreScanToPostScan3DConverter::convertPostScanCoordToPreScanCoord(xx, yy, zz, &i, &j, &k, false);
+        usPreScanToPostScan3DConverter::convertPostScanCoordToPreScanCoord(yy, xx, zz, &j, &i, &k, false);
 
         ii = floor(i);
         jj = floor(j);
@@ -292,17 +293,19 @@ void usPreScanToPostScan3DConverter::convert(usImagePostScan3D<unsigned char> &p
 
 /**
  * Converts the pre-scan coordinates into post-scan coordinates of the corresponding voxel.
- * @param i Position in pre-scan image : scanline coordinate.
- * @param j Position in pre-scan image : sample coordinate.
- * @param k Position in pre-scan image : frame coordinate.
- * @param [out] x Position in the post-scan image along x axis.
- * @param [out] y Position in the post-scan image along y axis.
- * @param [out] z Position in the post-scan image along z axis.
+ * @param i_preScan Position in pre-scan image : sample coordinate.
+ * @param j_preScan Position in pre-scan image : scanline  coordinate.
+ * @param k_preScan Position in pre-scan image : frame coordinate.
+ * @param [out] i_postScan Position in the post-scan image : sample coordinate.
+ * @param [out] j_postScan Position in the post-scan image  : scanline  coordinate.
+ * @param [out] k_postScan Position in the post-scan image : frame coordinate.
  * @param sweepInZdirection Motor direction.
  * @todo check sweepInZdirection parameter
  */
-void usPreScanToPostScan3DConverter::convertPreScanCoordToPostScanCoord(double i, double j, double k, double *x,
-                                                                        double *y, double *z, bool sweepInZdirection)
+void usPreScanToPostScan3DConverter::convertPreScanCoordToPostScanCoord(double i_preScan, double j_preScan,
+                                                                        double k_preScan, double *i_postScan,
+                                                                        double *j_postScan, double *k_postScan,
+                                                                        bool sweepInZdirection)
 {
   const double Nframe = m_VpreScan.getFrameNumber();
   const double Nline = m_VpreScan.getScanLineNumber();
@@ -310,51 +313,56 @@ void usPreScanToPostScan3DConverter::convertPreScanCoordToPostScanCoord(double i
   const double offsetPhi = 0.5 * m_VpreScan.getScanLinePitch() * (Nline - 1);
   const double offsetTheta = 0.5 * m_VpreScan.getFramePitch() * Nframe;
 
-  const double r = m_VpreScan.getTransducerRadius() + j * m_VpreScan.getAxialResolution();
-  const double phi = i * m_VpreScan.getScanLinePitch() - offsetPhi;
-  const double theta = (sweepInZdirection ? 1 : -1) *
-                       (m_VpreScan.getFramePitch() * Nframe * (i + Nline * k) / (Nframe * Nline - 1) - offsetTheta);
+  const double r = m_VpreScan.getTransducerRadius() + i_preScan * m_VpreScan.getAxialResolution();
+  const double phi = j_preScan * m_VpreScan.getScanLinePitch() - offsetPhi;
+  const double theta =
+      (sweepInZdirection ? 1 : -1) *
+      (m_VpreScan.getFramePitch() * Nframe * (j_preScan + Nline * k_preScan) / (Nframe * Nline - 1) - offsetTheta);
 
   const double cPhi = cos(phi);
 
-  if (x)
-    *x = r * sin(phi);
+  if (j_postScan)
+    *j_postScan = r * sin(phi);
   double radiusOffset = m_VpreScan.getTransducerRadius() - m_VpreScan.getMotorRadius();
-  if (y)
-    *y = (r * cPhi - radiusOffset) * cos(theta);
-  if (z)
-    *z = (r * cPhi - radiusOffset) * sin(theta);
+  if (i_postScan)
+    *i_postScan = (r * cPhi - radiusOffset) * cos(theta);
+  if (k_postScan)
+    *k_postScan = (r * cPhi - radiusOffset) * sin(theta);
 }
 
 /**
  * Converts the pre-scan coordinates into post-scan coordinates of the corresponding voxel.
- * @param x Position in the post-scan image along x axis.
- * @param y Position in the post-scan image along y axis.
- * @param z Position in the post-scan image along z axis.
- * @param [out] i Position in pre-scan image : scanline coordinate.
- * @param [out] j Position in pre-scan image : sample coordinate.
- * @param [out] k Position in pre-scan image : frame coordinate.
+ * @param i_postScan Position in the post-scan image : sample coordinate.
+ * @param j_postScan Position in the post-scan image : scanline  coordinate.
+ * @param k_postScan Position in the post-scan image : frame coordinate.
+ * @param [out] i_preScan Position in pre-scan image : sample coordinate.
+ * @param [out] j_preScan Position in pre-scan image : scanline coordinate.
+ * @param [out] k_preScan Position in pre-scan image : frame coordinate.
  * @param sweepInZdirection Motor direction.
  * @todo check sweepInZdirection parameter
  */
-void usPreScanToPostScan3DConverter::convertPostScanCoordToPreScanCoord(double x, double y, double z, double *i,
-                                                                        double *j, double *k, bool sweepInZdirection)
+void usPreScanToPostScan3DConverter::convertPostScanCoordToPreScanCoord(double i_postScan, double j_postScan,
+                                                                        double k_postScan, double *i_preScan,
+                                                                        double *j_preScan, double *k_preScan,
+                                                                        bool sweepInZdirection)
 {
   const double Nframe = m_VpreScan.getFrameNumber();
   const double Nline = m_VpreScan.getScanLineNumber();
   double radiusOffset = m_VpreScan.getTransducerRadius() - m_VpreScan.getMotorRadius();
-  const double rProbe = radiusOffset + sqrt(y * y + z * z);
-  const double r = sqrt(rProbe * rProbe + x * x);
-  const double phi = atan(x / rProbe);
-  const double theta = atan(z / y);
+  const double rProbe = radiusOffset + sqrt(i_postScan * i_postScan + k_postScan * k_postScan);
+  const double r = sqrt(rProbe * rProbe + j_postScan * j_postScan);
+  const double phi = atan(j_postScan / rProbe);
+  const double theta = atan(k_postScan / i_postScan);
 
-  double itmp = phi / m_VpreScan.getScanLinePitch() + 0.5 * (Nline - 1);
-  if (j)
-    *i = itmp;
-  if (j)
-    *j = (r - m_VpreScan.getTransducerRadius()) / m_VpreScan.getAxialResolution();
-  if (k)
-    *k = (Nframe * Nline - 1) *
-             (0.5 / Nline + (sweepInZdirection ? 1 : -1) * theta / (m_VpreScan.getFramePitch() * Nframe * Nline)) -
-         itmp / Nline;
+  double jtmp = phi / m_VpreScan.getScanLinePitch() + 0.5 * (Nline - 1);
+  if (j_preScan)
+    *j_preScan = jtmp;
+  if (i_preScan)
+    *i_preScan = (r - m_VpreScan.getTransducerRadius()) / m_VpreScan.getAxialResolution();
+  if (k_preScan) {
+    *k_preScan =
+        (Nframe * Nline - 1) *
+            (0.5 / Nline + (sweepInZdirection ? 1 : -1) * theta / (m_VpreScan.getFramePitch() * Nframe * Nline)) -
+        jtmp / Nline;
+  }
 }

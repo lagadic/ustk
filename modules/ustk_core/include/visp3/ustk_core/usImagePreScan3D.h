@@ -166,7 +166,7 @@ public:
   void setScanLineNumber(unsigned int scanLineNumber);
 
   // Filtering before calling vpImage::resize() to update scanLineNumber
-  void resize(unsigned int dimX, unsigned int dimY, unsigned int dimZ);
+  void resize(unsigned int width, unsigned int height, unsigned int numberOfFrames);
 };
 
 /**
@@ -188,9 +188,9 @@ usImagePreScan3D<Type>::usImagePreScan3D(const usImage3D<Type> &image, const usI
                                          const usMotorSettings &motorSettings)
   : usImage3D<Type>(image), usImagePreScanSettings(preScanSettings), usMotorSettings(motorSettings)
 {
-  if (image.getDimU() != preScanSettings.getScanLineNumber())
+  if (image.getWidth() != preScanSettings.getScanLineNumber())
     throw(vpException(vpException::badValue, "3D pre-scan image X-size differ from transducer scan line number"));
-  if (image.getDimW() != motorSettings.getFrameNumber())
+  if (image.getNumberOfFrames() != motorSettings.getFrameNumber())
     throw(vpException(vpException::badValue, "3D pre-scan image Z-size differ from motor frame number"));
 }
 
@@ -249,7 +249,7 @@ template <class Type> std::ostream &operator<<(std::ostream &out, const usImageP
 */
 template <class Type> unsigned int usImagePreScan3D<Type>::getBModeSampleNumber() const
 {
-  return usImage3D<Type>::getDimV();
+  return usImage3D<Type>::getHeight();
 }
 
 /**
@@ -259,8 +259,8 @@ template <class Type> unsigned int usImagePreScan3D<Type>::getBModeSampleNumber(
 template <class Type> void usImagePreScan3D<Type>::setData(const usImage3D<Type> &image)
 {
   usImage3D<Type>::operator=(image);
-  setScanLineNumber(image.getDimU());
-  setFrameNumber(image.getDimW());
+  setScanLineNumber(image.getWidth());
+  setFrameNumber(image.getNumberOfFrames());
 }
 
 /**
@@ -271,7 +271,7 @@ template <class Type> void usImagePreScan3D<Type>::setData(const usImage3D<Type>
  */
 template <class Type> void usImagePreScan3D<Type>::setScanLineNumber(unsigned int scanLineNumber)
 {
-  usImage3D<Type>::resize(scanLineNumber, usImage3D<Type>::getDimV(), usImage3D<Type>::getDimW());
+  usImage3D<Type>::resize(scanLineNumber, usImage3D<Type>::getHeight(), usImage3D<Type>::getNumberOfFrames());
   usTransducerSettings::setScanLineNumber(scanLineNumber);
 }
 
@@ -283,7 +283,7 @@ template <class Type> void usImagePreScan3D<Type>::setScanLineNumber(unsigned in
  */
 template <class Type> void usImagePreScan3D<Type>::setFrameNumber(unsigned int frameNumber)
 {
-  usImage3D<Type>::resize(usImage3D<Type>::getDimU(), usImage3D<Type>::getDimV(), frameNumber);
+  usImage3D<Type>::resize(usImage3D<Type>::getWidth(), usImage3D<Type>::getHeight(), frameNumber);
   usMotorSettings::setFrameNumber(frameNumber);
 }
 
@@ -292,15 +292,16 @@ template <class Type> void usImagePreScan3D<Type>::setFrameNumber(unsigned int f
  *
  * Updates also the transducer scan line number that corresponds to the image X-size and
  * the motor frame number that corresponds to the image Z-size.
- * \param dimX Image X-size.
- * \param dimY Image Y-size.
- * \param dimZ Image Z-size.
+ * \param width Image width.
+ * \param height Image height.
+ * \param numberOfFrames Number of frames in the volume.
  */
-template <class Type> void usImagePreScan3D<Type>::resize(unsigned int dimX, unsigned int dimY, unsigned int dimZ)
+template <class Type>
+void usImagePreScan3D<Type>::resize(unsigned int width, unsigned int height, unsigned int numberOfFrames)
 {
-  usImage3D<Type>::resize(dimX, dimY, dimZ);
-  usMotorSettings::setFrameNumber(dimZ);
-  usTransducerSettings::setScanLineNumber(dimX);
+  usImage3D<Type>::resize(width, height, numberOfFrames);
+  usMotorSettings::setFrameNumber(numberOfFrames);
+  usTransducerSettings::setScanLineNumber(width);
 }
 
 /**
@@ -311,20 +312,20 @@ template <class Type> void usImagePreScan3D<Type>::resize(unsigned int dimX, uns
 template <class Type> void usImagePreScan3D<Type>::insertFrame(const usImagePreScan2D<Type> &frame, unsigned int index)
 {
   // Dimentions checks
-  if (index > this->getDimW())
+  if (index > this->getNumberOfFrames())
     throw(vpException(vpException::badValue, "usImage3D::insertFrame : frame index out of volume"));
 
-  if (frame.getHeight() != this->getDimV() || frame.getWidth() != this->getDimU())
+  if (frame.getHeight() != this->getHeight() || frame.getWidth() != this->getWidth())
     throw(vpException(vpException::badValue, "usImage3D::insertFrame : frame size don't match volume size"));
 
   // offset to access the frame in the volume
-  int offset = index * this->getDimV() * this->getDimU();
+  int offset = index * this->getHeight() * this->getWidth();
   Type *frameBeginning = this->getData() + offset;
 
   // copy
-  for (unsigned int i = 0; i < this->getDimU(); i++) {
-    for (unsigned int j = 0; j < this->getDimV(); j++) {
-      frameBeginning[i + this->getDimU() * j] = frame[j][i];
+  for (unsigned int i = 0; i < this->getWidth(); i++) {
+    for (unsigned int j = 0; j < this->getHeight(); j++) {
+      frameBeginning[i + this->getWidth() * j] = frame[j][i];
     }
   }
 }
@@ -338,19 +339,19 @@ template <class Type> void usImagePreScan3D<Type>::getFrame(usImagePreScan2D<Typ
 {
 
   // Dimentions checks
-  if (index > this->getDimW() - 1)
+  if (index > this->getNumberOfFrames() - 1)
     throw(vpException(vpException::badValue, "usImage3D::getFrame : frame index out of volume"));
 
-  image.resize(this->getDimV(), this->getDimU());
+  image.resize(this->getHeight(), this->getWidth());
 
   // offset to access the frame in the volume
-  int offset = index * this->getDimV() * this->getDimU();
+  int offset = index * this->getHeight() * this->getWidth();
   Type *frameBeginning = this->getData() + offset;
 
   // copy
-  for (unsigned int i = 0; i < this->getDimU(); i++) {
-    for (unsigned int j = 0; j < this->getDimV(); j++) {
-      image[j][i] = frameBeginning[i + this->getDimU() * j];
+  for (unsigned int i = 0; i < this->getWidth(); i++) {
+    for (unsigned int j = 0; j < this->getHeight(); j++) {
+      image[j][i] = frameBeginning[i + this->getWidth() * j];
     }
   }
 }

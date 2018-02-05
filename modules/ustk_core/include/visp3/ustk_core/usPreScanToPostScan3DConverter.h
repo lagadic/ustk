@@ -132,11 +132,6 @@ public:
   void convert(usImagePostScan3D<unsigned char> &postScanImage, const usImagePreScan3D<unsigned char> &preScanImage,
                int downSamplingFactor = 1);
 
-  void convertPreScanCoordToPostScanCoord(double i, double j, double k, double *x = NULL, double *y = NULL,
-                                          double *z = NULL, bool sweepInZdirection = true);
-  void convertPostScanCoordToPreScanCoord(double x, double y, double z, double *i = NULL, double *j = NULL,
-                                          double *k = NULL, bool sweepInZdirection = true);
-
   void init(const usImagePreScan3D<unsigned char> &preScanImage, int down = 1);
 
   double getResolution() const;
@@ -147,6 +142,13 @@ public:
   double getResolution() { return m_resolution; }
 
   void SweepInZdirection(bool flag) { m_SweepInZdirection = flag; }
+
+private:
+  void convertPreScanCoordToPostScanCoord(double i_preScan, double j_preScan, double k_preScan,
+                                          double *i_postScan = NULL, double *j_postScan = NULL,
+                                          double *k_postScan = NULL, bool sweepInZdirection = true);
+  void convertPostScanCoordToPreScanCoord(double x, double y, double z, double *i = NULL, double *j = NULL,
+                                          double *k = NULL, bool sweepInZdirection = true);
 };
 
 #endif // US_SCAN_CONVERTER_3D_H

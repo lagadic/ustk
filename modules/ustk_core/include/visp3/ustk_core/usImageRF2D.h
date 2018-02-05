@@ -47,7 +47,7 @@
   @brief 2D Radio Frequence (RF) ultrasound image.
   @ingroup module_ustk_core
 
-  This class represents a 2D RF ultrasound image. This image is nothing more than an image (respecting column major
+  This class represents a 2D RF ultrasound image. This image is nothing more than an image (respecting column-major
 bitmap storage) that  contains additional settings that give information about the acquisition process done by the
 transducer.
 
@@ -140,12 +140,12 @@ public:
 
   //! operator() allows to access/modify RF samples values in the image.
   Type operator()(unsigned int i, unsigned int j) const;
-  void operator()(unsigned int i, unsigned int j, Type value);
+  void operator()(unsigned int i, unsigned int j, const Type &value);
 
   void setScanLineNumber(unsigned int scanLineNumber);
 
-  void resize(const unsigned int h, const unsigned int w);
-  void resize(const unsigned int h, const unsigned int w, const Type val);
+  void resize(const unsigned int height, const unsigned int width);
+  void resize(const unsigned int height, const unsigned int width, const Type &val);
 
 private:
   Type *bitmap;
@@ -167,7 +167,8 @@ usImageRF2D<Type>::usImageRF2D() : usImagePreScanSettings(), bitmap(NULL), npixe
 
 /**
 * Initializing constructor.
-* @param image 2D RF image.
+* @param height Image height.
+* @param width Image width.
 */
 template <class Type> usImageRF2D<Type>::usImageRF2D(unsigned int height, unsigned int width) : usImagePreScanSettings()
 {
@@ -268,7 +269,7 @@ template <class Type> Type usImageRF2D<Type>::operator()(unsigned int i, unsigne
 * @param j Column index of the pixel to write.
 * @param value The value to write.
 */
-template <class Type> void usImageRF2D<Type>::operator()(unsigned int i, unsigned int j, Type value)
+template <class Type> void usImageRF2D<Type>::operator()(unsigned int i, unsigned int j, const Type &value)
 {
   col[j][i] = value;
 }
@@ -309,13 +310,33 @@ template <class Type> void usImageRF2D<Type>::setScanLineNumber(unsigned int sca
  * Resize the 2D RF image.
  *
  * Updates also the transducer scan line number that corresponds to the image width.
- * \param h Image height.
- * \param w Image width.
+ * \param height Image height.
+ * \param width Image width.
  */
-template <class Type> void usImageRF2D<Type>::resize(const unsigned int h, const unsigned int w)
+template <class Type> void usImageRF2D<Type>::resize(const unsigned int height, const unsigned int width)
 {
-  this->init(h, w);
-  this->setScanLineNumber(w);
+  this->init(height, width);
+  this->setScanLineNumber(width);
+}
+
+/*!
+ * Resize the 2D RF image.
+ *
+ * Updates also the transducer scan line number that corresponds to the image width.
+ * \param height Image height.
+ * \param width Image width.
+ * \param val Value to set in every pixel.
+ */
+template <class Type>
+void usImageRF2D<Type>::resize(const unsigned int height, const unsigned int width, const Type &val)
+{
+  this->init(height, width);
+  this->setScanLineNumber(width);
+
+  // fill bitmap
+  for (unsigned int n = 0; n < this->npixels; n++) {
+    bitmap[n] = val;
+  }
 }
 
 /*!
@@ -323,8 +344,8 @@ template <class Type> void usImageRF2D<Type>::resize(const unsigned int h, const
 
   Allocate memory for an [h x w] image, using column major image convention.
 
-  \param w : Image width.
-  \param h : Image height.
+  \param width : Image width.
+  \param height : Image height.
 
   Element of the bitmap are not initialized
 
@@ -335,23 +356,23 @@ template <class Type> void usImageRF2D<Type>::resize(const unsigned int h, const
   \exception vpException::memoryAllocationError
 
 */
-template <class Type> void usImageRF2D<Type>::init(unsigned int h, unsigned int w)
+template <class Type> void usImageRF2D<Type>::init(unsigned int height, unsigned int width)
 {
-  if (w != this->width) {
+  if (width != this->width) {
     if (col != NULL) {
       delete[] col;
       col = NULL;
     }
   }
 
-  if ((h != this->height) || (w != this->width)) {
+  if ((height != this->height) || (width != this->width)) {
     if (bitmap != NULL) {
       delete[] bitmap;
       bitmap = NULL;
     }
   }
-  this->width = w;
-  this->height = h;
+  this->width = width;
+  this->height = height;
 
   npixels = width * height;
   if (bitmap == NULL)
