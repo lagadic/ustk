@@ -170,7 +170,9 @@ usImageRF2D<Type>::usImageRF2D() : usImagePreScanSettings(), bitmap(NULL), npixe
 * @param height Image height.
 * @param width Image width.
 */
-template <class Type> usImageRF2D<Type>::usImageRF2D(unsigned int height, unsigned int width) : usImagePreScanSettings()
+template <class Type>
+usImageRF2D<Type>::usImageRF2D(unsigned int height, unsigned int width)
+  : usImagePreScanSettings(), bitmap(NULL), npixels(0), width(0), height(0), col(NULL)
 {
   init(height, width);
 }
@@ -183,7 +185,7 @@ template <class Type> usImageRF2D<Type>::usImageRF2D(unsigned int height, unsign
 */
 template <class Type>
 usImageRF2D<Type>::usImageRF2D(unsigned int height, unsigned int width, const usImagePreScanSettings &preScanSettings)
-  : usImagePreScanSettings(preScanSettings)
+  : usImagePreScanSettings(preScanSettings), bitmap(NULL), npixels(0), width(0), height(0), col(NULL)
 {
   if (width != preScanSettings.getScanLineNumber())
     throw(vpException(vpException::badValue, "RF image width differ from transducer scan line number"));
@@ -198,7 +200,7 @@ usImageRF2D<Type>::usImageRF2D(unsigned int height, unsigned int width, const us
 */
 template <class Type>
 usImageRF2D<Type>::usImageRF2D(const usImageRF2D &other)
-  : usImagePreScanSettings(other), npixels(0), width(0), height(0)
+  : usImagePreScanSettings(other), bitmap(NULL), npixels(0), width(0), height(0), col(NULL)
 {
   // allocation and resize
   resize(other.getHeight(), other.getWidth());
