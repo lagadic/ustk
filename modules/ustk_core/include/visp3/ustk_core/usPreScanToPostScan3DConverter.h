@@ -56,6 +56,14 @@
  *
  * @warning Converting with this class uses a lot of RAM when computing the LUTs in init().
  *
+ * Here is the schema of the conversion, with an usImagePreScan3D image as input and some usImagePostScan3D as output
+ * (linear/convex cases) :
+ *
+ *   \image html img-usImagePreScan3D.png
+ *
+ *   \image html img-usImagePostScan3D-linear.png
+ *   \image html img-usImagePostScan3D-convex.png
+ *
  *  Here is an example of how to use this converter :
  *
  * \code

@@ -204,7 +204,9 @@ usImageRF3D<Type>::usImageRF3D(unsigned int width, unsigned int height, unsigned
 
 /**
 * Full initializing constructor.
-* @param image3D 3D image to copy that corresponds to the 3D RF image data.
+* @param width Image width.
+* @param height Image height.
+* @param numberOfFrames Number of frames in volume.
 * @param preScanSettings Pre-scan settings to copy.
 * @param motorSettings Motor settings to copy.
 */

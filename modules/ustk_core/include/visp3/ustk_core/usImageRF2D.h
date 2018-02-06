@@ -177,7 +177,8 @@ template <class Type> usImageRF2D<Type>::usImageRF2D(unsigned int height, unsign
 
 /**
 * Initializing constructor.
-* @param image 2D RF image.
+* @param height Image height.
+* @param width Image width.
 * @param preScanSettings Pre-scan image settings.
 */
 template <class Type>
