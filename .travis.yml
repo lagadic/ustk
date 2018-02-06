@@ -54,7 +54,7 @@ before_script:
 
 script: 
   - make
-  - ctest -VV
+  - ctest
 
 notifications:
   email:
