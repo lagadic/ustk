@@ -50,6 +50,12 @@
 * @class usMeterPixelConversion
 * @brief Conversion between a position in meters in the space and the equivalent pixel position in the ultrasound image.
 * @ingroup module_ustk_core
+*
+* * The following image shows the correspondance between frames (u,v) and (x,y) for post-scan 2D images:
+*   \image html img-usImagePostScan2D.png
+* The following image shows the correspondance between frames (u,v,w) and (x,y,z) for post-scan 3D images with linear
+* motor:
+*   \image html img-usImagePostScan3D-linear.png
 */
 class VISP_EXPORT usMeterPixelConversion
 {
