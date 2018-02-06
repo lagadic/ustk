@@ -46,11 +46,12 @@
 #include <map>
 #include <sstream>
 #include <string>
-#include <string>
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/ustk_core/usImage3D.h>
+#include <visp3/ustk_core/usImageRF2D.h>
+#include <visp3/ustk_core/usImageRF3D.h>
 
 /**
  * @class usRawFileParser
@@ -59,22 +60,21 @@
  */
 class VISP_EXPORT usRawFileParser
 {
-
 public:
   /** @name 2D io */
   //@{
   void read(vpImage<unsigned char> &image2D, const std::string &mhdFileName);
   void write(const vpImage<unsigned char> &image2D, const std::string &rawFileName);
-  void read(vpImage<short> &image2D, const std::string &mhdFileName);
-  void write(const vpImage<short> &image2D, const std::string &rawFileName);
+  void read(usImageRF2D<short> &image2D, const std::string &mhdFileName);
+  void write(const usImageRF2D<short> &image2D, const std::string &rawFileName);
   //@}
 
   /** @name 3D io */
   //@{
   void read(usImage3D<unsigned char> &image3D, const std::string &mhdFileName);
   void write(const usImage3D<unsigned char> &image3D, const std::string &rawFileName);
-  void read(usImage3D<short> &image3D, const std::string &mhdFileName);
-  void write(const usImage3D<short> &image3D, const std::string &rawFileName);
+  void read(usImageRF3D<short> &image3D, const std::string &mhdFileName);
+  void write(const usImageRF3D<short> &image3D, const std::string &rawFileName);
   //@}
 };
 #endif // US_RAW_FILE_PARSER_H

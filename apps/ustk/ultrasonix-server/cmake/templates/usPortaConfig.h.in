@@ -42,4 +42,6 @@
 // porta licence path
 #define USTK_PORTA_LICENCE_PATH "${Porta_LICENCE_PATH}"
 
+#define USTK_PORTA_VERSION_MAJOR ${Porta_VERSION_MAJOR}
+
 #endif

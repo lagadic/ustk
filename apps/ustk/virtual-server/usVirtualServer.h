@@ -42,6 +42,7 @@
 #include <QtCore/QDateTime>
 #include <QtCore/QFile>
 #include <QtCore/QString>
+#include <QtCore/QStringList>
 #include <QtNetwork/QTcpServer>
 #include <QtNetwork/QTcpSocket>
 
@@ -52,6 +53,7 @@
 //#include <unistd.h>
 
 // USTK inclues
+#include <visp3/ustk_core/usConfig.h>
 #include <visp3/ustk_io/usMHDSequenceReader.h>
 #include <visp3/ustk_io/usSequenceReader.h>
 

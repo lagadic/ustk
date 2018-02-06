@@ -1,21 +1,31 @@
 #ifndef US_NETWORK_GRABBER_H
 #define US_NETWORK_GRABBER_H
 
+#include <usPortaConfig.h>
+
 #include <QtCore/QDateTime>
 #include <QtCore/QFile>
 #include <QtCore/QString>
 #include <QtNetwork/QTcpServer>
 #include <QtNetwork/QTcpSocket>
+#include <QtWidgets/QApplication>
 
 // for URect
 #define COMPILE_PORTA_DEMO
 
 // Ultrasonix SDK includes
 #include <ImagingModes.h>
-#include <porta.h>
 #include <porta_params_def.h>
-#include <porta_std_includes.h>
+#include <porta.h>
 #include <utx_opt.h>
+
+#if USTK_PORTA_VERSION_MAJOR > 5
+#include <porta_def.h>
+#include <porta_wrapper.h>
+#define RfMode 12
+#else
+#include <porta_std_includes.h>
+#endif
 
 #include <cmath>
 #include <ctime>

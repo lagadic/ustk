@@ -3,6 +3,7 @@
 #ifdef USTK_HAVE_FFTW
 
 #include <visp3/core/vpTime.h>
+#include <visp3/ustk_core/usImageRF3D.h>
 #include <visp3/ustk_core/usRFToPreScan3DConverter.h>
 #include <visp3/ustk_io/usImageIo.h>
 
@@ -18,16 +19,13 @@ int main()
     std::cout << "You should set USTK_DATASET_PATH environment var to access to ustk dataset" << std::endl;
     return 0;
   }
-
+  std::cout << filename << std::endl;
   usImageRF2D<short int> rfImage;
   usImageRF3D<short int> rfImage3D;
   rfImage3D.resize(192, 3840, 10);
 
-  usImagePreScan3D<unsigned char> prescanImage;
-
-  char buffer[400];
-  for (int i = 0; i < 10; i++) {
-    sprintf(buffer, filename.c_str(), i);
+  // inserting 10 times the same frame to simulate a 3D image
+  for (unsigned int i = 0; i < 10; i++) {
     usImageIo::read(rfImage, filename);
     rfImage3D.insertFrame(rfImage, i);
   }
@@ -49,6 +47,7 @@ int main()
 
   std::cout << "converting..." << std::endl;
 
+  usImagePreScan3D<unsigned char> prescanImage;
   converter.convert(rfImage3D, prescanImage);
 
   std::cout << prescanImage;

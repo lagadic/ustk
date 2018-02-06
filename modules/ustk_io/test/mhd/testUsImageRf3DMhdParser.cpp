@@ -223,9 +223,7 @@ int main(int argc, const char **argv)
     rf3DReference.setAxialResolution(0.0058);
     rf3DReference.setTransmitFrequency(300000);
     rf3DReference.setSamplingFrequency(2000000);
-    rf3DReference.setDepth(rf3DReference.getAxialResolution() * rf3DReference.getDimY());
-    // image initialisation
-    rf3DReference.initData(255);
+    rf3DReference.setDepth(rf3DReference.getAxialResolution() * rf3DReference.getHeight());
 
     // printing settings
     std::cout << "Written in " << filename << std::endl;
@@ -233,13 +231,11 @@ int main(int argc, const char **argv)
 
     // write image
     usImageIo::write(rf3DReference, filename);
-    std::cout << "1" << std::endl;
 
     // read the image we just wrote
     usImageRF3D<short> rf3D;
     filename = dirname + vpIoTools::path("/") + "rf3d.mhd";
     usImageIo::read(rf3D, filename);
-    std::cout << "2" << std::endl;
 
     // printing settings read
     std::cout << "Read from " << filename << std::endl;

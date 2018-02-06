@@ -51,6 +51,12 @@
 *
 * @warning Be sure you correctly filled your acquisition settings (probe radius, scan line pitch, etc...). Those
 * parameters are used in the conversion !
+*
+* The following image shows the correspondance between frames (u,v) and (x,y) for post-scan 2D images:
+*   \image html img-usImagePostScan2D.png
+* The following image shows the correspondance between frames (u,v,w) and (x,y,z) for post-scan 3D images with linear
+* motor:
+*   \image html img-usImagePostScan3D-linear.png
 */
 class VISP_EXPORT usPixelMeterConversion
 {

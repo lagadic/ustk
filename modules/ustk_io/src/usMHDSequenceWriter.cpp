@@ -28,7 +28,7 @@ void usMHDSequenceWriter::setSequenceDirectory(const std::string sequenceDirecto
 }
 
 /**
-* Writing method for usImageRF3D images in a sequence.
+* Writing method for usImageRF2D images in a sequence.
 * @param image The usImageRF2D image to write.
 * @param timestamp The timestamp of the image.
 */
@@ -141,8 +141,8 @@ void usMHDSequenceWriter::write(const usImagePreScan2D<unsigned char> &image, co
 }
 
 /**
-* Writing method for usImageRF3D images in a sequence.
-* @param image The usImageRF2D image to write.
+* Writing method for usImagePostScan2D images in a sequence.
+* @param image The usImagePostScan2D image to write.
 * @param timestamp The timestamp of the image.
 */
 void usMHDSequenceWriter::write(const usImagePostScan2D<unsigned char> &image, const uint64_t timestamp)
@@ -226,9 +226,9 @@ void usMHDSequenceWriter::write(const usImageRF3D<short int> &image, const std::
   sprintf(rawFileNamebufferMin, "image%05d.raw", m_imageCounter);
 
   usMetaHeaderParser::MHDHeader header;
-  header.dim[0] = image.getDimX();
-  header.dim[1] = image.getDimY();
-  header.dim[2] = image.getDimZ();
+  header.dim[0] = image.getWidth();
+  header.dim[1] = image.getHeight();
+  header.dim[2] = image.getNumberOfFrames();
   header.elementSpacing[0] = 1.0;
   header.elementSpacing[1] = 1.0;
   header.elementSpacing[2] = 1.0;
@@ -289,9 +289,9 @@ void usMHDSequenceWriter::write(const usImagePreScan3D<unsigned char> &image, co
   sprintf(rawFileNamebufferMin, "image%05d.raw", m_imageCounter);
 
   usMetaHeaderParser::MHDHeader header;
-  header.dim[0] = image.getDimX();
-  header.dim[1] = image.getDimY();
-  header.dim[2] = image.getDimZ();
+  header.dim[0] = image.getWidth();
+  header.dim[1] = image.getHeight();
+  header.dim[2] = image.getNumberOfFrames();
   header.elementSpacing[0] = 1.0;
   header.elementSpacing[1] = 1.0;
   header.elementSpacing[2] = 1.0;
@@ -352,9 +352,9 @@ void usMHDSequenceWriter::write(const usImagePostScan3D<unsigned char> &image, c
   sprintf(rawFileNamebufferMin, "image%05d.raw", m_imageCounter);
 
   usMetaHeaderParser::MHDHeader header;
-  header.dim[0] = image.getDimX();
-  header.dim[1] = image.getDimY();
-  header.dim[2] = image.getDimZ();
+  header.dim[0] = image.getWidth();
+  header.dim[1] = image.getHeight();
+  header.dim[2] = image.getNumberOfFrames();
   header.elementSpacing[0] = 1.0;
   header.elementSpacing[1] = 1.0;
   header.elementSpacing[2] = 1.0;

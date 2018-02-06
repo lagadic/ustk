@@ -80,13 +80,13 @@ int main(int argc, char **argv)
 
   vtkSmartPointer<vtkPlane> planeX = vtkSmartPointer<vtkPlane>::New();
   planeX->SetNormal(1, 0, 0);
-  planeX->SetOrigin(postScanImage.getDimX() * spacing[0] / 2.0, 0, 0);
+  planeX->SetOrigin(postScanImage.getDimU() * spacing[0] / 2.0, 0, 0);
   vtkSmartPointer<vtkPlane> planeY = vtkSmartPointer<vtkPlane>::New();
   planeY->SetNormal(0, 1, 0);
-  planeY->SetOrigin(0, postScanImage.getDimY() * spacing[1] / 2.0, 0);
+  planeY->SetOrigin(0, postScanImage.getDimV() * spacing[1] / 2.0, 0);
   vtkSmartPointer<vtkPlane> planeZ = vtkSmartPointer<vtkPlane>::New();
   planeZ->SetNormal(0, 0, 1);
-  planeZ->SetOrigin(0, 0, postScanImage.getDimZ() * spacing[2] / 2.0);
+  planeZ->SetOrigin(0, 0, postScanImage.getDimW() * spacing[2] / 2.0);
   scene.setPlanes(planeX, planeY, planeZ);
 
   scene.init();

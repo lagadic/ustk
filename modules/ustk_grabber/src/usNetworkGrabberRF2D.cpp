@@ -219,12 +219,12 @@ void usNetworkGrabberRF2D::dataArrived()
   else {
     if (m_verbose) {
       std::cout << "reading following part of the frame" << std::endl;
-      std::cout << "local image size = " << m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getSize()
+      std::cout << "local image size = " << m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getNumberOfPixel()
                 << std::endl;
     }
     m_bytesLeftToRead -= in.readRawData(
         ((char *)m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->bitmap) +
-            ((m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getSize() * 2) - m_bytesLeftToRead),
+            ((m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getNumberOfPixel() * 2) - m_bytesLeftToRead),
         m_bytesLeftToRead);
 
     if (m_verbose)

@@ -28,8 +28,8 @@ int main()
   vtkImageImport *importer = vtkImageImport::New();
   importer->SetDataScalarTypeToUnsignedChar();
   importer->SetImportVoidPointer((void *)postScanImage.getConstData());
-  importer->SetWholeExtent(0, postScanImage.getDimX() - 1, 0, postScanImage.getDimY() - 1, 0,
-                           postScanImage.getDimZ() - 1);
+  importer->SetWholeExtent(0, postScanImage.getDimU() - 1, 0, postScanImage.getDimV() - 1, 0,
+                           postScanImage.getDimW() - 1);
   importer->SetDataExtentToWholeExtent();
   importer->SetNumberOfScalarComponents(1);
 
@@ -46,9 +46,9 @@ int main()
     return 1;
 
   // voxel of middle or image
-  int middleX = postScanImage.getDimX() / 2;
-  int middleY = postScanImage.getDimY() / 2;
-  int middleZ = postScanImage.getDimZ() / 2;
+  int middleX = postScanImage.getDimU() / 2;
+  int middleY = postScanImage.getDimV() / 2;
+  int middleZ = postScanImage.getDimW() / 2;
   if (vtkImage->GetScalarPointer(middleX, middleY, middleZ) != postScanImage.getData(middleX, middleY, middleZ))
     return 1;
 

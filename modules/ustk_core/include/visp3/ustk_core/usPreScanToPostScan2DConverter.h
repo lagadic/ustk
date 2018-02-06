@@ -50,6 +50,13 @@
  * This class allows to convert 2D pre-scan ultrasound images to post-scan.
  * The convertion is applied in the convert() method.
  *
+ * Here is the schema of the conversion, with an usImagePreScan2D image as input and two usImagePostScan2D as output
+ * (linear and convex transducer cases) :
+ *
+ *   \image html img-usImagePreScan2D.png
+ *
+ *   \image html img-usImagePostScan2D.png
+ *
  * Here is an example of how to use the converter, to build a post-scan image from a pre-scan image.
  *
  * \code

@@ -44,7 +44,7 @@
 * @param decimationFactor Decimation factor for RF conversion (keeping 1 RF sample every decimationFactor samples)
 */
 usRFToPostScan3DConverter::usRFToPostScan3DConverter(int decimationFactor)
-  : m_RFConverter(), m_scanConverter(), m_scanConverterIsInit(false), m_inputImageChanged(false), m_intermediateImage()
+  : m_RFConverter(), m_scanConverter(), m_intermediateImage()
 {
   m_RFConverter.setDecimationFactor(decimationFactor);
 }

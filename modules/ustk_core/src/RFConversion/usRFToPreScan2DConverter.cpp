@@ -176,14 +176,14 @@ void usRFToPreScan2DConverter::convert(const usImageRF2D<short int> &rfImage,
   // First we copy the transducer settings
   preScanImage.setImagePreScanSettings(rfImage);
 
-  int w = rfImage.getWidth();
-  int h = rfImage.getHeight();
+  unsigned int w = rfImage.getWidth();
+  unsigned int h = rfImage.getHeight();
 
   unsigned int frameSize = w * h;
 
   // Run envelope detector
-  for (int i = 0; i < w; ++i) {
-    enveloppeDetection(rfImage.bitmap + i * h, m_env + i * h);
+  for (unsigned int i = 0; i < w; ++i) {
+    enveloppeDetection(rfImage.getSignal(i), m_env + i * h);
   }
 
   // Log-compress
@@ -203,8 +203,8 @@ void usRFToPreScan2DConverter::convert(const usImageRF2D<short int> &rfImage,
 
   // Decimate and normalize
   unsigned int k = 0;
-  for (int i = 0; i < h; i += m_decimationFactor) {
-    for (int j = 0; j < w; ++j) {
+  for (unsigned int i = 0; i < h; i += m_decimationFactor) {
+    for (unsigned int j = 0; j < w; ++j) {
       unsigned int vcol = (unsigned int)(((m_comp[i + h * j] - min) / maxMinDiff) * 255);
       preScanImage[k][j] = (vcol > 255) ? 255 : vcol;
     }

@@ -66,6 +66,16 @@ find_path(Porta_SETTINGS_PATH
 if(Porta_LIBRARIES AND Porta_INCLUDE_DIRS)
   set(Porta_FOUND TRUE)
   message(STATUS "Porta found")
+
+  find_file(PORTA_WRAPPER_DIR porta_wrapper.cpp $ENV{PORTA_DIR}/wrapper)
+  message(STATUS "PORTA_WRAPPER_DIR : ${PORTA_WRAPPER_DIR}")
+  if(EXISTS ${PORTA_WRAPPER_DIR})
+    set(Porta_VERSION_MAJOR 6)
+    list(APPEND Porta_INCLUDE_DIRS $ENV{PORTA_DIR}/wrapper)
+  else()
+    set(Porta_VERSION_MAJOR 5)
+  endif()
+
 else()
   set(Porta_FOUND FALSE)
   message(STATUS "Could not find Porta (if you are on a ulstrasonix machine, make sure you properly filled PORTA_DIR environment variable).")
@@ -76,4 +86,5 @@ mark_as_advanced(
   Porta_LIBRARIES
   Porta_FIRMWARE_PATH
   Porta_SETTINGS_PATH
+  PORTA_WRAPPER_DIR
 )

@@ -94,7 +94,7 @@ int main(int argc, const char **argv)
       }
     }
   }
-  if ((sqrt(inc) / (double)(prescanReference.getSize() - pxSkipped)) <
+  if ((sqrt((double)inc) / (double)(prescanReference.getSize() - pxSkipped)) <
       0.5) // we allow a mean difference of 1 units per pixels between the images
     testFailed = false;
 

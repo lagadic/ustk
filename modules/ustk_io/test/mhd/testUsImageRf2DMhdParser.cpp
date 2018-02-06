@@ -213,15 +213,15 @@ int main(int argc, const char **argv)
     filename = dirname + vpIoTools::path("/") + "rf2d.mhd";
 
     // Init values in reference parser (same values in file read in test)
-    vpImage<short> data(186, 233, 128); // Set pixel intensity to 128
-    usImageRF2D<short> rf2DReference;
-    rf2DReference.setData(data);
+    usImageRF2D<short> rf2DReference(186, 233);
+    rf2DReference.setScanLineNumber(233);
     rf2DReference.setScanLinePitch(0.0145);
     rf2DReference.setTransducerRadius(0.554);
     rf2DReference.setTransducerConvexity(true);
     rf2DReference.setAxialResolution(0.0058);
     rf2DReference.setTransmitFrequency(300000);
     rf2DReference.setSamplingFrequency(2000000);
+    rf2DReference.setDepth(rf2DReference.getScanLinePitch() * rf2DReference.getHeight());
 
     std::cout << "Written in " << filename << std::endl;
     std::cout << rf2DReference;

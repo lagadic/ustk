@@ -25,9 +25,7 @@ int main()
 
   usImagePostScan3D<unsigned char> postcanImage;
 
-  char buffer[400];
   for (int i = 0; i < 10; i++) {
-    sprintf(buffer, filename.c_str(), i);
     usImageIo::read(rfImage, filename);
     rfImage3D.insertFrame(rfImage, i);
   }

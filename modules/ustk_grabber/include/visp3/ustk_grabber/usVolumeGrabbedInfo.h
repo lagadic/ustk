@@ -130,10 +130,7 @@ template <class Type> std::vector<uint64_t> usVolumeGrabbedInfo<Type>::getTimeSt
 */
 template <class Type> std::ostream &operator<<(std::ostream &out, const usVolumeGrabbedInfo<Type> &other)
 {
-  out << "volumeCount : " << other.getTimeStamp() << std::endl
-      << "firstFrameTimeStamp : " << other.getFistFrameTimeStamp() << std::endl
-      << "lastFrameTimeStamp per volume : " << other.getLastFrameTimeStamp() << std::endl
-      << (Type)other << std::endl;
+  out << "volumeCount : " << other.getVolumeCount() << std::endl << (Type)other << std::endl;
 
   return out;
 }

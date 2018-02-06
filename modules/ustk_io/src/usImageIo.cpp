@@ -115,7 +115,7 @@ void usImageIo::write(const usImageRF2D<short> &imageRf2D, const std::string &he
     // filling header
     usMetaHeaderParser::MHDHeader header;
     header.numberOfDimensions = 2;
-    header.elementType = usMetaHeaderParser::MET_UCHAR;
+    header.elementType = usMetaHeaderParser::MET_SHORT;
     header.imageType = us::RF_2D;
     header.elementSpacing[0] = 1;
     header.elementSpacing[1] = 1;
@@ -164,8 +164,8 @@ void usImageIo::read(usImageRF2D<short int> &imageRf2D, const std::string &heade
     if (mhdParser.getImageType() != us::RF_2D && mhdParser.getImageType() != us::NOT_SET) {
       throw(vpException(vpException::badValue, "Reading a non rf 2D image!"));
     }
-    if (mhdParser.getElementType() != usMetaHeaderParser::MET_UCHAR) {
-      throw(vpException(vpException::badValue, "Reading a non unsigned char image!"));
+    if (mhdParser.getElementType() != usMetaHeaderParser::MET_SHORT) {
+      throw(vpException(vpException::badValue, "Reading a non short image!"));
     }
 
     usMetaHeaderParser::MHDHeader mhdHeader = mhdParser.getMHDHeader();
@@ -227,14 +227,14 @@ void usImageIo::write(const usImageRF3D<short> &imageRf3D, const std::string &he
     // filling header
     usMetaHeaderParser::MHDHeader header;
     header.numberOfDimensions = 3;
-    header.elementType = usMetaHeaderParser::MET_UCHAR;
+    header.elementType = usMetaHeaderParser::MET_SHORT;
     header.imageType = us::RF_3D;
     header.elementSpacing[0] = 1;
     header.elementSpacing[1] = 1;
     header.elementSpacing[2] = 1;
-    header.dim[0] = imageRf3D.getDimX();
-    header.dim[1] = imageRf3D.getDimY();
-    header.dim[2] = imageRf3D.getDimZ();
+    header.dim[0] = imageRf3D.getWidth();
+    header.dim[1] = imageRf3D.getHeight();
+    header.dim[2] = imageRf3D.getNumberOfFrames();
     header.msb = false;
     header.MHDFileName = headerFileName;
     // remove full path for image file name (located in the same directory as the mhd
@@ -276,8 +276,8 @@ void usImageIo::read(usImageRF3D<short> &imageRf3, const std::string &headerFile
     if (mhdParser.getImageType() != us::RF_3D && mhdParser.getImageType() != us::NOT_SET) {
       throw(vpException(vpException::badValue, "Reading a non rf 3D image!"));
     }
-    if (mhdParser.getElementType() != usMetaHeaderParser::MET_UCHAR) {
-      throw(vpException(vpException::badValue, "Reading a non unsigned char image!"));
+    if (mhdParser.getElementType() != usMetaHeaderParser::MET_SHORT) {
+      throw(vpException(vpException::badValue, "Reading a non short image!"));
     }
 
     usMetaHeaderParser::MHDHeader mhdHeader = mhdParser.getMHDHeader();
@@ -515,9 +515,9 @@ void usImageIo::write(const usImagePreScan3D<unsigned char> &preScanImage, const
     header.elementSpacing[0] = 1;
     header.elementSpacing[1] = 1;
     header.elementSpacing[2] = 1;
-    header.dim[0] = preScanImage.getDimX();
-    header.dim[1] = preScanImage.getDimY();
-    header.dim[2] = preScanImage.getDimZ();
+    header.dim[0] = preScanImage.getWidth();
+    header.dim[1] = preScanImage.getHeight();
+    header.dim[2] = preScanImage.getNumberOfFrames();
     header.msb = false;
     header.MHDFileName = headerFileName;
     // remove full path for image file name (located in the same directory as the mhd)
@@ -901,13 +901,11 @@ void usImageIo::read(usImagePostScan2D<unsigned char> &postScanImage, const std:
 */
 void usImageIo::write(const usImagePostScan3D<unsigned char> &postScanImage, const std::string &headerFileName)
 {
-  std::cout << "writing postScan3D" << std::endl;
   // checking header type
   usImageIo::usHeaderFormatType headerFormat = getHeaderFormat(headerFileName);
   if (headerFormat == FORMAT_XML) {
     write(postScanImage, headerFileName, std::string(".png"));
   } else if (headerFormat == FORMAT_MHD) {
-    std::cout << "writing mhd" << std::endl;
     write(postScanImage, headerFileName, std::string(".raw"));
   }
 }
@@ -941,9 +939,9 @@ void usImageIo::write(const usImagePostScan3D<unsigned char> &postScanImage, con
     header.elementSpacing[0] = postScanImage.getElementSpacingX();
     header.elementSpacing[1] = postScanImage.getElementSpacingY();
     header.elementSpacing[2] = postScanImage.getElementSpacingZ();
-    header.dim[0] = postScanImage.getDimX();
-    header.dim[1] = postScanImage.getDimY();
-    header.dim[2] = postScanImage.getDimZ();
+    header.dim[0] = postScanImage.getWidth();
+    header.dim[1] = postScanImage.getHeight();
+    header.dim[2] = postScanImage.getNumberOfFrames();
     header.msb = false;
     header.MHDFileName = headerFileName;
     // remove full path for image file name (located in the same directory as the mhd

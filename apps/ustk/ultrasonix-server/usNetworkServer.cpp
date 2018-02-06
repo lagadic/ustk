@@ -2,6 +2,7 @@
 
 usNetworkServer::usNetworkServer(QObject *parent) : QObject(parent)
 {
+
   // init porta hardware
 
   // creating porta object
@@ -158,13 +159,21 @@ void usNetworkServer::readIncomingData()
       probeInfo nfo;
       m_porta->getProbeInfo(nfo);
       if (initWithoutUpdate && nfo.motorized) {
+#if USTK_PORTA_VERSION_MAJOR < 6
         m_porta->setParam(prmMotorStatus, 0); // disables the motor
+#endif
         m_porta->setMotorActive(false);
       }
-      m_porta->runImage();
+      if (!m_porta->runImage()) {
+        std::cout << "porta run error" << std::endl;
+      } else {
+        std::cout << "porta run OK" << std::endl;
+      }
     } else {
       m_porta->stopImage();
+#if USTK_PORTA_VERSION_MAJOR < 6
       m_porta->setParam(prmMotorStatus, 0); // disables the motor
+#endif
       m_porta->setMotorActive(false);
     }
   } else {
@@ -185,7 +194,11 @@ void usNetworkServer::connectionAboutToClose()
 }
 
 /// The callback provided to porta to be called when a new frame is acquired from the cine buffer.
+#if USTK_PORTA_VERSION_MAJOR > 5 // used only for RF in sdk version >= 6
+int portaCallback(void *param, unsigned char *addr, int blockIndex, int)
+#else
 bool portaCallback(void *param, unsigned char *addr, int blockIndex, int)
+#endif
 {
   std::cout << "new frame acquired" << std::endl;
   usNetworkServer *server = (usNetworkServer *)param;
@@ -246,6 +259,162 @@ bool portaCallback(void *param, unsigned char *addr, int blockIndex, int)
   }
 
   QByteArray block;
+  std::cout << "writing header on socket" << std::endl;
+  QDataStream out(&block, QIODevice::WriteOnly);
+  out.setVersion(QDataStream::Qt_5_0);
+  out << server->imageHeader.headerId;
+  out << server->imageHeader.frameCount;
+  out << server->imageHeader.timeStamp;
+  out << server->imageHeader.dataRate;
+  out << server->imageHeader.dataLength;
+  out << server->imageHeader.ss;
+  out << server->imageHeader.imageType;
+  out << server->imageHeader.frameWidth;
+  out << server->imageHeader.frameHeight;
+  out << server->imageHeader.pixelWidth;
+  out << server->imageHeader.pixelHeight;
+  out << server->imageHeader.transmitFrequency;
+  out << server->imageHeader.samplingFrequency;
+  out << server->imageHeader.transducerRadius;
+  out << server->imageHeader.scanLinePitch;
+  out << server->imageHeader.scanLineNumber;
+  out << server->imageHeader.imageDepth;
+  out << server->imageHeader.degPerFrame;
+  out << server->imageHeader.framesPerVolume;
+  out << server->imageHeader.motorRadius;
+  out << server->imageHeader.motorType;
+  std::cout << "writing image on socket" << std::endl;
+
+  if (server->imageHeader.imageType == 1) { // post scan
+    out.writeRawData((char *)server->postScanImage, server->imageHeader.dataLength);
+  } else if (server->imageHeader.imageType == 0) { // pre-scan
+    out.writeRawData((char *)beginImage, server->imageHeader.dataLength);
+  } else if (server->imageHeader.imageType == 2) { // RF
+    out.writeRawData((char *)beginImage, server->imageHeader.dataLength);
+  }
+
+  if (server->motorOffsetSkipped && (motorStatus == 1)) { // 3D but offset skipped
+    socket->write(block);
+  } else if (motorStatus == 0) { // 2D
+    socket->write(block);
+  }
+
+  // for bi-plane we send a second image
+  if (portaInstance->getCurrentMode() == BiplaneMode && server->imageHeader.imageType == 1) {
+    QByteArray block;
+    std::cout << "writing 2nd header" << std::endl;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_5_0);
+    out << server->imageHeader.headerId;
+    out << server->imageHeader.frameCount;
+    out << server->imageHeader.timeStamp;
+    out << server->imageHeader.dataRate;
+    out << server->imageHeader.dataLength;
+    out << server->imageHeader.ss;
+    out << server->imageHeader.imageType;
+    out << server->imageHeader.frameWidth;
+    out << server->imageHeader.frameHeight;
+    out << server->imageHeader.pixelWidth;
+    out << server->imageHeader.pixelHeight;
+    out << server->imageHeader.transmitFrequency;
+    out << server->imageHeader.samplingFrequency;
+    out << server->imageHeader.transducerRadius;
+    out << server->imageHeader.scanLinePitch;
+    out << server->imageHeader.scanLineNumber;
+    out << server->imageHeader.imageDepth;
+    out << server->imageHeader.degPerFrame;
+    out << server->imageHeader.framesPerVolume;
+    out << server->imageHeader.motorRadius;
+    out << server->imageHeader.motorType;
+    std::cout << "writing 2nd image" << std::endl;
+    out.writeRawData((char *)server->secondBiplaneImage, server->imageHeader.dataLength);
+    server->imageHeader.frameCount++;
+
+    socket->write(block);
+  }
+
+  /*std::cout << "headerId = " << server->imageHeader.headerId  << std::endl;
+  std::cout << "frameCount = " << server->imageHeader.frameCount  << std::endl;
+  std::cout << "timeStamp = " << server->imageHeader.timeStamp  << std::endl;
+  std::cout << "dataLength = " << server->imageHeader.dataLength  << std::endl;
+  std::cout << "ss = " << server->imageHeader.ss  << std::endl;
+  std::cout << "imageType = " << server->imageHeader.imageType  << std::endl;
+  std::cout << "frameWidth = " << server->imageHeader.frameWidth  << std::endl;
+  std::cout << "frameHeight = " << server->imageHeader.frameHeight  << std::endl;
+  std::cout << "pixelWidth = " << server->imageHeader.pixelWidth  << std::endl;
+  std::cout << "pixelHeight = " << server->imageHeader.pixelHeight  << std::endl;
+  std::cout << "transmitFrequency = " << server->imageHeader.transmitFrequency  << std::endl;
+  std::cout << "samplingFrequency = " << server->imageHeader.samplingFrequency  << std::endl;
+  std::cout << "transducerRadius = " << server->imageHeader.transducerRadius  << std::endl;
+  std::cout << "scanLinePitch = " << server->imageHeader.scanLinePitch  << std::endl;
+  std::cout << "scanLineNumber = " << server->imageHeader.scanLineNumber  << std::endl;
+  std::cout << "degPerFrame = " << server->imageHeader.degPerFrame  << std::endl;
+  std::cout << "framesPerVolume = " << server->imageHeader.framesPerVolume  << std::endl;
+  std::cout << "motorRadius = " << server->imageHeader.motorRadius << std::endl;
+  std::cout << "motorType = " << server->imageHeader.motorType << std::endl;
+
+  std::cout << "steps = " << portaInstance->getParam(prmMotorSteps) << std::endl;*/
+  return true;
+}
+
+/// The callback provided to porta (versions 6+) for B mode images
+#if USTK_PORTA_VERSION_MAJOR > 5
+int portaCallbackImage(void *param, int id, int)
+{
+  std::cout << "new frame acquired" << std::endl;
+  usNetworkServer *server = (usNetworkServer *)param;
+  porta *portaInstance = server->getPorta();
+  QTcpSocket *socket = server->getSocket();
+
+  if (portaInstance->getCurrentMode() != BiplaneMode)
+    server->imageHeader.frameCount++;
+  else if (server->imageHeader.frameCount == 0)
+    server->imageHeader.frameCount++;
+
+  // manage motor offset at the beginning
+  int motorStatus;
+  portaInstance->getParam(prmMotorStatus, motorStatus);
+  if (!server->motorOffsetSkipped && (motorStatus == 1) && server->imageHeader.frameCount == 2) {
+    server->imageHeader.frameCount = 0;
+    server->motorOffsetSkipped = true;
+  }
+
+  // std::cout << "frame count = " << server->imageHeader.frameCount << std::endl;
+  // std::cout << "image size = " << portaInstance->getFrameSize() << std::endl;
+  unsigned char *beginImage;
+  // filling image header
+
+  quint64 oldTimeStamp = server->imageHeader.timeStamp; // for dataRate
+  server->imageHeader.timeStamp = QDateTime::currentMSecsSinceEpoch();
+
+  server->imageHeader.dataRate = 1000.0 / (server->imageHeader.timeStamp - oldTimeStamp);
+
+  if (server->imageHeader.imageType == 1) { // post scan
+    server->imageHeader.dataLength = server->imageHeader.frameWidth * server->imageHeader.frameHeight;
+    portaInstance->getBwImage(0, server->postScanImage, false);
+
+    int mx, my;
+    portaInstance->getMicronsPerPixel(0, mx, my);
+
+    // bi-plande case
+    if (portaInstance->getCurrentMode() == BiplaneMode) {
+      portaInstance->getBwImage(1, server->secondBiplaneImage, false);
+      std::cout << "getting 2nd image from bi plane" << std::endl;
+    }
+    server->imageHeader.pixelHeight = my / 1000000.0;
+    server->imageHeader.pixelWidth = mx / 1000000.0;
+
+  } else if (server->imageHeader.imageType == 0) { // pre scan
+    server->imageHeader.dataLength = portaInstance->getParam(prmBNumLines) * portaInstance->getParam(prmBNumSamples);
+
+    beginImage = new unsigned char[portaInstance->getParam(prmBNumLines) * portaInstance->getParam(prmBNumSamples) *
+                                   sizeof(unsigned char)];
+    portaGetBwImagePrescan(0, beginImage);
+    server->imageHeader.pixelHeight = 0;
+    server->imageHeader.pixelWidth = 0;
+  }
+
+  QByteArray block;
   std::cout << "writing header" << std::endl;
   QDataStream out(&block, QIODevice::WriteOnly);
   out.setVersion(QDataStream::Qt_5_0);
@@ -275,8 +444,6 @@ bool portaCallback(void *param, unsigned char *addr, int blockIndex, int)
   if (server->imageHeader.imageType == 1) { // post scan
     out.writeRawData((char *)server->postScanImage, server->imageHeader.dataLength);
   } else if (server->imageHeader.imageType == 0) { // pre-scan
-    out.writeRawData((char *)beginImage, server->imageHeader.dataLength);
-  } else if (server->imageHeader.imageType == 2) { // RF
     out.writeRawData((char *)beginImage, server->imageHeader.dataLength);
   }
 
@@ -345,6 +512,7 @@ bool portaCallback(void *param, unsigned char *addr, int blockIndex, int)
   std::cout << "steps = " << portaInstance->getParam(prmMotorSteps) << std::endl;*/
   return true;
 }
+#endif
 
 // porta init
 void usNetworkServer::initPorta(usNetworkServer::usInitHeaderIncomming header)
@@ -372,22 +540,37 @@ void usNetworkServer::initPorta(usNetworkServer::usInitHeaderIncomming header)
         QString settingsPath = QString(USTK_PORTA_SETTINGS_PATH) + QString("presets/imaging/");
         settingsPath += getProbeSettingsFromId(code);
         m_porta->loadPreset(settingsPath.toStdString().c_str());
-
+#if USTK_PORTA_VERSION_MAJOR > 5
+        int mode = header.imagingMode;
+        if (mode == 12) // RF
+          mode = BMode;
+        if (!m_porta->initImagingMode((imagingMode)mode)) { // in 6.x SDK, there is no more RF mode
+#else
         if (!m_porta->initImagingMode((imagingMode)header.imagingMode)) {
+#endif
           std::cout << "error initializing imaging mode" << std::endl;
         } else {
           if (code == header.probeId) {
+
+#if USTK_PORTA_VERSION_MAJOR > 5
+            if (header.imagingMode == RfMode)
+              m_porta->setRawDataCallback(portaCallback, (void *)this);
+            else
+              m_porta->setDisplayCallback(0, portaCallbackImage, (void *)this);
+
+#else
             m_porta->setRawDataCallback(portaCallback, (void *)this);
+#endif
             // case of 3D, we disable motor by default and set it to middle frame
             if (nfo.motorized) {
               m_porta->goToPosition(0); // 0 = begin position
+#if USTK_PORTA_VERSION_MAJOR <= 5
               m_porta->setParam(prmMotorStatus, 0);
+#endif
               m_porta->setMotorActive(false);
-              m_porta->setParam(prmMotorStatus, 0);
               imageHeader.motorRadius = nfo.motorRadius / 1000000.0; // from microns to meters
-              std::cout << "motor radius : " << imageHeader.motorRadius << std::endl;
-              if (header.probeId == 15)    // 4DC7
-                imageHeader.motorType = 1; // see usMotorType
+              if (header.probeId == 15)                              // 4DC7
+                imageHeader.motorType = 1;                           // see usMotorType
               else
                 imageHeader.motorType = 0;
             }
@@ -399,8 +582,10 @@ void usNetworkServer::initPorta(usNetworkServer::usInitHeaderIncomming header)
     }
   }
 
-  // must set it to 128 for 4DC7 and C5-2 probes
+// must set it to 128 for 4DC7 and C5-2 probes
+#if USTK_PORTA_VERSION_MAJOR <= 5
   m_porta->setParam(prmBLineDensity, 128);
+#endif
 
   imageHeader.frameCount = 0;
   imageHeader.transducerRadius = nfo.radius / 1000000.0;                              // from microns to  meters
@@ -425,20 +610,31 @@ void usNetworkServer::initPorta(usNetworkServer::usInitHeaderIncomming header)
 
   imageHeader.imageDepth = m_porta->getParam(prmBImageDepth);
 
+/// The callback provided to porta to be called when a new frame is acquired from the cine buffer.
+#if USTK_PORTA_VERSION_MAJOR > 5
+  portaRect rect;
+#else
   URect rect;
+#endif
   m_porta->getParam(prmBImageRect, rect);
 
   if (header.imagingMode == 12) { // RF
     imageHeader.imageType = 2;
     imageHeader.frameWidth = m_porta->getParam(prmRfNumLines);
     imageHeader.frameHeight = m_porta->getParam(prmRfNumSamples);
+#if USTK_PORTA_VERSION_MAJOR <= 5
     m_porta->setParam(prmRfMode, 1);
+#endif
+    imageHeader.ss = 16;
   } else {
     imageHeader.imageType = 0;
     imageHeader.frameWidth = rect.right + 1;
     imageHeader.frameHeight = rect.bottom;
+    imageHeader.ss = 8;
+#if USTK_PORTA_VERSION_MAJOR > 5
+    m_porta->setDisplayDimensions(0, rect.right, rect.bottom);
+#endif
   }
-  imageHeader.ss = m_porta->getParam(prmBSampleSize) == 0 ? 8 : 16;
 
   motorOffsetSkipped = false;
   std::cout << "end init porta" << std::endl;
@@ -468,6 +664,7 @@ bool usNetworkServer::updatePorta(usUpdateHeaderIncomming header)
     if (nfo.motorized) {
       // 2D
       if (!header.activateMotor) {
+        m_porta->setMotorActive(true);
         m_porta->goToPosition(header.motorPosition); // 0 = begin position
         m_porta->setParam(prmMotorStatus, 0);
         m_porta->setMotorActive(false);
@@ -484,9 +681,12 @@ bool usNetworkServer::updatePorta(usUpdateHeaderIncomming header)
     // RF - prescan
     if (!header.postScanMode) {
       if ((imagingMode)header.imagingMode == BMode) {
+#if USTK_PORTA_VERSION_MAJOR > 5
+        portaRect rect;
+#else
         m_porta->setParam(prmRfMode, 0); // send only Bmode image
-
         URect rect;
+#endif
         m_porta->getParam(prmBImageRect, rect);
         imageHeader.frameWidth = rect.right + 1;
         imageHeader.frameHeight = rect.bottom;
@@ -528,7 +728,11 @@ bool usNetworkServer::updatePorta(usUpdateHeaderIncomming header)
 
       if (!header.postScanMode) {
         if ((imagingMode)header.imagingMode == BMode) {
+#if USTK_PORTA_VERSION_MAJOR > 5
+          portaRect rect;
+#else
           URect rect;
+#endif
           m_porta->getParam(prmBImageRect, rect);
           imageHeader.frameWidth = rect.right + 1;
           imageHeader.frameHeight = rect.bottom;
@@ -538,14 +742,16 @@ bool usNetworkServer::updatePorta(usUpdateHeaderIncomming header)
         }
       }
 
-      if (header.postScanMode)
+      if (header.postScanMode) {
         imageHeader.imageType = 1;
-      else if (header.imagingMode == BMode)
+        imageHeader.ss = 8;
+      } else if (header.imagingMode == BMode) {
         imageHeader.imageType = 0;
-      else if (header.imagingMode == RfMode)
+        imageHeader.ss = 8;
+      } else if (header.imagingMode == RfMode) {
         imageHeader.imageType = 2;
-
-      imageHeader.ss = m_porta->getParam(prmBSampleSize) == 0 ? 8 : 16;
+        imageHeader.ss = 16;
+      }
 
       confirmHeader.initOk = 1;
       return true;

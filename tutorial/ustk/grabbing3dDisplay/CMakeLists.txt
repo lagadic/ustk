@@ -26,27 +26,18 @@
 # WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
 # Authors:
-# Fabien Spindler
+# Marc Pouliquen
 #
 #############################################################################
 
-project(tutorial-ultrasonix)
+project(tutorial-grabbing-3D-display)
 
 cmake_minimum_required(VERSION 2.6)
 
-find_package(VISP REQUIRED visp_ustk_grabber visp_sensor visp_robot)
+find_package(VISP REQUIRED visp_ustk_grabber visp_ustk_gui visp_sensor visp_robot)
 
 set(tutorial_ultrasonix_cpp
-  tutorial-ultrasonix-qt-grabbing-pre-scan.cpp
-  tutorial-ultrasonix-qt-grabbing-pre-scan3D.cpp
-  tutorial-ultrasonix-qt-grabbing-post-scan.cpp
-  tutorial-ultrasonix-qt-grabbing-post-scan-bi-plan.cpp
-  tutorial-ultrasonix-qt-grabbing-post-scan3D.cpp
-  tutorial-ultrasonix-qt-grabbing-RF.cpp
-  tutorial-ultrasonix-qt-grabbing-RF3D.cpp
-  tutorial-ultrasonix-qt-grabbing-RF-scan-conversion.cpp
-  tutorial-ultrasonix-qt-grabbing-pre-scan-confidence.cpp
-  tutorial-ultrasonix-qt-grabbing-pre-scan-confidence-control.cpp)
+  tutorial-ultrasonix-qt-grabbing-pre-scan3D-display.cpp)
 
 foreach(cpp ${tutorial_ultrasonix_cpp})
   visp_add_target(${cpp})

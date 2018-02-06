@@ -51,7 +51,7 @@
 
   This class represents a 2D post-scan ultrasound image. This image is nothing more than a vpImage that
   contains ultrasound 2D post-scan data and additional settings that give information about the
-  acquisition process done by the transducer.
+  acquisition process done by the transducer. The bitmap storage is done in row-major.
 
   The settings associated to an usImagePostScan2D image are the following:
   - the transducer settings (see usTransducerSettings) that are:

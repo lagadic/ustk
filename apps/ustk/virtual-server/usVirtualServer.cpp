@@ -118,7 +118,11 @@ void usVirtualServer::readIncomingData()
   // prepare reading in QDataStream
   QDataStream in;
   in.setDevice(connectionSoc);
+#if defined(USTK_HAVE_VTK_QT4)
+  in.setVersion(QDataStream::Qt_4_8);
+#else
   in.setVersion(QDataStream::Qt_5_0);
+#endif
 
   // read header id
   int id;
@@ -136,7 +140,11 @@ void usVirtualServer::readIncomingData()
     // send back default params
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
+#if defined(USTK_HAVE_VTK_QT4)
+    out.setVersion(QDataStream::Qt_4_8);
+#else
     out.setVersion(QDataStream::Qt_5_0);
+#endif
     out << confirmHeader.headerId;
     out << confirmHeader.initOk;
     out << confirmHeader.probeId;
@@ -491,7 +499,11 @@ void usVirtualServer::sendingLoopSequenceXml()
 
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
+#if defined(USTK_HAVE_VTK_QT4)
+    out.setVersion(QDataStream::Qt_4_8);
+#else
     out.setVersion(QDataStream::Qt_5_0);
+#endif
     out << imageHeader.headerId;
     out << imageHeader.frameCount;
     out << imageHeader.timeStamp;
@@ -1417,7 +1429,11 @@ void usVirtualServer::sendingLoopSequenceMHD()
 
       QByteArray block;
       QDataStream out(&block, QIODevice::WriteOnly);
+#if defined(USTK_HAVE_VTK_QT4)
+      out.setVersion(QDataStream::Qt_4_8);
+#else
       out.setVersion(QDataStream::Qt_5_0);
+#endif
 
       out << imageHeader.headerId;
       out << imageHeader.frameCount;
@@ -1458,7 +1474,11 @@ void usVirtualServer::sendingLoopSequenceMHD()
 
       QByteArray block;
       QDataStream out(&block, QIODevice::WriteOnly);
+#if defined(USTK_HAVE_VTK_QT4)
+      out.setVersion(QDataStream::Qt_4_8);
+#else
       out.setVersion(QDataStream::Qt_5_0);
+#endif
 
       out << imageHeader.headerId;
       out << imageHeader.frameCount;
@@ -1500,7 +1520,11 @@ void usVirtualServer::sendingLoopSequenceMHD()
 
       QByteArray block;
       QDataStream out(&block, QIODevice::WriteOnly);
+#if defined(USTK_HAVE_VTK_QT4)
+      out.setVersion(QDataStream::Qt_4_8);
+#else
       out.setVersion(QDataStream::Qt_5_0);
+#endif
 
       out << imageHeader.headerId;
       out << imageHeader.frameCount;
@@ -1545,7 +1569,11 @@ void usVirtualServer::sendingLoopSequenceMHD()
       while (!endOfVolume) {
         QByteArray block;
         QDataStream out(&block, QIODevice::WriteOnly);
+#if defined(USTK_HAVE_VTK_QT4)
+        out.setVersion(QDataStream::Qt_4_8);
+#else
         out.setVersion(QDataStream::Qt_5_0);
+#endif
         // new frame to send
         if (m_pauseOn) { // pause case (we send volumes V, V+1, V, V+1, ...)
           // check if current volume is odd or even
@@ -1689,11 +1717,11 @@ void usVirtualServer::sendingLoopSequenceMHD()
         out << imageHeader.frameCount;
         out << imageHeader.timeStamp;
         out << imageHeader.dataRate;
-        out << (int)m_rfImage3d.getDimX() * m_rfImage3d.getDimY() * 2; // datalength in bytes
-        out << (int)16;                                                // sample size in bits
-        out << (int)2;                                                 // image type
-        out << m_rfImage3d.getDimX();
-        out << m_rfImage3d.getDimY();
+        out << (int)m_rfImage3d.getWidth() * m_rfImage3d.getHeight() * 2; // datalength in bytes
+        out << (int)16;                                                   // sample size in bits
+        out << (int)2;                                                    // image type
+        out << m_rfImage3d.getWidth();
+        out << m_rfImage3d.getHeight();
         out << (double).0; // pixelWidth
         out << (double).0; // pixelHeight
         out << m_rfImage3d.getTransmitFrequency();
@@ -1727,7 +1755,11 @@ void usVirtualServer::sendingLoopSequenceMHD()
       while (!endOfVolume) {
         QByteArray block;
         QDataStream out(&block, QIODevice::WriteOnly);
+#if defined(USTK_HAVE_VTK_QT4)
+        out.setVersion(QDataStream::Qt_4_8);
+#else
         out.setVersion(QDataStream::Qt_5_0);
+#endif
         // new frame to send
         if (m_pauseOn) { // pause case (we send volumes V, V+1, V, V+1, ...)
           // check if current volume is odd or even
@@ -1885,11 +1917,11 @@ void usVirtualServer::sendingLoopSequenceMHD()
         out << imageHeader.frameCount;
         out << imageHeader.timeStamp;
         out << imageHeader.dataRate;
-        out << (int)m_preScanImage3d.getDimX() * m_preScanImage3d.getDimY(); // datalength in bytes
-        out << (int)8;                                                       // sample size in bits
+        out << (int)m_preScanImage3d.getWidth() * m_preScanImage3d.getHeight(); // datalength in bytes
+        out << (int)8;                                                          // sample size in bits
         out << (int)0;
-        out << m_preScanImage3d.getDimX();
-        out << m_preScanImage3d.getDimY();
+        out << m_preScanImage3d.getWidth();
+        out << m_preScanImage3d.getHeight();
         out << (double).0; // pixelWidth
         out << (double).0; // pixelHeight
         out << m_preScanImage3d.getTransmitFrequency();
