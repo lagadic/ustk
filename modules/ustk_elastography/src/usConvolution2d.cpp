@@ -33,7 +33,21 @@
 
 #include <visp3/ustk_elastography/usConvolution2d.h>
 
-usConvolution2d::usConvolution2d() { m_computed = false; }
+#if defined(USTK_HAVE_FFTW)
+
+/**
+* Default constructor.
+* It only initializes the pointers class members to NULL.
+*/
+usConvolution2d::usConvolution2d()
+  : outa(NULL), outb(NULL), outc(NULL), out(NULL), ad(NULL), bd(NULL), p1(), p2(), p3(), m_init(false)
+{
+}
+
+/**
+* Destructor.
+* Clear memory allocations.
+*/
 usConvolution2d::~usConvolution2d()
 {
   fftw_destroy_plan(p1);
@@ -47,46 +61,76 @@ usConvolution2d::~usConvolution2d()
   delete bd;
 }
 
-void usConvolution2d::init(vpMatrix t_M1, vpMatrix t_M2)
+/**
+* Initialization of the convolution process with the matrix dimentions specified (if not already done), and storage of
+* convolution inputs.
+*
+* @param matrix1 Input matrix for the convolution.
+* @param matrix2 Convolution filter to apply on matrix1.
+*/
+void usConvolution2d::init(const vpMatrix &matrix1, const vpMatrix &matrix2)
 {
-  Am = t_M1.getRows();
-  An = t_M1.getCols();
-  Bm = t_M2.getRows();
-  Bn = t_M2.getCols();
+  // check matrix dimentions
+  if (Am != matrix1.getRows() || An != matrix1.getCols() || Bm != matrix2.getRows() || Bn != matrix2.getCols()) {
 
-  h_dst = Am - Bm + 1; // Valid convolution
-  w_dst = An - Bn + 1;
-  hf = Am + Bm - 1; // Full convolution
-  wf = An + Bn - 1;
+    // memory de-allocation to avoid leak
+    delete outa;
+    delete outb;
+    delete outc;
+    delete out;
+    delete ad;
+    delete bd;
 
-  m_R.resize(h_dst, w_dst);
-  m_M1 = t_M1;
-  m_M2 = t_M2;
+    fftw_destroy_plan(p1);
+    fftw_destroy_plan(p2);
+    fftw_destroy_plan(p3);
 
-  ad = new fftw_complex[hf * wf];
-  bd = new fftw_complex[hf * wf];
-  outa = new fftw_complex[hf * wf];
-  outb = new fftw_complex[hf * wf];
-  outc = new fftw_complex[hf * wf];
-  out = new fftw_complex[hf * wf];
+    // re-allocation with new matrices dimentions
+    Am = matrix1.getRows();
+    An = matrix1.getCols();
+    Bm = matrix2.getRows();
+    Bn = matrix2.getCols();
+
+    h_dst = Am - Bm + 1; // Valid convolution
+    w_dst = An - Bn + 1;
+    hf = Am + Bm - 1; // Full convolution
+    wf = An + Bn - 1;
+
+    m_R.resize(h_dst, w_dst);
+    m_M1 = matrix1;
+    m_M2 = matrix2;
+
+    // fftw inputs/outputs arrays
+    ad = new fftw_complex[hf * wf];
+    bd = new fftw_complex[hf * wf];
+    outa = new fftw_complex[hf * wf];
+    outb = new fftw_complex[hf * wf];
+    outc = new fftw_complex[hf * wf];
+    out = new fftw_complex[hf * wf];
+
+    // fftw plans
+    p1 = fftw_plan_dft_2d(wf, hf, ad, outa, FFTW_FORWARD, FFTW_ESTIMATE);
+    p2 = fftw_plan_dft_2d(wf, hf, bd, outb, FFTW_FORWARD, FFTW_ESTIMATE);
+    p3 = fftw_plan_dft_2d(wf, hf, outc, out, FFTW_BACKWARD, FFTW_ESTIMATE);
+  } else { // init already done with correct matrix dimentions
+    m_M1 = matrix1;
+    m_M2 = matrix2;
+  }
 
   padding_zeros();
-
-  // fftw plans
-  p1 = fftw_plan_dft_2d(wf, hf, ad, outa, FFTW_FORWARD, FFTW_ESTIMATE);
-  p2 = fftw_plan_dft_2d(wf, hf, bd, outb, FFTW_FORWARD, FFTW_ESTIMATE);
-  p3 = fftw_plan_dft_2d(wf, hf, outc, out, FFTW_BACKWARD, FFTW_ESTIMATE);
+  m_init = true;
 }
 
-void usConvolution2d::update(vpMatrix t_M1, vpMatrix t_M2)
+/**
+* Run the convolution.
+*
+* @param matrix1 Input matrix for the convolution.
+* @param matrix2 Convolution filter to apply on matrix1.
+*/
+vpMatrix usConvolution2d::run(const vpMatrix &matrix1, const vpMatrix &matrix2)
 {
-  m_M1 = t_M1;
-  m_M2 = t_M2;
-  padding_zeros();
-}
+  init(matrix1, matrix2);
 
-void usConvolution2d::run()
-{
   fftw_execute(p1);
   fftw_execute(p2);
   // Complex product
@@ -105,19 +149,13 @@ void usConvolution2d::run()
   for (int i = startX; i < endX; ++i) {
     l = 0;
     for (int j = startY; j < endY; ++j) {
+      // the output of the convolution array (out) is extracted column by column.
       m_R[l][k] = out[j + i * hf][0] / (double)(wf * hf);
       l++;
     }
     k++;
   }
 
-  m_computed = true;
-}
-
-vpMatrix usConvolution2d::getConvolution(void)
-{
-  if (!m_computed)
-    throw(vpException(vpException::badValue), "Convolution not computed !");
   return m_R;
 }
 
@@ -126,11 +164,12 @@ void usConvolution2d::padding_zeros()
   // Padding the two arrays with zeros
   for (uint i = 0; i < wf; ++i) {
     for (uint j = 0; j < hf; ++j) {
+      // fftw intput arrays (ad, bd) are filled scanline per scanline (column by column)
       ad[j + i * hf][0] = ((j < Am) && (i < An)) ? m_M1[j][i] : 0.0;
       ad[j + i * hf][1] = 0.0;
-
       bd[j + i * hf][0] = ((j < Bm) && (i < Bn)) ? m_M2[j][i] : 0.0;
       bd[j + i * hf][1] = 0.0;
     }
   }
 }
+#endif // USTK_HAVE_FFTW

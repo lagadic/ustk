@@ -31,27 +31,50 @@
  *
  *****************************************************************************/
 
+/**
+ * @file usConvolution2d.h
+ * @brief Convolution process for elastography puropse, based on fftw thirdparty library.
+ */
+
 #ifndef US_CONVOLUTION_2D_H
 #define US_CONVOLUTION_2D_H
+
+#include <visp3/ustk_core/usConfig.h>
+
+#if defined(USTK_HAVE_FFTW)
 
 #include <fftw3.h>
 #include <visp/vpMath.h>
 #include <visp/vpMatrix.h>
 
+/**
+ * @class usConvolution2d
+ * @brief Convolution process for elastography puropse, based on fftw thirdparty library.
+ * @ingroup module_ustk_elastography
+ *
+ * This class performs 2D convolutions on RF images.
+ */
 class VISP_EXPORT usConvolution2d
 {
 public:
   usConvolution2d();
   virtual ~usConvolution2d();
-  void init(vpMatrix t_M1, vpMatrix t_M2);
-  void update(vpMatrix t_M1, vpMatrix t_M2);
-  void run();
-  vpMatrix getConvolution(void);
+  void init(const vpMatrix &matrix1, const vpMatrix &matrix2);
+  vpMatrix run(const vpMatrix &matrix1, const vpMatrix &matrix2);
 
 private:
+  fftw_complex *outa;
+  fftw_complex *outb;
+  fftw_complex *outc;
+  fftw_complex *out;
+  fftw_complex *ad;
+  fftw_complex *bd;
   fftw_plan p1;
   fftw_plan p2;
   fftw_plan p3;
+
+  bool m_init;
+
   vpMatrix m_M1;
   vpMatrix m_M2;
   vpMatrix m_R;
@@ -59,18 +82,13 @@ private:
   uint w_dst;
   uint hf;
   uint wf;
-  fftw_complex *outa;
-  fftw_complex *outb;
-  fftw_complex *outc;
-  fftw_complex *out;
-  fftw_complex *ad;
-  fftw_complex *bd;
   unsigned int Am; // A row number
   unsigned int An; // A col number
   unsigned int Bm; // B row number
   unsigned int Bn; // B col number
-  bool m_computed;
+
   void padding_zeros(void);
 };
 
+#endif // USTK_HAVE_FFTW
 #endif // US_CONVOLUTION_2D_H

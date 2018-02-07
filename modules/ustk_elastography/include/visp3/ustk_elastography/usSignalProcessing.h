@@ -34,9 +34,13 @@
 #ifndef US_SIGNAL_PROCESSING_H
 #define US_SIGNAL_PROCESSING_H
 
-#include <visp3/core/vpIoTools.h>
+/**
+ * @file usSignalProcessing.h
+ * @brief Class containing a set of static methods to compute various processes on RF images (gradients, product,
+ * interpolation).
+ */
+
 #include <visp3/core/vpMatrix.h>
-#include <visp3/core/vpSubMatrix.h>
 #include <visp3/ustk_core/usImageRF2D.h>
 
 #include <algorithm>
@@ -47,7 +51,6 @@
 #include <fstream>
 #include <iostream>
 #include <numeric>
-#include <omp.h>
 #include <typeinfo>
 #include <vector>
 
@@ -57,6 +60,11 @@ typedef unsigned int uint;
 using namespace std;
 typedef complex<double> dcomplex;
 
+/**
+ * @class usSignalProcessing.h
+ * @brief Class containing a set of static methods to compute various processes on RF images (gradients, product,
+ * interpolation).
+ */
 class VISP_EXPORT usSignalProcessing
 {
 public:
@@ -64,24 +72,17 @@ public:
   usSignalProcessing();
   /// Virtual destructor
   virtual ~usSignalProcessing();
-  /// FIR1: Lowpass filter
-  static vpMatrix m_FIR1(unsigned N, double Wn);
   /// Gaussian Kernel generator
-  static vpMatrix GaussianFilter(int ny, int nx, double sigma);
+  static vpMatrix GaussianFilter(int height, int width, double sigma);
   /// Computation of gradients
-  static vpMatrix GetGx(vpMatrix F);
-  static vpMatrix GetGy(vpMatrix F);
-  static vpMatrix GetGx(const usImageRF2D<short> &F);
-  static vpMatrix GetGy(const usImageRF2D<short int> &F);
+  static vpMatrix getXGradient(const usImageRF2D<short> &image);
+  static vpMatrix getYGradient(const usImageRF2D<short int> &image);
   // Diference between usImageRF2D
   static vpMatrix Difference(const usImageRF2D<short int> &A, const usImageRF2D<short int> &B);
   /// Bilinear Interpolation
   static vpMatrix BilinearInterpolation(vpMatrix In, uint newW, uint newH);
   /// Element-wise product
-  static vpMatrix HadamardProd(vpMatrix in_array1, vpMatrix in_array2);
-  /// Normalize Matrix to 1
-  static vpMatrix Normalize_1(vpMatrix &in_array);
-  static vpMatrix SubMatrix(const vpMatrix &M, uint r, uint c, uint nrows, uint ncols);
+  static vpMatrix HadamardProd(vpMatrix matrix1, vpMatrix matrix2);
 };
 
 #endif // US_SIGNAL_PROCESSING_H

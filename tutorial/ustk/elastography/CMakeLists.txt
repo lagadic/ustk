@@ -37,7 +37,8 @@ cmake_minimum_required(VERSION 2.8.12)
 find_package(VISP REQUIRED visp_ustk_elastography)
 
 set(tutorial_cpp
-  tutorial-elastography-2D.cpp)
+  tutorial-elastography-2D.cpp
+  tutorial-elastography-2D-basic.cpp)
 
 foreach(cpp ${tutorial_cpp})
   visp_add_target(${cpp})

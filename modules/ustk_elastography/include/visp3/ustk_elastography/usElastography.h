@@ -34,19 +34,13 @@
 #ifndef USELASTOGRAPHY_H
 #define USELASTOGRAPHY_H
 
+/**
+ * @file usElastography.h
+ * @brief Base class to compute an elastography on RF images.
+ */
 #include <visp3/ustk_core/usConfig.h>
 
-#if (defined(USTK_HAVE_VTK_QT) || defined(USTK_HAVE_QT5)) && defined(VISP_HAVE_OPENCV)
-
-#include <QColor>
-#include <QDebug>
-#include <QElapsedTimer>
-#include <QImage>
-#include <QMutex>
-#include <QReadWriteLock>
-#include <QSharedPointer>
-#include <QThread>
-#include <QWaitCondition>
+#if defined(USTK_HAVE_FFTW)
 
 #include <visp3/core/vpImageTools.h>
 
@@ -55,77 +49,58 @@
 #include <visp3/ustk_elastography/usMotionEstimation.h>
 #include <visp3/ustk_elastography/usSignalProcessing.h>
 
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
-#include <opencv2/video/tracking.hpp>
-
-class VISP_EXPORT usElastography : public QThread
+/**
+ * @class usElastography
+ * @brief Computation of a strain map using two sucessive RF images acquired at different compressions of the probe.
+ * @ingroup module_ustk_elastography
+ *
+ * This class produces a strain map based on tissues displacements between 2 input RF images.
+ *
+ * The typical use of this class is :
+ *  - Set the ROI in the RF image, with setROI()
+ *  - Set the pre and post compressed images, with setPreCompression() and setPostCompression() or with updateRF().
+ *  - Run the process, using run()
+ */
+class VISP_EXPORT usElastography
 {
-  Q_OBJECT
 public:
   enum MotionEstimator { OF, BMA_TAYLOR };
-  usElastography(bool t_isFiles = false);
+  usElastography();
   usElastography(usImageRF2D<short int> &Pre, usImageRF2D<short int> &Post);
   virtual ~usElastography();
-  void setCommonSharedRFImage(QSharedPointer<usImageRF2D<short int> > t_RFIm);
-  void setCommonSharedStrainImage(QSharedPointer<vpImage<unsigned char> > t_StrainIm);
-  void setPreCompression(const usImageRF2D<short> &Pre);
-  void setPostCompression(const usImageRF2D<short> &Post);
-  void setMotionEstimator(MotionEstimator t_mest) { m_mEstimatior = t_mest; }
-  usImageRF2D<short int> getPreCompression(void);
-  usImageRF2D<short int> getPostCompression(void);
-  vpImage<unsigned char> getStrainMap(void);
-  void setLSQpercentage(double per);
-  void setPRF(double prf);
-  void setfs(double fs);
+
+  double getFPS(void) { return m_FPS; }
   double getfs(void) { return m_fs; }
-  double getPRF(void) { return m_PRF; }
-  // void run();
-public slots:
-  // void getImageStrain(void);
-  void setPairRF(usImageRF2D<short int> Pre, usImageRF2D<short int> Post);
-  void setRF(const usImageRF2D<short int> &t_RfArray);
-  void setRF(void);
-  void getCentroid(bool t_c);
-  void reset(void) { m_Idx = 0; }
-  virtual void run(void);
-  void stop(void) { emit stopped(); }
+
+  vpImage<unsigned char> run();
+
+  void setFPS(double fps);
+  void setfs(double fs);
+  void setLSQpercentage(double per);
+  void setMotionEstimator(MotionEstimator t_mest) { m_mEstimatior = t_mest; }
+  void setPostCompression(const usImageRF2D<short> &Post);
+  void setPreCompression(const usImageRF2D<short> &Pre);
   void setROI(int tx, int ty, int tw, int th);
+
+  void updateRF(const usImageRF2D<short int> &image);
   void updateROIPos(int tx, int ty);
-  void useFiles(bool t_state);
-signals:
-  void StrainMapComp(void);
-  void Centroid(QPointF t_c);
-  void stopped(void);
-  void roiSet(bool);
 
 private:
   usImageRF2D<short int> usImageRF_ROI(const usImageRF2D<short int> &M, uint r, uint c, uint nrows, uint ncols);
 
-  QMutex m_mutex;
-  QWaitCondition m_cond;
-  usImageRF2D<short int> m_receivedRF;
   vpImage<unsigned char> m_StrainMap;
   usImageRF2D<short int> m_Precomp;
   usImageRF2D<short int> m_Postcomp;
-  vpMatrix m_Elasto;
+
   double m_Lsqper;
   bool m_isloadPre;
   bool m_isloadPost;
-  bool m_isStrainComp;
-  bool m_isElastoComp;
-  bool m_stopped;
-  bool m_centroid;
-  bool m_isElastoInitialized;
-  bool m_isFiles;
-  double m_PRF;
+  double m_FPS;
   double m_fs;
   double m_c;
   double m_min_str;
   double m_max_str;
   double m_max_abs;
-  uint m_Idx;
   int m_h_m;
   int m_w_m;
 
@@ -136,9 +111,8 @@ private:
   bool m_setROI;
   usImageRF2D<short int> m_PreROI;
   usImageRF2D<short int> m_PostROI;
-  vpImagePoint m_ip;
 
-  QVector<usConvolution2d *> cC;
+  std::vector<usConvolution2d *> cC;
 
   // Motion estimation
   MotionEstimator m_mEstimatior;
@@ -146,14 +120,7 @@ private:
 
   vpMatrix U;
   vpMatrix V;
-
-  // Shared Pointers
-  QSharedPointer<usImageRF2D<short int> > s_RFIm;
-  QSharedPointer<vpImage<unsigned char> > s_StrainIm;
-  bool isSetSharedStrainMemory;
-
-  QPointF GetImageCentroid(void);
 };
 
-#endif // QT && OPENCV
+#endif // FFTW
 #endif // USELASTOGRAPHY_H

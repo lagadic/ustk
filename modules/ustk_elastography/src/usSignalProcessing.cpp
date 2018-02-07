@@ -44,53 +44,22 @@ usSignalProcessing::usSignalProcessing() {}
  */
 usSignalProcessing::~usSignalProcessing() {}
 
-vpMatrix usSignalProcessing::m_FIR1(unsigned N, double Wn)
-{
-  unsigned odd, i, j, nhlf;
-  double f1, gain, c1;
-  double wind[N + 1], xn[(N + 1) / 2], b[(N + 1) / 2], c[(N + 1) / 2], c3[(N + 1) / 2];
-  vpMatrix bb(N + 1, 1);
-  // Initial parameters
-  gain = 0.0000000;
-  N = N + 1;
-  odd = N - (N / 2) * 2;
-  ///////// Hamming(N)  ////////
-  for (i = 0; i < (N + 1); i++)
-    wind[i] = 0.54 - 0.46 * cos((2 * PI * i) / (N - 1));
-  f1 = Wn / 2.0;
-  c1 = f1;
-  nhlf = (N + 1) / 2; // Half of elements
-  /// Lowpass  ///
-  if (odd)
-    b[0] = 2 * c1;
-  for (i = 0; i < nhlf; i++)
-    xn[i] = i + 0.5 * (1 - odd);
-  for (i = 0; i < nhlf; i++)
-    c[i] = PI * xn[i];
-  for (i = 0; i < nhlf; i++)
-    c3[i] = 2 * c1 * c[i];
-  for (i = 0; i < nhlf; i++)
-    b[i] = sin(c3[i]) / c[i];
-  for (i = 0, j = nhlf - 1; i < nhlf; i++, j--)
-    bb.data[i] = b[j];
-  for (i = nhlf, j = 0; i < (N + 1); i++, j++)
-    bb.data[i] = b[j];
-  for (i = 0; i < (N + 1); i++)
-    bb.data[i] = bb.data[i] * wind[i];
-  for (i = 0; i < (N + 1); i++)
-    gain += bb.data[i];
-  for (i = 0; i < (N + 1); i++)
-    bb.data[i] = bb.data[i] / gain;
-  return bb;
-}
-
-vpMatrix usSignalProcessing::GaussianFilter(int ny, int nx, double sigma)
+/**
+* Gaussian filter kernel generator.
+*
+* @param height Gaussian kernel height.
+* @param width Gaussian kernel width.
+* @param sigma Standard deviation of the gaussian function.
+*
+* @return The gaussian filter kernel.
+*/
+vpMatrix usSignalProcessing::GaussianFilter(int height, int width, double sigma)
 {
   int i, j, a, b;
   double mul;
-  vpMatrix t_out(ny, nx);
-  a = (nx - 1) / 2;
-  b = (ny - 1) / 2;
+  vpMatrix t_out(height, width);
+  a = (width - 1) / 2;
+  b = (height - 1) / 2;
   for (i = -a; i <= a; i++) {
     for (j = -b; j <= b; j++) {
       mul = (exp((-1.0 * ((i * i) + (j * j))) / (2.0 * sigma * sigma))) / (2 * M_PI * sigma);
@@ -101,78 +70,69 @@ vpMatrix usSignalProcessing::GaussianFilter(int ny, int nx, double sigma)
   return t_out;
 }
 
-vpMatrix usSignalProcessing::GetGx(vpMatrix F)
+/**
+* Computes a gradient filter on a RF image, along every row.
+* The filter kernel is : [-0.5, 0, 0.5]
+*
+* @param image RF image to apply the X gradient filter on.
+* @return The output of the X gradient filter.
+*/
+vpMatrix usSignalProcessing::getXGradient(const usImageRF2D<short int> &image)
 {
-  assert(F.getCols() >= 0);
-  vpMatrix t_out(F.getRows(), F.getCols());
-  // Computing the edges of the gradient
-  for (uint i = 0; i < F.getRows(); i++) {
-    *(t_out.data + i) = *(F.data + i + F.getRows()) - *(F.data + i);
-
-    *(t_out.data + (F.getCols() - 1) * F.getRows() + i) =
-        *(F.data + (F.getCols() - 2) * F.getRows() + i) - *(F.data + (F.getCols() - 1) * F.getRows() + i);
-  }
-  //#pragma omp parallel for collapse(2)
-  for (uint i = 1; i < F.getCols() - 1; i++)
-    for (uint j = 0; j < F.getRows(); j++)
-      *(t_out.data + i * F.getRows() + j) =
-          (double)(*(F.data + (i + 1) * F.getRows() + j) - *(F.data + (i - 1) * F.getRows() + j)) * 0.5;
-  return t_out;
-}
-
-vpMatrix usSignalProcessing::GetGy(vpMatrix F)
-{
-  assert(F.getCols() >= 0);
-  vpMatrix t_out(F.getRows(), F.getCols());
-  // Computing the edges of the gradient
-  for (uint i = 0; i < F.getCols(); i++) {
-    *(t_out.data + i * F.getRows()) = *(F.data + i * F.getRows() + 1) - *(F.data + i * F.getRows());
-    *(t_out.data + (F.getRows() - 1) + i * F.getRows()) =
-        *(F.data + (F.getRows() - 1) + i * F.getRows()) - *(F.data + (F.getRows() - 2) + i * F.getRows());
-  }
-  //#pragma omp parallel for collapse(2)
-  for (uint i = 1; i < F.getRows() - 1; i++)
-    for (uint j = 0; j < F.getCols(); j++)
-      *(t_out.data + j * F.getRows() + i) =
-          (double)(*(F.data + j * F.getRows() + i + 1) - *(F.data + j * F.getRows() + i - 1)) * 0.5;
-  return t_out;
-}
-
-vpMatrix usSignalProcessing::GetGx(const usImageRF2D<short int> &F)
-{
-  vpMatrix t_out(F.getHeight(), F.getWidth());
+  vpMatrix t_out(image.getHeight(), image.getWidth());
 
   // manage first and last of each column
-  for (uint i = 0; i < F.getHeight(); i++) {
-    t_out[i][0] = F(i, 1) - F(i, 0);
-    t_out[i][F.getWidth() - 1] = F(i, F.getWidth() - 2) - F(i, F.getWidth() - 1);
+  for (uint i = 0; i < image.getHeight(); i++) {
+    t_out[i][0] = image(i, 1) - image(i, 0);
+    t_out[i][image.getWidth() - 1] = image(i, image.getWidth() - 2) - image(i, image.getWidth() - 1);
   }
 
-  for (uint i = 0; i < F.getHeight(); i++)
-    for (uint j = 1; j < F.getWidth() - 1; j++)
-      t_out[i][j] = (F(i, j + 1) - F(i, j - 1)) * 0.5;
+  for (uint i = 0; i < image.getHeight(); i++)
+    for (uint j = 1; j < image.getWidth() - 1; j++)
+      t_out[i][j] = (image(i, j + 1) - image(i, j - 1)) * 0.5;
 
   return t_out;
 }
 
-vpMatrix usSignalProcessing::GetGy(const usImageRF2D<short> &F)
+/**
+* Computes a gradient filter on a RF image, along every row.
+* The filter kernel is the transpose of : [-0.5, 0, 0.5]
+*
+* @param image RF image to apply the Y gradient filter on.
+* @return The output of the Y gradient filter.
+*/
+vpMatrix usSignalProcessing::getYGradient(const usImageRF2D<short> &image)
 {
-  vpMatrix t_out(F.getHeight(), F.getWidth());
-  // Computing the edges of the gradient
-  for (uint j = 0; j < F.getWidth(); j++) {
-    t_out[0][j] = F(1, j) - F(0, j);
-    t_out[F.getHeight() - 1][j] = F(F.getHeight() - 1, j) - F(F.getHeight() - 2, j);
+  vpMatrix t_out(image.getHeight(), image.getWidth());
+
+  // manage first and last of each row
+  for (uint j = 0; j < image.getWidth(); j++) {
+    t_out[0][j] = image(1, j) - image(0, j);
+    t_out[image.getHeight() - 1][j] = image(image.getHeight() - 1, j) - image(image.getHeight() - 2, j);
   }
-  //#pragma omp parallel for collapse(2)
-  for (uint i = 1; i < F.getHeight() - 1; i++)
-    for (uint j = 0; j < F.getWidth(); j++)
-      t_out[i][j] = (F(i + 1, j) - F(i - 1, j)) * 0.5;
+
+  for (uint i = 1; i < image.getHeight() - 1; i++)
+    for (uint j = 0; j < image.getWidth(); j++)
+      t_out[i][j] = (image(i + 1, j) - image(i - 1, j)) * 0.5;
 
   return t_out;
 }
 
+/**
+* Computes the difference between 2 matrix (value by value)
+* The output matrix O is defined as O[i][j] = A[i][j] - B[i][j] for every component of the matrix.
+* A and B must have the same size.
+*
+* @param A First input matrix.
+* @param A Second input matrix.
+* @return The difference matrix.
+*/
 vpMatrix usSignalProcessing::Difference(const usImageRF2D<short int> &A, const usImageRF2D<short int> &B)
 {
+  if (A.getHeight() != B.getHeight() || A.getWidth() != B.getWidth())
+    throw(vpException(vpException::dimensionError,
+                      "usSignalProcessing::Difference(), input matrices dimentions mismatch."));
+
   vpMatrix t_out(A.getHeight(), A.getWidth());
 
   for (uint i = 0; i < A.getHeight(); i++)
@@ -181,6 +141,14 @@ vpMatrix usSignalProcessing::Difference(const usImageRF2D<short int> &A, const u
   return t_out;
 }
 
+/**
+* Performs a bilinear interpolation on matrix In, to produce an output matrix of size (newH,newW)
+*
+* @param In Input matrix to interpolate.
+* @param newW Output matrix width.
+* @param newH Output matrix height.
+* @return The resulting matrix of the interpolation.
+*/
 vpMatrix usSignalProcessing::BilinearInterpolation(vpMatrix In, uint newW, uint newH)
 {
   vpMatrix ivec(newH, newW);
@@ -188,7 +156,7 @@ vpMatrix usSignalProcessing::BilinearInterpolation(vpMatrix In, uint newW, uint 
   double ty = (double)(In.getRows() - 1.0) / newH;
   double x_diff, y_diff;
   double A, B, C, D;
-  //#pragma omp parallel for collapse(2)
+
   for (uint i = 0; i < newH; i++) {
     for (uint j = 0; j < newW; j++) {
       int x = (int)(tx * j);
@@ -196,10 +164,10 @@ vpMatrix usSignalProcessing::BilinearInterpolation(vpMatrix In, uint newW, uint 
       x_diff = ((tx * j) - x);
       y_diff = ((ty * i) - y);
 
-      A = In.data[x * In.getRows() + y];
-      B = In.data[(x + 1) * In.getRows() + y];
-      C = In.data[x * In.getRows() + (y + 1)];
-      D = In.data[(x + 1) * In.getRows() + (y + 1)];
+      A = In[y][x];
+      B = In[y][x + 1];
+      C = In[y + 1][x];
+      D = In[y + 1][x + 1];
 
       double vi = (double)(A * (1.0 - x_diff) * (1.0 - y_diff) + B * (x_diff) * (1.0 - y_diff) +
                            C * (y_diff) * (1.0 - x_diff) + D * (x_diff * y_diff));
@@ -207,74 +175,25 @@ vpMatrix usSignalProcessing::BilinearInterpolation(vpMatrix In, uint newW, uint 
     }
   }
   return ivec;
-  /*
-    vpMatrix ivec(newH, newW);
-    double tx = (double)(In.getCols() - 1.0) / newW;
-    double ty = (double)(In.getRows() - 1.0) / newH;
-    double x_diff, y_diff;
-    double A, B, C, D;
-    //#pragma omp parallel for collapse(2)
-    for (uint i = 0; i < newH; i++) {
-      for (uint j = 0; j < newW; j++) {
-        int x = (int)(tx * j);
-        int y = (int)(ty * i);
-        x_diff = ((tx * j) - x);
-        y_diff = ((ty * i) - y);
-
-        A = In[y][x];
-        B = In[y][x + 1];
-        C = In[y + 1][x];
-        D = In[y + 1][x + 1];
-
-        double vi = (double)(A * (1.0 - x_diff) * (1.0 - y_diff) + B * (x_diff) * (1.0 - y_diff) +
-                             C * (y_diff) * (1.0 - x_diff) + D * (x_diff * y_diff));
-        ivec[i][j] = vi;
-      }
-    }
-    return ivec;*/
 }
 
-vpMatrix usSignalProcessing::HadamardProd(vpMatrix in_array1, vpMatrix in_array2)
+/**
+* Performs the Hadamar product between 2 input matrices.
+* matrix1 and matrix2 must have the same size.
+*
+* @param matrix1 First input matrix to multiply.
+* @param matrix2 Second input matrix to multiply.
+* @return The resulting matrix of the product.
+*/
+vpMatrix usSignalProcessing::HadamardProd(vpMatrix matrix1, vpMatrix matrix2)
 {
-  assert(in_array1.getRows() == in_array2.getRows());
-  assert(in_array1.getCols() == in_array2.getCols());
-  uint t_rows = in_array2.getRows();
-  uint t_cols = in_array2.getCols();
+  assert(matrix1.getRows() == matrix2.getRows());
+  assert(matrix1.getCols() == matrix2.getCols());
+  uint t_rows = matrix2.getRows();
+  uint t_cols = matrix2.getCols();
   vpMatrix t_out(t_rows, t_cols);
   for (uint i = 0; i < t_rows; i++)
     for (uint j = 0; j < t_cols; j++)
-      t_out[i][j] = in_array1[i][j] * in_array2[i][j];
+      t_out[i][j] = matrix1[i][j] * matrix2[i][j];
   return t_out;
-}
-
-vpMatrix usSignalProcessing::Normalize_1(vpMatrix &in_array)
-{
-  vpMatrix out_array(in_array.getRows(), in_array.getCols());
-  /*double maxv = in_array.getMaxValue();
-  double minv = in_array.getMinValue();*/
-
-  double min_str = vpMath::abs(in_array.getMaxValue());
-  double max_str = vpMath::abs(in_array.getMinValue());
-
-  double max_abs = (min_str > max_str) ? min_str : max_str;
-
-  for (uint i = 0; i < in_array.size(); i++) {
-    *(out_array.data + i) = vpMath::abs(in_array.data[i]) / max_abs;
-  }
-  return out_array;
-}
-
-vpMatrix usSignalProcessing::SubMatrix(const vpMatrix &M, uint r, uint c, uint nrows, uint ncols)
-{
-  uint rnrows = r + nrows;
-  uint cncols = c + ncols;
-  vpMatrix t_Mout;
-
-  assert(rnrows < M.getRows() || cncols < M.getCols());
-  t_Mout.resize(nrows, ncols);
-  for (unsigned int i = c; i < cncols; i++)
-    for (unsigned int j = r; j < rnrows; j++)
-      t_Mout.data[(i - c) * nrows + (j - r)] = M.data[i * M.getRows() + j];
-
-  return t_Mout;
 }

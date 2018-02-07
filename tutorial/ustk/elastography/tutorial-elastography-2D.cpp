@@ -15,6 +15,7 @@
 
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayX.h>
+#include <visp3/io/vpImageIo.h>
 
 int main(int argc, char **argv)
 {
@@ -23,7 +24,6 @@ int main(int argc, char **argv)
 
   usElastography *elastography = new usElastography;
   elastography->setROI(40, 2500, 50, 500);
-  elastography->start();
 
   QThread *grabbingThread = new QThread();
 
@@ -75,10 +75,8 @@ int main(int argc, char **argv)
 
       std::cout << "MAIN THREAD received frame No : " << grabbedFrame->getFrameCount() << std::endl;
 
-      elastography->setRF(*grabbedFrame);
-      strainImage = elastography->getStrainMap();
-
-      std::cout << "size : " << strainImage.getHeight() << ", " << strainImage.getWidth() << std::endl;
+      elastography->updateRF(*grabbedFrame);
+      strainImage = elastography->run();
 
       converter.convert(*grabbedFrame, preScanImage);
 
@@ -96,11 +94,10 @@ int main(int argc, char **argv)
 
       // processing display
       if (displayInit) {
-
         vpDisplay::display(preScanImage);
         vpDisplay::displayRectangle(preScanImage, 250, 40, 50, 50, vpColor::red);
-        vpDisplay::flush(preScanImage);
         vpDisplay::display(strainImage);
+        vpDisplay::flush(preScanImage);
         vpDisplay::flush(strainImage);
       }
     }
