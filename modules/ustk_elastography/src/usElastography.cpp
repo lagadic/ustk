@@ -151,7 +151,7 @@ void usElastography::updateRF(const usImageRF2D<short> &image)
 * @param tx Top left column of the ROI.
 * @param ty Top left row of the ROI.
 * @param tw ROI width in px.
-* @param tw ROI height in px.
+* @param th ROI height in px.
 */
 void usElastography::setROI(int tx, int ty, int tw, int th)
 {

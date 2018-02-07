@@ -124,7 +124,7 @@ vpMatrix usSignalProcessing::getYGradient(const usImageRF2D<short> &image)
 * A and B must have the same size.
 *
 * @param A First input matrix.
-* @param A Second input matrix.
+* @param B Second input matrix.
 * @return The difference matrix.
 */
 vpMatrix usSignalProcessing::Difference(const usImageRF2D<short int> &A, const usImageRF2D<short int> &B)
