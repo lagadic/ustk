@@ -35,18 +35,19 @@
 if(USE_FFTW)
   list(APPEND opt_incs ${FFTW_INCLUDE_DIRS})
   list(APPEND opt_libs ${FFTW_LIBRARIES})
+
+  if(USE_ARMADILLO)
+    list(APPEND opt_incs ${ARMADILLO_INCLUDE_DIRS})
+    list(APPEND opt_libs ${ARMADILLO_LIBRARIES})
+  endif()
+
+  vp_add_module(ustk_elastography visp_ustk_core)
+
+  vp_glob_module_sources()
+
+  vp_module_include_directories(${opt_incs})
+  vp_create_module(${opt_libs})
+
+  vp_add_tests(DEPENDS_ON  visp_ustk_io)
+
 endif()
-
-if(USE_ARMADILLO)
-  list(APPEND opt_incs ${ARMADILLO_INCLUDE_DIRS})
-  list(APPEND opt_libs ${ARMADILLO_LIBRARIES})
-endif()
-
-vp_add_module(ustk_elastography visp_ustk_core)
-
-vp_glob_module_sources()
-
-vp_module_include_directories(${opt_incs})
-vp_create_module(${opt_libs})
-
-vp_add_tests(DEPENDS_ON  visp_ustk_io)

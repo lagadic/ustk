@@ -211,39 +211,24 @@ vpImage<unsigned char> usElastography::run()
     } else {
       // Step 1: Numerical gradients
       vpMatrix Fx = usSignalProcessing::getXGradient(m_PreROI);
-      vpMatrix::save("Fx", Fx);
       vpMatrix Fy = usSignalProcessing::getYGradient(m_PreROI);
-      vpMatrix::save("Fy", Fy);
       // Difference
       // vpMatrix Dt = m_Postcomp-m_Precomp;
       vpMatrix Dt = usSignalProcessing::Difference(m_PostROI, m_PreROI);
-      vpMatrix::save("Dt", Dt);
       // Step 2: computing the quadratic functions
       vpMatrix dx2 = usSignalProcessing::HadamardProd(Fx, Fx);
-      vpMatrix::save("dx2", dx2);
       vpMatrix dy2 = usSignalProcessing::HadamardProd(Fy, Fy);
-      vpMatrix::save("dy2", dy2);
       vpMatrix dxy = usSignalProcessing::HadamardProd(Fx, Fy);
-      vpMatrix::save("dxy", V);
       vpMatrix dtx = usSignalProcessing::HadamardProd(Dt, Fx);
-      vpMatrix::save("dtx", dtx);
       vpMatrix dty = usSignalProcessing::HadamardProd(Dt, Fy);
-      vpMatrix::save("dty", dty);
       // Step 3: blur the 5 images
       vpMatrix h_gauss = usSignalProcessing::GaussianFilter(15, 5, 7.5); //(51,35,5); //21 good-phantom
-      vpMatrix::save("h_gauss", h_gauss);
 
       vpMatrix gdx2 = cC[0]->run(dx2, h_gauss);
       vpMatrix gdy2 = cC[1]->run(dy2, h_gauss);
       vpMatrix gdxy = cC[2]->run(dxy, h_gauss);
       vpMatrix gdty = cC[3]->run(dty, h_gauss);
       vpMatrix gdtx = cC[4]->run(dtx, h_gauss);
-
-      vpMatrix::save("gdx2", gdx2);
-      vpMatrix::save("gdy2", gdy2);
-      vpMatrix::save("gdxy", gdxy);
-      vpMatrix::save("gdty", gdty);
-      vpMatrix::save("gdtx", gdtx);
 
       // Step 4: compute the u, v components of the displacement
       // usign windows of size Wsizex, Wsizey
@@ -297,8 +282,6 @@ vpImage<unsigned char> usElastography::run()
         k++;
       }
     }
-
-    vpMatrix::save("V_mat", V);
 
     vpMatrix vV(m_h_m, m_w_m, true);
     vV = usSignalProcessing::BilinearInterpolation(V, m_w_m, m_h_m);
