@@ -181,6 +181,16 @@ void usRFToPreScan2DConverter::convert(const usImageRF2D<short int> &rfImage,
 
   unsigned int frameSize = w * h;
 
+  // prepare signals corresponding to each scanline or column (the bitmap is storing row after row)
+  std::vector<short *> rfSignals;
+  for (unsigned int j = 0; j < w; j++) {
+    short *s = new short[h];
+    for (unsigned int i = 0; i < h; i++) {
+      s[i] = rfImage(i, j);
+    }
+    rfSignals.push_back(s);
+  }
+
   // Run envelope detector
   for (unsigned int i = 0; i < w; ++i) {
     enveloppeDetection(rfImage.getSignal(i), m_env + i * h);

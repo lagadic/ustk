@@ -30,19 +30,15 @@
 #
 #############################################################################
 
-project(tutorial-scan-conversion)
+project(tutorial-ustk-elastography)
 
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8.12)
 
-find_package(VISP REQUIRED visp_ustk_io)
+find_package(VISP REQUIRED visp_ustk_elastography)
 
 set(tutorial_cpp
-  tutorial-rfFileToPreScanConversion.cpp
-  tutorial-RFConversion2D.cpp
-  tutorial-scanConversion3D.cpp
-  tutorial-scanConversion2D.cpp
-  tutorial-fullConversion2D.cpp
-  tutorial-fullConversion3D.cpp)
+  tutorial-elastography-2D.cpp
+  tutorial-elastography-2D-basic.cpp)
 
 foreach(cpp ${tutorial_cpp})
   visp_add_target(${cpp})
@@ -50,4 +46,3 @@ foreach(cpp ${tutorial_cpp})
     visp_add_dependency(${cpp} "tutorials")
   endif()
 endforeach()
-

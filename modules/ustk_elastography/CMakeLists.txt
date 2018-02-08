@@ -27,27 +27,27 @@
 #
 # Authors:
 # Fabien Spindler
+# Marc Pouliquen
+# Pedro Patlan Rosales
 #
 #############################################################################
 
-project(tutorial-scan-conversion)
+if(USE_FFTW)
+  list(APPEND opt_incs ${FFTW_INCLUDE_DIRS})
+  list(APPEND opt_libs ${FFTW_LIBRARIES})
 
-cmake_minimum_required(VERSION 2.6)
-
-find_package(VISP REQUIRED visp_ustk_io)
-
-set(tutorial_cpp
-  tutorial-rfFileToPreScanConversion.cpp
-  tutorial-RFConversion2D.cpp
-  tutorial-scanConversion3D.cpp
-  tutorial-scanConversion2D.cpp
-  tutorial-fullConversion2D.cpp
-  tutorial-fullConversion3D.cpp)
-
-foreach(cpp ${tutorial_cpp})
-  visp_add_target(${cpp})
-  if(COMMAND visp_add_dependency)
-    visp_add_dependency(${cpp} "tutorials")
+  if(USE_ARMADILLO)
+    list(APPEND opt_incs ${ARMADILLO_INCLUDE_DIRS})
+    list(APPEND opt_libs ${ARMADILLO_LIBRARIES})
   endif()
-endforeach()
 
+  vp_add_module(ustk_elastography visp_ustk_core)
+
+  vp_glob_module_sources()
+
+  vp_module_include_directories(${opt_incs})
+  vp_create_module(${opt_libs})
+
+  vp_add_tests(DEPENDS_ON  visp_ustk_io)
+
+endif()
