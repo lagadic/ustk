@@ -24,7 +24,7 @@ The following code shows how to read a rf frame, include it in a volume, and fin
 To read a RF frame, you can use the usImageIo::read() method. Then, to convert it, the usRFToPreScan3DConverter does the job.
 Note that using rf files, you have to manually set the transducer settings of the probe used (those informations aren't present in rf format from ultrasonix).
 
-\include tutorial-rfConversion3D.cpp
+\include tutorial-rfFileToPreScanConversion.cpp
 
 \section tuto_scan_conversion_3d Scan conversion of a pre-scan ultrasound frame
 

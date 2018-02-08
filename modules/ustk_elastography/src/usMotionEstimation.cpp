@@ -68,8 +68,8 @@ void usMotionEstimation::init(mat M1, mat M2, int blk_w, int blk_h, int sr_w, in
 }
 /*!
  * \brief init
- * \param M1: RF frame 1 type usImageRF2D<short int>
- * \param M2: RF frame 2 type usImageRF2D<short int>
+ * \param usM1: RF frame 1 type usImageRF2D<short int>
+ * \param usM2: RF frame 2 type usImageRF2D<short int>
  * \param blk_w: block width (int)
  * \param blk_h: block height (int)
  * \param sr_w: search region width (int)
@@ -99,10 +99,11 @@ void usMotionEstimation::init(usImageRF2D<short int> usM1, usImageRF2D<short int
 }
 /*!
  * \brief usMotionEstimation::run
- * This function run the BMA algorithm and stores the displacements
+ * This function run the BMA algorithm and stores the displacements*/
+/* REMOVE DOXYGEN WARNING DUE TO \mathbf
  * between \f$ \mathbf{M}_1\f$ and \f$ \mathbf{M}_2\f$ in \mathbf{U} (lateral)
- * and \mathbf{V} (axial).
- */
+* and \mathbf{V} (axial).
+*/
 void usMotionEstimation::run()
 {
   std::cout << "Limits: " << m_ycRng.n_elem << ", " << m_xcRng.n_elem << std::endl;

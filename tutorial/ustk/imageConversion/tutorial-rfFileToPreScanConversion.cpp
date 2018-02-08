@@ -1,3 +1,5 @@
+//! \example tutorial-rfFileToPreScanConversion.cpp
+
 #include <visp3/ustk_core/usConfig.h>
 
 #ifdef USTK_HAVE_FFTW
