@@ -97,6 +97,14 @@ if(DOXYGEN_FOUND)
   # - DOXYGEN_STRIP_FROM_INC_PATH corresponding to STRIP_FROM_INC_PATH in the doxy file
   set(DOXYGEN_STRIP_FROM_INC_PATH "")
 
+  foreach(m ${VISP_MODULES_BUILD} ${VISP_MODULES_DISABLED_USER} ${VISP_MODULES_DISABLED_AUTO} ${VISP_MODULES_DISABLED_FORCE})
+    message("m 2: ${m}")
+    #message("VISP_MODULE_${m}_LOCATION: ${VISP_MODULE_${m}_LOCATION}")
+    if(m MATCHES "^visp_")
+      set(DOXYGEN_STRIP_FROM_INC_PATH "${DOXYGEN_STRIP_FROM_INC_PATH} \\ \n\t\t\t \"${VISP_MODULE_${m}_LOCATION}/include\"")
+    endif()
+  endforeach()
+
   configure_file(${USTK_SOURCE_DIR}/doc/config-doxygen.in
     ${USTK_DOC_DIR}/config-doxygen
     @ONLY )
