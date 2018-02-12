@@ -70,7 +70,7 @@ void usRFToPreScan3DConverter::convert(const usImageRF3D<short int> &rfImage,
       (((int)rfImage.getHeight()) != m_heightRF) || (((int)rfImage.getWidth()) != m_widthRF)) {
     init(rfImage.getHeight(), rfImage.getWidth(), rfImage.getNumberOfFrames());
   }
-  preScanImage.resize(rfImage.getWidth(), rfImage.getHeight() / getDecimationFactor(), rfImage.getNumberOfFrames());
+  preScanImage.resize(rfImage.getHeight(), rfImage.getWidth() / getDecimationFactor(), rfImage.getNumberOfFrames());
   // First we copy the transducer/motor settings
   preScanImage.setImagePreScanSettings(rfImage);
   preScanImage.setAxialResolution(rfImage.getDepth() / preScanImage.getHeight());

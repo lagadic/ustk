@@ -63,7 +63,7 @@ int main(int argc, char **argv)
   */
 
   usImagePreScan3D<unsigned char> prescanImage;
-  prescanImage.resize(128, 480, 16);
+  prescanImage.resize(480, 128, 16);
   usImagePostScan3D<unsigned char> postscanImage;
 
   usImageIo::read(prescanImage, mhd_filename);

@@ -223,7 +223,7 @@ template <> void usSequenceReader3D<usImagePreScan3D<unsigned char> >::open(usIm
     throw(vpException(vpException::badValue, ".vol file doesn't contain unsigned char data"));
 
   // READING DATA
-  image.resize(m_volHeader.w, m_volHeader.h, m_volHeader.fpv);
+  image.resize(m_volHeader.h, m_volHeader.w, m_volHeader.fpv);
   n = 0;
   unsigned char voxel;
   for (int k = 0; k < m_volHeader.fpv; k++) {
@@ -275,7 +275,7 @@ template <> void usSequenceReader3D<usImagePostScan3D<unsigned char> >::open(usI
     throw(vpException(vpException::badValue, ".vol file doesn't contain unsigned char data"));
 
   // READING DATA
-  image.resize(m_volHeader.w, m_volHeader.h, m_volHeader.fpv);
+  image.resize(m_volHeader.h, m_volHeader.w, m_volHeader.fpv);
   n = 0;
   unsigned char voxel;
   for (int k = 0; k < m_volHeader.fpv; k++) {
@@ -302,7 +302,7 @@ template <> void usSequenceReader3D<usImagePreScan3D<unsigned char> >::acquire(u
     return;
   }
   // READING DATA
-  image.resize(m_volHeader.w, m_volHeader.h, m_volHeader.fpv);
+  image.resize(m_volHeader.h, m_volHeader.w, m_volHeader.fpv);
   unsigned char voxel;
   for (int k = 0; k < m_volHeader.fpv; k++) {
     for (int j = 0; j < m_volHeader.w; j++) {
@@ -327,7 +327,7 @@ template <> void usSequenceReader3D<usImagePostScan3D<unsigned char> >::acquire(
     return;
   }
   // READING DATA
-  image.resize(m_volHeader.w, m_volHeader.h, m_volHeader.fpv);
+  image.resize(m_volHeader.h, m_volHeader.w, m_volHeader.fpv);
   unsigned char voxel;
   for (int k = 0; k < m_volHeader.fpv; k++) {
     for (int i = 0; i < m_volHeader.h; i++) {
@@ -374,7 +374,7 @@ void usSequenceReader3D<usImagePreScan3D<unsigned char> >::getVolume(usImagePreS
   m_volFile.seekg(offset);
 
   // READING DATA
-  preScanImage.resize(m_volHeader.w, m_volHeader.h, m_volHeader.fpv);
+  preScanImage.resize(m_volHeader.h, m_volHeader.w, m_volHeader.fpv);
   unsigned char voxel;
   for (int k = 0; k < m_volHeader.fpv; k++) {
     for (int j = 0; j < m_volHeader.w; j++) {

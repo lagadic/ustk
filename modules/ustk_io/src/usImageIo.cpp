@@ -283,7 +283,7 @@ void usImageIo::read(usImageRF3D<short> &imageRf3, const std::string &headerFile
     usMetaHeaderParser::MHDHeader mhdHeader = mhdParser.getMHDHeader();
 
     // resizing image in memory
-    imageRf3.resize(mhdHeader.dim[0], mhdHeader.dim[1], mhdHeader.dim[2]);
+    imageRf3.resize(mhdHeader.dim[1], mhdHeader.dim[0], mhdHeader.dim[2]);
 
     usImagePreScanSettings settings;
     settings.setTransducerRadius(mhdHeader.transducerRadius);
@@ -564,7 +564,7 @@ void usImageIo::read(usImagePreScan3D<unsigned char> &preScanImage, const std::s
     if (sequenceReader.getFrameCount() == 0)
       throw(vpException(vpException::fatalError, "Trying to open a 2D image, check your xml settings (frameNumber) !"));
 
-    preScanImage.resize(preScanFrame.getScanLineNumber(), preScanFrame.getBModeSampleNumber(),
+    preScanImage.resize(preScanFrame.getBModeSampleNumber(), preScanFrame.getScanLineNumber(),
                         sequenceReader.getFrameCount());
 
     int frameIndex = 0;
@@ -600,7 +600,7 @@ void usImageIo::read(usImagePreScan3D<unsigned char> &preScanImage, const std::s
     usMetaHeaderParser::MHDHeader mhdHeader = mhdParser.getMHDHeader();
 
     // resizing image in memory
-    preScanImage.resize(mhdHeader.dim[0], mhdHeader.dim[1], mhdHeader.dim[2]);
+    preScanImage.resize(mhdHeader.dim[1], mhdHeader.dim[0], mhdHeader.dim[2]);
 
     usImagePreScanSettings settings;
     settings.setTransducerRadius(mhdHeader.transducerRadius);
@@ -671,7 +671,7 @@ void usImageIo::read(usImagePreScan3D<unsigned char> &preScanImage, const std::s
     // to select volume to read (in .vol files multiple volumes can be stacked after the header part)
 
     // READING DATA
-    preScanImage.resize(header.w, header.h, header.fpv);
+    preScanImage.resize(header.h, header.w, header.fpv);
     n = 0;
     unsigned char voxel;
     for (int k = 0; k < header.fpv; k++) {
@@ -998,7 +998,7 @@ void usImageIo::read(usImagePostScan3D<unsigned char> &postScanImage, const std:
     usMetaHeaderParser::MHDHeader mhdHeader = mhdParser.getMHDHeader();
 
     // resizing image in memory
-    postScanImage.resize(mhdHeader.dim[0], mhdHeader.dim[1], mhdHeader.dim[2]);
+    postScanImage.resize(mhdHeader.dim[1], mhdHeader.dim[0], mhdHeader.dim[2]);
 
     postScanImage.setTransducerRadius(mhdHeader.transducerRadius);
     postScanImage.setScanLinePitch(mhdHeader.scanLinePitch);

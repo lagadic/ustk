@@ -280,7 +280,7 @@ void usNetworkGrabberRF3D::includeFrameInVolume()
 
   for (unsigned int i = 0; i < m_grabbedImage.getHeight(); i++) {
     for (unsigned int j = 0; j < m_grabbedImage.getWidth(); j++) {
-      (*m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC))(j, i, framePostition, m_grabbedImage(i, j));
+      (*m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC))(i, j, framePostition, m_grabbedImage(i, j));
     }
   }
 

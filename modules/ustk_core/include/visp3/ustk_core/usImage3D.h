@@ -67,11 +67,11 @@ public:
 
   /**
   * Constructor. Set the dimensions of the volume.
-  * @param width Volume width.
   * @param height Volume height.
+  * @param width Volume width.
   * @param frameNumber Volume size in the third dimension (orthogonal to ultrasound 2D frames).
   */
-  usImage3D(unsigned int width, unsigned int height, unsigned int frameNumber);
+  usImage3D(unsigned int height, unsigned int width, unsigned int frameNumber);
 
   /**
   * Copy constructor. By default performs a deep copy.
@@ -102,15 +102,12 @@ public:
 
   /**
   * Get the pointer to the data container for specified position in the volume.
-  * @param indexI Index on i-axis to acess
-  * @param indexJ Index on j-axis to acess
-  * @param indexK Index on k-axis to acess
+  * @param i Index on i-axis to acess
+  * @param j Index on j-axis to acess
+  * @param k Index on k-axis to acess
   * @return The pointer to the voxel specified indexes.
   */
-  Type *getData(unsigned int indexI, unsigned int indexJ, unsigned int indexK)
-  {
-    return framPointer[indexK] + m_width * indexI + indexJ;
-  }
+  Type *getData(unsigned int i, unsigned int j, unsigned int k) { return framPointer[k] + m_width * i + j; }
 
   /**
   * Get the volume width.
@@ -156,25 +153,25 @@ public:
 
   /**
   * Access operator.
-  * @param indexI Index on i-axis to acess
-  * @param indexJ Index on j-axis to acess
-  * @param indexK Index on k-axis to acess
+  * @param i Index on i-axis to acess
+  * @param j Index on j-axis to acess
+  * @param k Index on k-axis to acess
   */
-  inline Type operator()(unsigned int indexI, unsigned int indexJ, unsigned int indexK) const
+  inline Type operator()(unsigned int i, unsigned int j, unsigned int k) const
   {
-    return framPointer[indexK][m_width * indexI + indexJ];
+    return framPointer[k][m_width * i + j];
   }
 
   /**
   * Modification operator.
-  * @param indexI Index on i-axis to modify
-  * @param indexJ Index on j-axis to modify
-  * @param indexK Index on k-axis to modify
+  * @param i Index on i-axis to modify
+  * @param j Index on j-axis to modify
+  * @param k Index on k-axis to modify
   * @param value Value to insert at the desired index
   */
-  inline void operator()(unsigned int indexI, unsigned int indexJ, unsigned int indexK, Type value)
+  inline void operator()(unsigned int i, unsigned int j, unsigned int k, Type value)
   {
-    framPointer[indexK][m_width * indexI + indexJ] = value;
+    framPointer[k][m_width * i + j] = value;
   }
 
   /**
@@ -198,11 +195,11 @@ protected:
 private:
   /**
   * Initiation of the image.
-  * @param width Volume width (number of voxels).
   * @param heigth Volume height (number of voxels).
+  * @param width Volume width (number of voxels).
   * @param numberOfFrames Volume size (number of voxels) in the third dimension (orthogonal to ultrasound 2D frames).
   */
-  void init(unsigned int width, unsigned int heigth, unsigned int numberOfFrames);
+  void init(unsigned int heigth, unsigned int width, unsigned int numberOfFrames);
 
   unsigned int m_width;          /**< Volume width in voxels (number of voxels on the j-axis)*/
   unsigned int m_height;         /**< Volume height in voxels (number of voxels on the i-axis)*/
@@ -220,8 +217,8 @@ private:
   \brief Image initialization
 
   Allocate memory for an [width x height x numberOfFrames] image.
-  \param width : Width of the 2D planes contained in the volume.
   \param height : Height of the 2D planes contained in the volume.
+  \param width : Width of the 2D planes contained in the volume.
   \param numberOfFrames : Volume dimension in the 3rd dimension.
 
   Element of the bitmap are not initialized
@@ -234,7 +231,7 @@ private:
 
 */
 template <class Type>
-inline void usImage3D<Type>::init(unsigned int width, unsigned int height, unsigned int numberOfFrames)
+inline void usImage3D<Type>::init(unsigned int height, unsigned int width, unsigned int numberOfFrames)
 {
   if ((width != this->m_width) || (height != this->m_height) || (numberOfFrames != this->m_numberOfFrames)) {
     if (bitmap != NULL) {
@@ -277,11 +274,11 @@ usImage3D<Type>::usImage3D() : m_width(0), m_height(0), m_numberOfFrames(0), m_s
 }
 
 template <class Type>
-usImage3D<Type>::usImage3D(unsigned int width, unsigned int height, unsigned int frameNumber)
+usImage3D<Type>::usImage3D(unsigned int height, unsigned int width, unsigned int frameNumber)
   : m_width(width), m_height(height), m_numberOfFrames(frameNumber), m_size(width * height * frameNumber), bitmap(NULL),
     framPointer(NULL)
 {
-  init(width, height, frameNumber);
+  init(height, width, frameNumber);
   initData(0);
 }
 
@@ -361,8 +358,8 @@ template <class Type> void usImage3D<Type>::initData(Type value)
   }
 }
 
-template <class Type> void usImage3D<Type>::resize(unsigned int width, unsigned int height, unsigned int numberOfFrames)
+template <class Type> void usImage3D<Type>::resize(unsigned int height, unsigned int width, unsigned int numberOfFrames)
 {
-  init(width, height, numberOfFrames);
+  init(height, width, numberOfFrames);
 }
 #endif // US_IMAGE_3D_H

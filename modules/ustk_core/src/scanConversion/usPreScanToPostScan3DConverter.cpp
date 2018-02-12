@@ -255,7 +255,7 @@ void usPreScanToPostScan3DConverter::convert(usImagePostScan3D<unsigned char> &p
   if (!m_initDone) {
     init(preScanImage);
   }
-  postScanImage.resize(m_nbX, m_nbY, m_nbZ);
+  postScanImage.resize(m_nbY, m_nbX, m_nbZ);
   unsigned char *dataPost = postScanImage.getData();
   const unsigned char *dataPre;
   dataPre = preScanImage.getConstData();

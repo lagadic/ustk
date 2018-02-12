@@ -52,8 +52,8 @@ void usVTKConverter::convert(const usImagePostScan3D<unsigned char> &postScanIma
   if (importer == NULL) {
     importer = vtkSmartPointer<vtkImageImport>::New();
     importer->SetDataScalarTypeToUnsignedChar();
-    importer->SetWholeExtent(0, postScanImage.getDimU() - 1, 0, postScanImage.getDimV() - 1, 0,
-                             postScanImage.getDimW() - 1);
+    importer->SetWholeExtent(0, postScanImage.getWidth() - 1, 0, postScanImage.getHeight() - 1, 0,
+                             postScanImage.getNumberOfFrames() - 1);
     importer->SetDataExtentToWholeExtent();
     importer->SetNumberOfScalarComponents(1);
     importer->SetImportVoidPointer((void *)postScanImage.getConstData(), 1);
@@ -77,8 +77,8 @@ void usVTKConverter::convert(const usImagePreScan3D<unsigned char> &preScanImage
     importer = vtkSmartPointer<vtkImageImport>::New();
     importer->SetDataScalarTypeToUnsignedChar();
     importer->SetImportVoidPointer((void *)preScanImage.getConstData());
-    importer->SetWholeExtent(0, preScanImage.getDimU() - 1, 0, preScanImage.getDimV() - 1, 0,
-                             preScanImage.getDimW() - 1);
+    importer->SetWholeExtent(0, preScanImage.getWidth() - 1, 0, preScanImage.getHeight() - 1, 0,
+                             preScanImage.getNumberOfFrames() - 1);
     importer->SetDataExtentToWholeExtent();
     importer->SetNumberOfScalarComponents(1);
   } else

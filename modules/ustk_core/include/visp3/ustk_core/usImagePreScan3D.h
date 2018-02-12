@@ -166,7 +166,7 @@ public:
   void setScanLineNumber(unsigned int scanLineNumber);
 
   // Filtering before calling vpImage::resize() to update scanLineNumber
-  void resize(unsigned int width, unsigned int height, unsigned int numberOfFrames);
+  void resize(unsigned int height, unsigned int width, unsigned int numberOfFrames);
 };
 
 /**
@@ -292,14 +292,14 @@ template <class Type> void usImagePreScan3D<Type>::setFrameNumber(unsigned int f
  *
  * Updates also the transducer scan line number that corresponds to the image X-size and
  * the motor frame number that corresponds to the image Z-size.
- * \param width Image width.
  * \param height Image height.
+ * \param width Image width.
  * \param numberOfFrames Number of frames in the volume.
  */
 template <class Type>
-void usImagePreScan3D<Type>::resize(unsigned int width, unsigned int height, unsigned int numberOfFrames)
+void usImagePreScan3D<Type>::resize(unsigned int height, unsigned int width, unsigned int numberOfFrames)
 {
-  usImage3D<Type>::resize(width, height, numberOfFrames);
+  usImage3D<Type>::resize(height, width, numberOfFrames);
   usMotorSettings::setFrameNumber(numberOfFrames);
   usTransducerSettings::setScanLineNumber(width);
 }
