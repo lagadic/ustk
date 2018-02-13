@@ -93,15 +93,8 @@ VP_SET(USTK_HAVE_ARMADILLO TRUE IF (BUILD_MODULE_visp_ustk_core AND USE_ARMADILL
 # Use "make ustk_doc" target to generate the documentation
 #----------------------------------------------------------------------
 if(DOXYGEN_FOUND)
-  # set vars used in doxygen config file
-  # - DOXYGEN_STRIP_FROM_INC_PATH corresponding to STRIP_FROM_INC_PATH in the doxy file
-  set(DOXYGEN_STRIP_FROM_INC_PATH "")
-
-  foreach(m ${VISP_MODULES_BUILD} ${VISP_MODULES_DISABLED_USER} ${VISP_MODULES_DISABLED_AUTO} ${VISP_MODULES_DISABLED_FORCE})
-    if(m MATCHES "^visp_")
-      set(DOXYGEN_STRIP_FROM_INC_PATH "${DOXYGEN_STRIP_FROM_INC_PATH} \\ \n\t\t\t \"${VISP_MODULE_${m}_LOCATION}/include\"")
-    endif()
-  endforeach()
+  # Note that set DOXYGEN_STRIP_FROM_INC_PATH corresponding to STRIP_FROM_INC_PATH in the
+  # doxy file is already set in ViSP main CMakeLists.txt file
 
   configure_file(${USTK_SOURCE_DIR}/doc/config-doxygen.in
     ${USTK_DOC_DIR}/config-doxygen
