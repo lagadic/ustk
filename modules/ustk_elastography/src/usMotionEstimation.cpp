@@ -33,6 +33,7 @@
 
 #include <visp3/ustk_elastography/usMotionEstimation.h>
 
+#if defined(USTK_HAVE_ARMADILLO)
 usMotionEstimation::usMotionEstimation() {}
 
 usMotionEstimation::~usMotionEstimation() {}
@@ -288,3 +289,5 @@ vpMatrix usMotionEstimation::convert_mat2vpMatrix(mat vI)
   memcpy(I.data, vI.memptr(), vI.size() * sizeof(double));
   return I;
 }
+
+#endif // ARMADILLO

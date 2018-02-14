@@ -34,6 +34,10 @@
 #ifndef US_MOTION_ESTIMATION_H
 #define US_MOTION_ESTIMATION_H
 
+#include <visp3/ustk_core/usConfig.h>
+
+#if defined(USTK_HAVE_ARMADILLO)
+
 #include <algorithm>
 #include <cmath>
 #include <iostream>
@@ -85,4 +89,5 @@ private:
   int m_Ly;
 };
 
+#endif // ARMADILLO
 #endif // US_MOTION_ESTIMATION_H
