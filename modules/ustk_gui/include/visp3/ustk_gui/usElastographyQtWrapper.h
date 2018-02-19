@@ -41,7 +41,7 @@
 // VISP includes
 #include <visp3/ustk_core/usConfig.h>
 
-#if (defined(USTK_HAVE_VTK_QT) || defined(USTK_HAVE_QT5)) && defined(USTK_HAVE_ELASTOGRAPHY)
+#if (defined(USTK_HAVE_VTK_QT) || defined(USTK_HAVE_QT5)) && defined(VISP_HAVE_MODULE_USTK_ELASTOGRAPHY)
 
 #include <QObject>
 #include <visp3/ustk_elastography/usElastography.h>

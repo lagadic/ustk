@@ -78,10 +78,4 @@
 // Defined if FFTW support available
 #cmakedefine USTK_HAVE_ARMADILLO
 
-// Defined if ustk_elastography module is built
-#cmakedefine USTK_HAVE_ELASTOGRAPHY
-
-// Defined if ustk_grabber module is built
-#cmakedefine USTK_HAVE_GRABBER
-
 #endif

@@ -29,6 +29,7 @@
  * Marc Pouliquen
  *
  *****************************************************************************/
+#include <iostream>
 #include <visp3/ustk_core/usConfig.h>
 
 #if defined(USTK_HAVE_FFTW)
