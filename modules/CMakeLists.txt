@@ -48,6 +48,7 @@ set(USTK_BINARY_DIR "${CMAKE_BINARY_DIR}")
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/ustk_core/cmake")
 
 VP_OPTION(USE_FFTW "FFTW" "" "Include fftw support" "" ON)
+VP_OPTION(USE_ARMADILLO "Armadillo" "" "Include armadillo support" "" ON)
 VP_OPTION(USE_VTK  "VTK"  QUIET "Include vtk support"  "" ON)
 
 if(USE_VTK)
@@ -70,7 +71,7 @@ endif()
 if(NOT USE_VTK)
   #find Qt5
   #find_package(Qt5 COMPONENTS Core Network Widgets)
-  VP_OPTION(USE_QT5 "Qt5;COMPONENTS;Core;Network;Widgets" QUIET "Include Qt5 support" "" ON)
+  VP_OPTION(USE_QT5 "Qt5;COMPONENTS;Core;Network;Widgets;PrintSupport" QUIET "Include Qt5 support" "" ON)
 endif()
 
 if(USE_VTK)
@@ -84,16 +85,16 @@ if(USE_VTK)
   endif()
 endif()
 
-VP_SET(USTK_HAVE_QT5  TRUE IF USE_QT5)
-VP_SET(USTK_HAVE_FFTW TRUE IF USE_FFTW)
+VP_SET(USTK_HAVE_QT5  TRUE IF (BUILD_MODULE_visp_ustk_core AND USE_QT5))
+VP_SET(USTK_HAVE_FFTW TRUE IF (BUILD_MODULE_visp_ustk_core AND USE_FFTW))
+VP_SET(USTK_HAVE_ARMADILLO TRUE IF (BUILD_MODULE_visp_ustk_core AND USE_ARMADILLO))
 
 #----------------------------------------------------------------------
 # Use "make ustk_doc" target to generate the documentation
 #----------------------------------------------------------------------
 if(DOXYGEN_FOUND)
-  # set vars used in doxygen config file
-  # - DOXYGEN_STRIP_FROM_INC_PATH corresponding to STRIP_FROM_INC_PATH in the doxy file
-  set(DOXYGEN_STRIP_FROM_INC_PATH "")
+  # Note that set DOXYGEN_STRIP_FROM_INC_PATH corresponding to STRIP_FROM_INC_PATH in the
+  # doxy file is already set in ViSP main CMakeLists.txt file
 
   configure_file(${USTK_SOURCE_DIR}/doc/config-doxygen.in
     ${USTK_DOC_DIR}/config-doxygen

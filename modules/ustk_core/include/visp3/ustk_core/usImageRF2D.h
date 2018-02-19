@@ -264,7 +264,13 @@ template <class Type> bool usImageRF2D<Type>::operator==(const usImageRF2D<Type>
 * @param j Column index of the pixel to access.
 * @return The value of the pixel.
 */
-template <class Type> Type usImageRF2D<Type>::operator()(unsigned int i, unsigned int j) const { return col[j][i]; }
+template <class Type> Type usImageRF2D<Type>::operator()(unsigned int i, unsigned int j) const
+{
+  if (i >= height || j >= width)
+    throw vpException(vpException::dimensionError, "usImageRF2D, try to acess index out of image bounds");
+
+  return col[j][i];
+}
 
 /**
 * Pixel writing operator.
@@ -274,6 +280,9 @@ template <class Type> Type usImageRF2D<Type>::operator()(unsigned int i, unsigne
 */
 template <class Type> void usImageRF2D<Type>::operator()(unsigned int i, unsigned int j, const Type &value)
 {
+  if (i >= height || j >= width)
+    throw vpException(vpException::dimensionError, "usImageRF2D, try to write at index out of image bounds");
+
   col[j][i] = value;
 }
 

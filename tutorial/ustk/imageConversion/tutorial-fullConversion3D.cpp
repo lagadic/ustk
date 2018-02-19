@@ -21,7 +21,7 @@ int main()
 
   usImageRF2D<short int> rfImage;
   usImageRF3D<short int> rfImage3D;
-  rfImage3D.resize(192, 3840, 10);
+  rfImage3D.resize(3840, 192, 10);
 
   usImagePostScan3D<unsigned char> postcanImage;
 

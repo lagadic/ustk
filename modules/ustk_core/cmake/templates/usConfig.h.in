@@ -75,4 +75,7 @@
 // Defined if FFTW support available
 #cmakedefine USTK_HAVE_FFTW
 
+// Defined if FFTW support available
+#cmakedefine USTK_HAVE_ARMADILLO
+
 #endif

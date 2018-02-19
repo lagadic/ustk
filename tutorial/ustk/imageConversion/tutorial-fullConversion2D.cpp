@@ -23,7 +23,7 @@ int main(int argc, char **argv)
   if (filename.empty()) {
     std::string env_ipath = us::getDataSetPath();
     if (!env_ipath.empty())
-      filename = env_ipath + "/rf/signal.rf";
+      filename = env_ipath + "/RFElasto/image00010.mhd";
     else {
       std::cout << "You should set USTK_DATASET_PATH environment var to access to ustk dataset" << std::endl;
       return 0;
@@ -37,11 +37,6 @@ int main(int argc, char **argv)
   postscanImage.setWidthResolution(0.0005);
 
   usImageIo::read(rfImage, filename);
-
-  // settings used for signal.rf file in ustk-dataset
-  rfImage.setScanLinePitch(0.010625);
-  rfImage.setTransducerRadius(0.0398);
-  rfImage.setDepth(0.15);
 
   postscanImage.setTransducerSettings(rfImage);
 

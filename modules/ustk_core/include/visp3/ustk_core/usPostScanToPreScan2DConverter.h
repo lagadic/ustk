@@ -46,8 +46,13 @@
  * @brief 2D back-scan converter
  * @ingroup module_ustk_core
  *
- * This class allows to convert 2D post-scan ultrasound images to pre-scan.
+ * This class allows to convert a 2D post-scan ultrasound image to a pre-scan image.
  * The convertion is applied in the convert() method.
+ *
+ * Considering the following usImagePostScan2D image (convex or linear) as input:
+ * \image html img-usImagePostScan2D.png
+ * this class generates an usImagePreScan2D (convex or linear) as output:
+ * \image html img-usImagePreScan2D.png
  *
  * Here is an example of how to use the converter, to build a pre-scan image from a post-scan image.
  *

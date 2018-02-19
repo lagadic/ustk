@@ -138,9 +138,9 @@ template <class Type> class usImageRF3D : public usImagePreScanSettings, public 
 
 public:
   usImageRF3D();
-  usImageRF3D(unsigned int width, unsigned int height, unsigned int numberOfFrames);
-  usImageRF3D(unsigned int width, unsigned int height, unsigned int dimZ, const usImagePreScanSettings &imageSettings,
-              const usMotorSettings &motorSettings);
+  usImageRF3D(unsigned int height, unsigned int width, unsigned int numberOfFrames);
+  usImageRF3D(unsigned int height, unsigned int width, unsigned int numberOfFrames,
+              const usImagePreScanSettings &imageSettings, const usMotorSettings &motorSettings);
   usImageRF3D(const usImageRF3D<Type> &other);
   virtual ~usImageRF3D();
 
@@ -161,16 +161,16 @@ public:
   usImageRF3D<Type> &operator=(const usImageRF3D<Type> &other);
   bool operator==(const usImageRF3D<Type> &other);
 
-  Type operator()(unsigned int indewI, unsigned int indexJ, unsigned int indexK) const;
-  void operator()(unsigned int indewI, unsigned int indexJ, unsigned int indexK, const Type &value);
+  Type operator()(unsigned int i, unsigned int indexJ, unsigned int k) const;
+  void operator()(unsigned int i, unsigned int indexJ, unsigned int k, const Type &value);
 
   void setFrameNumber(unsigned int frameNumber);
   void setScanLineNumber(unsigned int scanLineNumber);
 
-  void resize(unsigned int width, unsigned int height, unsigned int numberOfFrames);
+  void resize(unsigned int height, unsigned int width, unsigned int numberOfFrames);
 
 private:
-  void init(unsigned int width, unsigned int height, unsigned int numberOfFrames);
+  void init(unsigned int height, unsigned int width, unsigned int numberOfFrames);
 
   unsigned int m_width;          /**< Volume width in pixels (number of pixels on the j-axis)*/
   unsigned int m_height;         /**< Volume height in pixels (number of pixels on the v-axis)*/
@@ -195,23 +195,23 @@ usImageRF3D<Type>::usImageRF3D()
 * Basic constructor.
 */
 template <class Type>
-usImageRF3D<Type>::usImageRF3D(unsigned int width, unsigned int height, unsigned int numberOfFrames)
+usImageRF3D<Type>::usImageRF3D(unsigned int height, unsigned int width, unsigned int numberOfFrames)
   : usImagePreScanSettings(), usMotorSettings(), m_width(0), m_height(0), m_numberOfFrames(0), m_size(0), bitmap(NULL),
     framPointer(NULL)
 {
-  resize(width, height, numberOfFrames);
+  resize(height, width, numberOfFrames);
 }
 
 /**
 * Full initializing constructor.
-* @param width Image width.
 * @param height Image height.
+* @param width Image width.
 * @param numberOfFrames Number of frames in volume.
 * @param preScanSettings Pre-scan settings to copy.
 * @param motorSettings Motor settings to copy.
 */
 template <class Type>
-usImageRF3D<Type>::usImageRF3D(unsigned int width, unsigned int height, unsigned int numberOfFrames,
+usImageRF3D<Type>::usImageRF3D(unsigned int height, unsigned int width, unsigned int numberOfFrames,
                                const usImagePreScanSettings &preScanSettings, const usMotorSettings &motorSettings)
   : usImagePreScanSettings(preScanSettings), usMotorSettings(motorSettings), m_width(0), m_height(0),
     m_numberOfFrames(0), m_size(0), bitmap(NULL), framPointer(NULL)
@@ -221,7 +221,7 @@ usImageRF3D<Type>::usImageRF3D(unsigned int width, unsigned int height, unsigned
   if (numberOfFrames != motorSettings.getFrameNumber())
     throw(vpException(vpException::badValue, "3D RF image W-size differ from motor frame number"));
 
-  init(width, height, numberOfFrames);
+  init(height, width, numberOfFrames);
 }
 
 /**
@@ -349,14 +349,14 @@ template <class Type> void usImageRF3D<Type>::setFrameNumber(unsigned int frameN
  *
  * Updates also the transducer scan line number that corresponds to the image U-size and
  * the motor frame number that corresponds to the image W-size.
- * \param width Image width.
  * \param height Image height.
+ * \param width Image width.
  * \param numberOfFrames Number of frames in the volume.
  */
 template <class Type>
-void usImageRF3D<Type>::resize(unsigned int width, unsigned int height, unsigned int numberOfFrames)
+void usImageRF3D<Type>::resize(unsigned int height, unsigned int width, unsigned int numberOfFrames)
 {
-  init(width, height, numberOfFrames);
+  init(height, width, numberOfFrames);
   usMotorSettings::setFrameNumber(numberOfFrames);
   usTransducerSettings::setScanLineNumber(width);
 }
@@ -429,7 +429,7 @@ template <class Type> void usImageRF3D<Type>::getFrame(usImageRF2D<Type> &image,
   \exception vpException::memoryAllocationError
 
 */
-template <class Type> void usImageRF3D<Type>::init(unsigned int width, unsigned int height, unsigned int numberOfFrames)
+template <class Type> void usImageRF3D<Type>::init(unsigned int height, unsigned int width, unsigned int numberOfFrames)
 {
   if ((width != this->m_width) || (height != this->m_height) || (numberOfFrames != this->m_numberOfFrames)) {
     if (bitmap != NULL) {
@@ -493,35 +493,34 @@ template <class Type> unsigned int usImageRF3D<Type>::getSize() const { return m
 template <class Type> const Type *usImageRF3D<Type>::getConstData() const { return bitmap; }
 
 /**
-* @brief Access operator for value in voxel (indewI, indexJ, indexK)
-* @param indewI Index along i-axis to access (from 0 to height-1).
-* @param indexJ Index along j-axis to access (from 0 to width-1).
-* @param indexK Index along k-axis to access (from 0 to numberOfFrames-1).
+* @brief Access operator for value in voxel (i, j, k)
+* @param i Index along i-axis to access (from 0 to height-1).
+* @param j Index along j-axis to access (from 0 to width-1).
+* @param k Index along k-axis to access (from 0 to numberOfFrames-1).
 */
-template <class Type>
-Type usImageRF3D<Type>::operator()(unsigned int indewI, unsigned int indexJ, unsigned int indexK) const
+template <class Type> Type usImageRF3D<Type>::operator()(unsigned int i, unsigned int j, unsigned int k) const
 {
-  bool indexOK = indexJ < m_width && indewI < m_height && indexK < m_numberOfFrames;
+  bool indexOK = j < m_width && i < m_height && k < m_numberOfFrames;
   if (!indexOK)
     throw(vpException(vpException::dimensionError, "usImageRF3D : accessing a voxel out of range !"));
 
-  return framPointer[indexK][m_height * indexJ + indewI];
+  return framPointer[k][m_height * j + i];
 }
 
 /**
-* @brief Set value in voxel (indewI, indexJ, indexK)
-* @param indewI Index along i-axis to write in (from 0 to height-1).
-* @param indexJ Index along j-axis to write in (from 0 to width-1).
-* @param indexK Index along k-axis to write in (from 0 to numberOfFrames-1).
+* @brief Set value in voxel (i, j, k)
+* @param i Index along i-axis to write in (from 0 to height-1).
+* @param j Index along j-axis to write in (from 0 to width-1).
+* @param k Index along k-axis to write in (from 0 to numberOfFrames-1).
 * @param value Value to insert.
 */
 template <class Type>
-void usImageRF3D<Type>::operator()(unsigned int indewI, unsigned int indexJ, unsigned int indexK, const Type &value)
+void usImageRF3D<Type>::operator()(unsigned int i, unsigned int j, unsigned int k, const Type &value)
 {
-  bool indexOK = indexJ < m_width && indewI < m_height && indexK < m_numberOfFrames;
+  bool indexOK = j < m_width && i < m_height && k < m_numberOfFrames;
   if (!indexOK)
     throw(vpException(vpException::dimensionError, "usImageRF3D : trying to write in a voxel out of range !"));
-  framPointer[indexK][m_height * indexJ + indewI] = value;
+  framPointer[k][m_height * j + i] = value;
 }
 
 #endif // US_IMAGE_RF_3D_H

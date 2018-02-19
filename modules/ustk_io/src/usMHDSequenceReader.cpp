@@ -232,7 +232,7 @@ void usMHDSequenceReader::acquire(usImageRF3D<short int> &image, std::vector<uin
   image.setMotorSettings(motorSettings);
 
   // resizing image in memory
-  image.resize(mhdHeader.dim[0], mhdHeader.dim[1], mhdHeader.dim[2]);
+  image.resize(mhdHeader.dim[1], mhdHeader.dim[0], mhdHeader.dim[2]);
 
   // data parsing
   usRawFileParser rawParser;
@@ -293,7 +293,7 @@ void usMHDSequenceReader::acquire(usImagePreScan3D<unsigned char> &image, std::v
   image.setMotorSettings(motorSettings);
 
   // resizing image in memory
-  image.resize(mhdHeader.dim[0], mhdHeader.dim[1], mhdHeader.dim[2]);
+  image.resize(mhdHeader.dim[1], mhdHeader.dim[0], mhdHeader.dim[2]);
 
   // data parsing
   usRawFileParser rawParser;
@@ -333,7 +333,7 @@ void usMHDSequenceReader::acquire(usImagePostScan3D<unsigned char> &image, uint6
     timestamp = mhdHeader.timestamp.at(0);
 
   // resizing image in memory
-  image.resize(mhdHeader.dim[0], mhdHeader.dim[1], mhdHeader.dim[2]);
+  image.resize(mhdHeader.dim[1], mhdHeader.dim[0], mhdHeader.dim[2]);
 
   image.setTransducerRadius(mhdHeader.transducerRadius);
   image.setScanLinePitch(mhdHeader.scanLinePitch);
@@ -612,7 +612,7 @@ void usMHDSequenceReader::getImage(unsigned int imageNumber, usImageRF3D<short i
   image.setMotorSettings(motorSettings);
 
   // resizing image in memory
-  image.resize(mhdHeader.dim[0], mhdHeader.dim[1], mhdHeader.dim[2]);
+  image.resize(mhdHeader.dim[1], mhdHeader.dim[0], mhdHeader.dim[2]);
 
   // data parsing
   usRawFileParser rawParser;
@@ -669,7 +669,7 @@ void usMHDSequenceReader::getImage(unsigned int imageNumber, usImagePreScan3D<un
   image.setMotorSettings(motorSettings);
 
   // resizing image in memory
-  image.resize(mhdHeader.dim[0], mhdHeader.dim[1], mhdHeader.dim[2]);
+  image.resize(mhdHeader.dim[1], mhdHeader.dim[0], mhdHeader.dim[2]);
 
   // data parsing
   usRawFileParser rawParser;
@@ -710,7 +710,7 @@ void usMHDSequenceReader::getImage(unsigned int imageNumber, usImagePostScan3D<u
     timestamp = mhdHeader.timestamp.at(0);
 
   // resizing image in memory
-  image.resize(mhdHeader.dim[0], mhdHeader.dim[1], mhdHeader.dim[2]);
+  image.resize(mhdHeader.dim[1], mhdHeader.dim[0], mhdHeader.dim[2]);
 
   image.setTransducerRadius(mhdHeader.transducerRadius);
   image.setScanLinePitch(mhdHeader.scanLinePitch);

@@ -13,7 +13,8 @@ set(tutorial_cpp
   us2DViewerDrawing.cpp
   us2DViewerPicker.cpp
   usResliceMatrixExample.cpp
-  us3DViewerSlicing.cpp)
+  us3DViewerSlicing.cpp
+  usQtElastography.cpp)
 
 foreach(cpp ${tutorial_cpp})
   visp_add_target(${cpp})
