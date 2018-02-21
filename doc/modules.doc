@@ -61,3 +61,11 @@
   \defgroup module_ustk_needle_detection ustk_needle_detection: UsTK needle detection module
   Ultrasound tool kit needle detection module content. It contains diferents algorithms to track a needle in 2D or 3D ultrasound images.
 */
+/*******************************************
+ * Module ustk_needle_elastography
+ *******************************************/
+/*!
+  \ingroup module_ustk
+  \defgroup module_ustk_elastography ustk_elastography: UsTK elastography module
+  Ultrasound tool kit elastography processes. It contains diferents algorithms to compute elastography measures based on palpation sequences of RF images.
+*/
