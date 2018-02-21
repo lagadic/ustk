@@ -34,11 +34,12 @@ project(tutorial-ustk-elastography)
 
 cmake_minimum_required(VERSION 2.8.12)
 
-find_package(VISP REQUIRED visp_ustk_elastography)
+find_package(VISP COMPONENTS visp_ustk_elastography OPTIONAL_COMPONENTS visp_ustk_gui)
 
 set(tutorial_cpp
   tutorial-elastography-2D.cpp
-  tutorial-elastography-2D-basic.cpp)
+  tutorial-elastography-2D-basic.cpp
+  tutorial-elastography-2D-gui.cpp)
 
 foreach(cpp ${tutorial_cpp})
   visp_add_target(${cpp})

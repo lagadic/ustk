@@ -1,0 +1,34 @@
+/**
+
+\page tutorial-ustk-elastography Tutorial: UsTk elastography
+\tableofcontents
+
+
+\section intro_ustk_elastography Introduction
+
+This tutorial expains how to perform elastography task on RF image coming through the network (with virtual server in this tutorial). 
+
+\section ustk_elastography_basics How does elastography works ?
+
+The elastography computation requires 2 RF input images. The process estimates the axial displacements of the RF samples per blocks in the image, and produces the strain map of the tissues based on those displacements.
+
+\section ustk_elastography_run Running the tutorial
+
+To run the tutorial, you have to run first the virtual server application to send a RF palpation sequence contained in ustk-dataset repository (https://github.com/lagadic/ustk-dataset), from ustk build directory:
+\code
+$ ./apps/ustk/virtual-server/ustk-virtualServer --input /path/to/ustk-dataset/RFElasto
+\endcode
+This application will send the RF sequence through TCP to the client. The client is the tutorial main application, here is the source code:
+
+\include tutorial-elastography-2D.cpp
+
+You can see that the ROI selection is hard-coded, it is intentionnally done to perform the elastography on a region with huge diferences in tissues stiffness. The ROI is the region contained in the red rectangle in the first display. The second display shows the elastography result: hard tissues are in black, and soft ones in whithe.
+
+You can run it once the virtual server is correctly running, from ustk build directory:
+\code
+$ ./elastography/tutorial-elastography-2D
+\endcode
+
+
+*/
+
