@@ -116,7 +116,10 @@ private:
 
   // Motion estimation
   MotionEstimator m_mEstimatior;
+
+#if defined(USTK_HAVE_ARMADILLO)
   usMotionEstimation m_ME;
+#endif
 
   vpMatrix U;
   vpMatrix V;

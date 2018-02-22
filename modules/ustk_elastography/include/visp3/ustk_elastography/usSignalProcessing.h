@@ -64,6 +64,7 @@ typedef complex<double> dcomplex;
  * @class usSignalProcessing.h
  * @brief Class containing a set of static methods to compute various processes on RF images (gradients, product,
  * interpolation).
+ * @ingroup module_ustk_elastography
  */
 class VISP_EXPORT usSignalProcessing
 {

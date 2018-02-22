@@ -34,6 +34,11 @@
 #ifndef US_MOTION_ESTIMATION_H
 #define US_MOTION_ESTIMATION_H
 
+/**
+ * @file usMotionEstimation.h
+ * @brief Base class to compute block-matching algorithm to find block displacements on RF images for elastography
+ * purpose.
+ */
 #include <visp3/ustk_core/usConfig.h>
 
 #if defined(USTK_HAVE_ARMADILLO)
@@ -50,13 +55,30 @@
 
 using namespace arma;
 
+/**
+ * @class usMotionEstimation
+ * @brief Base class to compute block-matching algorithm to find block displacements on RF images for elastography
+ * purpose.
+ * @ingroup module_ustk_elastography
+ *
+ * This class computes block-matching algorithm on 2 input RF images to estimate tissues displacements for elastography.
+ * This method is used for hudge displacements between 2 successive RF images. For small displacements use the optical
+ * flow contained in usElastography class.
+ *
+ * The typical use of this class is :
+ *  - Init the motion estimation with init(), this prepares the different blocks on the 2 input images.
+ *  - Run the process with run() method, it computes the displacements of each image block.
+ *  - Get the axial displacements, using getV_vp(). They are used to estimate tissues stiffness. Note that you can also
+ * get the lateral displacements whith getU_vp() but those are useless for elastography purpose.
+ */
 class VISP_EXPORT usMotionEstimation
 {
 public:
   usMotionEstimation();
   virtual ~usMotionEstimation();
   void init(mat M1, mat M2, int blk_w, int blk_h, int sr_w, int sr_h);
-  void init(usImageRF2D<short int> usM1, usImageRF2D<short int> usM2, int blk_w, int blk_h, int sr_w, int sr_h);
+  void init(const usImageRF2D<short int> &usM1, const usImageRF2D<short int> &usM2, int blk_w, int blk_h, int sr_w,
+            int sr_h);
   void run();
   vec FullSearch(mat block, int xc, int yc, int sr_w, int sr_h);
   vec TaylorApp(mat B1, mat B2);
@@ -69,7 +91,7 @@ public:
   vpMatrix getV_vp(void) { return convert_mat2vpMatrix(m_V); }
   void saveU(const char *t_s);
   void saveV(const char *t_s);
-  mat convert_usImageRF2mat(usImageRF2D<short int> vI);
+  mat convert_usImageRF2mat(const usImageRF2D<short> &vI);
   vpMatrix convert_mat2vpMatrix(mat vI);
 
 private:

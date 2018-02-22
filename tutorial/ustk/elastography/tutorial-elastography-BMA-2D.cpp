@@ -1,4 +1,4 @@
-//! \example tutorial-elastography-2D.cpp
+//! \example tutorial-elastography-BMA-2D.cpp
 
 #include <iostream>
 #include <visp3/ustk_core/usConfig.h>
@@ -23,6 +23,7 @@ int main(int argc, char **argv)
   QApplication app(argc, argv);
 
   usElastography *elastography = new usElastography;
+  elastography->setMotionEstimator(usElastography::BMA_TAYLOR);
   elastography->setROI(40, 3200, 50, 500);
 
   QThread *grabbingThread = new QThread();

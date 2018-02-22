@@ -1,4 +1,4 @@
-//! \example tutorial-elastography-2D-basic.cpp
+//! \example tutorial-elastography-2D-gui.cpp
 
 #include <iostream>
 #include <visp3/ustk_core/usConfig.h>
