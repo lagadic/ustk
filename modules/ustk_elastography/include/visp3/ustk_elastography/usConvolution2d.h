@@ -78,10 +78,10 @@ private:
   vpMatrix m_M1;
   vpMatrix m_M2;
   vpMatrix m_R;
-  uint h_dst;
-  uint w_dst;
-  uint hf;
-  uint wf;
+  unsigned int h_dst;
+  unsigned int w_dst;
+  unsigned int hf;
+  unsigned int wf;
   unsigned int Am; // A row number
   unsigned int An; // A col number
   unsigned int Bm; // B row number

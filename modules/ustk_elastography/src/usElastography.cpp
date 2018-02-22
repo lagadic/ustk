@@ -201,6 +201,7 @@ vpImage<unsigned char> usElastography::run()
     assert(m_PreROI.getWidth() == m_PostROI.getWidth());
     assert(m_PreROI.getHeight() == m_PostROI.getHeight());
     if (m_mEstimatior == BMA_TAYLOR) {
+#if defined(USTK_HAVE_ARMADILLO)
       // Step 0: BMA
       m_ME.init(m_PreROI, m_PostROI, 2, 20, 2, 120);
       m_ME.run();
@@ -208,6 +209,9 @@ vpImage<unsigned char> usElastography::run()
       V = m_ME.getV_vp() * (m_c * (m_FPS / (2.0 * m_fs)));
       m_h_m = m_PreROI.getHeight();
       m_w_m = m_PreROI.getWidth();
+#else
+		throw vpException(vpException::fatalError, "usElastography : cannot use block-matching algorithm, armadillo is missing.");
+#endif
     } else {
       // Step 1: Numerical gradients
       vpMatrix Fx = usSignalProcessing::getXGradient(m_PreROI);
@@ -294,7 +298,7 @@ vpImage<unsigned char> usElastography::run()
     vpMatrix h((uint)n + 1, 1, true);
     double xi = kappa * 12.0 / (n * (n * n - 1));
     uint j = 0;
-    for (int i = n; i >= 0; i--) {
+    for (int i = (int)n; i >= 0; i--) {
       h[j][0] = xi * (i - (n + 1) / 2.0);
       j++;
     }

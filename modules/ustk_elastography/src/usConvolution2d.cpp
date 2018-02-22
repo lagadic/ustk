@@ -53,12 +53,12 @@ usConvolution2d::~usConvolution2d()
   fftw_destroy_plan(p1);
   fftw_destroy_plan(p2);
   fftw_destroy_plan(p3);
-  delete outa;
-  delete outb;
-  delete outc;
-  delete out;
-  delete ad;
-  delete bd;
+  delete[] outa;
+  delete[] outb;
+  delete[] outc;
+  delete[] out;
+  delete[] ad;
+  delete[] bd;
 }
 
 /**
@@ -74,12 +74,12 @@ void usConvolution2d::init(const vpMatrix &matrix1, const vpMatrix &matrix2)
   if (Am != matrix1.getRows() || An != matrix1.getCols() || Bm != matrix2.getRows() || Bn != matrix2.getCols()) {
 
     // memory de-allocation to avoid leak
-    delete outa;
-    delete outb;
-    delete outc;
-    delete out;
-    delete ad;
-    delete bd;
+    delete[] outa;
+    delete[] outb;
+    delete[] outc;
+    delete[] out;
+    delete[] ad;
+    delete[] bd;
 
     fftw_destroy_plan(p1);
     fftw_destroy_plan(p2);
@@ -134,7 +134,7 @@ vpMatrix usConvolution2d::run(const vpMatrix &matrix1, const vpMatrix &matrix2)
   fftw_execute(p1);
   fftw_execute(p2);
   // Complex product
-  for (uint i = 0; i < wf * hf; ++i) {
+  for (unsigned int i = 0; i < wf * hf; ++i) {
     outc[i][0] = (outa[i][0] * outb[i][0]) - (outa[i][1] * outb[i][1]);
     outc[i][1] = (outa[i][0] * outb[i][1]) + (outa[i][1] * outb[i][0]);
   }
@@ -162,8 +162,8 @@ vpMatrix usConvolution2d::run(const vpMatrix &matrix1, const vpMatrix &matrix2)
 void usConvolution2d::padding_zeros()
 {
   // Padding the two arrays with zeros
-  for (uint i = 0; i < wf; ++i) {
-    for (uint j = 0; j < hf; ++j) {
+  for (unsigned int i = 0; i < wf; ++i) {
+    for (unsigned int j = 0; j < hf; ++j) {
       // fftw intput arrays (ad, bd) are filled scanline per scanline (column by column)
       ad[j + i * hf][0] = ((j < Am) && (i < An)) ? m_M1[j][i] : 0.0;
       ad[j + i * hf][1] = 0.0;

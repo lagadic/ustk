@@ -21,7 +21,7 @@ void usMHDSequenceReader::setSequenceDirectory(const std::string sequenceDirecto
 {
   m_sequenceFiles = vpIoTools::getDirFiles(sequenceDirectory);
   m_sequenceDirectory = sequenceDirectory;
-  m_totalImageNumber = m_sequenceFiles.size() / 2; // we have mhd and raw in the directory (2 * m_totalImageNumber)
+  m_totalImageNumber = (int)m_sequenceFiles.size() / 2; // we have mhd and raw in the directory (2 * m_totalImageNumber)
   m_imageCounter = 0;
 }
 
