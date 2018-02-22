@@ -65,6 +65,7 @@ before_build:
 
 build_script:
   - echo %PATH%
+  - echo %APPVEYOR_PROJECT_ID%
   - dir C:\projects\deps
   - dir C:\tools
   - md C:\projects\visp\build
