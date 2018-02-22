@@ -65,7 +65,6 @@ void usMotionEstimation::init(mat M1, mat M2, int blk_w, int blk_h, int sr_w, in
 
   m_U = mat(m_ycRng.n_elem, m_xcRng.n_elem);
   m_V = mat(m_ycRng.n_elem, m_xcRng.n_elem);
-  std::cout << "Initializated!" << std::endl;
 }
 /*!
  * \brief init
@@ -76,8 +75,8 @@ void usMotionEstimation::init(mat M1, mat M2, int blk_w, int blk_h, int sr_w, in
  * \param sr_w: search region width (int)
  * \param sr_h: search region height (int)
  */
-void usMotionEstimation::init(usImageRF2D<short int> usM1, usImageRF2D<short int> usM2, int blk_w, int blk_h, int sr_w,
-                              int sr_h)
+void usMotionEstimation::init(const usImageRF2D<short int> &usM1, const usImageRF2D<short int> &usM2, int blk_w,
+                              int blk_h, int sr_w, int sr_h)
 {
   m_M1 = convert_usImageRF2mat(usM1);
   m_M2 = convert_usImageRF2mat(usM2);
@@ -107,7 +106,7 @@ void usMotionEstimation::init(usImageRF2D<short int> usM1, usImageRF2D<short int
 */
 void usMotionEstimation::run()
 {
-  std::cout << "Limits: " << m_ycRng.n_elem << ", " << m_xcRng.n_elem << std::endl;
+  // std::cout << "Limits: " << m_ycRng.n_elem << ", " << m_xcRng.n_elem << std::endl;
   for (unsigned int i = 0; i < m_ycRng.n_elem; i++) {
     for (unsigned int j = 0; j < m_xcRng.n_elem; j++) {
       int xc = m_xcRng(j);
@@ -274,7 +273,7 @@ void usMotionEstimation::saveU(const char *t_s) { m_U.save(t_s, raw_ascii); }
 
 void usMotionEstimation::saveV(const char *t_s) { m_V.save(t_s, raw_ascii); }
 
-mat usMotionEstimation::convert_usImageRF2mat(usImageRF2D<short int> vI)
+mat usMotionEstimation::convert_usImageRF2mat(const usImageRF2D<short int> &vI)
 {
   mat I(vI.getHeight(), vI.getWidth());
   for (uint i = 0; i < vI.getHeight(); i++)

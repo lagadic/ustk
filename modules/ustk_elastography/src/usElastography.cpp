@@ -55,6 +55,7 @@ usElastography::usElastography()
   m_setROI = false;
   // Using OF by default
   m_mEstimatior = OF;
+  m_ME = usMotionEstimation();
 
   // Avoiding leaking memory with the convolutions on cpu
   for (uint i = 0; i < 6; i++)
@@ -210,7 +211,8 @@ vpImage<unsigned char> usElastography::run()
       m_h_m = m_PreROI.getHeight();
       m_w_m = m_PreROI.getWidth();
 #else
-		throw vpException(vpException::fatalError, "usElastography : cannot use block-matching algorithm, armadillo is missing.");
+      throw vpException(vpException::fatalError,
+                        "usElastography : cannot use block-matching algorithm, armadillo is missing.");
 #endif
     } else {
       // Step 1: Numerical gradients

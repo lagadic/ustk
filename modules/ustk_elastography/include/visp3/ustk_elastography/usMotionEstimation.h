@@ -56,7 +56,8 @@ public:
   usMotionEstimation();
   virtual ~usMotionEstimation();
   void init(mat M1, mat M2, int blk_w, int blk_h, int sr_w, int sr_h);
-  void init(usImageRF2D<short int> usM1, usImageRF2D<short int> usM2, int blk_w, int blk_h, int sr_w, int sr_h);
+  void init(const usImageRF2D<short int> &usM1, const usImageRF2D<short> &usM2, int blk_w, int blk_h, int sr_w,
+            int sr_h);
   void run();
   vec FullSearch(mat block, int xc, int yc, int sr_w, int sr_h);
   vec TaylorApp(mat B1, mat B2);
@@ -69,7 +70,7 @@ public:
   vpMatrix getV_vp(void) { return convert_mat2vpMatrix(m_V); }
   void saveU(const char *t_s);
   void saveV(const char *t_s);
-  mat convert_usImageRF2mat(usImageRF2D<short int> vI);
+  mat convert_usImageRF2mat(const usImageRF2D<short> &vI);
   vpMatrix convert_mat2vpMatrix(mat vI);
 
 private:
