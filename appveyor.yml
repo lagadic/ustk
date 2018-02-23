@@ -11,15 +11,14 @@ configuration:
   - Release
 
 environment:
-
-  APPVEYOR_RDP_PASSWORD: U5tk!-pswd
-
+  
   matrix:
     - CMAKE_GENERATOR: MinGW Makefiles
       BUILD_NAME: mingw
 
     - CMAKE_GENERATOR: Visual Studio 14 2015 Win64
       BUILD_NAME: vs2015
+      
 
 # Scripts that are called at very beginning, before repo cloning
 init:
@@ -81,5 +80,5 @@ build_script:
   # Issue with exception on MinGW AppVeyor
   - if "%CMAKE_GENERATOR%"=="MinGW Makefiles" ctest -VV -E testMatrixException
   
-  on_finish:
+on_finish:
   - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
