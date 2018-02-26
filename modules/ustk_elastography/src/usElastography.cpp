@@ -55,7 +55,9 @@ usElastography::usElastography()
   m_setROI = false;
   // Using OF by default
   m_mEstimatior = OF;
+#if defined(USTK_HAVE_ARMADILLO)
   m_ME = usMotionEstimation();
+#endif
 
   // Avoiding leaking memory with the convolutions on cpu
   for (uint i = 0; i < 6; i++)

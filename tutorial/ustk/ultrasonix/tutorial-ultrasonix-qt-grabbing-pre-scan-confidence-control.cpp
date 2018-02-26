@@ -70,10 +70,10 @@ vpThread::Return controlFunction(vpThread::Args args)
   // Initialized the force gain
   lambda = 0;
   for (int i = 0; i < 3; i++)
-    lambda[i][i] = 0.05 / 6;
+    lambda[i][i] = 0.05 / 10;
   // Initialized the torque gain
   for (int i = 3; i < 6; i++)
-    lambda[i][i] = 1.2 / 2;
+    lambda[i][i] = 1.2 / 10;
 
   // Initialize the desired force/torque values
   pHp_star = 0;
