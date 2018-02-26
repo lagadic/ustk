@@ -41,6 +41,7 @@
 #include <visp3/ustk_core/usPostScanToPreScan2DConverter.h>
 #include <visp3/ustk_core/usPreScanToPostScan2DConverter.h>
 #include <visp3/ustk_io/usImageIo.h>
+#include <visp3/ustk_core/usConfig.h>
 
 #include <string>
 #include <vector>
@@ -48,7 +49,7 @@
 /* -------------------------------------------------------------------------- */
 /*                               MAIN FUNCTION                                */
 /* -------------------------------------------------------------------------- */
-
+#if defined(VISP_HAVE_XML2)
 int main(int argc, const char **argv)
 {
   (void)argc;
@@ -102,3 +103,12 @@ int main(int argc, const char **argv)
     std::cout << "Test passed !" << std::endl;
   return testFailed;
 }
+#else
+int main(int argc, const char **argv)
+{
+	(void)argc;
+	(void)argv;
+	std::cout << "You should intall xml2 to run this test\n";
+	return 0;
+}
+#endif
