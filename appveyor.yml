@@ -45,7 +45,7 @@ install:
   - git clone https://github.com/lagadic/visp C:\projects\visp\visp
   - set VISP_SRC_DIR=C:\projects\visp\visp
 
-# visp clone directory
+# ustk clone directory
 clone_folder: C:\projects\ustk\ustk
 
 before_build:
@@ -60,6 +60,7 @@ before_build:
   # Setup ViSP
   - if "%CMAKE_GENERATOR%"=="Visual Studio 14 2015 Win64" set VISP_DLL_DIR=C:\projects\visp\build\install\%platform%\vc14\bin
   - if "%CMAKE_GENERATOR%"=="MinGW Makefiles" set VISP_DLL_DIR=C:\projects\visp\build\install\%platform%\mingw\bin
+  - set PATH=%VISP_DLL_DIR%;%PATH%
   # Issue with pthreads threading on MinGW AppVeyor
   - if "%CMAKE_GENERATOR%"=="Visual Studio 14 2015 Win64" set APPVEYOR_THREADING=true
   - if "%CMAKE_GENERATOR%"=="MinGW Makefiles" set APPVEYOR_THREADING=false
@@ -79,6 +80,3 @@ build_script:
   - if "%CMAKE_GENERATOR%"=="Visual Studio 14 2015 Win64" ctest -VV
   # Issue with exception on MinGW AppVeyor
   - if "%CMAKE_GENERATOR%"=="MinGW Makefiles" ctest -VV -E testMatrixException
-  
-on_finish:
-  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))

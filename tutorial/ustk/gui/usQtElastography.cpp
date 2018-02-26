@@ -8,9 +8,7 @@
 int main(int argc, char **argv)
 {
   // QT application
-  std::cout << "A\n";
   QApplication app(argc, argv);
-  std::cout << "B\n";
 
   usElastographyMainWindow *window = new usElastographyMainWindow;
   app.setActiveWindow(window);
