@@ -2,7 +2,11 @@
 
 Copyright (C) 2016-2017 by Inria.
 
-[![Build Status](https://travis-ci.org/lagadic/ustk.png)](https://travis-ci.org/lagadic/ustk)
+Platform | Build Status |
+-------- | ------------ |
+Linux and OS X | [![Build Status](https://travis-ci.org/lagadic/ustk.png)](https://travis-ci.org/lagadic/ustk) |
+Windows | [![Build status](https://ci.appveyor.com/api/projects/status/25t7wcl7akdw3nmw/branch/master?svg=true)](https://ci.appveyor.com/project/fspindle/ustk/branch/master) |
+
 
 ## Dependencies
 
