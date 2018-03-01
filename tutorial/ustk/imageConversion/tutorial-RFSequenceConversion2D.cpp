@@ -50,5 +50,13 @@ int main(int argc, char **argv)
 
   return 0;
 }
-
+#else
+#include <iostream>
+int main(int argc, char **argv)
+{
+  (void)argc;
+  (void *)argv;
+  std::cout << "this tutorial requirest RF to pre-scan conversion, so you have to install FFTW thirdparty\n";
+  return 0;
+}
 #endif
