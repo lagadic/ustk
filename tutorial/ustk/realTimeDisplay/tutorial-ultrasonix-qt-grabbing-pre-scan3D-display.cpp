@@ -3,7 +3,7 @@
 #include <iostream>
 #include <visp3/ustk_core/usConfig.h>
 
-#if (defined(USTK_HAVE_QT5) || defined(USTK_HAVE_VTK_QT)) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
+#if defined(VISP_HAVE_MODULE_USTK_GUI) && defined(VISP_HAVE_MODULE_USTK_GRABBER)
 
 #include <QApplication>
 #include <QtCore/QThread>
@@ -14,9 +14,6 @@
 
 #include <visp3/ustk_gui/us3DSceneWidget.h>
 #include <visp3/ustk_gui/usVTKConverter.h>
-
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayX.h>
 
 int main(int argc, char **argv)
 {
@@ -113,8 +110,7 @@ int main(int argc, char **argv)
 #else
 int main()
 {
-  std::cout << "You should intall Qt5 (with wigdets and network modules), and display X to run this tutorial"
-            << std::endl;
+  std::cout << "You should build ustk_gui and ustk_grabber to run this tutorial" << std::endl;
   return 0;
 }
 

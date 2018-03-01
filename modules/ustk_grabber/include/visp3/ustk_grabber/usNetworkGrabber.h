@@ -178,6 +178,7 @@ signals:
   void endBlockingLoop();
   void runAcquisitionSignal(bool run);
   void sendAcquisitionParametersSignal();
+  void endConnection();
 
 public slots:
   /// Network

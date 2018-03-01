@@ -30,14 +30,15 @@
 #
 #############################################################################
 
-project(tutorial-grabbing-3D-display)
+project(tutorial-real-time-display)
 
 cmake_minimum_required(VERSION 2.6)
 
-find_package(VISP REQUIRED visp_ustk_grabber visp_ustk_gui visp_sensor visp_robot)
+find_package(VISP REQUIRED visp_ustk_grabber visp_ustk_gui)
 
 set(tutorial_ultrasonix_cpp
-  tutorial-ultrasonix-qt-grabbing-pre-scan3D-display.cpp)
+  tutorial-ultrasonix-qt-grabbing-pre-scan3D-display.cpp
+  tutorial-local-grabbing-pre-scan2D-display.cpp)
 
 foreach(cpp ${tutorial_ultrasonix_cpp})
   visp_add_target(${cpp})

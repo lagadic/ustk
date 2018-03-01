@@ -31,66 +31,51 @@
  *****************************************************************************/
 
 /**
- * @file usElastographyMainWindow.h
- * @brief Main window class for elastography display.
+ * @file usImageDisplayWidget.h
+ * @brief Qt widget class for ultrasound image display.
  */
 
-#ifndef __usElastographyMainWindow_h_
-#define __usElastographyMainWindow_h_
+#ifndef __usImageDisplayWidget_h_
+#define __usImageDisplayWidget_h_
 
 // VISP includes
 #include <visp3/ustk_core/usConfig.h>
 
 #if (defined(USTK_HAVE_VTK_QT) || defined(USTK_HAVE_QT5)) && defined(VISP_HAVE_MODULE_USTK_ELASTOGRAPHY)
 
-#include <QGraphicsPixmapItem>
-#include <QGraphicsScene>
-#include <QGraphicsView>
-#include <QMainWindow>
+#include <QImage>
+#include <QLabel>
 #include <QObject>
 #include <QPixmap>
-#include <visp3/io/vpImageIo.h>
-#include <visp3/ustk_grabber/usNetworkGrabberRF2D.h>
-#include <visp3/ustk_gui/usElastographyQtWrapper.h>
+#include <QResizeEvent>
+#include <QWidget>
+#include <visp3/ustk_core/usImagePostScan2D.h>
+#include <visp3/ustk_core/usImagePreScan2D.h>
 
 /**
- * @class usElastographyMainWindow
- * @brief Main window class for elastography display.
+ * @class usImageDisplayWidget
+ * @brief Qt widget class for ultrasound image display.
  * @ingroup module_ustk_gui
  */
 
-class VISP_EXPORT usElastographyMainWindow : public QMainWindow
+class VISP_EXPORT usImageDisplayWidget : public QWidget
 {
   Q_OBJECT
 public:
-  usElastographyMainWindow();
-  ~usElastographyMainWindow();
+  usImageDisplayWidget();
+  ~usImageDisplayWidget();
+
+  void resizeEvent(QResizeEvent *event);
 
 public slots:
-  void drawElasto(const vpImage<unsigned char> img);
-  void setElastoROI(QRect rect);
-  void updateFrame();
+  void updateFrame(const vpImage<unsigned char> img);
 
 private:
-  void convertVpImageToQImage();
-
-  // Computing the strain map
-  usElastographyQtWrapper m_elastographyWrapper;
-
-  // Grabbing
-  QThread *m_grabbingThread;
-  usNetworkGrabberRF2D m_rfGrabber;
-
-  // GUI
-  QGraphicsScene *m_scene;
-  QGraphicsView *m_view;
-  QGraphicsPixmapItem m_item;
+  QLabel *m_label;
 
   // data
-  vpImage<unsigned char> m_strainMap;
-  QImage m_strainPixmap;
-  unsigned char *bitmap;
-  unsigned int m_bitmapSize;
+  QImage m_QImage;
+  QPixmap m_pixmap;
 };
 #endif // QT && ELASTOGRAPHY
-#endif // __usElastographyMainWindow_h_
+#endif // __usImageDisplayWidget_h_

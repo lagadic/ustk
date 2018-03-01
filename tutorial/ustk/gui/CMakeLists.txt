@@ -14,7 +14,7 @@ set(tutorial_cpp
   us2DViewerPicker.cpp
   usResliceMatrixExample.cpp
   us3DViewerSlicing.cpp
-  usQtElastography.cpp)
+  tutorial-image-display-qwidget.cpp)
 
 foreach(cpp ${tutorial_cpp})
   visp_add_target(${cpp})
