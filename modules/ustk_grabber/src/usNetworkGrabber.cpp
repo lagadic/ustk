@@ -101,7 +101,12 @@ void usNetworkGrabber::connectToServer()
 void usNetworkGrabber::disconnectFromServer()
 {
   m_connect = false;
-  m_tcpSocket->disconnect();
+
+  emit(endConnection());
+  // wait disconnection is effective
+  QEventLoop loop;
+  loop.connect(m_tcpSocket, SIGNAL(disconnected()), SLOT(quit()));
+  loop.exec();
 }
 
 /**
@@ -116,6 +121,7 @@ void usNetworkGrabber::processConnectionToServer()
     m_tcpSocket->connectToHost(addr, 8080);
 
     connect(m_tcpSocket, SIGNAL(connected()), this, SLOT(connected()));
+    connect(this, SIGNAL(endConnection()), this, SLOT(disconnected()));
     connect(m_tcpSocket, SIGNAL(disconnected()), this, SLOT(disconnected()));
     connect(m_tcpSocket, SIGNAL(error(QAbstractSocket::SocketError)), this,
             SLOT(handleError(QAbstractSocket::SocketError)));

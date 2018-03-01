@@ -39,6 +39,7 @@ find_package(VISP REQUIRED visp_ustk_io)
 set(tutorial_cpp
   tutorial-rfFileToPreScanConversion.cpp
   tutorial-RFConversion2D.cpp
+  tutorial-RFSequenceConversion2D.cpp
   tutorial-scanConversion3D.cpp
   tutorial-scanConversion2D.cpp
   tutorial-fullConversion2D.cpp

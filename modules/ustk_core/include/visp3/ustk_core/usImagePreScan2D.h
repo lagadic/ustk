@@ -107,6 +107,8 @@ template <class Type> class usImagePreScan2D : public vpImage<Type>, public usIm
 public:
   // default constructors
   usImagePreScan2D();
+  // sized constructor
+  usImagePreScan2D(unsigned int height, unsigned int width);
   // All parameters initialisation constructors
   usImagePreScan2D(const vpImage<Type> &image, const usImagePreScanSettings &preScanSettings);
   // usImagePreScan2D copy constructor
@@ -146,6 +148,18 @@ template <class Type>
 usImagePreScan2D<Type>::usImagePreScan2D(const usImagePreScan2D &other)
   : vpImage<Type>(other), usImagePreScanSettings(other)
 {
+}
+
+/**
+* Constructor from image size.
+* \param height Image height.
+* \param width Image width.
+*/
+template <class Type>
+usImagePreScan2D<Type>::usImagePreScan2D(unsigned int height, unsigned int width)
+  : vpImage<Type>(height, width), usImagePreScanSettings()
+{
+  usTransducerSettings::setScanLineNumber(width);
 }
 
 /**

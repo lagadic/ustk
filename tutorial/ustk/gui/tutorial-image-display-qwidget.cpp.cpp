@@ -9,6 +9,7 @@
 #include <visp3/ustk_io/usImageIo.h>
 
 #include <QApplication>
+#include <QMainWindow>
 
 int main(int argc, char **argv)
 {
@@ -23,9 +24,12 @@ int main(int argc, char **argv)
   usImagePreScan2D<unsigned char> preScan;
   usImageIo::read(preScan, us::getDataSetPath() + "/pre-scan/2D_xml/prescan2d.xml");
 
-  usImageDisplayWidget window;
-  window.updateFrame(preScan);
-  window.show();
+  usImageDisplayWidget *widget = new usImageDisplayWidget();
+  widget->updateFrame(preScan);
+
+  QMainWindow window;
+  window.setCentralWidget(widget);
+  window.showMaximized();
 
   return app.exec();
 }
