@@ -42,7 +42,7 @@
 /**
 * Constructor.
 */
-usImageDisplayWidget::usImageDisplayWidget() : m_label(NULL), m_QImage()
+usImageDisplayWidget::usImageDisplayWidget() : m_label(NULL), m_QImage(), m_pixmap()
 {
   this->setMinimumSize(50, 50);
   m_label = new QLabel(this);

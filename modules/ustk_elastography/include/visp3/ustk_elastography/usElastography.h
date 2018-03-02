@@ -74,6 +74,7 @@ public:
 
   vpImage<unsigned char> run();
 
+  void setDecimationFactor(unsigned int decimationFactor) { m_decimationFactor = decimationFactor; }
   void setFPS(double fps);
   void setfs(double fs);
   void setLSQpercentage(double per);
@@ -123,6 +124,8 @@ private:
 
   vpMatrix U;
   vpMatrix V;
+
+  unsigned int m_decimationFactor;
 };
 
 #endif // FFTW

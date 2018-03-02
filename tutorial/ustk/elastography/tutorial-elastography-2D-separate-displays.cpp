@@ -1,4 +1,4 @@
-//! \example tutorial-elastography-2D.cpp
+//! \example tutorial-elastography-2D-separate-displays.cpp
 
 #include <iostream>
 #include <visp3/ustk_core/usConfig.h>
@@ -9,7 +9,6 @@
 #include <QApplication>
 #include <QtCore/QThread>
 
-#include <visp3/ustk_core/usImageElastography.h>
 #include <visp3/ustk_core/usRFToPreScan2DConverter.h>
 #include <visp3/ustk_elastography/usElastography.h>
 #include <visp3/ustk_grabber/usNetworkGrabberRF2D.h>
@@ -46,14 +45,14 @@ int main(int argc, char **argv)
 
   // prepare converter
   vpImage<unsigned char> strainImage;
-  usImageElastography elastographyImage;
-  vpImage<vpRGBa> elastoToDisplay;
 
 // Prepare display
 #if defined(VISP_HAVE_X11)
-  vpDisplayX *displayElasto = NULL;
+  vpDisplayX *displayEcho = NULL;
+  vpDisplayX *displayElas = NULL;
 #elif defined(VISP_HAVE_GDI)
-  vpDisplayGDI *displayElasto = NULL;
+  vpDisplayGDI *displayEcho = NULL;
+  vpDisplayGDI *displayElas = NULL;
 #endif
   bool displayInit = false;
   bool captureRunning = true;
@@ -78,29 +77,27 @@ int main(int argc, char **argv)
 
       elastography->updateRF(*grabbedFrame);
       strainImage = elastography->run();
-      std::cout << "strain image size : " << strainImage.getHeight() << ", " << strainImage.getWidth() << std::endl;
 
       converter.convert(*grabbedFrame, preScanImage);
-
-      elastographyImage.setUltrasoundImage(preScanImage);
-      elastographyImage.setStrainMap(strainImage, 320, 40);
-      elastoToDisplay = elastographyImage.getElastoImage();
 
       // init display
       if (!displayInit && strainImage.getHeight() != 0 && strainImage.getWidth() != 0) {
 #if defined(VISP_HAVE_X11)
-        displayElasto = new vpDisplayX(elastoToDisplay);
+        displayEcho = new vpDisplayX(preScanImage);
+        displayElas = new vpDisplayX(strainImage);
 #elif defined(VISP_HAVE_GDI)
-        displayElasto = new vpDisplayGDI(elastoToDisplay);
+        displayEcho = new vpDisplayGDI(preScanImage);
+        displayElas = new vpDisplayGDI(strainImage);
 #endif
         displayInit = true;
       }
 
       // processing display
       if (displayInit) {
-        vpDisplay::display(elastoToDisplay);
+        vpDisplay::display(preScanImage);
+        vpDisplay::displayRectangle(preScanImage, 320, 40, 50, 50, vpColor::red);
         vpDisplay::display(strainImage);
-        vpDisplay::flush(elastoToDisplay);
+        vpDisplay::flush(preScanImage);
         vpDisplay::flush(strainImage);
       }
     }
@@ -111,7 +108,8 @@ int main(int argc, char **argv)
   } while (captureRunning);
 
   if (displayInit) {
-    delete displayElasto;
+    delete displayElas;
+    delete displayEcho;
   }
   return app.exec();
 }
