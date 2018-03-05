@@ -7,8 +7,10 @@
 
 #include <visp3/ustk_grabber/usNetworkGrabberPreScan2D.h>
 #include <visp3/ustk_gui/usImageDisplayWidget.h>
+#include <visp3/ustk_gui/usRobotManualControlWidget.h>
 
 #include <QApplication>
+#include <QHBoxLayout>
 #include <QMainWindow>
 
 int main(int argc, char **argv)
@@ -23,8 +25,17 @@ int main(int argc, char **argv)
   // Qt widgets
   usImageDisplayWidget *widget = new usImageDisplayWidget();
   widget->updateFrame(*preScan);
+
+  usRobotManualControlWidget *robotControlPanel = new usRobotManualControlWidget();
+
+  QWidget *centralWidget = new QWidget();
+  QHBoxLayout *mainLayout = new QHBoxLayout();
+  mainLayout->addWidget(widget, 2);
+  mainLayout->addWidget(robotControlPanel);
+  centralWidget->setLayout(mainLayout);
+
   QMainWindow window;
-  window.setCentralWidget(widget);
+  window.setCentralWidget(centralWidget);
   window.show();
 
   // grabber
@@ -52,6 +63,13 @@ int main(int argc, char **argv)
   // disconnect from server
   qtGrabber->disconnectFromServer();
   grabbingThread->quit();
+
+  delete preScan;
+  delete widget;
+  delete robotControlPanel;
+  delete centralWidget;
+  delete mainLayout;
+
   return 0;
 }
 
