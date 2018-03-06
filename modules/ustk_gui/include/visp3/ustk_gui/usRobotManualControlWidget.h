@@ -48,6 +48,7 @@
 #include <QGroupBox>
 #include <QLabel>
 #include <QSlider>
+#include <QPushButton>
 
 class VISP_EXPORT usRobotManualControlWidget : public QGroupBox
 {
@@ -72,6 +73,11 @@ private:
   QSlider *wxSlider;
   QSlider *wySlider;
   QSlider *wzSlider;
+  //Start / stop button
+  QPushButton * initPushButton;
+  QPushButton * startPushButton;
+  QPushButton * stopPushButton;
+  QLabel * labelRobotState;
   // Layouts
   QGridLayout *L;
 signals:
@@ -83,21 +89,18 @@ signals:
   void changeWX(int);
   void changeWY(int);
   void changeWZ(int);
-  // In case virtuose is not available
-  void changeTX(double);
-  void changeTY(double);
-  void changeTZ(double);
-  void changeRX(double);
-  void changeRY(double);
-  void changeRZ(double);
+
+  void initClicked();
+  void startClicked();
+  void stopClicked();
+
 public slots:
+  void robotErrorSlot();
+  void robotInitialized(void);
+  void robotStarted(void);
+  void robotStopped(void);
   void releaseSlider(void);
-  void changeTxDouble(int t_val) { emit changeTX(t_val * 0.001); }
-  void changeTyDouble(int t_val) { emit changeTY(t_val * 0.001); }
-  void changeTzDouble(int t_val) { emit changeTZ(t_val * 0.001); }
-  void changeRxDouble(int t_val) { emit changeRX(t_val * 0.001); }
-  void changeRyDouble(int t_val) { emit changeRY(t_val * 0.001); }
-  void changeRzDouble(int t_val) { emit changeRZ(t_val * 0.001); }
+  void setRobotState(QString text);
 };
 
 #endif // USTK_HAVE_VTK_QT

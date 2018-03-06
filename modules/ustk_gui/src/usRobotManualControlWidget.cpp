@@ -71,6 +71,19 @@ usRobotManualControlWidget::usRobotManualControlWidget()
   wzSlider->setValue(0);
   wzSlider->setRange(-80, 80);
 
+  initPushButton = new QPushButton(this);
+  initPushButton->setText(QString("Init robot"));
+  initPushButton->setEnabled(true);
+  startPushButton = new QPushButton(this);
+  startPushButton->setText(QString("Start robot"));
+  startPushButton->setEnabled(true);
+  stopPushButton = new QPushButton(this);
+  stopPushButton->setText(QString("Stop robot"));
+  stopPushButton->setEnabled(true);
+
+  labelRobotState = new QLabel(this);
+  labelRobotState->setText("Press security handle, then click Init robot");
+
   txSlider->setMinimumWidth(150);
   tySlider->setMinimumWidth(150);
   tzSlider->setMinimumWidth(150);
@@ -85,6 +98,9 @@ usRobotManualControlWidget::usRobotManualControlWidget()
   L->addWidget(wxLabel, 3, 0, Qt::AlignRight);
   L->addWidget(wyLabel, 4, 0, Qt::AlignRight);
   L->addWidget(wzLabel, 5, 0, Qt::AlignRight);
+  L->addWidget(initPushButton, 6, 0, 1, 2, Qt::AlignCenter);
+  L->addWidget(startPushButton, 7, 0, Qt::AlignRight);
+  L->addWidget(labelRobotState, 8, 0, 1, 2, Qt::AlignCenter);
 
   L->addWidget(txSlider, 0, 1, Qt::AlignLeft);
   L->addWidget(tySlider, 1, 1, Qt::AlignLeft);
@@ -92,6 +108,7 @@ usRobotManualControlWidget::usRobotManualControlWidget()
   L->addWidget(wxSlider, 3, 1, Qt::AlignLeft);
   L->addWidget(wySlider, 4, 1, Qt::AlignLeft);
   L->addWidget(wzSlider, 5, 1, Qt::AlignLeft);
+  L->addWidget(stopPushButton, 7, 1, Qt::AlignLeft);
 
   this->setLayout(L);
   // Setting up connections
@@ -113,6 +130,11 @@ usRobotManualControlWidget::~usRobotManualControlWidget()
   delete wxSlider;
   delete wySlider;
   delete wzSlider;
+
+  delete startPushButton;
+  delete stopPushButton;
+  delete labelRobotState;
+
   // Layouts
   delete L;
 }
@@ -133,13 +155,15 @@ void usRobotManualControlWidget::setUpConnections()
   connect(wxSlider, SIGNAL(valueChanged(int)), SIGNAL(changeWX(int)));
   connect(wySlider, SIGNAL(valueChanged(int)), SIGNAL(changeWY(int)));
   connect(wzSlider, SIGNAL(valueChanged(int)), SIGNAL(changeWZ(int)));
-  // Connection Signal-to slot to double signal to use in a main GUI
-  connect(txSlider, SIGNAL(valueChanged(int)), SLOT(changeTxDouble(int)));
-  connect(tySlider, SIGNAL(valueChanged(int)), SLOT(changeTyDouble(int)));
-  connect(tzSlider, SIGNAL(valueChanged(int)), SLOT(changeTzDouble(int)));
-  connect(wxSlider, SIGNAL(valueChanged(int)), SLOT(changeRxDouble(int)));
-  connect(wySlider, SIGNAL(valueChanged(int)), SLOT(changeRyDouble(int)));
-  connect(wzSlider, SIGNAL(valueChanged(int)), SLOT(changeRzDouble(int)));
+  // signal-signal connection for start / stop robot buttons
+  connect(initPushButton, SIGNAL(clicked()), SIGNAL(initClicked()));
+  connect(startPushButton, SIGNAL(clicked()), SIGNAL(startClicked()));
+  connect(stopPushButton, SIGNAL(clicked()), SIGNAL(stopClicked()));
+
+  //gui updates
+  connect(initPushButton, SIGNAL(clicked()), this, SLOT(robotInitialized()));
+  connect(startPushButton, SIGNAL(clicked()), this, SLOT(robotStarted()));
+  connect(stopPushButton, SIGNAL(clicked()), this, SLOT(robotStopped()));
 }
 
 void usRobotManualControlWidget::releaseSlider()
@@ -147,3 +171,36 @@ void usRobotManualControlWidget::releaseSlider()
   QSlider *slider = dynamic_cast<QSlider *>(sender());
   slider->setValue(0);
 }
+
+void usRobotManualControlWidget::robotInitialized(void) {
+  startPushButton->setEnabled(true);
+  stopPushButton->setEnabled(true);
+  labelRobotState->setText(QString("Now press the viper start button (flashing)"));
+  this->update();
+}
+void usRobotManualControlWidget::robotStarted(void) {
+  startPushButton->setEnabled(false);
+  stopPushButton->setEnabled(true);
+  labelRobotState->setText(QString("Robot OK, you can move it or stop it"));
+  this->update();
+}
+
+void usRobotManualControlWidget::robotStopped(void) {
+  startPushButton->setEnabled(true);
+  stopPushButton->setEnabled(false);
+  labelRobotState->setText(QString("Robot stopped, start it to move it"));
+  this->update();
+}
+
+void usRobotManualControlWidget::setRobotState(QString text) {
+  labelRobotState->setText(text);
+  this->update();
+}
+
+void usRobotManualControlWidget::robotErrorSlot() {
+  startPushButton->setEnabled(false);
+  stopPushButton->setEnabled(false);
+  labelRobotState->setText("Robot Error ! To restart, press security handle, then click Init robot");
+  this->update();
+}
+
