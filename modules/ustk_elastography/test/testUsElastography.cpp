@@ -52,6 +52,7 @@ int main()
   usImageIo::read(postComp, image2.c_str());
 
   usElastography elastography(preComp, postComp);
+  elastography.setDecimationFactor(1);
   elastography.setROI(40, 2500, 50, 500);
 
   // computate elasto
