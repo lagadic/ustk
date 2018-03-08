@@ -76,22 +76,22 @@ vpThread::Return controlFunction(vpThread::Args args)
   // Initialized the force gains, for proportionnal component
   lambdaProportionnal = 0;
   for (int i = 0; i < 3; i++)
-    lambdaProportionnal[i][i] = 0.004;
+    lambdaProportionnal[i][i] = 0.007;
   // Initialized the torque gains, for proportionnal component
   for (int i = 3; i < 6; i++)
     lambdaProportionnal[i][i] = 0;
   // Initialized the force gains, for derivate component
   lambdaDerivate = 0;
   for (int i = 0; i < 3; i++)
-    lambdaDerivate[i][i] = 0.02;
+    lambdaDerivate[i][i] = 0.06;
   // Initialized the torque gains, for derivate component
   for (int i = 3; i < 6; i++)
     lambdaDerivate[i][i] = 0;
-  // Initialized the force gains, for inegral component
+  // Initialized the force gains, for integral component
   lambdaDerivate = 0;
   for (int i = 0; i < 3; i++)
-    lambdaIntegral[i][i] = 0;//.00005;
-  // Initialized the torque gains, for inegral component
+    lambdaIntegral[i][i] = 0;
+  // Initialized the torque gains, for integral component
   for (int i = 3; i < 6; i++)
     lambdaIntegral[i][i] = 0;
 
@@ -155,6 +155,12 @@ vpThread::Return controlFunction(vpThread::Args args)
   int iter = 0;
   t_CaptureState capture_state_;
 
+  //signal filtering
+  unsigned int bufferSize = 50;
+  double signalBuffer[bufferSize];
+  for(unsigned int i=0; i<bufferSize;i++)
+    signalBuffer[i]=0;
+
   std::cout << "Starting control loop..." << std::endl;
   do {
     s_mutex_capture.lock();
@@ -200,16 +206,26 @@ vpThread::Return controlFunction(vpThread::Args args)
 
       v_p[0] = 0;
       v_p[1] = 0;
-      //v_p[2] = 0; // TO REMOVE
-      //v_p[3] = 0; // TO REMOVE
+      v_p[2] = 0;
       v_p[4] = 0;
       v_p[5] = 0;
 
       // save last error for derivate part of the controller
       sEs_last = sEs;
 
+
       // Compute the force/torque error in the sensor frame
       sEs = sFp * pHp_star - (sHs - sFg * gHg - sHs_bias);
+
+      // fill filtering buffer
+      signalBuffer[iter%bufferSize] = sEs[2];
+
+      //filter
+      double sum=0;
+      for(unsigned int i=0; i<bufferSize;i++) {
+        sum+= signalBuffer[i];
+      }
+      sEs[2] = sum/bufferSize;
 
       sEs_sum += sEs;
 
