@@ -71,6 +71,9 @@ public slots:
     void run();
     void stop();
 
+    void startAutomaticForceControl();
+    void stopAutomaticForceControl();
+
     // Manual velocity control in US probe contact frame
     void setXVelocity(int xVelocity);
     void setYVelocity(int yVelocity);
@@ -81,9 +84,11 @@ public slots:
 
 signals:
     void startControlLoop();
+    void startControlLoopAutomatic();
     void robotError();
 private slots:
     void controlLoop();
+    void controlLoopAutomatic();
 private:
     bool m_initialized;
     bool m_run;

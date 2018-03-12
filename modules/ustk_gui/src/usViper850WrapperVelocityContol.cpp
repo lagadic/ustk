@@ -9,6 +9,7 @@ usViper850WrapperVelocityControl::usViper850WrapperVelocityControl()
   velocityProbeContact = vpColVector(6,0);
 
   connect(this, SIGNAL(startControlLoop()), this, SLOT(controlLoop()));
+  connect(this, SIGNAL(startControlLoopAutomatic()), this, SLOT(controlLoopAutomatic()));
 }
 
 usViper850WrapperVelocityControl::~usViper850WrapperVelocityControl()
@@ -99,6 +100,218 @@ void usViper850WrapperVelocityControl::controlLoop()
   }
 }
 
+void usViper850WrapperVelocityControl::controlLoopAutomatic()
+{
+  // Transformation from end-effector frame to the force/torque sensor
+  // Note that the end-effector frame is located on the lower part of
+  // male component of the tool changer.
+  vpHomogeneousMatrix eMs;
+  eMs[2][3] = -0.062; // tz = -6.2cm
+
+  // Transformation from force/torque sensor to the probe frame from where
+  // we want to control the robot
+  vpHomogeneousMatrix sMp;
+
+  // Transformation from force/torque sensor to the end-effector frame
+  vpHomogeneousMatrix sMe;
+  eMs.inverse(sMe);
+
+  // Build the transformation that allows to convert a velocity in the
+  // end-effector frame to the FT sensor frame
+  vpVelocityTwistMatrix sVe;
+  sVe.buildFrom(sMe);
+
+  vpColVector sHs(6);      // force/torque sensor measures
+  vpColVector pHp_star(6); // force/torque sensor desired values in probe frame
+  vpColVector gHg(6);      // force/torque due to the gravity
+  vpMatrix lambdaProportionnal(6, 6); //gain of proportionnal part of the force controller
+  vpMatrix lambdaDerivate(6, 6); //gain of derivate part of the force controller
+  vpMatrix lambdaIntegral(6, 6); //gain of derivate part of the force controller
+  vpColVector sEs(6,0);      // force/torque error
+  vpColVector sEs_last(6,0);      // force/torque error
+  vpColVector sEs_sum(6,0);      // force/torque sum error
+  // Position of the cog of the object attached after the sensor in the sensor frame
+  vpTranslationVector stg;
+  vpColVector sHs_bias(6); // force/torque sensor measures for bias
+
+  // Cartesian velocities corresponding to the force/torque control in the
+  // sensor frame
+  vpColVector v_s(6);
+
+  //////////   PID gains ///////
+  // Initialized the force gains, for proportionnal component
+  lambdaProportionnal = 0;
+  for (int i = 0; i < 3; i++)
+    lambdaProportionnal[i][i] = 0.007;
+  // Initialized the torque gains, for proportionnal component
+  for (int i = 3; i < 6; i++)
+    lambdaProportionnal[i][i] = 0;
+  // Initialized the force gains, for derivate component
+  lambdaDerivate = 0;
+  for (int i = 0; i < 3; i++)
+    lambdaDerivate[i][i] = 0.06;
+  // Initialized the torque gains, for derivate component
+  for (int i = 3; i < 6; i++)
+    lambdaDerivate[i][i] = 0;
+  // Initialized the force gains, for integral component
+  lambdaDerivate = 0;
+  for (int i = 0; i < 3; i++)
+    lambdaIntegral[i][i] = 0;
+  // Initialized the torque gains, for integral component
+  for (int i = 3; i < 6; i++)
+    lambdaIntegral[i][i] = 0;
+
+  // Initialize the desired force/torque values
+  pHp_star = 0;
+  pHp_star[2] = 4; // Fz = 4N
+
+  // Set the probe frame control
+  sMp[2][3] = 0.262; // tz = 26.2cm
+
+  // Init the force/torque due to the gravity
+  gHg[2] = -(0.696 + 0.476) * 9.81; // m*g
+
+  // Position of the cog of the object attached after the sensor in the sensor frame
+  stg[0] = 0;
+  stg[1] = 0;
+  stg[2] = 0.088; // tz = 88.4mm
+
+  vpRotationMatrix sRp;
+  sMp.extract(sRp);
+  vpTranslationVector stp;
+  sMp.extract(stp);
+
+  vpHomogeneousMatrix eMp = eMs * sMp;
+  vpVelocityTwistMatrix eVp(eMp);
+
+  // Get the position of the end-effector in the reference frame
+  vpColVector q;
+  vpHomogeneousMatrix fMe;
+  vpHomogeneousMatrix fMs;
+  vpRotationMatrix sRf;
+  viper->getPosition(vpRobot::ARTICULAR_FRAME, q);
+  viper->get_fMe(q, fMe);
+  // Compute the position of the sensor frame in the reference frame
+  fMs = fMe * eMs;
+  vpHomogeneousMatrix sMf;
+  fMs.inverse(sMf);
+  sMf.extract(sRf);
+
+  // Build the transformation that allows to convert the forces due to the
+  // gravity in the sensor frame
+  vpForceTwistMatrix sFg(sMf); // Only the rotation part is to consider
+  // Modify the translational part
+  for (int i = 0; i < 3; i++)
+    for (int j = 0; j < 3; j++)
+      sFg[i + 3][j] = (stg.skew() * sRf)[i][j];
+
+  // Build the transformation that allows to convert a FT expressed in the
+  // FT probe frame into the sensor frame
+  vpForceTwistMatrix sFp(sMp);
+
+  // Bias the force/torque sensor
+  viper->biasForceTorqueSensor();
+
+  // Set the robot to velocity control
+  viper->setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
+
+  int iter = 0;
+
+  //signal filtering
+  unsigned int bufferSize = 50;
+  double signalBuffer[bufferSize];
+  for(unsigned int i=0; i<bufferSize;i++)
+    signalBuffer[i]=0;
+
+  while(m_run) {
+    try {
+
+    // Get the force/torque measures from the sensor
+    sHs = viper->getForceTorque();
+
+    // Multiply the measures by -1 to get the force/torque exerced by the
+    // robot to the environment.
+    sHs *= -1;
+
+    // Update the gravity transformation matrix
+    viper->getPosition(vpRobot::ARTICULAR_FRAME, q);
+    viper->get_fMe(q, fMe);
+    // Compute the position of the sensor frame in the reference frame
+    fMs = fMe * eMs;
+    // Compute the inverse transformation
+    fMs.inverse(sMf);
+    sMf.extract(sRf);
+    // Update the transformation that allows to convert the forces due to the
+    // gravity in the sensor frame
+    sFg.buildFrom(sMf); // Only the rotation part is to consider
+    // Modify the translational part
+    for (int i = 0; i < 3; i++)
+      for (int j = 0; j < 3; j++)
+        sFg[i + 3][j] = (stg.skew() * sRf)[i][j];
+
+    if (iter == 0) {
+      sHs_bias = sHs - sFg * gHg;
+    }
+
+    // save last error for derivate part of the controller
+    sEs_last = sEs;
+
+
+    // Compute the force/torque error in the sensor frame
+    sEs = sFp * pHp_star - (sHs - sFg * gHg - sHs_bias);
+
+    // fill filtering buffer
+    signalBuffer[iter%bufferSize] = sEs[2];
+
+    //filter
+    double sum=0;
+    for(unsigned int i=0; i<bufferSize;i++) {
+      sum+= signalBuffer[i];
+    }
+    sEs[2] = sum/bufferSize;
+
+    sEs_sum += sEs;
+
+    // to avoid hudge derivate error at first iteration, we set the derivate error to 0
+    if(iter == 0) {
+      sEs_last = sEs;
+    }
+
+    // Compute the force/torque control law in the sensor frame (propotionnal + derivate controller)
+    v_s = lambdaProportionnal * sEs + lambdaDerivate *(sEs - sEs_last) + lambdaIntegral * sEs_sum;
+
+    v_s[0] = 0.0;
+    v_s[1] = 0.0;
+    v_s[3] = 0.0;
+    v_s[4] = 0.0;
+    v_s[5] = 0.0;
+
+    vpVelocityTwistMatrix eVs;
+    sVe.inverse(eVs);
+
+    ve = eVs * v_s;
+
+    // Get the robot jacobian eJe
+    viper->get_eJe(eJe);
+
+    // Compute the joint velocities to achieve the force/torque control
+    q_dot = eJe.pseudoInverse() * ve;
+
+    // Send the joint velocities to the robot
+    viper->setVelocity(vpRobot::ARTICULAR_FRAME, q_dot);
+    iter++;
+
+    } catch (...) {
+      viper->setRobotState(vpRobot::STATE_STOP);
+      std::cout << "Viper robot could not be initialized" << std::endl;
+      emit(robotError());
+    }
+
+    // as we are in a loop in a slot, we have to tell to the qapplication to take in account incoming signals and execute corresponding slots
+    qApp->processEvents();
+  }
+}
+
 /**
  * @brief Set the linear velocity along x axis in 4DC7 probe contact frame.
  * @param xVelocity Velocity in millimeter per second.
@@ -151,5 +364,33 @@ void usViper850WrapperVelocityControl::setYAngularVelocity(int yAngularVelocity)
 void usViper850WrapperVelocityControl::setZAngularVelocity(int zAngularVelocity)
 {
   velocityProbeContact[5] = vpMath::rad((double)zAngularVelocity/10.0);
+}
+
+
+void usViper850WrapperVelocityControl::startAutomaticForceControl() {
+
+  m_run = false; //stop the running loop
+
+  // reset velocities vector to zero
+  for(unsigned int i=0; i<velocityProbeContact.size();i++)
+    velocityProbeContact[i]=0;
+
+  if(!viper->getPowerState())
+    startRobot();
+
+  m_run = true;
+  emit(startControlLoopAutomatic());
+}
+
+void usViper850WrapperVelocityControl::stopAutomaticForceControl() {
+
+  m_run = false; //stop the running loop
+
+  // reset velocities vector to zero
+  for(unsigned int i=0; i<velocityProbeContact.size();i++)
+    velocityProbeContact[i]=0;
+
+  m_run = true;
+  emit(startControlLoop()); // go back to manual mode
 }
 #endif

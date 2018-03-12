@@ -78,8 +78,12 @@ private:
   QPushButton * startPushButton;
   QPushButton * stopPushButton;
   QLabel * labelRobotState;
+  QPushButton * automaticForceButton;
   // Layouts
   QGridLayout *L;
+
+  bool automaticForceControl;
+
 signals:
   // Linear velocities
   void changeVX(int);
@@ -94,6 +98,9 @@ signals:
   void startClicked();
   void stopClicked();
 
+  void activateAutomaticForceControl();
+  void disableAutomaticForceControl();
+
 public slots:
   void robotErrorSlot();
   void robotInitialized(void);
@@ -101,6 +108,9 @@ public slots:
   void robotStopped(void);
   void releaseSlider(void);
   void setRobotState(QString text);
+
+private slots:
+  void activateAutomaticForceControlSlot();
 };
 
 #endif // USTK_HAVE_VTK_QT

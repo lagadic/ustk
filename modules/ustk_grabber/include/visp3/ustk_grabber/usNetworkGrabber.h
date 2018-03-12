@@ -150,8 +150,6 @@ public:
 
   void readAcquisitionParameters(QDataStream &stream);
 
-  void runAcquisition();
-
   bool sendAcquisitionParameters();
 
   void setIPAddress(const std::string &s_ip) { m_ip = s_ip; }
@@ -171,25 +169,26 @@ public:
 
   void setVerbose(bool verbose) { m_verbose = verbose; }
 
-  void stopAcquisition();
-
 signals:
   void serverUpdateEnded(bool success);
   void endBlockingLoop();
   void runAcquisitionSignal(bool run);
   void sendAcquisitionParametersSignal();
   void endConnection();
+  void acquisitionInitialized(bool);
 
 public slots:
-  /// Network
   void connected();
-  void processConnectionToServer();
+  void connectToServer();
+  void connectToServer(QHostAddress address);
   virtual void dataArrived() = 0;
   void disconnected();
-  void handleError(QAbstractSocket::SocketError err);
-  void connectToServer();
   void disconnectFromServer();
-  void setServerIp(std::string &ip);
+  void handleError(QAbstractSocket::SocketError err);
+  void initAcquisitionSlot(usNetworkGrabber::usInitHeaderSent header);
+  void processConnectionToServer();
+  void runAcquisition();
+  void stopAcquisition();
 
 protected slots:
   void serverUpdated(bool sucess);

@@ -286,7 +286,6 @@ void usMetaHeaderParser::parse()
     MHDfile << std::scientific;
 
     MHDfile << "NDims = " << header.numberOfDimensions << "\n";
-    ;
 
     if (header.numberOfDimensions == 2) {
       char str[100];

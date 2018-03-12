@@ -9,6 +9,7 @@
 #include <visp3/ustk_gui/usImageDisplayWidget.h>
 #include <visp3/ustk_gui/usRobotManualControlWidget.h>
 #include <visp3/ustk_gui/usViper850WrapperVelocityContol.h>
+#include <visp3/ustk_gui/usUltrasonixClientWidget.h>
 
 #include <QApplication>
 #include <QHBoxLayout>
@@ -28,9 +29,11 @@ int main(int argc, char **argv)
   widget->updateFrame(*preScan);
 
   usRobotManualControlWidget *robotControlPanel = new usRobotManualControlWidget();
+  usUltrasonixClientWidget *ultrasonixControlWidet = new usUltrasonixClientWidget();
 
   QWidget *centralWidget = new QWidget();
   QHBoxLayout *mainLayout = new QHBoxLayout();
+  mainLayout->addWidget(ultrasonixControlWidet);
   mainLayout->addWidget(widget, 2);
   mainLayout->addWidget(robotControlPanel);
   centralWidget->setLayout(mainLayout);
@@ -42,6 +45,11 @@ int main(int argc, char **argv)
   threadRobotControl->start();
   viperControl.run();
 
+  // grabber
+  QThread *grabbingThread = new QThread();
+  usNetworkGrabberPreScan2D *qtGrabber = new usNetworkGrabberPreScan2D();
+  qtGrabber->moveToThread(grabbingThread);
+  grabbingThread->start();
 
   QMainWindow window;
   window.setCentralWidget(centralWidget);
@@ -54,28 +62,23 @@ int main(int argc, char **argv)
   QObject::connect(robotControlPanel, SIGNAL(changeWY(int)),&viperControl, SLOT(setYAngularVelocity(int)));
   QObject::connect(robotControlPanel, SIGNAL(changeWZ(int)),&viperControl, SLOT(setZAngularVelocity(int)));
 
-
   QObject::connect(robotControlPanel, SIGNAL(initClicked()),&viperControl, SLOT(init()));
   QObject::connect(robotControlPanel, SIGNAL(startClicked()),&viperControl, SLOT(run()));
   QObject::connect(robotControlPanel, SIGNAL(stopClicked()),&viperControl, SLOT(stop()));
 
+  QObject::connect(robotControlPanel, SIGNAL(activateAutomaticForceControl()),&viperControl, SLOT(startAutomaticForceControl()));
+  QObject::connect(robotControlPanel, SIGNAL(disableAutomaticForceControl()),&viperControl, SLOT(stopAutomaticForceControl()));
+
   // manage errors
   QObject::connect(&viperControl, SIGNAL(robotError()),robotControlPanel, SLOT(robotErrorSlot()));
 
-  // grabber
-  QThread *grabbingThread = new QThread();
-  usNetworkGrabberPreScan2D *qtGrabber = new usNetworkGrabberPreScan2D();
-  // qtGrabber->setVerbose(true);
-  //qtGrabber->setIPAddress("127.0.0.1"); // local loop, server must be running on same computer
-  qtGrabber->connectToServer();
-  usNetworkGrabber::usInitHeaderSent header;
-  header.probeId = 15;    // 4DC7 id = 15
-  header.slotId = 0;      // top slot id = 0
-  header.imagingMode = 0; // B-mode = 0
-  qtGrabber->initAcquisition(header);
-  qtGrabber->runAcquisition();
-  qtGrabber->moveToThread(grabbingThread);
-  grabbingThread->start();
+  // grabber control
+  qRegisterMetaType<QHostAddress>("QHostAddress");
+  qRegisterMetaType<usNetworkGrabber::usInitHeaderSent>("usNetworkGrabber::usInitHeaderSent");
+  QObject::connect(ultrasonixControlWidet, SIGNAL(connectToServer(QHostAddress)),qtGrabber, SLOT(connectToServer(QHostAddress)));
+  QObject::connect(ultrasonixControlWidet, SIGNAL(initAcquisition(usNetworkGrabber::usInitHeaderSent)),qtGrabber, SLOT(initAcquisitionSlot(usNetworkGrabber::usInitHeaderSent)));
+  QObject::connect(ultrasonixControlWidet, SIGNAL(runAcquisition()),qtGrabber, SLOT(runAcquisition()));
+  QObject::connect(ultrasonixControlWidet, SIGNAL(stopAcquisition()),qtGrabber, SLOT(stopAcquisition()));
 
   //send new images via qt signal
   qRegisterMetaType<vpImage<unsigned char> >("vpImage<unsigned char>");

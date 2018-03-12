@@ -36,6 +36,7 @@
 */
 
 #include <visp3/ustk_gui/usRobotManualControlWidget.h>
+#include <iostream>
 
 usRobotManualControlWidget::usRobotManualControlWidget()
 {
@@ -91,6 +92,10 @@ usRobotManualControlWidget::usRobotManualControlWidget()
   wySlider->setMinimumWidth(150);
   wzSlider->setMinimumWidth(150);
 
+  automaticForceButton = new QPushButton(this);
+  automaticForceButton->setText(QString("Enable automatic force control"));
+  automaticForceButton->setEnabled(true);
+
   L = new QGridLayout;
   L->addWidget(txLabel, 0, 0, Qt::AlignRight);
   L->addWidget(tyLabel, 1, 0, Qt::AlignRight);
@@ -101,6 +106,7 @@ usRobotManualControlWidget::usRobotManualControlWidget()
   L->addWidget(initPushButton, 6, 0, 1, 2, Qt::AlignCenter);
   L->addWidget(startPushButton, 7, 0, Qt::AlignRight);
   L->addWidget(labelRobotState, 8, 0, 1, 2, Qt::AlignCenter);
+  L->addWidget(automaticForceButton, 9, 0, 1, 2, Qt::AlignCenter);
 
   L->addWidget(txSlider, 0, 1, Qt::AlignLeft);
   L->addWidget(tySlider, 1, 1, Qt::AlignLeft);
@@ -135,6 +141,8 @@ usRobotManualControlWidget::~usRobotManualControlWidget()
   delete stopPushButton;
   delete labelRobotState;
 
+  delete automaticForceButton;
+
   // Layouts
   delete L;
 }
@@ -158,12 +166,15 @@ void usRobotManualControlWidget::setUpConnections()
   // signal-signal connection for start / stop robot buttons
   connect(initPushButton, SIGNAL(clicked()), SIGNAL(initClicked()));
   connect(startPushButton, SIGNAL(clicked()), SIGNAL(startClicked()));
+  automaticForceButton->setText(QString("Enable automatic force control"));
   connect(stopPushButton, SIGNAL(clicked()), SIGNAL(stopClicked()));
 
   //gui updates
   connect(initPushButton, SIGNAL(clicked()), this, SLOT(robotInitialized()));
   connect(startPushButton, SIGNAL(clicked()), this, SLOT(robotStarted()));
   connect(stopPushButton, SIGNAL(clicked()), this, SLOT(robotStopped()));
+
+  connect(automaticForceButton, SIGNAL(clicked()), this, SLOT(activateAutomaticForceControlSlot()));
 }
 
 void usRobotManualControlWidget::releaseSlider()
@@ -204,3 +215,25 @@ void usRobotManualControlWidget::robotErrorSlot() {
   this->update();
 }
 
+void usRobotManualControlWidget::activateAutomaticForceControlSlot() {
+
+  bool activate = automaticForceButton->text() == QString("Enable automatic force control");
+
+  txSlider->setEnabled(!activate);
+  tySlider->setEnabled(!activate);
+  automaticForceButton->setText(QString("Enable automatic force control"));
+  tzSlider->setEnabled(!activate);
+  wxSlider->setEnabled(!activate);
+  wySlider->setEnabled(!activate);
+  wzSlider->setEnabled(!activate);
+  if(activate) {
+    automaticForceButton->setText(QString("Disable automatic force control"));
+    labelRobotState->setText("Automatic force control enabled");
+    emit(activateAutomaticForceControl());
+  }
+  else {
+    automaticForceButton->setText(QString("Enable automatic force control"));
+    labelRobotState->setText("Manual robot control");
+    emit(disableAutomaticForceControl());
+  }
+}
