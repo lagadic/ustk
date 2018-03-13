@@ -105,6 +105,9 @@ void usImageElastography::setUltrasoundImage(const vpImage<unsigned char> &ultra
 
 void usImageElastography::computeElastographyImage()
 {
+#ifdef VISP_HAVE_OPENMP
+#pragma omp parallel for
+#endif
   for (unsigned int i = 0; i < m_elastoImage.getHeight(); i++) {
     for (unsigned int j = 0; j < m_elastoImage.getWidth(); j++) {
       vpRGBa newColor;
