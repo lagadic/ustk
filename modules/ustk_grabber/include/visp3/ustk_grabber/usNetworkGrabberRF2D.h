@@ -83,6 +83,7 @@ public:
 
 signals:
   void newFrameAvailable();
+  void newFrame(usImageRF2D<short int> &);
 
 private:
   // Image buffer

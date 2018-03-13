@@ -43,6 +43,10 @@
 #include <visp3/ustk_core/usImagePostScan2D.h>
 #include <visp3/ustk_core/usImagePreScan2D.h>
 
+#ifdef VISP_HAVE_OPENMP
+#include <omp.h>
+#endif
+
 /*!
   @class usImageElastography
   @brief Elastography image : contains a 2D B-Mode image (pre-scan or post-scan), with an overlaying colored sub-image
