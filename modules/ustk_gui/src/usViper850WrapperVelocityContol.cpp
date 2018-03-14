@@ -142,19 +142,19 @@ void usViper850WrapperVelocityControl::controlLoopAutomatic()
   // Initialized the force gains, for proportionnal component
   lambdaProportionnal = 0;
   for (int i = 0; i < 3; i++)
-    lambdaProportionnal[i][i] = 0.007;
+    lambdaProportionnal[i][i] = 0.015;
   // Initialized the torque gains, for proportionnal component
   for (int i = 3; i < 6; i++)
     lambdaProportionnal[i][i] = 0;
   // Initialized the force gains, for derivate component
   lambdaDerivate = 0;
   for (int i = 0; i < 3; i++)
-    lambdaDerivate[i][i] = 0.06;
+    lambdaDerivate[i][i] = 0.09;
   // Initialized the torque gains, for derivate component
   for (int i = 3; i < 6; i++)
     lambdaDerivate[i][i] = 0;
   // Initialized the force gains, for integral component
-  lambdaDerivate = 0;
+  lambdaIntegral = 0;
   for (int i = 0; i < 3; i++)
     lambdaIntegral[i][i] = 0;
   // Initialized the torque gains, for integral component
@@ -215,16 +215,20 @@ void usViper850WrapperVelocityControl::controlLoopAutomatic()
   // Set the robot to velocity control
   viper->setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
 
-  int iter = 0;
+  unsigned int iter = 0;
 
   //signal filtering
-  unsigned int bufferSize = 50;
+  unsigned int bufferSize = 80;
   double signalBuffer[bufferSize];
   for(unsigned int i=0; i<bufferSize;i++)
     signalBuffer[i]=0;
 
+  double t0 = vpTime::measureTimeMs();
+  double deltaTmilliseconds = 1; // 1ms for each loop cycle
+
   while(m_run) {
     try {
+      t0 = vpTime::measureTimeMs();
 
     // Get the force/torque measures from the sensor
     sHs = viper->getForceTorque();
@@ -265,10 +269,11 @@ void usViper850WrapperVelocityControl::controlLoopAutomatic()
 
     //filter
     double sum=0;
-    for(unsigned int i=0; i<bufferSize;i++) {
+    unsigned int realBufferSize = iter+1<bufferSize ? iter+1 : bufferSize;
+    for(unsigned int i=0; i<realBufferSize;i++) {
       sum+= signalBuffer[i];
     }
-    sEs[2] = sum/bufferSize;
+    sEs[2] = sum/realBufferSize;
 
     sEs_sum += sEs;
 
@@ -309,6 +314,7 @@ void usViper850WrapperVelocityControl::controlLoopAutomatic()
 
     // as we are in a loop in a slot, we have to tell to the qapplication to take in account incoming signals and execute corresponding slots
     qApp->processEvents();
+    vpTime::wait(t0,deltaTmilliseconds);
   }
 }
 

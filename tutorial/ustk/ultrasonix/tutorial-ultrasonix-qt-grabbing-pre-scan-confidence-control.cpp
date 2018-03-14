@@ -76,19 +76,19 @@ vpThread::Return controlFunction(vpThread::Args args)
   // Initialized the force gains, for proportionnal component
   lambdaProportionnal = 0;
   for (int i = 0; i < 3; i++)
-    lambdaProportionnal[i][i] = 0.007;
+    lambdaProportionnal[i][i] = 0.015;
   // Initialized the torque gains, for proportionnal component
   for (int i = 3; i < 6; i++)
     lambdaProportionnal[i][i] = 0;
   // Initialized the force gains, for derivate component
   lambdaDerivate = 0;
   for (int i = 0; i < 3; i++)
-    lambdaDerivate[i][i] = 0.06;
+    lambdaDerivate[i][i] = 0.09;
   // Initialized the torque gains, for derivate component
   for (int i = 3; i < 6; i++)
     lambdaDerivate[i][i] = 0;
   // Initialized the force gains, for integral component
-  lambdaDerivate = 0;
+  lambdaIntegral = 0;
   for (int i = 0; i < 3; i++)
     lambdaIntegral[i][i] = 0;
   // Initialized the torque gains, for integral component
@@ -111,11 +111,6 @@ vpThread::Return controlFunction(vpThread::Args args)
   stg[0] = 0;
   stg[1] = 0;
   stg[2] = 0.088; // tz = 88.4mm
-
-  vpRotationMatrix sRp;
-  sMp.extract(sRp);
-  vpTranslationVector stp;
-  sMp.extract(stp);
 
   vpHomogeneousMatrix eMp = eMs * sMp;
   vpVelocityTwistMatrix eVp(eMp);
@@ -152,17 +147,20 @@ vpThread::Return controlFunction(vpThread::Args args)
   // Set the robot to velocity control
   robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
 
-  int iter = 0;
+  unsigned int iter = 0;
   t_CaptureState capture_state_;
 
   //signal filtering
-  unsigned int bufferSize = 50;
+  unsigned int bufferSize = 80;
   double signalBuffer[bufferSize];
   for(unsigned int i=0; i<bufferSize;i++)
     signalBuffer[i]=0;
 
   std::cout << "Starting control loop..." << std::endl;
+  double t0 = vpTime::measureTimeMs();
+  double deltaTmilliseconds = 1; // 1ms for each loop cycle
   do {
+    t0 = vpTime::measureTimeMs();
     s_mutex_capture.lock();
     capture_state_ = s_capture_state;
     s_mutex_capture.unlock();
@@ -213,7 +211,6 @@ vpThread::Return controlFunction(vpThread::Args args)
       // save last error for derivate part of the controller
       sEs_last = sEs;
 
-
       // Compute the force/torque error in the sensor frame
       sEs = sFp * pHp_star - (sHs - sFg * gHg - sHs_bias);
 
@@ -222,10 +219,11 @@ vpThread::Return controlFunction(vpThread::Args args)
 
       //filter
       double sum=0;
-      for(unsigned int i=0; i<bufferSize;i++) {
+      unsigned int realBufferSize = iter+1<bufferSize ? iter+1 : bufferSize;
+      for(unsigned int i=0; i<realBufferSize;i++) {
         sum+= signalBuffer[i];
       }
-      sEs[2] = sum/bufferSize;
+      sEs[2] = sum/realBufferSize;
 
       sEs_sum += sEs;
 
@@ -235,7 +233,7 @@ vpThread::Return controlFunction(vpThread::Args args)
       }
 
       // Compute the force/torque control law in the sensor frame (propotionnal + derivate controller)
-      v_s = lambdaProportionnal * sEs + lambdaDerivate *(sEs - sEs_last) + lambdaIntegral * sEs_sum;
+      v_s = lambdaProportionnal * sEs + lambdaDerivate *(sEs - sEs_last) / deltaTmilliseconds + lambdaIntegral * sEs_sum;
 
       v_s[0] = 0.0;
       v_s[1] = 0.0;
@@ -259,7 +257,7 @@ vpThread::Return controlFunction(vpThread::Args args)
 
       iter++;
     }
-    vpTime::wait(1); // 5
+    vpTime::wait(t0,deltaTmilliseconds);
   } while (capture_state_ != capture_stopped);
 
   std::cout << "End of control thread" << std::endl;
@@ -288,7 +286,7 @@ int main(int argc, char **argv)
   usImagePreScan2D<unsigned char> confidence;
 
   // gain
-  double lambdaVisualError = 10;
+  double lambdaVisualError = 12;
 
   // Prepare display
   vpDisplay *display = NULL;
@@ -350,7 +348,7 @@ int main(int argc, char **argv)
       s_capture_state = capture_started;
       s_mutex_capture.unlock();
 
-      std::cout << "MAIN THREAD received frame No : " << grabbedFrame->getFrameCount() << std::endl;
+     // std::cout << "MAIN THREAD received frame No : " << grabbedFrame->getFrameCount() << std::endl;
 
       // init display
       if (!displayInit && grabbedFrame->getHeight() != 0 && grabbedFrame->getWidth() != 0) {
