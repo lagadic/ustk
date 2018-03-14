@@ -31,18 +31,22 @@
  *****************************************************************************/
 
 /**
-* @file usImageDisplayWidget.cpp
+* @file usElastographyDisplayWidget.cpp
 * @brief Qt widget class for ultrasound image display.
 */
 
-#include <visp3/ustk_gui/usImageDisplayWidget.h>
+#include <visp3/ustk_gui/usElastographyDisplayWidget.h>
+#ifdef VISP_HAVE_OPENMP
+#include <omp.h>
+#endif
 
 #if (defined(USTK_HAVE_VTK_QT) || defined(USTK_HAVE_QT5))
 
 /**
 * Constructor.
 */
-usImageDisplayWidget::usImageDisplayWidget() : m_label(NULL), m_QImage(), m_pixmap()
+usElastographyDisplayWidget::usElastographyDisplayWidget()
+  : m_label(NULL), m_QImage(), m_pixmap(), m_rgbBitmap(NULL), m_bitmapSize(0)
 {
   this->setMinimumSize(50, 50);
   m_label = new QLabel(this);
@@ -53,27 +57,42 @@ usImageDisplayWidget::usImageDisplayWidget() : m_label(NULL), m_QImage(), m_pixm
 /**
 * Destructor.
 */
-usImageDisplayWidget::~usImageDisplayWidget() { delete m_label; }
+usElastographyDisplayWidget::~usElastographyDisplayWidget() { delete m_label; }
 
 /**
 * Slot called to update the ultrasound image to display.
-* @param img New ultrasound image to display.
+* @param elastographyImage New elastography image to display.
 */
-void usImageDisplayWidget::updateFrame(const vpImage<unsigned char> img)
+void usElastographyDisplayWidget::updateFrame(const vpImage<vpRGBa> elastographyImage)
 {
-  m_QImage = QImage(img.bitmap, img.getWidth(), img.getHeight(), img.getWidth(), QImage::Format_Indexed8);
-  QImage I = m_QImage.convertToFormat(QImage::Format_RGB888);
-  I = I.scaled(this->width(), this->height());
+  if (m_bitmapSize != elastographyImage.getSize() * 3) {
+    m_rgbBitmap = new uchar[elastographyImage.getSize() * 3];
+    m_bitmapSize = elastographyImage.getSize() * 3;
+  }
+// loop on every pixel
+#ifdef VISP_HAVE_OPENMP
+#pragma omp parallel for
+#endif
+  for (int i = 0; i < (int)elastographyImage.getSize(); i++) {
+    m_rgbBitmap[i * 3] = elastographyImage.bitmap[i].R;
+    m_rgbBitmap[i * 3 + 1] = elastographyImage.bitmap[i].G;
+    m_rgbBitmap[i * 3 + 2] = elastographyImage.bitmap[i].B;
+  }
+  m_QImage = QImage(m_rgbBitmap, elastographyImage.getWidth(), elastographyImage.getHeight(),
+                    elastographyImage.getWidth() * 3, QImage::Format_RGB888);
+  // m_QImage.save("qimage.png");
+  QImage I = m_QImage.scaled(this->width(), this->height());
+  // I.save("qimageScaled.png");
   m_pixmap = QPixmap::fromImage(I);
+  m_pixmap.save("qpixmap.png");
   m_label->setPixmap(m_pixmap);
   m_label->update();
 }
 
-void usImageDisplayWidget::resizeEvent(QResizeEvent *event)
+void usElastographyDisplayWidget::resizeEvent(QResizeEvent *event)
 {
   m_label->resize(event->size());
-  QImage I = m_QImage.convertToFormat(QImage::Format_RGB888);
-  I = I.scaled(this->width(), this->height());
+  QImage I = m_QImage.scaled(this->width(), this->height());
   m_pixmap = QPixmap::fromImage(I);
   m_label->setPixmap(m_pixmap);
   m_label->update();

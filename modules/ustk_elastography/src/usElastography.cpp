@@ -59,6 +59,8 @@ usElastography::usElastography()
   m_ME = usMotionEstimation();
 #endif
 
+  m_decimationFactor = 10;
+
   // Avoiding leaking memory with the convolutions on cpu
   for (uint i = 0; i < 6; i++)
     cC.push_back(new usConvolution2d);
@@ -310,15 +312,17 @@ vpImage<unsigned char> usElastography::run()
     /// Strain matrix S
     vpMatrix strainMatrix = cC[5]->run(vV, h);
 
-    m_StrainMap.resize(strainMatrix.getRows(), strainMatrix.getCols());
+    m_StrainMap.resize((unsigned int)(strainMatrix.getRows() / (double)m_decimationFactor), strainMatrix.getCols());
 
     m_min_str = std::abs(strainMatrix.getMinValue());
     m_max_str = std::abs(strainMatrix.getMaxValue());
     m_max_abs = (m_min_str > m_max_str) ? m_min_str : m_max_str;
-    for (unsigned int xIndex = 0; xIndex < strainMatrix.getCols(); ++xIndex) {
-      for (unsigned int yIndex = 0; yIndex < strainMatrix.getRows(); ++yIndex) {
+    for (unsigned int xIndex = 0; xIndex < m_StrainMap.getCols(); ++xIndex) {
+      for (unsigned int yIndex = 0; yIndex < m_StrainMap.getRows(); ++yIndex) {
         m_StrainMap[yIndex][xIndex] =
-            std::isnan(strainMatrix[yIndex][xIndex]) ? 0.0 : 254 * (fabs(strainMatrix[yIndex][xIndex]) / (m_max_abs));
+            std::isnan(strainMatrix[yIndex * m_decimationFactor][xIndex])
+                ? 0.0
+                : 254 * (fabs(strainMatrix[yIndex * m_decimationFactor][xIndex]) / (m_max_abs));
       }
     }
   }

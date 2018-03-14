@@ -14,7 +14,8 @@ set(tutorial_cpp
   us2DViewerPicker.cpp
   usResliceMatrixExample.cpp
   us3DViewerSlicing.cpp
-  tutorial-image-display-qwidget.cpp)
+  tutorial-image-display-qwidget.cpp
+  tutorial-robot-control-gui.cpp)
 
 foreach(cpp ${tutorial_cpp})
   visp_add_target(${cpp})

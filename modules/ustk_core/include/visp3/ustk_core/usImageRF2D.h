@@ -206,7 +206,7 @@ usImageRF2D<Type>::usImageRF2D(const usImageRF2D &other)
   resize(other.getHeight(), other.getWidth());
 
   // filling pixels values
-  memcpy(bitmap, other.getBitmap(), (size_t)(height * width * sizeof(usImageRF2D<Type>)));
+  memcpy(bitmap, other.getBitmap(), (size_t)(height * width * sizeof(Type)));
 }
 
 /**

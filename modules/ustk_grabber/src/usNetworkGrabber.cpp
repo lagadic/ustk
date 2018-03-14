@@ -82,15 +82,20 @@ usNetworkGrabber::~usNetworkGrabber()
 }
 
 /**
-* Selection of the server ip adress. For the lab network: 192.168.100.2. for ultrasonix machine.
-*/
-void usNetworkGrabber::setServerIp(std::string &ip) { m_ip = ip; }
-
-/**
 * Method used to connect to the server.
 */
 void usNetworkGrabber::connectToServer()
 {
+  m_connect = true;
+  this->processConnectionToServer();
+}
+
+/**
+* Method used to connect to the server.
+*/
+void usNetworkGrabber::connectToServer(QHostAddress address)
+{
+  setIPAddress(address.toString().toStdString());
   m_connect = true;
   this->processConnectionToServer();
 }
@@ -226,6 +231,51 @@ bool usNetworkGrabber::initAcquisition(const usNetworkGrabber::usInitHeaderSent 
     std::cout << "server confirmation : " << (int)m_updateParametersSucess << std::endl;
 
   return m_updateParametersSucess;
+}
+
+/**
+* Slot to call to init the ultrasonix station, by passing acquisition parameters.
+* It is a blocking method : we wait the answer of the server to know if init was sucessfull.
+* @return Boolean to say if init was sucessfull (true) or not (false).
+* @see usNetworkGrabber::usInitHeaderSent
+*/
+void usNetworkGrabber::initAcquisitionSlot(usInitHeaderSent header)
+{
+
+  if (m_isRunning)
+    stopAcquisition();
+
+  QByteArray block;
+  QDataStream out(&block, QIODevice::WriteOnly);
+#if (defined(USTK_HAVE_QT5) || defined(USTK_HAVE_VTK_QT5))
+  out.setVersion(QDataStream::Qt_5_0);
+#elif defined(USTK_HAVE_VTK_QT4)
+  out.setVersion(QDataStream::Qt_4_8);
+#else
+  throw(vpException(vpException::fatalError, "your Qt version is not managed in ustk"));
+#endif
+
+  // Writing on the stream. Warning : order matters ! (must be the same as on server side when reading)
+
+  out << header.headerId;
+  out << header.probeId;
+  out << header.slotId;
+  out << header.imagingMode;
+  m_tcpSocket->write(block);
+
+  if (m_verbose)
+    std::cout << "INIT SENT, waiting server confirmation..." << std::endl;
+  // loop to wait update on server
+  QEventLoop *loop = new QEventLoop;
+  QObject::connect(this, SIGNAL(endBlockingLoop()), loop, SLOT(quit()));
+  loop->exec();
+
+  m_isInit = m_updateParametersSucess;
+
+  if (m_verbose)
+    std::cout << "server confirmation : " << (int)m_updateParametersSucess << std::endl;
+
+  emit(acquisitionInitialized(m_isInit));
 }
 
 /**

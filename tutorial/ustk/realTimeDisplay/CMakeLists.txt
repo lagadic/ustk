@@ -38,7 +38,8 @@ find_package(VISP REQUIRED visp_ustk_grabber visp_ustk_gui)
 
 set(tutorial_ultrasonix_cpp
   tutorial-ultrasonix-qt-grabbing-pre-scan3D-display.cpp
-  tutorial-local-grabbing-pre-scan2D-display.cpp)
+  tutorial-local-grabbing-pre-scan2D-display.cpp
+  tutorial-local-grabbing-elastography-display.cpp)
 
 foreach(cpp ${tutorial_ultrasonix_cpp})
   visp_add_target(${cpp})

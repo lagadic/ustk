@@ -85,6 +85,7 @@ public:
 
 signals:
   void newFrameAvailable();
+  void newFrame(vpImage<unsigned char> image);
 
 protected:
   void invertRowsCols();

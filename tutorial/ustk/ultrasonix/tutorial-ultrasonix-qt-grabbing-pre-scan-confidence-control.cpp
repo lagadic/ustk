@@ -56,7 +56,12 @@ vpThread::Return controlFunction(vpThread::Args args)
   vpColVector sHs_star(6); // force/torque sensor desired values in sensor frame
   vpColVector pHp_star(6); // force/torque sensor desired values in probe frame
   vpColVector gHg(6);      // force/torque due to the gravity
-  vpMatrix lambda(6, 6);
+  vpMatrix lambdaProportionnal(6, 6); //gain of proportionnal part of the force controller
+  vpMatrix lambdaDerivate(6, 6); //gain of derivate part of the force controller
+  vpMatrix lambdaIntegral(6, 6); //gain of derivate part of the force controller
+  vpColVector sEs(6,0);      // force/torque error
+  vpColVector sEs_last(6,0);      // force/torque error
+  vpColVector sEs_sum(6,0);      // force/torque sum error
   // Position of the cog of the object attached after the sensor in the sensor frame
   vpTranslationVector stg;
   vpColVector sHs_bias(6); // force/torque sensor measures for bias
@@ -67,17 +72,32 @@ vpThread::Return controlFunction(vpThread::Args args)
   // Joint velocities corresponding to the force/torque control
   vpColVector q_dot(6);
 
-  // Initialized the force gain
-  lambda = 0;
+  //////////   PID gains ///////
+  // Initialized the force gains, for proportionnal component
+  lambdaProportionnal = 0;
   for (int i = 0; i < 3; i++)
-    lambda[i][i] = 0.05 / 10;
-  // Initialized the torque gain
+    lambdaProportionnal[i][i] = 0.015;
+  // Initialized the torque gains, for proportionnal component
   for (int i = 3; i < 6; i++)
-    lambda[i][i] = 1.2 / 10;
+    lambdaProportionnal[i][i] = 0;
+  // Initialized the force gains, for derivate component
+  lambdaDerivate = 0;
+  for (int i = 0; i < 3; i++)
+    lambdaDerivate[i][i] = 0.09;
+  // Initialized the torque gains, for derivate component
+  for (int i = 3; i < 6; i++)
+    lambdaDerivate[i][i] = 0;
+  // Initialized the force gains, for integral component
+  lambdaIntegral = 0;
+  for (int i = 0; i < 3; i++)
+    lambdaIntegral[i][i] = 0;
+  // Initialized the torque gains, for integral component
+  for (int i = 3; i < 6; i++)
+    lambdaIntegral[i][i] = 0;
 
   // Initialize the desired force/torque values
   pHp_star = 0;
-  pHp_star[2] = 3; // Fz = 3N
+  pHp_star[2] = 4; // Fz = 4N
   //
   // Case of the C65 US probe
   //
@@ -91,11 +111,6 @@ vpThread::Return controlFunction(vpThread::Args args)
   stg[0] = 0;
   stg[1] = 0;
   stg[2] = 0.088; // tz = 88.4mm
-
-  vpRotationMatrix sRp;
-  sMp.extract(sRp);
-  vpTranslationVector stp;
-  sMp.extract(stp);
 
   vpHomogeneousMatrix eMp = eMs * sMp;
   vpVelocityTwistMatrix eVp(eMp);
@@ -132,11 +147,20 @@ vpThread::Return controlFunction(vpThread::Args args)
   // Set the robot to velocity control
   robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
 
-  int iter = 0;
+  unsigned int iter = 0;
   t_CaptureState capture_state_;
 
+  //signal filtering
+  unsigned int bufferSize = 80;
+  double signalBuffer[bufferSize];
+  for(unsigned int i=0; i<bufferSize;i++)
+    signalBuffer[i]=0;
+
   std::cout << "Starting control loop..." << std::endl;
+  double t0 = vpTime::measureTimeMs();
+  double deltaTmilliseconds = 1; // 1ms for each loop cycle
   do {
+    t0 = vpTime::measureTimeMs();
     s_mutex_capture.lock();
     capture_state_ = s_capture_state;
     s_mutex_capture.unlock();
@@ -180,11 +204,36 @@ vpThread::Return controlFunction(vpThread::Args args)
 
       v_p[0] = 0;
       v_p[1] = 0;
+      v_p[2] = 0;
       v_p[4] = 0;
       v_p[5] = 0;
 
-      // Compute the force/torque control law in the sensor frame
-      v_s = lambda * (sFp * pHp_star - (sHs - sFg * gHg - sHs_bias));
+      // save last error for derivate part of the controller
+      sEs_last = sEs;
+
+      // Compute the force/torque error in the sensor frame
+      sEs = sFp * pHp_star - (sHs - sFg * gHg - sHs_bias);
+
+      // fill filtering buffer
+      signalBuffer[iter%bufferSize] = sEs[2];
+
+      //filter
+      double sum=0;
+      unsigned int realBufferSize = iter+1<bufferSize ? iter+1 : bufferSize;
+      for(unsigned int i=0; i<realBufferSize;i++) {
+        sum+= signalBuffer[i];
+      }
+      sEs[2] = sum/realBufferSize;
+
+      sEs_sum += sEs;
+
+      // to avoid hudge derivate error at first iteration, we set the derivate error to 0
+      if(iter == 0) {
+        sEs_last = sEs;
+      }
+
+      // Compute the force/torque control law in the sensor frame (propotionnal + derivate controller)
+      v_s = lambdaProportionnal * sEs + lambdaDerivate *(sEs - sEs_last) / deltaTmilliseconds + lambdaIntegral * sEs_sum;
 
       v_s[0] = 0.0;
       v_s[1] = 0.0;
@@ -208,7 +257,7 @@ vpThread::Return controlFunction(vpThread::Args args)
 
       iter++;
     }
-    vpTime::wait(1); // 5
+    vpTime::wait(t0,deltaTmilliseconds);
   } while (capture_state_ != capture_stopped);
 
   std::cout << "End of control thread" << std::endl;
@@ -235,6 +284,9 @@ int main(int argc, char **argv)
   usFrameGrabbedInfo<usImagePreScan2D<unsigned char> > *grabbedFrame;
   usFrameGrabbedInfo<usImagePreScan2D<unsigned char> > localFrame;
   usImagePreScan2D<unsigned char> confidence;
+
+  // gain
+  double lambdaVisualError = 12;
 
   // Prepare display
   vpDisplay *display = NULL;
@@ -289,14 +341,14 @@ int main(int argc, char **argv)
       {
         vpMutex::vpScopedLock lock(s_mutex_control_velocity);
         s_controlVelocity = 0.0;
-        s_controlVelocity[3] = 0.5 * tc;
+        s_controlVelocity[3] = lambdaVisualError * tc;
       }
 
       s_mutex_capture.lock();
       s_capture_state = capture_started;
       s_mutex_capture.unlock();
 
-      std::cout << "MAIN THREAD received frame No : " << grabbedFrame->getFrameCount() << std::endl;
+     // std::cout << "MAIN THREAD received frame No : " << grabbedFrame->getFrameCount() << std::endl;
 
       // init display
       if (!displayInit && grabbedFrame->getHeight() != 0 && grabbedFrame->getWidth() != 0) {

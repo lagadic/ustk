@@ -1,4 +1,4 @@
-//! \example tutorial-image-display-qwidget.cpp
+//! \example tutorial-local-grabbing-pre-scan2D-display.cpp
 
 #include <iostream>
 #include <visp3/ustk_core/usConfig.h>

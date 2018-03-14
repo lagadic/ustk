@@ -245,6 +245,7 @@ void usNetworkGrabberPreScan2D::invertRowsCols()
 
   m_firstFrameAvailable = true;
   emit(newFrameAvailable());
+  emit(newFrame(*m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)));
 }
 
 /**
