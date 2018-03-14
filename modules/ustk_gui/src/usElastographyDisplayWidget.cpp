@@ -73,7 +73,7 @@ void usElastographyDisplayWidget::updateFrame(const vpImage<vpRGBa> elastography
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
-  for (unsigned int i = 0; i < elastographyImage.getSize(); i++) {
+  for (int i = 0; i < (int)elastographyImage.getSize(); i++) {
     m_rgbBitmap[i * 3] = elastographyImage.bitmap[i].R;
     m_rgbBitmap[i * 3 + 1] = elastographyImage.bitmap[i].G;
     m_rgbBitmap[i * 3 + 2] = elastographyImage.bitmap[i].B;

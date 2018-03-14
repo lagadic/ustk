@@ -108,11 +108,11 @@ void usImageElastography::computeElastographyImage()
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
-  for (unsigned int i = 0; i < m_elastoImage.getHeight(); i++) {
+  for (int i = 0; i < (int)m_elastoImage.getHeight(); i++) {
     for (unsigned int j = 0; j < m_elastoImage.getWidth(); j++) {
       vpRGBa newColor;
       // inside of the strainMap ROI
-      if (i >= m_heigthPosition && i < m_heigthPosition + m_strainMap.getHeight() && j >= m_widthPosition &&
+      if (i >= (int)m_heigthPosition && i < (int)(m_heigthPosition + m_strainMap.getHeight()) && j >= m_widthPosition &&
           j < m_widthPosition + m_strainMap.getWidth()) {
         newColor.R = m_strainMap[i - m_heigthPosition][j - m_widthPosition];
       } else { // oustide
