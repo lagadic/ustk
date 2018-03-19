@@ -97,12 +97,18 @@ vpThread::Return controlFunction(vpThread::Args args)
 
   // Initialize the desired force/torque values
   pHp_star = 0;
-  pHp_star[2] = 4; // Fz = 4N
+  pHp_star[1] = 4; // Fy = 4N
   //
   // Case of the C65 US probe
   //
   // Set the probe frame control
-  sMp[2][3] = 0.262; // tz = 26.2cm
+  sMp[0][0] = 0;
+  sMp[1][1] = 0;
+  sMp[2][2] = 0;
+  sMp[0][2] = 1; // Z in force sensor becomes X in the probe control frame
+  sMp[1][0] = 1; // X in force sensor becomes Y in the probe control frame
+  sMp[2][1] = 1; // Y in force sensor becomes Z in the probe control frame
+  sMp[1][3] = 0.262; // ty = 26.2cm
 
   // Init the force/torque due to the gravity
   gHg[2] = -(0.696 + 0.476) * 9.81; // m*g
@@ -113,6 +119,7 @@ vpThread::Return controlFunction(vpThread::Args args)
   stg[2] = 0.088; // tz = 88.4mm
 
   vpHomogeneousMatrix eMp = eMs * sMp;
+
   vpVelocityTwistMatrix eVp(eMp);
 
   // Get the position of the end-effector in the reference frame
@@ -205,8 +212,8 @@ vpThread::Return controlFunction(vpThread::Args args)
       v_p[0] = 0;
       v_p[1] = 0;
       v_p[2] = 0;
+      v_p[3] = 0;
       v_p[4] = 0;
-      v_p[5] = 0;
 
       // save last error for derivate part of the controller
       sEs_last = sEs;
@@ -341,7 +348,7 @@ int main(int argc, char **argv)
       {
         vpMutex::vpScopedLock lock(s_mutex_control_velocity);
         s_controlVelocity = 0.0;
-        s_controlVelocity[3] = lambdaVisualError * tc;
+        s_controlVelocity[5] = lambdaVisualError * tc;
       }
 
       s_mutex_capture.lock();
@@ -404,7 +411,7 @@ int main(int argc, char **argv)
   {
     vpMutex::vpScopedLock lock(s_mutex_control_velocity);
     s_controlVelocity = 0.0;
-    s_controlVelocity[2] = -0.05; // move up in probe frame
+    s_controlVelocity[5] = -0.05; // move up in probe frame
   }
   vpTime::wait(500);
   {
