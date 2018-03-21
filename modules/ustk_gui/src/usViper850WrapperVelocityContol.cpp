@@ -33,6 +33,12 @@ void usViper850WrapperVelocityControl::init()
 
     // Transformation from end-effector frame to the probe contact frame
     vpHomogeneousMatrix eMp;
+    eMp[0][0] = 0;
+    eMp[1][1] = 0;
+    eMp[2][2] = 0;
+    eMp[0][2] = 1; // Z in force sensor becomes X in the probe control frame
+    eMp[1][0] = 1; // X in force sensor becomes Y in the probe control frame
+    eMp[2][1] = 1; // Y in force sensor becomes Z in the probe control frame
     eMp[2][3] = 0.2; // tz = 20cm
 
     // Build the transformation that allows to convert a velocity in the end-effector frame to the probe contact frame
@@ -163,9 +169,15 @@ void usViper850WrapperVelocityControl::controlLoopAutomatic()
 
   // Initialize the desired force/torque values
   pHp_star = 0;
-  pHp_star[2] = 4; // Fz = 4N
+  pHp_star[1] = 4; // Fy = 4N
 
   // Set the probe frame control
+  sMp[0][0] = 0;
+  sMp[1][1] = 0;
+  sMp[2][2] = 0;
+  sMp[0][2] = 1; // Z in force sensor becomes X in the probe control frame
+  sMp[1][0] = 1; // X in force sensor becomes Y in the probe control frame
+  sMp[2][1] = 1; // Y in force sensor becomes Z in the probe control frame
   sMp[2][3] = 0.262; // tz = 26.2cm
 
   // Init the force/torque due to the gravity
