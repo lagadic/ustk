@@ -636,7 +636,7 @@ template <class ImageType> void usSequenceReader<ImageType>::acquire(ImageType &
 
   // Reading image
   char buffer[FILENAME_MAX];
-  sprintf(buffer, m_genericImageFileName.c_str(), m_firstFrame);
+  sprintf(buffer, m_genericImageFileName.c_str(), m_frameCount);
   std::string imageFileName;
   // check timestamp
   std::vector<std::string> splitName =
@@ -698,7 +698,7 @@ template <class ImageType> void usSequenceReader<ImageType>::acquire(ImageType &
   }
   // Reading image
   char buffer[FILENAME_MAX];
-  sprintf(buffer, m_genericImageFileName.c_str(), m_firstFrame);
+  sprintf(buffer, m_genericImageFileName.c_str(), m_frameCount);
   std::string imageFileName;
   // check timestamp
   std::vector<std::string> splitName =
@@ -765,7 +765,7 @@ inline void usSequenceReader<usImagePreScan2D<unsigned char> >::acquire(usImageP
   }
   // Reading image
   char buffer[FILENAME_MAX];
-  sprintf(buffer, m_genericImageFileName.c_str(), m_firstFrame);
+  sprintf(buffer, m_genericImageFileName.c_str(), m_frameCount);
   std::string imageFileName;
   // check timestamp
   std::vector<std::string> splitName =
@@ -833,7 +833,7 @@ inline void usSequenceReader<usImagePreScan2D<unsigned char> >::acquire(usImageP
   }
   // Reading image
   char buffer[FILENAME_MAX];
-  sprintf(buffer, m_genericImageFileName.c_str(), m_firstFrame);
+  sprintf(buffer, m_genericImageFileName.c_str(), m_frameCount);
   std::string imageFileName;
   // check timestamp
   std::vector<std::string> splitName =
@@ -906,7 +906,7 @@ template <class ImageType> void usSequenceReader<ImageType>::getFrame(ImageType 
 
   // Reading image
   char buffer[FILENAME_MAX];
-  sprintf(buffer, m_genericImageFileName.c_str(), m_firstFrame);
+  sprintf(buffer, m_genericImageFileName.c_str(), index);
   std::string imageFileName = buffer;
 
   vpImageIo::read(image, imageFileName);
