@@ -47,8 +47,8 @@
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QLabel>
-#include <QSlider>
 #include <QPushButton>
+#include <QSlider>
 
 class VISP_EXPORT usRobotManualControlWidget : public QGroupBox
 {
@@ -73,12 +73,12 @@ private:
   QSlider *wxSlider;
   QSlider *wySlider;
   QSlider *wzSlider;
-  //Start / stop button
-  QPushButton * initPushButton;
-  QPushButton * startPushButton;
-  QPushButton * stopPushButton;
-  QLabel * labelRobotState;
-  QPushButton * automaticForceButton;
+  // Start / stop button
+  QPushButton *initPushButton;
+  QPushButton *startPushButton;
+  QPushButton *stopPushButton;
+  QLabel *labelRobotState;
+  QPushButton *automaticForceButton;
   // Layouts
   QGridLayout *L;
 

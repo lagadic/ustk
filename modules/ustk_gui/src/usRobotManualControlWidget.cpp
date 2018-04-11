@@ -35,8 +35,8 @@
 * @brief Qt widget used to control manually robots with sliders for angular and linear velocities or positions.
 */
 
-#include <visp3/ustk_gui/usRobotManualControlWidget.h>
 #include <iostream>
+#include <visp3/ustk_gui/usRobotManualControlWidget.h>
 
 usRobotManualControlWidget::usRobotManualControlWidget()
 {
@@ -169,7 +169,7 @@ void usRobotManualControlWidget::setUpConnections()
   automaticForceButton->setText(QString("Enable automatic force control"));
   connect(stopPushButton, SIGNAL(clicked()), SIGNAL(stopClicked()));
 
-  //gui updates
+  // gui updates
   connect(initPushButton, SIGNAL(clicked()), this, SLOT(robotInitialized()));
   connect(startPushButton, SIGNAL(clicked()), this, SLOT(robotStarted()));
   connect(stopPushButton, SIGNAL(clicked()), this, SLOT(robotStopped()));
@@ -183,39 +183,45 @@ void usRobotManualControlWidget::releaseSlider()
   slider->setValue(0);
 }
 
-void usRobotManualControlWidget::robotInitialized(void) {
+void usRobotManualControlWidget::robotInitialized(void)
+{
   startPushButton->setEnabled(true);
   stopPushButton->setEnabled(true);
   labelRobotState->setText(QString("Now press the viper start button (flashing)"));
   this->update();
 }
-void usRobotManualControlWidget::robotStarted(void) {
+void usRobotManualControlWidget::robotStarted(void)
+{
   startPushButton->setEnabled(false);
   stopPushButton->setEnabled(true);
   labelRobotState->setText(QString("Robot OK, you can move it or stop it"));
   this->update();
 }
 
-void usRobotManualControlWidget::robotStopped(void) {
+void usRobotManualControlWidget::robotStopped(void)
+{
   startPushButton->setEnabled(true);
   stopPushButton->setEnabled(false);
   labelRobotState->setText(QString("Robot stopped, start it to move it"));
   this->update();
 }
 
-void usRobotManualControlWidget::setRobotState(QString text) {
+void usRobotManualControlWidget::setRobotState(QString text)
+{
   labelRobotState->setText(text);
   this->update();
 }
 
-void usRobotManualControlWidget::robotErrorSlot() {
+void usRobotManualControlWidget::robotErrorSlot()
+{
   startPushButton->setEnabled(false);
   stopPushButton->setEnabled(false);
   labelRobotState->setText("Robot Error ! To restart, press security handle, then click Init robot");
   this->update();
 }
 
-void usRobotManualControlWidget::activateAutomaticForceControlSlot() {
+void usRobotManualControlWidget::activateAutomaticForceControlSlot()
+{
 
   bool activate = automaticForceButton->text() == QString("Enable automatic force control");
 
@@ -226,12 +232,11 @@ void usRobotManualControlWidget::activateAutomaticForceControlSlot() {
   wxSlider->setEnabled(!activate);
   wySlider->setEnabled(!activate);
   wzSlider->setEnabled(!activate);
-  if(activate) {
+  if (activate) {
     automaticForceButton->setText(QString("Disable automatic force control"));
     labelRobotState->setText("Automatic force control enabled");
     emit(activateAutomaticForceControl());
-  }
-  else {
+  } else {
     automaticForceButton->setText(QString("Enable automatic force control"));
     labelRobotState->setText("Manual robot control");
     emit(disableAutomaticForceControl());

@@ -40,7 +40,7 @@ usNetworkServer::usNetworkServer(QObject *parent) : QObject(parent)
   } else {
     std::cout << "TCP server start failure" << tcpServer.errorString().toStdString() << std::endl;
   }
-  
+
   connect(this, SIGNAL(writeOnSocketSignal()), this, SLOT(writeOnSocketSlot()));
 }
 
@@ -220,8 +220,8 @@ bool portaCallback(void *param, unsigned char *addr, int blockIndex, int)
     server->motorOffsetSkipped = true;
   }
 
-   std::cout << "frame count = " << server->imageHeader.frameCount << std::endl;
-   std::cout << "image size = " << portaInstance->getFrameSize() << std::endl;
+  std::cout << "frame count = " << server->imageHeader.frameCount << std::endl;
+  std::cout << "image size = " << portaInstance->getFrameSize() << std::endl;
   unsigned char *beginImage;
   // filling image header
 
@@ -339,8 +339,8 @@ bool portaCallback(void *param, unsigned char *addr, int blockIndex, int)
     socket->write(block);
   }
   */
-  
-  server->beginImage = (char*)beginImage;
+
+  server->beginImage = (char *)beginImage;
   server->motorStatus = motorStatus;
   server->biPlane = portaInstance->getCurrentMode() == BiplaneMode;
 
@@ -958,14 +958,13 @@ void usNetworkServer::writeUpdateAcquisitionParameters(QDataStream &stream, usUp
   stream << stepsPerFrameMax;
 }
 
-void usNetworkServer::writeOnSocketFromOtherThread() {
-	emit(writeOnSocketSignal());
-}
+void usNetworkServer::writeOnSocketFromOtherThread() { emit(writeOnSocketSignal()); }
 
-void usNetworkServer::writeOnSocketSlot() {
+void usNetworkServer::writeOnSocketSlot()
+{
   QByteArray block;
   std::cout << "writing header on socket" << std::endl;
-  std::cout << "image number : " << imageHeader.frameCount <<std::endl;
+  std::cout << "image number : " << imageHeader.frameCount << std::endl;
   QDataStream out(&block, QIODevice::WriteOnly);
   out.setVersion(QDataStream::Qt_5_0);
   out << imageHeader.headerId;
@@ -999,7 +998,7 @@ void usNetworkServer::writeOnSocketSlot() {
     out.writeRawData((char *)beginImage, imageHeader.dataLength);
   }
 
-  quint64 dataWrittenSize=0;
+  quint64 dataWrittenSize = 0;
 
   if (motorOffsetSkipped && (motorStatus == 1)) { // 3D but offset skipped
     dataWrittenSize = connectionSoc->write(block);

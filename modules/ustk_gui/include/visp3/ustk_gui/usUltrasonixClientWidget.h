@@ -31,7 +31,6 @@
  *
  *****************************************************************************/
 
-
 /**
  * @file usUltrasonixClientWidget.h
  * @brief Qt widget used to control the ultrasonix station using ustk-server application, through a network connection.
@@ -45,56 +44,56 @@
 
 #if defined(USTK_HAVE_VTK_QT) && defined(VISP_HAVE_MODULE_USTK_GRABBER)
 
-#include <visp3/ustk_grabber/usNetworkGrabber.h>
-#include <QWidget>
 #include <QApplication>
 #include <QComboBox>
-#include <QLabel>
-#include <QPushButton>
 #include <QGridLayout>
-#include <QLineEdit>
 #include <QHostAddress>
+#include <QLabel>
+#include <QLineEdit>
 #include <QMessageBox>
+#include <QPushButton>
+#include <QWidget>
+#include <visp3/ustk_grabber/usNetworkGrabber.h>
 
-class VISP_EXPORT usUltrasonixClientWidget: public QWidget
+class VISP_EXPORT usUltrasonixClientWidget : public QWidget
 {
-    Q_OBJECT
+  Q_OBJECT
 public:
-    usUltrasonixClientWidget();
-    virtual ~usUltrasonixClientWidget();
+  usUltrasonixClientWidget();
+  virtual ~usUltrasonixClientWidget();
 
 signals:
-    void connectToServer(QHostAddress adress);
-    void initAcquisition(usNetworkGrabber::usInitHeaderSent initHeader);
-    void runAcquisition();
-    void stopAcquisition();
+  void connectToServer(QHostAddress adress);
+  void initAcquisition(usNetworkGrabber::usInitHeaderSent initHeader);
+  void runAcquisition();
+  void stopAcquisition();
 
 private slots:
-    void initAcquisitionSlot();
-    void connectToServerSlot();
+  void initAcquisitionSlot();
+  void connectToServerSlot();
 
 private:
-    // Labels
-    QLabel *serverIpAdressLabel;
-    QLabel *probeSelectionLabel;
+  // Labels
+  QLabel *serverIpAdressLabel;
+  QLabel *probeSelectionLabel;
 
-    // Connect, init, run, stop buttons
-    QPushButton * connectPushButton;
-    QPushButton * initPushButton;
-    QPushButton * startPushButton;
-    QPushButton * stopPushButton;
+  // Connect, init, run, stop buttons
+  QPushButton *connectPushButton;
+  QPushButton *initPushButton;
+  QPushButton *startPushButton;
+  QPushButton *stopPushButton;
 
-    // selection
-    QLineEdit * ipTextEdit;
-    QComboBox * probeSelectComboBox;
+  // selection
+  QLineEdit *ipTextEdit;
+  QComboBox *probeSelectComboBox;
 
-    QRegExpValidator *ipValidator;
+  QRegExpValidator *ipValidator;
 
-    // Layouts
-    QGridLayout *Layout;
+  // Layouts
+  QGridLayout *Layout;
 
-    QHostAddress hostAddress;
-    usNetworkGrabber::usInitHeaderSent initHeader;
+  QHostAddress hostAddress;
+  usNetworkGrabber::usInitHeaderSent initHeader;
 };
 #endif // USTK_HAVE_VTK_QT && VISP_HAVE_VIPER850
 #endif // __usUltrasonixClientWidget_h_

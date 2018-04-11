@@ -31,7 +31,6 @@
  *
  *****************************************************************************/
 
-
 /**
  * @file usViper850WrapperVelocityControl.h
  * @brief Qt widget used to control manually robots with sliders for angular and linear velocities or positions.
@@ -45,63 +44,64 @@
 
 #if defined(USTK_HAVE_VTK_QT) && defined(VISP_HAVE_VIPER850) && defined(VISP_HAVE_MODULE_ROBOT)
 
-#include <visp3/core/vpMatrix.h>
-#include <visp3/core/vpMath.h>
-#include <visp3/robot/vpRobotViper850.h>
-#include <QObject>
 #include <QApplication>
+#include <QObject>
+#include <visp3/core/vpMath.h>
+#include <visp3/core/vpMatrix.h>
+#include <visp3/robot/vpRobotViper850.h>
 
 // For 4DC7 probe usage //
-#define VIPER_PROBE_4DC7_TX   0.00479375
-#define VIPER_PROBE_4DC7_TY   0.142001
-#define VIPER_PROBE_4DC7_TZ  -0.00113622
-#define VIPER_PROBE_4DC7_RZ   1.63126*M_PI/180.0
-#define VIPER_PROBE_4DC7_RY   -0.781128*M_PI/180.0
-#define VIPER_PROBE_4DC7_RX   1.68121*M_PI/180.0
+#define VIPER_PROBE_4DC7_TX 0.00479375
+#define VIPER_PROBE_4DC7_TY 0.142001
+#define VIPER_PROBE_4DC7_TZ -0.00113622
+#define VIPER_PROBE_4DC7_RZ 1.63126 * M_PI / 180.0
+#define VIPER_PROBE_4DC7_RY -0.781128 * M_PI / 180.0
+#define VIPER_PROBE_4DC7_RX 1.68121 * M_PI / 180.0
 
-class VISP_EXPORT usViper850WrapperVelocityControl: public QObject
+class VISP_EXPORT usViper850WrapperVelocityControl : public QObject
 {
-    Q_OBJECT
+  Q_OBJECT
 public:
-    usViper850WrapperVelocityControl();
-    virtual ~usViper850WrapperVelocityControl();
+  usViper850WrapperVelocityControl();
+  virtual ~usViper850WrapperVelocityControl();
 
 public slots:
-    void init();
-    void run();
-    void stop();
+  void init();
+  void run();
+  void stop();
 
-    void startAutomaticForceControl();
-    void stopAutomaticForceControl();
+  void startAutomaticForceControl();
+  void stopAutomaticForceControl();
 
-    // Manual velocity control in US probe contact frame
-    void setXVelocity(int xVelocity);
-    void setYVelocity(int yVelocity);
-    void setZVelocity(int zVelocity);
-    void setXAngularVelocity(int xAngularVelocity);
-    void setYAngularVelocity(int yAngularVelocity);
-    void setZAngularVelocity(int zAngularVelocity);
+  // Manual velocity control in US probe contact frame
+  void setXVelocity(int xVelocity);
+  void setYVelocity(int yVelocity);
+  void setZVelocity(int zVelocity);
+  void setXAngularVelocity(int xAngularVelocity);
+  void setYAngularVelocity(int yAngularVelocity);
+  void setZAngularVelocity(int zAngularVelocity);
 
 signals:
-    void startControlLoop();
-    void startControlLoopAutomatic();
-    void robotError();
+  void startControlLoop();
+  void startControlLoopAutomatic();
+  void robotError();
 private slots:
-    void controlLoop();
-    void controlLoopAutomatic();
+  void controlLoop();
+  void controlLoopAutomatic();
+
 private:
-    bool m_initialized;
-    bool m_run;
-    vpRobotViper850 *viper;
-    void startRobot(void);
+  bool m_initialized;
+  bool m_run;
+  vpRobotViper850 *viper;
+  void startRobot(void);
 
-    vpMatrix eJe; // robot jacobian
+  vpMatrix eJe; // robot jacobian
 
-    vpVelocityTwistMatrix eVp; // change velocity from ultrasound probe contact force to end-effector frame
+  vpVelocityTwistMatrix eVp; // change velocity from ultrasound probe contact force to end-effector frame
 
-    vpColVector velocityProbeContact; // velocity in ultrasound probe contact point
-    vpColVector q_dot;
-    vpColVector ve; //velocity of end-effector
+  vpColVector velocityProbeContact; // velocity in ultrasound probe contact point
+  vpColVector q_dot;
+  vpColVector ve; // velocity of end-effector
 };
 #endif // USTK_HAVE_VTK_QT && VISP_HAVE_VIPER850
 #endif // __usViper850WrapperVelocityControl_h_

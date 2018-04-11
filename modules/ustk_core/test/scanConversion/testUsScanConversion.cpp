@@ -38,10 +38,10 @@
 #include <visp3/core/vpIoTools.h>
 
 #include <visp3/ustk_core/us.h>
+#include <visp3/ustk_core/usConfig.h>
 #include <visp3/ustk_core/usPostScanToPreScan2DConverter.h>
 #include <visp3/ustk_core/usPreScanToPostScan2DConverter.h>
 #include <visp3/ustk_io/usImageIo.h>
-#include <visp3/ustk_core/usConfig.h>
 
 #include <string>
 #include <vector>
@@ -106,9 +106,9 @@ int main(int argc, const char **argv)
 #else
 int main(int argc, const char **argv)
 {
-	(void)argc;
-	(void)argv;
-	std::cout << "You should intall xml2 to run this test\n";
-	return 0;
+  (void)argc;
+  (void)argv;
+  std::cout << "You should intall xml2 to run this test\n";
+  return 0;
 }
 #endif
