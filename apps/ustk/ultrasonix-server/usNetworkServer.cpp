@@ -40,6 +40,8 @@ usNetworkServer::usNetworkServer(QObject *parent) : QObject(parent)
   } else {
     std::cout << "TCP server start failure" << tcpServer.errorString().toStdString() << std::endl;
   }
+
+  connect(this, SIGNAL(writeOnSocketSignal()), this, SLOT(writeOnSocketSlot()));
 }
 
 usNetworkServer::~usNetworkServer() {}
@@ -218,8 +220,8 @@ bool portaCallback(void *param, unsigned char *addr, int blockIndex, int)
     server->motorOffsetSkipped = true;
   }
 
-  // std::cout << "frame count = " << server->imageHeader.frameCount << std::endl;
-  // std::cout << "image size = " << portaInstance->getFrameSize() << std::endl;
+  std::cout << "frame count = " << server->imageHeader.frameCount << std::endl;
+  std::cout << "image size = " << portaInstance->getFrameSize() << std::endl;
   unsigned char *beginImage;
   // filling image header
 
@@ -257,7 +259,7 @@ bool portaCallback(void *param, unsigned char *addr, int blockIndex, int)
     server->imageHeader.pixelHeight = 0;
     server->imageHeader.pixelWidth = 0;
   }
-
+  /*
   QByteArray block;
   std::cout << "writing header on socket" << std::endl;
   QDataStream out(&block, QIODevice::WriteOnly);
@@ -293,11 +295,15 @@ bool portaCallback(void *param, unsigned char *addr, int blockIndex, int)
     out.writeRawData((char *)beginImage, server->imageHeader.dataLength);
   }
 
+  quint64 dataWrittenSize=0;
+
   if (server->motorOffsetSkipped && (motorStatus == 1)) { // 3D but offset skipped
-    socket->write(block);
+    dataWrittenSize = socket->write(block);
   } else if (motorStatus == 0) { // 2D
-    socket->write(block);
+    dataWrittenSize = socket->write(block);
   }
+
+  std::cout << "written data size = " << dataWrittenSize << std::endl;
 
   // for bi-plane we send a second image
   if (portaInstance->getCurrentMode() == BiplaneMode && server->imageHeader.imageType == 1) {
@@ -332,6 +338,13 @@ bool portaCallback(void *param, unsigned char *addr, int blockIndex, int)
 
     socket->write(block);
   }
+  */
+
+  server->beginImage = (char *)beginImage;
+  server->motorStatus = motorStatus;
+  server->biPlane = portaInstance->getCurrentMode() == BiplaneMode;
+
+  server->writeOnSocketFromOtherThread();
 
   /*std::cout << "headerId = " << server->imageHeader.headerId  << std::endl;
   std::cout << "frameCount = " << server->imageHeader.frameCount  << std::endl;
@@ -943,4 +956,89 @@ void usNetworkServer::writeUpdateAcquisitionParameters(QDataStream &stream, usUp
   stream << motorPositionMax;
   stream << framesPerVolumeMax;
   stream << stepsPerFrameMax;
+}
+
+void usNetworkServer::writeOnSocketFromOtherThread() { emit(writeOnSocketSignal()); }
+
+void usNetworkServer::writeOnSocketSlot()
+{
+  QByteArray block;
+  std::cout << "writing header on socket" << std::endl;
+  std::cout << "image number : " << imageHeader.frameCount << std::endl;
+  QDataStream out(&block, QIODevice::WriteOnly);
+  out.setVersion(QDataStream::Qt_5_0);
+  out << imageHeader.headerId;
+  out << imageHeader.frameCount;
+  out << imageHeader.timeStamp;
+  out << imageHeader.dataRate;
+  out << imageHeader.dataLength;
+  out << imageHeader.ss;
+  out << imageHeader.imageType;
+  out << imageHeader.frameWidth;
+  out << imageHeader.frameHeight;
+  out << imageHeader.pixelWidth;
+  out << imageHeader.pixelHeight;
+  out << imageHeader.transmitFrequency;
+  out << imageHeader.samplingFrequency;
+  out << imageHeader.transducerRadius;
+  out << imageHeader.scanLinePitch;
+  out << imageHeader.scanLineNumber;
+  out << imageHeader.imageDepth;
+  out << imageHeader.degPerFrame;
+  out << imageHeader.framesPerVolume;
+  out << imageHeader.motorRadius;
+  out << imageHeader.motorType;
+  std::cout << "writing image on socket" << std::endl;
+
+  if (imageHeader.imageType == 1) { // post scan
+    out.writeRawData((char *)postScanImage, imageHeader.dataLength);
+  } else if (imageHeader.imageType == 0) { // pre-scan
+    out.writeRawData((char *)beginImage, imageHeader.dataLength);
+  } else if (imageHeader.imageType == 2) { // RF
+    out.writeRawData((char *)beginImage, imageHeader.dataLength);
+  }
+
+  quint64 dataWrittenSize = 0;
+
+  if (motorOffsetSkipped && (motorStatus == 1)) { // 3D but offset skipped
+    dataWrittenSize = connectionSoc->write(block);
+  } else if (motorStatus == 0) { // 2D
+    dataWrittenSize = connectionSoc->write(block);
+  }
+
+  std::cout << "written data size = " << dataWrittenSize << std::endl;
+
+  // for bi-plane we send a second image
+  if (biPlane && imageHeader.imageType == 1) {
+    QByteArray block;
+    std::cout << "writing 2nd header" << std::endl;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_5_0);
+    out << imageHeader.headerId;
+    out << imageHeader.frameCount;
+    out << imageHeader.timeStamp;
+    out << imageHeader.dataRate;
+    out << imageHeader.dataLength;
+    out << imageHeader.ss;
+    out << imageHeader.imageType;
+    out << imageHeader.frameWidth;
+    out << imageHeader.frameHeight;
+    out << imageHeader.pixelWidth;
+    out << imageHeader.pixelHeight;
+    out << imageHeader.transmitFrequency;
+    out << imageHeader.samplingFrequency;
+    out << imageHeader.transducerRadius;
+    out << imageHeader.scanLinePitch;
+    out << imageHeader.scanLineNumber;
+    out << imageHeader.imageDepth;
+    out << imageHeader.degPerFrame;
+    out << imageHeader.framesPerVolume;
+    out << imageHeader.motorRadius;
+    out << imageHeader.motorType;
+    std::cout << "writing 2nd image" << std::endl;
+    out.writeRawData((char *)secondBiplaneImage, imageHeader.dataLength);
+    imageHeader.frameCount++;
+
+    connectionSoc->write(block);
+  }
 }

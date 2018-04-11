@@ -47,7 +47,6 @@
 #include <sstream>
 #include <stdint.h>
 #include <string>
-#include <string>
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/ustk_core/us.h>

@@ -19,10 +19,7 @@ usUltrasonixClientWidget::usUltrasonixClientWidget()
 
   // ip validation
   QString ipRange = "(?:[0-1]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])";
-  QRegExp ipRegex ("^" + ipRange
-                   + "\\." + ipRange
-                   + "\\." + ipRange
-                   + "\\." + ipRange + "$");
+  QRegExp ipRegex("^" + ipRange + "\\." + ipRange + "\\." + ipRange + "\\." + ipRange + "$");
   ipValidator = new QRegExpValidator(ipRegex, this);
   ipTextEdit->setValidator(ipValidator);
 
@@ -65,15 +62,13 @@ void usUltrasonixClientWidget::initAcquisitionSlot()
   initHeader.slotId = 0;      // top slot
   initHeader.imagingMode = 0; // B-mode
 
-  if(probeSelectComboBox->currentIndex() == 0) {// 4DC7
+  if (probeSelectComboBox->currentIndex() == 0) { // 4DC7
     initHeader.probeId = 15;
     emit(initAcquisition(initHeader));
-  }
-  else if(probeSelectComboBox->currentIndex() == 1) {// C5-2
+  } else if (probeSelectComboBox->currentIndex() == 1) { // C5-2
     initHeader.probeId = 10;
     emit(initAcquisition(initHeader));
-  }
-  else {
+  } else {
     QMessageBox msgBox;
     msgBox.setText("Wrong probe selection !");
     msgBox.exec();
@@ -82,7 +77,7 @@ void usUltrasonixClientWidget::initAcquisitionSlot()
 
 void usUltrasonixClientWidget::connectToServerSlot()
 {
-  hostAddress.setAddress( ipTextEdit->text());
+  hostAddress.setAddress(ipTextEdit->text());
   emit(connectToServer(hostAddress));
 }
 #endif

@@ -3,6 +3,7 @@
 
 #include <usPortaConfig.h>
 
+#include <QtCore/QDataStream>
 #include <QtCore/QDateTime>
 #include <QtCore/QFile>
 #include <QtCore/QString>
@@ -15,8 +16,8 @@
 
 // Ultrasonix SDK includes
 #include <ImagingModes.h>
-#include <porta_params_def.h>
 #include <porta.h>
+#include <porta_params_def.h>
 #include <utx_opt.h>
 
 #if USTK_PORTA_VERSION_MAJOR > 5
@@ -127,10 +128,20 @@ public:
 
   unsigned char *postScanImage;
 
+  char *beginImage;
+
+  int motorStatus;
+  bool biPlane;
+
   // for bi-plane
   unsigned char *secondBiplaneImage;
 
   bool motorOffsetSkipped;
+
+  void writeOnSocketFromOtherThread();
+
+signals:
+  void writeOnSocketSignal();
 
 private slots:
   // Called automatically when a client attempts to connect
@@ -144,6 +155,8 @@ private slots:
 
   // Called automatically when data sent by a client is fully available to the server
   void readIncomingData();
+
+  void writeOnSocketSlot();
 
 private:
   // Variable(socket) to store listening tcpserver
