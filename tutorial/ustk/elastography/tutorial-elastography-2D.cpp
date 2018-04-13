@@ -22,6 +22,11 @@ int main(int argc, char **argv)
 {
   // QT application
   QApplication app(argc, argv);
+  QString ip;
+  if (app.arguments().contains(QString("--ip")))
+    ip = app.arguments().at(qApp->arguments().indexOf(QString("--ip")) + 1);
+  else
+    ip = QString("127.0.0.1");
 
   usElastography *elastography = new usElastography;
   elastography->setROI(40, 3200, 50, 500);
@@ -29,7 +34,7 @@ int main(int argc, char **argv)
   QThread *grabbingThread = new QThread();
 
   usNetworkGrabberRF2D *qtGrabber = new usNetworkGrabberRF2D();
-  qtGrabber->setIPAddress("127.0.0.1");
+  qtGrabber->setIPAddress(ip.toStdString());
   qtGrabber->connectToServer();
 
   // setting acquisition parameters
