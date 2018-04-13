@@ -5,6 +5,8 @@ This page references all the tutorials related to Ultrasound TK.
 
 - \subpage tutorial-ustk-grabber-sonosite <br>This tutorial gives examples to use sonosite grabber
 
+- \subpage tutorial-ustk-ultrasonix-server <br>This tutorial explains how to install the server application on a ultrasonix machine
+
 - \subpage tutorial-ustk-grabber-ultrasonix <br>This tutorial gives examples to use ultrasonix grabber
 
 - \subpage tutorial-ustk-grabber-ultrasonix-confidence <br>This tutorial gives examples to run a confidence map using ultrasonix grabber
