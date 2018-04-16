@@ -9,9 +9,9 @@
 #include <QApplication>
 #include <QtCore/QThread>
 
-#include <visp3/ustk_core/usImageElastography.h>
 #include <visp3/ustk_core/usRFToPreScan2DConverter.h>
 #include <visp3/ustk_elastography/usElastography.h>
+#include <visp3/ustk_elastography/usImageElastography.h>
 #include <visp3/ustk_grabber/usNetworkGrabberRF2D.h>
 
 #include <visp3/gui/vpDisplayGDI.h>

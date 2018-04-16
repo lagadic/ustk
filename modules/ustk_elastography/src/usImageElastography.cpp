@@ -30,7 +30,7 @@
  *
  *****************************************************************************/
 
-#include <visp3/ustk_core/usImageElastography.h>
+#include <visp3/ustk_elastography/usImageElastography.h>
 
 /*!
   \brief Constructor.
