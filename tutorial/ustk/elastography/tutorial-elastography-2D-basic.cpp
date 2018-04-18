@@ -8,7 +8,7 @@
 #include <visp3/ustk_elastography/usElastography.h>
 
 #include <visp3/io/vpImageIo.h>
-#include <visp3/ustk_io/usImageIo.h>
+#include <visp3/ustk_core/usImageIo.h>
 
 int main()
 {

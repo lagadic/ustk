@@ -34,7 +34,7 @@ cmake_minimum_required(VERSION 2.8.12)
 
 set(CMAKE_AUTOMOC ON)
 
-find_package(VISP REQUIRED visp_ustk_io)
+find_package(VISP REQUIRED visp_ustk_core)
 
 if(USTK_HAVE_VTK_QT4)
   find_package(Qt4 REQUIRED QtCore QtNetwork QtGui)

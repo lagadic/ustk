@@ -87,7 +87,7 @@ vpThread::Return displayFunction(vpThread::Args args)
   usPreScanToPostScan2DConverter converter_;
   usScanlineConfidence2D confidenceMapProcessor_;
   usDenseTracker2D tracker;
-  usRectangle rectangle;
+  vpRectOriented rectangle;
   bool rectangleRoiDefined = false;
   t_stateInitROI stateROI = ROI_waiting;
 

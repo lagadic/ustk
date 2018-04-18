@@ -11,7 +11,7 @@
 
 #include <visp3/ustk_core/usRFToPreScan3DConverter.h>
 #include <visp3/ustk_grabber/usNetworkGrabberRF3D.h>
-#include <visp3/ustk_io/usImageIo.h>
+#include <visp3/ustk_core/usImageIo.h>
 
 int main(int argc, char **argv)
 {

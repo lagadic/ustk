@@ -41,7 +41,7 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 
-#include <visp3/ustk_core/usRectangle.h>
+#include <visp3/core/vpRectOriented.h>
 
 /**
  * @class usDenseTracker2D
@@ -58,18 +58,18 @@ class VISP_EXPORT usDenseTracker2D
 public:
   vpImage<unsigned char> &getRegion();
 
-  usRectangle getTarget() const;
+  vpRectOriented getTarget() const;
 
   vpImage<unsigned char> &getTemplate();
 
-  void init(const vpImage<unsigned char> &I, const usRectangle &R);
+  void init(const vpImage<unsigned char> &I, const vpRectOriented &R);
 
   void update(const vpImage<unsigned char> &I);
 
 private:
   vpColVector s_desired;
   vpColVector s_current;
-  usRectangle m_target;
+  vpRectOriented m_target;
   vpImage<unsigned char> m_template;
   vpImage<unsigned char> m_region;
   vpImage<double> m_gradX;

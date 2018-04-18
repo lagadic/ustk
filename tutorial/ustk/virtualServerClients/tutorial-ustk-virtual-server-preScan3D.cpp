@@ -11,7 +11,7 @@
 #include <QtCore/QThread>
 
 #include <visp3/ustk_grabber/usNetworkGrabberPreScan3D.h>
-#include <visp3/ustk_io/usMHDSequenceWriter.h>
+#include <visp3/ustk_core/usMHDSequenceWriter.h>
 
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayOpenCV.h>

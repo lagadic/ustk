@@ -47,7 +47,7 @@
 
 #include <visp3/ustk_gui/us3DSceneWidget.h>
 #include <visp3/ustk_gui/usViewerWidget.h>
-#include <visp3/ustk_io/usImageIo.h>
+#include <visp3/ustk_core/usImageIo.h>
 
 // VTK includes
 #include <vtkDistanceWidget.h>

@@ -41,7 +41,7 @@
 #include <visp3/ustk_core/usConfig.h>
 #include <visp3/ustk_core/usPostScanToPreScan2DConverter.h>
 #include <visp3/ustk_core/usPreScanToPostScan2DConverter.h>
-#include <visp3/ustk_io/usImageIo.h>
+#include <visp3/ustk_core/usImageIo.h>
 
 #include <string>
 #include <vector>

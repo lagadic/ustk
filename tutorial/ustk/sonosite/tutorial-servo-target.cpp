@@ -71,7 +71,7 @@ vpThread::Return displayFunction(vpThread::Args args)
   (void)args; // Avoid warning: unused parameter args
   usImagePostScan2D<unsigned char> postScan_;
   usDenseTracker2D tracker;
-  usRectangle rectangle;
+  vpRectOriented rectangle;
 
   postScan_.setTransducerRadius(0.060);
   postScan_.setTransducerConvexity(true);

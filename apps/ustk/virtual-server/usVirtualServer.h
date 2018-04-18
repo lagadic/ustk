@@ -54,8 +54,8 @@
 
 // USTK inclues
 #include <visp3/ustk_core/usConfig.h>
-#include <visp3/ustk_io/usMHDSequenceReader.h>
-#include <visp3/ustk_io/usSequenceReader.h>
+#include <visp3/ustk_core/usMHDSequenceReader.h>
+#include <visp3/ustk_core/usSequenceReader.h>
 
 #include "usConsoleListener.h"
 

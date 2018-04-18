@@ -34,7 +34,7 @@ project(tutorial-ustk-confidence)
 
 cmake_minimum_required(VERSION 2.6)
 
-find_package(VISP REQUIRED visp_ustk_io visp_ustk_confidence_map)
+find_package(VISP REQUIRED visp_ustk_confidence_map)
 
 set(tutorial_cpp
   tutorial-confidence-map.cpp)

@@ -79,7 +79,7 @@ transducer.
 
   \code
 #include <visp3/ustk_core/usImageRF2D.h>
-#include <visp3/ustk_io/usImageIo.h>
+#include <visp3/ustk_core/usImageIo.h>
 
 int main()
 {

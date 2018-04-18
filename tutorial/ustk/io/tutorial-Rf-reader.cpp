@@ -5,8 +5,8 @@
 #include <visp3/ustk_core/usImagePreScan2D.h>
 #include <visp3/ustk_core/usImageRF2D.h>
 #include <visp3/ustk_core/usRFToPreScan2DConverter.h>
-#include <visp3/ustk_io/usImageIo.h>
-#include <visp3/ustk_io/usRfReader.h>
+#include <visp3/ustk_core/usImageIo.h>
+#include <visp3/ustk_core/usRfReader.h>
 
 int main(int argc, char **argv)
 {

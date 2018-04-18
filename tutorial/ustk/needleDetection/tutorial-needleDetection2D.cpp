@@ -50,7 +50,7 @@
 
 // ustk
 #include <visp3/ustk_core/us.h>
-#include <visp3/ustk_io/usSequenceReader.h>
+#include <visp3/ustk_core/usSequenceReader.h>
 #include <visp3/ustk_needle_detection/usNeedleTrackerSIR2D.h>
 
 using namespace std;
