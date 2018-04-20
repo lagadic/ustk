@@ -214,9 +214,6 @@ int main(int argc, const char **argv)
     }
     filename = dirname + vpIoTools::path("/") + "postscan2d.mhd";
 
-    vpImage<unsigned char> test;
-    std::cout << test.getMaxValue();
-
     // Init values in reference parser (same values in file read in test)
     vpImage<unsigned char> data(186, 233, 128); // Set pixel intensity to 128
     usImagePostScan2D<unsigned char> usImagePostScan2DReference;

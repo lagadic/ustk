@@ -32,7 +32,6 @@
  *****************************************************************************/
 
 #include <visp3/core/vpImageFilter.h>
-#include <visp3/ustk_core/usImageMathematics.h>
 #include <visp3/ustk_needle_detection/usNeedleTrackerSIR2D.h>
 
 usNeedleTrackerSIR2D::usNeedleTrackerSIR2D()
@@ -107,7 +106,7 @@ void usNeedleTrackerSIR2D::init(const vpImage<unsigned char> &I, unsigned int nP
     ++c;
   }
   m_fgMean /= c;
-  m_bgMean = usImageMathematics::sum(I) / I.getSize();
+  m_bgMean = I.getSum() / I.getSize();
 
   init(dims, nPoints, nParticles, needle);
 }
