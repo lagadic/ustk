@@ -72,7 +72,7 @@ vpImage<vpRGBa> usImageElastography::getElastoImage() { return m_elastoImage; }
 /**
 * Strain map image setter.
 * @warning Make sure you already set the ultrasound image with setUltrasoundImage() before calling this method.
-* @param m_strainMap
+* @param strainMap
 * @param heightPosition
 * @param widthPosition
 */

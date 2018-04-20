@@ -18,3 +18,5 @@ Below you will find some tutorials dedicated to the ultrasound tool kit extensio
 
 - \ref tutorial-ustk-elastography <br>This tutorial explains how to use the elastography process on RF sequences, sent by the virtual server application.
 
+- \ref tutorial-ustk-needle-tracker2D <br>This tutorial explains how to use the 2D needle tracker.
+

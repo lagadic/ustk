@@ -17,4 +17,6 @@ This page references all the tutorials related to Ultrasound TK.
 
 - \subpage tutorial-ustk-elastography <br>This tutorial explains how to use the elastography process on RF sequences, sent by the virtual server application.
 
+- \subpage tutorial-ustk-needle-tracker2D <br>This tutorial explains how to use the 2D needle tracker.
+
 */
