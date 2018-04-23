@@ -11,7 +11,7 @@ Requrements:
 - Ultrasonix research SDK version : porta 5.6.0 or newer
 - CMake softare
 - A C++ compiler (the software is tested on Visual Studio 2010)
-- UsTK and its dependencies (including Qt 5)
+- UsTK and its dependencies, including Qt 5 (tested with qt 5.5 on windows xp with Visual Studio 2010).
 
 \section ustk_server_build_configuration Configuration of the build 
 

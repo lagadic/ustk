@@ -57,9 +57,9 @@ usNeedleTrackerSIR2D::~usNeedleTrackerSIR2D()
         delete m_particles[i];
         m_particles[i] = NULL;
       }
-      delete[] m_particles;
-      m_particles = NULL;
     }
+    delete[] m_particles;
+    m_particles = NULL;
   }
   if (m_weights) {
     delete[] m_weights;
