@@ -7,11 +7,17 @@
 
 This tutorial expains how to install the UsTK ultrasonix TCP server application on a ultrasonix machine.
 Requrements:
-- Station type : Sonix touch
+- Station type : Sonix touch / Sonix tablet
 - Ultrasonix research SDK version : porta 5.6.0 or newer
 - CMake softare
 - A C++ compiler (the software is tested on Visual Studio 2010)
 - UsTK and its dependencies, including Qt 5 (tested with qt 5.5 on windows xp with Visual Studio 2010).
+
+<br>
+\image html sonixtouch.png The sonix touch station 
+<br>
+\image html sonixtablet.jpg The sonix tablet station 
+<br>
 
 \section ustk_server_build_configuration Configuration of the build 
 
@@ -45,5 +51,9 @@ porta instance created
 TCP server Started
 Server now listening on port# 8080
 \endcode
+
+\section ustk_server_next_tutorial Next tutorial
+Once the server application is running on your ultrasounix station, you can then go to the next \ref tutorial-ustk-grabber-ultrasonix
+
 */
 
