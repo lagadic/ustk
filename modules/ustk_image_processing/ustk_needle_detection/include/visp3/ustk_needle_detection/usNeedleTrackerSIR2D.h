@@ -69,7 +69,7 @@ public:
    * @param model The needle model.
    * @param I The input image.
    */
-  double computeLikelihood(usPolynomialCurve2D *model, vpImage<unsigned char> &I);
+  double computeLikelihood(const usPolynomialCurve2D &model, vpImage<unsigned char> &I);
 
   /**
    * Returns the detected needle model.
