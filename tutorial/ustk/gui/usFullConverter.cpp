@@ -4,7 +4,7 @@
 
 #include <visp3/ustk_core/usPreScanToPostScan3DConverter.h>
 #include <visp3/ustk_gui/usVTKConverter.h>
-#include <visp3/ustk_io/usImageIo.h>
+#include <visp3/ustk_core/usImageIo.h>
 #include <vtkImageImport.h>
 #include <vtkMetaImageWriter.h>
 

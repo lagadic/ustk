@@ -1,4 +1,4 @@
-#include <visp3/ustk_gui/usViper850WrapperVelocityContol.h>
+#include <visp3/ustk_gui/usViper850WrapperVelocityControl.h>
 
 #if defined(USTK_HAVE_VTK_QT) && defined(VISP_HAVE_VIPER850) && defined(VISP_HAVE_MODULE_ROBOT)
 

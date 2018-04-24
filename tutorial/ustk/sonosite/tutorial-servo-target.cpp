@@ -125,7 +125,7 @@ vpThread::Return displayFunction(vpThread::Args args)
 
       // Convert post-scan to pre-scan image
       if (firstLoopCycle) {
-        rectangle.setCenter(postScan_.getHeight() / 2, postScan_.getWidth() / 2);
+        rectangle.setCenter(vpImagePoint(postScan_.getHeight() / 2, postScan_.getWidth() / 2));
         rectangle.setSize(50, 30);
         rectangle.setOrientation(0);
         tracker.init(postScan_, rectangle);
@@ -134,11 +134,11 @@ vpThread::Return displayFunction(vpThread::Args args)
       tracker.update(postScan_);
       rectangle = tracker.getTarget();
 
-      usPixelMeterConversion::convert(postScan_, rectangle.getCy(), rectangle.getCx(), xtarget, ytarget);
+      usPixelMeterConversion::convert(postScan_, rectangle.getCenter().get_j(), rectangle.getCenter().get_i(), xtarget, ytarget);
 
       std::cout << "Height resolution : " << postScan_.getHeightResolution() << std::endl;
       std::cout << "Width resolution : " << postScan_.getWidthResolution() << std::endl;
-      std::cout << "Cy = " << rectangle.getCy() << ", Cx = " << rectangle.getCx() << std::endl;
+      std::cout << "Center i = " << rectangle.getCenter().get_i() << ", j = " << rectangle.getCenter().get_j() << std::endl;
       std::cout << "xtarget = " << xtarget << ", ytarget = " << ytarget << std::endl;
 
       double time = (vpTime::measureTimeMs() - startTime) / 1000.0;
@@ -163,14 +163,14 @@ vpThread::Return displayFunction(vpThread::Args args)
       // Display the image
       vpDisplay::display(postScan_);
 
-      vpDisplay::displayLine(postScan_, static_cast<int>(rectangle.getX1()), static_cast<int>(rectangle.getY1()),
-                             static_cast<int>(rectangle.getX2()), static_cast<int>(rectangle.getY2()), vpColor::red);
-      vpDisplay::displayLine(postScan_, static_cast<int>(rectangle.getX2()), static_cast<int>(rectangle.getY2()),
-                             static_cast<int>(rectangle.getX3()), static_cast<int>(rectangle.getY3()), vpColor::red);
-      vpDisplay::displayLine(postScan_, static_cast<int>(rectangle.getX3()), static_cast<int>(rectangle.getY3()),
-                             static_cast<int>(rectangle.getX4()), static_cast<int>(rectangle.getY4()), vpColor::red);
-      vpDisplay::displayLine(postScan_, static_cast<int>(rectangle.getX4()), static_cast<int>(rectangle.getY4()),
-                             static_cast<int>(rectangle.getX1()), static_cast<int>(rectangle.getY1()), vpColor::red);
+      vpDisplay::displayLine(postScan_, static_cast<int>(rectangle.getTopLeft().get_i()), static_cast<int>(rectangle.getTopLeft().get_j()),
+                             static_cast<int>(rectangle.getBottomLeft().get_i()), static_cast<int>(rectangle.getBottomLeft().get_j()), vpColor::red);
+      vpDisplay::displayLine(postScan_, static_cast<int>(rectangle.getBottomLeft().get_i()), static_cast<int>(rectangle.getBottomLeft().get_j()),
+                             static_cast<int>(rectangle.getBottomRight().get_i()), static_cast<int>(rectangle.getBottomRight().get_j()), vpColor::red);
+      vpDisplay::displayLine(postScan_, static_cast<int>(rectangle.getBottomRight().get_i()), static_cast<int>(rectangle.getBottomRight().get_j()),
+                             static_cast<int>(rectangle.getTopRight().get_i()), static_cast<int>(rectangle.getTopRight().get_j()), vpColor::red);
+      vpDisplay::displayLine(postScan_, static_cast<int>(rectangle.getTopRight().get_i()), static_cast<int>(rectangle.getTopRight().get_j()),
+                             static_cast<int>(rectangle.getTopLeft().get_i()), static_cast<int>(rectangle.getTopLeft().get_j()), vpColor::red);
 
       // Trigger end of acquisition with a mouse click
       vpDisplay::displayText(postScan_, 10, 10, "Click to exit...", vpColor::red);

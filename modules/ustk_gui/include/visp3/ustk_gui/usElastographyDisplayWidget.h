@@ -49,7 +49,7 @@
 #include <QPixmap>
 #include <QResizeEvent>
 #include <QWidget>
-#include <visp3/ustk_core/usImageElastography.h>
+#include <visp3/ustk_elastography/usImageElastography.h>
 
 /**
  * @class usElastographyDisplayWidget

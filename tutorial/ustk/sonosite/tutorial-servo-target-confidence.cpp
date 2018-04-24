@@ -168,7 +168,7 @@ vpThread::Return displayFunction(vpThread::Args args)
         tracker.update(postScan_);
         rectangle = tracker.getTarget();
 
-        usPixelMeterConversion::convert(postScan_, rectangle.getCy(), rectangle.getCx(), xtarget, ytarget);
+        usPixelMeterConversion::convert(postScan_, rectangle.getCenter().get_j(), rectangle.getCenter().get_i(), xtarget, ytarget);
 
         double ttarget = atan2(xtarget, ytarget);
 
@@ -220,14 +220,14 @@ vpThread::Return displayFunction(vpThread::Args args)
       vpDisplay::display(postScan_);
 
       if (rectangleRoiDefined) {
-        vpDisplay::displayLine(postScan_, static_cast<int>(rectangle.getX1()), static_cast<int>(rectangle.getY1()),
-                               static_cast<int>(rectangle.getX2()), static_cast<int>(rectangle.getY2()), vpColor::red);
-        vpDisplay::displayLine(postScan_, static_cast<int>(rectangle.getX2()), static_cast<int>(rectangle.getY2()),
-                               static_cast<int>(rectangle.getX3()), static_cast<int>(rectangle.getY3()), vpColor::red);
-        vpDisplay::displayLine(postScan_, static_cast<int>(rectangle.getX3()), static_cast<int>(rectangle.getY3()),
-                               static_cast<int>(rectangle.getX4()), static_cast<int>(rectangle.getY4()), vpColor::red);
-        vpDisplay::displayLine(postScan_, static_cast<int>(rectangle.getX4()), static_cast<int>(rectangle.getY4()),
-                               static_cast<int>(rectangle.getX1()), static_cast<int>(rectangle.getY1()), vpColor::red);
+        vpDisplay::displayLine(postScan_, static_cast<int>(rectangle.getTopLeft().get_i()), static_cast<int>(rectangle.getTopLeft().get_j()),
+                               static_cast<int>(rectangle.getBottomLeft().get_i()), static_cast<int>(rectangle.getBottomLeft().get_j()), vpColor::red);
+        vpDisplay::displayLine(postScan_, static_cast<int>(rectangle.getBottomLeft().get_i()), static_cast<int>(rectangle.getBottomLeft().get_j()),
+                               static_cast<int>(rectangle.getBottomRight().get_i()), static_cast<int>(rectangle.getBottomRight().get_j()), vpColor::red);
+        vpDisplay::displayLine(postScan_, static_cast<int>(rectangle.getBottomRight().get_i()), static_cast<int>(rectangle.getBottomRight().get_j()),
+                               static_cast<int>(rectangle.getTopRight().get_i()), static_cast<int>(rectangle.getTopRight().get_j()), vpColor::red);
+        vpDisplay::displayLine(postScan_, static_cast<int>(rectangle.getTopRight().get_i()), static_cast<int>(rectangle.getTopRight().get_j()),
+                               static_cast<int>(rectangle.getTopLeft().get_i()), static_cast<int>(rectangle.getTopLeft().get_j()), vpColor::red);
       }
 
       // Display the confidence map
@@ -238,7 +238,7 @@ vpThread::Return displayFunction(vpThread::Args args)
       if (vpDisplay::getClick(postScan_, ROI_centralPoint, false)) {
         // update rectangle only on the first click
         if (stateROI == ROI_waiting) {
-          rectangle.setCenter(ROI_centralPoint.get_v(), ROI_centralPoint.get_u());
+          rectangle.setCenter(vpImagePoint(ROI_centralPoint.get_v(), ROI_centralPoint.get_u()));
           rectangle.setSize(80, 50);
           rectangle.setOrientation(0);
           rectangleRoiDefined = true;
