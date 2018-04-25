@@ -29,11 +29,9 @@ echo configuring project...
 cmake ../visp -DVISP_CONTRIB_MODULES_PATH=../ustk -DBUILD_MODULE_visp_ar=OFF -DBUILD_MODULE_visp_blob=OFF -DBUILD_MODULE_visp_detection=OFF -DBUILD_MODULE_visp_klt=OFF -DBUILD_MODULE_visp_mbt=OFF -DBUILD_MODULE_visp_me=OFF -DBUILD_MODULE_visp_tt=OFF -DBUILD_MODULE_visp_tt_mi=OFF -DBUILD_MODULE_visp_vision=OFF -DBUILD_MODULE_visp_visual_features=OFF -DBUILD_MODULE_visp_vs=OFF
  
 echo Compiling project
-make 
+make -j4
 
 echo importing ustk-dataset
 git clone https://github.com/lagadic/ustk-dataset $src_root/ustk-dataset
 export USTK_DATASET_PATH=$src_root/ustk-dataset
-
-echo installation sucessfull !
 

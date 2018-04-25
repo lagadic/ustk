@@ -23,7 +23,7 @@ Once the sources are downloaded, you can run the installation script for ubuntu:
 $ sh $HOME/USTK_DIR/ustk/script/install-ubuntu.sh
 \endcode
 
-This will download all thirdparties and build the library. 
+This will download all thirdparties and build the library (it will take some time). You will have to enter your password to download required packages, and confirm a few questions during the process.
 
 Once the build is sucessfull, you can install the library on your system (optionnal). Simply run:
 
