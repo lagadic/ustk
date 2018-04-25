@@ -47,7 +47,7 @@
 #include <visp3/ustk_core/usImagePreScan2D.h>
 #include <visp3/ustk_grabber/usFrameGrabbedInfo.h>
 #include <visp3/ustk_grabber/usNetworkGrabber.h>
-#include <visp3/ustk_io/usMHDSequenceWriter.h>
+#include <visp3/ustk_core/usMHDSequenceWriter.h>
 
 /**
  * @class usNetworkGrabberPreScan2D

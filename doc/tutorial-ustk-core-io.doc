@@ -1,6 +1,6 @@
 /**
 
-\page tutorial-ustk-core-io Tutorials: UsTk core and io tutorials (image read/write and conversions)
+\page tutorial-ustk-core-io Tutorials: UsTK core and io tutorials (image read/write and conversions)
 \tableofcontents
 
 
@@ -9,7 +9,7 @@
 The core module contains all ultrasound tool kit data structures such as 2D or 3D images, for RF, pre-scan or post-scan modalities, and conversion algorithms between those different image types. The io module code contains a set of read/write methods to save and load ultrasound images.
 
 The following turials are good examples to :
-- Load and convert a 3D RF image in a pre-scan image.
+- Load and convert a 2D RF image in a pre-scan image.
 - Load and convert a 2D pre-scan image and convert it to a post-scan image.
 
 Note that the source code used in this tutorial can be downloaded using the following command :
@@ -18,15 +18,15 @@ Note that the source code used in this tutorial can be downloaded using the foll
 $ svn export https://github.com/lagadic/ustk.git/trunk/tutorial/ustk/imageConversion
 \endcode
 
-\section tuto_rf_3d_conversion 3D Rf Conversion 
+\section tuto_rf_2d_conversion 2D Rf Conversion 
 
 The following code shows how to read a rf frame, include it in a volume, and finally convert the volume to pre-scan iamge.
-To read a RF frame, you can use the usImageIo::read() method. Then, to convert it, the usRFToPreScan3DConverter does the job.
+To read a RF frame, you can use the usImageIo::read() method. Then, to convert it, the usRFToPreScan2DConverter does the job.
 Note that using rf files, you have to manually set the transducer settings of the probe used (those informations aren't present in rf format from ultrasonix).
 
 \include tutorial-rfFileToPreScanConversion.cpp
 
-\section tuto_scan_conversion_3d Scan conversion of a pre-scan ultrasound frame
+\section tuto_scan_conversion_2d Scan conversion of a pre-scan ultrasound frame
 
 The following code shows how to read a pre-scan frame, and convert it to a post-scan iamge.
 To read a pre-scan frame, you can use the usImageIo::read() method. Then to convert it, use usPreScanToPostScan2DConverter class.

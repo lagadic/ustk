@@ -1,0 +1,28 @@
+/**
+
+\page tutorial-ustk-needle-tracker2D Tutorial: UsTK needle tracker 2D
+\tableofcontents
+
+\section intro_ustk_neeedle_tracker2D Introduction
+
+This tutorial expains how to perform 2D needle tracking on a needle insertion sequence of images, using a particle filtering method. See \cite Chatelain15b for more details on the method used.	 
+
+\section ustk_neeedle_tracker2D_run Running the tutorial
+
+To run the tutorial make sure you downloaded ustk-dataset repository (https://github.com/lagadic/ustk-dataset), and filled USTK_DATASET_PATH environment variable to point on its location on your system. <br>
+Then run tutorial-needleDetection2D application. For information, here is the source code of the tutorial:
+
+\include tutorial-needleDetection2D.cpp
+
+To run the turorial from UsTK binary directory you can use the following command:
+\code
+$ ./tutorial/ustk/needleDetection/tutorial-needleDetection2D
+\endcode
+You will see a window displaying a ultrasound image on screen. <br> 
+Then the first step is to initialize the tracker, by clicking on the entry point of the needle and then on the needle tip. See the image below for the needle position in the sequence used in this tutorial:
+\image html needleSequenceFirstFrame.png The first frame of the needle insertion sequence
+
+Once the tracker is initialized with your 2 successive clicks, you will see the needle tracking result on top of the images: the needle is represented with a red curve. 
+
+*/
+

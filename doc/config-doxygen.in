@@ -26,7 +26,7 @@ DOXYFILE_ENCODING      = UTF-8
 # identify the project. Note that if you do not use Doxywizard you need
 # to put quotes around the project name if it contains spaces.
 
-PROJECT_NAME           = "UsTK : Ultrasound Toolkit"
+PROJECT_NAME           = "UsTK : Ultrasound ToolKit"
 
 # The PROJECT_NUMBER tag can be used to enter a project or revision number.
 # This could be handy for archiving the generated documentation or
@@ -1600,7 +1600,8 @@ PREDEFINED             = DOXYGEN_SHOULD_SKIP_THIS \
                          USTK_HAVE_VTK_QT \
 			 USTK_HAVE_QT5 \
 			 USTK_HAVE_FFTW	\
-			 USTK_HAVE_ARMADILLO	
+			 USTK_HAVE_ARMADILLO \
+			 VISP_HAVE_MODULE_USTK_ELASTOGRAPHY
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then
 # this tag can be used to specify a list of macro names that should be expanded.

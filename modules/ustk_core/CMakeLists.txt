@@ -35,14 +35,14 @@ if(USE_FFTW)
   list(APPEND opt_libs ${FFTW_LIBRARIES})
 endif()
 
-vp_add_module(ustk_core visp_core)
+vp_add_module(ustk_core visp_io)
 
 vp_glob_module_sources()
 
 vp_module_include_directories(${opt_incs})
 vp_create_module(${opt_libs})
 
-vp_add_tests(DEPENDS_ON visp_ustk_io)
+vp_add_tests(DEPENDS_ON visp_ustk_core)
 
 vp_add_config_file("cmake/templates/usConfig.h.in")
 

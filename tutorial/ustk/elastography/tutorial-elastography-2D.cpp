@@ -9,9 +9,10 @@
 #include <QApplication>
 #include <QtCore/QThread>
 
-#include <visp3/ustk_core/usImageElastography.h>
 #include <visp3/ustk_core/usRFToPreScan2DConverter.h>
+#include <visp3/ustk_core/usSequenceWriter.h>
 #include <visp3/ustk_elastography/usElastography.h>
+#include <visp3/ustk_elastography/usImageElastography.h>
 #include <visp3/ustk_grabber/usNetworkGrabberRF2D.h>
 
 #include <visp3/gui/vpDisplayGDI.h>
@@ -22,14 +23,19 @@ int main(int argc, char **argv)
 {
   // QT application
   QApplication app(argc, argv);
+  QString ip;
+  if (app.arguments().contains(QString("--ip")))
+    ip = app.arguments().at(qApp->arguments().indexOf(QString("--ip")) + 1);
+  else
+    ip = QString("127.0.0.1");
 
   usElastography *elastography = new usElastography;
-  elastography->setROI(40, 3200, 50, 500);
+  elastography->setROI(40, 2700, 50, 500);
 
   QThread *grabbingThread = new QThread();
 
   usNetworkGrabberRF2D *qtGrabber = new usNetworkGrabberRF2D();
-  qtGrabber->setIPAddress("127.0.0.1");
+  qtGrabber->setIPAddress(ip.toStdString());
   qtGrabber->connectToServer();
 
   // setting acquisition parameters
@@ -49,6 +55,8 @@ int main(int argc, char **argv)
   usImageElastography elastographyImage;
   vpImage<vpRGBa> elastoToDisplay;
 
+  usSequenceWriter<vpImage<vpRGBa> > writer;
+
 // Prepare display
 #if defined(VISP_HAVE_X11)
   vpDisplayX *displayElasto = NULL;
@@ -67,6 +75,8 @@ int main(int argc, char **argv)
   qtGrabber->moveToThread(grabbingThread);
   grabbingThread->start();
 
+  writer.setSequenceFileName("./elastosequence.xml");
+  writer.setImageFileName(std::string("./sequencepreElasto%04d.png"));
   std::cout << "waiting ultrasound initialisation..." << std::endl;
 
   // our local grabbing loop
@@ -83,8 +93,9 @@ int main(int argc, char **argv)
       converter.convert(*grabbedFrame, preScanImage);
 
       elastographyImage.setUltrasoundImage(preScanImage);
-      elastographyImage.setStrainMap(strainImage, 320, 40);
+      elastographyImage.setStrainMap(strainImage, 270, 40);
       elastoToDisplay = elastographyImage.getElastoImage();
+      writer.saveImage(elastoToDisplay);
 
       // init display
       if (!displayInit && strainImage.getHeight() != 0 && strainImage.getWidth() != 0) {

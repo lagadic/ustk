@@ -1,11 +1,12 @@
 /**
 
-\page tutorial-ustk-grabber-sonosite Tutorial: UsTk grabber tutorial for sonosite
+\page tutorial-ustk-grabber-sonosite Tutorial: UsTK grabber tutorial for sonosite 180 plus
 \tableofcontents
 
 \section intro_ustk_grabber_sonosite Introduction
 
-This tutorial expains how to grab ultrasound images from the sonosite using Visp v4l2 grabber.
+This tutorial expains how to grab ultrasound images from the sonosite 180 plus connected with a BNC cable to the computer and using Visp v4l2 grabber.
+\image html sonosite180plus.png The sonosite 180 plus used in our lab
 
 Note that the source code used in this tutorial can be downloaded using the following command :
 

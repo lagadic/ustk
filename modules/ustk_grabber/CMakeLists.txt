@@ -110,7 +110,7 @@ if(USE_VTK)
 endif()
 
 if(USE_QT5 OR USE_VTK)
-  vp_add_module(ustk_grabber visp_gui visp_ustk_io )
+  vp_add_module(ustk_grabber visp_ustk_core)
   vp_glob_module_sources()
   vp_module_include_directories(${opt_incs})
   vp_create_module(${opt_libs})

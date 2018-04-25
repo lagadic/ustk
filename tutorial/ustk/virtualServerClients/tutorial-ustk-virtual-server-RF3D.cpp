@@ -12,7 +12,7 @@
 
 #include <visp3/ustk_core/usRFToPreScan3DConverter.h>
 #include <visp3/ustk_grabber/usNetworkGrabberRF3D.h>
-#include <visp3/ustk_io/usMHDSequenceWriter.h>
+#include <visp3/ustk_core/usMHDSequenceWriter.h>
 
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayOpenCV.h>

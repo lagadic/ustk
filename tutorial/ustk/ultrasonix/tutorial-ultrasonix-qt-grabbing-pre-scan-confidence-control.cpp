@@ -294,7 +294,7 @@ int main(int argc, char **argv)
   usImagePreScan2D<unsigned char> confidence;
 
   // gain
-  double lambdaVisualError = 12;
+  double lambdaVisualError = 5;
 
   // Prepare display
   vpDisplay *display = NULL;

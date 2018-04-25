@@ -32,8 +32,7 @@
 
 #include <visp3/ustk_template_tracking/usDenseTracker2D.h>
 
-#include <visp3/ustk_core/usImageMathematics.h>
-#include <visp3/ustk_core/usRectangle.h>
+#include <visp3/core/vpImageTools.h>
 
 #include <visp3/core/vpImageFilter.h>
 
@@ -43,10 +42,10 @@
  * @param I Image containing a region to track.
  * @param R Region of interest (in the image pxiel coordinates).
  */
-void usDenseTracker2D::init(const vpImage<unsigned char> &I, const usRectangle &R)
+void usDenseTracker2D::init(const vpImage<unsigned char> &I, const vpRectOriented &R)
 {
-  usImageMathematics::extract(I, m_template, R);
-  usImageMathematics::extract(I, m_region, R);
+  vpImageTools::extract(I, m_template, R);
+  vpImageTools::extract(I, m_region, R);
   m_target = R;
   m_height = m_template.getHeight();
   m_width = m_template.getWidth();
@@ -94,7 +93,7 @@ void usDenseTracker2D::update(const vpImage<unsigned char> &I)
 
   while ((i < max_iter) && (std::abs(rms - rms0) > drms)) {
     // extract new region from previous target rectangle
-    usImageMathematics::extract(I, m_region, m_target);
+    vpImageTools::extract(I, m_region, m_target);
 
     // filling current features colVector
     for (unsigned int u = 0; u < m_height; ++u)
@@ -115,7 +114,8 @@ void usDenseTracker2D::update(const vpImage<unsigned char> &I)
     double da = -v[2];
 
     // update target with old values and deplacements previously comuted
-    m_target.setCenter(m_target.getCx() + gain * dx, m_target.getCy() + gain * dy);
+    m_target.setCenter(
+        vpImagePoint(m_target.getCenter().get_i() + gain * dx, m_target.getCenter().get_j() + gain * dy));
     m_target.setOrientation(alpha + gain * da);
 
     ++i;
@@ -129,7 +129,7 @@ void usDenseTracker2D::update(const vpImage<unsigned char> &I)
  * @brief To call after update() at each new frame, to get the position of the ROI in the last acquired frame.
  * @return The rectangle pixel coordinates in the new frame.
  */
-usRectangle usDenseTracker2D::getTarget() const { return m_target; }
+vpRectOriented usDenseTracker2D::getTarget() const { return m_target; }
 
 vpImage<unsigned char> &usDenseTracker2D::getTemplate() { return m_template; }
 

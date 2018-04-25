@@ -1,0 +1,39 @@
+/**
+
+\page tutorial-ustk-install-ubuntu Tutorial: Installation from source for Linux Ubuntu
+\tableofcontents
+
+In this tutorial you will learn how to install UsTK from source on Linux Ubuntu. These steps have been tested with Ubuntu 17.04 (64 bit) distribution, but should work with any other distribution as well. 
+
+\section install_ubuntu_required Get the sources
+
+Prior to build and install UsTK, you have to download the sources. To achieve this, run the following command:
+
+\code
+$ git clone https://github.com/lagadic/ustk $HOME/USTK_DIR/ustk
+\endcode
+
+Git will clone the UsTK repository a subdirectory of your home directory.
+
+\section install_ubuntu_3rdparty Build UsTK using the installation script
+
+Once the sources are downloaded, you can run the installation script for ubuntu:
+
+\code
+$ sh $HOME/USTK_DIR/ustk/script/install-ubuntu.sh
+\endcode
+
+This will download all thirdparties and build the library (it will take some time). You will have to enter your password to download required packages, and confirm a few questions during the process.
+
+Once the build is sucessfull, you can install the library on your system (optionnal). Simply run:
+
+\code
+$ cd $HOME/USTK_DIR/ustk_build
+$ sudo make install
+\endcode
+
+\section install_ubuntu_next Next tutorial
+
+You are now ready to see the next tutorial.
+
+*/

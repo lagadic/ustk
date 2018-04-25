@@ -6,7 +6,7 @@
 #if defined(VISP_HAVE_MODULE_USTK_GUI)
 
 #include <visp3/ustk_gui/usImageDisplayWidget.h>
-#include <visp3/ustk_io/usImageIo.h>
+#include <visp3/ustk_core/usImageIo.h>
 
 #include <QApplication>
 #include <QMainWindow>

@@ -9,7 +9,7 @@
 #include <visp3/ustk_gui/usImageDisplayWidget.h>
 #include <visp3/ustk_gui/usRobotManualControlWidget.h>
 #include <visp3/ustk_gui/usUltrasonixClientWidget.h>
-#include <visp3/ustk_gui/usViper850WrapperVelocityContol.h>
+#include <visp3/ustk_gui/usViper850WrapperVelocityControl.h>
 
 #include <QApplication>
 #include <QHBoxLayout>

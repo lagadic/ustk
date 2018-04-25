@@ -4,7 +4,7 @@
 
 #include <visp3/ustk_confidence_map/usScanlineConfidence2D.h>
 #include <visp3/ustk_core/usImagePreScan2D.h>
-#include <visp3/ustk_io/usImageIo.h>
+#include <visp3/ustk_core/usImageIo.h>
 
 int main(int argc, const char *argv[])
 {

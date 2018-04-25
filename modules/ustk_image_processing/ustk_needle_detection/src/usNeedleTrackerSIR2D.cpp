@@ -32,7 +32,6 @@
  *****************************************************************************/
 
 #include <visp3/core/vpImageFilter.h>
-#include <visp3/ustk_core/usImageMathematics.h>
 #include <visp3/ustk_needle_detection/usNeedleTrackerSIR2D.h>
 
 usNeedleTrackerSIR2D::usNeedleTrackerSIR2D()
@@ -58,9 +57,9 @@ usNeedleTrackerSIR2D::~usNeedleTrackerSIR2D()
         delete m_particles[i];
         m_particles[i] = NULL;
       }
-      delete[] m_particles;
-      m_particles = NULL;
     }
+    delete[] m_particles;
+    m_particles = NULL;
   }
   if (m_weights) {
     delete[] m_weights;
@@ -107,7 +106,7 @@ void usNeedleTrackerSIR2D::init(const vpImage<unsigned char> &I, unsigned int nP
     ++c;
   }
   m_fgMean /= c;
-  m_bgMean = usImageMathematics::sum(I) / I.getSize();
+  m_bgMean = I.getSum() / I.getSize();
 
   init(dims, nPoints, nParticles, needle);
 }
@@ -206,7 +205,7 @@ void usNeedleTrackerSIR2D::run(vpImage<unsigned char> &I, double v)
   // Compute weights
   double sumWeights = 0.0;
   for (unsigned int i = 0; i < m_nParticles; ++i) {
-    m_weights[i] *= computeLikelihood(m_particles[i], I);
+    m_weights[i] *= computeLikelihood(*(m_particles[i]), I);
     sumWeights += m_weights[i];
   }
 
@@ -247,64 +246,17 @@ void usNeedleTrackerSIR2D::run(vpImage<unsigned char> &I, double v)
     m_lengthThreshold *= 2.0;
   }
 }
-/*
-double usNeedleTrackerSIR2D::computeLikelihood(usPolynomialCurve2D *model, vpImage<unsigned char> &I)
-{
-  double ll = 0.0;
-  vpColVector point, dir;
-  unsigned int c = 0;
-  double length = model->getLength();
-  double intensity, l;
 
-  for (double t = 0; t <= 1.0; t += 1.0 / length) {
-    point = model->getPoint(t);
-    dir = model->getTangent(t);
-    int x = vpMath::round(point[0]);
-    int y = vpMath::round(point[1]);
-    if ((3 <= x) && (x < m_dims[0] - 3) && (3 <= y) && (y < m_dims[1] - 3)) {
-      ++c;
-      intensity = vpImageFilter::gaussianFilter(I, x, y);
-      if (intensity >= m_bgMean)
-        return 0.0;
-      if (intensity <= m_fgMean)
-        continue;
-      l = (intensity - m_bgMean) / (m_fgMean - m_bgMean);
-      ll += log(l);
-    }
-  }
-
-  if (c == 0)
-    return 0.0;
-
-  ll /= c;
-
-  point = model->getPoint(1.0 + 1.0 / length);
-  int x = vpMath::round(point[0]);
-  int y = vpMath::round(point[1]);
-  if ((0 <= x) && (x < m_dims[0]) && (0 <= y) && (y < m_dims[1])) {
-    intensity = vpImageFilter::gaussianFilter(I,x,y);
-    if (intensity >= m_bgMean)
-      return exp(ll);
-    if (intensity <= m_fgMean)
-      return 0.0;
-    l = 1.0 - (intensity - m_bgMean) / (m_fgMean - m_bgMean);
-    ll += log(l);
-  }
-
-  return exp(ll);
-}
-*/
-
-double usNeedleTrackerSIR2D::computeLikelihood(usPolynomialCurve2D *model, vpImage<unsigned char> &I)
+double usNeedleTrackerSIR2D::computeLikelihood(const usPolynomialCurve2D &model, const vpImage<unsigned char> &I)
 {
   double l = 0.0;
   vpColVector point;
   unsigned int c = 0;
-  double length = model->getLength();
+  double length = model.getLength();
   double intensity;
 
   for (double t = 0; t <= 1.0; t += 1.0 / length) {
-    point = model->getPoint(t);
+    point = model.getPoint(t);
     unsigned int x = vpMath::round(point[0]);
     unsigned int y = vpMath::round(point[1]);
     if ((3 <= x) && (x < m_dims[0] - 3) && (3 <= y) && (y < m_dims[1] - 3)) {
@@ -319,7 +271,7 @@ double usNeedleTrackerSIR2D::computeLikelihood(usPolynomialCurve2D *model, vpIma
 
   l /= c;
 
-  point = model->getPoint(1.0);
+  point = model.getPoint(1.0);
   unsigned int x = vpMath::round(point[0]);
   unsigned int y = vpMath::round(point[1]);
   if ((3 <= x) && (x < m_dims[0] - 3) && (3 <= y) && (y < m_dims[1] - 3)) {
@@ -327,7 +279,7 @@ double usNeedleTrackerSIR2D::computeLikelihood(usPolynomialCurve2D *model, vpIma
     l += intensity;
   }
 
-  point = model->getPoint(1.0 + 1.0 / length);
+  point = model.getPoint(1.0 + 1.0 / length);
   x = vpMath::round(point[0]);
   y = vpMath::round(point[1]);
   if ((3 <= x) && (x < m_dims[0] - 3) && (3 <= y) && (y < m_dims[1] - 3)) {

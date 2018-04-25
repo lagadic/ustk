@@ -5,6 +5,8 @@ This page references all the tutorials related to Ultrasound TK.
 
 - \subpage tutorial-ustk-grabber-sonosite <br>This tutorial gives examples to use sonosite grabber
 
+- \subpage tutorial-ustk-ultrasonix-server <br>This tutorial explains how to install the server application on a ultrasonix machine
+
 - \subpage tutorial-ustk-grabber-ultrasonix <br>This tutorial gives examples to use ultrasonix grabber
 
 - \subpage tutorial-ustk-grabber-ultrasonix-confidence <br>This tutorial gives examples to run a confidence map using ultrasonix grabber
@@ -14,5 +16,7 @@ This page references all the tutorials related to Ultrasound TK.
 - \subpage tutorial-ustk-virtual-server <br>This tutorial explains how to run the virtual server, and how to prepare your sequence of images to be compatible as input of the virtual server.
 
 - \subpage tutorial-ustk-elastography <br>This tutorial explains how to use the elastography process on RF sequences, sent by the virtual server application.
+
+- \subpage tutorial-ustk-needle-tracker2D <br>This tutorial explains how to use the 2D needle tracker.
 
 */

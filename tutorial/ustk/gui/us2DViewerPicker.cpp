@@ -6,7 +6,7 @@
 #include <visp3/ustk_core/usImagePostScan3D.h>
 #include <visp3/ustk_gui/us2DSceneWidget.h>
 #include <visp3/ustk_gui/usVTKConverter.h>
-#include <visp3/ustk_io/usImageIo.h>
+#include <visp3/ustk_core/usImageIo.h>
 #include <vtkMetaImageReader.h>
 
 int main(int argc, char **argv)

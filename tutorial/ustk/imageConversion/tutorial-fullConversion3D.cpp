@@ -4,7 +4,7 @@
 
 #include <visp3/core/vpTime.h>
 #include <visp3/ustk_core/usRFToPostScan3DConverter.h>
-#include <visp3/ustk_io/usImageIo.h>
+#include <visp3/ustk_core/usImageIo.h>
 
 int main()
 {

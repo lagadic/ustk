@@ -1,6 +1,6 @@
 /**
 
-\page tutorial-ustk-virtual-server Tutorial: UsTk virtual server
+\page tutorial-ustk-virtual-server Tutorial: UsTK virtual server
 \tableofcontents
 
 
@@ -30,7 +30,7 @@ $ svn export https://github.com/lagadic/ustk.git/trunk/apps/ustk
 
 Then you have to run CMake to configure your project, and finally you can compile it.
 
-The virtual server application requires in input a path to the sequence to replay. To run it go in the directory where the application is built, and run the following command (replace /path/to/your/sequence by the path to the sequence you prepared in, previous section):
+The virtual server application requires in input a path to the sequence to replay. To run it go in the directory where the application is built, and run the following command (replace /path/to/your/sequence by the path to the sequence you prepared in previous section):
 \code
 $ ./ustk-virtualServer --input /path/to/your/sequence
 \endcode
@@ -41,7 +41,7 @@ Server now listening on port# 8080"
 it means that your server is running correctly. 
 Now you can use a client application to connect to it and grabbing the images using a grabber class as shown in next section.
 
-\section ustk_virtual_server_client Running the virtual server client
+\section ustk_virtual_server_client_run Running the client
 
 This section explains how to run a client application to grab the frames sent by the virtual server.
 
@@ -59,7 +59,7 @@ $ ./tutorial-ustk-virtual-server-preScan3D
 
 If all is going well, you should see the following message :
 "init success
-waiting ultrasound initialisation...", and then the volumes coming.
+waiting ultrasound initialisation...", and then the volumes are coming.
 
 */
 

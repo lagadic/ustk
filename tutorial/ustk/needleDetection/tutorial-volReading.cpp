@@ -53,7 +53,7 @@
 #include <visp3/io/vpParseArgv.h>
 
 // ustk
-#include <visp3/ustk_io/usSequenceReader3D.h>
+#include <visp3/ustk_core/usSequenceReader3D.h>
 #include <visp3/ustk_needle_detection/usNeedleTrackerSIR2D.h>
 
 using namespace std;

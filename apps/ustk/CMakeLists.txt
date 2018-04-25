@@ -34,7 +34,7 @@ project(visp-apps-ustk)
 
 cmake_minimum_required(VERSION 2.8.12)
 
-find_package(VISP REQUIRED visp_ustk_io)
+find_package(VISP REQUIRED visp_ustk_core)
 
 if(MSVC)
   if(NOT VISP_SHARED)
@@ -58,5 +58,5 @@ if(MSVC)
 endif()
 
 visp_add_subdirectory(ultrasonix-server REQUIRED_DEPS visp_core)
-visp_add_subdirectory(virtual-server    REQUIRED_DEPS visp_ustk_io)
+visp_add_subdirectory(virtual-server    REQUIRED_DEPS visp_ustk_core)
 

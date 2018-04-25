@@ -34,7 +34,7 @@ project(tutorial-ustk-io)
 
 cmake_minimum_required(VERSION 2.6)
 
-find_package(VISP REQUIRED visp_ustk_io)
+find_package(VISP REQUIRED visp_ustk_core)
 
 set(tutorial_cpp
   tutorial-Rf-reader.cpp

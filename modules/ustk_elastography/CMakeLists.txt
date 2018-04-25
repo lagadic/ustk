@@ -48,6 +48,6 @@ if(USE_FFTW)
   vp_module_include_directories(${opt_incs})
   vp_create_module(${opt_libs})
 
-  vp_add_tests(DEPENDS_ON  visp_ustk_io)
+  vp_add_tests(DEPENDS_ON  visp_ustk_core)
 
 endif()

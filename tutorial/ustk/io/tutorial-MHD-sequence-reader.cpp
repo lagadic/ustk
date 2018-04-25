@@ -1,6 +1,6 @@
 //! \example tutorial-MHD-sequence-reader.cpp
-#include <visp3/ustk_io/usMHDSequenceReader.h>
-#include <visp3/ustk_io/usMHDSequenceWriter.h>
+#include <visp3/ustk_core/usMHDSequenceReader.h>
+#include <visp3/ustk_core/usMHDSequenceWriter.h>
 int main(int argc, char **argv)
 {
   std::string sequenceDirectory;

@@ -46,7 +46,7 @@
 #include <QApplication>
 #include <QImage>
 #include <QObject>
-#include <visp3/ustk_core/usImageElastography.h>
+#include <visp3/ustk_elastography/usImageElastography.h>
 #include <visp3/ustk_core/usRFToPreScan2DConverter.h>
 #include <visp3/ustk_gui/usElastographyQtWrapper.h>
 
