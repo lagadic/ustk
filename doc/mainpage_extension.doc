@@ -1,6 +1,18 @@
+\section install_ustk Installation
+
+UsTk is a multi platform library that works under Linux, OSX and Windows, so to install UsTK you need the CMake configuration tool available from http://www.cmake.org. As UsTK is a set of modules for ViSP library, you will need to download it <a href="https://github.com/lagadic/visp" target="_parent">here</a>. Furthermore, depending on your operation system and the capabilities you need, you may install third party libraries listed <a href="https://github.com/lagadic/ustk/blob/master/README.md#dependencies" target="_parent">here</a>.
+
+UsTK full installation procedure using CMake is detailed in the Installation from prebuild SDK tutorials and Installation from source tutorials. Getting started tutorials and documents in pdf are also available from https://visp.inria.fr/publications.
+
 \section tuto_ustk Tutorials in UsTK
 
-Below you will find some tutorials dedicated to the ultrasound tool kit extension:
+Below you will find some tutorials dedicated to the ultrasound toolkit extension.
+
+\subsection tuto_install_ustk Instalation from source tutorials
+
+- \ref tutorial-ustk-install-ubuntu <br>This tutorial explains how to build and install UsTK under ubuntu distribution
+
+\subsection tuo_code_ustk Running UsTK example codes tutorials
 
 - \ref tutorial-ustk-core-io <br>This tutorial gives an overview of ustk_core and ustk_io modules
 

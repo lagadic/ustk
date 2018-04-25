@@ -247,7 +247,7 @@ void usNeedleTrackerSIR2D::run(vpImage<unsigned char> &I, double v)
   }
 }
 
-double usNeedleTrackerSIR2D::computeLikelihood(const usPolynomialCurve2D &model, vpImage<unsigned char> &I)
+double usNeedleTrackerSIR2D::computeLikelihood(const usPolynomialCurve2D &model, const vpImage<unsigned char> &I)
 {
   double l = 0.0;
   vpColVector point;

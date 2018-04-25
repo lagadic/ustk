@@ -8,13 +8,17 @@
 
 <p>UsTK is a modular C++ library that allows fast development of visual
 servoing applications dedicated to ultrasound images. UsTK is developed and maintained by the Inria
-<a href="http://team.inria.fr/lagadic" target="_parent">Lagadic</a> team located at <a
+<a href="http://team.inria.fr/rainbow" target="_parent">Rainbow</a> team located at <a
 href="http://www.inria.fr/en/centre/rennes" target="_parent">Inria Rennes</a>.</p>
 
-<p>UsTK source code is now available on GitHub <a href="https://github.org/lagadic/ustk" target="_parent">https://github.org/lagadic/ustk</a></p>
+<p>UsTK official site is <a href="https://ustk.inria.fr" target="_parent">https://ustk.inria.fr</a></p>
+
+<p>UsTK source code is now available on GitHub <a href="https://github.com/lagadic/ustk" target="_parent">https://github.com/lagadic/ustk</a></p>
  
 <p>If you have any problems or find any bugs, please report them in 
-<a href="https://github.com/lagadic/ustk/issues">the bug tracker</a>. 
+<a href="https://github.com/lagadic/ustk/issues">the bug tracker</a>.</p>
+
+It is also possible to contact UsTK main developers using: <a href="mailto:ustk@inria.fr?subject=[ustk]">ustk@inria.fr</a>
 
 @VISP_MAINPAGE_EXTENSION@
 
