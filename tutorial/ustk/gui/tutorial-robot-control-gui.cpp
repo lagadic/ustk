@@ -10,6 +10,7 @@
 #include <visp3/ustk_gui/usRobotManualControlWidget.h>
 #include <visp3/ustk_gui/usUltrasonixClientWidget.h>
 #include <visp3/ustk_gui/usViper850WrapperVelocityControl.h>
+#include <visp3/ustk_gui/usConfidenceMapController.h>
 
 #include <QApplication>
 #include <QHBoxLayout>
@@ -27,6 +28,7 @@ int main(int argc, char **argv)
   // Qt widgets
   usImageDisplayWidget *widget = new usImageDisplayWidget();
   widget->updateFrame(*preScan);
+  widget->enableControlArrows();
 
   usRobotManualControlWidget *robotControlPanel = new usRobotManualControlWidget();
   usUltrasonixClientWidget *ultrasonixControlWidet = new usUltrasonixClientWidget();
@@ -45,6 +47,12 @@ int main(int argc, char **argv)
   threadRobotControl->start();
   viperControl.run();
 
+  //confidence-map-based controller
+  usConfidenceMapController * confidenceController = new usConfidenceMapController();
+  QThread *confidenceThread = new QThread();
+  confidenceController->moveToThread(confidenceThread);
+  confidenceThread->start();
+
   // grabber
   QThread *grabbingThread = new QThread();
   usNetworkGrabberPreScan2D *qtGrabber = new usNetworkGrabberPreScan2D();
@@ -53,14 +61,21 @@ int main(int argc, char **argv)
 
   QMainWindow window;
   window.setCentralWidget(centralWidget);
-  window.show();
+  window.showMaximized();
 
+  // sliders robot controls
   QObject::connect(robotControlPanel, SIGNAL(changeVX(int)), &viperControl, SLOT(setXVelocity(int)));
   QObject::connect(robotControlPanel, SIGNAL(changeVY(int)), &viperControl, SLOT(setYVelocity(int)));
   QObject::connect(robotControlPanel, SIGNAL(changeVZ(int)), &viperControl, SLOT(setZVelocity(int)));
   QObject::connect(robotControlPanel, SIGNAL(changeWX(int)), &viperControl, SLOT(setXAngularVelocity(int)));
   QObject::connect(robotControlPanel, SIGNAL(changeWY(int)), &viperControl, SLOT(setYAngularVelocity(int)));
   QObject::connect(robotControlPanel, SIGNAL(changeWZ(int)), &viperControl, SLOT(setZAngularVelocity(int)));
+
+  // buttons robot controls
+  QObject::connect(widget, SIGNAL(moveLeft()), &viperControl, SLOT(moveLeft()));
+  QObject::connect(widget, SIGNAL(moveRight()), &viperControl, SLOT(moveRight()));
+  QObject::connect(widget, SIGNAL(stopMove()), &viperControl, SLOT(stopMove()));
+
 
   QObject::connect(robotControlPanel, SIGNAL(initClicked()), &viperControl, SLOT(init()));
   QObject::connect(robotControlPanel, SIGNAL(startClicked()), &viperControl, SLOT(run()));
@@ -85,9 +100,15 @@ int main(int argc, char **argv)
   QObject::connect(ultrasonixControlWidet, SIGNAL(stopAcquisition()), qtGrabber, SLOT(stopAcquisition()));
 
   // send new images via qt signal
-  qRegisterMetaType<vpImage<unsigned char> >("vpImage<unsigned char>");
-  QObject::connect(qtGrabber, SIGNAL(newFrame(vpImage<unsigned char>)), widget,
-                   SLOT(updateFrame(vpImage<unsigned char>)));
+  qRegisterMetaType<usImagePreScan2D<unsigned char> >("usImagePreScan2D<unsigned char>");
+  QObject::connect(qtGrabber, SIGNAL(newFrame(usImagePreScan2D<unsigned char>)), widget,
+                   SLOT(updateFrame(usImagePreScan2D<unsigned char>)));
+
+  //confidence controller
+  QObject::connect(qtGrabber, SIGNAL(newFrame(usImagePreScan2D<unsigned char>)), confidenceController,
+                   SLOT(updateImage(usImagePreScan2D<unsigned char>)));
+  QObject::connect(confidenceController, SIGNAL(updateProbeOrientation(int)), &viperControl, SLOT(setZAngularVelocity(int)));
+
 
   app.exec();
 

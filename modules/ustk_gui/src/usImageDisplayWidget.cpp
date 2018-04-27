@@ -42,12 +42,26 @@
 /**
 * Constructor.
 */
-usImageDisplayWidget::usImageDisplayWidget() : m_label(NULL), m_QImage(), m_pixmap()
+usImageDisplayWidget::usImageDisplayWidget() : m_label(NULL), m_QImage(), m_pixmap(),m_leftArrow(),m_rightArrow()
 {
   this->setMinimumSize(50, 50);
   m_label = new QLabel(this);
   m_label->setMinimumSize(50, 50);
   m_label->autoFillBackground();
+
+  m_controlArrowsActivated = false;
+  m_leftArrow.setParent(m_label);
+  m_rightArrow.setParent(m_label);
+
+  m_leftArrow.setText(QString("\u25C0"));
+  m_rightArrow.setText(QString("\u25B6"));
+  m_leftArrow.setVisible(false);
+  m_rightArrow.setVisible(false);
+
+  connect(&m_leftArrow,SIGNAL(pressed()),this,SIGNAL(moveLeft()));
+  connect(&m_rightArrow,SIGNAL(pressed()),this,SIGNAL(moveRight()));
+  connect(&m_leftArrow,SIGNAL(released()),this,SIGNAL(stopMove()));
+  connect(&m_rightArrow,SIGNAL(released()),this,SIGNAL(stopMove()));
 }
 
 /**
@@ -67,6 +81,26 @@ void usImageDisplayWidget::updateFrame(const vpImage<unsigned char> img)
   m_pixmap = QPixmap::fromImage(I);
   m_label->setPixmap(m_pixmap);
   m_label->update();
+
+  if(m_controlArrowsActivated)
+    enableControlArrows();
+}
+
+/**
+* Slot called to update the ultrasound image to display for pre-scan.
+* @param img New ultrasound image to display.
+*/
+void usImageDisplayWidget::updateFrame(const usImagePreScan2D<unsigned char> img)
+{
+  m_QImage = QImage(img.bitmap, img.getWidth(), img.getHeight(), img.getWidth(), QImage::Format_Indexed8);
+  QImage I = m_QImage.convertToFormat(QImage::Format_RGB888);
+  I = I.scaled(this->width(), this->height());
+  m_pixmap = QPixmap::fromImage(I);
+  m_label->setPixmap(m_pixmap);
+  m_label->update();
+
+  if(m_controlArrowsActivated)
+    enableControlArrows();
 }
 
 void usImageDisplayWidget::resizeEvent(QResizeEvent *event)
@@ -77,6 +111,26 @@ void usImageDisplayWidget::resizeEvent(QResizeEvent *event)
   m_pixmap = QPixmap::fromImage(I);
   m_label->setPixmap(m_pixmap);
   m_label->update();
+  if(m_controlArrowsActivated)
+    enableControlArrows();
+
+}
+
+void usImageDisplayWidget::enableControlArrows() {
+  m_controlArrowsActivated = true;
+
+  m_leftArrow.setVisible(true);
+  m_rightArrow.setVisible(true);
+  m_leftArrow.setGeometry(10,m_label->height()/2,40,40);
+  m_rightArrow.setGeometry(m_label->width()-50,m_label->height()/2,40,40);
+  m_leftArrow.raise();
+  m_rightArrow.raise();
+}
+
+void usImageDisplayWidget::disableControlArrows() {
+  m_controlArrowsActivated = false;
+  m_leftArrow.hide();
+  m_rightArrow.hide();
 }
 
 #endif

@@ -289,6 +289,7 @@ void usViper850WrapperVelocityControl::controlLoopAutomatic()
       // Compute the force/torque control law in the sensor frame (propotionnal + derivate controller)
       v_s = lambdaProportionnal * sEs + lambdaDerivate * (sEs - sEs_last) + lambdaIntegral * sEs_sum;
 
+      //set other speeds
       v_s[0] = 0.0;
       v_s[1] = 0.0;
       v_s[3] = 0.0;
@@ -298,7 +299,10 @@ void usViper850WrapperVelocityControl::controlLoopAutomatic()
       vpVelocityTwistMatrix eVs;
       sVe.inverse(eVs);
 
-      ve = eVs * v_s;
+      vpColVector v_e =  velocityProbeContact;
+      v_e[1] = 0.0;
+
+      ve = eVs * v_s + this->eVp * v_e;
 
       // Get the robot jacobian eJe
       viper->get_eJe(eJe);
@@ -395,7 +399,6 @@ void usViper850WrapperVelocityControl::startAutomaticForceControl()
 
 void usViper850WrapperVelocityControl::stopAutomaticForceControl()
 {
-
   m_run = false; // stop the running loop
 
   // reset velocities vector to zero
@@ -404,5 +407,17 @@ void usViper850WrapperVelocityControl::stopAutomaticForceControl()
 
   m_run = true;
   emit(startControlLoop()); // go back to manual mode
+}
+
+void usViper850WrapperVelocityControl::moveLeft() {
+  velocityProbeContact[0] = 0.01;
+}
+
+void usViper850WrapperVelocityControl::moveRight() {
+  velocityProbeContact[0] = -0.01;
+}
+
+void usViper850WrapperVelocityControl::stopMove() {
+  velocityProbeContact[0] = 0;
 }
 #endif
