@@ -52,6 +52,7 @@
 #include <QPushButton>
 #include <visp3/ustk_core/usImagePostScan2D.h>
 #include <visp3/ustk_core/usImagePreScan2D.h>
+#include <visp3/ustk_core/usPreScanToPostScan2DConverter.h>
 
 /**
  * @class usImageDisplayWidget
@@ -69,12 +70,15 @@ public:
   void enableControlArrows();
   void disableControlArrows();
 
+  void enablePostScanDisplay(bool enable);
+
   void resizeEvent(QResizeEvent *event);
 
 signals:
   void moveLeft();
   void moveRight();
   void stopMove();
+  void confidenceServoing(bool);
 
 public slots:
   void updateFrame(const vpImage<unsigned char> img);
@@ -87,10 +91,17 @@ private:
   QImage m_QImage;
   QPixmap m_pixmap;
 
+  //scan conversion
+  bool m_displayPostScan;
+  usPreScanToPostScan2DConverter m_scanConverter;
+  usImagePostScan2D<unsigned char> m_postScan;
+
   //overlay
   bool m_controlArrowsActivated;
   QPushButton m_leftArrow;
   QPushButton m_rightArrow;
+  QPushButton m_confidenceServoingButton;
+
 };
 #endif // QT && ELASTOGRAPHY
 #endif // __usImageDisplayWidget_h_

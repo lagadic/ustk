@@ -158,7 +158,6 @@ int main()
     }
   }
   tipGroundTruth.clear();
-  std::cout << "toto\n";
 
   return 0;
 }

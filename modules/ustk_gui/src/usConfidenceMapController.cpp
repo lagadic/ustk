@@ -42,7 +42,7 @@
 /**
 * Constructor.
 */
-usConfidenceMapController::usConfidenceMapController(QObject *parent): QObject(parent), m_confidenceProcessor(),m_confidenceMap(), m_gain(5)  {}
+usConfidenceMapController::usConfidenceMapController(QObject *parent): QObject(parent), m_confidenceProcessor(),m_confidenceMap(), m_gain(5),m_activated(false)  {}
 
 usConfidenceMapController::~usConfidenceMapController() {}
 
@@ -68,7 +68,8 @@ void usConfidenceMapController::updateImage(usImagePreScan2D<unsigned char> imag
   double thetaError = yc * m_confidenceMap.getScanLinePitch() - m_confidenceMap.getFieldOfView() / 2.0;
 
   //proportionnal control (unit 10-1 deg per second)
-  emit(updateProbeOrientation(vpMath::deg(m_gain * thetaError) * 10));
+  if(m_activated)
+    emit(updateProbeOrientation(vpMath::deg(m_gain * thetaError) * 10));
 }
 
 void  usConfidenceMapController::setPropotionnalControlGain(const double gain) {
@@ -77,6 +78,10 @@ void  usConfidenceMapController::setPropotionnalControlGain(const double gain) {
 
 double usConfidenceMapController::getPropotionnalControlGain() const {
   return m_gain;
+}
+
+void usConfidenceMapController::activateController(bool activate) {
+  m_activated = activate;
 }
 
 #endif

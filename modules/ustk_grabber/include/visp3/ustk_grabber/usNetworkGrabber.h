@@ -178,6 +178,7 @@ signals:
   void acquisitionInitialized(bool);
 
 public slots:
+  void center3DProbeMotor();
   void connected();
   void connectToServer();
   void connectToServer(QHostAddress address);

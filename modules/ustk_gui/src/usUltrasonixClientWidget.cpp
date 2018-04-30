@@ -9,6 +9,8 @@ usUltrasonixClientWidget::usUltrasonixClientWidget()
 
   connectPushButton = new QPushButton(QString("Connect to server"), this);
   initPushButton = new QPushButton(QString("Init acquisition"), this);
+
+  center3Dprobe = new QPushButton(QString("Center 3D probe motor"), this);
   startPushButton = new QPushButton(QString("Start Acquisition"), this);
   stopPushButton = new QPushButton(QString("Stop Acquisition"), this);
 
@@ -29,8 +31,9 @@ usUltrasonixClientWidget::usUltrasonixClientWidget()
   Layout->addWidget(connectPushButton, 1, 0, 1, 2, Qt::AlignCenter);
   Layout->addWidget(probeSelectionLabel, 2, 0, Qt::AlignRight);
   Layout->addWidget(initPushButton, 3, 0, 3, 2, Qt::AlignCenter);
-  Layout->addWidget(startPushButton, 4, 0, 4, 2, Qt::AlignCenter);
-  Layout->addWidget(stopPushButton, 5, 0, 5, 2, Qt::AlignCenter);
+  Layout->addWidget(center3Dprobe, 4, 0, 4, 2, Qt::AlignCenter);
+  Layout->addWidget(startPushButton, 5, 0, 5, 2, Qt::AlignCenter);
+  Layout->addWidget(stopPushButton, 6, 0, 6, 2, Qt::AlignCenter);
 
   Layout->addWidget(ipTextEdit, 0, 1, Qt::AlignLeft);
   Layout->addWidget(probeSelectComboBox, 2, 1, Qt::AlignLeft);
@@ -39,6 +42,8 @@ usUltrasonixClientWidget::usUltrasonixClientWidget()
 
   connect(connectPushButton, SIGNAL(clicked()), this, SLOT(connectToServerSlot()));
   connect(initPushButton, SIGNAL(clicked()), this, SLOT(initAcquisitionSlot()));
+
+  connect(center3Dprobe, SIGNAL(clicked()), this, SIGNAL(center3DProbeMotor()));
 
   connect(startPushButton, SIGNAL(clicked()), this, SIGNAL(runAcquisition()));
   connect(stopPushButton, SIGNAL(clicked()), this, SIGNAL(stopAcquisition()));
@@ -51,6 +56,7 @@ usUltrasonixClientWidget::~usUltrasonixClientWidget()
   delete connectPushButton;
   delete initPushButton;
   delete startPushButton;
+  delete center3Dprobe;
   delete stopPushButton;
   delete ipTextEdit;
   delete probeSelectComboBox;

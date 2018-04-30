@@ -68,12 +68,14 @@ signals:
 
 public slots:
   void updateImage(usImagePreScan2D<unsigned char> image);
+  void activateController(bool activate);
 
 private:
   usScanlineConfidence2D m_confidenceProcessor;
   usImagePreScan2D<unsigned char> m_confidenceMap;
 
   double m_gain;
+  bool m_activated;
 };
 #endif
 #endif // US_VIEWER_WIDGET

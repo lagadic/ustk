@@ -22,12 +22,8 @@ int main(int argc, char **argv)
   QApplication app(argc, argv);
   app.setApplicationName(QString("USTK display widget"));
 
-  // image
-  usImagePreScan2D<unsigned char> *preScan = new usImagePreScan2D<unsigned char>(50, 50);
-
   // Qt widgets
   usImageDisplayWidget *widget = new usImageDisplayWidget();
-  widget->updateFrame(*preScan);
   widget->enableControlArrows();
 
   usRobotManualControlWidget *robotControlPanel = new usRobotManualControlWidget();
@@ -96,6 +92,7 @@ int main(int argc, char **argv)
                    SLOT(connectToServer(QHostAddress)));
   QObject::connect(ultrasonixControlWidet, SIGNAL(initAcquisition(usNetworkGrabber::usInitHeaderSent)), qtGrabber,
                    SLOT(initAcquisitionSlot(usNetworkGrabber::usInitHeaderSent)));
+  QObject::connect(ultrasonixControlWidet, SIGNAL(center3DProbeMotor()), qtGrabber, SLOT(center3DProbeMotor()));
   QObject::connect(ultrasonixControlWidet, SIGNAL(runAcquisition()), qtGrabber, SLOT(runAcquisition()));
   QObject::connect(ultrasonixControlWidet, SIGNAL(stopAcquisition()), qtGrabber, SLOT(stopAcquisition()));
 
@@ -107,6 +104,7 @@ int main(int argc, char **argv)
   //confidence controller
   QObject::connect(qtGrabber, SIGNAL(newFrame(usImagePreScan2D<unsigned char>)), confidenceController,
                    SLOT(updateImage(usImagePreScan2D<unsigned char>)));
+  QObject::connect(widget, SIGNAL(confidenceServoing(bool)), confidenceController, SLOT(activateController(bool)));
   QObject::connect(confidenceController, SIGNAL(updateProbeOrientation(int)), &viperControl, SLOT(setZAngularVelocity(int)));
 
 
@@ -114,7 +112,6 @@ int main(int argc, char **argv)
 
   grabbingThread->exit();
 
-  delete preScan;
   delete widget;
   delete robotControlPanel;
   delete centralWidget;

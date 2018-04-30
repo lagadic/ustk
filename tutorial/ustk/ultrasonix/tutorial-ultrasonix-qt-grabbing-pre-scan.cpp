@@ -45,6 +45,9 @@ int main(int argc, char **argv)
   // sending acquisition parameters
   qtGrabber->initAcquisition(header);
 
+  qtGrabber->setMotorPosition(37);
+  qtGrabber->sendAcquisitionParameters();
+
   // Send the command to run the acquisition
   qtGrabber->runAcquisition();
 
