@@ -15,6 +15,7 @@ set(tutorial_cpp
   usResliceMatrixExample.cpp
   us3DViewerSlicing.cpp
   tutorial-image-display-qwidget.cpp
+  tutorial-image-display-qtquickoverlay.cpp
   tutorial-robot-control-gui.cpp)
 
 foreach(cpp ${tutorial_cpp})

@@ -89,12 +89,12 @@ if(USE_VTK)
   set(CMAKE_AUTOMOC ON)
 
   # Find Qt version corresponding to the Qt version used to compile VTK (4 or 5)
-  if(VTK_QT_VERSION VERSION_EQUAL "5") # Qt5 not working yet
-    find_package(Qt5 COMPONENTS Widgets REQUIRED QUIET)
+  if(VTK_QT_VERSION VERSION_EQUAL "5")
+    find_package(Qt5 COMPONENTS Widgets QuickWidgets REQUIRED QUIET)
     qt5_wrap_ui(UI_Srcs ${UIs})
 
     list(APPEND opt_incs "${Qt5Widgets_INCLUDE_DIRS}")
-    list(APPEND opt_libs Qt5::Widgets Qt5::Gui)
+    list(APPEND opt_libs Qt5::Widgets Qt5::Gui Qt5::QuickWidgets)
 
   elseif(VTK_QT_VERSION VERSION_EQUAL "4")
     find_package(Qt4 REQUIRED QtGui QtCore)

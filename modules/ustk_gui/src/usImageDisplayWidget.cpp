@@ -43,7 +43,7 @@
 * Constructor.
 */
 usImageDisplayWidget::usImageDisplayWidget()
-  : m_label(NULL), m_QImage(), m_pixmap(), m_displayPostScan(true), m_scanConverter(), m_postScan()
+  : m_label(NULL), m_QImage(), m_pixmap(), m_displayPostScan(true), m_scanConverter(), m_postScan(),m_image()
 {
   this->setMinimumSize(200, 200);
   m_label = new QLabel(this);
@@ -66,6 +66,7 @@ usImageDisplayWidget::~usImageDisplayWidget()
 */
 void usImageDisplayWidget::updateFrame(const vpImage<unsigned char> img)
 {
+  m_image = img;
   m_QImage = QImage(img.bitmap, img.getWidth(), img.getHeight(), img.getWidth(), QImage::Format_Indexed8);
   QImage I = m_QImage.convertToFormat(QImage::Format_RGB888);
   I = I.scaled(this->width(), this->height());
@@ -84,9 +85,10 @@ void usImageDisplayWidget::updateFrame(const usImagePreScan2D<unsigned char> img
     m_scanConverter.convert(img, m_postScan);
     m_QImage = QImage(m_postScan.bitmap, m_postScan.getWidth(), m_postScan.getHeight(), m_postScan.getWidth(),
                       QImage::Format_Indexed8);
-  } else
+  } else {
+    m_image = img;
     m_QImage = QImage(img.bitmap, img.getWidth(), img.getHeight(), img.getWidth(), QImage::Format_Indexed8);
-
+  }
   QImage I = m_QImage.convertToFormat(QImage::Format_RGB888);
   I = I.scaled(this->width(), this->height());
   m_pixmap = QPixmap::fromImage(I);
