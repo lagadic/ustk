@@ -31,40 +31,36 @@
  *****************************************************************************/
 
 /**
- * @file usImageDisplayWidget.h
- * @brief Qt widget class for 2D ultrasound image display.
+ * @file usImageDisplayWidgetRobotControl.h
+ * @brief Qt widget class for 2D ultrasound image display, containing robot control tools.
  */
 
-#ifndef __usImageDisplayWidget_h_
-#define __usImageDisplayWidget_h_
+#ifndef __usImageDisplayWidgetRobotControl_h_
+#define __usImageDisplayWidgetRobotControl_h_
 
 // VISP includes
 #include <visp3/ustk_core/usConfig.h>
 
 #if (defined(USTK_HAVE_VTK_QT) || defined(USTK_HAVE_QT5))
 
-#include <QImage>
-#include <QLabel>
-#include <QPixmap>
-#include <QResizeEvent>
-#include <visp3/ustk_core/usImagePostScan2D.h>
-#include <visp3/ustk_core/usImagePreScan2D.h>
-#include <visp3/ustk_core/usPreScanToPostScan2DConverter.h>
+#include <QPushButton>
+#include <visp3/ustk_gui/usImageDisplayWidget.h>
 
 /**
- * @class usImageDisplayWidget
- * @brief Qt widget class for 2D ultrasound image display.
+ * @class usImageDisplayWidgetRobotControl
+ * @brief Qt widget class for 2D ultrasound image display, containing robot control tools.
  * @ingroup module_ustk_gui
  */
 
-class VISP_EXPORT usImageDisplayWidget : public QWidget
+class VISP_EXPORT usImageDisplayWidgetRobotControl : public usImageDisplayWidget
 {
   Q_OBJECT
 public:
-  usImageDisplayWidget();
-  ~usImageDisplayWidget();
+  usImageDisplayWidgetRobotControl();
+  ~usImageDisplayWidgetRobotControl();
 
-  void enablePostScanDisplay(bool enable);
+  void enableControlArrows();
+  void disableControlArrows();
 
   void resizeEvent(QResizeEvent *event);
 
@@ -72,17 +68,18 @@ public slots:
   void updateFrame(const vpImage<unsigned char> img);
   void updateFrame(const usImagePreScan2D<unsigned char> img);
 
-protected:
-  QLabel *m_label;
+signals:
+  void moveLeft();
+  void moveRight();
+  void stopMove();
+  void confidenceServoing(bool);
 
-  // data
-  QImage m_QImage;
-  QPixmap m_pixmap;
-
-  // scan conversion
-  bool m_displayPostScan;
-  usPreScanToPostScan2DConverter m_scanConverter;
-  usImagePostScan2D<unsigned char> m_postScan;
+private:
+  // overlay for robot control
+  bool m_controlArrowsActivated;
+  QPushButton m_leftArrow;
+  QPushButton m_rightArrow;
+  QPushButton m_confidenceServoingButton;
 };
 #endif // QT && ELASTOGRAPHY
 #endif // __usImageDisplayWidget_h_

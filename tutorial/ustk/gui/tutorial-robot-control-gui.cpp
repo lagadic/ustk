@@ -6,7 +6,7 @@
 #if defined(VISP_HAVE_MODULE_USTK_GUI) && defined(VISP_HAVE_MODULE_USTK_GRABBER) && defined(VISP_HAVE_VIPER850)
 
 #include <visp3/ustk_grabber/usNetworkGrabberPreScan2D.h>
-#include <visp3/ustk_gui/usImageDisplayWidget.h>
+#include <visp3/ustk_gui/usImageDisplayWidgetRobotControl.h>
 #include <visp3/ustk_gui/usRobotManualControlWidget.h>
 #include <visp3/ustk_gui/usUltrasonixClientWidget.h>
 #include <visp3/ustk_gui/usViper850WrapperVelocityControl.h>
@@ -23,7 +23,7 @@ int main(int argc, char **argv)
   app.setApplicationName(QString("USTK display widget"));
 
   // Qt widgets
-  usImageDisplayWidget *widget = new usImageDisplayWidget();
+  usImageDisplayWidgetRobotControl *widget = new usImageDisplayWidgetRobotControl();
   widget->enableControlArrows();
 
   usRobotManualControlWidget *robotControlPanel = new usRobotManualControlWidget();

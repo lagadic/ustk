@@ -6,7 +6,7 @@
 #if defined(VISP_HAVE_MODULE_USTK_GUI) && defined(VISP_HAVE_MODULE_USTK_GRABBER)
 
 #include <visp3/ustk_grabber/usNetworkGrabberPreScan2D.h>
-#include <visp3/ustk_gui/usImageDisplayWidget.h>
+#include <visp3/ustk_gui/usImageDisplayWidgetRobotControl.h>
 
 #include <QApplication>
 #include <QMainWindow>
@@ -21,7 +21,7 @@ int main(int argc, char **argv)
   usImagePreScan2D<unsigned char> *preScan = new usImagePreScan2D<unsigned char>(50, 50);
 
   // Qt widgets
-  usImageDisplayWidget *widget = new usImageDisplayWidget();
+  usImageDisplayWidgetRobotControl *widget = new usImageDisplayWidgetRobotControl();
   widget->updateFrame(*preScan);
   QMainWindow window;
   window.setCentralWidget(widget);
