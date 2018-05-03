@@ -85,5 +85,5 @@ protected:
   usImagePostScan2D<unsigned char> m_postScan;
   vpImage<unsigned char> m_image;
 };
-#endif // QT && ELASTOGRAPHY
+#endif // QT
 #endif // __usImageDisplayWidget_h_

@@ -35,16 +35,15 @@
 * @brief Qt widget class for ultrasound image display.
 */
 
-#include <visp3/ustk_gui/usImageDisplayWidgetQmlOverlay.h>
 #include <QQuickItem>
+#include <visp3/ustk_gui/usImageDisplayWidgetQmlOverlay.h>
 
 #if (defined(USTK_HAVE_VTK_QT) || defined(USTK_HAVE_QT5))
 
 /**
 * Constructor.
 */
-usImageDisplayWidgetQmlOverlay::usImageDisplayWidgetQmlOverlay()
-  : usImageDisplayWidget(),m_qQuickOverlay()
+usImageDisplayWidgetQmlOverlay::usImageDisplayWidgetQmlOverlay() : usImageDisplayWidget(), m_qQuickOverlay()
 {
   this->setMinimumSize(200, 200);
   m_qQuickOverlay = new QQuickWidget(m_label);
@@ -52,7 +51,8 @@ usImageDisplayWidgetQmlOverlay::usImageDisplayWidgetQmlOverlay()
   m_qQuickOverlay->setClearColor(Qt::transparent);
   m_qQuickOverlay->setSource(QUrl::fromLocalFile("overlay.qml"));
 
-  connect(m_qQuickOverlay->rootObject(),SIGNAL(button1Clicked()), this, SLOT(updateRectPos()));
+  connect(m_qQuickOverlay->rootObject(), SIGNAL(startTracking()), this, SIGNAL(startTracking()));
+  connect(m_qQuickOverlay->rootObject(), SIGNAL(stopTracking()), this, SIGNAL(stopTracking()));
 }
 
 /**
@@ -74,16 +74,15 @@ void usImageDisplayWidgetQmlOverlay::resizeEvent(QResizeEvent *event)
   m_label->update();
 }
 
-
-vpImagePoint usImageDisplayWidgetQmlOverlay::toRealImageDimentions(const vpImagePoint displayPoint) {
+vpImagePoint usImageDisplayWidgetQmlOverlay::toRealImageDimentions(const vpImagePoint displayPoint)
+{
   vpImagePoint p;
   unsigned int imageHeight;
   unsigned int imageWidth;
-  if(m_displayPostScan) {
+  if (m_displayPostScan) {
     imageHeight = m_postScan.getHeight();
     imageWidth = m_postScan.getWidth();
-  }
-  else {
+  } else {
     imageHeight = m_image.getHeight();
     imageWidth = m_image.getWidth();
   }
@@ -93,15 +92,15 @@ vpImagePoint usImageDisplayWidgetQmlOverlay::toRealImageDimentions(const vpImage
   return p;
 }
 
-vpImagePoint usImageDisplayWidgetQmlOverlay::fromRealImageDimentions(vpImagePoint realImagePoint) {
+vpImagePoint usImageDisplayWidgetQmlOverlay::fromRealImageDimentions(vpImagePoint realImagePoint)
+{
   vpImagePoint p;
   unsigned int imageHeight;
   unsigned int imageWidth;
-  if(m_displayPostScan) {
+  if (m_displayPostScan) {
     imageHeight = m_postScan.getHeight();
     imageWidth = m_postScan.getWidth();
-  }
-  else {
+  } else {
     imageHeight = m_image.getHeight();
     imageWidth = m_image.getWidth();
   }
@@ -111,16 +110,17 @@ vpImagePoint usImageDisplayWidgetQmlOverlay::fromRealImageDimentions(vpImagePoin
   return p;
 }
 
-void usImageDisplayWidgetQmlOverlay::updateRectPosition(vpImagePoint centerCoordsInRealImage, double theta) {
-
-      QObject *rectItem = m_qQuickOverlay->rootObject()->findChild<QObject*>("selectionRectangle");
-      vpImagePoint newCoord = fromRealImageDimentions(centerCoordsInRealImage);
-      rectItem->setProperty("x", newCoord.get_i());
-      rectItem->setProperty("y", newCoord.get_j());
+void usImageDisplayWidgetQmlOverlay::updateRectPosition(vpImagePoint centerCoordsInRealImage, double theta)
+{
+  QObject *rectItem = m_qQuickOverlay->rootObject()->findChild<QObject *>("selectionRectangle");
+  vpImagePoint newCoord = fromRealImageDimentions(centerCoordsInRealImage);
+  rectItem->setProperty("x", newCoord.get_i());
+  rectItem->setProperty("y", newCoord.get_j());
 }
 
-void usImageDisplayWidgetQmlOverlay::updateRectPos() {
-  updateRectPosition(vpImagePoint(10,30));
+void usImageDisplayWidgetQmlOverlay::updateRectPosition(vpRectOriented newRectangle)
+{
+  updateRectPosition(newRectangle.getCenter(), newRectangle.getOrientation());
 }
 
 #endif

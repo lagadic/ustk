@@ -43,10 +43,11 @@
 
 #if (defined(USTK_HAVE_VTK_QT) || defined(USTK_HAVE_QT5))
 
-#include <QQuickWidget>
 #include <QPushButton>
-#include <visp3/ustk_gui/usImageDisplayWidget.h>
+#include <QQuickWidget>
 #include <visp3/core/vpImagePoint.h>
+#include <visp3/core/vpRectOriented.h>
+#include <visp3/ustk_gui/usImageDisplayWidget.h>
 
 /**
  * @class usImageDisplayWidgetQmlOverlay
@@ -63,10 +64,14 @@ public:
 
   void resizeEvent(QResizeEvent *event);
 
-  void updateRectPosition(vpImagePoint centerCoordsInRealImage, double theta=0);
+  void updateRectPosition(vpImagePoint centerCoordsInRealImage, double theta = 0);
 
 public slots:
-  void updateRectPos();
+  void updateRectPosition(vpRectOriented newRectangle);
+
+signals:
+  void startTracking();
+  void stopTracking();
 
 private:
   vpImagePoint toRealImageDimentions(const vpImagePoint displayPoint);

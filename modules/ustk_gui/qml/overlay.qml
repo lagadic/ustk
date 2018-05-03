@@ -37,11 +37,14 @@ Item {
     width: parent.width
     height: parent.height
     property var selection: undefined
+    property bool userSelection: true
 
-    signal button1Clicked()
+    signal startTracking()
+    signal stopTracking()
 
     MouseArea {
         anchors.fill: parent
+        enabled: userSelection
         onClicked: {
             if(!selection)
                 selection = selectionComponent.createObject(parent, {"x": parent.width / 2 - 50, "y": parent.height / 2 - 50, "width": 100, "height": 100})
@@ -55,22 +58,19 @@ Item {
         }
         spacing: 15
         Button {
-            text: "Button1"
+            text: "Start tracking"
             onClicked: {
-                console.log("Button1 CLICKED!")
-		button1Clicked()
+		if(selection) {
+		    startTracking()
+		    userSelection = false
+                }
             }
         }
         Button {
-            text: "Button2"
+            text: "Stop tracking"
             onClicked: {
-                console.log("Button2 CLICKED!")
-            }
-        }
-        Button {
-            text: "Button3"
-            onClicked: {
-                console.log("Button3 CLICKED!")
+                stopTracking()
+		userSelection = true
             }
         }
     }
@@ -91,6 +91,7 @@ Item {
 
             MouseArea {     // drag mouse area
                 anchors.fill: parent
+                enabled: userSelection
                 drag{
                     target: parent
                     minimumX: 0
@@ -112,9 +113,11 @@ Item {
                 color: "steelblue"
                 anchors.horizontalCenter: parent.left
                 anchors.verticalCenter: parent.verticalCenter
+                visible: userSelection
 
                 MouseArea {
                     anchors.fill: parent
+                    enabled: userSelection
                     drag{ target: parent; axis: Drag.XAxis }
                     onMouseXChanged: {
                         if(drag.active){
@@ -134,9 +137,11 @@ Item {
                 color: "steelblue"
                 anchors.horizontalCenter: parent.right
                 anchors.verticalCenter: parent.verticalCenter
+                visible: userSelection
 
                 MouseArea {
                     anchors.fill: parent
+                    enabled: userSelection
                     drag{ target: parent; axis: Drag.XAxis }
                     onMouseXChanged: {
                         if(drag.active){
@@ -157,9 +162,11 @@ Item {
                 color: "steelblue"
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.top
+                visible: userSelection
 
                 MouseArea {
                     anchors.fill: parent
+                    enabled: userSelection
                     drag{ target: parent; axis: Drag.YAxis }
                     onMouseYChanged: {
                         if(drag.active){
@@ -182,9 +189,11 @@ Item {
                 color: "steelblue"
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.bottom
+                visible: userSelection
 
                 MouseArea {
                     anchors.fill: parent
+                    enabled: userSelection
                     drag{ target: parent; axis: Drag.YAxis }
                     onMouseYChanged: {
                         if(drag.active){
