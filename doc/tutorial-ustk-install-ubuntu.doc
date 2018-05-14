@@ -7,33 +7,36 @@ In this tutorial you will learn how to install UsTK from source on Linux Ubuntu.
 
 \section install_ubuntu_required Get the sources
 
+First, create a workspace in $HOME/ustk-ws that will contain UsTK and ViSP sources, build and dataset:
+
+\code
+$ export USTK_WS=$HOME/ustk-ws
+$ mkdir -p $USTK_WS
+\endcode
+
 Prior to build and install UsTK, you have to download the sources. To achieve this, run the following command:
 
 \code
-$ git clone https://github.com/lagadic/ustk $HOME/USTK_DIR/ustk
+$ git clone https://github.com/lagadic/ustk $USTK_WS/ustk
 \endcode
 
 Git will clone the UsTK repository a subdirectory of your home directory.
 
 \section install_ubuntu_3rdparty Build UsTK using the installation script
 
-Once the sources are downloaded, you can run the installation script for ubuntu:
+The you can run the installation script for ubuntu:
 
-\code
-$ sh $HOME/USTK_DIR/ustk/script/install-ubuntu.sh
+\code	
+$ sh $USTK_WS/ustk/script/install-ubuntu.sh
 \endcode
 
-This will download all thirdparties and build the library (it will take some time). You will have to enter your password to download required packages, and confirm a few questions during the process.
+This will download all thirdparties and build the library (it will take some time). You will have to enter your password to install required packages, and confirm a few questions during the process.
 
 Once the build is sucessfull, you can install the library on your system (optionnal). Simply run:
 
 \code
-$ cd $HOME/USTK_DIR/ustk_build
+$ cd $USTK_WS/ustk_build
 $ sudo make install
 \endcode
-
-\section install_ubuntu_next Next tutorial
-
-You are now ready to see the next tutorial.
 
 */
