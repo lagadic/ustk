@@ -43,7 +43,7 @@
 * Constructor.
 */
 usImageDisplayWidget::usImageDisplayWidget()
-  : m_label(NULL), m_QImage(), m_pixmap(), m_displayPostScan(true), m_scanConverter(), m_postScan(),m_image()
+  : m_label(NULL), m_QImage(), m_pixmap(), m_useScanConversion(true), m_scanConverter(), m_postScan(), m_image()
 {
   this->setMinimumSize(200, 200);
   m_label = new QLabel(this);
@@ -66,6 +66,7 @@ usImageDisplayWidget::~usImageDisplayWidget()
 */
 void usImageDisplayWidget::updateFrame(const vpImage<unsigned char> img)
 {
+  m_useScanConversion = false;
   m_image = img;
   m_QImage = QImage(img.bitmap, img.getWidth(), img.getHeight(), img.getWidth(), QImage::Format_Indexed8);
   QImage I = m_QImage.convertToFormat(QImage::Format_RGB888);
@@ -81,7 +82,7 @@ void usImageDisplayWidget::updateFrame(const vpImage<unsigned char> img)
 */
 void usImageDisplayWidget::updateFrame(const usImagePreScan2D<unsigned char> img)
 {
-  if (m_displayPostScan) {
+  if (m_useScanConversion) {
     m_scanConverter.convert(img, m_postScan);
     m_QImage = QImage(m_postScan.bitmap, m_postScan.getWidth(), m_postScan.getHeight(), m_postScan.getWidth(),
                       QImage::Format_Indexed8);
@@ -106,6 +107,6 @@ void usImageDisplayWidget::resizeEvent(QResizeEvent *event)
   m_label->update();
 }
 
-void usImageDisplayWidget::enablePostScanDisplay(bool enable) { m_displayPostScan = enable; }
+void usImageDisplayWidget::useScanConversion(bool enable) { m_useScanConversion = enable; }
 
 #endif

@@ -98,7 +98,7 @@ void usImageDisplayWidgetRobotControl::updateFrame(const vpImage<unsigned char> 
 */
 void usImageDisplayWidgetRobotControl::updateFrame(const usImagePreScan2D<unsigned char> img)
 {
-  if (m_displayPostScan) {
+  if (m_useScanConversion) {
     m_scanConverter.convert(img, m_postScan);
     m_QImage = QImage(m_postScan.bitmap, m_postScan.getWidth(), m_postScan.getHeight(), m_postScan.getWidth(),
                       QImage::Format_Indexed8);

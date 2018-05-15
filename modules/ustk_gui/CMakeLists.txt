@@ -111,7 +111,7 @@ if(USE_VTK)
   endif()
 
   # Create ustk_gui module, only if vtk found
-  vp_add_module(ustk_gui visp_ustk_core OPTIONAL visp_ustk_elastography visp_ustk_grabber visp_robot visp_ustk_confidence_map)
+  vp_add_module(ustk_gui visp_ustk_core OPTIONAL visp_ustk_elastography visp_ustk_grabber visp_robot visp_ustk_confidence_map visp_ustk_template_tracking)
   vp_glob_module_sources()
   vp_module_include_directories(${opt_incs})
   vp_create_module(${opt_libs})

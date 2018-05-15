@@ -45,13 +45,14 @@
 */
 usImageDisplayWidgetQmlOverlay::usImageDisplayWidgetQmlOverlay() : usImageDisplayWidget(), m_qQuickOverlay()
 {
+  qRegisterMetaType<vpRectOriented>("vpRectOriented");
   this->setMinimumSize(200, 200);
   m_qQuickOverlay = new QQuickWidget(m_label);
   m_qQuickOverlay->setAttribute(Qt::WA_AlwaysStackOnTop);
   m_qQuickOverlay->setClearColor(Qt::transparent);
   m_qQuickOverlay->setSource(QUrl::fromLocalFile("overlay.qml"));
 
-  connect(m_qQuickOverlay->rootObject(), SIGNAL(startTracking()), this, SIGNAL(startTracking()));
+  connect(m_qQuickOverlay->rootObject(), SIGNAL(startTracking()), this, SLOT(startTrackingSlot()));
   connect(m_qQuickOverlay->rootObject(), SIGNAL(stopTracking()), this, SIGNAL(stopTracking()));
 }
 
@@ -74,12 +75,12 @@ void usImageDisplayWidgetQmlOverlay::resizeEvent(QResizeEvent *event)
   m_label->update();
 }
 
-vpImagePoint usImageDisplayWidgetQmlOverlay::toRealImageDimentions(const vpImagePoint displayPoint)
+vpImagePoint usImageDisplayWidgetQmlOverlay::displayImageToRealImageDimentions(const vpImagePoint displayPoint)
 {
   vpImagePoint p;
   unsigned int imageHeight;
   unsigned int imageWidth;
-  if (m_displayPostScan) {
+  if (m_useScanConversion) {
     imageHeight = m_postScan.getHeight();
     imageWidth = m_postScan.getWidth();
   } else {
@@ -92,12 +93,12 @@ vpImagePoint usImageDisplayWidgetQmlOverlay::toRealImageDimentions(const vpImage
   return p;
 }
 
-vpImagePoint usImageDisplayWidgetQmlOverlay::fromRealImageDimentions(vpImagePoint realImagePoint)
+vpImagePoint usImageDisplayWidgetQmlOverlay::realImageToDisplayImageDimentions(const vpImagePoint realImagePoint)
 {
   vpImagePoint p;
   unsigned int imageHeight;
   unsigned int imageWidth;
-  if (m_displayPostScan) {
+  if (m_useScanConversion) {
     imageHeight = m_postScan.getHeight();
     imageWidth = m_postScan.getWidth();
   } else {
@@ -110,17 +111,92 @@ vpImagePoint usImageDisplayWidgetQmlOverlay::fromRealImageDimentions(vpImagePoin
   return p;
 }
 
-void usImageDisplayWidgetQmlOverlay::updateRectPosition(vpImagePoint centerCoordsInRealImage, double theta)
+vpRectOriented usImageDisplayWidgetQmlOverlay::displayImageToRealImageDimentions(const vpRectOriented displayRectangle)
 {
-  QObject *rectItem = m_qQuickOverlay->rootObject()->findChild<QObject *>("selectionRectangle");
-  vpImagePoint newCoord = fromRealImageDimentions(centerCoordsInRealImage);
-  rectItem->setProperty("x", newCoord.get_i());
-  rectItem->setProperty("y", newCoord.get_j());
+  // center point
+  vpImagePoint center;
+  center = displayImageToRealImageDimentions(displayRectangle.getCenter());
+
+  // rectangle height & width scaling using angular parameter
+  unsigned int imageHeight;
+  unsigned int imageWidth;
+  if (m_useScanConversion) {
+    imageHeight = m_postScan.getHeight();
+    imageWidth = m_postScan.getWidth();
+  } else {
+    imageHeight = m_image.getHeight();
+    imageWidth = m_image.getWidth();
+  }
+  int newHeight =
+      (displayRectangle.getHeight() * imageHeight / (double)height()) * std::cos(displayRectangle.getOrientation()) +
+      (displayRectangle.getWidth() * imageWidth / (double)width()) * std::sin(displayRectangle.getOrientation());
+  int newWidth =
+      (displayRectangle.getHeight() * imageHeight / (double)height()) * std::sin(displayRectangle.getOrientation()) +
+      (displayRectangle.getWidth() * imageWidth / (double)width()) * std::cos(displayRectangle.getOrientation());
+
+  return vpRectOriented(center, newWidth, newHeight, displayRectangle.getOrientation());
 }
 
+vpRectOriented usImageDisplayWidgetQmlOverlay::realImageToDisplayImageDimentions(const vpRectOriented realRectangle)
+{
+  // center point
+  vpImagePoint center;
+  center = realImageToDisplayImageDimentions(realRectangle.getCenter());
+
+  // rectangle height & width scaling using angular parameter
+  unsigned int imageHeight;
+  unsigned int imageWidth;
+  if (m_useScanConversion) {
+    imageHeight = m_postScan.getHeight();
+    imageWidth = m_postScan.getWidth();
+  } else {
+    imageHeight = m_image.getHeight();
+    imageWidth = m_image.getWidth();
+  }
+  int newHeight =
+      (realRectangle.getHeight() * height() / (double)imageHeight) * std::cos(realRectangle.getOrientation()) +
+      (realRectangle.getWidth() * width() / (double)imageWidth) * std::sin(realRectangle.getOrientation());
+
+  int newWidth =
+      (realRectangle.getHeight() * height() / (double)imageHeight) * std::sin(realRectangle.getOrientation()) +
+      (realRectangle.getWidth() * width() / (double)imageWidth) * std::cos(realRectangle.getOrientation());
+
+  return vpRectOriented(center, newWidth, newHeight, realRectangle.getOrientation());
+}
+
+/**
+* Update rectangle position slot.
+* \param newRectangle New rectangle, expressed in real image dimensions.
+*/
 void usImageDisplayWidgetQmlOverlay::updateRectPosition(vpRectOriented newRectangle)
 {
-  updateRectPosition(newRectangle.getCenter(), newRectangle.getOrientation());
+  // transform rectangle from real image size to display dimentions
+  vpRectOriented displayRectangle;
+  displayRectangle = realImageToDisplayImageDimentions(newRectangle);
+
+  QObject *rectItem = m_qQuickOverlay->rootObject()->findChild<QObject *>("selectionRectangle");
+  rectItem->setProperty("x", displayRectangle.getCenter().get_j());
+  rectItem->setProperty("y", displayRectangle.getCenter().get_i());
+  rectItem->setProperty("rotation", vpMath::deg(displayRectangle.getOrientation()));
+  rectItem->setProperty("height", displayRectangle.getHeight());
+  rectItem->setProperty("width", displayRectangle.getWidth());
+}
+
+/**
+* Start tacking slot. Gets the actual position of the displayed rectangle, and transmits it unsing startTracking signal.
+*/
+void usImageDisplayWidgetQmlOverlay::startTrackingSlot()
+{
+  QObject *rectangleObject = m_qQuickOverlay->rootObject()->findChild<QObject *>("selectionRectangle");
+  int centerX = rectangleObject->property("x").toInt() + (rectangleObject->property("width").toInt() / 2);
+  int centerY = rectangleObject->property("y").toInt() + (rectangleObject->property("height").toInt() / 2);
+  int height = rectangleObject->property("height").toInt();
+  int width = rectangleObject->property("width").toInt();
+  int rotation = rectangleObject->property("rotation").toInt();
+
+  vpRectOriented displayRect(vpImagePoint(centerY, centerX), width, height, rotation);
+
+  emit(startTracking(displayImageToRealImageDimentions(displayRect)));
 }
 
 #endif
