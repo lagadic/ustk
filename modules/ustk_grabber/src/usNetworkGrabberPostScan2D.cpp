@@ -221,6 +221,7 @@ void usNetworkGrabberPostScan2D::dataArrived()
       }
       m_firstFrameAvailable = true;
       emit(newFrameAvailable());
+      emit(newFrame(*m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)));
     }
     if (m_verbose)
       std::cout << "Bytes left to read for whole frame = " << m_bytesLeftToRead << std::endl;
@@ -254,6 +255,7 @@ void usNetworkGrabberPostScan2D::dataArrived()
 
       m_firstFrameAvailable = true;
       emit(newFrameAvailable());
+      emit(newFrame(*m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)));
     }
   }
 }

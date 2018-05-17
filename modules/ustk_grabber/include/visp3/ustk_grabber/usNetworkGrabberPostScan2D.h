@@ -85,6 +85,7 @@ public:
 
 signals:
   void newFrameAvailable();
+  void newFrame(usImagePostScan2D<unsigned char> image);
 
 private:
   // Output images
