@@ -77,6 +77,22 @@ void usImageDisplayWidget::updateFrame(const vpImage<unsigned char> img)
 }
 
 /**
+* Slot called to update the ultrasound image to display in case of post-scan image sent.
+* @param img New ultrasound image to display.
+*/
+void usImageDisplayWidget::updateFrame(const usImagePostScan2D<unsigned char> img)
+{
+  m_useScanConversion = false;
+  m_image = img;
+  m_QImage = QImage(img.bitmap, img.getWidth(), img.getHeight(), img.getWidth(), QImage::Format_Indexed8);
+  QImage I = m_QImage.convertToFormat(QImage::Format_RGB888);
+  I = I.scaled(this->width(), this->height());
+  m_pixmap = QPixmap::fromImage(I);
+  m_label->setPixmap(m_pixmap);
+  m_label->update();
+}
+
+/**
 * Slot called to update the ultrasound image to display for pre-scan.
 * @param img New ultrasound image to display.
 */

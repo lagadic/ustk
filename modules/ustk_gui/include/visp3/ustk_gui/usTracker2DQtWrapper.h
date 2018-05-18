@@ -45,6 +45,8 @@
 
 #include <QObject>
 #include <visp3/ustk_template_tracking/usDenseTracker2D.h>
+#include <visp3/ustk_core/usImagePostScan2D.h>
+#include <visp3/ustk_core/usImagePreScan2D.h>
 
 /**
  * @class usTracker2DQtWrapper
@@ -62,6 +64,8 @@ public:
 public slots:
   void initTracker(vpRectOriented rect);
   void updateImage(vpImage<unsigned char> image);
+  void updateImage(usImagePreScan2D<unsigned char> image);
+  void updateImage(usImagePostScan2D<unsigned char> image);
   void stopTracking();
 
 signals:

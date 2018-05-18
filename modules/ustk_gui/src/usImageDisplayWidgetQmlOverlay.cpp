@@ -45,7 +45,6 @@
 */
 usImageDisplayWidgetQmlOverlay::usImageDisplayWidgetQmlOverlay() : usImageDisplayWidget(), m_qQuickOverlay()
 {
-  qRegisterMetaType<vpRectOriented>("vpRectOriented");
   this->setMinimumSize(200, 200);
   m_qQuickOverlay = new QQuickWidget(m_label);
   m_qQuickOverlay->setAttribute(Qt::WA_AlwaysStackOnTop);
@@ -54,6 +53,13 @@ usImageDisplayWidgetQmlOverlay::usImageDisplayWidgetQmlOverlay() : usImageDispla
 
   connect(m_qQuickOverlay->rootObject(), SIGNAL(startTracking()), this, SLOT(startTrackingSlot()));
   connect(m_qQuickOverlay->rootObject(), SIGNAL(stopTracking()), this, SIGNAL(stopTracking()));
+
+  QQuickWidget::Status status(QQuickWidget::Null);
+
+  while(status!=QQuickWidget::Ready) {
+    status = m_qQuickOverlay->status();
+    vpTime::wait(50);
+  }
 }
 
 /**
@@ -63,16 +69,12 @@ usImageDisplayWidgetQmlOverlay::~usImageDisplayWidgetQmlOverlay() {}
 
 void usImageDisplayWidgetQmlOverlay::resizeEvent(QResizeEvent *event)
 {
-  m_label->resize(event->size());
-
-  m_qQuickOverlay->rootObject()->setProperty("width", event->size().width());
-  m_qQuickOverlay->rootObject()->setProperty("height", event->size().height());
-
-  QImage I = m_QImage.convertToFormat(QImage::Format_RGB888);
-  I = I.scaled(this->width(), this->height());
-  m_pixmap = QPixmap::fromImage(I);
-  m_label->setPixmap(m_pixmap);
-  m_label->update();
+  event->accept();
+  usImageDisplayWidget::resizeEvent(event);
+  if( m_qQuickOverlay->rootObject()) {
+    m_qQuickOverlay->rootObject()->setProperty("width", event->size().width());
+    m_qQuickOverlay->rootObject()->setProperty("height", event->size().height());
+  }
 }
 
 vpImagePoint usImageDisplayWidgetQmlOverlay::displayImageToRealImageDimentions(const vpImagePoint displayPoint)
@@ -188,8 +190,8 @@ void usImageDisplayWidgetQmlOverlay::updateRectPosition(vpRectOriented newRectan
 void usImageDisplayWidgetQmlOverlay::startTrackingSlot()
 {
   QObject *rectangleObject = m_qQuickOverlay->rootObject()->findChild<QObject *>("selectionRectangle");
-  int centerX = rectangleObject->property("x").toInt() + (rectangleObject->property("width").toInt() / 2);
-  int centerY = rectangleObject->property("y").toInt() + (rectangleObject->property("height").toInt() / 2);
+  int centerX = rectangleObject->property("x").toInt();
+  int centerY = rectangleObject->property("y").toInt();
   int height = rectangleObject->property("height").toInt();
   int width = rectangleObject->property("width").toInt();
   int rotation = rectangleObject->property("rotation").toInt();

@@ -82,6 +82,36 @@ void usTracker2DQtWrapper::updateImage(vpImage<unsigned char> image)
 }
 
 /**
+* Slot to update the image for the tracker in case of pre-scan image sent.
+* @param image New image input for tracking.
+*/
+void usTracker2DQtWrapper::updateImage(usImagePreScan2D<unsigned char> image)
+{
+  if (m_isInitialized) {
+    m_tracker.update(image);
+    emit(newTrackedRectangle(m_tracker.getTarget()));
+  } else {
+    m_firstImage = image;
+    m_firstFrameArrived = true;
+  }
+}
+
+/**
+* Slot to update the image for the tracker in case of post-scan image sent.
+* @param image New image input for tracking.
+*/
+void usTracker2DQtWrapper::updateImage(usImagePostScan2D<unsigned char> image)
+{
+  if (m_isInitialized) {
+    m_tracker.update(image);
+    emit(newTrackedRectangle(m_tracker.getTarget()));
+  } else {
+    m_firstImage = image;
+    m_firstFrameArrived = true;
+  }
+}
+
+/**
 * Slot to stop the tracking process.
 */
 void usTracker2DQtWrapper::stopTracking()

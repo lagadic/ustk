@@ -71,6 +71,7 @@ public:
 public slots:
   void updateFrame(const vpImage<unsigned char> img);
   void updateFrame(const usImagePreScan2D<unsigned char> img);
+  void updateFrame(const usImagePostScan2D<unsigned char> img);
 
 protected:
   QLabel *m_label;
