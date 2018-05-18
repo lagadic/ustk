@@ -93,6 +93,8 @@ if(USE_VTK)
     find_package(Qt5 COMPONENTS Widgets QuickWidgets REQUIRED QUIET)
     qt5_wrap_ui(UI_Srcs ${UIs})
 
+    qt5_add_resources(UI_RESOURCES resources/resources.qrc)
+
     list(APPEND opt_incs "${Qt5Widgets_INCLUDE_DIRS}")
     list(APPEND opt_libs Qt5::Widgets Qt5::Gui Qt5::QuickWidgets)
 
@@ -110,9 +112,12 @@ if(USE_VTK)
     list(APPEND opt_libs ${QT_QTCORE_LIBRARIES})
   endif()
 
+  # Manage resources file (for qml components)
+  set(AUTORCC_ON)
+
   # Create ustk_gui module, only if vtk found
   vp_add_module(ustk_gui visp_ustk_core OPTIONAL visp_ustk_elastography visp_ustk_grabber visp_robot visp_ustk_confidence_map visp_ustk_template_tracking)
-  vp_glob_module_sources()
+  vp_glob_module_sources(${UI_RESOURCES})
   vp_module_include_directories(${opt_incs})
   vp_create_module(${opt_libs})
 

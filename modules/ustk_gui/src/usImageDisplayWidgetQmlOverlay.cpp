@@ -33,6 +33,7 @@
 /**
 * @file usImageDisplayWidgetQmlOverlay.cpp
 * @brief Qt widget class for ultrasound image display.
+* @warning This widget is based on QtQuick, and has been tested on qt 5.8 or newer versions.
 */
 
 #include <QQuickItem>
@@ -49,7 +50,7 @@ usImageDisplayWidgetQmlOverlay::usImageDisplayWidgetQmlOverlay() : usImageDispla
   m_qQuickOverlay = new QQuickWidget(m_label);
   m_qQuickOverlay->setAttribute(Qt::WA_AlwaysStackOnTop);
   m_qQuickOverlay->setClearColor(Qt::transparent);
-  m_qQuickOverlay->setSource(QUrl::fromLocalFile("overlay.qml"));
+  m_qQuickOverlay->setSource(QUrl("qrc:/qml/overlay.qml"));
 
   connect(m_qQuickOverlay->rootObject(), SIGNAL(startTracking()), this, SLOT(startTrackingSlot()));
   connect(m_qQuickOverlay->rootObject(), SIGNAL(stopTracking()), this, SIGNAL(stopTracking()));

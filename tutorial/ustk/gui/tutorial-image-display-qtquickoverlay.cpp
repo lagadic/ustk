@@ -6,9 +6,9 @@
 #if defined(VISP_HAVE_MODULE_USTK_GUI) && defined(VISP_HAVE_MODULE_USTK_TEMPLATE_TRACKING)
 
 #include <visp3/ustk_core/usImageIo.h>
+#include <visp3/ustk_grabber/usNetworkGrabberPreScan2D.h>
 #include <visp3/ustk_gui/usImageDisplayWidgetQmlOverlay.h>
 #include <visp3/ustk_gui/usTracker2DQtWrapper.h>
-#include <visp3/ustk_grabber/usNetworkGrabberPreScan2D.h>
 #include <visp3/ustk_gui/usUltrasonixClientWidget.h>
 
 #include <QApplication>
@@ -26,14 +26,13 @@ int main(int argc, char **argv)
   QWidget *centralWidget = new QWidget();
   QHBoxLayout *mainLayout = new QHBoxLayout();
   mainLayout->addWidget(ultrasonixControlWidet);
-  mainLayout->addWidget(widget,3);
-  //mainLayout->addWidget(robotControlPanel);
+  mainLayout->addWidget(widget, 3);
+  // mainLayout->addWidget(robotControlPanel);
   centralWidget->setLayout(mainLayout);
 
   // grabber
   QThread *grabbingThread = new QThread();
   usNetworkGrabberPreScan2D *qtGrabber = new usNetworkGrabberPreScan2D();
-  qtGrabber->activateRecording(std::string("/udd/mpouliqu/Documents/acqPreScan"));
   qtGrabber->moveToThread(grabbingThread);
   grabbingThread->start();
 
@@ -62,9 +61,10 @@ int main(int argc, char **argv)
                    SLOT(updateImage(usImagePreScan2D<unsigned char>)));
 
   // updates the GUI based on the tracking output
-  QObject::connect( tracker, SIGNAL(newTrackedRectangle(vpRectOriented)),widget, SLOT(updateRectPosition(vpRectOriented)));
+  QObject::connect(tracker, SIGNAL(newTrackedRectangle(vpRectOriented)), widget,
+                   SLOT(updateRectPosition(vpRectOriented)));
 
-  widget->updateFrame(vpImage<unsigned char>(200,200));
+  widget->updateFrame(vpImage<unsigned char>(200, 200));
 
   QMainWindow window;
   window.setCentralWidget(centralWidget);

@@ -34,8 +34,8 @@ import QtQuick 2.5
 import QtQuick.Controls 1.4
 
 Item {
-    width: parent.width
-    height: parent.height
+    width: 200
+    height: 200
     property var selection: undefined
     property bool userSelection: true
 
