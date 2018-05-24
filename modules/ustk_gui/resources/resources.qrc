@@ -1,5 +1,6 @@
 <!DOCTYPE RCC><RCC version="1.0">
     <qresource>
-        <file>qml/overlay.qml</file>
+        <file>qml/overlay-tracking-rect.qml</file>
+        <file>qml/overlay-servoing-rect-centering.qml</file>
     </qresource>
 </RCC>

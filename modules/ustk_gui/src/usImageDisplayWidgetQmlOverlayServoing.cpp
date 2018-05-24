@@ -31,29 +31,31 @@
  *****************************************************************************/
 
 /**
-* @file usImageDisplayWidgetQmlOverlay.cpp
+* @file usImageDisplayWidgetQmlOverlayServoing.cpp
 * @brief Qt widget class for ultrasound image display.
 * @warning This widget is based on QtQuick, and has been tested on qt 5.8 or newer versions.
 */
 
 #include <QQuickItem>
-#include <visp3/ustk_gui/usImageDisplayWidgetQmlOverlay.h>
+#include <visp3/ustk_gui/usImageDisplayWidgetQmlOverlayServoing.h>
 
 #if (defined(USTK_HAVE_VTK_QT) || defined(USTK_HAVE_QT5))
 
 /**
 * Constructor.
 */
-usImageDisplayWidgetQmlOverlay::usImageDisplayWidgetQmlOverlay() : usImageDisplayWidget(), m_qQuickOverlay()
+usImageDisplayWidgetQmlOverlayServoing::usImageDisplayWidgetQmlOverlayServoing() : usImageDisplayWidget(), m_qQuickOverlay()
 {
   this->setMinimumSize(200, 200);
   m_qQuickOverlay = new QQuickWidget(m_label);
   m_qQuickOverlay->setAttribute(Qt::WA_AlwaysStackOnTop);
   m_qQuickOverlay->setClearColor(Qt::transparent);
-  m_qQuickOverlay->setSource(QUrl("qrc:/qml/overlay-tracking-rect.qml"));
+  m_qQuickOverlay->setSource(QUrl("qrc:/qml/overlay-servoing-rect-centering.qml"));
 
   connect(m_qQuickOverlay->rootObject(), SIGNAL(startTracking()), this, SLOT(startTrackingSlot()));
-  connect(m_qQuickOverlay->rootObject(), SIGNAL(stopTracking()), this, SIGNAL(stopTracking()));
+  connect(m_qQuickOverlay->rootObject(), SIGNAL(stopTracking()), this, SIGNAL(stopTrackingRect()));
+  connect(m_qQuickOverlay->rootObject(), SIGNAL(startServoing()), this, SIGNAL(startServoingRect()));
+  connect(m_qQuickOverlay->rootObject(), SIGNAL(stopServoing()), this, SIGNAL(stopServoingRect()));
 
   QQuickWidget::Status status(QQuickWidget::Null);
 
@@ -66,19 +68,27 @@ usImageDisplayWidgetQmlOverlay::usImageDisplayWidgetQmlOverlay() : usImageDispla
 /**
 * Destructor.
 */
-usImageDisplayWidgetQmlOverlay::~usImageDisplayWidgetQmlOverlay() {}
+usImageDisplayWidgetQmlOverlayServoing::~usImageDisplayWidgetQmlOverlayServoing() {}
 
-void usImageDisplayWidgetQmlOverlay::resizeEvent(QResizeEvent *event)
+void usImageDisplayWidgetQmlOverlayServoing::resizeEvent(QResizeEvent *event)
 {
   event->accept();
   usImageDisplayWidget::resizeEvent(event);
   if( m_qQuickOverlay->rootObject()) {
     m_qQuickOverlay->rootObject()->setProperty("width", event->size().width());
     m_qQuickOverlay->rootObject()->setProperty("height", event->size().height());
+
+    QObject *rectItem = m_qQuickOverlay->rootObject()->findChild<QObject *>("selectionRectangle");
+    if(rectItem) {
+      int x = rectItem->property("x").toInt() * event->size().height() / (double)size().height();
+      int y = rectItem->property("y").toInt() * event->size().width() / (double)size().width();
+      rectItem->setProperty("x", x);
+      rectItem->setProperty("y", y);
+    }
   }
 }
 
-vpImagePoint usImageDisplayWidgetQmlOverlay::displayImageToRealImageDimentions(const vpImagePoint displayPoint)
+vpImagePoint usImageDisplayWidgetQmlOverlayServoing::displayImageToRealImageDimentions(const vpImagePoint displayPoint)
 {
   vpImagePoint p;
   unsigned int imageHeight;
@@ -96,7 +106,7 @@ vpImagePoint usImageDisplayWidgetQmlOverlay::displayImageToRealImageDimentions(c
   return p;
 }
 
-vpImagePoint usImageDisplayWidgetQmlOverlay::realImageToDisplayImageDimentions(const vpImagePoint realImagePoint)
+vpImagePoint usImageDisplayWidgetQmlOverlayServoing::realImageToDisplayImageDimentions(const vpImagePoint realImagePoint)
 {
   vpImagePoint p;
   unsigned int imageHeight;
@@ -114,7 +124,7 @@ vpImagePoint usImageDisplayWidgetQmlOverlay::realImageToDisplayImageDimentions(c
   return p;
 }
 
-vpRectOriented usImageDisplayWidgetQmlOverlay::displayImageToRealImageDimentions(const vpRectOriented displayRectangle)
+vpRectOriented usImageDisplayWidgetQmlOverlayServoing::displayImageToRealImageDimentions(const vpRectOriented displayRectangle)
 {
   // center point
   vpImagePoint center;
@@ -140,7 +150,7 @@ vpRectOriented usImageDisplayWidgetQmlOverlay::displayImageToRealImageDimentions
   return vpRectOriented(center, newWidth, newHeight, displayRectangle.getOrientation());
 }
 
-vpRectOriented usImageDisplayWidgetQmlOverlay::realImageToDisplayImageDimentions(const vpRectOriented realRectangle)
+vpRectOriented usImageDisplayWidgetQmlOverlayServoing::realImageToDisplayImageDimentions(const vpRectOriented realRectangle)
 {
   // center point
   vpImagePoint center;
@@ -171,7 +181,7 @@ vpRectOriented usImageDisplayWidgetQmlOverlay::realImageToDisplayImageDimentions
 * Update rectangle position slot.
 * \param newRectangle New rectangle, expressed in real image dimensions.
 */
-void usImageDisplayWidgetQmlOverlay::updateRectPosition(vpRectOriented newRectangle)
+void usImageDisplayWidgetQmlOverlayServoing::updateRectPosition(vpRectOriented newRectangle)
 {
   // transform rectangle from real image size to display dimentions
   vpRectOriented displayRectangle;
@@ -188,7 +198,7 @@ void usImageDisplayWidgetQmlOverlay::updateRectPosition(vpRectOriented newRectan
 /**
 * Start tacking slot. Gets the actual position of the displayed rectangle, and transmits it unsing startTracking signal.
 */
-void usImageDisplayWidgetQmlOverlay::startTrackingSlot()
+void usImageDisplayWidgetQmlOverlayServoing::startTrackingSlot()
 {
   QObject *rectangleObject = m_qQuickOverlay->rootObject()->findChild<QObject *>("selectionRectangle");
   int centerX = rectangleObject->property("x").toInt();
@@ -199,7 +209,7 @@ void usImageDisplayWidgetQmlOverlay::startTrackingSlot()
 
   vpRectOriented displayRect(vpImagePoint(centerY, centerX), width, height, rotation);
 
-  emit(startTracking(displayImageToRealImageDimentions(displayRect)));
+  emit(startTrackingRect(displayImageToRealImageDimentions(displayRect)));
 }
 
 #endif

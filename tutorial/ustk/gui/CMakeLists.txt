@@ -16,6 +16,7 @@ set(tutorial_cpp
   us3DViewerSlicing.cpp
   tutorial-image-display-qwidget.cpp
   tutorial-image-display-qtquickoverlay.cpp
+  tutorial-image-display-qtquickoverlayServoing.cpp
   tutorial-robot-control-gui.cpp)
 
 foreach(cpp ${tutorial_cpp})
