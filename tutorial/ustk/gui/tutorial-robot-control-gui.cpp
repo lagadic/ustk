@@ -6,10 +6,11 @@
 #if defined(VISP_HAVE_MODULE_USTK_GUI) && defined(VISP_HAVE_MODULE_USTK_GRABBER) && defined(VISP_HAVE_VIPER850)
 
 #include <visp3/ustk_grabber/usNetworkGrabberPreScan2D.h>
-#include <visp3/ustk_gui/usImageDisplayWidget.h>
+#include <visp3/ustk_gui/usImageDisplayWidgetRobotControl.h>
 #include <visp3/ustk_gui/usRobotManualControlWidget.h>
 #include <visp3/ustk_gui/usUltrasonixClientWidget.h>
 #include <visp3/ustk_gui/usViper850WrapperVelocityControl.h>
+#include <visp3/ustk_gui/usConfidenceMapController.h>
 
 #include <QApplication>
 #include <QHBoxLayout>
@@ -21,12 +22,9 @@ int main(int argc, char **argv)
   QApplication app(argc, argv);
   app.setApplicationName(QString("USTK display widget"));
 
-  // image
-  usImagePreScan2D<unsigned char> *preScan = new usImagePreScan2D<unsigned char>(50, 50);
-
   // Qt widgets
-  usImageDisplayWidget *widget = new usImageDisplayWidget();
-  widget->updateFrame(*preScan);
+  usImageDisplayWidgetRobotControl *widget = new usImageDisplayWidgetRobotControl();
+  widget->enableControlArrows();
 
   usRobotManualControlWidget *robotControlPanel = new usRobotManualControlWidget();
   usUltrasonixClientWidget *ultrasonixControlWidet = new usUltrasonixClientWidget();
@@ -45,6 +43,12 @@ int main(int argc, char **argv)
   threadRobotControl->start();
   viperControl.run();
 
+  //confidence-map-based controller
+  usConfidenceMapController * confidenceController = new usConfidenceMapController();
+  QThread *confidenceThread = new QThread();
+  confidenceController->moveToThread(confidenceThread);
+  confidenceThread->start();
+
   // grabber
   QThread *grabbingThread = new QThread();
   usNetworkGrabberPreScan2D *qtGrabber = new usNetworkGrabberPreScan2D();
@@ -53,14 +57,21 @@ int main(int argc, char **argv)
 
   QMainWindow window;
   window.setCentralWidget(centralWidget);
-  window.show();
+  window.showMaximized();
 
+  // sliders robot controls
   QObject::connect(robotControlPanel, SIGNAL(changeVX(int)), &viperControl, SLOT(setXVelocity(int)));
   QObject::connect(robotControlPanel, SIGNAL(changeVY(int)), &viperControl, SLOT(setYVelocity(int)));
   QObject::connect(robotControlPanel, SIGNAL(changeVZ(int)), &viperControl, SLOT(setZVelocity(int)));
   QObject::connect(robotControlPanel, SIGNAL(changeWX(int)), &viperControl, SLOT(setXAngularVelocity(int)));
   QObject::connect(robotControlPanel, SIGNAL(changeWY(int)), &viperControl, SLOT(setYAngularVelocity(int)));
   QObject::connect(robotControlPanel, SIGNAL(changeWZ(int)), &viperControl, SLOT(setZAngularVelocity(int)));
+
+  // buttons robot controls
+  QObject::connect(widget, SIGNAL(moveLeft()), &viperControl, SLOT(moveLeft()));
+  QObject::connect(widget, SIGNAL(moveRight()), &viperControl, SLOT(moveRight()));
+  QObject::connect(widget, SIGNAL(stopMove()), &viperControl, SLOT(stopMove()));
+
 
   QObject::connect(robotControlPanel, SIGNAL(initClicked()), &viperControl, SLOT(init()));
   QObject::connect(robotControlPanel, SIGNAL(startClicked()), &viperControl, SLOT(run()));
@@ -81,19 +92,26 @@ int main(int argc, char **argv)
                    SLOT(connectToServer(QHostAddress)));
   QObject::connect(ultrasonixControlWidet, SIGNAL(initAcquisition(usNetworkGrabber::usInitHeaderSent)), qtGrabber,
                    SLOT(initAcquisitionSlot(usNetworkGrabber::usInitHeaderSent)));
+  QObject::connect(ultrasonixControlWidet, SIGNAL(center3DProbeMotor()), qtGrabber, SLOT(center3DProbeMotor()));
   QObject::connect(ultrasonixControlWidet, SIGNAL(runAcquisition()), qtGrabber, SLOT(runAcquisition()));
   QObject::connect(ultrasonixControlWidet, SIGNAL(stopAcquisition()), qtGrabber, SLOT(stopAcquisition()));
 
   // send new images via qt signal
-  qRegisterMetaType<vpImage<unsigned char> >("vpImage<unsigned char>");
-  QObject::connect(qtGrabber, SIGNAL(newFrame(vpImage<unsigned char>)), widget,
-                   SLOT(updateFrame(vpImage<unsigned char>)));
+  qRegisterMetaType<usImagePreScan2D<unsigned char> >("usImagePreScan2D<unsigned char>");
+  QObject::connect(qtGrabber, SIGNAL(newFrame(usImagePreScan2D<unsigned char>)), widget,
+                   SLOT(updateFrame(usImagePreScan2D<unsigned char>)));
+
+  //confidence controller
+  QObject::connect(qtGrabber, SIGNAL(newFrame(usImagePreScan2D<unsigned char>)), confidenceController,
+                   SLOT(updateImage(usImagePreScan2D<unsigned char>)));
+  QObject::connect(widget, SIGNAL(confidenceServoing(bool)), confidenceController, SLOT(activateController(bool)));
+  QObject::connect(confidenceController, SIGNAL(updateProbeOrientation(int)), &viperControl, SLOT(setZAngularVelocity(int)));
+
 
   app.exec();
 
   grabbingThread->exit();
 
-  delete preScan;
   delete widget;
   delete robotControlPanel;
   delete centralWidget;

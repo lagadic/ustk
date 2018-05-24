@@ -31,60 +31,51 @@
  *****************************************************************************/
 
 /**
- * @file usImageDisplayWidget.h
- * @brief Qt widget class for 2D ultrasound image display.
+ * @file usConfidenceMapController.h
+ * @brief Wrapper aroud usScanlineConfidence2D to control a robot using with Qt sigals/slots mecanism.
  */
 
-#ifndef __usImageDisplayWidget_h_
-#define __usImageDisplayWidget_h_
+#ifndef __uusConfidenceMapController_h_
+#define __uusConfidenceMapController_h_
 
 // VISP includes
 #include <visp3/ustk_core/usConfig.h>
 
-#if (defined(USTK_HAVE_VTK_QT) || defined(USTK_HAVE_QT5))
+#if (defined(USTK_HAVE_VTK_QT) || defined(USTK_HAVE_QT5)) && defined(VISP_HAVE_MODULE_USTK_CONFIDENCE_MAP)
 
-#include <QImage>
-#include <QLabel>
-#include <QPixmap>
-#include <QResizeEvent>
-#include <visp3/ustk_core/usImagePostScan2D.h>
-#include <visp3/ustk_core/usImagePreScan2D.h>
-#include <visp3/ustk_core/usPreScanToPostScan2DConverter.h>
+#include <visp3/ustk_confidence_map/usScanlineConfidence2D.h>
+
+#include <QObject>
 
 /**
- * @class usImageDisplayWidget
- * @brief Qt widget class for 2D ultrasound image display.
+ * @class usConfidenceMapController
+ * @brief Wrapper aroud usScanlineConfidence2D to control a robot using with Qt sigals/slots mecanism.
  * @ingroup module_ustk_gui
  */
 
-class VISP_EXPORT usImageDisplayWidget : public QWidget
+class VISP_EXPORT usConfidenceMapController : public QObject
 {
   Q_OBJECT
 public:
-  usImageDisplayWidget();
-  ~usImageDisplayWidget();
+  usConfidenceMapController(QObject *parent = NULL);
+  virtual ~usConfidenceMapController();
 
-  void useScanConversion(bool enable);
+  void setPropotionnalControlGain(const double gain);
+  double getPropotionnalControlGain() const;
 
-  void resizeEvent(QResizeEvent *event);
+signals:
+  void updateProbeOrientation(int angularVelocity);
 
 public slots:
-  void updateFrame(const vpImage<unsigned char> img);
-  void updateFrame(const usImagePreScan2D<unsigned char> img);
-  void updateFrame(const usImagePostScan2D<unsigned char> img);
+  void updateImage(usImagePreScan2D<unsigned char> image);
+  void activateController(bool activate);
 
-protected:
-  QLabel *m_label;
+private:
+  usScanlineConfidence2D m_confidenceProcessor;
+  usImagePreScan2D<unsigned char> m_confidenceMap;
 
-  // data
-  QImage m_QImage;
-  QPixmap m_pixmap;
-
-  // scan conversion
-  bool m_useScanConversion;
-  usPreScanToPostScan2DConverter m_scanConverter;
-  usImagePostScan2D<unsigned char> m_postScan;
-  vpImage<unsigned char> m_image;
+  double m_gain;
+  bool m_activated;
 };
-#endif // QT
-#endif // __usImageDisplayWidget_h_
+#endif
+#endif // US_VIEWER_WIDGET

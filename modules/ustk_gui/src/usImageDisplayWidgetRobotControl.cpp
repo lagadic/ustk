@@ -31,89 +31,91 @@
  *****************************************************************************/
 
 /**
-* @file usImageDisplayWidget.cpp
+* @file usImageDisplayWidgetRobotControl.cpp
 * @brief Qt widget class for ultrasound image display.
 */
 
-#include <visp3/ustk_gui/usImageDisplayWidget.h>
+#include <visp3/ustk_gui/usImageDisplayWidgetRobotControl.h>
 
 #if (defined(USTK_HAVE_VTK_QT) || defined(USTK_HAVE_QT5))
 
 /**
 * Constructor.
 */
-usImageDisplayWidget::usImageDisplayWidget()
-  : m_label(NULL), m_QImage(), m_pixmap(), m_useScanConversion(true), m_scanConverter(), m_postScan(), m_image()
+usImageDisplayWidgetRobotControl::usImageDisplayWidgetRobotControl()
+  : usImageDisplayWidget(), m_controlArrowsActivated(false), m_leftArrow(), m_rightArrow(), m_confidenceServoingButton()
 {
   this->setMinimumSize(200, 200);
-  m_label = new QLabel(this);
-  m_label->setMinimumSize(200, 200);
-  m_label->autoFillBackground();
+
+  m_controlArrowsActivated = false;
+  m_leftArrow.setParent(this);
+  m_rightArrow.setParent(this);
+  m_confidenceServoingButton.setParent(this);
+
+  m_leftArrow.setText(QString("\u25C0"));
+  m_rightArrow.setText(QString("\u25B6"));
+  m_leftArrow.setVisible(false);
+  m_rightArrow.setVisible(false);
+
+  m_confidenceServoingButton.setText(QString("\u21BB"));
+  m_confidenceServoingButton.setVisible(true);
+  m_confidenceServoingButton.setCheckable(true);
+  m_confidenceServoingButton.setChecked(false);
+
+  connect(&m_leftArrow, SIGNAL(pressed()), this, SIGNAL(moveLeft()));
+  connect(&m_rightArrow, SIGNAL(pressed()), this, SIGNAL(moveRight()));
+  connect(&m_leftArrow, SIGNAL(released()), this, SIGNAL(stopMove()));
+  connect(&m_rightArrow, SIGNAL(released()), this, SIGNAL(stopMove()));
+
+  connect(&m_confidenceServoingButton, SIGNAL(toggled(bool)), this, SIGNAL(confidenceServoing(bool)));
 }
 
 /**
 * Destructor.
 */
-usImageDisplayWidget::~usImageDisplayWidget()
-{
-  if (m_label)
-    delete m_label;
-}
+usImageDisplayWidgetRobotControl::~usImageDisplayWidgetRobotControl() {}
 
 /**
 * Slot called to update the ultrasound image to display.
 * @param img New ultrasound image to display.
 */
-void usImageDisplayWidget::updateFrame(const vpImage<unsigned char> img)
+void usImageDisplayWidgetRobotControl::updateFrame(const vpImage<unsigned char> img)
 {
-  m_useScanConversion = false;
-  m_image = img;
   m_QImage = QImage(img.bitmap, img.getWidth(), img.getHeight(), img.getWidth(), QImage::Format_Indexed8);
   QImage I = m_QImage.convertToFormat(QImage::Format_RGB888);
   I = I.scaled(this->width(), this->height());
   m_pixmap = QPixmap::fromImage(I);
   m_label->setPixmap(m_pixmap);
   m_label->update();
-}
 
-/**
-* Slot called to update the ultrasound image to display in case of post-scan image sent.
-* @param img New ultrasound image to display.
-*/
-void usImageDisplayWidget::updateFrame(const usImagePostScan2D<unsigned char> img)
-{
-  m_useScanConversion = false;
-  m_image = img;
-  m_QImage = QImage(img.bitmap, img.getWidth(), img.getHeight(), img.getWidth(), QImage::Format_Indexed8);
-  QImage I = m_QImage.convertToFormat(QImage::Format_RGB888);
-  I = I.scaled(this->width(), this->height());
-  m_pixmap = QPixmap::fromImage(I);
-  m_label->setPixmap(m_pixmap);
-  m_label->update();
+  if (m_controlArrowsActivated)
+    enableControlArrows();
 }
 
 /**
 * Slot called to update the ultrasound image to display for pre-scan.
 * @param img New ultrasound image to display.
 */
-void usImageDisplayWidget::updateFrame(const usImagePreScan2D<unsigned char> img)
+void usImageDisplayWidgetRobotControl::updateFrame(const usImagePreScan2D<unsigned char> img)
 {
   if (m_useScanConversion) {
     m_scanConverter.convert(img, m_postScan);
     m_QImage = QImage(m_postScan.bitmap, m_postScan.getWidth(), m_postScan.getHeight(), m_postScan.getWidth(),
                       QImage::Format_Indexed8);
-  } else {
-    m_image = img;
+  } else
     m_QImage = QImage(img.bitmap, img.getWidth(), img.getHeight(), img.getWidth(), QImage::Format_Indexed8);
-  }
+
   QImage I = m_QImage.convertToFormat(QImage::Format_RGB888);
   I = I.scaled(this->width(), this->height());
   m_pixmap = QPixmap::fromImage(I);
   m_label->setPixmap(m_pixmap);
   m_label->update();
+
+  if (m_controlArrowsActivated)
+    enableControlArrows();
 }
 
-void usImageDisplayWidget::resizeEvent(QResizeEvent *event)
+void usImageDisplayWidgetRobotControl::resizeEvent(QResizeEvent *event)
 {
   m_label->resize(event->size());
   QImage I = m_QImage.convertToFormat(QImage::Format_RGB888);
@@ -121,8 +123,31 @@ void usImageDisplayWidget::resizeEvent(QResizeEvent *event)
   m_pixmap = QPixmap::fromImage(I);
   m_label->setPixmap(m_pixmap);
   m_label->update();
+
+  m_confidenceServoingButton.setGeometry(this->width() / 2, 10, 40, 40);
+  m_confidenceServoingButton.raise();
+
+  if (m_controlArrowsActivated)
+    enableControlArrows();
 }
 
-void usImageDisplayWidget::useScanConversion(bool enable) { m_useScanConversion = enable; }
+void usImageDisplayWidgetRobotControl::enableControlArrows()
+{
+  m_controlArrowsActivated = true;
+
+  m_leftArrow.setVisible(true);
+  m_rightArrow.setVisible(true);
+  m_leftArrow.setGeometry(10, this->height() / 2, 40, 40);
+  m_rightArrow.setGeometry(this->width() - 50, this->height() / 2, 40, 40);
+  m_leftArrow.raise();
+  m_rightArrow.raise();
+}
+
+void usImageDisplayWidgetRobotControl::disableControlArrows()
+{
+  m_controlArrowsActivated = false;
+  m_leftArrow.hide();
+  m_rightArrow.hide();
+}
 
 #endif

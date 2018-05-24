@@ -81,6 +81,10 @@ public slots:
   void setYAngularVelocity(int yAngularVelocity);
   void setZAngularVelocity(int zAngularVelocity);
 
+  void moveLeft();
+  void moveRight();
+  void stopMove();
+
 signals:
   void startControlLoop();
   void startControlLoopAutomatic();

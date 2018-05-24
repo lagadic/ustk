@@ -65,6 +65,7 @@ public:
 signals:
   void connectToServer(QHostAddress adress);
   void initAcquisition(usNetworkGrabber::usInitHeaderSent initHeader);
+  void center3DProbeMotor();
   void runAcquisition();
   void stopAcquisition();
 
@@ -80,6 +81,7 @@ private:
   // Connect, init, run, stop buttons
   QPushButton *connectPushButton;
   QPushButton *initPushButton;
+  QPushButton *center3Dprobe;
   QPushButton *startPushButton;
   QPushButton *stopPushButton;
 

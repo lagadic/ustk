@@ -31,60 +31,51 @@
  *****************************************************************************/
 
 /**
- * @file usImageDisplayWidget.h
- * @brief Qt widget class for 2D ultrasound image display.
+ * @file usTracker2DQtWrapper.h
+ * @brief Qt wrapper for usDenseTracker2D class.
  */
 
-#ifndef __usImageDisplayWidget_h_
-#define __usImageDisplayWidget_h_
+#ifndef __usTracker2DQtWrapper_h_
+#define __usTracker2DQtWrapper_h_
 
 // VISP includes
 #include <visp3/ustk_core/usConfig.h>
 
-#if (defined(USTK_HAVE_VTK_QT) || defined(USTK_HAVE_QT5))
+#if (defined(USTK_HAVE_VTK_QT) || defined(USTK_HAVE_QT5)) && defined(VISP_HAVE_MODULE_USTK_TEMPLATE_TRACKING)
 
-#include <QImage>
-#include <QLabel>
-#include <QPixmap>
-#include <QResizeEvent>
+#include <QObject>
+#include <visp3/ustk_template_tracking/usDenseTracker2D.h>
 #include <visp3/ustk_core/usImagePostScan2D.h>
 #include <visp3/ustk_core/usImagePreScan2D.h>
-#include <visp3/ustk_core/usPreScanToPostScan2DConverter.h>
 
 /**
- * @class usImageDisplayWidget
- * @brief Qt widget class for 2D ultrasound image display.
+ * @class usTracker2DQtWrapper
+ * @brief Qt wrapper for usDenseTracker2D class.
  * @ingroup module_ustk_gui
  */
 
-class VISP_EXPORT usImageDisplayWidget : public QWidget
+class VISP_EXPORT usTracker2DQtWrapper : public QObject
 {
   Q_OBJECT
 public:
-  usImageDisplayWidget();
-  ~usImageDisplayWidget();
-
-  void useScanConversion(bool enable);
-
-  void resizeEvent(QResizeEvent *event);
+  usTracker2DQtWrapper();
+  ~usTracker2DQtWrapper();
 
 public slots:
-  void updateFrame(const vpImage<unsigned char> img);
-  void updateFrame(const usImagePreScan2D<unsigned char> img);
-  void updateFrame(const usImagePostScan2D<unsigned char> img);
+  void initTracker(vpRectOriented rect);
+  void updateImage(vpImage<unsigned char> image);
+  void updateImage(usImagePreScan2D<unsigned char> image);
+  void updateImage(usImagePostScan2D<unsigned char> image);
+  void stopTracking();
 
-protected:
-  QLabel *m_label;
+signals:
+  void newTrackedRectangle(vpRectOriented);
 
-  // data
-  QImage m_QImage;
-  QPixmap m_pixmap;
-
-  // scan conversion
-  bool m_useScanConversion;
-  usPreScanToPostScan2DConverter m_scanConverter;
-  usImagePostScan2D<unsigned char> m_postScan;
-  vpImage<unsigned char> m_image;
+private:
+  usDenseTracker2D m_tracker;
+  vpImage<unsigned char> m_firstImage;
+  bool m_firstFrameArrived;
+  bool m_isInitialized;
 };
-#endif // QT
-#endif // __usImageDisplayWidget_h_
+#endif // QT && Template tracking module
+#endif // __usTracker2DQtWrapper_h_

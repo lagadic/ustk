@@ -31,60 +31,55 @@
  *****************************************************************************/
 
 /**
- * @file usImageDisplayWidget.h
- * @brief Qt widget class for 2D ultrasound image display.
+ * @file usImageDisplayWidgetQmlOverlay.h
+ * @brief Qt widget class for 2D ultrasound image display, containing robot control tools.
  */
 
-#ifndef __usImageDisplayWidget_h_
-#define __usImageDisplayWidget_h_
+#ifndef __usImageDisplayWidgetQmlOverlay_h_
+#define __usImageDisplayWidgetQmlOverlay_h_
 
 // VISP includes
 #include <visp3/ustk_core/usConfig.h>
 
 #if (defined(USTK_HAVE_VTK_QT) || defined(USTK_HAVE_QT5))
 
-#include <QImage>
-#include <QLabel>
-#include <QPixmap>
-#include <QResizeEvent>
-#include <visp3/ustk_core/usImagePostScan2D.h>
-#include <visp3/ustk_core/usImagePreScan2D.h>
-#include <visp3/ustk_core/usPreScanToPostScan2DConverter.h>
+#include <QPushButton>
+#include <QQuickWidget>
+#include <visp3/core/vpImagePoint.h>
+#include <visp3/core/vpRectOriented.h>
+#include <visp3/ustk_gui/usImageDisplayWidget.h>
 
 /**
- * @class usImageDisplayWidget
- * @brief Qt widget class for 2D ultrasound image display.
+ * @class usImageDisplayWidgetQmlOverlay
+ * @brief Qt widget class for 2D ultrasound image display, containing robot control tools.
  * @ingroup module_ustk_gui
  */
 
-class VISP_EXPORT usImageDisplayWidget : public QWidget
+class VISP_EXPORT usImageDisplayWidgetQmlOverlay : public usImageDisplayWidget
 {
   Q_OBJECT
 public:
-  usImageDisplayWidget();
-  ~usImageDisplayWidget();
-
-  void useScanConversion(bool enable);
+  usImageDisplayWidgetQmlOverlay();
+  ~usImageDisplayWidgetQmlOverlay();
 
   void resizeEvent(QResizeEvent *event);
 
 public slots:
-  void updateFrame(const vpImage<unsigned char> img);
-  void updateFrame(const usImagePreScan2D<unsigned char> img);
-  void updateFrame(const usImagePostScan2D<unsigned char> img);
+  void updateRectPosition(vpRectOriented newRectangle);
+  void startTrackingSlot();
 
-protected:
-  QLabel *m_label;
+signals:
+  void startTracking(vpRectOriented);
+  void stopTracking();
 
-  // data
-  QImage m_QImage;
-  QPixmap m_pixmap;
+private:
+  vpImagePoint displayImageToRealImageDimentions(const vpImagePoint displayPoint);
+  vpImagePoint realImageToDisplayImageDimentions(const vpImagePoint realImagePoint);
 
-  // scan conversion
-  bool m_useScanConversion;
-  usPreScanToPostScan2DConverter m_scanConverter;
-  usImagePostScan2D<unsigned char> m_postScan;
-  vpImage<unsigned char> m_image;
+  vpRectOriented displayImageToRealImageDimentions(const vpRectOriented displayRectangle);
+  vpRectOriented realImageToDisplayImageDimentions(const vpRectOriented realRectangle);
+
+  QQuickWidget *m_qQuickOverlay;
 };
-#endif // QT
-#endif // __usImageDisplayWidget_h_
+#endif // QT && ELASTOGRAPHY
+#endif // __usImageDisplayWidgetQmlOverlay_h_
