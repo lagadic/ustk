@@ -35,8 +35,8 @@
 * @brief Reader for a sequence of ultrasound images stored as mhd/raw files in a directory
 */
 
-#ifndef US_MHD_SEQUENCE_READER_H
-#define US_MHD_SEQUENCE_READER_H
+#ifndef __usMHDSequenceReader_h_
+#define __usMHDSequenceReader_h_
 
 #include <iostream>
 #include <stdint.h>
@@ -141,4 +141,4 @@ private:
   int m_imageCounter;
 };
 
-#endif // US_MHD_SEQUENCE_READER_H
+#endif // __usMHDSequenceReader_h_

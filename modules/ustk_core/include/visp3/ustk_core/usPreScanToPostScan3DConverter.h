@@ -157,4 +157,4 @@ private:
                                           double *k = NULL, bool sweepInZdirection = true);
 };
 
-#endif // US_SCAN_CONVERTER_3D_H
+#endif // __usPreScanToPostScan3DConverter_h_

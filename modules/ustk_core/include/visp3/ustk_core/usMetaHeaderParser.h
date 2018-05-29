@@ -149,5 +149,5 @@ private:
   std::map<int, std::string> imageTypeReverseMap;
   std::map<int, std::string> elementTypeReverseMap;
 };
-#endif // US_META_HEADER_PARSER_H
+#endif // __usMetaHeaderParser_h_
 #endif // DOXYGEN_SHOULD_SKIP_THIS

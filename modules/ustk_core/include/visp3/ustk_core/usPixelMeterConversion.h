@@ -69,4 +69,4 @@ public:
                       double &x, double &y, double &z);
 };
 
-#endif // US_PIXEL_METER_CONVERSION_H
+#endif // __usPixelMeterConversion_h_

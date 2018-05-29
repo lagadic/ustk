@@ -40,9 +40,9 @@
 #include <visp3/core/vpXmlParser.h>
 #include <visp3/io/vpImageIo.h>
 
+#include <visp3/ustk_core/usImageIo.h>
 #include <visp3/ustk_core/usImagePreScanSettings.h>
 #include <visp3/ustk_core/usMotorSettings.h>
-#include <visp3/ustk_core/usImageIo.h>
 #include <visp3/ustk_core/usRawFileParser.h>
 #include <visp3/ustk_core/usRfReader.h>
 #include <visp3/ustk_core/usSequenceReader.h>

@@ -123,4 +123,4 @@ private:
   double interpolateLinear(const vpImage<unsigned char> &I, double x, double y);
 };
 
-#endif // US_BACK_SCAN_CONVERTER_2D_H
+#endif // __usPostScanToPreScan2DConverter_h_

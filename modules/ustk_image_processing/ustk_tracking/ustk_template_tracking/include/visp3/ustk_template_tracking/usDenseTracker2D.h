@@ -87,4 +87,4 @@ private:
   bool m_isInit;
 };
 
-#endif // US_DENSE_TRACKER_2D_H
+#endif // __usDenseTracker2D_h_

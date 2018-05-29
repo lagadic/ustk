@@ -104,4 +104,4 @@ private:
   // Settings from the probe
   double m_axialResolution;
 };
-#endif // US_IMAGE_PRESCAN_SETTINGS_H
+#endif // __usImagePreScanSettings_h_

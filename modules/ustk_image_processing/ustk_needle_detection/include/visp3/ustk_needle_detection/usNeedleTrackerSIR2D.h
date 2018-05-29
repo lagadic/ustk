@@ -158,4 +158,4 @@ private:
   double m_bgMean;
 };
 
-#endif // US_NEEDLE_TRACKER_SIR_2D
+#endif // __usNeedleTrackerSIR2D_h_

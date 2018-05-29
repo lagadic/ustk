@@ -84,5 +84,5 @@ private:
   std::ifstream m_dataFile;
 };
 
-#endif // US_SEQUENCE_READER_3D_H
+#endif // __usRfReader_h_
 #endif // DOXYGEN_SHOULD_SKIP_THIS

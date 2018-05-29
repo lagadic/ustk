@@ -78,8 +78,8 @@ transducer.
   The following example shows how to read a 2D RF ultrasound image, and set the image settings of your choice.
 
   \code
-#include <visp3/ustk_core/usImageRF2D.h>
 #include <visp3/ustk_core/usImageIo.h>
+#include <visp3/ustk_core/usImageRF2D.h>
 
 int main()
 {
@@ -438,4 +438,4 @@ template <class Type> const Type *usImageRF2D<Type>::getSignal(unsigned int scan
 {
   return col[scanlineIndex];
 }
-#endif // US_IMAGE_RF_2D_H
+#endif // __usImageRF2D_h_

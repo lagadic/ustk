@@ -386,4 +386,4 @@ void usSequenceReader3D<usImagePreScan3D<unsigned char> >::getVolume(usImagePreS
   }
 }
 
-#endif // US_SEQUENCE_READER_3D_H
+#endif // __usSequenceReader3D_h_

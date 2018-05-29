@@ -316,4 +316,4 @@ template <class ImageType> void usSequenceWriter<ImageType>::saveImage(const Ima
   m_frameCount = m_frameCount + 1;
 }
 
-#endif // US_SEQUENCE_WRITER_H
+#endif // __usSequenceWriter_h_

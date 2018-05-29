@@ -57,4 +57,4 @@ public:
   void run(usImagePreScan2D<unsigned char> &preScanConfidence, const usImagePreScan2D<unsigned char> &preScanImage);
 };
 
-#endif // US_SCANLINE_CONF_2D_H
+#endif // __usScanlineConfidence2D_h_

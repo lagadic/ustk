@@ -78,4 +78,4 @@ private:
   bool m_activated;
 };
 #endif
-#endif // US_VIEWER_WIDGET
+#endif // __uusConfidenceMapController_h_

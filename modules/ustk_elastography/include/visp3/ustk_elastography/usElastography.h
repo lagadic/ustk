@@ -31,8 +31,8 @@
  *
  *****************************************************************************/
 
-#ifndef USELASTOGRAPHY_H
-#define USELASTOGRAPHY_H
+#ifndef __usElastography_h_
+#define __usElastography_h_
 
 /**
  * @file usElastography.h
@@ -129,4 +129,4 @@ private:
 };
 
 #endif // FFTW
-#endif // USELASTOGRAPHY_H
+#endif // __usElastography_h_

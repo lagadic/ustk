@@ -75,4 +75,4 @@ public:
   void paintEvent(QPaintEvent *event);
 };
 #endif
-#endif // US_VIEWER_WIDGET
+#endif // __usViewerWidget_h_

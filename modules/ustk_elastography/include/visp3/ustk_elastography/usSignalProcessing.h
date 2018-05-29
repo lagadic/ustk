@@ -31,8 +31,8 @@
  *
  *****************************************************************************/
 
-#ifndef US_SIGNAL_PROCESSING_H
-#define US_SIGNAL_PROCESSING_H
+#ifndef __usSignalProcessing_h_
+#define __usSignalProcessing_h_
 
 /**
  * @file usSignalProcessing.h
@@ -86,4 +86,4 @@ public:
   static vpMatrix HadamardProd(vpMatrix matrix1, vpMatrix matrix2);
 };
 
-#endif // US_SIGNAL_PROCESSING_H
+#endif // __usSignalProcessing_h_

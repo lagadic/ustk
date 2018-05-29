@@ -138,4 +138,4 @@ private:
   int m_samplingFrequency;
 };
 
-#endif // US_TRANSDUCER_SETTINGS_H
+#endif // __usTransducerSettings_h_

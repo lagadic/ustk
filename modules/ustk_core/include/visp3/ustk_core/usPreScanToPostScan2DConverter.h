@@ -127,4 +127,4 @@ private:
   bool m_initDone;
 };
 
-#endif // US_SCAN_CONVERTER_2D_H
+#endif // __usPreScanToPostScan2DConverter_h_
