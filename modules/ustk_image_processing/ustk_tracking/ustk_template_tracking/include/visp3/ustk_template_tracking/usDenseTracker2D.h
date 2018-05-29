@@ -56,6 +56,9 @@
 class VISP_EXPORT usDenseTracker2D
 {
 public:
+  usDenseTracker2D();
+  ~usDenseTracker2D();
+
   vpImage<unsigned char> &getRegion();
 
   vpRectOriented getTarget() const;
@@ -63,6 +66,8 @@ public:
   vpImage<unsigned char> &getTemplate();
 
   void init(const vpImage<unsigned char> &I, const vpRectOriented &R);
+
+  bool isInit();
 
   void update(const vpImage<unsigned char> &I);
 
@@ -79,6 +84,7 @@ private:
   unsigned int m_height;
   unsigned int m_width;
   unsigned int m_size;
+  bool m_isInit;
 };
 
 #endif // US_DENSE_TRACKER_2D_H

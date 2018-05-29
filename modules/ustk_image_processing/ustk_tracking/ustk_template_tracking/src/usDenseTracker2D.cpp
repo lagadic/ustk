@@ -37,6 +37,20 @@
 #include <visp3/core/vpImageFilter.h>
 
 /**
+ * Constructor.
+ */
+usDenseTracker2D::usDenseTracker2D() {
+  m_isInit = false;
+}
+
+/**
+ * Destructor.
+ */
+usDenseTracker2D::~usDenseTracker2D() {
+
+}
+
+/**
  * @brief Initialisation of the tracker : to call to set the region to track (R) in the image (I) before starting the
  * tracking.
  * @param I Image containing a region to track.
@@ -75,6 +89,7 @@ void usDenseTracker2D::init(const vpImage<unsigned char> &I, const vpRectOriente
     }
   // pseudo inverse of interaction matrix
   m_LI_inverse = m_LI.pseudoInverse();
+  m_isInit = true;
 }
 
 /**
@@ -83,54 +98,62 @@ void usDenseTracker2D::init(const vpImage<unsigned char> &I, const vpRectOriente
  */
 void usDenseTracker2D::update(const vpImage<unsigned char> &I)
 {
-  double gain = 0.6;
+  if(m_isInit) {
+    double gain = 0.6;
 
-  unsigned int max_iter = 40;
-  unsigned int i = 0;
-  double rms = 1.0;
-  double rms0 = 0.0;
-  double drms = 1.0e-5;
+    unsigned int max_iter = 40;
+    unsigned int i = 0;
+    double rms = 1.0;
+    double rms0 = 0.0;
+    double drms = 1.0e-5;
 
-  while ((i < max_iter) && (std::abs(rms - rms0) > drms)) {
-    // extract new region from previous target rectangle
-    vpImageTools::extract(I, m_region, m_target);
+    while ((i < max_iter) && (std::abs(rms - rms0) > drms)) {
+      // extract new region from previous target rectangle
+      vpImageTools::extract(I, m_region, m_target);
 
-    // filling current features colVector
-    for (unsigned int u = 0; u < m_height; ++u)
-      for (unsigned int v = 0; v < m_width; ++v)
-        s_current[u * m_width + v] = m_region[u][v];
+      // filling current features colVector
+      for (unsigned int u = 0; u < m_height; ++u)
+        for (unsigned int v = 0; v < m_width; ++v)
+          s_current[u * m_width + v] = m_region[u][v];
 
-    // compute error and velocity command
-    vpColVector e = s_current - s_desired;
-    vpColVector v = -gain * m_LI_inverse * e;
+      // compute error and velocity command
+      vpColVector e = s_current - s_desired;
+      vpColVector v = -gain * m_LI_inverse * e;
 
-    rms0 = rms;
-    rms = e.euclideanNorm() / m_size;
+      rms0 = rms;
+      rms = e.euclideanNorm() / m_size;
 
-    // extract deplacements to apply to follow the region
-    double alpha = m_target.getOrientation();
-    double dx = v[0] * cos(alpha) + v[1] * sin(alpha);
-    double dy = v[1] * cos(alpha) - v[0] * sin(alpha);
-    double da = -v[2];
+      // extract deplacements to apply to follow the region
+      double alpha = m_target.getOrientation();
+      double dx = v[0] * cos(alpha) + v[1] * sin(alpha);
+      double dy = v[1] * cos(alpha) - v[0] * sin(alpha);
+      double da = -v[2];
 
-    // update target with old values and deplacements previously comuted
-    m_target.setCenter(
-        vpImagePoint(m_target.getCenter().get_i() + gain * dx, m_target.getCenter().get_j() + gain * dy));
-    m_target.setOrientation(alpha + gain * da);
+      // update target with old values and deplacements previously comuted
+      m_target.setCenter(
+            vpImagePoint(m_target.getCenter().get_i() + gain * dx, m_target.getCenter().get_j() + gain * dy));
+      m_target.setOrientation(alpha + gain * da);
 
-    ++i;
+      ++i;
+    }
   }
-
-  // std::cout << "Converged in " << i << " iterations with rms = " << rms
-  //	    << "and drms = " << std::abs(rms - rms0) << std::endl;
 }
 
 /**
  * @brief To call after update() at each new frame, to get the position of the ROI in the last acquired frame.
  * @return The rectangle pixel coordinates in the new frame.
  */
-vpRectOriented usDenseTracker2D::getTarget() const { return m_target; }
+vpRectOriented usDenseTracker2D::getTarget() const {
+  if(!m_isInit)
+    throw(vpException(vpException::fatalError,"usDenseTracker2D not initialized !"));
+  return m_target;
+}
 
 vpImage<unsigned char> &usDenseTracker2D::getTemplate() { return m_template; }
 
 vpImage<unsigned char> &usDenseTracker2D::getRegion() { return m_region; }
+
+
+bool usDenseTracker2D::isInit() {
+  return m_isInit;
+}

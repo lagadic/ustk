@@ -188,26 +188,28 @@ void usImageDisplayWidgetQmlOverlayServoing::updateRectPosition(vpRectOriented n
   displayRectangle = realImageToDisplayImageDimentions(newRectangle);
 
   QObject *rectItem = m_qQuickOverlay->rootObject()->findChild<QObject *>("selectionRectangle");
-  rectItem->setProperty("x", displayRectangle.getCenter().get_j());
-  rectItem->setProperty("y", displayRectangle.getCenter().get_i());
+  rectItem->setProperty("x", displayRectangle.getCenter().get_j() - (displayRectangle.getWidth()/2.0));
+  rectItem->setProperty("y", displayRectangle.getCenter().get_i() - (displayRectangle.getHeight()/2.0));
   rectItem->setProperty("rotation", vpMath::deg(displayRectangle.getOrientation()));
   rectItem->setProperty("height", displayRectangle.getHeight());
   rectItem->setProperty("width", displayRectangle.getWidth());
 }
 
 /**
-* Start tacking slot. Gets the actual position of the displayed rectangle, and transmits it unsing startTracking signal.
+* Start tacking slot. Gets the actual position of the displayed rectangle, and transmits it unsing startTracking signal (expressed in real image dimentions).
 */
 void usImageDisplayWidgetQmlOverlayServoing::startTrackingSlot()
 {
   QObject *rectangleObject = m_qQuickOverlay->rootObject()->findChild<QObject *>("selectionRectangle");
-  int centerX = rectangleObject->property("x").toInt();
-  int centerY = rectangleObject->property("y").toInt();
+  int topLeftX = rectangleObject->property("x").toInt();
+  int topLeftY = rectangleObject->property("y").toInt();
   int height = rectangleObject->property("height").toInt();
   int width = rectangleObject->property("width").toInt();
+  int centerX = topLeftX + (width/2.0);
+  int centerY = topLeftY + (height/2.0);
   int rotation = rectangleObject->property("rotation").toInt();
 
-  vpRectOriented displayRect(vpImagePoint(centerY, centerX), width, height, rotation);
+  vpRectOriented displayRect(vpImagePoint(centerY, centerX), width, height, vpMath::rad(rotation));
 
   emit(startTrackingRect(displayImageToRealImageDimentions(displayRect)));
 }

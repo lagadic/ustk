@@ -10,6 +10,9 @@
 #include <visp3/ustk_gui/usImageDisplayWidgetQmlOverlayServoing.h>
 #include <visp3/ustk_gui/usTracker2DQtWrapper.h>
 #include <visp3/ustk_gui/usUltrasonixClientWidget.h>
+#include <visp3/ustk_gui/usViper850WrapperVelocityControl.h>
+#include <visp3/ustk_gui/usRobotManualControlWidget.h>
+#include <visp3/ustk_gui/usRectangleVisualServoingController.h>
 
 #include <QApplication>
 #include <QMainWindow>
@@ -22,13 +25,27 @@ int main(int argc, char **argv)
   usImageDisplayWidgetQmlOverlayServoing *widget = new usImageDisplayWidgetQmlOverlayServoing();
 
   usUltrasonixClientWidget *ultrasonixControlWidet = new usUltrasonixClientWidget();
+  usRobotManualControlWidget *robotControlPanel = new usRobotManualControlWidget();
 
   QWidget *centralWidget = new QWidget();
   QHBoxLayout *mainLayout = new QHBoxLayout();
   mainLayout->addWidget(ultrasonixControlWidet);
-  mainLayout->addWidget(widget, 3);
-  // mainLayout->addWidget(robotControlPanel);
+  mainLayout->addWidget(widget, 2);
+  mainLayout->addWidget(robotControlPanel);
   centralWidget->setLayout(mainLayout);
+
+  // robot control
+  QThread *threadRobotControl = new QThread();
+  usViper850WrapperVelocityControl viperControl;
+  viperControl.moveToThread(threadRobotControl);
+  threadRobotControl->start();
+  viperControl.run();
+
+  // 2D ROI tracking & confidence based controller
+  usRectangleVisualServoingController * visualServoingController = new usRectangleVisualServoingController();
+  QThread *servoingThread = new QThread();
+  visualServoingController->moveToThread(servoingThread);
+  servoingThread->start();
 
   // grabber
   QThread *grabbingThread = new QThread();
@@ -37,11 +54,34 @@ int main(int argc, char **argv)
   qtGrabber->moveToThread(grabbingThread);
   grabbingThread->start();
 
-  usTracker2DQtWrapper *tracker = new usTracker2DQtWrapper();
+  //usTracker2DQtWrapper *tracker = new usTracker2DQtWrapper();
 
-  // controls to start / stop tracking
-  QObject::connect(widget, SIGNAL(startTrackingRect(vpRectOriented)), tracker, SLOT(initTracker(vpRectOriented)));
-  QObject::connect(widget, SIGNAL(stopTrackingRect()), tracker, SLOT(stopTracking()));
+  // manual robot controls
+  QObject::connect(robotControlPanel, SIGNAL(changeVX(int)), &viperControl, SLOT(setXVelocity(int)));
+  QObject::connect(robotControlPanel, SIGNAL(changeVY(int)), &viperControl, SLOT(setYVelocity(int)));
+  QObject::connect(robotControlPanel, SIGNAL(changeVZ(int)), &viperControl, SLOT(setZVelocity(int)));
+  QObject::connect(robotControlPanel, SIGNAL(changeWX(int)), &viperControl, SLOT(setXAngularVelocity(int)));
+  QObject::connect(robotControlPanel, SIGNAL(changeWY(int)), &viperControl, SLOT(setYAngularVelocity(int)));
+  QObject::connect(robotControlPanel, SIGNAL(changeWZ(int)), &viperControl, SLOT(setZAngularVelocity(int)));
+
+  QObject::connect(robotControlPanel, SIGNAL(initClicked()), &viperControl, SLOT(init()));
+  QObject::connect(robotControlPanel, SIGNAL(startClicked()), &viperControl, SLOT(run()));
+  QObject::connect(robotControlPanel, SIGNAL(stopClicked()), &viperControl, SLOT(stop()));
+
+  QObject::connect(robotControlPanel, SIGNAL(activateAutomaticForceControl()), &viperControl,
+                   SLOT(startAutomaticForceControl()));
+  QObject::connect(robotControlPanel, SIGNAL(disableAutomaticForceControl()), &viperControl,
+                   SLOT(stopAutomaticForceControl()));
+
+  // manage errors
+  QObject::connect(&viperControl, SIGNAL(robotError()), robotControlPanel, SLOT(robotErrorSlot()));
+
+  // controls to start / stop tracking & servoing
+  qRegisterMetaType<vpRectOriented>("vpRectOriented");
+  QObject::connect(widget, SIGNAL(startTrackingRect(vpRectOriented)), visualServoingController, SLOT(initTracker(vpRectOriented)));
+  QObject::connect(widget, SIGNAL(stopTrackingRect()), visualServoingController, SLOT(stopTracking()));
+  QObject::connect(widget, SIGNAL(startServoingRect()), visualServoingController, SLOT(activateController()));
+  QObject::connect(widget, SIGNAL(stopServoingRect()), visualServoingController, SLOT(disactivateController()));
 
   // grabber control
   qRegisterMetaType<QHostAddress>("QHostAddress");
@@ -56,14 +96,21 @@ int main(int argc, char **argv)
 
   // send new images via qt signal
   qRegisterMetaType<usImagePostScan2D<unsigned char> >("usImagePreScan2D<unsigned char>");
-  QObject::connect(qtGrabber, SIGNAL(newFrame(usImagePreScan2D<unsigned char>)), widget,
-                   SLOT(updateFrame(usImagePreScan2D<unsigned char>)));
-  QObject::connect(qtGrabber, SIGNAL(newFrame(usImagePreScan2D<unsigned char>)), tracker,
+  qRegisterMetaType<usImagePostScan2D<unsigned char> >("usImagePostScan2D<unsigned char>");
+  QObject::connect(qtGrabber, SIGNAL(newFrame(usImagePreScan2D<unsigned char>)), visualServoingController,
                    SLOT(updateImage(usImagePreScan2D<unsigned char>)));
+  QObject::connect(visualServoingController, SIGNAL(newPostScanFrame(usImagePostScan2D<unsigned char> )), widget,
+                   SLOT(updateFrame(usImagePostScan2D<unsigned char>)));
 
   // updates the GUI based on the tracking output
-  QObject::connect(tracker, SIGNAL(newTrackedRectangle(vpRectOriented)), widget,
+  QObject::connect(visualServoingController, SIGNAL(newRectTracked(vpRectOriented)), widget,
                    SLOT(updateRectPosition(vpRectOriented)));
+
+  // send robot velocities from visualServoingController
+  QObject::connect(visualServoingController, SIGNAL(updatePobeXVelocity(int)), &viperControl,
+                   SLOT(setXVelocity(int)));
+  QObject::connect(visualServoingController, SIGNAL(updateProbeZOrientation(int)), &viperControl,
+                   SLOT(setZAngularVelocity(int)));
 
   widget->updateFrame(vpImage<unsigned char>(200, 200));
 
