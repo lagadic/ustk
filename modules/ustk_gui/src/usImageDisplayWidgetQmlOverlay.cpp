@@ -39,7 +39,7 @@
 #include <QQuickItem>
 #include <visp3/ustk_gui/usImageDisplayWidgetQmlOverlay.h>
 
-#if (defined(USTK_HAVE_VTK_QT) || defined(USTK_HAVE_QT5))
+#if (defined(USTK_HAVE_VTK_QT5) || defined(USTK_HAVE_QT5))
 
 /**
 * Constructor.
@@ -57,7 +57,7 @@ usImageDisplayWidgetQmlOverlay::usImageDisplayWidgetQmlOverlay() : usImageDispla
 
   QQuickWidget::Status status(QQuickWidget::Null);
 
-  while(status!=QQuickWidget::Ready) {
+  while (status != QQuickWidget::Ready) {
     status = m_qQuickOverlay->status();
     vpTime::wait(50);
   }
@@ -72,7 +72,7 @@ void usImageDisplayWidgetQmlOverlay::resizeEvent(QResizeEvent *event)
 {
   event->accept();
   usImageDisplayWidget::resizeEvent(event);
-  if( m_qQuickOverlay->rootObject()) {
+  if (m_qQuickOverlay->rootObject()) {
     m_qQuickOverlay->rootObject()->setProperty("width", event->size().width());
     m_qQuickOverlay->rootObject()->setProperty("height", event->size().height());
   }

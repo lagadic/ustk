@@ -32,7 +32,8 @@
 
 /**
  * @file usImageDisplayWidgetQmlOverlayServoing.h
- * @brief Qt widget class for 2D ultrasound image display, containing robot control tools for visual servoing on a rectangular ROI.
+ * @brief Qt widget class for 2D ultrasound image display, containing robot control tools for visual servoing on a
+ * rectangular ROI.
  */
 
 #ifndef __usImageDisplayWidgetQmlOverlayServoing_h_
@@ -41,7 +42,7 @@
 // VISP includes
 #include <visp3/ustk_core/usConfig.h>
 
-#if (defined(USTK_HAVE_VTK_QT) || defined(USTK_HAVE_QT5))
+#if (defined(USTK_HAVE_VTK_QT5) || defined(USTK_HAVE_QT5))
 
 #include <QPushButton>
 #include <QQuickWidget>
@@ -51,7 +52,8 @@
 
 /**
  * @class usImageDisplayWidgetQmlOverlayServoing
- * @brief Qt widget class for 2D ultrasound image display, containing robot control tools for visual servoing on a rectangular ROI.
+ * @brief Qt widget class for 2D ultrasound image display, containing robot control tools for visual servoing on a
+ * rectangular ROI.
  * @ingroup module_ustk_gui
  */
 
