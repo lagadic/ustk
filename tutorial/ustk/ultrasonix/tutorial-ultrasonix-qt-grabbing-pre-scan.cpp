@@ -23,6 +23,12 @@ int main(int argc, char **argv)
   usNetworkGrabberPreScan2D *qtGrabber = new usNetworkGrabberPreScan2D();
   qtGrabber->connectToServer();
 
+  // record option
+  if (qApp->arguments().contains(QString("--record"))) {
+    qtGrabber->activateRecording(
+        qApp->arguments().at(qApp->arguments().indexOf(QString("--record")) + 1).toStdString());
+  }
+
   // setting acquisition parameters
   usNetworkGrabber::usInitHeaderSent header;
   header.probeId = 15;    // 4DC7 id = 15
