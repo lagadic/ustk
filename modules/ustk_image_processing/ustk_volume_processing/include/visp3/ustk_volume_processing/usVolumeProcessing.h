@@ -39,7 +39,10 @@
 #ifndef __usVolumeProcessing_h_
 #define __usVolumeProcessing_h_
 
+#include <visp3/core/vpConfig.h>
+#ifdef VISP_HAVE_CPP11_COMPATIBILITY
 #include <type_traits>
+#endif
 
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpColVector.h>
@@ -83,20 +86,35 @@ public:
   /**
    * Apply a derivative filter along the i-axis (height) to a voxel.
    */
-  template<class Type1, class Type2= typename std::conditional<std::is_arithmetic<Type1>::value, double, Type1>::type >
+#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+  template<class Type1, class Type2= typename std::conditional<std::is_arithmetic<Type1>::value, double, Type1>::type>
   static Type2 derivativeI(const usImage3D<Type1> &V, unsigned int i, unsigned int j, unsigned int k);
+#else
+  template<class Type>
+  static double derivativeI(const usImage3D<Type> &V, unsigned int i, unsigned int j, unsigned int k);
+#endif
   
   /**
    * Apply a derivative filter along the j-axis (width) to a voxel.
    */
-  template<class Type1, class Type2= typename std::conditional<std::is_arithmetic<Type1>::value, double, Type1>::type >
+#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+  template<class Type1, class Type2= typename std::conditional<std::is_arithmetic<Type1>::value, double, Type1>::type>
   static Type2 derivativeJ(const usImage3D<Type1> &V, unsigned int i, unsigned int j, unsigned int k);
+#else
+  template<class Type>
+  static double derivativeJ(const usImage3D<Type> &V, unsigned int i, unsigned int j, unsigned int k);
+#endif
   
   /**
    * Apply a derivative filter along the k-axis (3rd dimension) to a voxel.
    */
-  template<class Type1, class Type2= typename std::conditional<std::is_arithmetic<Type1>::value, double, Type1>::type >
+#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+  template<class Type1, class Type2= typename std::conditional<std::is_arithmetic<Type1>::value, double, Type1>::type>
   static Type2 derivativeK(const usImage3D<Type1> &V, unsigned int i, unsigned int j, unsigned int k);
+#else
+  template<class Type>
+  static double derivativeK(const usImage3D<Type> &V, unsigned int i, unsigned int j, unsigned int k);
+#endif
   
   /**
    * Compute the gaussian filtered i-derivative (height) of a volume
@@ -296,24 +314,44 @@ public:
 	        dst(i, j, k, applyFilter(src, filter, i, j, k));
   }
 
+#ifdef VISP_HAVE_CPP11_COMPATIBILITY
   template<class Type1, class Type2>
   Type2 usVolumeProcessing::derivativeI(const usImage3D<Type1> &V, unsigned int i, unsigned int j, unsigned int k)
   {
-      return (V(i+1, j, k) - V(i-1, j, k)) / 2.0;
+      return ((Type2)V(i+1, j, k) - (Type2)V(i-1, j, k)) / 2.0;
   }
   
   template<class Type1, class Type2>
   Type2 usVolumeProcessing::derivativeJ(const usImage3D<Type1> &V, unsigned int i, unsigned int j, unsigned int k)
   {
-      return (V(i, j+1, k) - V(i, j-1, k)) / 2.0;
+      return ((Type2)V(i, j+1, k) - (Type2)V(i, j-1, k)) / 2.0;
   }
-
+  
   template<class Type1, class Type2>
   Type2 usVolumeProcessing::derivativeK(const usImage3D<Type1> &V, unsigned int i, unsigned int j, unsigned int k)
   {
-      return (V(i, j, k+1) - V(i, j, k-1)) / 2.0;
+      return ((Type2)V(i, j, k+1) - (Type2)V(i, j, k-1)) / 2.0;
   }
-
+#else
+  template<class Type>
+  double usVolumeProcessing::derivativeI(const usImage3D<Type> &V, unsigned int i, unsigned int j, unsigned int k)
+  {
+      return ((double)V(i+1, j, k) - (double)V(i-1, j, k)) / 2.0;
+  }
+  
+  template<class Type>
+  double usVolumeProcessing::derivativeJ(const usImage3D<Type> &V, unsigned int i, unsigned int j, unsigned int k)
+  {
+      return ((double)V(i, j+1, k) - (double)V(i, j-1, k)) / 2.0;
+  }
+  
+  template<class Type>
+  double usVolumeProcessing::derivativeK(const usImage3D<Type> &V, unsigned int i, unsigned int j, unsigned int k)
+  {
+      return ((double)V(i, j, k+1) - (double)V(i, j, k-1)) / 2.0;
+  }
+#endif
+  
   template<class Type1, class Type2>
   void usVolumeProcessing::gaussianDerivativeI(const usImage3D<Type1> &src, usImage3D<Type2> &dst, double sigma, unsigned int filter_size)
   {
@@ -342,13 +380,13 @@ public:
       unsigned int width = src.getWidth();
       unsigned int nbFrames = src.getNumberOfFrames();
       dst.resize(height, width, nbFrames);
-      Type2 zero = 0*derivativeI<Type1, Type2>(src, 1, 1, 1);
+      Type2 zero = 0*derivativeI(src, 1, 1, 1);
       // Access in order k-j-i for performance
       for(unsigned int k=0 ; k<nbFrames ; k++)
         for(unsigned int j=0 ; j<width ; j++)
         {
             dst(0, j, k, zero);
-            for(unsigned int i=1 ; i<height-1 ; i++) dst(i, j, k, derivativeI<Type1, Type2>(src, i, j, k));
+            for(unsigned int i=1 ; i<height-1 ; i++) dst(i, j, k, derivativeI(src, i, j, k));
             dst(height-1, j, k, zero);
         }
   }
@@ -360,13 +398,13 @@ public:
       unsigned int width = src.getWidth();
       unsigned int nbFrames = src.getNumberOfFrames();
       dst.resize(height, width, nbFrames);
-      Type2 zero = 0*derivativeJ<Type1, Type2>(src, 1, 1, 1);
+      Type2 zero = 0*derivativeJ(src, 1, 1, 1);
       // Access in order k-j-i for performance
       for(unsigned int k=0 ; k<nbFrames; k++)
       {
 	      for(unsigned int j=1 ; j<width-1 ; j++)
             for(unsigned int i=0 ; i<height ; i++)
-              dst(i, j, k, derivativeJ<Type1, Type2>(src, i, j, k));
+              dst(i, j, k, derivativeJ(src, i, j, k));
           
           for(unsigned int i=0 ; i<height ; i++)
           {
@@ -383,12 +421,12 @@ public:
       unsigned int width = src.getWidth();
       unsigned int nbFrames = src.getNumberOfFrames();
       dst.resize(height, width, nbFrames);
-      Type2 zero = 0*derivativeK<Type1, Type2>(src, 1, 1, 1);
+      Type2 zero = 0*derivativeK(src, 1, 1, 1);
       // Access in order k-j-i for performance     
       for(unsigned int k=1 ; k<nbFrames-1 ; k++)
 	    for(unsigned int j=0 ; j<width ; j++)
 	      for(unsigned int i=0 ; i<height ; i++)
-            dst(i, j, k, derivativeK<Type1, Type2>(src, i, j, k));
+            dst(i, j, k, derivativeK(src, i, j, k));
       
       for(unsigned int j=0 ; j<width ; j++)
 	    for(unsigned int i=0 ; i<height ; i++)
