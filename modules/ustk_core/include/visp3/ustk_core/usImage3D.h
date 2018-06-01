@@ -255,9 +255,9 @@ inline void usImage3D<Type>::init(unsigned int height, unsigned int width, unsig
     }
   }
 
-  this->m_width = width;
-  this->m_height = height;
-  this->m_numberOfFrames = numberOfFrames;
+  m_width = width;
+  m_height = height;
+  m_numberOfFrames = numberOfFrames;
 
   m_size = m_width * m_height * m_numberOfFrames;
 
@@ -278,37 +278,34 @@ inline void usImage3D<Type>::init(unsigned int height, unsigned int width, unsig
 }
 
 template <class Type>
-usImage3D<Type>::usImage3D() : m_width(0), m_height(0), m_numberOfFrames(0), m_size(0), bitmap(NULL), framPointer(NULL)
+usImage3D<Type>::usImage3D()
+    : m_width(0), m_height(0), m_numberOfFrames(0), m_size(0), bitmap(NULL), framPointer(NULL)
 {
 }
 
 template <class Type>
 usImage3D<Type>::usImage3D(unsigned int height, unsigned int width, unsigned int frameNumber)
-  : m_width(width), m_height(height), m_numberOfFrames(frameNumber), m_size(width * height * frameNumber), bitmap(NULL),
-    framPointer(NULL)
+    : m_width(0), m_height(0), m_numberOfFrames(0), m_size(0), bitmap(NULL), framPointer(NULL)
 {
-  init(height, width, frameNumber);
-  initData(Type());
+  this->init(height, width, frameNumber);
+  this->initData(Type());
 }
 
 template <class Type>
 usImage3D<Type>::usImage3D(unsigned int height, unsigned int width, unsigned int frameNumber, Type initialValue)
-  : m_width(width), m_height(height), m_numberOfFrames(frameNumber), m_size(width * height * frameNumber), bitmap(NULL),
-    framPointer(NULL)
+    : m_width(0), m_height(0), m_numberOfFrames(0), m_size(0), bitmap(NULL), framPointer(NULL)
 {
-  init(height, width, frameNumber);
-  initData(initialValue);
+  this->init(height, width, frameNumber);
+  this->initData(initialValue);
 }
 
 template <class Type> usImage3D<Type>::usImage3D(const usImage3D<Type> &volume, const bool copy)
+    : m_width(0), m_height(0), m_numberOfFrames(0), m_size(0), bitmap(NULL), framPointer(NULL)
 {
-  init(volume.getHeight(), volume.getWidth(), volume.getNumberOfFrames());
-
-  m_size = m_width * m_height * m_numberOfFrames;
+  this->init(volume.getHeight(), volume.getWidth(), volume.getNumberOfFrames());
 
   // deep copy
-  if (copy)
-    memcpy(bitmap, volume.bitmap, m_size * sizeof(Type));
+  if(copy) memcpy(bitmap, volume.bitmap, m_size * sizeof(Type));
 }
 
 template <class Type> usImage3D<Type>::~usImage3D()
@@ -377,6 +374,6 @@ template <class Type> void usImage3D<Type>::initData(Type value)
 
 template <class Type> void usImage3D<Type>::resize(unsigned int height, unsigned int width, unsigned int numberOfFrames)
 {
-  init(height, width, numberOfFrames);
+    this->init(height, width, numberOfFrames);
 }
 #endif // US_IMAGE_3D_H
