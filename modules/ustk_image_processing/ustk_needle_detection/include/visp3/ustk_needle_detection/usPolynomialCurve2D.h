@@ -28,22 +28,24 @@
  * Authors:
  * Pierre Chatelain
  * Alexandre Krupa
+ * Jason Chevrie
  *
  *****************************************************************************/
 
 #ifndef __usPolynomialCurve2D_h_
 #define __usPolynomialCurve2D_h_
 
-#include <visp3/core/vpMatrix.h>
+#include <vector>
 
-#include <visp3/ustk_needle_detection/usNeedleDetectionTools.h>
+#include <visp3/core/vpColVector.h>
+#include <visp3/core/vpMatrix.h>
 
 /**
  * @class usPolynomialCurve2D
- * @brief 2D needle model
+ * @brief 2D curve model
  * @ingroup module_ustk_needle_detection
  *
- * This class represents a needle modeled as a 2D polynomial curve.
+ * This class represents a 2D polynomial curve.
  *
  */
 class VISP_EXPORT usPolynomialCurve2D
@@ -57,73 +59,266 @@ public:
   /**
    * Copy constructor.
    */
-  usPolynomialCurve2D(const usPolynomialCurve2D &needle);
+  usPolynomialCurve2D(const usPolynomialCurve2D &curve);
+  
+  /**
+   * Assignment operator.
+   */
+  const usPolynomialCurve2D &operator=(const usPolynomialCurve2D &curve);
+  
+  /**
+   * Destructor.
+   */
+  virtual ~usPolynomialCurve2D();
 
   /**
    * Constructor.
    *
-   * @param order The order of the polynomial curve representing the needle.
+   * @param order The order of the polynomial curve.
    */
   usPolynomialCurve2D(unsigned int order);
 
   /**
-   * Change the order of the polynomial representing the needle.
+   * Change the order of the polynomial curve.
    */
-  usPolynomialCurve2D changePolynomialOrder(unsigned int newOrder);
+  void setOrder(unsigned int order);
 
   /**
-   * Compute the distance between two needles.
-   */
-  static double curveDistance(const usPolynomialCurve2D &n1, const usPolynomialCurve2D &n2);
-
-  /**
-   * Get the control points.
-   */
-  vpMatrix getControlPoints() const;
-
-  /**
-   * Get the needle curvature.
-   */
-  double getCurvature();
-
-  /**
-   * Get the needle length.
-   */
-  double getLength() const;
-
-  /**
-   * Get the needle model.
-   */
-  const vpMatrix *getModel() const;
-
-  /**
-   * Get the number of lines used to display the needle.
-   */
-  unsigned int getNumberOfRenderingLines() const;
-
-  /**
-   * Get the order of the polynomial curve representing the needle.
+   * Get the order of the polynomial curve.
    */
   unsigned int getOrder() const;
 
   /**
-   * Get the needle coordinates at a given curvilinear abscissa.
+   * Set the starting value of the parametric variable of the polynomial curve.
    */
-  vpColVector getPoint(double abscissa) const;
+  void setStartParameter(double startParameter);
+  
+  /**
+   * Get the starting value of the parametric variable of the polynomial curve.
+   */
+  double getStartParameter() const;
+  
+  /**
+   * Set the ending value of the parametric variable of the polynomial curve.
+   */
+  void setEndParameter(double endParameter);
+  
+  /**
+   * Get the ending value of the parametric variable of the polynomial curve.
+   */
+  double getEndParameter() const;
 
   /**
-   * Get the rendering points.
+   * Set the starting and ending values of the parametric variable of the polynomial curve.
+   * If the starting value is higher than the ending value, these values are inverted as well as the direction of displacement along the curve.
    */
-  vpMatrix getRenderingPoints() const;
+  void setBoundaries(double startParameter, double endParamter);
+  
+  /**
+   * Set the length of the curve in the parametric variable space.
+   */
+  void setParametricLength(double length);
+  
+  /**
+   * Get the length of the curve in the parametric variable space.
+   */
+  double getParametricLength() const;
+  
+  /**
+   * Set the curve length in metric space.
+   */
+  void setLength(double length, double precision=1e-4);
+  
+  /**
+   * Get the curve length in metric space.
+   */
+  double getLength(int nbCountSeg=50) const;
 
   /**
-   * Get the tangent vector at a given curvilinear abscissa.
+   * Set the curve polynomial coefficients.
    */
-  vpColVector getTangent(double abscissa) const;
+  void setPolynomialCoefficients(const vpMatrix &polynomialCoefficients);
+  
+  /**
+   * Get the polynomial coefficients.
+   */
+  vpMatrix getPolynomialCoefficients() const;
+    
+  /**
+   * Get the polynomial curve point at a given parametric value.
+   */
+  vpColVector getPoint(double parameter) const;
+  
+  /**
+   * Get the polynomial curve points at given parametric values.
+   */
+  vpMatrix getPoints(vpColVector parameters) const;
 
+  /**
+   * Get the starting extremity of the polynomial curve.
+   */
+  vpColVector getStartPoint() const;
+  
+  /**
+   * Get the ending extremity of the polynomial curve.
+   */
+  vpColVector getEndPoint() const;
+  
+  /**
+   * Get the tangent vector at a given parametric value.
+   */
+  vpColVector getTangent(double parameter) const;
+  
+  /**
+   * Get the tangent vector at the starting extremity of the polynomial curve.
+   */
+  vpColVector getStartTangent() const;
+  
+  /**
+   * Get the tangent vector at the starting extremity of the polynomial curve.
+   */
+  vpColVector getEndTangent() const;
+  
+  /**
+   * Get the derivative of the polynmial curve at a given parametric value.
+   */
+  vpColVector getDerivative(double parameter, unsigned int order) const;
+  
+  /**
+   * Define the polynomial curve to fit as best as possible a set of control points at given parametric values.
+   *
+   * @param points The desired control points.
+   * @param param The desired parametric values.
+   * @param order The order of the resulting polynomial curve (keep the current order of the curve if given value is <1 (default))
+   */
+  void defineFromPoints(const std::vector<vpColVector> &points, const std::vector<double> &param, unsigned int order=0);
+    
+  /**
+   * Define the polynomial curve to fit as best as possible a set of control points at given parametric values.
+   *
+   * @param points The desired control points.
+   * @param param The desired parametric values.
+   * @param order The order of the resulting polynomial curve (keep the current order of the curve if given value is <1 (default))
+   */
+  void defineFromPoints(const vpMatrix points, const vpColVector &param, unsigned int order=0);
+    
+  /**
+   * Define the polynomial curve to fit as best as possible a set of control points.
+   * Parametric values for the different points are automatically computed.
+   *
+   * @param points The desired control points.
+   * @param order The order of the resulting polynomial curve (keep the current order of the curve if given value is <1 (default))
+   */
+  void defineFromPointsAuto(const std::vector<vpColVector> &points, unsigned int order=0);
+  
+  /**
+   * Define the polynomial curve to fit as best as possible a set of control points.
+   * Parametric values for the different points are automatically computed.
+   *
+   * @param points The desired control points.
+   * @param order The order of the resulting polynomial curve (keep the current order of the curve if given value is <1 (default))
+   */
+  void defineFromPointsAuto(const vpMatrix &points, unsigned int order=0);
+    
+  /**
+   * Define the polynomial curve to fit as best as possible a set of weighted control points at given parametric values.
+   * Parametric values for the different points are automatically computed according to their position along a given straight direction.
+   * 
+   * @param points The desired control points.
+   * @param direction The direction used to compute the parametric values associated to each point.
+   * @param order The order of the resulting polynomial curve (keep the current order of the curve if given value is <1 (default))
+   */
+  void defineFromPointsAuto(const std::vector<vpColVector> &points, const vpColVector &direction, unsigned int order=0);
+  
+  /**
+   * Define the polynomial curve to fit as best as possible a set of control points at given parametric values.
+   * Parametric values for the different points are automatically computed according to their position along a given straight direction.
+   * 
+   * @param points The desired control points.
+   * @param direction The direction used to compute the parametric values associated to each point.
+   * @param order The order of the resulting polynomial curve (keep the current order of the curve if given value is <1 (default))
+   */
+  void defineFromPointsAuto(const vpMatrix &points, const vpColVector &direction, unsigned int order=0);
+  
+  /**
+   * Define the polynomial curve to fit as best as possible a set of weighted control points at given parametric values.
+   *
+   * @param points The desired control points.
+   * @param param The desired parametric values.
+   * @param weights Set of weights describing the importance of fitting each point with the curve.
+   * @param order The order of the resulting polynomial curve (keep the current order of the curve if given value is <1 (default))
+   */
+  void defineFromWeightedPoints(const std::vector<vpColVector> &points, const std::vector<double> &param, const std::vector<double> &weights, unsigned int order=0);
+  
+  /**
+   * Define the polynomial curve to fit as best as possible a set of weighted control points at given parametric values.
+   *
+   * @param points The desired control points.
+   * @param param The desired parametric values.
+   * @param weights Set of weights describing the importance of fitting each point with the curve.
+   * @param order The order of the resulting polynomial curve (keep the current order of the curve if given value is <1 (default))
+   */
+  void defineFromWeightedPoints(const vpMatrix &points, const vpColVector &param, const vpColVector &weights, unsigned int order=0);
+  
+  /**
+   * Define the polynomial curve to fit as best as possible a set of control points at given parametric values.
+   * Parametric values for the different points are automatically computed.
+   * 
+   * @param points The desired control points.
+   * @param weights Set of weights describing the importance of fitting each point with the curve.
+   * @param order The order of the resulting polynomial curve (keep the current order of the curve if given value is <1 (default))
+   */
+  void defineFromWeightedPointsAuto(const std::vector<vpColVector> &points, const std::vector<double> &weights, unsigned int order=0);
+  
+  /**
+   * Define the polynomial curve to fit as best as possible a set of control points at given parametric values.
+   * Parametric values for the different points are automatically computed.
+   * 
+   * @param points The desired control points.
+   * @param weights Set of weights describing the importance of fitting each point with the curve.
+   * @param order The order of the resulting polynomial curve (keep the current order of the curve if given value is <1 (default))
+   */
+  void defineFromWeightedPointsAuto(const vpMatrix &points, const vpColVector &weights, unsigned int order=0);
+  
+  /**
+   * Define the polynomial curve to fit as best as possible a set of control points at given parametric values.
+   * Parametric values for the different points are automatically computed according to their position along a given straight direction.
+   * 
+   * @param points The desired control points.
+   * @param weights Set of weights describing the importance of fitting each point with the curve.
+   * @param direction The direction used to compute the parametric values associated to each point.
+   * @param order The order of the resulting polynomial curve (keep the current order of the curve if given value is <1 (default))
+   */
+  void defineFromWeightedPointsAuto(const std::vector<vpColVector> &points, const std::vector<double> &weights, const vpColVector &direction, unsigned int order=0);
+  
+  /**
+   * Define the polynomial curve to fit as best as possible a set of control points at given parametric values.
+   * Parametric values for the different points are automatically computed according to their position along a given straight direction.
+   * 
+   * @param points The desired control points.
+   * @param weights Set of weights describing the importance of fitting each point with the curve.
+   * @param direction The direction used to compute the parametric values associated to each point.
+   * @param order The order of the resulting polynomial curve (keep the current order of the curve if given value is <1 (default))
+   */
+  void defineFromWeightedPointsAuto(const vpMatrix &points, const vpColVector &weights, const vpColVector &direction, unsigned int order=0);
+  
+  /**
+   * Get the curvature of the curve at a specific point.
+   * 
+   * @param param Parametric value where the curvature should be computed.
+   */
+  double getCurvature(double param) const;
+  
+  /**
+   * Get the mean deviation of the polynomial with respect to the straight axis between the two extremities.
+   * 
+   * @param nbCountSeg number of segments used to approximate the deviation.
+  */
+  double getMeanAxisDeviation(int nbCountSeg=50) const;
+    
   /**
    * Set the control points.
-   * The input matrix has to be of size nx3, where n is the order of the model.
+   * The input matrix has to be of size 2xn, where n is the order of the polynomial curve.
    *
    * @param controlPoints Reference to the desired control points.
    */
@@ -133,28 +328,62 @@ public:
    * Set the control points.
    */
   void setControlPoints(double **controlPoints);
-
+  
   /**
-   * Set the needle model.
+   * Get the control points. (to remove)
    */
-  void setModel(const vpMatrix &model);
-
+  vpMatrix getControlPoints() const;
+  
   /**
-   * Set the number of lines used to diplay the needle.
+   * Get the rendering points. (to remove)
    */
-  void setNumberOfRenderingLines(unsigned int nRenderingLines);
-
+  vpMatrix getRenderingPoints() const;
+  
   /**
-   * Set the order of the polynomial curve representing the needle.
+   * Compute the distance between two curves. (to remove)
    */
-  void setOrder(unsigned int order);
+  static double curveDistance(const usPolynomialCurve2D &n1, const usPolynomialCurve2D &n2);
+  
+  /**
+   * Get new curve starting at different parametric coefficients .
+   */
+  usPolynomialCurve2D getSubPolynomialCurve(double startParameter, double endParameter) const;
+  
+  /**
+   * Get new curve with new polynomial order.
+   */
+  usPolynomialCurve2D getNewOrderPolynomialCurve(unsigned int order) const;
+  
+  /**
+   * Modify the polynomial coefficients such that the parametric variable now goes from two different boundaries, without changing the shape of the curve in space.
+   */
+  void changeCoefficientsToFitBoundaries(double startParameter, double endParameter);
+  
+  /**
+   * Invert the direction of displacement along the curve with respect to the parametric variable.
+   */
+  void reverse();
+  
+  /**
+   * Modify the polynomial coefficients such that the metric length of the curve corresponds to the parametric length.
+   */
+  void changeCoefficientsToFitMetricLength();
+  
+  /**
+   * Apply an homogeneous transformation to the polynomial curve.
+   */
+  void move(double x, double y, double tz);
+  
+  /**
+   * Scale the polynomial curve.
+   */
+  void scale(double s);
 
 private:
-  unsigned int m_order;
-  unsigned int m_nRenderingLines;
-  vpMatrix m_controlPoints;
-  vpMatrix m_model;
-  vpMatrix m_renderingPoints;
+  unsigned int m_order; // Order of the polynomial curve
+  double m_startParameter; // starting value of the parametric variable
+  double m_endParameter; // ending value of the parametric variable
+  vpMatrix m_polynomialCoefficients; // coefficients of the polynomial curve
 };
 
 #endif // __usPolynomialCurve2D_h_

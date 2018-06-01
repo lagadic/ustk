@@ -199,7 +199,7 @@ void usNeedleTrackerSIR2D::run(vpImage<unsigned char> &I, double v)
     for (unsigned int k = 0; k < 2; ++k)
       controlPoints[k][m_nPointsCurrent - 1] += direction[k] + noise[k];
 
-    m_particles[i]->setControlPoints(controlPoints.t());
+    m_particles[i]->setControlPoints(controlPoints);
   }
 
   // Compute weights
@@ -231,15 +231,15 @@ void usNeedleTrackerSIR2D::run(vpImage<unsigned char> &I, double v)
     meanControlPoints += m_weights[i] * m_particles[i]->getControlPoints();
   }
 
-  m_needleModel->setControlPoints(meanControlPoints.t());
+  m_needleModel->setControlPoints(meanControlPoints);
 
   if ((m_needleModel->getLength()) > m_lengthThreshold && (m_nPoints != m_nPointsCurrent)) {
     std::cout << "Changing polynomial order from " << m_nPointsCurrent << " to " << (m_nPointsCurrent + 1) << std::endl;
-    usPolynomialCurve2D *newModel = new usPolynomialCurve2D(m_needleModel->changePolynomialOrder(m_nPointsCurrent));
+    usPolynomialCurve2D *newModel = new usPolynomialCurve2D(m_needleModel->getNewOrderPolynomialCurve(m_nPointsCurrent));
     delete m_needleModel;
     m_needleModel = newModel;
     for (unsigned int i = 0; i < m_nParticles; ++i) {
-      usPolynomialCurve2D *newModel = new usPolynomialCurve2D(m_particles[i]->changePolynomialOrder(m_nPointsCurrent));
+      usPolynomialCurve2D *newModel = new usPolynomialCurve2D(m_particles[i]->getNewOrderPolynomialCurve(m_nPointsCurrent));
       delete m_particles[i];
       m_particles[i] = newModel;
     }
