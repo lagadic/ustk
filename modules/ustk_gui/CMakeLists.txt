@@ -99,7 +99,7 @@ if(USE_VTK)
     list(APPEND opt_libs Qt5::Widgets Qt5::Gui Qt5::QuickWidgets)
 
   elseif(VTK_QT_VERSION VERSION_EQUAL "4")
-    find_package(Qt4 REQUIRED QtGui QtCore)
+    find_package(Qt4 REQUIRED QtGui QtCore OPTIONAL_COMPONENTS QtNetwork)
     # Use what VTK built with
     set(QT_QMAKE_EXECUTABLE ${VTK_QT_QMAKE_EXECUTABLE} CACHE FILEPATH "")
     set(QT_MOC_EXECUTABLE ${VTK_QT_MOC_EXECUTABLE} CACHE FILEPATH "")
@@ -108,15 +108,17 @@ if(USE_VTK)
     list(APPEND opt_incs "${QT_INCLUDE_DIR}")
     list(APPEND opt_incs "${QT_QTGUI_INCLUDE_DIR}")
     list(APPEND opt_incs "${QT_QTCORE_INCLUDE_DIR}")
+    list(APPEND opt_incs "${QT_QTNETWORK_INCLUDE_DIR}")
     list(APPEND opt_libs ${QT_QTGUI_LIBRARIES})
     list(APPEND opt_libs ${QT_QTCORE_LIBRARIES})
+    list(APPEND opt_libs ${QT_QTNETWORK_LIBRARIES})
   endif()
 
   # Manage resources file (for qml components)
   set(AUTORCC_ON)
 
   # Create ustk_gui module, only if vtk found
-  vp_add_module(ustk_gui visp_ustk_core OPTIONAL visp_ustk_elastography visp_ustk_grabber visp_robot visp_ustk_confidence_map visp_ustk_template_tracking)
+  vp_add_module(ustk_gui visp_ustk_core visp_ustk_elastography visp_ustk_grabber visp_robot visp_ustk_confidence_map visp_ustk_template_tracking)
   vp_glob_module_sources(${UI_RESOURCES})
   vp_module_include_directories(${opt_incs})
   vp_create_module(${opt_libs})

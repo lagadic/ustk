@@ -36,10 +36,11 @@
 * @warning This widget is based on QtQuick, and has been tested on qt 5.8 or newer versions.
 */
 
-#include <QQuickItem>
 #include <visp3/ustk_gui/usImageDisplayWidgetQmlOverlay.h>
 
 #if (defined(USTK_HAVE_VTK_QT5) || defined(USTK_HAVE_QT5))
+
+#include <QQuickItem>
 
 /**
 * Constructor.
