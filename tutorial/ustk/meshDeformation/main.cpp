@@ -5,9 +5,9 @@
 
 #include <visp3/ustk_core/us.h>
 
-#include <vtkGenericDataObjectReader.h>
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
+#include <vtkUnstructuredGridReader.h>
 
 int main(int argc, char **argv)
 {
@@ -18,13 +18,13 @@ int main(int argc, char **argv)
   usMeshDeformation scene;
 
   // Create the mesh to display
-  vtkSmartPointer<vtkGenericDataObjectReader> reader = vtkSmartPointer<vtkGenericDataObjectReader>::New();
+  vtkSmartPointer<vtkUnstructuredGridReader> reader = vtkSmartPointer<vtkUnstructuredGridReader>::New();
 
   std::string filename = us::getDataSetPath() + "/mesh/liver.vtk";
   reader->SetFileName(filename.c_str());
   reader->Update();
 
-  scene.setMeshInScene(reader->GetPolyDataOutput());
+  scene.setMeshInScene(reader->GetOutput());
 
   app.setActiveWindow(&scene);
   scene.showMaximized();

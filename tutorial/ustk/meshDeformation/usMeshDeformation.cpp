@@ -44,7 +44,7 @@
 usMeshDeformation::usMeshDeformation(QWidget *parent, Qt::WindowFlags f) : usViewerWidget(parent, f)
 {
   // POLYDATA
-  m_meshPolyData = vtkPolyData::New();
+  m_meshPolyData = vtkUnstructuredGrid::New();
 
   // Setup renderer
   renderer = vtkRenderer::New();
@@ -91,11 +91,11 @@ void usMeshDeformation::keyPressEvent(QKeyEvent *event)
 * Setter for the mesh to introcuce in the scene.
 * @param mesh The mesh, under vtkPolydataFormat.
 */
-void usMeshDeformation::setMeshInScene(vtkPolyData *mesh)
+void usMeshDeformation::setMeshInScene(vtkUnstructuredGrid *mesh)
 {
   m_meshPolyData = mesh;
 
-  vtkSmartPointer<vtkPolyDataMapper> meshMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+  vtkSmartPointer<vtkDataSetMapper> meshMapper = vtkSmartPointer<vtkDataSetMapper>::New();
   meshMapper->SetInputData(mesh);
   m_meshActor = vtkSmartPointer<vtkActor>::New();
   m_meshActor->GetProperty()->SetColor(0, 0, 1.0); // blue

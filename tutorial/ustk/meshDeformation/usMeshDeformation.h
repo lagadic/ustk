@@ -52,6 +52,7 @@
 // VTK includes
 #include <vtkArrowSource.h>
 #include <vtkCylinderSource.h>
+#include <vtkDataSetMapper.h>
 #include <vtkInteractorStyleTrackballCamera.h>
 #include <vtkMatrix4x4.h>
 #include <vtkProperty.h>
@@ -59,7 +60,7 @@
 #include <vtkSTLReader.h>
 #include <vtkSTLWriter.h>
 #include <vtkSmartPointer.h>
-#include <vtkSphereSource.h>
+#include <vtkUnstructuredGrid.h>
 
 #include <QPaintEngine>
 #include <QPainter>
@@ -107,7 +108,7 @@ public:
 
   vtkPoints *getMeshPoints();
 
-  void setMeshInScene(vtkPolyData *mesh);
+  void setMeshInScene(vtkUnstructuredGrid *mesh);
 
   // Catch paint events, in case we want to display some informations (writing in this widget) over the vtk scene
   void paintEvent(QPaintEvent *event);
@@ -119,7 +120,7 @@ public slots:
 
 private:
   // mesh polydata
-  vtkPolyData *m_meshPolyData;
+  vtkUnstructuredGrid *m_meshPolyData;
 
   // actor
   vtkSmartPointer<vtkActor> m_meshActor;
