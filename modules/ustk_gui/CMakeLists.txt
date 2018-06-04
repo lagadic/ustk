@@ -94,6 +94,7 @@ if(USE_VTK)
     qt5_wrap_ui(UI_Srcs ${UIs})
 
     qt5_add_resources(UI_RESOURCES resources/resources.qrc)
+    set_property(SOURCE ${UI_RESOURCES} PROPERTY SKIP_AUTOMOC ON) # To avoid CMP0071 warning
 
     list(APPEND opt_incs "${Qt5Widgets_INCLUDE_DIRS}")
     list(APPEND opt_libs Qt5::Widgets Qt5::Gui Qt5::QuickWidgets)
