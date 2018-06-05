@@ -168,9 +168,9 @@ int main()
     curve.defineFromWeightedPointsAuto(point3M, weights3V, direction, 3);
     std::cout << "done: usPolynomialCurve2D::defineFromWeightedPointsAuto(const vpMatrix &points, const vpColVector &weights, const vpColVector &direction, unsigned int order)" << std::endl;
 
-    double curvature = curve.getCurvature(0.25);
+    curve.getCurvature(0.25);
     std::cout << "done: usPolynomialCurve2D::getCurvature" << std::endl;
-    double meanDeviation = curve.getMeanAxisDeviation(100);
+    curve.getMeanAxisDeviation(100);
     std::cout << "done: usPolynomialCurve2D::getMeanAxisDeviation" << std::endl;
 
     vpMatrix CP = curve.getControlPoints();
@@ -179,7 +179,7 @@ int main()
     std::cout << "done: usPolynomialCurve2D::setControlPoints(const vpMatrix&)" << std::endl;
     curve.setControlPoints(&CP.data);
     std::cout << "done: usPolynomialCurve2D::setControlPoints(double**)" << std::endl;
-    vpMatrix RP = curve.getRenderingPoints();
+    curve.getRenderingPoints();
     std::cout << "done: usPolynomialCurve2D::getRenderingPoints" << std::endl;
     
     curve2 = curve.getSubPolynomialCurve(0.1, 0.2);

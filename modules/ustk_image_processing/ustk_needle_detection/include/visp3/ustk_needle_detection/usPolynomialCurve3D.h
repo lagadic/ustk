@@ -32,51 +32,52 @@
  *
  *****************************************************************************/
 
-#ifndef __usPolynomialCurve2D_h_
-#define __usPolynomialCurve2D_h_
+#ifndef __usPolynomialCurve3D_h_
+#define __usPolynomialCurve3D_h_
 
 #include <vector>
 
 #include <visp3/core/vpColVector.h>
+#include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpMatrix.h>
 
 /**
- * @class usPolynomialCurve2D
+ * @class usPolynomialCurve3D
  * @brief 2D curve model
  * @ingroup module_ustk_needle_detection
  *
  * This class represents a 2D polynomial curve.
  *
  */
-class VISP_EXPORT usPolynomialCurve2D
+class VISP_EXPORT usPolynomialCurve3D
 {
 public:
   /**
    * Default constructor. Requires a call to setOrder().
    */
-  usPolynomialCurve2D();
+  usPolynomialCurve3D();
 
   /**
    * Copy constructor.
    */
-  usPolynomialCurve2D(const usPolynomialCurve2D &curve);
+  usPolynomialCurve3D(const usPolynomialCurve3D &curve);
   
   /**
    * Assignment operator.
    */
-  const usPolynomialCurve2D &operator=(const usPolynomialCurve2D &curve);
+  const usPolynomialCurve3D &operator=(const usPolynomialCurve3D &curve);
   
   /**
    * Destructor.
    */
-  virtual ~usPolynomialCurve2D();
+  virtual ~usPolynomialCurve3D();
 
   /**
    * Constructor.
    *
    * @param order The order of the polynomial curve.
    */
-  usPolynomialCurve2D(unsigned int order);
+  usPolynomialCurve3D(unsigned int order);
 
   /**
    * Change the order of the polynomial curve.
@@ -342,17 +343,17 @@ public:
   /**
    * Compute the distance between two curves. (to remove)
    */
-  static double curveDistance(const usPolynomialCurve2D &n1, const usPolynomialCurve2D &n2);
+  static double curveDistance(const usPolynomialCurve3D &n1, const usPolynomialCurve3D &n2);
   
   /**
    * Get new curve starting at different parametric coefficients .
    */
-  usPolynomialCurve2D getSubPolynomialCurve(double startParameter, double endParameter) const;
+  usPolynomialCurve3D getSubPolynomialCurve(double startParameter, double endParameter) const;
   
   /**
    * Get new curve with new polynomial order.
    */
-  usPolynomialCurve2D getNewOrderPolynomialCurve(unsigned int order) const;
+  usPolynomialCurve3D getNewOrderPolynomialCurve(unsigned int order) const;
   
   /**
    * Modify the polynomial coefficients such that the parametric variable now goes from two different boundaries, without changing the shape of the curve in space.
@@ -372,7 +373,13 @@ public:
   /**
    * Apply an homogeneous transformation to the polynomial curve.
    */
-  void move(double x, double y, double tz);
+  void move(const vpHomogeneousMatrix &H);
+  
+  /**
+   * Apply an homogeneous transformation to the polynomial curve.
+   */
+  void move(double x, double y, double z, double tx, double ty, double tz);
+  
   
   /**
    * Scale the polynomial curve.
@@ -386,4 +393,4 @@ protected:
   vpMatrix m_polynomialCoefficients; // coefficients of the polynomial curve
 };
 
-#endif // __usPolynomialCurve2D_h_
+#endif // __usPolynomialCurve3D_h_
