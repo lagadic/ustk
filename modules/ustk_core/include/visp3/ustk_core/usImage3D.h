@@ -66,12 +66,21 @@ public:
   usImage3D();
 
   /**
-  * Constructor. Set the dimensions of the volume.
+  * Constructor. Set the dimensions of the volume. Initialize the data container with default value.
   * @param height Volume height.
   * @param width Volume width.
   * @param frameNumber Volume size in the third dimension (orthogonal to ultrasound 2D frames).
   */
   usImage3D(unsigned int height, unsigned int width, unsigned int frameNumber);
+  
+  /**
+  * Constructor. Set the dimensions of the volume. Initialize the data container with the specified value.
+  * @param height Volume height.
+  * @param width Volume width.
+  * @param frameNumber Volume size in the third dimension (orthogonal to ultrasound 2D frames).
+  * @param initialValue The initial data
+  */
+  usImage3D(unsigned int height, unsigned int width, unsigned int frameNumber, Type initialValue);
 
   /**
   * Copy constructor. By default performs a deep copy.
@@ -176,11 +185,11 @@ public:
 
   /**
   * Resize the image if needed (if new dimensions differ from old ones).
-  * @param width The volume size along i axis.
-  * @param heigth The volume size along j axis.
+  * @param height The volume size along i axis.
+  * @param width The volume size along j axis.
   * @param numberOfFrames The volume size along k axis.
   */
-  void resize(unsigned int width, unsigned int heigth, unsigned int numberOfFrames);
+  void resize(unsigned int height, unsigned int width, unsigned int numberOfFrames);
 
   /**
   * Set the data container.
@@ -195,11 +204,11 @@ protected:
 private:
   /**
   * Initiation of the image.
-  * @param heigth Volume height (number of voxels).
+  * @param height Volume height (number of voxels).
   * @param width Volume width (number of voxels).
   * @param numberOfFrames Volume size (number of voxels) in the third dimension (orthogonal to ultrasound 2D frames).
   */
-  void init(unsigned int heigth, unsigned int width, unsigned int numberOfFrames);
+  void init(unsigned int height, unsigned int width, unsigned int numberOfFrames);
 
   unsigned int m_width;          /**< Volume width in voxels (number of voxels on the j-axis)*/
   unsigned int m_height;         /**< Volume height in voxels (number of voxels on the i-axis)*/
@@ -246,9 +255,9 @@ inline void usImage3D<Type>::init(unsigned int height, unsigned int width, unsig
     }
   }
 
-  this->m_width = width;
-  this->m_height = height;
-  this->m_numberOfFrames = numberOfFrames;
+  m_width = width;
+  m_height = height;
+  m_numberOfFrames = numberOfFrames;
 
   m_size = m_width * m_height * m_numberOfFrames;
 
@@ -269,28 +278,34 @@ inline void usImage3D<Type>::init(unsigned int height, unsigned int width, unsig
 }
 
 template <class Type>
-usImage3D<Type>::usImage3D() : m_width(0), m_height(0), m_numberOfFrames(0), m_size(0), bitmap(NULL), framPointer(NULL)
+usImage3D<Type>::usImage3D()
+    : m_width(0), m_height(0), m_numberOfFrames(0), m_size(0), bitmap(NULL), framPointer(NULL)
 {
 }
 
 template <class Type>
 usImage3D<Type>::usImage3D(unsigned int height, unsigned int width, unsigned int frameNumber)
-  : m_width(width), m_height(height), m_numberOfFrames(frameNumber), m_size(width * height * frameNumber), bitmap(NULL),
-    framPointer(NULL)
+    : m_width(0), m_height(0), m_numberOfFrames(0), m_size(0), bitmap(NULL), framPointer(NULL)
 {
-  init(height, width, frameNumber);
-  initData(0);
+  this->init(height, width, frameNumber);
+  this->initData(Type());
+}
+
+template <class Type>
+usImage3D<Type>::usImage3D(unsigned int height, unsigned int width, unsigned int frameNumber, Type initialValue)
+    : m_width(0), m_height(0), m_numberOfFrames(0), m_size(0), bitmap(NULL), framPointer(NULL)
+{
+  this->init(height, width, frameNumber);
+  this->initData(initialValue);
 }
 
 template <class Type> usImage3D<Type>::usImage3D(const usImage3D<Type> &volume, const bool copy)
+    : m_width(0), m_height(0), m_numberOfFrames(0), m_size(0), bitmap(NULL), framPointer(NULL)
 {
-  init(volume.getWidth(), volume.getHeight(), volume.getNumberOfFrames());
-
-  m_size = m_width * m_height * m_numberOfFrames;
+  this->init(volume.getHeight(), volume.getWidth(), volume.getNumberOfFrames());
 
   // deep copy
-  if (copy)
-    memcpy(bitmap, volume.bitmap, m_size * sizeof(Type));
+  if(copy) memcpy(bitmap, volume.bitmap, m_size * sizeof(Type));
 }
 
 template <class Type> usImage3D<Type>::~usImage3D()
@@ -307,7 +322,7 @@ template <class Type> usImage3D<Type>::~usImage3D()
 
 template <class Type> usImage3D<Type> &usImage3D<Type>::operator=(const usImage3D<Type> &other)
 {
-  init(other.m_width, other.m_height, other.m_numberOfFrames);
+  this->init(other.m_height, other.m_width, other.m_numberOfFrames);
 
   memcpy(bitmap, other.bitmap, m_size * sizeof(Type));
   return *this;
@@ -338,7 +353,6 @@ template <class Type> std::ostream &operator<<(std::ostream &out, const usImage3
 template <class Type> void usImage3D<Type>::setData(Type *data, int numberOfVoxels)
 {
   try {
-    m_size = numberOfVoxels;
     if (m_size != numberOfVoxels) {
       throw(vpException(vpException::fatalError, "usImage3D::setData() error, bitmap dimensions mismatch."));
     }
@@ -360,6 +374,6 @@ template <class Type> void usImage3D<Type>::initData(Type value)
 
 template <class Type> void usImage3D<Type>::resize(unsigned int height, unsigned int width, unsigned int numberOfFrames)
 {
-  init(height, width, numberOfFrames);
+    this->init(height, width, numberOfFrames);
 }
 #endif // __usImage3D_h_
