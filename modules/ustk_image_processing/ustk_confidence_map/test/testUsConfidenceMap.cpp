@@ -35,6 +35,7 @@
 #include <visp3/ustk_core/usImageIo.h>
 #include <visp3/ustk_core/usImagePreScan2D.h>
 
+#if defined(VISP_HAVE_XML2)
 int main()
 {
   std::string filename, filenameConfidence;
@@ -72,3 +73,10 @@ int main()
   std::cout << "Test failed\n";
   return 1;
 }
+#else
+int main()
+{
+  std::cout << "This test requires xml2 to run.\n";
+  return 0;
+}
+#endif
