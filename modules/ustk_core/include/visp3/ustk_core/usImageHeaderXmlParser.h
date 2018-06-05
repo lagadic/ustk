@@ -109,5 +109,5 @@ protected:
   void readMainClass(xmlDocPtr doc, xmlNodePtr node);
   void writeMainClass(xmlNodePtr node);
 };
-#endif // US_IMAGE_HEADER_XML_PARSER_H
+#endif // __usImageHeaderXmlParser_h_
 #endif // VISP_HAVE_XML2 || QT

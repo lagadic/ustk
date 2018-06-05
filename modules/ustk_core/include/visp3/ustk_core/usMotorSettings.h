@@ -125,4 +125,4 @@ private:
   usMotorType m_motorType;
 };
 
-#endif // US_MOTOR_SETTINGS_H
+#endif // __usMotorSettings_h_

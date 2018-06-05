@@ -78,4 +78,4 @@ public:
   static void convert(vtkMatrix4x4 *, vpHomogeneousMatrix &);
 };
 #endif
-#endif // US_VTK_CONVERTER
+#endif // __usMedicalImageViewer_h_

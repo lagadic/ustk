@@ -415,7 +415,7 @@ vpThread::Return controlFunction(vpThread::Args args)
 
       vpColVector v_e = eVs * v_s + eVp * v_p;
 
-      std::cout << v_e.t() << std::endl;
+      //std::cout << v_e.t() << std::endl;
 
       // Get the robot jacobian eJe
       robot.get_eJe(eJe);

@@ -123,4 +123,4 @@ struct usImageHeader {
 VISP_EXPORT std::string getDataSetPath();
 };
 
-#endif // US_H
+#endif // __us_h_

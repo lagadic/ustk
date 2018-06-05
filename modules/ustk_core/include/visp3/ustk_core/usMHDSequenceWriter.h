@@ -35,8 +35,8 @@
 * @brief Writer for a sequence of ultrasound images stored as mhd/raw files in a directory
 */
 
-#ifndef US_MHD_SEQUENCE_WRITER_H
-#define US_MHD_SEQUENCE_WRITER_H
+#ifndef __usMHDSequenceWriter_h_
+#define __usMHDSequenceWriter_h_
 
 #include <iostream>
 #include <stdint.h>
@@ -76,4 +76,4 @@ private:
   int m_imageCounter;
 };
 
-#endif // US_MHD_SEQUENCE_WRITER_H
+#endif // __usMHDSequenceWriter_h_

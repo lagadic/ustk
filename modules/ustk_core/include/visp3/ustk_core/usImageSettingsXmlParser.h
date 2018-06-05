@@ -186,5 +186,5 @@ protected:
   void readMainClass(xmlDocPtr doc, xmlNodePtr node);
   void writeMainClass(xmlNodePtr node);
 };
-#endif // US_IMAGE_SETTINGS_XML_PARSER_H
+#endif // __usImageSettingsXmlParser_h_
 #endif // VISP_HAVE_XML2

@@ -278,4 +278,4 @@ template <class Type> void usImagePreScan2D<Type>::resize(const unsigned int h, 
   vpImage<Type>::resize(h, w, val);
 }
 
-#endif // US_IMAGE_PRESCAN_2D_H
+#endif // __usImagePreScan2D_h_

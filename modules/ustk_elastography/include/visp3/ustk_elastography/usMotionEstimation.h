@@ -31,8 +31,8 @@
  *
  *****************************************************************************/
 
-#ifndef US_MOTION_ESTIMATION_H
-#define US_MOTION_ESTIMATION_H
+#ifndef __usMotionEstimation_h_
+#define __usMotionEstimation_h_
 
 /**
  * @file usMotionEstimation.h
@@ -112,4 +112,4 @@ private:
 };
 
 #endif // ARMADILLO
-#endif // US_MOTION_ESTIMATION_H
+#endif // __usMotionEstimation_h_

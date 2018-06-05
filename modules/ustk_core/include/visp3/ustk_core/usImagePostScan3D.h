@@ -333,4 +333,4 @@ template <class Type> void usImagePostScan3D<Type>::setScanLineDepth(double scan
   m_scanLineDepth = scanLineDepth;
 }
 
-#endif // US_IMAGE_POSTSCAN_3D_H
+#endif // __usImagePostScan3D_h_

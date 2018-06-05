@@ -31,12 +31,13 @@
  *****************************************************************************/
 
 /**
- * @file usImageDisplayWidgetQmlOverlay.h
- * @brief Qt widget class for 2D ultrasound image display, containing robot control tools.
+ * @file usImageDisplayWidgetQmlOverlayServoing.h
+ * @brief Qt widget class for 2D ultrasound image display, containing robot control tools for visual servoing on a
+ * rectangular ROI.
  */
 
-#ifndef __usImageDisplayWidgetQmlOverlay_h_
-#define __usImageDisplayWidgetQmlOverlay_h_
+#ifndef __usImageDisplayWidgetQmlOverlayServoing_h_
+#define __usImageDisplayWidgetQmlOverlayServoing_h_
 
 // VISP includes
 #include <visp3/ustk_core/usConfig.h>
@@ -50,17 +51,18 @@
 #include <visp3/ustk_gui/usImageDisplayWidget.h>
 
 /**
- * @class usImageDisplayWidgetQmlOverlay
- * @brief Qt widget class for 2D ultrasound image display, containing robot control tools.
+ * @class usImageDisplayWidgetQmlOverlayServoing
+ * @brief Qt widget class for 2D ultrasound image display, containing robot control tools for visual servoing on a
+ * rectangular ROI.
  * @ingroup module_ustk_gui
  */
 
-class VISP_EXPORT usImageDisplayWidgetQmlOverlay : public usImageDisplayWidget
+class VISP_EXPORT usImageDisplayWidgetQmlOverlayServoing : public usImageDisplayWidget
 {
   Q_OBJECT
 public:
-  usImageDisplayWidgetQmlOverlay();
-  ~usImageDisplayWidgetQmlOverlay();
+  usImageDisplayWidgetQmlOverlayServoing();
+  ~usImageDisplayWidgetQmlOverlayServoing();
 
   void resizeEvent(QResizeEvent *event);
 
@@ -69,8 +71,10 @@ public slots:
   void startTrackingSlot();
 
 signals:
-  void startTracking(vpRectOriented);
-  void stopTracking();
+  void startTrackingRect(vpRectOriented);
+  void stopTrackingRect();
+  void startServoingRect();
+  void stopServoingRect();
 
 private:
   vpImagePoint displayImageToRealImageDimentions(const vpImagePoint displayPoint);
@@ -80,6 +84,9 @@ private:
   vpRectOriented realImageToDisplayImageDimentions(const vpRectOriented realRectangle);
 
   QQuickWidget *m_qQuickOverlay;
+  bool m_isTrackingRect;
+  bool m_isServoingRect;
+  bool m_isServoingConfidence;
 };
 #endif // QT && ELASTOGRAPHY
-#endif // __usImageDisplayWidgetQmlOverlay_h_
+#endif // __usImageDisplayWidgetQmlOverlayServoing_h_

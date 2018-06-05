@@ -1,11 +1,11 @@
 /**
 
-\page tutorial-ustk-install-ubuntu Tutorial: Installation from source for Linux Ubuntu
+\page tutorial-ustk-install-fedora Tutorial: Installation from source for Linux Fedora
 \tableofcontents
 
-In this tutorial you will learn how to install UsTK from source on Linux Ubuntu. These steps have been tested with Ubuntu 17.04 (64 bit) distribution, but should work with any other distribution as well. 
+In this tutorial you will learn how to install UsTK from source on Linux Fedora. These steps have been tested with Fedora 26 (64 bit) distribution, but should work with any other distribution as well. 
 
-\section install_ubuntu_required Get the sources
+\section install_fedora_required Get the sources
 
 First, create a workspace in $HOME/ustk-ws that will contain UsTK and ViSP sources, build and dataset:
 
@@ -22,17 +22,17 @@ $ git clone https://github.com/lagadic/ustk $USTK_WS/ustk
 
 Git will clone the UsTK repository a subdirectory of your home directory.
 
-\section install_ubuntu_3rdparty Build UsTK using the installation script
+\section install_fedora_script Build UsTK using the installation script
 
-The you can run the installation script for ubuntu:
+The you can run the installation script for fedora:
 
 \code	
-$ sh $USTK_WS/ustk/script/install-ubuntu.sh
+$ sh $USTK_WS/ustk/script/install-fedora.sh
 \endcode
 
 This will download all thirdparties and build the library (it will take some time). You will have to enter your password to install required packages, and confirm a few questions during the process.
 
-Once the build is sucessfull, you can install the library on your system (optionnal). Simply run:
+Once the build is sucessfull, you can install the library (ViSP with UsTK) on your system (optionnal). Simply run:
 
 \code
 $ cd $USTK_WS/ustk-build

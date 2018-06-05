@@ -82,4 +82,4 @@ private:
   QPushButton m_confidenceServoingButton;
 };
 #endif // QT && ELASTOGRAPHY
-#endif // __usImageDisplayWidget_h_
+#endif // __usImageDisplayWidgetRobotControl_h_

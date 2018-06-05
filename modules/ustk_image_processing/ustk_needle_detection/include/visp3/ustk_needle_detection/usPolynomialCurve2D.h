@@ -157,4 +157,4 @@ private:
   vpMatrix m_renderingPoints;
 };
 
-#endif // USPOLYNOMIALCURVE2D_H
+#endif // __usPolynomialCurve2D_h_

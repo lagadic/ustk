@@ -154,4 +154,4 @@ public:
   static usHeaderFormatType getHeaderFormat(const std::string &headerfilename);
 };
 
-#endif // US_IMAGE_IO_H
+#endif // __usImageIo_h_

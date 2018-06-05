@@ -523,4 +523,4 @@ void usImageRF3D<Type>::operator()(unsigned int i, unsigned int j, unsigned int 
   framPointer[k][m_height * j + i] = value;
 }
 
-#endif // US_IMAGE_RF_3D_H
+#endif // __usImageRF3D_h_

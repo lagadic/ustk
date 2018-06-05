@@ -22,6 +22,7 @@ int main(int argc, char **argv)
 
   usNetworkGrabberPostScanBiPlan *qtGrabber = new usNetworkGrabberPostScanBiPlan();
   qtGrabber->connectToServer();
+
   // qtGrabber->setVerbose(true);
   // setting acquisition parameters
   usNetworkGrabber::usInitHeaderSent header;

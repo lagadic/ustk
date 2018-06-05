@@ -36,8 +36,8 @@
  * @brief Convolution process for elastography puropse, based on fftw thirdparty library.
  */
 
-#ifndef US_CONVOLUTION_2D_H
-#define US_CONVOLUTION_2D_H
+#ifndef __usConvolution2d_h_
+#define __usConvolution2d_h_
 
 #include <visp3/ustk_core/usConfig.h>
 
@@ -91,4 +91,4 @@ private:
 };
 
 #endif // USTK_HAVE_FFTW
-#endif // US_CONVOLUTION_2D_H
+#endif // __usConvolution2d_h_

@@ -68,4 +68,4 @@ public:
                       double &u, double &v, double &w);
 };
 
-#endif // US_METER_PIXEL_CONVERSION_H
+#endif // __usMeterPixelConversion_h_

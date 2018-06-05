@@ -362,4 +362,4 @@ template <class Type> void usImage3D<Type>::resize(unsigned int height, unsigned
 {
   init(height, width, numberOfFrames);
 }
-#endif // US_IMAGE_3D_H
+#endif // __usImage3D_h_

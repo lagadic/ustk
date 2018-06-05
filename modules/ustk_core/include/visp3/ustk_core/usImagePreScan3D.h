@@ -356,4 +356,4 @@ template <class Type> void usImagePreScan3D<Type>::getFrame(usImagePreScan2D<Typ
   }
 }
 
-#endif // US_IMAGE_PRESCAN_3D_H
+#endif // __usImagePreScan3D_h_

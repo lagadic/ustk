@@ -70,4 +70,5 @@ visp_add_subdirectory(realTimeDisplay REQUIRED_DEPS visp_ustk_gui visp_ustk_grab
 visp_add_subdirectory(elastography REQUIRED_DEPS visp_ustk_elastography)
 if(USTK_HAVE_VTK_QT5)
   visp_add_subdirectory(virtualNeedle REQUIRED_DEPS visp_ustk_gui)
+  visp_add_subdirectory(meshDeformation REQUIRED_DEPS visp_ustk_gui)
 endif()

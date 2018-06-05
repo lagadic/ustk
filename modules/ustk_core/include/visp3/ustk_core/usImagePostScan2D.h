@@ -245,4 +245,4 @@ template <class Type> void usImagePostScan2D<Type>::setWidthResolution(double wi
 {
   m_widthResolution = widthResolution;
 }
-#endif // US_IMAGE_POSTSCAN_2D_H
+#endif // __usImagePostScan2D_h_

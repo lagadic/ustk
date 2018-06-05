@@ -27,6 +27,7 @@
 #
 # Authors:
 # Fabien Spindler
+# Marc Pouliquen
 #
 #############################################################################
 
@@ -36,26 +37,7 @@ set(CMAKE_AUTOMOC ON)
 
 find_package(VISP REQUIRED visp_ustk_core)
 
-if(USTK_HAVE_VTK_QT4)
-  find_package(Qt4 REQUIRED QtCore QtNetwork QtGui)
-
-  list(APPEND opt_incs "${QT_QTCORE_INCLUDE_DIR}")
-  list(APPEND opt_incs "${QT_QTNETWORK_INCLUDE_DIR}")
-  list(APPEND opt_incs "${QT_QTGUI_INCLUDE_DIR}")
-
-  list(APPEND opt_libs ${QT_QTCORE_LIBRARIES})
-  list(APPEND opt_libs ${QT_QTNETWORK_LIBRARIES})
-  list(APPEND opt_libs ${QT_QTGUILIBRARIES})
-
-  include_directories(${VISP_INCLUDE_DIRS} opt_incs)
-
-  set(HEADER_FILES usVirtualServer.h usConsoleListener.h)
-  set(CPP_FILES usVirtualServer.cpp virtualServer.cpp usConsoleListener.cpp)
-
-  add_executable(ustk-virtualServer ${CPP_FILES} ${HEADER_FILES})
-
-  target_link_libraries(ustk-virtualServer ${opt_libs} ${VISP_LIBRARIES})
-elseif(USTK_HAVE_VTK_QT5 OR USTK_HAVE_QT5)
+if(USTK_HAVE_VTK_QT5 OR USTK_HAVE_QT5)
   find_package(Qt5Widgets)
   find_package(Qt5Network)
 

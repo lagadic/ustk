@@ -149,4 +149,4 @@ short quantile(short *data, unsigned int num, unsigned int n);
 double variance(vpMatrix points, unsigned int npts, unsigned int d);
 }
 
-#endif // US_NEEDLE_DETECTION_TOOLS_H
+#endif // __usNeedleDetectionTools_h_

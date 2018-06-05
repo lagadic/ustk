@@ -957,4 +957,4 @@ template <class ImageType> usImageSettingsXmlParser usSequenceReader<ImageType>:
 }
 
 #endif
-#endif // US_SEQUENCE_READER_H
+#endif // __usSequenceReader_h_

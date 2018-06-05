@@ -77,5 +77,5 @@ public:
   void write(const usImageRF3D<short> &image3D, const std::string &rawFileName);
   //@}
 };
-#endif // US_RAW_FILE_PARSER_H
+#endif // __usRawFileParser_h_
 #endif // DOXYGEN_SHOULD_SKIP_THIS
