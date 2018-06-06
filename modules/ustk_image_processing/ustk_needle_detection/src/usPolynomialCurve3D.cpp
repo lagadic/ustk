@@ -1038,3 +1038,18 @@ void usPolynomialCurve3D::scale(double s)
 {
     m_polynomialCoefficients = s * m_polynomialCoefficients;
 }
+
+VISP_EXPORT std::ostream &operator<<(std::ostream &s, const usPolynomialCurve3D &seg)
+{
+    s << "usPolynomialCurve3D\n";
+    s << seg.m_order << '\n';
+    for(int i=0 ; i<3 ; i++)
+    {
+        for(unsigned int j=0 ; j<seg.m_order+1 ; j++) s << seg.m_polynomialCoefficients[i][j] << " ";
+        s << '\n';
+    }
+    s << seg.m_startParameter << '\n';
+    s << seg.m_endParameter << '\n';
+    s.flush();
+    return s;
+}

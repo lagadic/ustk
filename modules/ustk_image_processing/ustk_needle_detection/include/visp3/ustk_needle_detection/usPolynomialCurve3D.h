@@ -385,6 +385,9 @@ public:
    * Scale the polynomial curve.
    */
   void scale(double s);
+  
+  friend std::ostream &operator<<(std::ostream &s, const usPolynomialCurve3D &spg);
+  
 
 protected:
   unsigned int m_order; // Order of the polynomial curve

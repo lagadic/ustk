@@ -38,6 +38,8 @@
 
 #include <visp3/ustk_needle_detection/usPolynomialCurve3D.h>
 
+#include <vector>
+
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpMatrix.h>

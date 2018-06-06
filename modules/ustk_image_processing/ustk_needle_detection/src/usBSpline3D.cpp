@@ -1,3 +1,34 @@
+/****************************************************************************
+ *
+ * This file is part of the ustk software.
+ * Copyright (C) 2016 - 2017 by Inria. All rights reserved.
+ *
+ * This software is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * ("GPL") version 2 as published by the Free Software Foundation.
+ * See the file LICENSE.txt at the root directory of this source
+ * distribution for additional information about the GNU GPL.
+ *
+ * For using ustk with software that can not be combined with the GNU
+ * GPL, please contact Inria about acquiring a ViSP Professional
+ * Edition License.
+ *
+ * This software was developed at:
+ * Inria Rennes - Bretagne Atlantique
+ * Campus Universitaire de Beaulieu
+ * 35042 Rennes Cedex
+ * France
+ *
+ * If you have questions regarding the use of this file, please contact
+ * Inria at ustk@inria.fr
+ *
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * Author:
+ * Jason Chevrie
+ *
+ *****************************************************************************/
 
 #include <visp3/ustk_needle_detection/usBSpline3D.h>
 
@@ -5,20 +36,12 @@
 
 #include <visp3/core/vpConfig.h>
 #ifdef VISP_HAVE_EIGEN3
-//#undef Success
-//#include <Eigen/Dense>
-#include <Eigen/SparseCore>
-#include <Eigen/SparseLU>
-// Specify conflicting functions (redefined by Eigen)
-using std::sqrt;
-using std::pow;
+#include <eigen3/Eigen/SparseCore>
+#include <eigen3/Eigen/SparseLU>
 #endif
 
-#include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpException.h>
-#include <visp3/core/vpPoseVector.h>
-#include <visp3/core/vpRotationMatrix.h>
-#include <visp3/core/vpTranslationVector.h>
+
 
 //#define DISPLAY_TIMING
 //#define DISPLAY_STIFFNESS
@@ -27,6 +50,7 @@ using std::pow;
 
 usBSpline3D::usBSpline3D()
 {
+    
 }
 
 usBSpline3D::usBSpline3D(const usBSpline3D &spline):
@@ -44,6 +68,11 @@ const usBSpline3D& usBSpline3D::operator=(const usBSpline3D &spline)
 {
     m_spline = spline.m_spline;
     return *this;
+}
+
+usBSpline3D *usBSpline3D::clone() const
+{
+    return new usBSpline3D(*this);
 }
 
 int usBSpline3D::getNbSegments() const
@@ -598,4 +627,18 @@ double usBSpline3D::getCurvatureFromShape(double start, double end, vpColVector 
     center3D = seg.getEndPoint() + 1/k * ( d2X_dl2 - 1/pow(dX_dl.euclideanNorm(),2) * vpColVector::dotProd(dX_dl, d2X_dl2)*dX_dl);
     direction3D = vpColVector::crossProd(dX_dl, d2X_dl2).normalize();
     return k;*/
+}
+
+VISP_EXPORT std::ostream &operator<<(std::ostream &s, const usBSpline3D &needle);
+
+std::ostream &operator<<(std::ostream &s, const usBSpline3D &needle)
+{
+    s << "usBSpline3D\n";
+
+    unsigned int n = needle.m_spline.size();
+    s << n << '\n';
+    for(unsigned int i=0 ; i<n ; i++) s << needle.m_spline.at(i);
+
+    s.flush();
+    return s;
 }
