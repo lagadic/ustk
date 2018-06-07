@@ -31,12 +31,14 @@
 /*!
   \example testUsPolynomialCurve2D.cpp
 
-  USTK usPolynomialCurve test
+  USTK usPolynomialCurve2D test
 
   This example tests all functions declared in the usPolynomialCurve2D class.
 */
 
 #include <visp3/ustk_needle_detection/usPolynomialCurve2D.h>
+
+#include <vector>
 
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpMatrix.h>
@@ -44,7 +46,7 @@
 
 int main()
 {
-    std::cout << "Start testVolumeProcessing" << std::endl;
+    std::cout << "Start testUsPolynomialCurve2D" << std::endl;
     usPolynomialCurve2D curveDefault;
     std::cout << "done: usPolynomialCurve2D default contructor" << std::endl;
     usPolynomialCurve2D curve(2);

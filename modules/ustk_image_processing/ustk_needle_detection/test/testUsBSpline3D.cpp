@@ -45,7 +45,7 @@
 
 int main()
 {
-    std::cout << "Start testVolumeProcessing" << std::endl;
+    std::cout << "Start testUsBSpline3D" << std::endl;
     usBSpline3D spline;
     std::cout << "done: usBSpline3D default contructor" << std::endl;
     usBSpline3D spline2(spline);
@@ -53,7 +53,7 @@ int main()
     spline = spline2;
     std::cout << "done: usBSpline3D assignment operator" << std::endl;
     usBSpline3D *spline3 = spline.clone();
-    std::cout << "done: usBSpline3D polymorphic copy" << std::endl;
+    std::cout << "dVolumeProcessingone: usBSpline3D polymorphic copy" << std::endl;
     
     std::vector<vpColVector> points(4, vpColVector(3,0));
     points.at(1)[0] = 1;points.at(2)[1] = 2;points.at(3)[2] = 1;

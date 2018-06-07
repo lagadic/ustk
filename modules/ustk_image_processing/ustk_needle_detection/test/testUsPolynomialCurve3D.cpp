@@ -29,9 +29,9 @@
  *****************************************************************************/
 
 /*!
-  \example testusPolynomialCurve3D.cpp
+  \example testUsPolynomialCurve3D.cpp
 
-  USTK usPolynomialCurve test
+  USTK usPolynomialCurve3D test
 
   This example tests all functions declared in the usPolynomialCurve3D class.
 */
@@ -47,7 +47,7 @@
 
 int main()
 {
-    std::cout << "Start testVolumeProcessing" << std::endl;
+    std::cout << "Start testUsPolynomialCurve3D" << std::endl;
     usPolynomialCurve3D curveDefault;
     std::cout << "done: usPolynomialCurve3D default contructor" << std::endl;
     usPolynomialCurve3D curve(2);

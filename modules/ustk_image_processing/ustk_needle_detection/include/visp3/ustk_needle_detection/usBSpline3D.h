@@ -105,4 +105,6 @@ public:
         friend std::ostream &operator<<(std::ostream &s, const usBSpline3D &needle);
 };
 
+VISP_EXPORT std::ostream &operator<<(std::ostream &s, const usBSpline3D &needle);
+
 #endif // usBSpline3D_h

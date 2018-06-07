@@ -629,8 +629,6 @@ double usBSpline3D::getCurvatureFromShape(double start, double end, vpColVector 
     return k;*/
 }
 
-VISP_EXPORT std::ostream &operator<<(std::ostream &s, const usBSpline3D &needle);
-
 std::ostream &operator<<(std::ostream &s, const usBSpline3D &needle)
 {
     s << "usBSpline3D\n";

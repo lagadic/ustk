@@ -396,4 +396,6 @@ protected:
   vpMatrix m_polynomialCoefficients; // coefficients of the polynomial curve
 };
 
+VISP_EXPORT std::ostream &operator<<(std::ostream &s, const usPolynomialCurve3D &spg);
+
 #endif // __usPolynomialCurve3D_h_
