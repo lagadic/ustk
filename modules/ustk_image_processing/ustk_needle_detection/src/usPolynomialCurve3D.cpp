@@ -536,10 +536,12 @@ void usPolynomialCurve3D::defineFromPointsAuto(const std::vector<vpColVector> &p
     
     std::vector<vpColVector> newPoints(nbPoints);
     std::vector<double> param(nbPoints);
-    for(unsigned int i=0 ; i<nbPoints; i++)
+    newPoints.front() = points.at(index[0]);
+    param.front() = 0;
+    for(unsigned int i=1 ; i<nbPoints; i++)
     {
         newPoints.at(i) = points.at(index[i]);
-        param.at(i) = t.at(index[i]);
+        param.at(i) = param.at(i-1) + sqrt(vpMath::sqr(newPoints.at(i)[0]-newPoints.at(i-1)[0]) + vpMath::sqr(newPoints.at(i)[1]-newPoints.at(i-1)[1]) + + vpMath::sqr(newPoints.at(i)[2]-newPoints.at(i-1)[2]));
     }
 
     return this->defineFromPoints(newPoints, param, order);
@@ -569,10 +571,12 @@ void usPolynomialCurve3D::defineFromPointsAuto(const vpMatrix &points, const vpC
     
     vpMatrix newPoints(3, nbPoints);
     vpColVector param(nbPoints);
-    for(unsigned int i=0 ; i<nbPoints; i++)
+    for(unsigned int j=0 ; j<3; j++) newPoints[j][0] = points[j][index[0]];
+    param[0] = 0;
+    for(unsigned int i=1 ; i<nbPoints; i++)
     {
         for(unsigned int j=0 ; j<3; j++) newPoints[j][i] = points[j][index[i]];
-        param[i] = t.at(index[i]);
+        param[i] = param[i-1] + sqrt(vpMath::sqr(newPoints[0][i]-newPoints[0][i-1]) + vpMath::sqr(newPoints[1][i]-newPoints[1][i-1]) + vpMath::sqr(newPoints[2][i]-newPoints[2][i-1]));
     }
 
     return this->defineFromPoints(newPoints, param, order);
@@ -727,11 +731,14 @@ void usPolynomialCurve3D::defineFromWeightedPointsAuto(const std::vector<vpColVe
     std::vector<vpColVector> newPoints(nbPoints);
     std::vector<double> newWeights(nbPoints);
     std::vector<double> param(nbPoints);
-    for(unsigned int i=0 ; i<nbPoints; i++)
+    newPoints.front() = points.at(index[0]);
+    newWeights.front() = weights.at(index[0]);
+    param.front() = 0;
+    for(unsigned int i=1 ; i<nbPoints; i++)
     {
         newPoints.at(i) = points.at(index[i]);
-        param.at(i) = t.at(index[i]);
         newWeights.at(i) = weights.at(index[i]);
+        param.at(i) = param.at(i-1) + sqrt(vpMath::sqr(newPoints.at(i)[0]-newPoints.at(i-1)[0]) + vpMath::sqr(newPoints.at(i)[1]-newPoints.at(i-1)[1]) + + vpMath::sqr(newPoints.at(i)[2]-newPoints.at(i-1)[2]));
     }
 
     this->defineFromWeightedPoints(newPoints, param, newWeights, order);
@@ -776,11 +783,14 @@ void usPolynomialCurve3D::defineFromWeightedPointsAuto(const vpMatrix &points, c
     vpMatrix newPoints(3, nbPoints);
     vpColVector newWeights(nbPoints);
     vpColVector param(nbPoints);
-    for(unsigned int i=0 ; i<nbPoints; i++)
+    for(unsigned int j=0 ; j<3; j++) newPoints[j][0] = points[j][index[0]];
+    newWeights[0] = weights[index[0]];
+    param[0] = 0;
+    for(unsigned int i=1 ; i<nbPoints; i++)
     {
         for(unsigned int j=0 ; j<3; j++) newPoints[j][i] = points[j][index[i]];
-        param[i] = t.at(index[i]);
         newWeights[i] = weights[index[i]];
+        param[i] = param[i-1] + sqrt(vpMath::sqr(newPoints[0][i]-newPoints[0][i-1]) + vpMath::sqr(newPoints[1][i]-newPoints[1][i-1]) + vpMath::sqr(newPoints[2][i]-newPoints[2][i-1]));
     }
 
     this->defineFromWeightedPoints(newPoints, param, newWeights, order);
@@ -812,11 +822,14 @@ void usPolynomialCurve3D::defineFromWeightedPointsAuto(const std::vector<vpColVe
     std::vector<vpColVector> newPoints(nbPoints);
     std::vector<double> newWeights(nbPoints);
     std::vector<double> param(nbPoints);
-    for(unsigned int i=0 ; i<nbPoints; i++)
+    newPoints.front() = points.at(index[0]);
+    newWeights.front() = weights.at(index[0]);
+    param.front() = 0;
+    for(unsigned int i=1 ; i<nbPoints; i++)
     {
         newPoints.at(i) = points.at(index[i]);
-        param.at(i) = t.at(index[i]);
         newWeights.at(i) = weights.at(index[i]);
+        param.at(i) = param.at(i-1) + sqrt(vpMath::sqr(newPoints.at(i)[0]-newPoints.at(i-1)[0]) + vpMath::sqr(newPoints.at(i)[1]-newPoints.at(i-1)[1]) + + vpMath::sqr(newPoints.at(i)[2]-newPoints.at(i-1)[2]));
     }
 
     return this->defineFromWeightedPoints(newPoints, param, newWeights, order);
@@ -848,11 +861,14 @@ void usPolynomialCurve3D::defineFromWeightedPointsAuto(const vpMatrix &points, c
     vpMatrix newPoints(3, nbPoints);
     vpColVector newWeights(nbPoints);
     vpColVector param(nbPoints);
-    for(unsigned int i=0 ; i<nbPoints; i++)
+    for(unsigned int j=0 ; j<3; j++) newPoints[j][0] = points[j][index[0]];
+    newWeights[0] = weights[index[0]];
+    param[0] = 0;
+    for(unsigned int i=1 ; i<nbPoints; i++)
     {
         for(unsigned int j=0 ; j<3; j++) newPoints[j][i] = points[j][index[i]];
-        param[i] = t.at(index[i]);
         newWeights[i] = weights[index[i]];
+        param[i] = param[i-1] + sqrt(vpMath::sqr(newPoints[0][i]-newPoints[0][i-1]) + vpMath::sqr(newPoints[1][i]-newPoints[1][i-1]) + vpMath::sqr(newPoints[2][i]-newPoints[2][i-1]));
     }
 
     return this->defineFromWeightedPoints(newPoints, param, newWeights, order);

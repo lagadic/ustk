@@ -53,7 +53,7 @@ int main()
     spline = spline2;
     std::cout << "done: usBSpline3D assignment operator" << std::endl;
     usBSpline3D *spline3 = spline.clone();
-    std::cout << "dVolumeProcessingone: usBSpline3D polymorphic copy" << std::endl;
+    std::cout << "done: usBSpline3D polymorphic copy" << std::endl;
     
     std::vector<vpColVector> points(4, vpColVector(3,0));
     points.at(1)[0] = 1;points.at(2)[1] = 2;points.at(3)[2] = 1;
