@@ -36,12 +36,51 @@
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpRGBa.h>
-#include <visp3/core/vpRotationMatrix.h>
-#include <visp3/core/vpTranslationVector.h>
 
 
 namespace usGeometryDisplayTools
 {
+
+template<class ImageDataType>
+void displayFrame(const vpImage<ImageDataType> &I, const vpHomogeneousMatrix &imageMframe, double Xscale, double Yscale)
+{
+    double origin_x = Xscale * imageMframe[0][3];
+    double origin_y = Yscale * imageMframe[1][3];
+
+    double zmax = -2;
+    double zmin = 2;
+    int zmax_index = 0;
+    int zmin_index = 0;
+
+    for(int j=0 ; j<3 ; j++)
+    {
+        double z = imageMframe[2][j];
+        if(z>=zmax)
+        {
+            zmax = z;
+            zmax_index = j;
+        }
+        if(z<=zmin)
+        {
+            zmin = z;
+            zmin_index = j;
+        }
+    }
+    double order[3];
+    order[0] = zmax_index;
+    order[1] = 3-zmin_index-zmax_index;
+    order[2] = zmin_index;
+
+    // Display frame
+    vpColor color[3] = {vpColor::red, vpColor::green, vpColor::blue};
+    for(int i=0; i<3 ; i++)
+    {
+        int j = order[i];
+        vpDisplay::displayArrow(I, origin_y, origin_x, origin_y+20*imageMframe[1][j], origin_x+20*imageMframe[0][j], color[j], 5, 5, 1);
+    }
+}
+template void displayFrame<unsigned char>(const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double);
+template void displayFrame<vpRGBa>(const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double);
 
 //! Display usOrientedPlane3D
 
@@ -143,6 +182,42 @@ void display(const usPolynomialCurve3D &curve, const vpImage<ImageDataType> &I, 
 
 template void display<unsigned char>(const usPolynomialCurve3D&, const vpImage<unsigned char>&, const vpHomogeneousMatrix &, double, double, const vpColor &, int, double);
 template void display<vpRGBa>(const usPolynomialCurve3D&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix &, double, double, const vpColor &, int, double);
+
+template<class ImageDataType>
+void displayCurvatureFromShape(const usPolynomialCurve3D &curve, const vpImage<ImageDataType> &I, const vpHomogeneousMatrix &imageMworld, double Xscale, double Yscale, const vpColor &color)
+{
+    vpColVector C(4);
+    vpColVector D(4);
+    double k = curve.getCurvatureFromShape(0, -1, C, D);
+    if(k == 0) return;
+
+    double r = 1/k;
+
+    C = imageMworld * C;
+    C.resize(3,false);
+    D = imageMworld * D;
+    D.resize(3,false);
+
+    vpColVector Dxy(3,0);
+    Dxy[2] = 1;
+    vpColVector Axy = vpColVector::cross(D,Dxy);
+    vpColVector Bxy = vpColVector::cross(D,Axy).normalize();
+
+    double thetaxy = atan2(Axy[1], Axy[0]);
+    double axy = r;
+    double bxy = r * vpColVector::cross(Bxy,Dxy).euclideanNorm();
+    if(Bxy.euclideanNorm() < 0.5) bxy = axy; // if normalization failed the circle is almost in the plane
+
+    //Scaling
+    vpImagePoint centerXY(Yscale*C[1], Xscale*C[0]);
+    double A = sqrt( pow(Xscale * cos(thetaxy),2) + pow(Yscale * sin(thetaxy),2) );
+    axy *= A;
+    bxy *= A;
+    thetaxy = atan2(axy*sin(thetaxy), bxy*cos(thetaxy));
+    vpDisplay::displayEllipse(I, centerXY, axy, bxy, thetaxy, false, color);
+}
+template void displayCurvatureFromShape<unsigned char>(const usPolynomialCurve3D&, const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double, const vpColor&);
+template void displayCurvatureFromShape<vpRGBa>(const usPolynomialCurve3D&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double, const vpColor&);
 
 //! Display usBSpline3D
 

@@ -309,6 +309,16 @@ public:
   double getCurvature(double param) const;
   
   /**
+   * Get the approximate curvature of a portion of the curve 
+   * 
+   * @param start Starting parametric value of the portion of the curve.
+   * @param end Ending parametric value of the portion of the curve.
+   * @param center3D Center of the circle fitting the portion of the curve.
+   * @param direction3D Normal of the circle fitting the portion of the curve.
+   */
+  double getCurvatureFromShape(double start, double end, vpColVector &center3D, vpColVector &direction3D) const;
+  
+  /**
    * Get the mean deviation of the polynomial with respect to the straight axis between the two extremities.
    * 
    * @param nbCountSeg number of segments used to approximate the deviation.
@@ -377,7 +387,6 @@ public:
    * Apply an homogeneous transformation to the polynomial curve.
    */
   void move(double x, double y, double z, double tx, double ty, double tz);
-  
   
   /**
    * Scale the polynomial curve.

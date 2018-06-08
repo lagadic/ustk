@@ -885,6 +885,123 @@ double usPolynomialCurve3D::getCurvature(double param) const
     return curvature;
 }
 
+double usPolynomialCurve3D::getCurvatureFromShape(double start, double end, vpColVector &center3D, vpColVector &direction3D) const
+{
+    if(start<0) start = 0;
+    double length = this->getParametricLength();
+    if(start>length) start = length;
+    if(end<0) end = 0;
+    if(end>length) end = length;
+    if(start>end)
+    {
+        double tmp = start;
+        start = end;
+        end = tmp;
+    }
+
+    int nbPoints =  10;
+
+    // Create data matrix with centered vectors
+    double step = (end-start) / (nbPoints-1);
+    vpColVector params(nbPoints);
+    params[0] = start;
+    for(int i=1 ; i<nbPoints ; i++) params[i] = params[i-1] + step;
+    
+    vpMatrix M(this->getPoints(params));
+    vpRowVector mean(3,0);
+
+    for(int i=0 ; i<nbPoints; i++) mean += M.getRow(i);
+    mean /= nbPoints;
+
+    for(int i=0 ; i<nbPoints; i++)
+    {
+        M[i][0] -= mean[0];
+        M[i][1] -= mean[1];
+        M[i][2] -= mean[2];
+    }
+
+    // Reduction to two principal components using singular value decomposition
+    vpMatrix U(M);
+    vpColVector w;
+    vpMatrix V;
+    U.svd(w, V);
+
+    vpMatrix S;
+    S.diag(w);
+
+    U.resize(nbPoints, 2, false);
+
+    S.resize(2, 2, false);
+
+    vpMatrix P = U*S;
+
+    // 2D nonlinear least square fitting (Coope93)
+    vpColVector d(nbPoints);
+    for(int i=0 ; i<nbPoints; i++)
+    {
+        d[i] = pow( P.t().getCol(i).euclideanNorm(), 2);
+    }
+
+    vpColVector x(nbPoints, 1);
+    vpMatrix B(nbPoints, 3);
+    B.insert(P,0,0);
+    B.insert(x,0,2);
+
+    vpColVector y = B.pseudoInverse(0) * d;
+
+    vpColVector center(2);
+    center[0] = y[0]/2;
+    center[1] = y[1]/2;
+
+    double r = sqrt(y[2] + pow(center.euclideanNorm(), 2));
+
+    // Check validity
+
+    /*vpColVector cp = P.getRow(0).t() - center;
+    for(int i=1 ; i<nbPoints ; i++)
+    {
+        double dot = vpColVector::dotProd(cp, P.getRow(i).t() - center);
+        if(dot<0) return 0;
+    }*/
+
+    if(direction3D.size() == 3)
+    {
+        direction3D = V.getCol(2);
+    }
+    else if(direction3D.size() == 4)
+    {
+        direction3D.insert(0, V.getCol(2));
+        direction3D[3] = 0;
+    }
+
+    if(center3D.size() == 3)
+    {
+        V.resize(3, 2, false);
+        center3D = V*center;
+    }
+    else if(center3D.size() == 4)
+    {
+        V.resize(3, 2, false);
+        center3D.insert(0, V*center+mean.t());
+        center3D[3] = 1;
+    }
+
+    return 1.0/r;
+/*
+    usPolynomialCurve3D seg(m_spline.back());
+
+    vpColVector dX_dl = seg.getDerivative(seg.getParametricLength(),2);
+    if(dX_dl.euclideanNorm()<std::numeric_limits<double>::epsilon()) return 0;
+
+    vpColVector d2X_dl2 = seg.getDerivative(seg.getParametricLength(),2);
+
+    double k = vpColVector::crossProd(dX_dl, d2X_dl2).euclideanNorm() / pow(dX_dl.euclideanNorm(),3);
+
+    center3D = seg.getEndPoint() + 1/k * ( d2X_dl2 - 1/pow(dX_dl.euclideanNorm(),2) * vpColVector::dotProd(dX_dl, d2X_dl2)*dX_dl);
+    direction3D = vpColVector::crossProd(dX_dl, d2X_dl2).normalize();
+    return k;*/
+}
+
 double usPolynomialCurve3D::getMeanAxisDeviation(int nbCountSeg) const
 {
     if(nbCountSeg<2) throw vpException(vpException::badValue, "usPolynomialCurve3D::getMeanAxisDeviation: should use at least 2 segment to compute approximate deviation from axis");

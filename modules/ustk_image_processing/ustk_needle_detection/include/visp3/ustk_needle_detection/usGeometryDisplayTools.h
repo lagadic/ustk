@@ -45,6 +45,9 @@
 namespace usGeometryDisplayTools
 {
 
+template<class ImageDataType>
+VISP_EXPORT void displayFrame(const vpImage<ImageDataType> &I, const vpHomogeneousMatrix &imageMFrame, double Xscale = 3000, double Yscale = 3000);
+
 //! Display usOrientedPlane3D
 
 template <class ImageDataType>
@@ -59,6 +62,8 @@ VISP_EXPORT void display(const usPolynomialCurve2D &curve, const vpImage<ImageDa
 
 template<class ImageDataType>
 VISP_EXPORT void display(const usPolynomialCurve3D &curve, const vpImage<ImageDataType> &I, const vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale =3000, const vpColor &color = vpColor::red, int nbRenderingLines = 10, double visibilityDistance=std::numeric_limits<double>::infinity());
+template<class ImageDataType>
+VISP_EXPORT void displayCurvatureFromShape(const usPolynomialCurve3D &spline, const vpImage<ImageDataType> &I, const vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000, const vpColor &color = vpColor::black);
 
 //! Display usBSpline3D
 
