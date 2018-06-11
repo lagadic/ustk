@@ -87,21 +87,17 @@ template void displayFrame<vpRGBa>(const vpImage<vpRGBa>&, const vpHomogeneousMa
 template <class ImageDataType>
 void display(const usOrientedPlane3D &plane, const vpImage<ImageDataType> &I, const vpHomogeneousMatrix &imageMworld, double Xscale, double Yscale, const vpColor &color)
 {
-    vpColVector worldPoint(4,1);
-    worldPoint.insert(0,plane.getPosition());
+    vpMatrix R(imageMworld.getRotationMatrix());
+    vpColVector T(imageMworld.getTranslationVector());
+    
+    vpColVector imagePoint(R * plane.getPosition() + T);
+    vpColVector imageDirection = R * plane.getDirection();
+    
+    double x = Xscale * imagePoint[0];
+    double y = Yscale * imagePoint[1];
 
-    vpColVector probePoint = imageMworld * worldPoint;
-
-    double x = Xscale * probePoint[0];
-    double y = Yscale * probePoint[1];
-
-    vpColVector worldDirection(4,0);
-    worldDirection.insert(0,plane.getDirection());
-
-    vpColVector probeDirection = imageMworld * worldDirection;
-
-    double dx = 0.1 * Xscale * probeDirection[0];
-    double dy = 0.1 * Yscale * probeDirection[1];
+    double dx = 0.1 * Xscale * imageDirection[0];
+    double dy = 0.1 * Yscale * imageDirection[1];
 
     vpDisplay::displayCross(I, y, x, 7, color);
     vpDisplay::displayLine(I, y-dx, x+dy, y+dx, x-dy , color);

@@ -30,11 +30,17 @@
  *
  *****************************************************************************/
 
+#ifndef __usNeedleModelingDisplayTools_h_
+#define __usNeedleModelingDisplayTools_h_
+
 #include <visp3/ustk_needle_detection/usGeometryDisplayTools.h>
 
 #include <visp3/ustk_needle_modeling/usNeedleModelBaseTip.h>
 #include <visp3/ustk_needle_modeling/usNeedleModelPolynomial.h>
 #include <visp3/ustk_needle_modeling/usNeedleModelSpline.h>
+
+#include <visp3/ustk_needle_modeling/usTissueModelSpline.h>
+#include <visp3/ustk_needle_modeling/usVirtualSpring.h>
 
 
 namespace usNeedleModelingDisplayTools
@@ -58,7 +64,7 @@ VISP_EXPORT void displayBaseStaticTorsor(const usNeedleModelPolynomial &needleMo
 template <class ImageDataType>
 VISP_EXPORT void displayCurvatureFromShape(const usNeedleModelPolynomial &needleModel, const vpImage<ImageDataType> &I, const vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000);
 template <class ImageDataType>
-VISP_EXPORT void displayAll(const usNeedleModelPolynomial &needleModel, const vpImage<ImageDataType> &I, const vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000);
+VISP_EXPORT void display(const usNeedleModelPolynomial &needleModel, const vpImage<ImageDataType> &I, const vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000);
 
 //! Display usNeedleModelSpline
 
@@ -69,6 +75,19 @@ VISP_EXPORT void displayBaseStaticTorsor(const usNeedleModelSpline &needleModel,
 template<class ImageDataType>
 VISP_EXPORT void displayCurvatureFromShape(const usNeedleModelSpline &needleModel, const vpImage<ImageDataType> &I, const vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000);
 template<class ImageDataType>
-VISP_EXPORT void displayAll(const usNeedleModelSpline &needleModel, const vpImage<ImageDataType> &I, const vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000);
+VISP_EXPORT void display(const usNeedleModelSpline &needleModel, const vpImage<ImageDataType> &I, const vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000);
+
+//! Display usVirtualSpring
+
+template<class ImageDataType>
+VISP_EXPORT void display(const usVirtualSpring &spring, const vpImage<ImageDataType> &I, const vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000);
+
+//! Display usVirtualSpring
+
+template<class ImageDataType>
+VISP_EXPORT void display(const usTissueModelSpline &tissue, const vpImage<ImageDataType> &I, const vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000);
+
 
 } // namespace usNeedleModelingDisplayTools
+
+#endif // __usNeedleModelingDisplayTools_h_

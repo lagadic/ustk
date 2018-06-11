@@ -117,14 +117,14 @@ template void displayCurvatureFromShape<unsigned char>(const usNeedleModelPolyno
 template void displayCurvatureFromShape<vpRGBa>(const usNeedleModelPolynomial&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double);
 
 template<class ImageDataType>
-void displayAll(const usNeedleModelPolynomial &needleModel, const vpImage<ImageDataType> &I, const vpHomogeneousMatrix &imageMworld, double Xscale, double Yscale)
+void display(const usNeedleModelPolynomial &needleModel, const vpImage<ImageDataType> &I, const vpHomogeneousMatrix &imageMworld, double Xscale, double Yscale)
 {
     displayNeedle(needleModel, I, imageMworld, Xscale, Yscale);
     displayBaseStaticTorsor(needleModel, I, imageMworld, Xscale, Yscale);
     displayCurvatureFromShape(needleModel, I, imageMworld, Xscale, Yscale);
 }
-template void displayAll<unsigned char>(const usNeedleModelPolynomial&, const vpImage<unsigned char>&, const vpHomogeneousMatrix &imageMworld, double Xscale, double Yscale);
-template void displayAll<vpRGBa>(const usNeedleModelPolynomial&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix &imageMworld, double Xscale, double Yscale);
+template void display<unsigned char>(const usNeedleModelPolynomial&, const vpImage<unsigned char>&, const vpHomogeneousMatrix &imageMworld, double Xscale, double Yscale);
+template void display<vpRGBa>(const usNeedleModelPolynomial&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix &imageMworld, double Xscale, double Yscale);
 
 //! Display usNeedleModelSpline
 
@@ -176,13 +176,32 @@ template void displayCurvatureFromShape<unsigned char>(const usNeedleModelSpline
 template void displayCurvatureFromShape<vpRGBa>(const usNeedleModelSpline&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double);
 
 template<class ImageDataType>
-void displayAll(const usNeedleModelSpline &needleModel, const vpImage<ImageDataType> &I, const vpHomogeneousMatrix &imageMworld, double Xscale, double Yscale)
+void display(const usNeedleModelSpline &needleModel, const vpImage<ImageDataType> &I, const vpHomogeneousMatrix &imageMworld, double Xscale, double Yscale)
 {
     displayNeedle(needleModel, I, imageMworld, Xscale, Yscale);
     displayBaseStaticTorsor(needleModel, I, imageMworld, Xscale, Yscale);
     displayCurvatureFromShape(needleModel, I, imageMworld, Xscale, Yscale);
 }
-template void displayAll<unsigned char>(const usNeedleModelSpline&, const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double);
-template void displayAll<vpRGBa>(const usNeedleModelSpline&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double);
+template void display<unsigned char>(const usNeedleModelSpline&, const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double);
+template void display<vpRGBa>(const usNeedleModelSpline&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double);
+
+//! Display usVirtualSpring
+
+template<class ImageType> 
+void display(const usVirtualSpring &spring, const vpImage<ImageType> &I, const vpHomogeneousMatrix &imageMworld, double Xscale, double Yscale)
+{
+    usGeometryDisplayTools::display((const usOrientedPlane3D&)spring, I, imageMworld, Xscale, Yscale, vpColor::green);
+}
+template void display<unsigned char>(const usVirtualSpring&, const vpImage<unsigned char> &, const vpHomogeneousMatrix &, double, double);
+template void display<vpRGBa>(const usVirtualSpring&, const vpImage<vpRGBa> &, const vpHomogeneousMatrix &, double, double);
+
+//! Display usVirtualSpring
+
+template<class ImageDataType>
+void display(const usTissueModelSpline &tissue, const vpImage<ImageDataType> &I, const vpHomogeneousMatrix &imageMworld, double Xscale, double Yscale)
+{
+    usGeometryDisplayTools::display(tissue.accessSurface(), I, imageMworld, Xscale, Yscale, vpColor::black);
+    usGeometryDisplayTools::display(tissue.accessPath(), I, imageMworld, Xscale, Yscale, vpColor::blue);
+}
 
 } // namespace usNeedleModelingDisplayTools

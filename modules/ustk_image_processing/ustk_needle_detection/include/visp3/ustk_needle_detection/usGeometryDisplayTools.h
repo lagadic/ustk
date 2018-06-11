@@ -30,6 +30,9 @@
  *
  *****************************************************************************/
 
+#ifndef __usGeometryDisplayTools_h_
+#define __usGeometryDisplayTools_h_
+
 #include <limits>
 
 #include <visp3/core/vpColor.h>
@@ -76,4 +79,4 @@ VISP_EXPORT void displayCurvatureFromShape(const usBSpline3D &spline, const vpIm
 
 } // namespace usGeometryDisplayTools
 
-
+#endif // __usGeometryDisplayTools_h_
