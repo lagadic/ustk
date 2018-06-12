@@ -1,6 +1,10 @@
 /*! \page tutorial_ustk Tutorials in UsTK
 This page references all the tutorials related to Ultrasound TK.
 
+- \subpage tutorial-ustk-install-ubuntu <br>This tutorial explains how to build and install UsTK under ubuntu distribution
+
+- \subpage tutorial-ustk-install-fedora <br>This tutorial explains how to build and install UsTK under fedora distribution
+
 - \subpage tutorial-ustk-core-io <br>This tutorial gives an overview of ustk_core and ustk_io modules
 
 - \subpage tutorial-ustk-grabber-sonosite <br>This tutorial gives examples to use sonosite grabber
