@@ -19,4 +19,6 @@ This page references all the tutorials related to Ultrasound TK.
 
 - \subpage tutorial-ustk-needle-tracker2D <br>This tutorial explains how to use the 2D needle tracker.
 
+- \subpage tutorial-ustk-mesh-deformation <br>This tutorial explains how to use mesh deformation application.
+
 */

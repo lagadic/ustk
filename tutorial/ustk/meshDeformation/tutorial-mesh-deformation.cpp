@@ -1,3 +1,4 @@
+//! \example tutorial-mesh-deformation.cpp
 #include <visp3/ustk_core/usConfig.h>
 
 #ifdef USTK_HAVE_VTK_QT

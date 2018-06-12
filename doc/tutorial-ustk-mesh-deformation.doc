@@ -1,0 +1,37 @@
+/**
+
+\page tutorial-ustk-mesh-deformation Tutorial: UsTK volumic mesh deformation and visualisation (Qt + VTK)
+\tableofcontents
+
+\section intro_ustk_mesh_deformation Introduction
+
+This tutorial expains how to run the GUI tutorial displaying a mesh in a 3D scene (based on Qt and VTK libraries), and move a mesh node. 
+
+\section ustk_mesh_deformation_mesh_format Formatting correctly your mesh to volumetric (optionnal)
+
+If you have only a surfacic mesh, you'll have to convert it to volumetric. For this, tetgen tool is used (http://wias-berlin.de/software/tetgen/tetgen143.html).
+Once you compiled it, simply run the following command in build directory:
+\code
+$ ./tetgen mesh.vtk -K
+\endcode
+We assume "mesh.vtk" is a surfacic mesh you want to transform into tetrahedral mesh. Your output mesh will be "mesh.1.vtk"
+
+\section ustk_mesh_deformation_run_example Running the application with pre-generated mesh
+
+Before running the application with a pre-genrated liver mesh, make sure you set USTK_DATASET_PATH environment variable to ustk-dataset repository. Then, simply run:
+\code
+$ ./tutorial/ustk/meshDeformation/meshDeformation
+\endcode
+
+To deform your mesh, use up and down keyboard arrows. It will move the first node of your mesh along Y axis
+
+\section ustk_mesh_deformation_run_change_mesh Running the application with the mesh of your choice
+
+To use the mesh of your choice, you'll have to specify it in the code. 
+In tutorial-mesh-deformation.cpp, simply enter your mesh filename instead of the "liver.vtk" in the following line :
+\code
+std::string filename = us::getDataSetPath() + "/mesh/liver.vtk";
+\endcode
+
+*/
+
