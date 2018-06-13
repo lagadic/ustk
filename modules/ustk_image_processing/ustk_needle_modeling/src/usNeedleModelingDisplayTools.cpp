@@ -575,20 +575,20 @@ template void display<vpRGBa>(const usNeedleInsertionModelRayleighRitzSpline&, c
 //! Display usNeedleInsertionModelVirtualSprings
 
 template<class ImageDataType>
-void display(const usNeedleInsertionModelVirtualSprings &model, const vpImage<ImageDataType> &I, const vpHomogeneousMatrix &imageMworld, double Xscale, double Yscale)
+void display(const usNeedleInsertionModelVirtualSprings &model, const vpImage<ImageDataType> &I, const vpHomogeneousMatrix &imageMworld, double Xscale, double Yscale, bool displayFullBody)
 {
     for(int i=0 ; i<model.getNbSprings() ; i++)
     {
         if(model.accessSpring(i).IsPositionUpdateAllowed()) usGeometryDisplayTools::display((const usOrientedPlane3D&)model.accessSpring(i), I, imageMworld, Xscale, Yscale, vpColor::green);
         else usGeometryDisplayTools::display((const usOrientedPlane3D&)model.accessSpring(i), I, imageMworld, Xscale, Yscale, vpColor::red);
     }
-    display(model.accessNeedle(), I, imageMworld, Xscale, Yscale);
+    display(model.accessNeedle(), I, imageMworld, Xscale, Yscale, displayFullBody);
     usGeometryDisplayTools::display(model.accessSurface(), I, imageMworld, Xscale, Yscale, vpColor::black);
     //displayBaseStaticTorsor(model.accessNeedle(), I, imageMworld, Xscale, Yscale);
     //displayCurvatureFromShape(model.accessNeedle(), I, imageMworld, Xscale, Yscale);
 }
-template void display<unsigned char>(const usNeedleInsertionModelVirtualSprings&, const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double);
-template void display<vpRGBa>(const usNeedleInsertionModelVirtualSprings&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double);
+template void display<unsigned char>(const usNeedleInsertionModelVirtualSprings&, const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double, bool);
+template void display<vpRGBa>(const usNeedleInsertionModelVirtualSprings&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double, bool);
 
 
 

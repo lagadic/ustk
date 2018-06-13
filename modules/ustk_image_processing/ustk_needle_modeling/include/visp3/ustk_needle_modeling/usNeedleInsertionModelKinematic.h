@@ -71,6 +71,7 @@ public:
 
     //! Control of the needle
 
+    using usNeedleInsertionModelInterface::moveBase;
     bool moveBase(double vz, double wz, double time);
     bool moveBase(double controlCurvature, double vz, double wz, double time);
 

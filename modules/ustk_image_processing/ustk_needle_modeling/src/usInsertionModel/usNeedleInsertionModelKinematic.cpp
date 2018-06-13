@@ -119,7 +119,8 @@ bool usNeedleInsertionModelKinematic::setBasePose(const vpPoseVector &pose)
     vpColVector tipVelocity(6,0);
     tipVelocity[2] = baseVelocity[2];
     tipVelocity[3] = m_naturalCurvature*tipVelocity[2];
-
+    tipVelocity[5] = baseVelocity[5];
+    
     m_needle.moveTip(tipVelocity, 1);
 
     return true;
