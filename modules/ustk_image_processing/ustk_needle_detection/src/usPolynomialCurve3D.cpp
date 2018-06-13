@@ -281,7 +281,7 @@ vpColVector usPolynomialCurve3D::getPoint(double parameter) const
   return m_polynomialCoefficients * T;
 }
 
-vpMatrix usPolynomialCurve3D::getPoints(vpColVector parameters) const
+vpMatrix usPolynomialCurve3D::getPoints(const vpColVector &parameters) const
 {
   vpMatrix T(m_order+1, parameters.size());
   for(unsigned int j=0 ; j<parameters.size() ; j++)

@@ -75,8 +75,8 @@ public:
 
         //! Needle parameters
 
-        void setLength(double length);
-        double getLength() const;
+        void setFullLength(double length);
+        double getFullLength() const;
 
         void setOuterDiameter(double diameter);
         double getOuterDiameter() const;

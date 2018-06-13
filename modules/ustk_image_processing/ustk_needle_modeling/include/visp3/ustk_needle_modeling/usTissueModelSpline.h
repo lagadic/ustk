@@ -32,7 +32,7 @@ public:
     const usOrientedPlane3D &accessSurface() const;
     usOrientedPlane3D &accessSurface();
     const usBSpline3D &accessPath() const;
-    usBSpline3D accessPath();
+    usBSpline3D &accessPath();
 
     bool moveInWorldFrame(const vpHomogeneousMatrix &H);
     bool moveInWorldFrame(double x, double y, double z, double tx, double ty, double tz);

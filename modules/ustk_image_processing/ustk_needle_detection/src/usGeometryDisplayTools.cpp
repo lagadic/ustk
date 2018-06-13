@@ -229,6 +229,8 @@ template<class ImageDataType>
 void displayExtremities(const usBSpline3D &spline, const vpImage<ImageDataType> &I, const vpHomogeneousMatrix &imageMworld, double Xscale, double Yscale, const vpColor &color, double visibilityDistance)
 {
     unsigned int nbPoints = spline.getNbSegments()+1;
+    if(nbPoints < 2) return;
+    
     vpMatrix points(3, nbPoints);
     
     for(int i=0 ; i<spline.getNbSegments() ; i++) points.insert(spline.accessSegment(i).getStartPoint(), 0,i);
@@ -248,6 +250,15 @@ void displayExtremities(const usBSpline3D &spline, const vpImage<ImageDataType> 
 }
 template void displayExtremities<unsigned char>(const usBSpline3D&, const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double, const vpColor&, double);
 template void displayExtremities<vpRGBa>(const usBSpline3D&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double, const vpColor&, double);
+
+template<class ImageDataType>
+void display(const usBSpline3D &spline, const vpImage<ImageDataType> &I, const vpHomogeneousMatrix &imageMworld, double Xscale, double Yscale, const vpColor &color, int nbRenderingLines, double visibilityDistance)
+{
+    displayLine(spline, I, imageMworld, Xscale, Yscale, color, nbRenderingLines, visibilityDistance);
+    displayExtremities(spline, I, imageMworld, Xscale, Yscale, color, visibilityDistance);      
+}
+template void display<unsigned char>(const usBSpline3D&, const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double, const vpColor&, int, double);
+template void display<vpRGBa>(const usBSpline3D&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double, const vpColor&, int, double);
 
 template<class ImageDataType>
 void displayCurvatureFromShape(const usBSpline3D &spline, const vpImage<ImageDataType> &I, const vpHomogeneousMatrix &imageMworld, double Xscale, double Yscale, const vpColor &color)

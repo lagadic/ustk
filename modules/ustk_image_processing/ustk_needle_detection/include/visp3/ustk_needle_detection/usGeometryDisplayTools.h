@@ -75,6 +75,8 @@ VISP_EXPORT void displayLine(const usBSpline3D &spline, const vpImage<ImageDataT
 template<class ImageDataType>
 VISP_EXPORT void displayExtremities(const usBSpline3D &spline, const vpImage<ImageDataType> &I, const vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000, const vpColor &color = vpColor::red, double visibilityDistance=std::numeric_limits<double>::infinity());
 template<class ImageDataType>
+VISP_EXPORT void display(const usBSpline3D &spline, const vpImage<ImageDataType> &I, const vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale =3000, const vpColor &color = vpColor::red, int nbRenderingLines = 10, double visibilityDistance=std::numeric_limits<double>::infinity());
+template<class ImageDataType>
 VISP_EXPORT void displayCurvatureFromShape(const usBSpline3D &spline, const vpImage<ImageDataType> &I, const vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000, const vpColor &color = vpColor::black);
 
 } // namespace usGeometryDisplayTools

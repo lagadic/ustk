@@ -93,7 +93,7 @@ void usNeedleModelSpline::loadPreset(const NeedlePreset preset)
     {
         case NeedlePreset::BiopsyNeedle :
         {
-            this->setLength(0.126);
+            this->setFullLength(0.126);
             this->setOuterDiameter(0.0007);
             this->setInsideDiameter(0.00048);
             this->setNeedleYoungModulus(200e9);
@@ -101,7 +101,7 @@ void usNeedleModelSpline::loadPreset(const NeedlePreset preset)
         }
         case NeedlePreset::BiopsyCannula :
         {
-            this->setLength(0.146);
+            this->setFullLength(0.146);
             this->setOuterDiameter(0.00048);
             this->setInsideDiameter(0.0);
             this->setNeedleYoungModulus(200e9);
@@ -109,7 +109,7 @@ void usNeedleModelSpline::loadPreset(const NeedlePreset preset)
         }
         case NeedlePreset::Symmetric :
         {
-            this->setLength(0.109);
+            this->setFullLength(0.109);
             this->setOuterDiameter(0.00097);
             this->setInsideDiameter(0);
             this->setNeedleYoungModulus(200e9);
@@ -117,7 +117,7 @@ void usNeedleModelSpline::loadPreset(const NeedlePreset preset)
         }
         case NeedlePreset::AbayazidRRM13 :
         {
-            this->setLength(0.1);
+            this->setFullLength(0.1);
             this->setOuterDiameter(0.0005);
             this->setInsideDiameter(0.0);
             this->setNeedleYoungModulus(75e9);
@@ -125,7 +125,7 @@ void usNeedleModelSpline::loadPreset(const NeedlePreset preset)
         }
         case NeedlePreset::MisraRSRO10_PlastisolA :
         {
-            this->setLength(0.15);
+            this->setFullLength(0.15);
             this->setOuterDiameter(0.00046);
             this->setInsideDiameter(0.0);
             this->setNeedleYoungModulus(50e9);
@@ -133,7 +133,7 @@ void usNeedleModelSpline::loadPreset(const NeedlePreset preset)
         }
         case NeedlePreset::RoesthuisAM12 :
         {
-            this->setLength(0.1);
+            this->setFullLength(0.1);
             this->setOuterDiameter(0.0008);
             this->setInsideDiameter(0.0);
             this->setNeedleYoungModulus(75e9);
@@ -141,7 +141,7 @@ void usNeedleModelSpline::loadPreset(const NeedlePreset preset)
         }
         case NeedlePreset::SteelSoftTissue :
         {
-            this->setLength(0.1);
+            this->setFullLength(0.1);
             this->setOuterDiameter(0.001);
             this->setInsideDiameter(0.0);
             this->setNeedleYoungModulus(200e9);
@@ -149,7 +149,7 @@ void usNeedleModelSpline::loadPreset(const NeedlePreset preset)
         }
         case NeedlePreset::SRL_ActuatedFBG :
         {
-            this->setLength(0.1);
+            this->setFullLength(0.1);
             this->setOuterDiameter(0.002);
             this->setInsideDiameter(0.0);
             this->setNeedleYoungModulus(8062500000); // 0 -> 0.5mm = Nitinol (75GPa) + 0.5mm -> 1mm = PEEK (3.6GPa)
@@ -157,7 +157,7 @@ void usNeedleModelSpline::loadPreset(const NeedlePreset preset)
         }
         case NeedlePreset::SRL_BiopsySimple :
         {
-            this->setLength(0.127);
+            this->setFullLength(0.127);
             this->setOuterDiameter(0.00075);
             this->setInsideDiameter(0.);
             this->setNeedleYoungModulus(200e9);
@@ -165,7 +165,7 @@ void usNeedleModelSpline::loadPreset(const NeedlePreset preset)
         }
         case NeedlePreset::SRL_BiopsyNID :
         {
-            this->setLength(0.164);
+            this->setFullLength(0.164);
             this->setOuterDiameter(0.00055);
             this->setInsideDiameter(0.0005);
             this->setNeedleYoungModulus(200e9);
@@ -174,12 +174,12 @@ void usNeedleModelSpline::loadPreset(const NeedlePreset preset)
     }
 }
 
-void usNeedleModelSpline::setLength(double length)
+void usNeedleModelSpline::setFullLength(double length)
 {
     if(length>=0) m_length = length;
 }
 
-double usNeedleModelSpline::getLength() const
+double usNeedleModelSpline::getFullLength() const
 {
     return m_length;
 }

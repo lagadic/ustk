@@ -151,7 +151,7 @@ public:
   /**
    * Get the polynomial curve points at given parametric values.
    */
-  vpMatrix getPoints(vpColVector parameters) const;
+  vpMatrix getPoints(const vpColVector &parameters) const;
 
   /**
    * Get the starting extremity of the polynomial curve.
