@@ -22,7 +22,7 @@ find_package(VISP REQUIRED visp_ustk_gui)
 include_directories(${VISP_INCLUDE_DIRS})
 
 set(HEADER_FILES usMeshDeformation.h)
-set(CPP_FILES usMeshDeformation.cpp main.cpp)
+set(CPP_FILES usMeshDeformation.cpp tutorial-mesh-deformation.cpp)
 
 add_executable(meshDeformation ${CPP_FILES} ${HEADER_FILES})
 
