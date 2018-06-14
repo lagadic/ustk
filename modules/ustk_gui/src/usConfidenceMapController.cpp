@@ -67,6 +67,11 @@ void usConfidenceMapController::updateImage(usImagePreScan2D<unsigned char> imag
   // compute error angle (taget = barycenter on the central scanline)
   double thetaError = yc * m_confidenceMap.getScanLinePitch() - m_confidenceMap.getFieldOfView() / 2.0;
 
+  //emit current confidence barycenter angle (in rad) for display purpose
+
+  emit(confidenceMap(m_confidenceMap));
+  emit(confidenceBarycenterAngle(yc));
+
   //proportionnal control (unit 10-1 deg per second)
   if(m_activated)
     emit(updateProbeOrientation(vpMath::deg(m_gain * thetaError) * 10));

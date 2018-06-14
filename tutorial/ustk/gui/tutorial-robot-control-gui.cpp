@@ -25,6 +25,7 @@ int main(int argc, char **argv)
   // Qt widgets
   usImageDisplayWidgetRobotControl *widget = new usImageDisplayWidgetRobotControl();
   widget->enableControlArrows();
+  widget->enableFeaturesDisplay();
 
   usRobotManualControlWidget *robotControlPanel = new usRobotManualControlWidget();
   usUltrasonixClientWidget *ultrasonixControlWidet = new usUltrasonixClientWidget();
@@ -57,7 +58,8 @@ int main(int argc, char **argv)
 
   QMainWindow window;
   window.setCentralWidget(centralWidget);
-  window.showMaximized();
+  window.resize(1280,480);
+  window.show();
 
   // sliders robot controls
   QObject::connect(robotControlPanel, SIGNAL(changeVX(int)), &viperControl, SLOT(setXVelocity(int)));
@@ -106,7 +108,8 @@ int main(int argc, char **argv)
                    SLOT(updateImage(usImagePreScan2D<unsigned char>)));
   QObject::connect(widget, SIGNAL(confidenceServoing(bool)), confidenceController, SLOT(activateController(bool)));
   QObject::connect(confidenceController, SIGNAL(updateProbeOrientation(int)), &viperControl, SLOT(setZAngularVelocity(int)));
-
+  QObject::connect(confidenceController, SIGNAL(confidenceBarycenterAngle(double)), widget, SLOT(updateConfidenceAngle(double)));
+  QObject::connect(confidenceController, SIGNAL(confidenceMap(usImagePreScan2D<unsigned char>)), widget, SLOT(updateConfidenceMap(usImagePreScan2D<unsigned char>)));
 
   app.exec();
 

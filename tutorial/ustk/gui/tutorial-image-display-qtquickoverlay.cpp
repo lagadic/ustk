@@ -66,7 +66,8 @@ int main(int argc, char **argv)
 
   QMainWindow window;
   window.setCentralWidget(centralWidget);
-  window.showMaximized();
+  window.resize(640,480);
+  window.show();
 
   return app.exec();
 }
