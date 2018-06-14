@@ -73,6 +73,7 @@ signals:
 public slots:
   void updateImage(usImagePreScan2D<unsigned char> image);
   void initTracker(vpRectOriented rect);
+  void stopTracking();
   void activateController(bool activate);
   void activateController();
   void disactivateController();
@@ -85,7 +86,8 @@ private:
   usImagePreScan2D<unsigned char> m_confidencePreScan;
   usImagePostScan2D<unsigned char> m_imagePostScan;
 
-  bool m_activated;
+  bool m_trackerActivated;
+  bool m_controllerActivated;
 };
 #endif // Qt & template tracking available
 #endif // __usRectangleVisualServoingController_h_

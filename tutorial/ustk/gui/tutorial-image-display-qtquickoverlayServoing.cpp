@@ -113,11 +113,10 @@ int main(int argc, char **argv)
   QObject::connect(visualServoingController, SIGNAL(updateProbeZOrientation(int)), &viperControl,
                    SLOT(setZAngularVelocity(int)));
 
-  widget->updateFrame(vpImage<unsigned char>(200, 200));
-
   QMainWindow window;
   window.setCentralWidget(centralWidget);
-  window.showMaximized();
+  window.resize(1200,650);
+  window.show();
 
   return app.exec();
 }
