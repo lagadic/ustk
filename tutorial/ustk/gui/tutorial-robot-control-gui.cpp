@@ -72,12 +72,11 @@ int main(int argc, char **argv)
   // buttons robot controls
   QObject::connect(widget, SIGNAL(moveLeft()), &viperControl, SLOT(moveLeft()));
   QObject::connect(widget, SIGNAL(moveRight()), &viperControl, SLOT(moveRight()));
-  QObject::connect(widget, SIGNAL(stopMove()), &viperControl, SLOT(stopMove()));
+  QObject::connect(widget, SIGNAL(stopMove()), &viperControl, SLOT(stopMoveLateral()));
 
-
-  QObject::connect(robotControlPanel, SIGNAL(initClicked()), &viperControl, SLOT(init()));
-  QObject::connect(robotControlPanel, SIGNAL(startClicked()), &viperControl, SLOT(run()));
-  QObject::connect(robotControlPanel, SIGNAL(stopClicked()), &viperControl, SLOT(stop()));
+  QObject::connect(robotControlPanel, SIGNAL(initRobot()), &viperControl, SLOT(init()));
+  QObject::connect(robotControlPanel, SIGNAL(startRobot()), &viperControl, SLOT(run()));
+  QObject::connect(robotControlPanel, SIGNAL(stopRobot()), &viperControl, SLOT(stop()));
 
   QObject::connect(robotControlPanel, SIGNAL(activateAutomaticForceControl()), &viperControl,
                    SLOT(startAutomaticForceControl()));

@@ -72,7 +72,14 @@ void usViper850WrapperVelocityControl::run()
   }
 }
 
-void usViper850WrapperVelocityControl::stop() { m_run = false; }
+void usViper850WrapperVelocityControl::stop() {
+
+  // stop loop
+  m_run = false;
+
+  // stop robot
+  viper->setRobotState(vpRobot::STATE_STOP);
+}
 
 void usViper850WrapperVelocityControl::controlLoop()
 {
@@ -417,7 +424,7 @@ void usViper850WrapperVelocityControl::moveRight() {
   velocityProbeContact[0] = -0.01;
 }
 
-void usViper850WrapperVelocityControl::stopMove() {
+void usViper850WrapperVelocityControl::stopMoveLateral() {
   velocityProbeContact[0] = 0;
 }
 #endif

@@ -75,8 +75,7 @@ private:
   QSlider *wzSlider;
   // Start / stop button
   QPushButton *initPushButton;
-  QPushButton *startPushButton;
-  QPushButton *stopPushButton;
+  QPushButton *startStopPushButton;
   QLabel *labelRobotState;
   QPushButton *automaticForceButton;
   // Layouts
@@ -94,9 +93,9 @@ signals:
   void changeWY(int);
   void changeWZ(int);
 
-  void initClicked();
-  void startClicked();
-  void stopClicked();
+  void initRobot();
+  void startRobot();
+  void stopRobot();
 
   void activateAutomaticForceControl();
   void disableAutomaticForceControl();
@@ -104,10 +103,9 @@ signals:
 public slots:
   void robotErrorSlot();
   void robotInitialized(void);
-  void robotStarted(void);
-  void robotStopped(void);
   void releaseSlider(void);
   void setRobotState(QString text);
+  void setRobotActivation();
 
 private slots:
   void activateAutomaticForceControlSlot();
