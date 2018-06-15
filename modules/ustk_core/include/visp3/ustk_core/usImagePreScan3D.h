@@ -271,7 +271,7 @@ template <class Type> void usImagePreScan3D<Type>::setData(const usImage3D<Type>
  */
 template <class Type> void usImagePreScan3D<Type>::setScanLineNumber(unsigned int scanLineNumber)
 {
-  usImage3D<Type>::resize(scanLineNumber, usImage3D<Type>::getHeight(), usImage3D<Type>::getNumberOfFrames());
+  usImage3D<Type>::resize(usImage3D<Type>::getHeight(), scanLineNumber, usImage3D<Type>::getNumberOfFrames());
   usTransducerSettings::setScanLineNumber(scanLineNumber);
 }
 
@@ -283,7 +283,7 @@ template <class Type> void usImagePreScan3D<Type>::setScanLineNumber(unsigned in
  */
 template <class Type> void usImagePreScan3D<Type>::setFrameNumber(unsigned int frameNumber)
 {
-  usImage3D<Type>::resize(usImage3D<Type>::getWidth(), usImage3D<Type>::getHeight(), frameNumber);
+  usImage3D<Type>::resize(usImage3D<Type>::getHeight(), usImage3D<Type>::getWidth(), frameNumber);
   usMotorSettings::setFrameNumber(frameNumber);
 }
 
