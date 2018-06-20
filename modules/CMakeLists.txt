@@ -85,9 +85,9 @@ if(USE_VTK)
   endif()
 endif()
 
-VP_SET(USTK_HAVE_QT5  TRUE IF (BUILD_MODULE_visp_ustk_core AND USE_QT5))
-VP_SET(USTK_HAVE_FFTW TRUE IF (BUILD_MODULE_visp_ustk_core AND USE_FFTW))
-VP_SET(USTK_HAVE_ARMADILLO TRUE IF (BUILD_MODULE_visp_ustk_core AND USE_ARMADILLO))
+VP_SET(USTK_HAVE_QT5  TRUE IF USE_QT5)
+VP_SET(USTK_HAVE_FFTW TRUE IF USE_FFTW)
+VP_SET(USTK_HAVE_ARMADILLO TRUE IF USE_ARMADILLO)
 
 #----------------------------------------------------------------------
 # Use "make ustk_doc" target to generate the documentation
