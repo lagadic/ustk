@@ -102,6 +102,14 @@ $ cmake ../visp -DVISP_CONTRIB_MODULES_PATH=$USTK_WS/ustk -DBUILD_MODULE_visp_ar
 $ make -j4
 \endcode
 
+\subsection ustk_fedora_manual_dataset How to install UsTK dataset
+
+Some examples or tutorials are working with ultrasound medical images. We propose a dataset that contains 2D or 3D ultrasound data in https://github.com/lagadic/ustk-dataset. To use this dataset you may set the `USTK_DATASET_PATH` environment variable like:
+\code
+$ git clone https://github.com/lagadic/ustk-dataset $USTK_WS/ustk-dataset
+$ export USTK_DATASET_PATH=$USTK_WS/ustk-dataset
+\endcode
+
 \section ustk_fedora_doc Build UsTK documentation
 
 To build UsTK documentation as a stand alone documentation (i.e.. without all ViSP classes prefixed by "vp"):

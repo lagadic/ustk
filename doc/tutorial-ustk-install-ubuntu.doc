@@ -3,7 +3,7 @@
 \page tutorial-ustk-install-ubuntu Tutorial: Installation from source for Linux Ubuntu
 \tableofcontents
 
-In this tutorial you will learn how to install UsTK from source on Linux Ubuntu. These steps have been tested with Ubuntu 17.04 (64 bit) distribution, but should work with any other distribution as well. 
+In this tutorial you will learn how to install UsTK from source on Linux Ubuntu. These steps have been tested with Ubuntu 17.04 and Ubuntu 18.04 (64 bit) distributions, but should work with any other distribution as well. 
 
 To build and install UsTK there are two ways:
 - either you may \ref ustk_ubuntu_script
@@ -100,6 +100,14 @@ $ cmake ../visp -DVISP_CONTRIB_MODULES_PATH=$USTK_WS/ustk -DBUILD_MODULE_visp_ar
 - Now on unix-like OS build ViSP and UsTK using:
 \code
 $ make -j4
+\endcode
+
+\subsection ustk_ubuntu_manual_dataset How to install UsTK dataset
+
+Some examples or tutorials are working with ultrasound medical images. We propose a dataset that contains 2D or 3D ultrasound data in https://github.com/lagadic/ustk-dataset. To use this dataset you may set the `USTK_DATASET_PATH` environment variable like:
+\code
+$ git clone https://github.com/lagadic/ustk-dataset $USTK_WS/ustk-dataset
+$ export USTK_DATASET_PATH=$USTK_WS/ustk-dataset
 \endcode
 
 \section ustk_ubuntu_doc Build UsTK documentation
