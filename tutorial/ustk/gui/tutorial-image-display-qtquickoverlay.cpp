@@ -54,7 +54,7 @@ int main(int argc, char **argv)
   QObject::connect(ultrasonixControlWidet, SIGNAL(stopAcquisition()), qtGrabber, SLOT(stopAcquisition()));
 
   // send new images via qt signal
-  qRegisterMetaType<usImagePostScan2D<unsigned char> >("usImagePreScan2D<unsigned char>");
+  qRegisterMetaType<usImagePreScan2D<unsigned char> >("usImagePreScan2D<unsigned char>");
   QObject::connect(qtGrabber, SIGNAL(newFrame(usImagePreScan2D<unsigned char>)), widget,
                    SLOT(updateFrame(usImagePreScan2D<unsigned char>)));
   QObject::connect(qtGrabber, SIGNAL(newFrame(usImagePreScan2D<unsigned char>)), tracker,
@@ -64,11 +64,10 @@ int main(int argc, char **argv)
   QObject::connect(tracker, SIGNAL(newTrackedRectangle(vpRectOriented)), widget,
                    SLOT(updateRectPosition(vpRectOriented)));
 
-  widget->updateFrame(vpImage<unsigned char>(200, 200));
-
   QMainWindow window;
   window.setCentralWidget(centralWidget);
-  window.showMaximized();
+  window.resize(640,480);
+  window.show();
 
   return app.exec();
 }

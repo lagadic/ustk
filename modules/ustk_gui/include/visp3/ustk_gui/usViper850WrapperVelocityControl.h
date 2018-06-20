@@ -83,7 +83,7 @@ public slots:
 
   void moveLeft();
   void moveRight();
-  void stopMove();
+  void stopMoveLateral();
 
 signals:
   void startControlLoop();

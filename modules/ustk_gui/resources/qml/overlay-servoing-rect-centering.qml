@@ -37,6 +37,8 @@ Item {
   height: 200
   property var selection: undefined
   property bool userSelection: true
+  property bool trackingActive: false
+  property bool servoingActive: false
 
   signal startTracking()
   signal stopTracking()
@@ -60,7 +62,7 @@ Item {
       bottomMargin: 15
     }
     Button {
-      id: startTrackingButton
+      id: trackingButton
 
       opacity: 1
       text: qsTr("Start tracking")
@@ -71,8 +73,8 @@ Item {
       anchors.rightMargin: 10
 
       contentItem: Text {
-        text: startTrackingButton.text
-        font: startTrackingButton.font
+        text: trackingButton.text
+        font: trackingButton.font
         opacity: enabled ? 1.0 : 0.3
         color: "steelblue"
         horizontalAlignment: Text.AlignHCenter
@@ -84,59 +86,38 @@ Item {
         implicitWidth: 100
         implicitHeight: 40
         opacity: enabled ? 1 : 0.3
-        color: startTrackingButton.down ? "#d9d9d9" : "white"
+        color: trackingButton.down ? "#d9d9d9" : "white"
         border.width: 1
         radius: 4
       }
       onClicked: {
         if(selection) {
-          startTracking()
-          userSelection = false
+          if(!trackingActive) {
+            startTracking()
+            userSelection = false
+            trackingActive = true
+            trackingButton.text = qsTr("Stop tracking")
+          }
+          else {
+            stopTracking()
+            userSelection = true
+            trackingActive = false
+            trackingButton.text = qsTr("Start tracking")
+            if(servoingActive) {
+              stopServoing()
+              servoingActive = false
+              switchServoing.checked = false
+            }
+          }
         }
       }
-    }
-    Button {
-
-      id: stopTrackingButton
-
-      anchors.left: startTrackingButton.right
-      anchors.top: parent.top
-      anchors.bottom: parent.bottom
-      anchors.rightMargin: 10
-
-      text: qsTr("Stop tracking")
-      width: Text.width
-      opacity: 1
-      contentItem: Text {
-        text: stopTrackingButton.text
-        font: stopTrackingButton.font
-        opacity: enabled ? 1.0 : 0.3
-        color: "steelblue"
-        horizontalAlignment: Text.AlignHCenter
-        verticalAlignment: Text.AlignVCenter
-        elide: Text.ElideRight
-      }
-
-      background: Rectangle {
-        implicitWidth: 100
-        implicitHeight: 40
-        opacity: enabled ? 1 : 0.3
-        color: stopTrackingButton.down ? "#d9d9d9" : "white"
-        border.width: 1
-        radius: 4
-      }
-
-      onClicked: {
-        stopTracking()
-        userSelection = true
-      }
-
     }
     Rectangle {
       id: rectServoing
       width: 200
+      visible: trackingActive
 
-      anchors.left: stopTrackingButton.right
+      anchors.left: trackingButton.right
       anchors.top: parent.top
       anchors.bottom: parent.bottom
 
@@ -167,9 +148,11 @@ Item {
         onClicked: {
           if(checked) {
             startServoing()
+            servoingActive = true
           }
           else {
             stopServoing()
+            servoingActive = false
           }
         }
       }

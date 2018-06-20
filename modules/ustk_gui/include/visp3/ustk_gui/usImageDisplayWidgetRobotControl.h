@@ -44,8 +44,13 @@
 #if (defined(USTK_HAVE_VTK_QT) || defined(USTK_HAVE_QT5))
 
 #include <QPushButton>
+
 #include <visp3/ustk_gui/usImageDisplayWidget.h>
 
+#include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/gui/vpPlot.h>
+#include <visp3/core/vpTime.h>
 /**
  * @class usImageDisplayWidgetRobotControl
  * @brief Qt widget class for 2D ultrasound image display, containing robot control tools.
@@ -60,13 +65,18 @@ public:
   ~usImageDisplayWidgetRobotControl();
 
   void enableControlArrows();
+  void enableFeaturesDisplay();
   void disableControlArrows();
+  void disableFeaturesDisplay();
 
   void resizeEvent(QResizeEvent *event);
 
 public slots:
   void updateFrame(const vpImage<unsigned char> img);
   void updateFrame(const usImagePreScan2D<unsigned char> img);
+  void updateConfidenceServoingStatus(bool);
+  void updateConfidenceAngle(double sanline);
+  void updateConfidenceMap(usImagePreScan2D<unsigned char> confidence);
 
 signals:
   void moveLeft();
@@ -80,6 +90,17 @@ private:
   QPushButton m_leftArrow;
   QPushButton m_rightArrow;
   QPushButton m_confidenceServoingButton;
+
+  // optionnal features displays
+  bool m_useFeatureDisplay;
+  usImagePreScan2D<unsigned char> m_confidence;
+  vpPlot m_plot;
+  double m_startTime;
+#if defined(VISP_HAVE_GDI)
+  vpDisplayGDI * m_display;
+#elif defined(VISP_HAVE_OPENCV)
+  vpDisplayOpenCV * m_display;
+#endif
 };
 #endif // QT && ELASTOGRAPHY
 #endif // __usImageDisplayWidgetRobotControl_h_

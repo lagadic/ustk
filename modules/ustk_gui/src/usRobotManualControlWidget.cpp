@@ -75,12 +75,9 @@ usRobotManualControlWidget::usRobotManualControlWidget()
   initPushButton = new QPushButton(this);
   initPushButton->setText(QString("Init robot"));
   initPushButton->setEnabled(true);
-  startPushButton = new QPushButton(this);
-  startPushButton->setText(QString("Start robot"));
-  startPushButton->setEnabled(true);
-  stopPushButton = new QPushButton(this);
-  stopPushButton->setText(QString("Stop robot"));
-  stopPushButton->setEnabled(true);
+  startStopPushButton = new QPushButton(this);
+  startStopPushButton->setText(QString("Start robot"));
+  startStopPushButton->setEnabled(false);
 
   labelRobotState = new QLabel(this);
   labelRobotState->setText("Press security handle, then click Init robot");
@@ -104,7 +101,7 @@ usRobotManualControlWidget::usRobotManualControlWidget()
   L->addWidget(wyLabel, 4, 0, Qt::AlignRight);
   L->addWidget(wzLabel, 5, 0, Qt::AlignRight);
   L->addWidget(initPushButton, 6, 0, 1, 2, Qt::AlignCenter);
-  L->addWidget(startPushButton, 7, 0, Qt::AlignRight);
+  L->addWidget(startStopPushButton, 7, 0, 1, 2, Qt::AlignCenter);
   L->addWidget(labelRobotState, 8, 0, 1, 2, Qt::AlignCenter);
   L->addWidget(automaticForceButton, 9, 0, 1, 2, Qt::AlignCenter);
 
@@ -114,7 +111,6 @@ usRobotManualControlWidget::usRobotManualControlWidget()
   L->addWidget(wxSlider, 3, 1, Qt::AlignLeft);
   L->addWidget(wySlider, 4, 1, Qt::AlignLeft);
   L->addWidget(wzSlider, 5, 1, Qt::AlignLeft);
-  L->addWidget(stopPushButton, 7, 1, Qt::AlignLeft);
 
   this->setLayout(L);
   // Setting up connections
@@ -137,8 +133,7 @@ usRobotManualControlWidget::~usRobotManualControlWidget()
   delete wySlider;
   delete wzSlider;
 
-  delete startPushButton;
-  delete stopPushButton;
+  delete startStopPushButton;
   delete labelRobotState;
 
   delete automaticForceButton;
@@ -164,15 +159,13 @@ void usRobotManualControlWidget::setUpConnections()
   connect(wySlider, SIGNAL(valueChanged(int)), SIGNAL(changeWY(int)));
   connect(wzSlider, SIGNAL(valueChanged(int)), SIGNAL(changeWZ(int)));
   // signal-signal connection for start / stop robot buttons
-  connect(initPushButton, SIGNAL(clicked()), SIGNAL(initClicked()));
-  connect(startPushButton, SIGNAL(clicked()), SIGNAL(startClicked()));
+  connect(initPushButton, SIGNAL(clicked()), SIGNAL(initRobot()));
   automaticForceButton->setText(QString("Enable automatic force control"));
-  connect(stopPushButton, SIGNAL(clicked()), SIGNAL(stopClicked()));
+  automaticForceButton->setEnabled(false);
 
   // gui updates
   connect(initPushButton, SIGNAL(clicked()), this, SLOT(robotInitialized()));
-  connect(startPushButton, SIGNAL(clicked()), this, SLOT(robotStarted()));
-  connect(stopPushButton, SIGNAL(clicked()), this, SLOT(robotStopped()));
+  connect(startStopPushButton, SIGNAL(clicked()), this, SLOT(setRobotActivation()));
 
   connect(automaticForceButton, SIGNAL(clicked()), this, SLOT(activateAutomaticForceControlSlot()));
 }
@@ -185,25 +178,27 @@ void usRobotManualControlWidget::releaseSlider()
 
 void usRobotManualControlWidget::robotInitialized(void)
 {
-  startPushButton->setEnabled(true);
-  stopPushButton->setEnabled(true);
+  startStopPushButton->setEnabled(true);
+  startStopPushButton->setText(QString("Start robot"));
   labelRobotState->setText(QString("Now press the viper start button (flashing)"));
   this->update();
 }
-void usRobotManualControlWidget::robotStarted(void)
-{
-  startPushButton->setEnabled(false);
-  stopPushButton->setEnabled(true);
-  labelRobotState->setText(QString("Robot OK, you can move it or stop it"));
-  this->update();
-}
 
-void usRobotManualControlWidget::robotStopped(void)
-{
-  startPushButton->setEnabled(true);
-  stopPushButton->setEnabled(false);
-  labelRobotState->setText(QString("Robot stopped, start it to move it"));
-  this->update();
+void usRobotManualControlWidget::setRobotActivation() {
+  if (startStopPushButton->text() == QString("Start robot")) {
+    emit(startRobot());
+    startStopPushButton->setText(QString("Stop robot"));
+    labelRobotState->setText(QString("Robot OK, you can move it or stop it"));
+    automaticForceButton->setEnabled(true);
+    this->update();
+  }
+  else if (startStopPushButton->text() == QString("Stop robot")) {
+    emit(stopRobot());
+    startStopPushButton->setText(QString("Start robot"));
+    labelRobotState->setText(QString("Robot stopped"));
+    automaticForceButton->setEnabled(false);
+    this->update();
+  }
 }
 
 void usRobotManualControlWidget::setRobotState(QString text)
@@ -214,9 +209,10 @@ void usRobotManualControlWidget::setRobotState(QString text)
 
 void usRobotManualControlWidget::robotErrorSlot()
 {
-  startPushButton->setEnabled(false);
-  stopPushButton->setEnabled(false);
+  startStopPushButton->setEnabled(false);
   labelRobotState->setText("Robot Error ! To restart, press security handle, then click Init robot");
+  automaticForceButton->setText(QString("Enable automatic force control"));
+  automaticForceButton->setEnabled(false);
   this->update();
 }
 
@@ -242,3 +238,4 @@ void usRobotManualControlWidget::activateAutomaticForceControlSlot()
     emit(disableAutomaticForceControl());
   }
 }
+

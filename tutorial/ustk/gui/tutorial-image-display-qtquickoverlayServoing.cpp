@@ -65,9 +65,9 @@ int main(int argc, char **argv)
   QObject::connect(robotControlPanel, SIGNAL(changeWY(int)), &viperControl, SLOT(setYAngularVelocity(int)));
   QObject::connect(robotControlPanel, SIGNAL(changeWZ(int)), &viperControl, SLOT(setZAngularVelocity(int)));
 
-  QObject::connect(robotControlPanel, SIGNAL(initClicked()), &viperControl, SLOT(init()));
-  QObject::connect(robotControlPanel, SIGNAL(startClicked()), &viperControl, SLOT(run()));
-  QObject::connect(robotControlPanel, SIGNAL(stopClicked()), &viperControl, SLOT(stop()));
+  QObject::connect(robotControlPanel, SIGNAL(initRobot()), &viperControl, SLOT(init()));
+  QObject::connect(robotControlPanel, SIGNAL(startRobot()), &viperControl, SLOT(run()));
+  QObject::connect(robotControlPanel, SIGNAL(stopRobot()), &viperControl, SLOT(stop()));
 
   QObject::connect(robotControlPanel, SIGNAL(activateAutomaticForceControl()), &viperControl,
                    SLOT(startAutomaticForceControl()));
@@ -113,11 +113,10 @@ int main(int argc, char **argv)
   QObject::connect(visualServoingController, SIGNAL(updateProbeZOrientation(int)), &viperControl,
                    SLOT(setZAngularVelocity(int)));
 
-  widget->updateFrame(vpImage<unsigned char>(200, 200));
-
   QMainWindow window;
   window.setCentralWidget(centralWidget);
-  window.showMaximized();
+  window.resize(1200,650);
+  window.show();
 
   return app.exec();
 }
