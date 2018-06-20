@@ -23,7 +23,8 @@
 
 #include <visp3/ustk_template_tracking/usDenseTracker2D.h>
 
-#if defined(VISP_HAVE_V4L2) && defined(VISP_HAVE_PTHREAD) && defined(VISP_HAVE_VIPER850) && defined(VISP_HAVE_MODULE_USTK_GRABBER)
+#if defined(VISP_HAVE_V4L2) && defined(VISP_HAVE_PTHREAD) && defined(VISP_HAVE_VIPER850) &&                            \
+    defined(VISP_HAVE_MODULE_USTK_GRABBER)
 
 #include <QApplication>
 
@@ -126,7 +127,8 @@ vpThread::Return displayFunction(vpThread::Args args)
         tracker.update(postScan_);
         rectangle = tracker.getTarget();
 
-        usPixelMeterConversion::convert(postScan_, rectangle.getCenter().get_j(), rectangle.getCenter().get_i(), xtarget, ytarget);
+        usPixelMeterConversion::convert(postScan_, rectangle.getCenter().get_j(), rectangle.getCenter().get_i(),
+                                        xtarget, ytarget);
 
         double ttarget = atan2(xtarget, ytarget);
 
@@ -178,14 +180,22 @@ vpThread::Return displayFunction(vpThread::Args args)
       vpDisplay::display(postScan_);
 
       if (rectangleRoiDefined) {
-        vpDisplay::displayLine(postScan_, static_cast<int>(rectangle.getTopLeft().get_i()), static_cast<int>(rectangle.getTopLeft().get_j()),
-                               static_cast<int>(rectangle.getBottomLeft().get_i()), static_cast<int>(rectangle.getBottomLeft().get_j()), vpColor::red);
-        vpDisplay::displayLine(postScan_, static_cast<int>(rectangle.getBottomLeft().get_i()), static_cast<int>(rectangle.getBottomLeft().get_j()),
-                               static_cast<int>(rectangle.getBottomRight().get_i()), static_cast<int>(rectangle.getBottomRight().get_j()), vpColor::red);
-        vpDisplay::displayLine(postScan_, static_cast<int>(rectangle.getBottomRight().get_i()), static_cast<int>(rectangle.getBottomRight().get_j()),
-                               static_cast<int>(rectangle.getTopRight().get_i()), static_cast<int>(rectangle.getTopRight().get_j()), vpColor::red);
-        vpDisplay::displayLine(postScan_, static_cast<int>(rectangle.getTopRight().get_i()), static_cast<int>(rectangle.getTopRight().get_j()),
-                               static_cast<int>(rectangle.getTopLeft().get_i()), static_cast<int>(rectangle.getTopLeft().get_j()), vpColor::red);
+        vpDisplay::displayLine(postScan_, static_cast<int>(rectangle.getTopLeft().get_i()),
+                               static_cast<int>(rectangle.getTopLeft().get_j()),
+                               static_cast<int>(rectangle.getBottomLeft().get_i()),
+                               static_cast<int>(rectangle.getBottomLeft().get_j()), vpColor::red);
+        vpDisplay::displayLine(postScan_, static_cast<int>(rectangle.getBottomLeft().get_i()),
+                               static_cast<int>(rectangle.getBottomLeft().get_j()),
+                               static_cast<int>(rectangle.getBottomRight().get_i()),
+                               static_cast<int>(rectangle.getBottomRight().get_j()), vpColor::red);
+        vpDisplay::displayLine(postScan_, static_cast<int>(rectangle.getBottomRight().get_i()),
+                               static_cast<int>(rectangle.getBottomRight().get_j()),
+                               static_cast<int>(rectangle.getTopRight().get_i()),
+                               static_cast<int>(rectangle.getTopRight().get_j()), vpColor::red);
+        vpDisplay::displayLine(postScan_, static_cast<int>(rectangle.getTopRight().get_i()),
+                               static_cast<int>(rectangle.getTopRight().get_j()),
+                               static_cast<int>(rectangle.getTopLeft().get_i()),
+                               static_cast<int>(rectangle.getTopLeft().get_j()), vpColor::red);
       }
 
       // Display the confidence map
@@ -415,7 +425,7 @@ vpThread::Return controlFunction(vpThread::Args args)
 
       vpColVector v_e = eVs * v_s + eVp * v_p;
 
-      //std::cout << v_e.t() << std::endl;
+      // std::cout << v_e.t() << std::endl;
 
       // Get the robot jacobian eJe
       robot.get_eJe(eJe);
@@ -436,9 +446,9 @@ vpThread::Return controlFunction(vpThread::Args args)
 }
 
 //! [capture-multi-threaded mainFunction]
-int main(int argc,  char **argv)
+int main(int argc, char **argv)
 {
-  QApplication app(argc,argv);
+  QApplication app(argc, argv);
 
   // init
   s_robotIsRunning = false;
@@ -448,11 +458,10 @@ int main(int argc,  char **argv)
   vpThread thread_display((vpThread::Fn)displayFunction);
   vpThread thread_control((vpThread::Fn)controlFunction);
 
-
   usPreScanToPostScan2DConverter converter;
   usImagePostScan2D<unsigned char> postScan_local;
 
-  //starts the grabber
+  // starts the grabber
   usNetworkGrabberPreScan2D *qtGrabber = new usNetworkGrabberPreScan2D();
   qtGrabber->connectToServer();
 
@@ -480,26 +489,26 @@ int main(int argc,  char **argv)
 
   t_CaptureState capture_state_local = capture_waiting;
 
-  usImagePreScan2D<unsigned char> * grabbedImage;
+  usImagePreScan2D<unsigned char> *grabbedImage;
 
   while (!stop_capture_) {
+    s_mutex_capture.lock();
+    capture_state_local = s_capture_state;
+    s_mutex_capture.unlock();
+    if (capture_state_local == capture_stopped)
+      stop_capture_ = true;
+    else if (qtGrabber->isFirstFrameAvailable()) {
+      grabbedImage = qtGrabber->acquire();
+
+      converter.convert(*(grabbedImage), postScan_local);
+
+      s_mutex_image.lock();
+      s_frame = postScan_local;
+      s_mutex_image.unlock();
+
       s_mutex_capture.lock();
-      capture_state_local = s_capture_state;
+      s_capture_state = capture_started;
       s_mutex_capture.unlock();
-      if (capture_state_local == capture_stopped)
-        stop_capture_ = true;
-      else if(qtGrabber->isFirstFrameAvailable()) {
-        grabbedImage = qtGrabber->acquire();
-
-        converter.convert(*(grabbedImage),postScan_local);
-
-        s_mutex_image.lock();
-        s_frame = postScan_local;
-        s_mutex_image.unlock();
-
-        s_mutex_capture.lock();
-        s_capture_state = capture_started;
-        s_mutex_capture.unlock();
     }
   }
 
