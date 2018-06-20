@@ -14,6 +14,7 @@ sudo yum install libX11-devel
 sudo yum install libxml2-devel
 sudo yum install vtk-qt
 sudo yum install fftw-libs
+sudo yum install armadillo-devel
 
 if [ ! -v USTK_WS ] 
 then

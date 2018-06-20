@@ -14,6 +14,7 @@ sudo apt-get install libx11-dev
 sudo apt-get install libxml2-dev
 sudo apt-get install libvtk6-qt-dev
 sudo apt-get install libfftw3-dev
+sudo apt-get install libarmadillo-dev
 
 if [ ! -v USTK_WS ] 
 then

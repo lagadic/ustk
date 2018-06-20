@@ -97,15 +97,30 @@ This UsTK project requires the following libraries :
 	
 		Then don't forget to add the folder to your PATH.
 	  
+- [armadillo](http://arma.sourceforge.net/): armadillo library is used for elastography. This 3rd party could be installed from existing pre-build packages.
+
+	- How to install armadillo OS X
+
+			$ brew update
+			$ brew install armadillo
+
+	- How to install armadillo on Ubuntu
+
+			$ sudo apt-get install libarmadillo-dev
+
+	- How to install armadillo on Fedora
+
+			$ sudo yum install armadillo-devel
+
 ## How to build UsTK binaries
 
-- Install XML2, VTK, FFTW dependencies as explained in the previous section.
+- Install XML2, VTK, FFTW, armadillo dependencies as explained in the previous section.
 
 - Create a workspace folder and enter in this folder
 
 		$ mkdir <workspace>; cd <workspace>
 
-- Downloaded ViSP and UsTK sources codes
+- Download ViSP and UsTK sources codes
 
 		$ git clone https://github.com/lagadic/visp
 		$ git clone https://github.com/lagadic/ustk
