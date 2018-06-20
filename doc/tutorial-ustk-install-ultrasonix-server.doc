@@ -1,0 +1,85 @@
+/**
+
+\page tutorial-ustk-install-ultrasonix-server Tutorial: UsTK Ultrasonix server application installation 
+\tableofcontents
+
+\section intro_ustk_server Introduction
+
+This tutorial explains how to install the UsTK ultrasonix TCP server application on a ultrasonix machine.
+Requirements:
+- Station type : Sonix touch / Sonix tablet
+- Ultrasonix research SDK version : porta 5.6.0 or newer
+- CMake software
+- Visual Studio compiler
+- UsTK and its dependencies, including Qt 5 (tested with Qt 5.5 on Windows XP with Visual Studio 2010).
+
+<br>
+\image html sonixtouch.png The sonix touch station 
+<br>
+\image html sonixtablet.jpg The sonix tablet station 
+<br>
+
+\section ustk_server_build_configuration Configuration of the build 
+
+First login to the Ultrasonix machine.
+
+Then install Qt 5.5 for MSVC 2010 on the Ultrasonix machine. You may [download](https://download.qt.io/archive/qt/5.5/5.5.0/) `qt-opensource-windows-x86-msvc2010-5.5.0.exe` and double click on this file to start installation.
+
+Next, download Ultrasonix SDK on <a href="http://research.ultrasonix.com/">Ultrasonix research website</a>, and extract it on a location of your choice (`C:/Ultrasonix` for example). Add a new environment variable to your windows system called `PORTA_DIR`, and pointing on the porta directory of the SDK (`C:/Ultrasonix/SDK/porta` for example). To this end, open a `cmd.exe` terminal and run: 
+\code
+C:\> setx PORTA_DIR C:\Ultrasonix\SDK\porta
+\endcode
+
+If not already done, install [CMake](https://cmake.org/). 
+
+You may now download ViSP and UsTK source codes:
+
+- Create a workspace folder and enter in this folder
+
+		$ mkdir <workspace>; cd <workspace>
+
+- Download ViSP and UsTK sources codes
+
+		$ git clone https://github.com/lagadic/visp
+		$ git clone https://github.com/lagadic/ustk
+
+- Make a build directory (where UsTK and ViSP will be compiled together)
+
+		$ mkdir visp-ustk-build; cd visp-ustk-build
+
+Then you can configure the project using CMake: 
+- Run `cmake-gui`, and specify the source directory of ViSP (`<workspace>/visp`), and put the build directory (`<workspace>/visp-ustk-build`).
+- In the `VISP_CONTRIB_MODULES_PATH` option, enter the location of UsTK source code (`<workspace>/ustk`).
+- Click "Configure" button, and verify that porta and Qt have been found correctly with CMake checking that cmake option `USE_QT5` is true and `PORTA_LIBRARIES` is correctly filled with your path.
+- Click "Generate" button
+
+If all went well the configuration step is OK, you can move on to compilation step.
+
+\section ustk_server_build Build the application
+
+To build the application, there are two ways:
+
+1. Double click on `<workspace>/visp-ustk-build/VISP.sln` solution file in order to open the whole ViSP solution in Visual Studio. Then scroll to `ustk-ultrasonix-server` Visual Studio project and built this project.
+
+2. Or open directly `ustk-ultrasonix-server.sln` Visual Studio solution located in `<workspace>/visp-ustk-build/apps/ustk/ultrasonix-server` folder. Once opened in Visual Studio 2010, you can build it.
+
+If the build is successful, you can now run the server application (see below).
+
+\section ustk_server_run Running the server application
+
+Before running the application, verify that a ultrasound probe is connected to your station, and that your station is connected to a network.
+To run the application simply run the executable `ustk-ultrasonix-server.exe` generated in your build directory.
+In a console, you will see the following messages: <br>
+
+\code
+C:\...> ustk-ultrasonix-server.exe
+porta instance created
+TCP server Started
+Server now listening on port# 8080
+\endcode
+
+\section ustk_server_next_tutorial Next tutorial
+Once the server application is running on your Ultrasonix station, you can then go to the next \ref tutorial-ustk-grabber-ultrasonix.
+
+*/
+
