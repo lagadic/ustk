@@ -14,6 +14,8 @@ Below you will find some tutorials dedicated to the ultrasound toolkit extension
 
 - \ref tutorial-ustk-install-fedora <br>This tutorial explains how to build and install UsTK under fedora distribution.
 
+- \ref tutorial-ustk-install-osx <br>This tutorial explains how to build and install UsTK under Mac OSX.
+
 - \ref tutorial-ustk-install-ultrasonix-server <br>This tutorial explains how to install the server application on an Ultrasonix machine.
 
 \subsection tuto_code_ustk Running UsTK example codes tutorials

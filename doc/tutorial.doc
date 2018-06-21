@@ -15,6 +15,8 @@ This page introduces the user to the way to install UsTK.
 
 - \subpage tutorial-ustk-install-fedora <br>This tutorial explains how to build and install UsTK under fedora distribution.
 
+- \subpage tutorial-ustk-install-osx <br>This tutorial explains how to build and install UsTK under Mac OSX.
+
 - \subpage tutorial-ustk-install-ultrasonix-server <br>This tutorial explains how to install the server application on a ultrasonix machine.
 
 */
