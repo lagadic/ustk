@@ -5,7 +5,7 @@
 #
 
 echo "UsTK installation Script"
-echo" Installing dependencies..."
+echo "Installing dependencies..."
 
 sudo apt-get install build-essential
 sudo apt-get install cmake-curses-gui

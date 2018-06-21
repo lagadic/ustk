@@ -5,8 +5,7 @@
 #
 
 echo "UsTK installation Script"
-echo" Installing dependencies..."
-
+echo "Installing dependencies..."
 
 brew install cmake
 brew install opencv
