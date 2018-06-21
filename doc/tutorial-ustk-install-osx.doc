@@ -1,0 +1,138 @@
+/**
+
+\page tutorial-ustk-install-osx Tutorial: Installation from source for Mac OSX
+\tableofcontents
+
+In this tutorial you will learn how to install UsTK from source on MAC OSX. These steps have been tested with macOS High Sierra 10.13.4, but should work with any other distribution as well. 
+
+To build and install UsTK there are two ways:
+- either you may \ref ustk_osx_script
+- either you may \ref ustk_osx_manual
+
+\section ustk_osx_script Build UsTK using installation script
+
+\subsection ustk_osx_script_src Get the sources
+
+First, create a workspace in $HOME/ustk-ws that will contain UsTK and ViSP sources, build and dataset:
+
+\code
+$ export USTK_WS=$HOME/ustk-ws
+$ mkdir -p $USTK_WS
+\endcode
+
+Prior to build and install UsTK, you have to download the sources. To achieve this, run the following command:
+
+\code
+$ git clone https://github.com/lagadic/ustk $USTK_WS/ustk
+\endcode
+
+Git will clone the UsTK source code in `$USTK_WS/ustk` folder.
+
+\subsection ustk_osx_script_run Run installation script
+
+Then you can run the installation script for OSX:
+
+\code	
+$ sh $USTK_WS/ustk/script/install-osx.sh
+\endcode
+
+This will download all third-parties and build the library (it will take some time). You will have to enter your password to install required packages, and confirm a few questions during the process.
+
+Once build, you may now \ref ustk_osx_doc.
+
+\section ustk_osx_manual Build UsTK using command line
+
+We give hereafter all the instructions to build UsTK from source.
+
+\subsection ustk_osx_manual_3rdparty Install third-parties
+
+UsTK has optional third-parties that you can install running:
+
+- [XML2](http://xmlsoft.org/): XML2 library is used by UsTK for I/O (ultrasound image or sequence of images settings). This 3rd party could be installed from existing packages.
+\code
+$ brew update
+$ brew install libxml2
+\endcode
+
+- [VTK](http://www.vtk.org/) with Qt4 or Qt5 support: VTK library is used by UsTK for visualization (GUI). This 3rd party could be installed from existing pre-build packages.
+\code
+$ brew install vtk —-with-qt5
+\endcode
+
+- [FFTW](http://www.fftw.org/): FFTW library is used by RF to pre-scan converters. This 3rd party could be installed from existing pre-build packages.
+\code
+$ brew install fftw
+\endcode
+
+- [armadillo](http://arma.sourceforge.net/): armadillo library is used for elastography. This 3rd party could be installed from existing pre-build packages. 
+\code
+$ brew install armadillo
+\endcode
+
+\subsection ustk_osx_manual_build Build UsTK
+
+- First, create a workspace in $HOME/ustk-ws that will contain UsTK and ViSP sources, build and dataset:
+\code
+$ export USTK_WS=$HOME/ustk-ws
+$ mkdir -p $USTK_WS
+\endcode
+
+- Download ViSP and UsTK sources codes
+\code
+$ git clone https://github.com/lagadic/visp $USTK_WS/visp
+$ git clone https://github.com/lagadic/ustk $USTK_WS/ustk
+\endcode
+
+- Make a build directory (where UsTK and ViSP will be compiled together)
+\code
+$ mkdir $USTK_WS/ustk-build; cd $USTK_WS/ustk-build
+\endcode
+
+- Configure the build setting UsTK as a ViSP external contrib module
+\code
+$ cmake ../visp -DVISP_CONTRIB_MODULES_PATH=$USTK_WS/ustk
+\endcode
+
+- Note that with the previous command, all ViSP modules will be build besides UsTK. Since ViSP modules related to AR, detection, computer vision or tracking are not used by UsTK, their build could be turned off in order to speed up UsTK build. This could be achieved using:
+\code
+$ cmake ../visp -DVISP_CONTRIB_MODULES_PATH=$USTK_WS/ustk -DBUILD_MODULE_visp_ar=OFF -DBUILD_MODULE_visp_blob=OFF -DBUILD_MODULE_visp_detection=OFF -DBUILD_MODULE_visp_klt=OFF -DBUILD_MODULE_visp_mbt=OFF -DBUILD_MODULE_visp_me=OFF -DBUILD_MODULE_visp_tt=OFF -DBUILD_MODULE_visp_tt_mi=OFF -DBUILD_MODULE_visp_vision=OFF -DBUILD_MODULE_visp_visual_features=OFF -DBUILD_MODULE_visp_vs=OFF
+\endcode
+
+- Now on unix-like OS build ViSP and UsTK using:
+\code
+$ make -j4
+\endcode
+
+\subsection ustk_osx_manual_dataset How to install UsTK dataset
+
+Some examples or tutorials are working with ultrasound medical images. We propose a dataset that contains 2D or 3D ultrasound data in https://github.com/lagadic/ustk-dataset. To use this dataset you may set the `USTK_DATASET_PATH` environment variable like:
+\code
+$ git clone https://github.com/lagadic/ustk-dataset $USTK_WS/ustk-dataset
+$ export USTK_DATASET_PATH=$USTK_WS/ustk-dataset
+\endcode
+
+\section ustk_osx_doc Build UsTK documentation
+
+To build UsTK documentation as a stand alone documentation (i.e.. without all ViSP classes prefixed by "vp"):
+\code
+$ cd $USTK_WS/ustk-build
+$ make -j4 ustk_doc
+\endcode
+
+\section ustk_osx_install Install UsTK
+
+We don't recommend to install UsTK in `/usr/local`. If you want to do the installation anywa, run:
+\code
+$ cd $USTK_WS/ustk-build
+$ make -j4 install
+\endcode
+
+\section ustk_osx_uninstall Uninstall UsTK
+
+To uninstall UsTK, run:
+\code
+$ cd $USTK_WS/ustk-build
+$ make -j4 uninstall
+\endcode
+
+*/
