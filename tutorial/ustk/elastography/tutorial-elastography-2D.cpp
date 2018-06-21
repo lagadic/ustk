@@ -7,6 +7,7 @@
     defined(USTK_HAVE_FFTW)
 
 #include <QApplication>
+#include <QStringList>
 #include <QtCore/QThread>
 
 #include <visp3/ustk_core/usRFToPreScan2DConverter.h>
