@@ -41,7 +41,7 @@
  */
 #include <visp3/ustk_core/usConfig.h>
 
-#if defined(USTK_HAVE_ARMADILLO)
+#if defined(USTK_HAVE_ARMADILLO) && (ARMA_VERSION_MAJOR > 6) && (ARMA_VERSION_MAJOR > 700)
 
 #include <algorithm>
 #include <cmath>

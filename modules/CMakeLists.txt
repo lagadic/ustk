@@ -117,3 +117,12 @@ if(DOXYGEN_FOUND)
     set_target_properties(ustk_doc PROPERTIES FOLDER "extra")
   endif()
 endif()
+
+# ========================== UsTK optional 3rd parties ==========================
+status("")
+status("  UsTK 3rd parties:")
+status("    Use VTK:"           USE_VTK          THEN "yes (ver ${VTK_VERSION})" ELSE "no")
+status("    Use FFTW:"          USE_FFTW         THEN "yes (ver ${FFTW_VERSION})" ELSE "no")
+status("    Use Armadillo:"     USE_ARMADILLO    THEN "yes (ver ${ARMADILLO_VERSION_STRING})" ELSE "no")
+
+
