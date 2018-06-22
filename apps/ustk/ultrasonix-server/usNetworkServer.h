@@ -16,8 +16,8 @@
 
 // Ultrasonix SDK includes
 #include <ImagingModes.h>
-#include <porta.h>
 #include <porta_params_def.h>
+#include <porta.h>
 #include <utx_opt.h>
 
 #if USTK_PORTA_VERSION_MAJOR > 5

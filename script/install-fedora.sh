@@ -14,6 +14,7 @@ sudo yum install libX11-devel
 sudo yum install libxml2-devel
 sudo yum install vtk-qt
 sudo yum install fftw-libs
+sudo yum install armadillo-devel
 
 if [ ! -v USTK_WS ] 
 then
@@ -28,7 +29,8 @@ else
     if [ ! -d "$USTK_WS/visp" ]; then
        git clone https://github.com/lagadic/visp $USTK_WS/visp
     else
-        git pull origin master
+       cd $USTK_WS/visp
+       git pull origin master
     fi
 
     if [ ! -d "$USTK_WS/ustk-build" ]; then
@@ -45,6 +47,12 @@ else
     make -j4
 
     echo "Importing ustk-dataset"
-    git clone https://github.com/lagadic/ustk-dataset $USTK_WS/ustk-dataset
+    if [ ! -d "$USTK_WS/ustk-dataset" ]; then
+       git clone https://github.com/lagadic/ustk-dataset $USTK_WS/ustk-dataset
+    else
+       cd $USTK_WS/ustk-dataset
+       git pull origin master
+    fi
     export USTK_DATASET_PATH=$USTK_WS/ustk-dataset
 fi
+

@@ -1,19 +1,18 @@
 #!/bin/sh
 
 #
-# Usage: sh install-ubuntu.sh
+# Usage: sh install-osx.sh
 #
+
 echo "UsTK installation Script"
 echo "Installing dependencies..."
 
-sudo apt-get install build-essential
-sudo apt-get install cmake-curses-gui
-sudo apt-get install libopencv-dev
-sudo apt-get install libx11-dev
-sudo apt-get install libxml2-dev
-sudo apt-get install libvtk6-qt-dev
-sudo apt-get install libfftw3-dev
-sudo apt-get install libarmadillo-dev
+brew install cmake
+brew install opencv
+brew install libxml2
+brew install vtk —-with-qt5
+brew install fftw
+brew install armadillo
 
 if [ ! -v USTK_WS ] 
 then
@@ -38,9 +37,8 @@ else
     cd $USTK_WS/ustk-build
 
     echo "Configuring project with CMake..."
-
     cmake $USTK_WS/visp -DVISP_CONTRIB_MODULES_PATH=$USTK_WS/ustk -DBUILD_MODULE_visp_ar=OFF -DBUILD_MODULE_visp_blob=OFF -DBUILD_MODULE_visp_detection=OFF -DBUILD_MODULE_visp_klt=OFF -DBUILD_MODULE_visp_mbt=OFF -DBUILD_MODULE_visp_me=OFF -DBUILD_MODULE_visp_tt=OFF -DBUILD_MODULE_visp_tt_mi=OFF -DBUILD_MODULE_visp_vision=OFF -DBUILD_MODULE_visp_visual_features=OFF -DBUILD_MODULE_visp_vs=OFF
-
+	 
     echo "Compiling project"
     make -j4
 

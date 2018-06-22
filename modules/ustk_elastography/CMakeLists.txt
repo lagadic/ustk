@@ -48,6 +48,12 @@ if(USE_FFTW)
   vp_module_include_directories(${opt_incs})
   vp_create_module(${opt_libs})
 
-  vp_add_tests(DEPENDS_ON  visp_ustk_core)
+  vp_add_tests(DEPENDS_ON visp_ustk_core)
+
+  if(APPLE)
+    vp_set_source_file_compile_flag(src/usElastography.cpp -Wno-unused-parameter)
+    vp_set_source_file_compile_flag(src/usMotionEstimation.cpp -Wno-unused-parameter)
+    vp_set_source_file_compile_flag(test/testUsElastography.cpp -Wno-unused-parameter)
+  endif()
 
 endif()

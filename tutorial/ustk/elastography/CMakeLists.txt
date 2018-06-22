@@ -47,4 +47,8 @@ foreach(cpp ${tutorial_cpp})
   if(COMMAND visp_add_dependency)
     visp_add_dependency(${cpp} "tutorials")
   endif()
+  if(APPLE)
+    visp_set_source_file_compile_flag(${cpp} -Wno-unused-parameter)
+  endif()
 endforeach()
+

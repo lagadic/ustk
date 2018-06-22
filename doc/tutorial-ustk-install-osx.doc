@@ -1,17 +1,17 @@
 /**
 
-\page tutorial-ustk-install-ubuntu Tutorial: Installation from source for Linux Ubuntu
+\page tutorial-ustk-install-osx Tutorial: Installation from source for Mac OSX
 \tableofcontents
 
-In this tutorial you will learn how to install UsTK from source on Linux Ubuntu. These steps have been tested with Ubuntu 17.04 and Ubuntu 18.04 (64 bit) distributions, but should work with any other distribution as well. 
+In this tutorial you will learn how to install UsTK from source on MAC OSX. These steps have been tested with macOS High Sierra 10.13.4, but should work with any other distribution as well. 
 
 To build and install UsTK there are two ways:
-- either you may \ref ustk_ubuntu_script
-- either you may \ref ustk_ubuntu_manual
+- either you may \ref ustk_osx_script
+- either you may \ref ustk_osx_manual
 
-\section ustk_ubuntu_script Build UsTK using installation script
+\section ustk_osx_script Build UsTK using installation script
 
-\subsection ustk_ubuntu_script_src Get the sources
+\subsection ustk_osx_script_src Get the sources
 
 First, create a workspace in $HOME/ustk-ws that will contain UsTK and ViSP sources, build and dataset:
 
@@ -28,47 +28,48 @@ $ git clone https://github.com/lagadic/ustk $USTK_WS/ustk
 
 Git will clone the UsTK source code in `$USTK_WS/ustk` folder.
 
-\subsection ustk_ubuntu_script_run Run installation script
+\subsection ustk_osx_script_run Run installation script
 
-Then you can run the installation script for ubuntu:
+Then you can run the installation script for OSX:
 
 \code	
-$ sh $USTK_WS/ustk/script/install-ubuntu.sh
+$ sh $USTK_WS/ustk/script/install-osx.sh
 \endcode
 
 This will download all third-parties and build the library (it will take some time). You will have to enter your password to install required packages, and confirm a few questions during the process.
 
-Once build, you may now \ref ustk_ubuntu_doc.
+Once build, you may now \ref ustk_osx_doc.
 
-\section ustk_ubuntu_manual Build UsTK using command line
+\section ustk_osx_manual Build UsTK using command line
 
 We give hereafter all the instructions to build UsTK from source.
 
-\subsection ustk_ubuntu_manual_3rdparty Install third-parties
+\subsection ustk_osx_manual_3rdparty Install third-parties
 
 UsTK has optional third-parties that you can install running:
 
 - [XML2](http://xmlsoft.org/): XML2 library is used by UsTK for I/O (ultrasound image or sequence of images settings). This 3rd party could be installed from existing packages.
 \code
-$ sudo apt-get install libxml2-dev
+$ brew update
+$ brew install libxml2
 \endcode
 
 - [VTK](http://www.vtk.org/) with Qt4 or Qt5 support: VTK library is used by UsTK for visualization (GUI). This 3rd party could be installed from existing pre-build packages.
 \code
-$ sudo apt-get install libvtk6-qt-dev
+$ brew install vtk —-with-qt5
 \endcode
 
 - [FFTW](http://www.fftw.org/): FFTW library is used by RF to pre-scan converters. This 3rd party could be installed from existing pre-build packages.
 \code
-$ sudo apt-get install libfftw3-dev
+$ brew install fftw
 \endcode
 
 - [armadillo](http://arma.sourceforge.net/): armadillo library is used for elastography. This 3rd party could be installed from existing pre-build packages. 
 \code
-$ sudo apt-get install libarmadillo-dev
+$ brew install armadillo
 \endcode
 
-\subsection ustk_ubuntu_manual_build Build UsTK
+\subsection ustk_osx_manual_build Build UsTK
 
 - First, create a workspace in $HOME/ustk-ws that will contain UsTK and ViSP sources, build and dataset:
 \code
@@ -102,7 +103,7 @@ $ cmake ../visp -DVISP_CONTRIB_MODULES_PATH=$USTK_WS/ustk -DBUILD_MODULE_visp_ar
 $ make -j4
 \endcode
 
-\subsection ustk_ubuntu_manual_dataset How to install UsTK dataset
+\subsection ustk_osx_manual_dataset How to install UsTK dataset
 
 Some examples or tutorials are working with ultrasound medical images. We propose a dataset that contains 2D or 3D ultrasound data in https://github.com/lagadic/ustk-dataset. To use this dataset you may set the `USTK_DATASET_PATH` environment variable like:
 \code
@@ -110,7 +111,7 @@ $ git clone https://github.com/lagadic/ustk-dataset $USTK_WS/ustk-dataset
 $ export USTK_DATASET_PATH=$USTK_WS/ustk-dataset
 \endcode
 
-\section ustk_ubuntu_doc Build UsTK documentation
+\section ustk_osx_doc Build UsTK documentation
 
 To build UsTK documentation as a stand alone documentation (i.e.. without all ViSP classes prefixed by "vp"):
 \code
@@ -118,7 +119,7 @@ $ cd $USTK_WS/ustk-build
 $ make -j4 ustk_doc
 \endcode
 
-\section ustk_ubuntu_install Install UsTK
+\section ustk_osx_install Install UsTK
 
 We don't recommend to install UsTK in `/usr/local`. If you want to do the installation anywa, run:
 \code
@@ -126,7 +127,7 @@ $ cd $USTK_WS/ustk-build
 $ make -j4 install
 \endcode
 
-\section ustk_ubuntu_uninstall Uninstall UsTK
+\section ustk_osx_uninstall Uninstall UsTK
 
 To uninstall UsTK, run:
 \code

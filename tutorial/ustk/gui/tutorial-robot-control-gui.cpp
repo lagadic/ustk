@@ -1,4 +1,4 @@
-//! \example tutorial-local-grabbing-pre-scan2D-display.cpp
+//! \example tutorial-robot-control-gui.cpp
 
 #include <iostream>
 #include <visp3/ustk_core/usConfig.h>

@@ -136,4 +136,10 @@ if(USE_VTK)
   vp_set_source_file_compile_flag(src/usVTKConverter.cpp -Wno-inconsistent-missing-override)
 
   vp_set_source_file_compile_flag(test/testUsVTKconverter.cpp -Wno-inconsistent-missing-override)
+
+  if(APPLE)
+    vp_set_source_file_compile_flag(src/usElastographyQtWrapper.cpp -Wno-unused-parameter)
+    vp_set_source_file_compile_flag(src/usImageElastographyCreationWrapper.cpp -Wno-unused-parameter)
+  endif()
+
 endif()

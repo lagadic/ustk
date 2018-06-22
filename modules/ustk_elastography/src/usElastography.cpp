@@ -55,7 +55,7 @@ usElastography::usElastography()
   m_setROI = false;
   // Using OF by default
   m_mEstimatior = OF;
-#if defined(USTK_HAVE_ARMADILLO)
+#if defined(USTK_HAVE_ARMADILLO) && (ARMA_VERSION_MAJOR > 6) && (ARMA_VERSION_MAJOR > 700)
   m_ME = usMotionEstimation();
 #endif
 
@@ -206,7 +206,7 @@ vpImage<unsigned char> usElastography::run()
     assert(m_PreROI.getWidth() == m_PostROI.getWidth());
     assert(m_PreROI.getHeight() == m_PostROI.getHeight());
     if (m_mEstimatior == BMA_TAYLOR) {
-#if defined(USTK_HAVE_ARMADILLO)
+#if defined(USTK_HAVE_ARMADILLO) && (ARMA_VERSION_MAJOR > 6) && (ARMA_VERSION_MAJOR > 700)
       // Step 0: BMA
       m_ME.init(m_PreROI, m_PostROI, 2, 20, 2, 120);
       m_ME.run();
