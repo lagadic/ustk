@@ -118,7 +118,7 @@ private:
   // Motion estimation
   MotionEstimator m_mEstimatior;
 
-#if defined(USTK_HAVE_ARMADILLO)
+#if defined(USTK_HAVE_ARMADILLO) && (ARMA_VERSION_MAJOR > 6) && (ARMA_VERSION_MAJOR > 700)
   usMotionEstimation m_ME;
 #endif
 

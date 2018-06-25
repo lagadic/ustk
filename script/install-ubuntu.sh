@@ -3,7 +3,6 @@
 #
 # Usage: sh install-ubuntu.sh
 #
-
 echo "UsTK installation Script"
 echo "Installing dependencies..."
 
@@ -39,8 +38,9 @@ else
     cd $USTK_WS/ustk-build
 
     echo "Configuring project with CMake..."
+
     cmake $USTK_WS/visp -DVISP_CONTRIB_MODULES_PATH=$USTK_WS/ustk -DBUILD_MODULE_visp_ar=OFF -DBUILD_MODULE_visp_blob=OFF -DBUILD_MODULE_visp_detection=OFF -DBUILD_MODULE_visp_klt=OFF -DBUILD_MODULE_visp_mbt=OFF -DBUILD_MODULE_visp_me=OFF -DBUILD_MODULE_visp_tt=OFF -DBUILD_MODULE_visp_tt_mi=OFF -DBUILD_MODULE_visp_vision=OFF -DBUILD_MODULE_visp_visual_features=OFF -DBUILD_MODULE_visp_vs=OFF
-	 
+
     echo "Compiling project"
     make -j4
 

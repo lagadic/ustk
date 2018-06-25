@@ -33,7 +33,7 @@
 
 #include <visp3/ustk_elastography/usMotionEstimation.h>
 
-#if defined(USTK_HAVE_ARMADILLO)
+#if defined(USTK_HAVE_ARMADILLO) && (ARMA_VERSION_MAJOR > 6) && (ARMA_VERSION_MAJOR > 700)
 usMotionEstimation::usMotionEstimation() {}
 
 usMotionEstimation::~usMotionEstimation() {}
@@ -289,4 +289,9 @@ vpMatrix usMotionEstimation::convert_mat2vpMatrix(mat vI)
   return I;
 }
 
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work arround to avoid warning: libvisp_ustk_elastograpy.a(usMotionEstimation.cpp.o) has no symbols
+void dummy_vpusMotionEstimation(){};
 #endif // ARMADILLO
+
+
