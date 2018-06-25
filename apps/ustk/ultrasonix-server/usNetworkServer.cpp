@@ -221,7 +221,6 @@ bool portaCallback(void *param, unsigned char *addr, int blockIndex, int)
   }
 
   std::cout << "frame count = " << server->imageHeader.frameCount << std::endl;
-  std::cout << "image size = " << portaInstance->getFrameSize() << std::endl;
   unsigned char *beginImage;
   // filling image header
 
