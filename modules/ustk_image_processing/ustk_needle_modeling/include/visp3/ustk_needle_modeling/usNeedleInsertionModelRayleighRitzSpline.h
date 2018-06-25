@@ -58,7 +58,7 @@ public:
     enum class ModelPreset: int {BiopsyNeedle, BiopsyCannula, Symmetric, AbayazidRRM13, MisraRSRO10_PlastisolA, RoesthuisAM12, SteelSoftTissue, SRL_ActuatedFBG, SRL_BiopsySimple, SRL_BiopsyNID};
     enum class PathUpdateType: int {NoUpdate, WithTipPosition, WithTipDirection, WithTipMix};
     enum class NeedleTipType: int {SymmetricTip, BeveledTip, PrebentTip, ActuatedTip};
-    enum class SolvingMethod: int {Classic, FixedBeamLength, AdaptiveBeamLength, NoBevel};
+    enum class SolvingMethod: int {Classic, FixedBeamLength, NoBevel};
 
 public://protected:
 
@@ -177,15 +177,8 @@ public:
 
     //! Internal model command
 
-#if 0
-    void solveSegmentsParametersOpenCV();
-    void solveSegmentsParametersViSP();
-    void solveSegmentsParametersEigen();
-#endif
     void solveSegmentsParametersSparseEigen(); // solve without bevel (less accurate at tip, but less expensive since equation independant on dimension)
     void solveSegmentsParametersFullSparseEigen(); // solve with bevel (more accurate modeling of bevel effect, but slighly more expensive)
-    void solveSegmentsParametersFullSparseEigenAdaptive(); // solve with bevel + automatique variation of the number and length of segment to maintain low deformation of each beam (not very stable with length/true length fitting)
-    void solveSegmentsParametersFullSparseEigenCompressive(); // solve with bevel + compression energy term (not yet done)
     void solveSegmentsParametersFullSparseEigenFixedLength(); // solve with bevel + fixed size for sub splines
     void fitLength();
     void updateTipPose();

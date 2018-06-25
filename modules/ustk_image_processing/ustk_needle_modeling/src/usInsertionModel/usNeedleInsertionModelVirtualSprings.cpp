@@ -36,6 +36,7 @@
 
 #include <visp3/ustk_needle_detection/usGeometryTools.h>
 
+#include <visp3/core/vpConfig.h>
 #ifdef VISP_HAVE_EIGEN3
 #include <eigen3/Eigen/SparseCore>
 #include <eigen3/Eigen/SparseLU>
@@ -50,10 +51,6 @@
 #include <visp3/core/vpRotationMatrix.h>
 #include <visp3/core/vpTime.h>
 #include <visp3/core/vpTranslationVector.h>
-
-//#define DISPLAY_TIMING
-//#define DISPLAY_STIFFNESS
-//#define DISPLAY_LENGTH
 
 
 usNeedleInsertionModelVirtualSprings::usNeedleInsertionModelVirtualSprings():
@@ -504,9 +501,7 @@ double usNeedleInsertionModelVirtualSprings::getMeanTissueStretch() const
 bool usNeedleInsertionModelVirtualSprings::setBasePose(const vpPoseVector &pose)
 {
     // Set base position in worldframe if the base doesn't go under the tissue
-#ifdef DISPLAY_TIMING
-double t0 = vpTime::measureTimeMs();
-#endif
+
     if(m_springs.size() >0)
     {
         vpColVector position(pose.getTranslationVector());
@@ -517,9 +512,6 @@ double t0 = vpTime::measureTimeMs();
 
     this->updateState();
 
-#ifdef DISPLAY_TIMING
-std::cout << "usNeedleInsertionModelVirtualSprings::setBasePose: Timing: " <<  vpTime::measureTimeMs()-t0 << " ms" << std::endl;
-#endif
     return true;
 }
 
@@ -659,24 +651,6 @@ void usNeedleInsertionModelVirtualSprings::addInsertionPointOnSegment(int segmen
         vpColVector d0 = m_springs.at(segment-1).getDirection();
         vpColVector d1 = m_springs.at(segment).getDirection();
 
-        /* Order 3 polynomial interpolation => not stable (and order 2 is worst)
-         * vpColVector X = x1-x0;
-        double d0td0 = d0.t()*d0;
-        double d1td1 = d1.t()*d1;
-        double d0td1 = d0.t()*d1;
-        double d0tx = d0.t()*X;
-        double d1tx = d1.t()*X;
-        double alpha = 2*(d0tx+d1tx)/(d0td0+d1td1+2*d0td1);//3*(d0tx+d1tx)/(2*(d0td0+d1td1+d0td1));
-
-        vpColVector a0 = x0;
-        vpColVector a1 = alpha*d0;
-        vpColVector a2 = 3*X - alpha*(2*d0+d1);
-        vpColVector a3 = -2*X + alpha*(d0+d1);
-
-        vpColVector P = c*c*c*a3 + c*c*a2 + c*a1 + a0;
-        vpColVector D = 3*c*c*a3 + 2*c*a2 + a1;
-        D.normalize();*/
-
         vpColVector P = c*x1 + (1-c)*x0;
         vpColVector D = c*d1 + (1-c)*d0;
 
@@ -695,14 +669,6 @@ void usNeedleInsertionModelVirtualSprings::addInsertionPointOnSegment(int segmen
         m_springs.at(segment).setDirection(D);
         m_springs.at(segment).setStiffness(K1+K2);
     }
-
-#ifdef DISPLAY_STIFFNESS
-std::cout << "Added one spring on segment " << segment << std::endl;
-    for(int i=0 ; i<m_springs.size() ; i++)
-    {
-        std::cout << m_springs.at(i).getStiffness() << std::endl;
-    }
-#endif
 }
 
 int usNeedleInsertionModelVirtualSprings::addInsertionPoint(usVirtualSpring spg)
@@ -757,15 +723,8 @@ int usNeedleInsertionModelVirtualSprings::addInsertionPoint(usVirtualSpring spg)
 
     this->addInsertionPointOnSegmentHard(segment,s);
     m_springs.at(segment) = spg;
+    
     return segment;
-
-#ifdef DISPLAY_STIFFNESS
-std::cout << "Added one spring on segment " << segment << std::endl;
-    for(int i=0 ; i<m_springs.size() ; i++)
-    {
-        std::cout << m_springs.at(i).getStiffness() << std::endl;
-    }
-#endif
 }
 
 int usNeedleInsertionModelVirtualSprings::addInsertionPoint(const vpColVector &p, const vpColVector &d)
@@ -846,15 +805,8 @@ int usNeedleInsertionModelVirtualSprings::addInsertionPoint(const vpColVector &p
 
     this->addInsertionPointOnSegmentHard(segment,s);
     m_springs.at(segment) = spg;
+    
     return segment;
-
-#ifdef DISPLAY_STIFFNESS
-std::cout << "Added one spring on segment " << segment << std::endl;
-    for(int i=0 ; i<m_springs.size() ; i++)
-    {
-        std::cout << m_springs.at(i).getStiffness() << std::endl;
-    }
-#endif
 }
 
 void usNeedleInsertionModelVirtualSprings::addInsertionPointAtTip()
@@ -879,14 +831,6 @@ void usNeedleInsertionModelVirtualSprings::removeInsertionPointsHard(int first, 
     }
     m_needle.accessSegment(first).setParametricLength(l);
     m_needle.removeSegments(first+1, last+1);
-
-#ifdef DISPLAY_STIFFNESS
-std::cout << "Removed " << last-first+1 << " spring(s) from " << first << " to " << last << std::endl;
-    for(int i=0 ; i<m_springs.size() ; i++)
-    {
-        std::cout << m_springs.at(i).getStiffness() << std::endl;
-    }
-#endif
 }
 
 void usNeedleInsertionModelVirtualSprings::removeLastInsertionPointHard()
@@ -1043,35 +987,10 @@ void usNeedleInsertionModelVirtualSprings::updateTipForce()
 
 void usNeedleInsertionModelVirtualSprings::updateInsertionDirections()
 {
-    //if(m_springs.size() < 3) return;
-
     for(int i=0 ; i< m_tipSpringsIndex ; i++)
     {
         if(!m_springs.at(i).IsDirectionUpdateAllowed()) continue;
         m_springs.at(i).setDirection(m_needle.accessSegment(i).getEndTangent());
-
-        /*vpColVector X1 = m_springs.at(i-1).getPosition();
-        vpColVector X2 = m_springs.at(i).getPosition();
-        vpColVector X3 = m_springs.at(i+1).getPosition();
-
-        vpColVector T1 = (X2-X1).normalize();
-        vpColVector T2 = (X3-X2).normalize();
-
-        vpColVector D = vpColVector::crossProd(T1, T2).normalize();
-
-        double cross = vpColVector::crossProd(T1,T2).euclideanNorm();
-        double dot = vpColVector::dotProd(T1,T2);
-        double alpha = atan2(cross, dot);
-
-        double l = (X2-X1).euclideanNorm();
-        double L = (X3-X1).euclideanNorm();
-
-        double beta = l/L*alpha;
-
-        vpRotationMatrix R(beta*D[0],beta*D[1],beta*D[2]);
-
-        m_springs.at(i).setDirection(R*T1);
-        if(i==1) m_springs.front().setDirection(R*T1);*/
     }
 
     for(unsigned int i=m_tipSpringsIndex ; i< m_springs.size() ; i++)
@@ -1079,16 +998,11 @@ void usNeedleInsertionModelVirtualSprings::updateInsertionDirections()
         if(!m_springs.at(i).IsDirectionUpdateAllowed()) continue;
         m_springs.at(i).setDirection(m_needle.accessSegment(i).getEndTangent());
     }
-   // this->displayDebug();
 }
 
 #ifdef VISP_HAVE_EIGEN3
 void usNeedleInsertionModelVirtualSprings::solveSegmentsParametersSparseEigen()
 {
-#ifdef DISPLAY_TIMING
-double t0 = vpTime::measureTimeMs();
-#endif
-
     int nbSeg = m_needle.getNbSegments();
 
     // Set system to solve :
@@ -1288,11 +1202,6 @@ double t0 = vpTime::measureTimeMs();
         line++;
     }
 
-#ifdef DISPLAY_TIMING
-std::cout << "usNeedleInsertionModelVirtualSprings::solveSegmentsParametersSparseEigen: timing: Matrix creation: " << vpTime::measureTimeMs() - t0 << " ms" << std::endl;
-t0 = vpTime::measureTimeMs();
-#endif
-
     Eigen::SparseMatrix<double> M(12*nbSeg, 12*nbSeg);
     M.setFromTriplets(L.begin(), L.end());
 
@@ -1300,11 +1209,6 @@ t0 = vpTime::measureTimeMs();
     solver.compute(M);
 
     a = solver.solve(b);
-
-#ifdef DISPLAY_TIMING
-std::cout << "usNeedleInsertionModelVirtualSprings::solveSegmentsParametersSparseEigen: timing: Solving: " << vpTime::measureTimeMs() - t0 << " ms" << std::endl;
-t0 = vpTime::measureTimeMs();
-#endif
 
     // Update needle parameters
     vpMatrix coef(3,4);
@@ -1345,19 +1249,11 @@ t0 = vpTime::measureTimeMs();
 
     vpPoseVector tipPose(translation, worldRtip);
     m_needle.setTipPose(tipPose);
-
-#ifdef DISPLAY_TIMING
-std::cout << "usNeedleInsertionModelVirtualSprings::solveSegmentsParametersSparseEigen: Timing: Parameters update " << vpTime::measureTimeMs() - t0 << " ms" << std::endl;
-#endif
 }
 
 #elif VISP_HAVE_OPENCV
 void usNeedleInsertionModelVirtualSprings::solveSegmentsParametersOpenCV()
 {
-#ifdef DISPLAY_TIMING
-double t0 = vpTime::measureTimeMs();
-#endif
-
     int nbSeg = m_needle.getNbSegments();
 
     // Set system to solve :
@@ -1562,43 +1458,9 @@ double t0 = vpTime::measureTimeMs();
         line++;
     }
 
-//std::cout << line << " " << nbSeg << std::endl;
-
     // Solve system
 
-/*std::cout <<std::endl << this << " " <<  M.getRows() << " " << M.getCols() <<  " " << 12*nbSeg << std::endl;
-    for(int i=0 ; i<12*nbSeg ; i++)
-    {
-        for(int j=0 ; j<12*nbSeg ; j++)
-        {
-            std::cout << ((M[i][j]==0)?".":"*");
-        }
-        std::cout << std::endl;
-    }*/
-
-//M.print(std::cout, 10);
-//for(int line=0 ; line<M.getRows() ; line++) std::cout << M.getRow(line).euclideanNorm() << std::endl;
-//b.print(std::cout, 10);
-//std::cout << "Matrix condition number = " << M.cond() << std::endl;
-
-#ifdef DISPLAY_TIMING
-std::cout << "usNeedleInsertionModelVirtualSprings::solveSegmentsParametersOpenCV: Timing: Matrix creation: " << vpTime::measureTimeMs() - t0 << " ms" << std::endl;
-t0 = vpTime::measureTimeMs();
-#endif
-
-    //cv::Mat Mi = M.inv();
     cv::solve(M,b,a);
-    //a = Mi * b;
-
-#ifdef DISPLAY_TIMING
-std::cout << "usNeedleInsertionModelVirtualSprings::solveSegmentsParametersOpenCV: Timing: Solving: " << vpTime::measureTimeMs() - t0 << " ms" << std::endl;
-t0 = vpTime::measureTimeMs();
-#endif
-
-
-//Minv.print(std::cout,10);
-//a.print(std::cout,10);
-
 
     // Update needle parameters
     vpMatrix coef(3,4);
@@ -1640,19 +1502,11 @@ t0 = vpTime::measureTimeMs();
 
     m_worldMtip.buildFrom(translation, worldRtip);
     m_tipPose.buildFrom(m_worldMtip);
-
-#ifdef DISPLAY_TIMING
-std::cout << "usNeedleInsertionModelVirtualSprings::solveSegmentsParametersOpenCV: Timing: Parameters update: "  << vpTime::measureTimeMs() - t0 << " ms" << std::endl;
-#endif
 }
 
 #else
 void usNeedleInsertionModelVirtualSprings::solveSegmentsParametersViSP()
 {
-#ifdef DISPLAY_TIMING
-double t0 = vpTime::measureTimeMs();
-#endif
-
     int nbSeg = m_needle.getNbSegments();
 
     // Set system to solve :
@@ -1858,58 +1712,10 @@ double t0 = vpTime::measureTimeMs();
         line++;
     }
 
-//std::cout << line << " " << nbSeg << std::endl;
-
     // Solve system
-
-/*std::cout <<std::endl << this << " " <<  M.getRows() << " " << M.getCols() <<  " " << 12*nbSeg << std::endl;
-    for(int i=0 ; i<12*nbSeg ; i++)
-    {
-        for(int j=0 ; j<12*nbSeg ; j++)
-        {
-            std::cout << ((M[i][j]==0)?".":"*");
-        }
-        std::cout << std::endl;
-    }*/
-
-//M.print(std::cout, 10);
-//for(int line=0 ; line<M.getRows() ; line++) std::cout << M.getRow(line).euclideanNorm() << std::endl;
-//b.print(std::cout, 10);
-//std::cout << "Matrix condition number = " << M.cond() << std::endl;
-
-#ifdef DISPLAY_TIMING
-std::cout << "usNeedleInsertionModelVirtualSprings::solveSegmentsParametersViSP: timing: Matrix creation: " << vpTime::measureTimeMs() - t0 << " ms" << std::endl;
-t0 = vpTime::measureTimeMs();
-#endif
-
-/*vpMatrix M0(M.getRows(),M.getCols(),0);
-int n=0;
-for(int i = 0 ; i<M.getRows() ; i++)
-{
-    for(int j=0;j<M.getCols();j++)
-    {
-        if(M[i][j] != 0)
-        {
-            M0[i][j] = 1;
-            n++;
-        }
-    }
-}
-M0.print(std::cout,1,"Invert");
-std::cout << n << std::endl;*/
 
     vpMatrix Minv = M.inverseByLU();
     a = Minv * b;
-
-#ifdef DISPLAY_TIMING
-std::cout << "usNeedleInsertionModelVirtualSprings::solveSegmentsParametersViSP: timing: Solving:" << vpTime::measureTimeMs() - t0 << " ms" << std::endl;
-t0 = vpTime::measureTimeMs();
-#endif
-
-
-//Minv.print(std::cout,10);
-//a.print(std::cout,10);
-
 
     // Update needle parameters
     vpMatrix coef(3,4);
@@ -1951,10 +1757,6 @@ t0 = vpTime::measureTimeMs();
 
     m_worldMtip.buildFrom(translation, worldRtip);
     m_tipPose.buildFrom(m_worldMtip);
-
-#ifdef DISPLAY_TIMING
-std::cout << "usNeedleInsertionModelVirtualSprings::solveSegmentsparametersViSP: Timing: Parameters update " << vpTime::measureTimeMs() - t0 << " ms" << std::endl;
-#endif
 }
 #endif
 
@@ -1981,36 +1783,11 @@ void usNeedleInsertionModelVirtualSprings::computeSegmentsLengths()
         return;
     }
 
-#ifdef DISPLAY_TIMING
-double t0 = vpTime::measureTimeMs();
-#endif
-
-#ifdef DISPLAY_LENGTH
-std::cout << "Lengths before" << std::endl;
-    for(int i=0 ; i<m_needle.getNbSegments() ; i++)
-    {
-        std::cout << "\t" << m_needle.accessSegment(i).getParametricLength() << std::endl;
-    }
-#endif
-
     for(int i=0 ; i<m_needle.getNbSegments()-1 ; i++)
     {
         double l = m_needle.accessSegment(i).getLength();
         m_needle.accessSegment(i).setParametricLength(l);
     }
-
-#ifdef DISPLAY_LENGTH
-std::cout << "Lengths after" << std::endl;
-    for(int i=0 ; i<m_needle.getNbSegments() ; i++)
-    {
-        std::cout << "\t" << m_needle.accessSegment(i).getParametricLength() << std::endl;
-    }
-#endif
-
-#ifdef DISPLAY_TIMING
-std::cout << "Measure lengths time: " << vpTime::measureTimeMs() - t0 << " ms" << std::endl;
-#endif
-
 }
 
 bool usNeedleInsertionModelVirtualSprings::addRemoveSprings()
@@ -2154,10 +1931,6 @@ bool usNeedleInsertionModelVirtualSprings::addRemoveSprings()
             return false;
         }
     }
-
-#ifdef DISPLAY_LENGTH
-std::cout << "Tip length: " << m_needle.accessLastSegment().getParametricLength() << std::endl;
-#endif
 }
 
 bool usNeedleInsertionModelVirtualSprings::checkInactiveMeasureSprings()

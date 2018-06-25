@@ -39,10 +39,6 @@
 #include <visp3/core/vpRowVector.h>
 #include <visp3/core/vpTime.h>
 
-//#define DISPLAY_TIMING
-//#define DISPLAY_STIFFNESS
-//#define DISPLAYm_length
-
 
 usNeedleModelSpline::usNeedleModelSpline():
     usNeedleModelBaseTip(),
@@ -246,10 +242,6 @@ vpColVector usNeedleModelSpline::getNeedleDirection(double l) const
 
 double usNeedleModelSpline::getDistanceFromPoint(const vpColVector &P, double start, double stop, double threshold) const
 {
-#ifdef DISPLAY_TIMING
-double t0 = vpTime::measureTimeMs();
-#endif
-
     if(P.size() != 3) throw vpException(vpException::dimensionError, "usNeedleModelSpline::getDistanceFromPoint: invalid point dimension");
 
     if(start<0) start = 0;
@@ -275,10 +267,6 @@ double t0 = vpTime::measureTimeMs();
     }
 
     double l = (this->getNeedlePoint(middle)-P).euclideanNorm();
-
-#ifdef DISPLAY_TIMING
-std::cout << "usNeedleModelSpline::getDistanceFromPoint: timing: " << vpTime::measureTimeMs() - t0 << " ms" << std::endl;
-#endif
 
     return l;
 }
@@ -415,8 +403,6 @@ double usNeedleModelSpline::getCurvatureFromNeedleShape(double start, double end
 
     if(nbPoints < 3)
     {
-        //std::cout << "usNeedleModelSpline::getCurvatureFromNeedleShape: not enough points" << std::endl;
-        //std::cout << "first = " << first << " last = " << last << " nbPoints = " << nbPoints << std::endl;
         return 0;
     }
 

@@ -40,11 +40,6 @@
 #include <visp3/core/vpTime.h>
 
 
-//#define DISPLAY_TIMING
-//#define DISPLAY_STIFFNESS
-//#define DISPLAY_LENGTH
-
-
 usNeedleModelPolynomial::usNeedleModelPolynomial():
     usNeedleModelBaseTip(),
     usPolynomialCurve3D(),
@@ -198,10 +193,6 @@ vpColVector usNeedleModelPolynomial::getNeedleDirection(double l) const
 
 double usNeedleModelPolynomial::getDistanceFromPoint(const vpColVector &P, double start, double stop, double threshold) const
 {
-#ifdef DISPLAY_TIMING
-double t0 = vpTime::measureTimeMs();
-#endif
-
     if(P.size() != 3) throw vpException(vpException::dimensionError, "usNeedleModelPolynomial::getDistanceFromPoint: invalid point dimension");
 
     if(start<0) start = 0;
@@ -227,10 +218,6 @@ double t0 = vpTime::measureTimeMs();
     }
 
     double l = (this->getNeedlePoint(middle)-P).euclideanNorm();
-
-#ifdef DISPLAY_TIMING
-std::cout << "usNeedleModelPolynomial::getDistanceFromPoint: timing: " << vpTime::measureTimeMs() - t0 << " ms" << std::endl;
-#endif
 
     return l;
 }
@@ -263,24 +250,6 @@ double usNeedleModelPolynomial::getBendingEnergy() const
     E *= 0.5*this->getEI();
 
     return E;
-
-    /* Trapeze integration method
-    int subSegmentsNumber = 100;
-    double l = this->getStartParameter();
-    double dl = this->getParametricLength()/subSegmentsNumber;
-    double dE = pow(this->getCurvature(l),2) / 2;
-    l += dl;
-    for(int k=1 ; k<subSegmentsNumber ; k++)
-    {
-        dE += pow(this->getCurvature(l),2);
-        l += dl;
-    }
-    dE += pow(this->getCurvature(l),2) / 2;
-    E += dl*dE;
-
-    E *= 0.5*this->getEI();
-
-    return E;*/
 }
 
 vpColVector usNeedleModelPolynomial::getBaseStaticTorsor() const
@@ -324,8 +293,6 @@ double usNeedleModelPolynomial::getCurvatureFromNeedleShape(double start, double
 
     if(nbPoints < 3)
     {
-        //std::cout << "usNeedleModelPolynomial::getCurvatureFromNeedleShape: not enough points" << std::endl;
-        //std::cout << "first = " << first << " last = " << last << " nbPoints = " << nbPoints << std::endl;
         return 0;
     }
 
@@ -413,19 +380,6 @@ double usNeedleModelPolynomial::getCurvatureFromNeedleShape(double start, double
     }
 
     return 1.0/r;
-/*
-    usPolynomialCurve3D seg(_spline.back());
-
-    vpColVector dX_dl = seg.getDerivative(seg.getParametricLength(),2);
-    if(dX_dl.euclideanNorm()<std::numeric_limits<double>::epsilon()) return 0;
-
-    vpColVector d2X_dl2 = seg.getDerivative(seg.getParametricLength(),2);
-
-    double k = vpColVector::crossProd(dX_dl, d2X_dl2).euclideanNorm() / pow(dX_dl.euclideanNorm(),3);
-
-    center3D = seg.getEndPoint() + 1/k * ( d2X_dl2 - 1/pow(dX_dl.euclideanNorm(),2) * vpColVector::dotProd(dX_dl, d2X_dl2)*dX_dl);
-    direction3D = vpColVector::crossProd(dX_dl, d2X_dl2).normalize();
-    return k;*/
 }
 
 std::ostream &operator<<(std::ostream &s, const usNeedleModelPolynomial &needle)

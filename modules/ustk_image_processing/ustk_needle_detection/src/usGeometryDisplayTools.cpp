@@ -151,9 +151,10 @@ void display(const usPolynomialCurve3D &curve, const vpImage<ImageDataType> &I, 
     
     vpMatrix points = curve.getPoints(params);
     
-    vpMatrix R(imageMworld.getRotationMatrix());
-    vpColVector T(imageMworld.getTranslationVector());
-    vpMatrix imagePoints((vpMatrix)R * points + vpMatrix::kron(T, vpMatrix(1,nbPoints,1)));
+    const vpMatrix R(imageMworld.getRotationMatrix());
+    const vpMatrix T(imageMworld.getTranslationVector());
+    const vpMatrix ones(1,nbPoints,1);
+    vpMatrix imagePoints(R * points + vpMatrix::kron(T, ones));
 
     double x0 = Xscale*imagePoints[0][0];
     double y0 = Yscale*imagePoints[1][0];
@@ -236,9 +237,10 @@ void displayExtremities(const usBSpline3D &spline, const vpImage<ImageDataType> 
     for(int i=0 ; i<spline.getNbSegments() ; i++) points.insert(spline.accessSegment(i).getStartPoint(), 0,i);
     points.insert(spline.accessLastSegment().getEndPoint(), 0,spline.getNbSegments());
         
-    vpMatrix R(imageMworld.getRotationMatrix());
-    vpColVector T(imageMworld.getTranslationVector());
-    vpMatrix imagePoints((vpMatrix)R * points + vpMatrix::kron(T, vpMatrix(1,nbPoints,1)));
+    const vpMatrix R(imageMworld.getRotationMatrix());
+    const vpMatrix T(imageMworld.getTranslationVector());
+    const vpMatrix ones(1,nbPoints,1);
+    vpMatrix imagePoints(R * points + vpMatrix::kron(T, ones));
 
     for(unsigned int i=0 ; i<nbPoints ; i++)
     {

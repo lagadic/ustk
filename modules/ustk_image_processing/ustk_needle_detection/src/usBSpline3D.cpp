@@ -43,11 +43,6 @@
 #include <visp3/core/vpException.h>
 
 
-//#define DISPLAY_TIMING
-//#define DISPLAY_STIFFNESS
-//#define DISPLAY_LENGTH
-
-
 usBSpline3D::usBSpline3D()
 {
     
@@ -136,13 +131,8 @@ void usBSpline3D::clear()
     m_spline.clear();
 }
 
-// #define DEBUGm_spline_TIMING
 void usBSpline3D::defineFromPoints(const std::vector<vpColVector> &points, const std::vector<double> &lengths, int order)
 {
-#ifdef DEBUGm_spline_TIMING
-double t0 = vpTime::measureTimeMs();
-#endif
-
     if(points.size()<2) throw vpException(vpException::dimensionError, "usBSpline3D::defineFromPoints: should have at least two points to define the curve");
     if(order<1) throw vpException(vpException::dimensionError, "usBSpline3D::defineFromPoints: order should be greater than zero");
         
@@ -150,10 +140,11 @@ double t0 = vpTime::measureTimeMs();
     
     if(lengths.size() != nbSeg) throw vpException(vpException::dimensionError, "usBSpline3D::defineFromPoints: mismathcing number of segments and points");
        
+#ifdef VISP_HAVE_EIGEN3
     int nbSegCoef = order+1;
     int nbCoef = nbSegCoef*nbSeg;
     
-#ifdef VISP_HAVE_EIGEN3
+
     typedef Eigen::Triplet<double> T;
     std::vector<T> L;
 
@@ -300,10 +291,6 @@ double t0 = vpTime::measureTimeMs();
 #else
     throw vpException(vpException::functionNotImplementedError, "usBSpline3D::defineFromPoints: not implemented without Eigen3");
 #endif
-
-#ifdef DEBUGm_spline_TIMING
-std::cout << "usBSpline3D::defineFromPoints: Timing: " << vpTime::measureTimeMs()-t0 << " ms" << std::endl;
-#endif
 }
 
 const usPolynomialCurve3D &usBSpline3D::accessSegment(int i) const
@@ -429,10 +416,6 @@ vpColVector usBSpline3D::getTangent(double param) const
 
 double usBSpline3D::getDistanceFromPoint(const vpColVector &P, double start, double stop, double threshold) const
 {
-#ifdef DISPLAY_TIMING
-double t0 = vpTime::measureTimeMs();
-#endif
-
     if(P.size() != 3) throw vpException(vpException::dimensionError, "usBSpline3D::getDistanceFromPoint: invalid point dimension");
 
     if(start<0) start = 0;
@@ -459,10 +442,6 @@ double t0 = vpTime::measureTimeMs();
     }
 
     double l = (this->getPoint(middle)-P).euclideanNorm();
-
-#ifdef DISPLAY_TIMING
-std::cout << "usBSpline3D::getDistanceFromPoint: timing: " << vpTime::measureTimeMs() - t0 << " ms" << std::endl;
-#endif
 
     return l;
 }
