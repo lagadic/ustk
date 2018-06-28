@@ -64,9 +64,9 @@ public:
   double getPropotionnalControlGain() const;
 
 signals:
-  void updateProbeOrientation(int angularVelocity);
   void confidenceBarycenterAngle(double theta);
   void confidenceMap(usImagePreScan2D<unsigned char>);
+  void updateProbeOrientation(int angularVelocity);
 
 public slots:
   void updateImage(usImagePreScan2D<unsigned char> image);

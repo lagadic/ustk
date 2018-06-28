@@ -10,7 +10,6 @@
 #include <visp3/ustk_gui/usImageDisplayWidgetQmlOverlayServoing.h>
 #include <visp3/ustk_gui/usRectangleVisualServoingController.h>
 #include <visp3/ustk_gui/usRobotManualControlWidget.h>
-#include <visp3/ustk_gui/usTracker2DQtWrapper.h>
 #include <visp3/ustk_gui/usUltrasonixClientWidget.h>
 #include <visp3/ustk_gui/usViper850WrapperVelocityControl.h>
 
@@ -23,6 +22,7 @@ int main(int argc, char **argv)
   app.setApplicationName(QString("USTK tracking 2D demo"));
 
   usImageDisplayWidgetQmlOverlayServoing *widget = new usImageDisplayWidgetQmlOverlayServoing();
+  widget->enableFeaturesDisplay();
 
   usUltrasonixClientWidget *ultrasonixControlWidet = new usUltrasonixClientWidget();
   usRobotManualControlWidget *robotControlPanel = new usRobotManualControlWidget();
@@ -53,8 +53,6 @@ int main(int argc, char **argv)
   qtGrabber->activateRecording("/home/usData/trackingRoiSequence/");
   qtGrabber->moveToThread(grabbingThread);
   grabbingThread->start();
-
-  // usTracker2DQtWrapper *tracker = new usTracker2DQtWrapper();
 
   // manual robot controls
   QObject::connect(robotControlPanel, SIGNAL(changeVX(int)), &viperControl, SLOT(setXVelocity(int)));
@@ -96,12 +94,12 @@ int main(int argc, char **argv)
   QObject::connect(ultrasonixControlWidet, SIGNAL(stopAcquisition()), qtGrabber, SLOT(stopAcquisition()));
 
   // send new images via qt signal
-  qRegisterMetaType<usImagePostScan2D<unsigned char> >("usImagePreScan2D<unsigned char>");
+  qRegisterMetaType<usImagePreScan2D<unsigned char> >("usImagePreScan2D<unsigned char>");
   qRegisterMetaType<usImagePostScan2D<unsigned char> >("usImagePostScan2D<unsigned char>");
   QObject::connect(qtGrabber, SIGNAL(newFrame(usImagePreScan2D<unsigned char>)), visualServoingController,
                    SLOT(updateImage(usImagePreScan2D<unsigned char>)));
-  QObject::connect(visualServoingController, SIGNAL(newPostScanFrame(usImagePostScan2D<unsigned char>)), widget,
-                   SLOT(updateFrame(usImagePostScan2D<unsigned char>)));
+  QObject::connect(qtGrabber, SIGNAL(newFrame(usImagePreScan2D<unsigned char>)), widget,
+                   SLOT(updateFrame(usImagePreScan2D<unsigned char>)));
 
   // updates the GUI based on the tracking output
   QObject::connect(visualServoingController, SIGNAL(newRectTracked(vpRectOriented)), widget,
@@ -111,6 +109,11 @@ int main(int argc, char **argv)
   QObject::connect(visualServoingController, SIGNAL(updatePobeXVelocity(int)), &viperControl, SLOT(setXVelocity(int)));
   QObject::connect(visualServoingController, SIGNAL(updateProbeZOrientation(int)), &viperControl,
                    SLOT(setZAngularVelocity(int)));
+
+  // features display
+  QObject::connect(visualServoingController, SIGNAL(trackerXError(double)), widget, SLOT(updateXError(double)));
+  QObject::connect(visualServoingController, SIGNAL(confidenceBarycenterAngle(double)), widget, SLOT(updateConfidenceAngle(double)));
+  QObject::connect(visualServoingController, SIGNAL(confidenceMap(usImagePreScan2D<unsigned char>)), widget, SLOT(updateConfidenceMap(usImagePreScan2D<unsigned char>)));
 
   QMainWindow window;
   window.setCentralWidget(centralWidget);

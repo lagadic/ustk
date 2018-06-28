@@ -50,6 +50,11 @@
 #include <visp3/core/vpRectOriented.h>
 #include <visp3/ustk_gui/usImageDisplayWidget.h>
 
+#include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/gui/vpPlot.h>
+#include <visp3/core/vpTime.h>
+
 /**
  * @class usImageDisplayWidgetQmlOverlayServoing
  * @brief Qt widget class for 2D ultrasound image display, containing robot control tools for visual servoing on a
@@ -67,7 +72,13 @@ public:
   void resizeEvent(QResizeEvent *event);
 
 public slots:
+  void enableFeaturesDisplay();
+  void disableFeaturesDisplay();
   void updateRectPosition(vpRectOriented newRectangle);
+  void updateConfidenceAngle(double scanline);
+  void updateConfidenceMap(usImagePreScan2D<unsigned char> confidence);
+  void updateFrame(const usImagePreScan2D<unsigned char> img);
+  void updateXError(double error);
   void startTrackingSlot();
 
 signals:
@@ -87,6 +98,17 @@ private:
   bool m_isTrackingRect;
   bool m_isServoingRect;
   bool m_isServoingConfidence;
+
+  // optionnal features displays
+  bool m_useFeatureDisplay;
+  usImagePreScan2D<unsigned char> m_confidence;
+  vpPlot m_plot;
+  double m_startTime;
+#if defined(VISP_HAVE_GDI)
+  vpDisplayGDI * m_display;
+#elif defined(VISP_HAVE_OPENCV)
+  vpDisplayOpenCV * m_display;
+#endif
 };
 #endif // QT && ELASTOGRAPHY
 #endif // __usImageDisplayWidgetQmlOverlayServoing_h_

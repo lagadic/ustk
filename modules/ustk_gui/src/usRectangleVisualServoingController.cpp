@@ -73,6 +73,9 @@ void usRectangleVisualServoingController::updateImage(usImagePreScan2D<unsigned 
 
     double ttarget = atan2(xtarget, ytarget);
 
+    // emit results for display puropose
+    emit(trackerXError(xtarget));
+
     unsigned int height(m_confidencePreScan.getHeight()), width(m_confidencePreScan.getWidth());
 
     double I_sum = 0.0;
@@ -88,6 +91,10 @@ void usRectangleVisualServoingController::updateImage(usImagePreScan2D<unsigned 
     yc /= I_sum;
 
     double tc = yc * m_confidencePreScan.getScanLinePitch() - m_confidencePreScan.getFieldOfView() / 2.0;
+
+    // emit results for display puropose
+    emit(confidenceMap(m_confidencePreScan));
+    emit(confidenceBarycenterAngle(yc));
 
     double lambda_t = 1.2;
     double lambda_c = 0.8;
