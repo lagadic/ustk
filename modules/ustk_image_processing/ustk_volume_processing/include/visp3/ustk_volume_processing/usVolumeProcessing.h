@@ -58,9 +58,8 @@
 class VISP_EXPORT usVolumeProcessing
 {
 public:
-  template <class Type> static Type max(const usImage3D<Type> &V);
-
-  template <class Type> static Type min(const usImage3D<Type> &V);
+  template <class Type1, class Type2>
+  static void absoluteDifference(const usImage3D<Type1> &src1, const usImage3D<Type1> &src2, usImage3D<Type2> &dst);
 
   template <class Type1, class Type2>
   static double applyFilter(const usImage3D<Type1> &src, const usImage3D<Type2> &filter, unsigned int i, unsigned int j,
@@ -68,6 +67,10 @@ public:
 
   template <class Type1, class Type2>
   static void applyFilter(const usImage3D<Type1> &src, usImage3D<Type2> &dst, const usImage3D<double> &filter);
+
+  template <class Type> static void computeBarycenter(const usImage3D<Type> &V, double &ic, double &jc, double &kc);
+
+  template <class Type1, class Type2> static void derivativeI(const usImage3D<Type1> &src, usImage3D<Type2> &dst);
 
 #ifdef VISP_HAVE_CPP11_COMPATIBILITY
   template <class Type1, class Type2 = typename std::conditional<std::is_arithmetic<Type1>::value, double, Type1>::type>
@@ -77,6 +80,8 @@ public:
   static double derivativeI(const usImage3D<Type> &V, unsigned int i, unsigned int j, unsigned int k);
 #endif
 
+  template <class Type1, class Type2> static void derivativeJ(const usImage3D<Type1> &src, usImage3D<Type2> &dst);
+
 #ifdef VISP_HAVE_CPP11_COMPATIBILITY
   template <class Type1, class Type2 = typename std::conditional<std::is_arithmetic<Type1>::value, double, Type1>::type>
   static Type2 derivativeJ(const usImage3D<Type1> &V, unsigned int i, unsigned int j, unsigned int k);
@@ -85,6 +90,8 @@ public:
   static double derivativeJ(const usImage3D<Type> &V, unsigned int i, unsigned int j, unsigned int k);
 #endif
 
+  template <class Type1, class Type2> static void derivativeK(const usImage3D<Type1> &src, usImage3D<Type2> &dst);
+
 #ifdef VISP_HAVE_CPP11_COMPATIBILITY
   template <class Type1, class Type2 = typename std::conditional<std::is_arithmetic<Type1>::value, double, Type1>::type>
   static Type2 derivativeK(const usImage3D<Type1> &V, unsigned int i, unsigned int j, unsigned int k);
@@ -92,6 +99,12 @@ public:
   template <class Type>
   static double derivativeK(const usImage3D<Type> &V, unsigned int i, unsigned int j, unsigned int k);
 #endif
+
+  template <class Type1, class Type2>
+  static void difference(const usImage3D<Type1> &src1, const usImage3D<Type1> &src2, usImage3D<Type2> &dst);
+
+  template <class Type>
+  static void frangi(const usImage3D<Type> &src, usImage3D<double> &dst, double a, double b, double c);
 
   template <class Type1, class Type2>
   static void gaussianDerivativeI(const usImage3D<Type1> &src, usImage3D<Type2> &dst, double sigma,
@@ -105,46 +118,33 @@ public:
   static void gaussianDerivativeK(const usImage3D<Type1> &src, usImage3D<Type2> &dst, double sigma,
                                   unsigned int filter_size);
 
-  template <class Type1, class Type2> static void derivativeI(const usImage3D<Type1> &src, usImage3D<Type2> &dst);
-
-  template <class Type1, class Type2> static void derivativeJ(const usImage3D<Type1> &src, usImage3D<Type2> &dst);
-
-  template <class Type1, class Type2> static void derivativeK(const usImage3D<Type1> &src, usImage3D<Type2> &dst);
-
-  template <class Type> static void gradient(const usImage3D<Type> &src, usImage3D<vpColVector> &dst);
-
-  template <class Type> static void hessian(const usImage3D<Type> &src, usImage3D<vpMatrix> &dst);
-
-  template <class Type>
-  static void frangi(const usImage3D<Type> &src, usImage3D<double> &dst, double a, double b, double c);
-
-  static void norm(const usImage3D<vpColVector> &src, usImage3D<double> &dst);
-
-  template <class Type1, class Type2>
-  static void difference(const usImage3D<Type1> &src1, const usImage3D<Type1> &src2, usImage3D<Type2> &dst);
-
-  template <class Type1, class Type2>
-  static void absoluteDifference(const usImage3D<Type1> &src1, const usImage3D<Type1> &src2, usImage3D<Type2> &dst);
-
-  template <class Type> static void computeBarycenter(const usImage3D<Type> &V, double &ic, double &jc, double &kc);
-
   static usImage3D<double> generateGaussianDerivativeFilterI(double sigma, int size);
 
-  static usImage3D<double> generateGaussianDerivativeFilterJ(double sigma, int size);
-
-  static usImage3D<double> generateGaussianDerivativeFilterK(double sigma, int size);
-
   static usImage3D<double> generateGaussianDerivativeFilterII(double sigma, int size);
-
-  static usImage3D<double> generateGaussianDerivativeFilterJJ(double sigma, int size);
-
-  static usImage3D<double> generateGaussianDerivativeFilterKK(double sigma, int size);
 
   static usImage3D<double> generateGaussianDerivativeFilterIJ(double sigma, int size);
 
   static usImage3D<double> generateGaussianDerivativeFilterIK(double sigma, int size);
 
+  static usImage3D<double> generateGaussianDerivativeFilterJ(double sigma, int size);
+
+  static usImage3D<double> generateGaussianDerivativeFilterJJ(double sigma, int size);
+
   static usImage3D<double> generateGaussianDerivativeFilterJK(double sigma, int size);
+
+  static usImage3D<double> generateGaussianDerivativeFilterK(double sigma, int size);
+
+  static usImage3D<double> generateGaussianDerivativeFilterKK(double sigma, int size);
+
+  template <class Type> static void gradient(const usImage3D<Type> &src, usImage3D<vpColVector> &dst);
+
+  template <class Type> static void hessian(const usImage3D<Type> &src, usImage3D<vpMatrix> &dst);
+
+  template <class Type> static Type max(const usImage3D<Type> &V);
+
+  template <class Type> static Type min(const usImage3D<Type> &V);
+
+  static void norm(const usImage3D<vpColVector> &src, usImage3D<double> &dst);
 };
 
 /****************************************************************************
