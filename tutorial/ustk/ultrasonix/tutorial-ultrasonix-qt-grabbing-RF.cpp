@@ -89,7 +89,10 @@ int main(int argc, char **argv)
 
       // processing display
       if (displayInit) {
+        if(vpDisplay::getClick(preScanImage, false))
+          captureRunning = false;
         vpDisplay::display(preScanImage);
+        vpDisplay::displayText(preScanImage,20,20,std::string("Click to exit..."),vpColor::red);
         vpDisplay::flush(preScanImage);
       }
     } else {
@@ -97,11 +100,13 @@ int main(int argc, char **argv)
     }
   } while (captureRunning);
 
+  qtGrabber->stopAcquisition();
+
   if (displayInit) {
     delete display;
   }
 
-  return app.exec();
+  return 0;
 }
 
 #else
