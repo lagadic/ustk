@@ -31,265 +31,303 @@
  *
  *****************************************************************************/
 
-#include <visp3/ustk_volume_processing/usVolumeProcessing.h>
 #include <visp3/core/vpException.h>
+#include <visp3/ustk_volume_processing/usVolumeProcessing.h>
 
-
+/**
+ * Compute the norm of a vector image.
+ * @param src Input volume.
+ * @param dst Output volume.
+ */
 void usVolumeProcessing::norm(const usImage3D<vpColVector> &src, usImage3D<double> &dst)
 {
-    dst.resize(src.getHeight(), src.getWidth(), src.getNumberOfFrames());
-    
-    for(unsigned int i=0  ; i<src.getSize() ; i++) dst.getData()[i] = src.getConstData()[i].euclideanNorm();
+  dst.resize(src.getHeight(), src.getWidth(), src.getNumberOfFrames());
+
+  for (unsigned int i = 0; i < src.getSize(); i++)
+    dst.getData()[i] = src.getConstData()[i].euclideanNorm();
 }
 
+/**
+ * Generate a Gaussian filtered derivative filter along the j-axis (width).
+ * @param sigma Gaussian filter standard deviation.
+ * @param size Size of the gaussian filter.
+ */
 usImage3D<double> usVolumeProcessing::generateGaussianDerivativeFilterI(double sigma, int size)
 {
-    if(size<=0 || (size % 2) != 1)
-    {
-        throw vpException(vpException::badValue, "usVolumeProcessing::generateGaussianDerivativeFilterI(): Bad filter size, should be positive and odd");
-    }
-  
-    double sigma2 = vpMath::sqr(sigma);
-    int m = (size - 1) / 2;
-    usImage3D<double> filter(size, size, size);
+  if (size <= 0 || (size % 2) != 1) {
+    throw vpException(
+        vpException::badValue,
+        "usVolumeProcessing::generateGaussianDerivativeFilterI(): Bad filter size, should be positive and odd");
+  }
 
-    double dgi, gj, gk;
-    for(int k=0 ; k<size; k++)
-    {
-        gk = exp(- vpMath::sqr(k - m) / (2.0 * sigma2)) / (sigma * sqrt(2.0 * M_PI));
-        for(int j=0  ; j<size; j++)
-        {
-            gj = exp(- vpMath::sqr(j - m) / (2.0 * sigma2)) / (sigma * sqrt(2.0 * M_PI));
-            for(int i=0  ; i<size; i++)
-            {
-                dgi = - (i - m) * exp(- vpMath::sqr(i - m) / (2.0 * sigma2)) / (2.0 * sigma * sigma2 * sqrt(2.0 * M_PI)); 
-                filter(i, j, k, dgi * gj * gk);
-            }
-        }
+  double sigma2 = vpMath::sqr(sigma);
+  int m = (size - 1) / 2;
+  usImage3D<double> filter(size, size, size);
+
+  double dgi, gj, gk;
+  for (int k = 0; k < size; k++) {
+    gk = exp(-vpMath::sqr(k - m) / (2.0 * sigma2)) / (sigma * sqrt(2.0 * M_PI));
+    for (int j = 0; j < size; j++) {
+      gj = exp(-vpMath::sqr(j - m) / (2.0 * sigma2)) / (sigma * sqrt(2.0 * M_PI));
+      for (int i = 0; i < size; i++) {
+        dgi = -(i - m) * exp(-vpMath::sqr(i - m) / (2.0 * sigma2)) / (2.0 * sigma * sigma2 * sqrt(2.0 * M_PI));
+        filter(i, j, k, dgi * gj * gk);
+      }
     }
-    return filter;
+  }
+  return filter;
 }
 
+/**
+ * Generate a Gaussian filtered derivative filter along the j-axis (width).
+ * @param sigma Gaussian filter standard deviation.
+ * @param size Size of the gaussian filter.
+ */
 usImage3D<double> usVolumeProcessing::generateGaussianDerivativeFilterJ(double sigma, int size)
 {
-    if(size<=0 || (size % 2) != 1)
-    {
-        throw vpException(vpException::badValue, "usVolumeProcessing::generateGaussianDerivativeFilterJ(): Bad filter size, should be positive and odd");
-    }
-  
-    double sigma2 = vpMath::sqr(sigma);
-    int m = (size - 1) / 2;
-    usImage3D<double> filter(size, size, size);
+  if (size <= 0 || (size % 2) != 1) {
+    throw vpException(
+        vpException::badValue,
+        "usVolumeProcessing::generateGaussianDerivativeFilterJ(): Bad filter size, should be positive and odd");
+  }
 
-    double gi, dgj, gk;
-    for(int k=0 ; k<size ; k++)
-    {
-        gk = exp(- vpMath::sqr(k - m) / (2.0 * sigma2)) / (sigma * sqrt(2.0 * M_PI));
-        for(int j=0  ; j<size ; j++)
-        {
-            dgj = - (j - m) * exp(- vpMath::sqr(j - m) / (2.0 * sigma2)) / (2.0 * sigma * sigma2 * sqrt(2.0 * M_PI));
-            for(int i=0  ; i<size ; i++)
-            {
-                gi = exp(- vpMath::sqr(i - m) / (2.0 * sigma2)) / (sigma * sqrt(2.0 * M_PI));
-                filter(i, j, k, gi * dgj * gk);
-            }
-        }
+  double sigma2 = vpMath::sqr(sigma);
+  int m = (size - 1) / 2;
+  usImage3D<double> filter(size, size, size);
+
+  double gi, dgj, gk;
+  for (int k = 0; k < size; k++) {
+    gk = exp(-vpMath::sqr(k - m) / (2.0 * sigma2)) / (sigma * sqrt(2.0 * M_PI));
+    for (int j = 0; j < size; j++) {
+      dgj = -(j - m) * exp(-vpMath::sqr(j - m) / (2.0 * sigma2)) / (2.0 * sigma * sigma2 * sqrt(2.0 * M_PI));
+      for (int i = 0; i < size; i++) {
+        gi = exp(-vpMath::sqr(i - m) / (2.0 * sigma2)) / (sigma * sqrt(2.0 * M_PI));
+        filter(i, j, k, gi * dgj * gk);
+      }
     }
-    return filter;
+  }
+  return filter;
 }
 
+/**
+ * Generate a Gaussian filtered derivative filter along the k-axis (3rd dimension).
+ * @param sigma Gaussian filter standard deviation.
+ * @param size Size of the gaussian filter.
+ */
 usImage3D<double> usVolumeProcessing::generateGaussianDerivativeFilterK(double sigma, int size)
 {
-    if(size<=0 || (size % 2) != 1)
-    {
-        throw vpException(vpException::badValue, "usVolumeProcessing::generateGaussianDerivativeFilterK(): Bad filter size, should be positive and odd");
-    }
-  
-    double sigma2 = vpMath::sqr(sigma);
-    int m = (size - 1) / 2;
-    usImage3D<double> filter(size, size, size);
+  if (size <= 0 || (size % 2) != 1) {
+    throw vpException(
+        vpException::badValue,
+        "usVolumeProcessing::generateGaussianDerivativeFilterK(): Bad filter size, should be positive and odd");
+  }
 
-    double gi, gj, dgk;
-    for(int k=0 ; k<size ; k++)
-    {
-        dgk =  - (k - m) * exp(- vpMath::sqr(k - m) / (2.0 * sigma2)) / (2.0 * sigma * sigma2 * sqrt(2.0 * M_PI));
-        for(int j=0 ; j<size ; j++)
-        {
-            gj = exp(- vpMath::sqr(j - m) / (2.0 * sigma2)) / (sigma * sqrt(2.0 * M_PI));
-            for(int i=0  ; i<size ; i++)
-            {
-                gi = exp(- vpMath::sqr(i - m) / (2.0 * sigma2)) / (sigma * sqrt(2.0 * M_PI));
-                filter(i, j, k, gi * gj * dgk);
-            }
-        }
+  double sigma2 = vpMath::sqr(sigma);
+  int m = (size - 1) / 2;
+  usImage3D<double> filter(size, size, size);
+
+  double gi, gj, dgk;
+  for (int k = 0; k < size; k++) {
+    dgk = -(k - m) * exp(-vpMath::sqr(k - m) / (2.0 * sigma2)) / (2.0 * sigma * sigma2 * sqrt(2.0 * M_PI));
+    for (int j = 0; j < size; j++) {
+      gj = exp(-vpMath::sqr(j - m) / (2.0 * sigma2)) / (sigma * sqrt(2.0 * M_PI));
+      for (int i = 0; i < size; i++) {
+        gi = exp(-vpMath::sqr(i - m) / (2.0 * sigma2)) / (sigma * sqrt(2.0 * M_PI));
+        filter(i, j, k, gi * gj * dgk);
+      }
     }
-    return filter;
+  }
+  return filter;
 }
 
+/**
+ * Generate a Gaussian filtered second derivative filter along the i-axis (height).
+ * @param sigma Gaussian filter standard deviation.
+ * @param size Size of the gaussian filter.
+ */
 usImage3D<double> usVolumeProcessing::generateGaussianDerivativeFilterII(double sigma, int size)
 {
-    if(size<=0 || (size % 2) != 1)
-    {
-        throw vpException(vpException::badValue, "usVolumeProcessing::generateGaussianDerivativeFilterII(): Bad filter size, should be positive and odd");
-    }
-  
-    double sigma2 = vpMath::sqr(sigma);
-    int m = (size - 1) / 2;
-    usImage3D<double> filter(size, size, size);
+  if (size <= 0 || (size % 2) != 1) {
+    throw vpException(
+        vpException::badValue,
+        "usVolumeProcessing::generateGaussianDerivativeFilterII(): Bad filter size, should be positive and odd");
+  }
 
-    double ddgi, gj, gk;
-    for(int k=0 ; k<size ; k++)
-    {
-        gk = exp(- vpMath::sqr(k - m) / (2.0 * sigma2)) / (sigma * sqrt(2.0 * M_PI));
-        for(int j=0 ; j<size ; j++)
-        {
-            gj = exp(- vpMath::sqr(j - m) / (2.0 * sigma2)) / (sigma * sqrt(2.0 * M_PI));
-            for(int i=0  ; i<size ; i++)
-            {
-                ddgi = (vpMath::sqr(i - m) / (4.0 * vpMath::sqr(sigma2) * sqrt(2.0 * M_PI)) - 1.0 / (2.0 * sigma * sigma2 * sqrt(2.0 * M_PI))) * exp(- vpMath::sqr(i - m) / (2.0 * sigma2));
-                filter(i, j, k, ddgi * gj * gk);
-            }
-        }
+  double sigma2 = vpMath::sqr(sigma);
+  int m = (size - 1) / 2;
+  usImage3D<double> filter(size, size, size);
+
+  double ddgi, gj, gk;
+  for (int k = 0; k < size; k++) {
+    gk = exp(-vpMath::sqr(k - m) / (2.0 * sigma2)) / (sigma * sqrt(2.0 * M_PI));
+    for (int j = 0; j < size; j++) {
+      gj = exp(-vpMath::sqr(j - m) / (2.0 * sigma2)) / (sigma * sqrt(2.0 * M_PI));
+      for (int i = 0; i < size; i++) {
+        ddgi = (vpMath::sqr(i - m) / (4.0 * vpMath::sqr(sigma2) * sqrt(2.0 * M_PI)) -
+                1.0 / (2.0 * sigma * sigma2 * sqrt(2.0 * M_PI))) *
+               exp(-vpMath::sqr(i - m) / (2.0 * sigma2));
+        filter(i, j, k, ddgi * gj * gk);
+      }
     }
-    return filter;
+  }
+  return filter;
 }
 
+/**
+ * Generate a Gaussian filtered second derivative filter along the j-axis (width).
+ * @param sigma Gaussian filter standard deviation.
+ * @param size Size of the gaussian filter.
+ */
 usImage3D<double> usVolumeProcessing::generateGaussianDerivativeFilterJJ(double sigma, int size)
 {
-    if(size<=0 || (size % 2) != 1)
-    {
-        throw vpException(vpException::badValue, "usVolumeProcessing::generateGaussianDerivativeFilterJJ(): Bad filter size, should be positive and odd");
-    }
-  
-    double sigma2 = vpMath::sqr(sigma);
-    int m = (size - 1) / 2;
-    usImage3D<double> filter(size, size, size);
+  if (size <= 0 || (size % 2) != 1) {
+    throw vpException(
+        vpException::badValue,
+        "usVolumeProcessing::generateGaussianDerivativeFilterJJ(): Bad filter size, should be positive and odd");
+  }
 
-    double gi, ddgj, gk;
-    for(int k=0 ; k<size; k++)
-    {
-        gk = exp(- vpMath::sqr(k - m) / (2.0 * sigma2)) / (sigma * sqrt(2.0 * M_PI));
-        for(int j=0  ; j<size; j++)
-        {
-            ddgj = (vpMath::sqr(j - m) / (4.0 * vpMath::sqr(sigma2) * sqrt(2.0 * M_PI)) - 1.0 / (2.0 * sigma * sigma2 * sqrt(2.0 * M_PI))) * exp(- vpMath::sqr(j - m) / (2.0 * sigma2));
-            for(int i=0  ; i<size ; i++)
-            {
-                gi = exp(- vpMath::sqr(i - m) / (2.0 * sigma2)) / (sigma * sqrt(2.0 * M_PI));
-                filter(i, j, k, gi * ddgj * gk);
-            }
-        }
+  double sigma2 = vpMath::sqr(sigma);
+  int m = (size - 1) / 2;
+  usImage3D<double> filter(size, size, size);
+
+  double gi, ddgj, gk;
+  for (int k = 0; k < size; k++) {
+    gk = exp(-vpMath::sqr(k - m) / (2.0 * sigma2)) / (sigma * sqrt(2.0 * M_PI));
+    for (int j = 0; j < size; j++) {
+      ddgj = (vpMath::sqr(j - m) / (4.0 * vpMath::sqr(sigma2) * sqrt(2.0 * M_PI)) -
+              1.0 / (2.0 * sigma * sigma2 * sqrt(2.0 * M_PI))) *
+             exp(-vpMath::sqr(j - m) / (2.0 * sigma2));
+      for (int i = 0; i < size; i++) {
+        gi = exp(-vpMath::sqr(i - m) / (2.0 * sigma2)) / (sigma * sqrt(2.0 * M_PI));
+        filter(i, j, k, gi * ddgj * gk);
+      }
     }
-    return filter;
+  }
+  return filter;
 }
 
+/**
+ * Generate a Gaussian filtered second derivative filter along the k-axis (3rd dimension).
+ * @param sigma Gaussian filter standard deviation.
+ * @param size Size of the gaussian filter.
+ */
 usImage3D<double> usVolumeProcessing::generateGaussianDerivativeFilterKK(double sigma, int size)
 {
-    if(size<=0 || (size % 2) != 1)
-    {
-        throw vpException(vpException::badValue, "usVolumeProcessing::generateGaussianDerivativeFilterKK(): Bad filter size, should be positive and odd");
-    }
-  
-    double sigma2 = vpMath::sqr(sigma);
-    int m = (size - 1) / 2;
-    usImage3D<double> filter(size, size, size);
+  if (size <= 0 || (size % 2) != 1) {
+    throw vpException(
+        vpException::badValue,
+        "usVolumeProcessing::generateGaussianDerivativeFilterKK(): Bad filter size, should be positive and odd");
+  }
 
-    double gi, gj, ddgk;
-    for(int k=0 ; k<size ; k++)
-    {
-        ddgk = (vpMath::sqr(k - m) / (4.0 * vpMath::sqr(sigma2) * sqrt(2.0 * M_PI)) - 1.0 / (2.0 * sigma * sigma2 * sqrt(2.0 * M_PI))) * exp(- vpMath::sqr(k - m) / (2.0 * sigma2));
-        for(int j=0  ; j<size; j++)
-        {
-            gj = exp(- vpMath::sqr(j - m) / (2.0 * sigma2)) / (sigma * sqrt(2.0 * M_PI));
-            for(int i=0  ; i<size ; i++)
-            {
-                gi = exp(- vpMath::sqr(i - m) / (2.0 * sigma2)) / (sigma * sqrt(2.0 * M_PI));
-                filter(i, j, k, gi * gj * ddgk);
-            }
-        }
+  double sigma2 = vpMath::sqr(sigma);
+  int m = (size - 1) / 2;
+  usImage3D<double> filter(size, size, size);
+
+  double gi, gj, ddgk;
+  for (int k = 0; k < size; k++) {
+    ddgk = (vpMath::sqr(k - m) / (4.0 * vpMath::sqr(sigma2) * sqrt(2.0 * M_PI)) -
+            1.0 / (2.0 * sigma * sigma2 * sqrt(2.0 * M_PI))) *
+           exp(-vpMath::sqr(k - m) / (2.0 * sigma2));
+    for (int j = 0; j < size; j++) {
+      gj = exp(-vpMath::sqr(j - m) / (2.0 * sigma2)) / (sigma * sqrt(2.0 * M_PI));
+      for (int i = 0; i < size; i++) {
+        gi = exp(-vpMath::sqr(i - m) / (2.0 * sigma2)) / (sigma * sqrt(2.0 * M_PI));
+        filter(i, j, k, gi * gj * ddgk);
+      }
     }
-    return filter;
+  }
+  return filter;
 }
 
+/**
+ * Generate a Gaussian filtered second derivative filter along the ij-axis (height/width diagonal).
+ * @param sigma Gaussian filter standard deviation.
+ * @param size Size of the gaussian filter.
+ */
 usImage3D<double> usVolumeProcessing::generateGaussianDerivativeFilterIJ(double sigma, int size)
 {
-    if(size<=0 || (size % 2) != 1)
-    {
-        throw vpException(vpException::badValue, "usVolumeProcessing::generateGaussianDerivativeFilterIJ(): Bad filter size, should be positive and odd");
-    }
-  
-    double sigma2 = vpMath::sqr(sigma);
-    int m = (size - 1) / 2;
-    usImage3D<double> filter(size, size, size);
+  if (size <= 0 || (size % 2) != 1) {
+    throw vpException(
+        vpException::badValue,
+        "usVolumeProcessing::generateGaussianDerivativeFilterIJ(): Bad filter size, should be positive and odd");
+  }
 
-    double dgi, dgj, gk;
-    for(int k=0 ; k<size ; k++)
-    {
-        gk = exp(- vpMath::sqr(k - m) / (2.0 * sigma2)) / (sigma * sqrt(2.0 * M_PI));
-        for(int j=0  ; j<size ; j++)
-        {
-            dgj = - (j - m) * exp(- vpMath::sqr(j - m) / (2.0 * sigma2)) / (2.0 * sigma * sigma2 * sqrt(2.0 * M_PI));
-            for(int i=0  ; i<size ; i++)
-            {
-                dgi = - (i - m) * exp(- vpMath::sqr(i - m) / (2.0 * sigma2)) / (2.0 * sigma * sigma2 * sqrt(2.0 * M_PI));
-                filter(i, j, k, dgi * dgj * gk);
-            }
-        }
+  double sigma2 = vpMath::sqr(sigma);
+  int m = (size - 1) / 2;
+  usImage3D<double> filter(size, size, size);
+
+  double dgi, dgj, gk;
+  for (int k = 0; k < size; k++) {
+    gk = exp(-vpMath::sqr(k - m) / (2.0 * sigma2)) / (sigma * sqrt(2.0 * M_PI));
+    for (int j = 0; j < size; j++) {
+      dgj = -(j - m) * exp(-vpMath::sqr(j - m) / (2.0 * sigma2)) / (2.0 * sigma * sigma2 * sqrt(2.0 * M_PI));
+      for (int i = 0; i < size; i++) {
+        dgi = -(i - m) * exp(-vpMath::sqr(i - m) / (2.0 * sigma2)) / (2.0 * sigma * sigma2 * sqrt(2.0 * M_PI));
+        filter(i, j, k, dgi * dgj * gk);
+      }
     }
-    return filter;
+  }
+  return filter;
 }
 
+/**
+ * Generate a Gaussian filtered second derivative filter along the ik-axis (height/3rd dimension diagonal).
+ * @param sigma Gaussian filter standard deviation.
+ * @param size Size of the gaussian filter.
+ */
 usImage3D<double> usVolumeProcessing::generateGaussianDerivativeFilterIK(double sigma, int size)
 {
-    if(size<=0 || (size % 2) != 1)
-    {
-        throw vpException(vpException::badValue, "usVolumeProcessing::generateGaussianDerivativeFilterIK(): Bad filter size, should be positive and odd");
-    }
-  
-    double sigma2 = vpMath::sqr(sigma);
-    int m = (size - 1) / 2;
-    usImage3D<double> filter(size, size, size);
+  if (size <= 0 || (size % 2) != 1) {
+    throw vpException(
+        vpException::badValue,
+        "usVolumeProcessing::generateGaussianDerivativeFilterIK(): Bad filter size, should be positive and odd");
+  }
 
-    double dgi, gj, dgk;
-    for(int k=0 ; k<size ; k++)
-    {
-        dgk = - (k - m) * exp(- vpMath::sqr(k - m) / (2.0 * sigma2)) / (2.0 * sigma * sigma2 * sqrt(2.0 * M_PI));
-        for(int j=0  ; j<size ; j++)
-        {
-            gj = exp(- vpMath::sqr(j - m) / (2.0 * sigma2))	/ (sigma * sqrt(2.0 * M_PI));
-            for(int i=0  ; i<size ; i++)
-            {
-                dgi = - (i - m) * exp(- vpMath::sqr(i - m) / (2.0 * sigma2)) / (2.0 * sigma * sigma2 * sqrt(2.0 * M_PI));
-                filter(i, j, k, dgi * gj * dgk);
-            }
-        }
+  double sigma2 = vpMath::sqr(sigma);
+  int m = (size - 1) / 2;
+  usImage3D<double> filter(size, size, size);
+
+  double dgi, gj, dgk;
+  for (int k = 0; k < size; k++) {
+    dgk = -(k - m) * exp(-vpMath::sqr(k - m) / (2.0 * sigma2)) / (2.0 * sigma * sigma2 * sqrt(2.0 * M_PI));
+    for (int j = 0; j < size; j++) {
+      gj = exp(-vpMath::sqr(j - m) / (2.0 * sigma2)) / (sigma * sqrt(2.0 * M_PI));
+      for (int i = 0; i < size; i++) {
+        dgi = -(i - m) * exp(-vpMath::sqr(i - m) / (2.0 * sigma2)) / (2.0 * sigma * sigma2 * sqrt(2.0 * M_PI));
+        filter(i, j, k, dgi * gj * dgk);
+      }
     }
-    return filter;
+  }
+  return filter;
 }
 
+/**
+ * Generate a Gaussian filtered second derivative filter along the jk-axis (width/3rd dimension diagonal).
+ * @param sigma Gaussian filter standard deviation.
+ * @param size Size of the gaussian filter.
+ */
 usImage3D<double> usVolumeProcessing::generateGaussianDerivativeFilterJK(double sigma, int size)
 {
-    if(size<=0 || (size % 2) != 1)
-    {
-        throw vpException(vpException::badValue, "usVolumeProcessing::generateGaussianDerivativeFilterJK(): Bad filter size, should be positive and odd");
-    }
-  
-    double sigma2 = vpMath::sqr(sigma);
-    int m = (size - 1) / 2;
-    usImage3D<double> filter(size, size, size);
+  if (size <= 0 || (size % 2) != 1) {
+    throw vpException(
+        vpException::badValue,
+        "usVolumeProcessing::generateGaussianDerivativeFilterJK(): Bad filter size, should be positive and odd");
+  }
 
-    double gi, dgj, dgk;
-    for(int k=0 ; k<size ; k++)
-    {
-        dgk = - (k - m) * exp(- vpMath::sqr(k - m) / (2.0 * sigma2)) / (2.0 * sigma * sigma2 * sqrt(2.0 * M_PI));
-        for(int j=0  ; j<size ; j++)
-        {
-            dgj = - (j - m) * exp(- vpMath::sqr(j - m) / (2.0 * sigma2)) / (2.0 * sigma * sigma2 * sqrt(2.0 * M_PI));
-            for(int i=0  ; i<size ; i++)
-            {
-                gi = exp(- vpMath::sqr(i - m) / (2.0 * sigma2)) / (sigma * sqrt(2.0 * M_PI));
-                filter(i, j, k, gi * dgj * dgk);
-            }
-        }
+  double sigma2 = vpMath::sqr(sigma);
+  int m = (size - 1) / 2;
+  usImage3D<double> filter(size, size, size);
+
+  double gi, dgj, dgk;
+  for (int k = 0; k < size; k++) {
+    dgk = -(k - m) * exp(-vpMath::sqr(k - m) / (2.0 * sigma2)) / (2.0 * sigma * sigma2 * sqrt(2.0 * M_PI));
+    for (int j = 0; j < size; j++) {
+      dgj = -(j - m) * exp(-vpMath::sqr(j - m) / (2.0 * sigma2)) / (2.0 * sigma * sigma2 * sqrt(2.0 * M_PI));
+      for (int i = 0; i < size; i++) {
+        gi = exp(-vpMath::sqr(i - m) / (2.0 * sigma2)) / (sigma * sqrt(2.0 * M_PI));
+        filter(i, j, k, gi * dgj * dgk);
+      }
     }
-    return filter;
+  }
+  return filter;
 }
