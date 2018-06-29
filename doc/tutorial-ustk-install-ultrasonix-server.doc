@@ -51,6 +51,7 @@ Then you can configure the project using CMake:
 - Run `cmake-gui`, and specify the source directory of ViSP (`<workspace>/visp`), and put the build directory (`<workspace>/visp-ustk-build`).
 - In the `VISP_CONTRIB_MODULES_PATH` option, enter the location of UsTK source code (`<workspace>/ustk`).
 - Click "Configure" button, and verify that porta and Qt have been found correctly with CMake checking that cmake option `USE_QT5` is true and `PORTA_LIBRARIES` is correctly filled with your path.
+- Set `Porta_LICENSE_PATH` variable to the path that contains `licenses_web` file generally located in `C:/Ultrasonix/SDK/porta/license`
 - Click "Generate" button
 
 If all went well the configuration step is OK, you can move on to compilation step.
@@ -59,11 +60,11 @@ If all went well the configuration step is OK, you can move on to compilation st
 
 To build the application, there are two ways:
 
-1. Double click on `<workspace>/visp-ustk-build/VISP.sln` solution file in order to open the whole ViSP solution in Visual Studio. Then scroll to `ustk-ultrasonix-server` Visual Studio project and built this project.
+1. Double click on `<workspace>/visp-ustk-build/VISP.sln` solution file in order to open the whole ViSP solution in Visual Studio. Then select **Release** in configuration manager, scroll to `ustk-ultrasonix-server` Visual Studio project and built this project.
 
-2. Or open directly `ustk-ultrasonix-server.sln` Visual Studio solution located in `<workspace>/visp-ustk-build/apps/ustk/ultrasonix-server` folder. Once opened in Visual Studio 2010, you can build it.
+2. Or open directly `ustk-ultrasonix-server.sln` Visual Studio solution located in `<workspace>/visp-ustk-build/apps/ustk/ultrasonix-server` folder. Once opened in Visual Studio 2010, select **Release** in configuration manager and build the project.
 
-If the build is successful, you can now run the server application (see below).
+If the build is successful, you can now run the server application located in `<workspace>/visp-ustk-build/apps/ustk/ultrasonix-server/Release/ustk-ultrasonix-server.exe` (see below).
 
 \section ustk_server_run Running the server application
 
@@ -77,6 +78,17 @@ porta instance created
 TCP server Started
 Server now listening on port# 8080
 \endcode
+
+Now should appear a window asking "Do you want to keep blocking this program ?". Click on button "Unblock".
+
+The server running on Ultrasonix Station is now ready.
+
+On Ubuntu, you can run clients that are already provided as tutorials in:
+- `<visp-ustk-build>/tutorial/ustk/ultrasonix/tutorial-ultrasonix-qt-grabbing-RF` to grab RF 2D images
+- `<visp-ustk-build>/tutorial/ustk/ultrasonix/tutorial-ultrasonix-qt-grabbing-pre-scan` to grab pre-scan 2D images
+- `<visp-ustk-build>/tutorial/ustk/ultrasonix/tutorial-ultrasonix-qt-grabbing-post-scan` to grab post-scan 2D images
+
+Other examples are provided in the same folder.
 
 \section ustk_server_next_tutorial Next tutorial
 Once the server application is running on your Ultrasonix station, you can then go to the next \ref tutorial-ustk-grabber-ultrasonix.
