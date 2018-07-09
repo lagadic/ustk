@@ -247,26 +247,23 @@ void usNetworkGrabberPreScan3D::includeFrameInVolume()
             m_grabbedImage.getHeight()) { // m_grabbedImage is "turned" so the height corresponds to the scanline numer.
       throw(vpException(vpException::badValue, "Transducer settings changed during acquisition, somethink went wrong"));
     }
+    if (m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getMotorSettings() != m_motorSettings)
+      throw(vpException(vpException::badValue, "Motor settings changed during acquisition, somethink went wrong"));
   } else { // init case
     m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC)->setImagePreScanSettings(m_grabbedImage);
     m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC)->setScanLineNumber(m_grabbedImage.getHeight());
     m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->setImagePreScanSettings(m_grabbedImage);
     m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->setScanLineNumber(m_grabbedImage.getHeight());
-  }
-  m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setImagePreScanSettings(m_grabbedImage);
-  m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setScanLineNumber(m_grabbedImage.getHeight());
-
-  if (m_firstFrameAvailable) {
-    if (m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getMotorSettings() != m_motorSettings)
-      throw(vpException(vpException::badValue, "Motor settings changed during acquisition, somethink went wrong"));
-  } else { // init case
+    m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setImagePreScanSettings(m_grabbedImage);
+    m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setScanLineNumber(m_grabbedImage.getHeight());
+    
     m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC)->setMotorSettings(m_motorSettings);
     m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->setMotorSettings(m_motorSettings);
+    m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setMotorSettings(m_motorSettings);
   }
-  m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setMotorSettings(m_motorSettings);
-
+  
   m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)
-      ->resize(m_grabbedImage.getHeight(), m_grabbedImage.getWidth(), m_motorSettings.getFrameNumber());
+      ->resize(m_grabbedImage.getWidth(), m_grabbedImage.getHeight(), m_motorSettings.getFrameNumber());
 
   // Inserting frame in volume by inverting rows and cols voxels (along x and y axis), to match ustk volume storage
   int volumeIndex = (m_grabbedImage.getFrameCount() / m_grabbedImage.getFramesPerVolume());    // from 0
