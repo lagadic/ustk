@@ -31,7 +31,7 @@
 
 /**
  * @file usRectangleVisualServoingController.h
- * @brief
+ * @brief Qt wrapper for a controller based on confidence map and dense tracker.
  */
 
 #ifndef __usRectangleVisualServoingController_h_
@@ -53,7 +53,7 @@
 
 /**
  * @class usRectangleVisualServoingController
- * @brief
+ * @brief Qt wrapper for a controller based on confidence map and dense tracker.
  * @ingroup module_ustk_gui
  */
 class VISP_EXPORT usRectangleVisualServoingController : public QObject
@@ -65,10 +65,13 @@ public:
 
 
 signals:
+  void confidenceBarycenterAngle(double theta);
+  void confidenceMap(usImagePreScan2D<unsigned char>);
   void updatePobeXVelocity(int linearVelocity);
   void updateProbeZOrientation(int angularVelocity);
   void newRectTracked(vpRectOriented rect);
   void newPostScanFrame(usImagePostScan2D<unsigned char> image);
+  void trackerXError(double error);
 
 public slots:
   void updateImage(usImagePreScan2D<unsigned char> image);

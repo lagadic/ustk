@@ -127,7 +127,7 @@ void usImageDisplayWidgetRobotControl::updateFrame(const usImagePreScan2D<unsign
 
   //update feature display
   if(m_useFeatureDisplay) {
-#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
+#if (defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
     if(m_confidence.getSize()>0) {
       if(m_confidence.display == NULL)
         m_display->init(m_confidence);
@@ -205,8 +205,8 @@ void usImageDisplayWidgetRobotControl::disableFeaturesDisplay() {
 }
 
 void usImageDisplayWidgetRobotControl::updateConfidenceAngle(double sanline) {
+#if (defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
   if(m_useFeatureDisplay) {
-#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
     vpImagePoint p0 = vpImagePoint(0, sanline);
     vpImagePoint p1 = vpImagePoint(m_confidence.getHeight()-1, sanline);
     vpImagePoint p2 = vpImagePoint(0, m_confidence.getWidth()/2);

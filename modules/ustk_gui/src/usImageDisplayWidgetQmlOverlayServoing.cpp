@@ -46,7 +46,7 @@
 * Constructor.
 */
 usImageDisplayWidgetQmlOverlayServoing::usImageDisplayWidgetQmlOverlayServoing()
-  : usImageDisplayWidget(), m_qQuickOverlay()
+  : usImageDisplayWidget(), m_qQuickOverlay(),m_useFeatureDisplay(false), m_confidence(), m_plot(),m_startTime()
 {
   this->setMinimumSize(200, 200);
   m_qQuickOverlay = new QQuickWidget(m_label);
@@ -65,6 +65,12 @@ usImageDisplayWidgetQmlOverlayServoing::usImageDisplayWidgetQmlOverlayServoing()
     status = m_qQuickOverlay->status();
     vpTime::wait(50);
   }
+
+#if defined(VISP_HAVE_GDI)
+  m_display = new vpDisplayGDI;
+#elif defined(VISP_HAVE_OPENCV)
+  m_display = new vpDisplayOpenCV;
+#endif
 }
 
 /**
@@ -87,6 +93,37 @@ void usImageDisplayWidgetQmlOverlayServoing::resizeEvent(QResizeEvent *event)
       rectItem->setProperty("x", x);
       rectItem->setProperty("y", y);
     }
+  }
+}
+
+/**
+* Slot called to update the ultrasound image to display for pre-scan.
+* @param img New ultrasound image to display.
+*/
+void usImageDisplayWidgetQmlOverlayServoing::updateFrame(const usImagePreScan2D<unsigned char> img)
+{
+  if (m_useScanConversion) {
+    m_scanConverter.convert(img, m_postScan);
+    m_QImage = QImage(m_postScan.bitmap, m_postScan.getWidth(), m_postScan.getHeight(), m_postScan.getWidth(),
+                      QImage::Format_Indexed8);
+  } else
+    m_QImage = QImage(img.bitmap, img.getWidth(), img.getHeight(), img.getWidth(), QImage::Format_Indexed8);
+
+  QImage I = m_QImage.convertToFormat(QImage::Format_RGB888);
+  I = I.scaled(this->width(), this->height());
+  m_pixmap = QPixmap::fromImage(I);
+  m_label->setPixmap(m_pixmap);
+  m_label->update();
+
+  //update feature display
+  if(m_useFeatureDisplay) {
+#if (defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
+    if(m_confidence.getSize()>0) {
+      if(m_confidence.display == NULL)
+        m_display->init(m_confidence);
+      vpDisplay::display(m_confidence);
+    }
+#endif
   }
 }
 
@@ -218,6 +255,56 @@ void usImageDisplayWidgetQmlOverlayServoing::startTrackingSlot()
   vpRectOriented displayRect(vpImagePoint(centerY, centerX), width, height, vpMath::rad(rotation));
 
   emit(startTrackingRect(displayImageToRealImageDimentions(displayRect)));
+}
+
+void usImageDisplayWidgetQmlOverlayServoing::enableFeaturesDisplay() {
+  m_useFeatureDisplay = true;
+
+  m_plot.init(2);
+  m_plot.initGraph(0, 1);
+  m_plot.setTitle(0, "confidence barycenter error");
+  m_plot.setUnitY(0, "error");
+  m_plot.setLegend(0, 0, "time");
+  m_plot.initGraph(1, 1);
+  m_plot.setTitle(1, "Lateral tracking error");
+  m_plot.setUnitY(1, "error");
+  m_plot.setLegend(1, 0, "time");
+  m_startTime = vpTime::measureTimeMs();
+}
+
+void usImageDisplayWidgetQmlOverlayServoing::disableFeaturesDisplay() {
+  m_useFeatureDisplay = false;
+}
+
+
+void usImageDisplayWidgetQmlOverlayServoing::updateConfidenceAngle(double scanline) {
+#if (defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
+  if(m_useFeatureDisplay) {
+    vpImagePoint p0 = vpImagePoint(0, scanline);
+    vpImagePoint p1 = vpImagePoint(m_confidence.getHeight()-1, scanline);
+    vpImagePoint p2 = vpImagePoint(0, m_confidence.getWidth()/2);
+    vpImagePoint p3 = vpImagePoint(m_confidence.getHeight()-1, m_confidence.getWidth()/2);
+    vpDisplay::displayLine(m_confidence,p0,p1,vpColor::red);
+    vpDisplay::displayLine(m_confidence,p2,p3,vpColor::green);
+    vpDisplay::flush(m_confidence);
+
+    // plot errors
+    m_plot.plot(0, 0, vpTime::measureTimeMs()-m_startTime, vpMath::deg(scanline * m_confidence.getScanLinePitch() - m_confidence.getFieldOfView() / 2.0));
+  }
+#endif
+}
+
+void usImageDisplayWidgetQmlOverlayServoing::updateConfidenceMap(usImagePreScan2D<unsigned char> confidence) {
+  m_confidence = confidence;
+}
+
+void usImageDisplayWidgetQmlOverlayServoing::updateXError(double error) {
+#if (defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
+  if(m_useFeatureDisplay) {
+    // plot errors
+    m_plot.plot(1, 0, vpTime::measureTimeMs()-m_startTime, error);
+  }
+#endif
 }
 
 #endif
