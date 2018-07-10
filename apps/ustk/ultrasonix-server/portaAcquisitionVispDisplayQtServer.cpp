@@ -15,7 +15,12 @@
 int main(int argc, char *argv[])
 {
   QApplication a(argc, argv);
-  usNetworkServer w;
+  usNetworkServer server;
+
+  if(a.arguments().contains(QString("--probeSettingsFile"))) {
+	std::cout << "using settings file : " << a.arguments().at(a.arguments().indexOf(QString("--probeSettingsFile")) + 1).toStdString() << std::endl;
+    server.useProbeConfigFile(a.arguments().at(a.arguments().indexOf(QString("--probeSettingsFile")) + 1).toStdString());
+  }
 
   return a.exec();
 }
