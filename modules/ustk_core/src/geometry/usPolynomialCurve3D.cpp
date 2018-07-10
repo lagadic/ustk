@@ -30,7 +30,7 @@
  *
  *****************************************************************************/
 
-#include <visp3/ustk_needle_detection/usPolynomialCurve3D.h>
+#include <visp3/ustk_core/usPolynomialCurve3D.h>
 
 #include <algorithm>
 

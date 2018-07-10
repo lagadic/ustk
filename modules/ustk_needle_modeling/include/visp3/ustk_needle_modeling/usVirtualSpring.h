@@ -37,7 +37,7 @@
 
 #include <visp3/core/vpColVector.h>
 
-#include <visp3/ustk_needle_detection/usOrientedPlane3D.h>
+#include <visp3/ustk_core/usOrientedPlane3D.h>
 
 
 class VISP_EXPORT usVirtualSpring : public usOrientedPlane3D

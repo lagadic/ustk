@@ -3,8 +3,8 @@
 
 #include <iostream>
 
-#include <visp3/ustk_needle_detection/usBSpline3D.h>
-#include <visp3/ustk_needle_detection/usOrientedPlane3D.h>
+#include <visp3/ustk_core/usBSpline3D.h>
+#include <visp3/ustk_core/usOrientedPlane3D.h>
 
 
 class VISP_EXPORT usTissueModelSpline

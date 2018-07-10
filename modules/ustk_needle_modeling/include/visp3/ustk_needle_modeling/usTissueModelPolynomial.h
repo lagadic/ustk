@@ -35,8 +35,8 @@
 
 #include <iostream>
 
-#include <visp3/ustk_needle_detection/usOrientedPlane3D.h>
-#include <visp3/ustk_needle_detection/usPolynomialCurve3D.h>
+#include <visp3/ustk_core/usOrientedPlane3D.h>
+#include <visp3/ustk_core/usPolynomialCurve3D.h>
 
 
 class VISP_EXPORT usTissueModelPolynomial

@@ -30,7 +30,7 @@
  *
  *****************************************************************************/
 
-#include <visp3/ustk_needle_detection/usGeometryDisplayTools.h>
+#include <visp3/ustk_core/usGeometryDisplayTools.h>
 
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpDisplay.h>

@@ -33,7 +33,7 @@
 #ifndef __usNeedleModelingDisplayTools_h_
 #define __usNeedleModelingDisplayTools_h_
 
-#include <visp3/ustk_needle_detection/usGeometryDisplayTools.h>
+#include <visp3/ustk_core/usGeometryDisplayTools.h>
 
 #include <visp3/ustk_needle_modeling/usNeedleModelBaseTip.h>
 #include <visp3/ustk_needle_modeling/usNeedleModelPolynomial.h>

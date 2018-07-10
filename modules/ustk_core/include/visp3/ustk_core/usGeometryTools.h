@@ -38,9 +38,9 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpColVector.h>
 
-#include <visp3/ustk_needle_detection/usBSpline3D.h>
-#include <visp3/ustk_needle_detection/usOrientedPlane3D.h>
-#include <visp3/ustk_needle_detection/usPolynomialCurve3D.h>
+#include <visp3/ustk_core/usBSpline3D.h>
+#include <visp3/ustk_core/usOrientedPlane3D.h>
+#include <visp3/ustk_core/usPolynomialCurve3D.h>
 
 
 namespace usGeometryTools

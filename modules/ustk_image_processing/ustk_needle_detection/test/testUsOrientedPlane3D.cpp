@@ -36,7 +36,7 @@
   This example tests all functions declared in the usOrientedPlane3D class.
 */
 
-#include <visp3/ustk_needle_detection/usOrientedPlane3D.h>
+#include <visp3/ustk_core/usOrientedPlane3D.h>
 
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpHomogeneousMatrix.h>

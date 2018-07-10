@@ -30,7 +30,7 @@
  *
  *****************************************************************************/
 
-#include <visp3/ustk_needle_detection/usGeometryTools.h>
+#include <visp3/ustk_core/usGeometryTools.h>
 
 #include <limits>
 

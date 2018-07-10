@@ -36,7 +36,7 @@
   This example tests all functions declared in the usBSpline3D class.
 */
 
-#include <visp3/ustk_needle_detection/usBSpline3D.h>
+#include <visp3/ustk_core/usBSpline3D.h>
 
 #include <vector>
 #include <visp3/core/vpColVector.h>

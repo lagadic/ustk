@@ -37,7 +37,7 @@
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpRGBa.h>
 
-#include <visp3/ustk_needle_detection/usGeometryTools.h>
+#include <visp3/ustk_core/usGeometryTools.h>
 
 
 namespace usNeedleModelingDisplayTools
@@ -81,7 +81,7 @@ void displayNeedle(const usNeedleModelPolynomial &needleModel, const vpImage<Ima
         double r = 0.5 * needleModel.getOuterDiameter();
         double l = needleModel.getParametricLength();
         double step = l / 10;
-        vpColVector z(imageMworld.inverse().getCol(2));
+        vpColVector z(imageMworld.inverse().getCol(2), 0,3);
 
         std::vector<double> params(11);
         std::vector<vpColVector> p1(11);
@@ -165,7 +165,7 @@ void displayNeedle(const usNeedleModelSpline &needleModel, const vpImage<ImageDa
     if(displayFullBody)
     {
         double r = 0.5 * needleModel.getOuterDiameter();
-        vpColVector z(imageMworld.inverse().getCol(2));
+        vpColVector z(imageMworld.inverse().getCol(2), 0,3);
 
         std::vector<double> lengths(needleModel.getNbSegments());
         std::vector<vpColVector> p1(needleModel.getNbSegments()+1);

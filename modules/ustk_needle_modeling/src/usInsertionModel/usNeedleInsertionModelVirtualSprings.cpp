@@ -34,7 +34,7 @@
 
 #include<iomanip>
 
-#include <visp3/ustk_needle_detection/usGeometryTools.h>
+#include <visp3/ustk_core/usGeometryTools.h>
 
 #include <visp3/core/vpConfig.h>
 #ifdef VISP_HAVE_EIGEN3

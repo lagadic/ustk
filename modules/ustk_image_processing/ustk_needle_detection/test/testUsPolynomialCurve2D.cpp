@@ -36,7 +36,7 @@
   This example tests all functions declared in the usPolynomialCurve2D class.
 */
 
-#include <visp3/ustk_needle_detection/usPolynomialCurve2D.h>
+#include <visp3/ustk_core/usPolynomialCurve2D.h>
 
 #include <vector>
 

@@ -37,7 +37,7 @@
 
 #include <visp3/core/vpColVector.h>
 
-#include <visp3/ustk_needle_detection/usBSpline3D.h>
+#include <visp3/ustk_core/usBSpline3D.h>
 #include <visp3/ustk_needle_modeling/usNeedleModelBaseTip.h>
 
 

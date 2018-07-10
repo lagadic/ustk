@@ -38,7 +38,7 @@
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 
-#include <visp3/ustk_needle_detection/usPolynomialCurve3D.h>
+#include <visp3/ustk_core/usPolynomialCurve3D.h>
 
 
 class VISP_EXPORT usBSpline3D

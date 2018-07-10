@@ -36,7 +36,7 @@
   This example tests all functions declared in the usGeometryDisplayTools namespace.
 */
 
-#include <visp3/ustk_needle_detection/usGeometryDisplayTools.h>
+#include <visp3/ustk_core/usGeometryDisplayTools.h>
 
 #if defined(VISP_HAVE_X11)
 #include <visp3/gui/vpDisplayX.h>

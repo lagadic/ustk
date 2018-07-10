@@ -44,7 +44,7 @@
 
 #include <visp3/ustk_needle_modeling/usNeedleInsertionModelInterface.h>
 #include <visp3/ustk_needle_modeling/usNeedleModelSpline.h>
-#include <visp3/ustk_needle_detection/usOrientedPlane3D.h>
+#include <visp3/ustk_core/usOrientedPlane3D.h>
 #include <visp3/ustk_needle_modeling/usVirtualSpring.h>
 
 

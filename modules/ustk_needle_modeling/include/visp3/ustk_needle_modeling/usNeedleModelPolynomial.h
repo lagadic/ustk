@@ -38,7 +38,7 @@
 #include <visp3/core/vpColVector.h>
 
 #include <visp3/ustk_needle_modeling/usNeedleModelBaseTip.h>
-#include <visp3/ustk_needle_detection/usPolynomialCurve3D.h>
+#include <visp3/ustk_core/usPolynomialCurve3D.h>
 
 
 class VISP_EXPORT usNeedleModelPolynomial : public usNeedleModelBaseTip, public usPolynomialCurve3D
