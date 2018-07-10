@@ -50,6 +50,10 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/ustk_core/cmake")
 VP_OPTION(USE_FFTW "FFTW" "" "Include fftw support" "" ON)
 VP_OPTION(USE_ARMADILLO "Armadillo" "" "Include armadillo support" "" ON)
 VP_OPTION(USE_VTK  "VTK"  QUIET "Include vtk support"  "" ON)
+# UsTK needs c++11
+if(NOT USE_CPP11 AND CPP11_FOUND)
+  VP_OPTION(USE_CPP11     CPP11       ""    "Include c++11 support"        "" ON)
+endif()
 
 if(USE_VTK)
   if(NOT VTK_VERSION)
