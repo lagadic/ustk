@@ -36,6 +36,10 @@
   This example tests all functions declared in the usGeometryDisplayTools namespace.
 */
 
+#include <visp3/core/vpConfig.h>
+
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9)
+
 #include <visp3/ustk_core/usGeometryDisplayTools.h>
 
 #if defined(VISP_HAVE_X11)
@@ -50,9 +54,13 @@
 #include <visp3/gui/vpDisplayD3D.h>
 #endif
 
+#include <vector>
+
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpImage.h>
 #include <visp3/core/vpMatrix.h>
+#include <visp3/core/vpRGBa.h>
 
 
 int main()
@@ -61,26 +69,48 @@ int main()
     
     vpImage<unsigned char> I1(700, 500, 255);
     vpImage<vpRGBa> I2(700, 500, vpRGBa(255,255,255,255));
-            
+    
 #if defined(VISP_HAVE_X11)
-    vpDisplayX d1(I1, 0,0, "Display unsigned char");
-    vpDisplayX d2(I2, d1.getWindowXPosition()+d1.getWidth(), d1.getWindowYPosition(), "Display vpRGBa");
+    vpDisplayX *d1;
+    vpDisplayX *d2;
 #elif defined(VISP_HAVE_OPENCV)
-    vpDisplayOpenCV d1(I1, "Display unsigned char");
-    vpDisplayOpenCV d2(I2, d1.getWindowXPosition()+d1.getWidth(), d1.getWindowYPosition(), "Display vpRGBa");
+    vpDisplayOpenCV *d1;
+    vpDisplayOpenCV *d2;
 #elif defined(VISP_HAVE_GTK)
-    vpDisplayGTK d1(I1, "Display unsigned char");
-    vpDisplayGTK d2(I2, d1.getWindowXPosition()+d1.getWidth(), d1.getWindowYPosition(), "Display vpRGBa");
+    vpDisplayGTK *d1;
+    vpDisplayGTK *d2;
 #elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI d1(I1, "Display unsigned char");
-    vpDisplayGDI d2(I2, d1.getWindowXPosition()+d1.getWidth(), d1.getWindowYPosition(), "Display vpRGBa");
+    vpDisplayGDI *d1;
+    vpDisplayGDI *d2;
 #elif defined(VISP_HAVE_D3D9)
-    vpDisplayD3d d1(I1, "Display unsigned char");
-    vpDisplayD3d d2(I2, d1.getWindowXPosition()+d1.getWidth(), d1.getWindowYPosition(), "Display vpRGBa");
-#else
-    std::cout << "No image viewer is available..." << std::endl;
-    return 0;
+    vpDisplayD3d *d1;
+    vpDisplayD3d *d2;
 #endif
+            
+    try
+    {
+#if defined(VISP_HAVE_X11)
+    d1 = new vpDisplayX(I1, 0,0, "Display unsigned char");
+    d2 = new vpDisplayX(I2, d1->getWindowXPosition()+d1->getWidth(), d1->getWindowYPosition(), "Display vpRGBa");
+#elif defined(VISP_HAVE_OPENCV)
+    d1 = new vpDisplayOpenCV(I1, "Display unsigned char");
+    d2 = new vpDisplayOpenCV(I2, d1->getWindowXPosition()+d1->getWidth(), d1->getWindowYPosition(), "Display vpRGBa");
+#elif defined(VISP_HAVE_GTK)
+    d1 = new vpDisplayGTK(I1, "Display unsigned char");
+    d2 = new vpDisplayGTK(I2, d1->getWindowXPosition()+d1->getWidth(), d1->getWindowYPosition(), "Display vpRGBa");
+#elif defined(VISP_HAVE_GDI)
+    d1 = new vpDisplayGDI(I1, "Display unsigned char");
+    d2 = new vpDisplayGDI(I2, d1->getWindowXPosition()+d1->getWidth(), d1->getWindowYPosition(), "Display vpRGBa");
+#elif defined(VISP_HAVE_D3D9)
+    d1 = new vpDisplayD3d(I1, "Display unsigned char");
+    d2 = new vpDisplayD3d(I2, d1->getWindowXPosition()+d1->getWidth(), d1->getWindowYPosition(), "Display vpRGBa");
+#endif
+    }
+    catch(std::exception &e)
+    {
+        std::cout << "testUsGeometryDisplayTools: could not initialize display:\n" << e.what() << std::endl;
+        return 0;
+    }
         
     usOrientedPlane3D plane(vpPoseVector(0,0,0.05, 0,M_PI/4,0));
     
@@ -91,7 +121,7 @@ int main()
     points2D.at(3)[0] = 0.02;points2D.at(3)[1] = 0.05;
     usPolynomialCurve2D curve2D;
     curve2D.defineFromPointsAuto(points2D, points2D.back()-points2D.front(),3);
-    
+
     std::vector<vpColVector> points3D(4, vpColVector(3,0));
     points3D.at(1)[0] = 0.02;
     points3D.at(2)[1] = 0.02;points3D.at(2)[2] = 0.03;
@@ -144,5 +174,21 @@ int main()
     
     vpTime::wait(2000);
     
+    delete d1;
+    delete d2;
+    
     return 0;
 }
+
+#else
+
+#include <iostream>
+
+int main()
+{
+    std::cout << "No display to start testUsGeometryDisplayTools" << std::endl;
+    
+    return 0;
+}
+
+#endif

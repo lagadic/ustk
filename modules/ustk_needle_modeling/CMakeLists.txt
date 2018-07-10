@@ -30,6 +30,7 @@
 #
 #############################################################################
 
+IF(USE_CPP11)
 vp_add_module(ustk_needle_modeling visp_core visp_ustk_core visp_ustk_needle_detection)
 
 vp_glob_module_sources()
@@ -37,4 +38,4 @@ vp_module_include_directories()
 vp_create_module()
 
 vp_add_tests(DEPENDS_ON visp_ustk_needle_modeling)
-
+ENDIF()

@@ -38,11 +38,28 @@
   This example tests the model of the insertion of a needle via the class usNeedleInsertionModelVirtualSprings.
 */
 
-#include <visp3/ustk_needle_modeling/usNeedleInsertionModelVirtualSprings.h>
+#include <visp3/core/vpConfig.h>
 
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9)
+
+#include <visp3/ustk_needle_modeling/usNeedleInsertionModelVirtualSprings.h>
 #include <visp3/ustk_needle_modeling/usNeedleModelingDisplayTools.h>
 
+#if defined(VISP_HAVE_X11)
 #include <visp3/gui/vpDisplayX.h>
+#elif defined(VISP_HAVE_OPENCV)
+#include <visp3/gui/vpDisplayOpenCV.h>
+#elif defined(VISP_HAVE_GTK)
+#include <visp3/gui/vpDisplayGTK.h>
+#elif defined(VISP_HAVE_GDI)
+#include <visp3/gui/vpDisplayGDI.h>
+#elif defined(VISP_HAVE_D3D9)
+#include <visp3/gui/vpDisplayD3D.h>
+#endif
+
+#include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/core/vpPoseVector.h>
 
 
 int main()
@@ -78,7 +95,38 @@ int main()
     n1.setSurfaceAtTip();
     
     vpImage<unsigned char> I1(700, 500, 255);
-    vpDisplayX d1(I1);
+    
+#if defined(VISP_HAVE_X11)
+    vpDisplayX *d1;
+#elif defined(VISP_HAVE_OPENCV)
+    vpDisplayOpenCV *d1;
+#elif defined(VISP_HAVE_GTK)
+    vpDisplayGTK *d1;
+#elif defined(VISP_HAVE_GDI)
+    vpDisplayGDI *d1;
+#elif defined(VISP_HAVE_D3D9)
+    vpDisplayD3D *d1;
+#endif
+    
+    try
+    {
+#if defined(VISP_HAVE_X11)
+    d1 = new vpDisplayX(I1);
+#elif defined(VISP_HAVE_OPENCV)
+    d1 = new vpDisplayOpenCV(I1);
+#elif defined(VISP_HAVE_GTK)
+    d1 = new vpDisplayGTK(I1);
+#elif defined(VISP_HAVE_GDI)
+    d1 = new vpDisplayGDI(I1);
+#elif defined(VISP_HAVE_D3D9)
+    d1 = new vpDisplayD3D(I1);
+#endif
+    }
+    catch(std::exception &e)
+    {
+        std::cout << "testUsNeedleInsertionModelVirtualSprings: could not initialize display:\n" << e.what() << std::endl;
+        return 0;
+    }
 
     for(int i=0 ; i<3000 ; i++)
     {    
@@ -105,7 +153,21 @@ int main()
         
         vpDisplay::flush(I1);
     }
+    
+    delete d1;
 
     return 0;
-
 }
+
+#else
+
+#include <iostream>
+
+int main()
+{
+    std::cout << "No display to start testUsNeedleInsertionModelVirtualSprings" << std::endl;
+    
+    return 0;
+}
+
+#endif

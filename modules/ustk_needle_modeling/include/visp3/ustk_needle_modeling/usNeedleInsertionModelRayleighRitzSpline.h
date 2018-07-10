@@ -125,7 +125,8 @@ public:
         bool addTissueLayer(double K, double l);
 
         bool setStiffnessPerUnitLength(int i, double K);
-        double getStiffnessPerUnitLength(int i) const;
+        bool setStiffnessPerUnitLength(double K);
+        double getStiffnessPerUnitLength(int i = 0) const;
 
         bool setLayerLength(int i, double l);
         double getLayerLength(int i) const;
@@ -180,6 +181,7 @@ public:
     void solveSegmentsParametersSparseEigen(); // solve without bevel (less accurate at tip, but less expensive since equation independant on dimension)
     void solveSegmentsParametersFullSparseEigen(); // solve with bevel (more accurate modeling of bevel effect, but slighly more expensive)
     void solveSegmentsParametersFullSparseEigenFixedLength(); // solve with bevel + fixed size for sub splines
+    void solveSegmentsParametersDense(); // solve with dense method with bevel + fixed size for sub splines (very slow, only here for compatibility but should be avoided)
     void fitLength();
     void updateTipPose();
 

@@ -319,6 +319,13 @@ bool usNeedleInsertionModelRayleighRitzSpline::setStiffnessPerUnitLength(int i, 
     return true;
 }
 
+bool usNeedleInsertionModelRayleighRitzSpline::setStiffnessPerUnitLength(double K)
+{
+    if( K<=0 ) return false;
+    for(unsigned int i=0 ; i<m_stiffnessPerUnitLength.size() ; i++) m_stiffnessPerUnitLength.at(i) = K;
+    return true;
+}
+
 double usNeedleInsertionModelRayleighRitzSpline::getStiffnessPerUnitLength(int i) const
 {
     return m_stiffnessPerUnitLength.at(i);
@@ -776,6 +783,8 @@ bool usNeedleInsertionModelRayleighRitzSpline::cutPathToPoint(const vpColVector 
 
 void usNeedleInsertionModelRayleighRitzSpline::solveSegmentsParametersSparseEigen()
 {
+#ifdef VISP_HAVE_EIGEN3
+    
     double trueFreeLength = 0;
 
     if(usGeometryTools::DoesSegmentCrossPlane(m_needle, m_tissue.accessSurface()))
@@ -1067,6 +1076,9 @@ void usNeedleInsertionModelRayleighRitzSpline::solveSegmentsParametersSparseEige
         m_needle.accessSegment(i).setPolynomialCoefficients(m);
         startIndex += order+1;
     }
+#else
+    throw vpException(vpException::functionNotImplementedError, "usNeedleInsertionModelRayleighRitzSpline::solveSegmentsParametersSparseEigen: not implemented without Eigen3");
+#endif
 }
 
 void usNeedleInsertionModelRayleighRitzSpline::solveSegmentsParametersFullSparseEigen()
@@ -1971,6 +1983,446 @@ void usNeedleInsertionModelRayleighRitzSpline::solveSegmentsParametersFullSparse
 #endif
 }
 
+void usNeedleInsertionModelRayleighRitzSpline::solveSegmentsParametersDense()
+{
+    if(m_tissue.accessPath().getNbSegments()==0 || m_needle.getFullLength() <= std::numeric_limits<double>::epsilon()) // no path present
+    {
+        usPolynomialCurve3D seg(m_needle.accessSegment(0));
+        vpMatrix M(3,seg.getOrder()+1,0);
+        for(int dim=0; dim<3 ; dim++)
+        {
+            M[dim][0] = m_needle.getBasePose()[dim];
+            M[dim][1] = m_needle.getWorldMbase()[dim][2];
+        }
+        seg.setPolynomialCoefficients(M);
+        seg.setParametricLength(m_needle.getFullLength());
+        m_needle.init();
+        m_needle.setSegment(0, seg);
+
+        return;
+    }
+
+
+    double trueFreeLength = 0;
+
+    if(usGeometryTools::DoesSegmentCrossPlane(m_needle, m_tissue.accessSurface()))
+    {
+        double freeLength = -1;
+        usGeometryTools::getPlaneCurveCrossingPoint(m_needle, m_tissue.accessSurface(), -1, &freeLength);
+        int seg = -1;
+        double param = 0;
+        m_needle.getParametersFromLength(freeLength, seg, param);
+
+        for(int i=0 ; i<seg ; i++)
+        {
+            trueFreeLength += m_needle.accessSegment(i).getLength();
+        }
+        trueFreeLength += m_needle.accessSegment(seg).getSubPolynomialCurve(0,param).getLength();
+    }
+    else
+    {
+        vpColVector p(3); for(int i=0 ; i<3 ; i++) p[i] = m_needle.getBasePose()[i];
+        vpColVector d(3); for(int i=0 ; i<3 ; i++) d[i] = m_needle.getWorldMbase()[i][2];
+        double cosTheta = fabs(vpColVector::dotProd(m_tissue.accessSurface().getDirection(),d));
+        if(cosTheta > std::numeric_limits<double>::epsilon()) trueFreeLength = fabs(usGeometryTools::getPointPlaneDistance(p, m_tissue.accessSurface())) / cosTheta;
+        else trueFreeLength = m_needle.getFullLength();
+    }
+
+    bool tipIn = usGeometryTools::IsPointInFrontOfPlane(m_needleTip->getTipPosition(),m_tissue.accessSurface());
+    if(trueFreeLength>=m_needle.getFullLength() && !tipIn) // needle is not inserted
+    {
+        usPolynomialCurve3D seg(m_needle.accessSegment(0));
+        vpMatrix M(3,seg.getOrder()+1,0);
+        for(int dim=0; dim<3 ; dim++)
+        {
+            M[dim][0] = m_needle.getBasePose()[dim];
+            M[dim][1] = m_needle.getWorldMbase()[dim][2];
+        }
+        seg.setPolynomialCoefficients(M);
+        seg.setParametricLength(m_needle.getFullLength());
+        m_needle.init();
+        m_needle.setSegment(0, seg);
+
+        return;
+    }
+
+    double segDefaultLength = 0.01;
+    int nbSegments = 1+floor(m_needle.getFullLength() / segDefaultLength);
+
+    while(m_needle.getNbSegments() > nbSegments)
+    {
+        m_needle.removeLastSegment();
+    }
+    while(m_needle.getNbSegments() < nbSegments)
+    {
+        m_needle.addSegment(m_needle.accessLastSegment());
+    }
+    m_restDilatationFactor.resize(m_needle.getNbSegments(), 1);
+    for(int i=0 ; i<nbSegments-1 ; i++) m_needle.accessSegment(i).setParametricLength(segDefaultLength);
+    if(nbSegments>1)
+    {
+        double l = m_needle.getFullLength() - segDefaultLength*(nbSegments-1);
+        if(l > std::numeric_limits<double>::epsilon()) m_needle.accessLastSegment().setParametricLength(l);
+        else
+        {
+            m_needle.removeLastSegment();
+            nbSegments--;
+        }
+        
+    }
+    int nbcoef = 0;
+    for(int i=0 ; i<nbSegments ; i++) nbcoef += m_needle.accessSegment(i).getOrder()+1;
+
+    double EI = m_needle.getEI();
+
+    int nbConstraints = 2;
+    for(int i=0 ; i<nbSegments-1 ; i++)
+    {
+        int order1 = m_needle.accessSegment(i).getOrder();
+        int order2 = m_needle.accessSegment(i+1).getOrder();
+        int order = std::max(order1,order2);
+        nbConstraints += std::min(3, order);
+    }
+
+    int nbMatrixLine = 3*(nbConstraints+nbcoef);
+    
+    vpMatrix M(nbMatrixLine, nbMatrixLine ,0);
+
+    vpColVector A(nbMatrixLine, 0);
+    vpColVector B(nbMatrixLine, 0);
+
+    //Constraints matrix
+
+    // Base conditions
+    int line = 3*nbcoef;
+    for(int dim=0; dim<3 ; dim++)
+    {
+        B[line] = m_needle.getBasePose()[dim];
+        M[line][dim ] =  1;
+        M[dim ][line] = -1;
+        line++;
+    }
+    for(int dim=0; dim<3 ; dim++)
+    {
+        B[line] = m_needle.getWorldMbase()[dim][2];
+        M[line ][3+dim] =  1;
+        M[3+dim][line ] = -1;
+        line++;
+    }
+
+    int nbSegCoef = 0;
+    int startIndex = 0;
+    for(int i=0 ; i<nbSegments-1 ; i++)
+    {
+        nbSegCoef = m_needle.accessSegment(i).getOrder()+1;
+        int order1 = m_needle.accessSegment(i).getOrder();
+        int order2 = m_needle.accessSegment(i+1).getOrder();
+        int order = std::max(order1,order2);
+        double segLength = m_needle.accessSegment(i).getParametricLength();
+
+        // Continuity
+
+        double *tmp = new double[nbSegCoef];
+        if(order>0) // Order 0
+        {
+            tmp[0] = 1;
+            for(int j=1 ; j<nbSegCoef ; j++) tmp[j] = segLength*tmp[j-1];
+
+            for(int dim=0; dim<3 ; dim++)
+            {
+                for(int j=0 ; j<nbSegCoef ; j++)
+                {
+                    M[line              ][startIndex+3*j+dim] =  tmp[j];
+                    M[startIndex+3*j+dim][line              ] = -tmp[j];
+                }
+                M[line                      ][startIndex+3*nbSegCoef+dim] = -1;
+                M[startIndex+3*nbSegCoef+dim][line                      ] =  1;
+                line++;
+            }
+        }
+        if(order>1) // Order 1
+        {
+            tmp[0] = 0;
+            tmp[1] = 1;
+            for(int j=2 ; j<nbSegCoef ; j++) tmp[j] = segLength*tmp[j-1];
+            for(int j=1 ; j<nbSegCoef ; j++) tmp[j] *= j;
+
+            for(int dim=0; dim<3 ; dim++)
+            {
+                for(int j=1 ; j<nbSegCoef ; j++)
+                {
+                    M[line              ][startIndex+3*j+dim] =  tmp[j];
+                    M[startIndex+3*j+dim][line              ] = -tmp[j];
+                }
+                M[line                          ][startIndex+3*(nbSegCoef+1)+dim] = -1;
+                M[startIndex+3*(nbSegCoef+1)+dim][line                          ] =  1;
+                line++;
+            }
+        }
+        if(order>2) // Order 2
+        {
+            tmp[0] = 0;
+            tmp[1] = 0;
+            tmp[2] = 1;
+            for(int j=3 ; j<nbSegCoef ; j++) tmp[j] = segLength*tmp[j-1];
+            for(int j=2 ; j<nbSegCoef ; j++) tmp[j] *= j*(j-1);
+
+            for(int dim=0; dim<3 ; dim++)
+            {
+                for(int j=2 ; j<nbSegCoef ; j++)
+                {
+                    M[line              ][startIndex+3*j+dim] =  tmp[j];
+                    M[startIndex+3*j+dim][line              ] = -tmp[j];
+                }
+                M[line                          ][startIndex+3*(nbSegCoef+2)+dim] = -2;
+                M[startIndex+3*(nbSegCoef+2)+dim][line                          ] =  2;
+                line++;
+            }
+        }
+        delete[] tmp;
+        startIndex += 3*nbSegCoef;
+    }
+
+    // Optimization matrix
+
+    line = 0;
+
+    nbSegCoef = m_needle.accessSegment(0).getOrder()+1;
+    int nbSegEq = nbSegCoef;
+    double segLength = m_needle.accessSegment(0).getParametricLength();
+
+    startIndex = 0;
+    int restIndex = 0;
+    double currentRestParam = 0;
+    int layerIndex = -1;
+    double currentDepth = -trueFreeLength;
+    double nextLayerDepth = 0;
+    for(int i=0 ; i<nbSegments ; i++)
+    {
+        nbSegCoef = m_needle.accessSegment(i).getOrder()+1;
+        nbSegEq = nbSegCoef;
+        segLength = m_needle.accessSegment(i).getParametricLength();
+
+        double lseg = 0;
+        double LsegMin = 0;
+        double LsegMax = segLength;
+        while(lseg < segLength)
+        {
+            double stiffnessPerUnitLength = 0;
+            if(layerIndex >= 0) stiffnessPerUnitLength = m_stiffnessPerUnitLength.at(layerIndex);
+
+            if(currentDepth-lseg+segLength > nextLayerDepth && layerIndex+1<(int)m_layerLength.size())
+            {
+                LsegMax = nextLayerDepth-currentDepth;
+            }
+
+            for(int j=0; j<nbSegEq ; j++)
+            {
+                for(int k=0 ; k<nbSegCoef ; k++)
+                {
+                    double c = 0;
+                    // Bending minimization
+                    if(j>1 && k>1) c += EI * (pow(LsegMax,j+k-3)-pow(LsegMin,j+k-3))*j*(j-1)*k*(k-1)/(j+k-3);
+                    //if(i==0) c*=100;
+                    // Tissue deformation minimization
+                    c += stiffnessPerUnitLength * (pow(LsegMax,j+k+1)-pow(LsegMin,j+k+1))/(j+k+1);
+
+                    for(int dim=0; dim<3 ; dim++) M[line+3*j+dim][startIndex+3*k+dim] =  c;
+                }
+            }
+
+            if(layerIndex >= 0)
+            {
+                double l = LsegMin;
+                double factor = m_restDilatationFactor.at(i);
+                while(l < LsegMax)
+                {
+                    usPolynomialCurve3D p(m_tissue.accessPath().accessSegment(restIndex).getSubPolynomialCurve(currentRestParam, ((restIndex==m_tissue.accessPath().getNbSegments()-1)?currentRestParam:0)+ m_tissue.accessPath().accessSegment(restIndex).getParametricLength()));
+                    p.changeCoefficientsToFitBoundaries(l,l+factor*p.getParametricLength());
+                    int nbRestSegCoef = p.getOrder()+1;
+    
+                    double Lmin = l;
+                    double Lmax = 0;
+                    if( (LsegMax-l) < p.getParametricLength() || restIndex==m_tissue.accessPath().getNbSegments()-1)
+                    {
+                        Lmax = LsegMax;
+                        currentRestParam += (LsegMax-l)/factor;
+                        l = LsegMax;
+                    }
+                    else
+                    {
+                        Lmax = l+p.getParametricLength();
+                        l = Lmax;
+                        currentRestParam = 0;
+                        restIndex++;
+                    }
+
+                    vpMatrix coefP = p.getPolynomialCoefficients();
+                    for(int j=0; j<nbSegEq ; j++)
+                    {
+                        for(int k=0 ; k<nbRestSegCoef ; k++)
+                        {
+                            double c = stiffnessPerUnitLength * (pow(Lmax,j+k+1)-pow(Lmin,j+k+1))/(j+k+1);
+                            for(int dim=0 ; dim<3 ; dim++)
+                            {
+                                B[line+3*j+dim] += c * coefP[dim][k];
+                            }
+                        }
+                    }
+                }
+            }
+
+            if( LsegMax < segLength)
+            {
+                layerIndex++;
+                nextLayerDepth += m_layerLength.at(layerIndex);
+                lseg += LsegMax-LsegMin;
+            }
+            else lseg = segLength;
+
+            currentDepth += LsegMax-LsegMin;
+            LsegMin = LsegMax;
+            LsegMax = segLength;
+        }
+
+        line += 3*nbSegEq;
+        startIndex += 3*nbSegCoef;
+    }
+
+    line -= 3*(m_needle.accessLastSegment().getOrder()+1);
+    startIndex -= 3*(m_needle.accessLastSegment().getOrder()+1);
+
+    // Bevel
+    {
+        if(layerIndex<0)
+        {
+            layerIndex = 0;
+            currentDepth = 0;
+        }
+        vpMatrix I;I.eye(3);
+        vpRotationMatrix R(0,0,0);
+
+        vpColVector bevelSegment = m_needleTip->getTipPosition() - m_needleTip->getBasePosition();
+        double bevLength = bevelSegment.euclideanNorm();
+        bevelSegment.normalize();
+        vpColVector p = vpColVector::crossProd(m_needleTip->getBaseAxisZ(), bevelSegment);
+        R.buildFrom(p[0],p[1],p[2]);
+
+        double segLength = m_needle.accessLastSegment().getParametricLength();
+        double LbevMin = 0;
+        if(currentDepth == 0)
+        {
+            double cosTheta = fabs(vpColVector::dotProd(m_tissue.accessSurface().getDirection(),bevelSegment));
+            if(cosTheta > std::numeric_limits<double>::epsilon()) LbevMin = fabs(usGeometryTools::getPointPlaneDistance(m_needleTip->getBasePosition(), m_tissue.accessSurface())) / cosTheta;
+            else LbevMin = bevLength;
+        }
+        double lbev = LbevMin;
+        double LbevMax = bevLength;
+        while(lbev < bevLength)
+        {
+            double stiffnessPerUnitLength = m_stiffnessPerUnitLength.at(layerIndex);
+
+            if(currentDepth-lbev+bevLength > nextLayerDepth && layerIndex+1<(int)m_layerLength.size())
+            {
+                LbevMax = nextLayerDepth-currentDepth;
+            }
+
+            for(int j=0; j<nbSegEq ; j++)
+            {
+                for(int k=0 ; k<nbSegCoef ; k++)
+                {
+                    double c0 = 0;
+                    double c1 = 0;
+                    double c2 = 0;
+                    double c3 = 0;
+                    // Tissue deformation minimization
+                    c0 = pow(segLength,j+k)*(LbevMax-LbevMin);
+                    if(j>0) c1 = j * pow(segLength,j+k-1) * (pow(LbevMax,2)-pow(LbevMin,2)) / 2;
+                    if(k>0) c2 = k * pow(segLength,j+k-1) * (pow(LbevMax,2)-pow(LbevMin,2)) / 2;
+                    if(j+k>1) c3 = (j*k) * pow(segLength,j+k-2) * (pow(LbevMax,3)-pow(LbevMin,3)) / 3;
+
+                    vpMatrix coefMat = stiffnessPerUnitLength * (c0*I + c1*R.t() + c2*R + c3*R.t()*R);
+
+                    for(int dimj=0; dimj<3 ; dimj++)for(int dimk=0; dimk<3 ; dimk++)  M[line+3*j+dimj][startIndex+3*k+dimk] = coefMat[dimj][dimk];
+                }
+            }
+
+            double l = LbevMin;
+            while(l < LbevMax)
+            {
+                usPolynomialCurve3D p(m_tissue.accessPath().accessSegment(restIndex).getSubPolynomialCurve(currentRestParam, ((restIndex==m_tissue.accessPath().getNbSegments()-1)?currentRestParam:0)+ m_tissue.accessPath().accessSegment(restIndex).getParametricLength()));
+                p.changeCoefficientsToFitBoundaries(l,l+p.getParametricLength());
+                int nbRestSegCoef = p.getOrder()+1;
+
+                double Lmin = l;
+                double Lmax = 0;
+                if( (LbevMax-l) < p.getParametricLength() || restIndex==m_tissue.accessPath().getNbSegments()-1)
+                {
+                    Lmax = LbevMax;
+                    currentRestParam += LbevMax-l;
+                    l = LbevMax;
+                }
+                else
+                {
+                    Lmax = l+p.getParametricLength();
+                    l = Lmax;
+                    currentRestParam = 0;
+                    restIndex++;
+                }
+
+                vpMatrix coefP = p.getPolynomialCoefficients();
+                for(int j=0; j<nbSegEq ; j++)
+                {
+                    vpColVector b0(3,0);
+                    vpColVector b1(3,0);
+                    for(int k=0 ; k<nbRestSegCoef ; k++)
+                    {
+                        b0 += pow(segLength,j)*(pow(Lmax,k+1)-pow(Lmin,k+1))/(k+1) * coefP.getCol(k);
+                    }
+                    if(j>0) for(int k=0 ; k<nbRestSegCoef ; k++)
+                    {
+                        b1 += j * pow(segLength,j-1)*(pow(Lmax,k+2)-pow(Lmin,k+2))/(k+2) * coefP.getCol(k);
+                    }
+                    vpColVector coef = stiffnessPerUnitLength * (b0 + R.t()*b1);
+
+                    for(int dim=0 ; dim<3 ; dim++) B[line+3*j+dim] += coef[dim];
+                }
+            }
+
+            if( LbevMax < bevLength)
+            {
+                layerIndex++;
+                nextLayerDepth += m_layerLength.at(layerIndex);
+                lbev += LbevMax-LbevMin;
+            }
+            else lbev = bevLength;
+
+            currentDepth += LbevMax-LbevMin;
+            LbevMin = LbevMax;
+            LbevMax = bevLength;
+        }
+    }
+
+    A = M.inverseByLU() * B;
+
+    // Update coefficients
+    startIndex = 0;
+    for(int i=0 ; i<nbSegments ; i++)
+    {
+        int order = m_needle.accessSegment(i).getOrder();
+        vpMatrix m(3,order+1);
+        for(int j=0 ; j<order+1 ; j++)
+        {
+            for(int dim=0 ; dim<3 ; dim++)
+            {
+                m[dim][j] = A[startIndex+3*j+dim];
+            }
+        }
+        m_needle.accessSegment(i).setPolynomialCoefficients(m);
+        startIndex += 3*(order+1);
+    }
+}
+
 void usNeedleInsertionModelRayleighRitzSpline::fitLength()
 {
     double l=0;
@@ -2017,6 +2469,7 @@ void usNeedleInsertionModelRayleighRitzSpline::updateTipPose()
 
 void usNeedleInsertionModelRayleighRitzSpline::solveSegmentsParameters()
 {
+#ifdef VISP_HAVE_EIGEN3
     switch(m_solvingMethod)
     {
         case SolvingMethod::Classic:
@@ -2029,6 +2482,9 @@ void usNeedleInsertionModelRayleighRitzSpline::solveSegmentsParameters()
             this->solveSegmentsParametersSparseEigen();
             break;
     }
+#else
+    this->solveSegmentsParametersDense();
+#endif
 }
 
 bool usNeedleInsertionModelRayleighRitzSpline::updateState()

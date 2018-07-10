@@ -141,6 +141,7 @@ void usBSpline3D::defineFromPoints(const std::vector<vpColVector> &points, const
     if(lengths.size() != nbSeg) throw vpException(vpException::dimensionError, "usBSpline3D::defineFromPoints: mismathcing number of segments and points");
        
 #ifdef VISP_HAVE_EIGEN3
+    
     int nbSegCoef = order+1;
     int nbCoef = nbSegCoef*nbSeg;
     
@@ -288,8 +289,146 @@ void usBSpline3D::defineFromPoints(const std::vector<vpColVector> &points, const
         m_spline.push_back(seg);
         startIndex += nbSegCoef;
     }
+    
 #else
-    throw vpException(vpException::functionNotImplementedError, "usBSpline3D::defineFromPoints: not implemented without Eigen3");
+    
+    int nbSegCoef = order+1;
+    int nbCoef = nbSegCoef*nbSeg;
+
+    int nbHardConstraints = (nbSeg+1) + (nbSeg-1);
+    if(order>1) nbHardConstraints += (nbSeg-1);
+    if(order>2) nbHardConstraints += (nbSeg-1);
+
+    vpMatrix M(nbHardConstraints+nbCoef,nbHardConstraints+nbCoef,0);
+    
+    vpMatrix A(nbHardConstraints+nbCoef,3, 0);
+    vpMatrix B(nbHardConstraints+nbCoef,3, 0);
+
+    //Hard constraints
+
+    // Start conditions
+    int line = nbCoef;
+
+    // Points
+    int startIndex = 0;
+    for(unsigned int i=0 ; i<nbSeg ; i++)
+    {
+        M[line      ][startIndex] =  1;
+        M[startIndex][line      ] = -1;
+        for(int dim=0 ; dim<3 ; dim++) B[line][dim] = points.at(i)[dim];
+        line++;
+
+        double segLength = lengths.at(i);
+        double *tmp = new double[nbSegCoef];
+
+        tmp[0] = 1;
+        for(int j=1 ; j<nbSegCoef ; j++) tmp[j] = segLength*tmp[j-1];
+
+        for(int j=0 ; j<nbSegCoef ; j++)
+        {
+            M[line        ][startIndex+j] =  tmp[j];
+            M[startIndex+j][line        ] = -tmp[j];
+        }
+        for(int dim=0 ; dim<3 ; dim++) B[line][dim] = points.at(i+1)[dim];
+        line++;
+
+        delete[] tmp;
+        startIndex += nbSegCoef;
+    }
+
+    // Continuity
+
+    startIndex = 0;
+    for(unsigned int i=0 ; i<nbSeg-1 ; i++)
+    {
+        double segLength = lengths.at(i);
+        double *tmp = new double[nbSegCoef];
+
+        if(order>1) // Order 1
+        {
+            tmp[0] = 0;
+            tmp[1] = 1;
+            for(int j=2 ; j<nbSegCoef ; j++) tmp[j] = segLength*tmp[j-1];
+            for(int j=1 ; j<nbSegCoef ; j++) tmp[j] *= j;
+
+            for(int j=1 ; j<nbSegCoef ; j++)
+            {
+                M[line        ][startIndex+j] =  tmp[j];
+                M[startIndex+j][line        ] = -tmp[j];
+            }
+            M[line                  ][startIndex+nbSegCoef+1] = -1;
+            M[startIndex+nbSegCoef+1][line                  ] =  1;
+            line++;
+        }
+        if(order>2) // Order 2
+        {
+            tmp[0] = 0;
+            tmp[1] = 0;
+            tmp[2] = 1;
+            for(int j=3 ; j<nbSegCoef ; j++) tmp[j] = segLength*tmp[j-1];
+            for(int j=2 ; j<nbSegCoef ; j++) tmp[j] *= j*(j-1);
+
+            for(int j=2 ; j<nbSegCoef ; j++)
+            {
+                M[line        ][startIndex+j] =  tmp[j];
+                M[startIndex+j][line        ] = -tmp[j];
+            }
+            M[line                  ][startIndex+nbSegCoef+2] = -2;
+            M[startIndex+nbSegCoef+2][line                  ] =  2;
+            line++;
+        }
+        delete[] tmp;
+        startIndex += nbSegCoef;
+    }
+
+    // Optimization matrix
+
+    line = 0;
+    startIndex = 0;
+    for(unsigned int i=0 ; i<nbSeg ; i++)
+    {
+        double segLength = lengths.at(i);
+
+        for(int j=2; j<nbSegCoef ; j++)
+        {
+            for(int k=2 ; k<nbSegCoef ; k++)
+            {
+                double c = pow(segLength,j+k-3)*j*(j-1)*k*(k-1)/(j+k-3);
+                M[line+j][startIndex+k] = c;
+            }
+        }
+        line += nbSegCoef;
+        startIndex += nbSegCoef;
+    }
+
+    try
+    {
+        A = M.inverseByLU() * B;
+    }
+    catch(std::exception &e)
+    {
+        throw vpException(vpException::fatalError,"usBSpline3D::defineFromPoints: %s\n", e.what());
+    }
+
+    m_spline.clear();
+    startIndex = 0;
+    for(unsigned int i=0 ; i<nbSeg ; i++)
+    {
+        usPolynomialCurve3D seg(order);
+        vpMatrix m(3,nbSegCoef);
+        for(int j=0 ; j<nbSegCoef ; j++)
+        {
+            for(int dim=0 ; dim<3 ; dim++)
+            {
+                m[dim][j] = A[startIndex+j][dim];
+            }
+        }
+        seg.setPolynomialCoefficients(m);
+        seg.setParametricLength(lengths.at(i));
+        //seg.setMaxCurvilinearCoordinate(seg.getLength());
+        m_spline.push_back(seg);
+        startIndex += nbSegCoef;
+    }
 #endif
 }
 

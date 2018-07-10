@@ -42,7 +42,7 @@ vp_glob_module_sources()
 vp_module_include_directories(${opt_incs})
 vp_create_module(${opt_libs})
 
-vp_add_tests(DEPENDS_ON visp_ustk_core)
+vp_add_tests(DEPENDS_ON visp_ustk_core visp_gui)
 
 vp_add_config_file("cmake/templates/usConfig.h.in")
 
