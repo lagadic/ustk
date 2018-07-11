@@ -11,7 +11,7 @@ usNetworkServer::usNetworkServer(QObject *parent) : QObject(parent)
   // porta settings
   char *portaFirmware = USTK_PORTA_FIRMWARE_PATH;
   char *portaSettings = USTK_PORTA_SETTINGS_PATH;
-  char *portaLicense = USTK_PORTA_LICENCE_PATH;
+  char *portaLicense = USTK_PORTA_LICENSE_PATH;
   char *portaLut = "";
 
   int usm = 3; // us module version 3 (MDP/TOUCH)
