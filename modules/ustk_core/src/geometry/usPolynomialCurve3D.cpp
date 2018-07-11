@@ -249,23 +249,6 @@ void usPolynomialCurve3D::setPolynomialCoefficients(const vpMatrix &polynomialCo
     
     m_order = polynomialCoefficients.getCols()-1;
     m_polynomialCoefficients = polynomialCoefficients;
-  
-   /*vpMatrix coords(m_order, m_order);
-  for(unsigned int j = 0; j < m_order; ++j) {
-    coords[0][j] = 1.0;
-    double t = static_cast<double>(j) / static_cast<double>(m_order - 1);
-    for (unsigned int i = 1; i < m_order; ++i)
-      coords[i][j] = coords[i - 1][j] * t;
-  }
-  m_controlPoints = m_polynomialCoefficients * coords;
-  coords = vpMatrix(m_order, m_nRenderingLines + 1);
-  for (unsigned int j = 0; j < m_nRenderingLines + 1; ++j) {
-    coords[0][j] = 1.0;
-    double t = static_cast<double>(j) / static_cast<double>(m_nRenderingLines);
-    for (unsigned int i = 1; i < m_order; ++i)
-      coords[i][j] = coords[i - 1][j] * t;
-  }
-  m_renderingPoints = m_polynomialCoefficients * coords;*/
 }
 
 vpMatrix usPolynomialCurve3D::getPolynomialCoefficients() const
@@ -535,16 +518,22 @@ void usPolynomialCurve3D::defineFromPointsAuto(const std::vector<vpColVector> &p
     std::sort(index.begin(), index.end(), [&t](int i, int j){return t[i] < t[j];});
     
     std::vector<vpColVector> newPoints(nbPoints);
-    std::vector<double> param(nbPoints);
+    std::vector<double> interLength(nbPoints-1);
     newPoints.front() = points.at(index[0]);
-    param.front() = 0;
+    double oldLength = this->getParametricLength();
+    double newLength = 0;
     for(unsigned int i=1 ; i<nbPoints; i++)
     {
         newPoints.at(i) = points.at(index[i]);
-        param.at(i) = param.at(i-1) + sqrt(vpMath::sqr(newPoints.at(i)[0]-newPoints.at(i-1)[0]) + vpMath::sqr(newPoints.at(i)[1]-newPoints.at(i-1)[1]) + + vpMath::sqr(newPoints.at(i)[2]-newPoints.at(i-1)[2]));
+        interLength.at(i-1) = sqrt(vpMath::sqr(newPoints.at(i)[0]-newPoints.at(i-1)[0]) + vpMath::sqr(newPoints.at(i)[1]-newPoints.at(i-1)[1]) + + vpMath::sqr(newPoints.at(i)[2]-newPoints.at(i-1)[2]));
+        newLength += interLength.at(i-1);
     }
+    double scaling = oldLength / newLength;
+    std::vector<double> param(nbPoints);
+    param.front() = m_startParameter;
+    for(unsigned int i=1 ; i<nbPoints; i++) param.at(i) = param.at(i-1) + scaling * interLength.at(i-1);
 
-    return this->defineFromPoints(newPoints, param, order);
+    this->defineFromPoints(newPoints, param, order);
 }
 
 void usPolynomialCurve3D::defineFromPointsAuto(const vpMatrix &points, const vpColVector &direction, unsigned int order)
@@ -570,16 +559,22 @@ void usPolynomialCurve3D::defineFromPointsAuto(const vpMatrix &points, const vpC
     std::sort(index.begin(), index.end(), [&t](int i, int j){return t[i] < t[j];});
     
     vpMatrix newPoints(3, nbPoints);
-    vpColVector param(nbPoints);
+    vpColVector interLength(nbPoints-1);
     for(unsigned int j=0 ; j<3; j++) newPoints[j][0] = points[j][index[0]];
-    param[0] = 0;
+    double oldLength = this->getParametricLength();
+    double newLength = 0;
     for(unsigned int i=1 ; i<nbPoints; i++)
     {
         for(unsigned int j=0 ; j<3; j++) newPoints[j][i] = points[j][index[i]];
-        param[i] = param[i-1] + sqrt(vpMath::sqr(newPoints[0][i]-newPoints[0][i-1]) + vpMath::sqr(newPoints[1][i]-newPoints[1][i-1]) + vpMath::sqr(newPoints[2][i]-newPoints[2][i-1]));
+        interLength[i-1] = sqrt(vpMath::sqr(newPoints[0][i]-newPoints[0][i-1]) + vpMath::sqr(newPoints[1][i]-newPoints[1][i-1]) + vpMath::sqr(newPoints[2][i]-newPoints[2][i-1]));
+        newLength += interLength[i-1];
     }
+    double scaling = oldLength / newLength;
+    vpColVector param(nbPoints);
+    param[0] = m_startParameter;
+    for(unsigned int i=1 ; i<nbPoints; i++) param[i] = param[i-1] + scaling * interLength[i-1];
 
-    return this->defineFromPoints(newPoints, param, order);
+    this->defineFromPoints(newPoints, param, order);
 }
 
 void usPolynomialCurve3D::defineFromWeightedPoints(const std::vector<vpColVector> &points, const std::vector<double> &param, const std::vector<double> &weights, unsigned int order)
@@ -730,16 +725,22 @@ void usPolynomialCurve3D::defineFromWeightedPointsAuto(const std::vector<vpColVe
     
     std::vector<vpColVector> newPoints(nbPoints);
     std::vector<double> newWeights(nbPoints);
-    std::vector<double> param(nbPoints);
+    std::vector<double> interLength(nbPoints-1);
     newPoints.front() = points.at(index[0]);
     newWeights.front() = weights.at(index[0]);
-    param.front() = 0;
+    double oldLength = this->getParametricLength();
+    double newLength = 0;
     for(unsigned int i=1 ; i<nbPoints; i++)
     {
         newPoints.at(i) = points.at(index[i]);
         newWeights.at(i) = weights.at(index[i]);
-        param.at(i) = param.at(i-1) + sqrt(vpMath::sqr(newPoints.at(i)[0]-newPoints.at(i-1)[0]) + vpMath::sqr(newPoints.at(i)[1]-newPoints.at(i-1)[1]) + + vpMath::sqr(newPoints.at(i)[2]-newPoints.at(i-1)[2]));
+        interLength.at(i-1) = sqrt(vpMath::sqr(newPoints.at(i)[0]-newPoints.at(i-1)[0]) + vpMath::sqr(newPoints.at(i)[1]-newPoints.at(i-1)[1]) + vpMath::sqr(newPoints.at(i)[2]-newPoints.at(i-1)[2]));
+        newLength += interLength.at(i-1);
     }
+    double scaling = oldLength / newLength;
+    std::vector<double> param(nbPoints);
+    param.front() = m_startParameter;
+    for(unsigned int i=1 ; i<nbPoints; i++) param.at(i) = param.at(i-1) + scaling * interLength.at(i-1);
 
     this->defineFromWeightedPoints(newPoints, param, newWeights, order);
 }
@@ -782,19 +783,25 @@ void usPolynomialCurve3D::defineFromWeightedPointsAuto(const vpMatrix &points, c
     
     vpMatrix newPoints(3, nbPoints);
     vpColVector newWeights(nbPoints);
-    vpColVector param(nbPoints);
+    vpColVector interLength(nbPoints-1);
     for(unsigned int j=0 ; j<3; j++) newPoints[j][0] = points[j][index[0]];
     newWeights[0] = weights[index[0]];
-    param[0] = 0;
+    double oldLength = this->getParametricLength();
+    double newLength = 0;
     for(unsigned int i=1 ; i<nbPoints; i++)
     {
         for(unsigned int j=0 ; j<3; j++) newPoints[j][i] = points[j][index[i]];
         newWeights[i] = weights[index[i]];
-        param[i] = param[i-1] + sqrt(vpMath::sqr(newPoints[0][i]-newPoints[0][i-1]) + vpMath::sqr(newPoints[1][i]-newPoints[1][i-1]) + vpMath::sqr(newPoints[2][i]-newPoints[2][i-1]));
+        interLength[i-1] = sqrt(vpMath::sqr(newPoints[0][i]-newPoints[0][i-1]) + vpMath::sqr(newPoints[1][i]-newPoints[1][i-1]) + vpMath::sqr(newPoints[2][i]-newPoints[2][i-1]));
+        newLength += interLength[i-1];
     }
+    double scaling = oldLength / newLength;
+    vpColVector param(nbPoints);
+    param[0] = m_startParameter;
+    for(unsigned int i=1 ; i<nbPoints; i++) param[i] = param[i-1] + scaling * interLength[i-1];
 
     this->defineFromWeightedPoints(newPoints, param, newWeights, order);
-}
+}   
 
 void usPolynomialCurve3D::defineFromWeightedPointsAuto(const std::vector<vpColVector> &points, const std::vector<double> &weights, const vpColVector &direction, unsigned int order)
 {
@@ -821,18 +828,24 @@ void usPolynomialCurve3D::defineFromWeightedPointsAuto(const std::vector<vpColVe
     
     std::vector<vpColVector> newPoints(nbPoints);
     std::vector<double> newWeights(nbPoints);
-    std::vector<double> param(nbPoints);
+    std::vector<double> interLength(nbPoints-1);
     newPoints.front() = points.at(index[0]);
     newWeights.front() = weights.at(index[0]);
-    param.front() = 0;
+    double oldLength = this->getParametricLength();
+    double newLength = 0;
     for(unsigned int i=1 ; i<nbPoints; i++)
     {
         newPoints.at(i) = points.at(index[i]);
         newWeights.at(i) = weights.at(index[i]);
-        param.at(i) = param.at(i-1) + sqrt(vpMath::sqr(newPoints.at(i)[0]-newPoints.at(i-1)[0]) + vpMath::sqr(newPoints.at(i)[1]-newPoints.at(i-1)[1]) + + vpMath::sqr(newPoints.at(i)[2]-newPoints.at(i-1)[2]));
+        interLength.at(i-1) = sqrt(vpMath::sqr(newPoints.at(i)[0]-newPoints.at(i-1)[0]) + vpMath::sqr(newPoints.at(i)[1]-newPoints.at(i-1)[1]) + vpMath::sqr(newPoints.at(i)[2]-newPoints.at(i-1)[2]));
+        newLength += interLength.at(i-1);
     }
+    double scaling = oldLength / newLength;
+    std::vector<double> param(nbPoints);
+    param.front() = m_startParameter;
+    for(unsigned int i=1 ; i<nbPoints; i++) param.at(i) = param.at(i-1) + scaling * interLength.at(i-1);
 
-    return this->defineFromWeightedPoints(newPoints, param, newWeights, order);
+    this->defineFromWeightedPoints(newPoints, param, newWeights, order);
 }
 
 void usPolynomialCurve3D::defineFromWeightedPointsAuto(const vpMatrix &points, const vpColVector &weights, const vpColVector &direction, unsigned int order)
@@ -860,18 +873,24 @@ void usPolynomialCurve3D::defineFromWeightedPointsAuto(const vpMatrix &points, c
     
     vpMatrix newPoints(3, nbPoints);
     vpColVector newWeights(nbPoints);
-    vpColVector param(nbPoints);
+    vpColVector interLength(nbPoints-1);
     for(unsigned int j=0 ; j<3; j++) newPoints[j][0] = points[j][index[0]];
     newWeights[0] = weights[index[0]];
-    param[0] = 0;
+    double oldLength = this->getParametricLength();
+    double newLength = 0;
     for(unsigned int i=1 ; i<nbPoints; i++)
     {
         for(unsigned int j=0 ; j<3; j++) newPoints[j][i] = points[j][index[i]];
         newWeights[i] = weights[index[i]];
-        param[i] = param[i-1] + sqrt(vpMath::sqr(newPoints[0][i]-newPoints[0][i-1]) + vpMath::sqr(newPoints[1][i]-newPoints[1][i-1]) + vpMath::sqr(newPoints[2][i]-newPoints[2][i-1]));
+        interLength[i-1] = sqrt(vpMath::sqr(newPoints[0][i]-newPoints[0][i-1]) + vpMath::sqr(newPoints[1][i]-newPoints[1][i-1]) + vpMath::sqr(newPoints[2][i]-newPoints[2][i-1]));
+        newLength += interLength[i-1];
     }
+    double scaling = oldLength / newLength;
+    vpColVector param(nbPoints);
+    param[0] = m_startParameter;
+    for(unsigned int i=1 ; i<nbPoints; i++) param[i] = param[i-1] + scaling * interLength[i-1];
 
-    return this->defineFromWeightedPoints(newPoints, param, newWeights, order);
+    this->defineFromWeightedPoints(newPoints, param, newWeights, order);
 }
 
 double usPolynomialCurve3D::getCurvature(double param) const
@@ -1024,8 +1043,11 @@ double usPolynomialCurve3D::getMeanAxisDeviation(int nbCountSeg) const
 
 void usPolynomialCurve3D::setControlPoints(const vpMatrix &controlPoints)
 {
+    if(controlPoints.getRows() != 3) throw vpException(vpException::dimensionError, "usPolynomialCurve3D::setControlPoints(const vpMatrix&): invalid points dimension, should be 3");
+    if(controlPoints.getCols() < 2) throw vpException(vpException::dimensionError, "usPolynomialCurve3D::setControlPoints(const vpMatrix&): invalid number of points, should greater than 1");
+    
     vpColVector direction = controlPoints.getCol(controlPoints.getCols()-1) - controlPoints.getCol(0);
-    this->defineFromPointsAuto(controlPoints, direction, controlPoints.getCols());
+    this->defineFromPointsAuto(controlPoints, direction, controlPoints.getCols()-1);
 }
 
 void usPolynomialCurve3D::setControlPoints(double **controlPoints)
