@@ -4,7 +4,6 @@ usNetworkServer::usNetworkServer(QObject *parent) : QObject(parent)
 {
 
   // init porta hardware
-
   // creating porta object
   m_porta = new porta;
   std::cout << "porta instance created" << std::endl;
@@ -41,7 +40,10 @@ usNetworkServer::usNetworkServer(QObject *parent) : QObject(parent)
     std::cout << "TCP server start failure" << tcpServer.errorString().toStdString() << std::endl;
   }
 
-  connect(this, SIGNAL(writeOnSocketSignal()), this, SLOT(writeOnSocketSlot()));
+  usingProbeConfigFile = false;
+  verboseMode = false;
+
+  connect(this, SIGNAL(writeOnSocketSignal()), this, SLOT(writeOnSocketSlot()));  
 }
 
 usNetworkServer::~usNetworkServer() {}
@@ -202,7 +204,7 @@ int portaCallback(void *param, unsigned char *addr, int blockIndex, int)
 bool portaCallback(void *param, unsigned char *addr, int blockIndex, int)
 #endif
 {
-  std::cout << "new frame acquired" << std::endl;
+  //std::cout << "new frame acquired" << std::endl;
   usNetworkServer *server = (usNetworkServer *)param;
   porta *portaInstance = server->getPorta();
   QTcpSocket *socket = server->getSocket();
@@ -220,7 +222,7 @@ bool portaCallback(void *param, unsigned char *addr, int blockIndex, int)
     server->motorOffsetSkipped = true;
   }
 
-  std::cout << "frame count = " << server->imageHeader.frameCount << std::endl;
+  //std::cout << "frame count = " << server->imageHeader.frameCount << std::endl;
   unsigned char *beginImage;
   // filling image header
 
@@ -239,7 +241,7 @@ bool portaCallback(void *param, unsigned char *addr, int blockIndex, int)
     // bi-plande case
     if (portaInstance->getCurrentMode() == BiplaneMode) {
       portaInstance->getBwImage(1, server->secondBiplaneImage, false);
-      std::cout << "getting 2nd image from bi plane" << std::endl;
+      //std::cout << "getting 2nd image from bi plane" << std::endl;
     }
     server->imageHeader.pixelHeight = my / 1000000.0;
     server->imageHeader.pixelWidth = mx / 1000000.0;
@@ -779,16 +781,37 @@ porta *usNetworkServer::getPorta() { return m_porta; }
 QString usNetworkServer::getProbeSettingsFromId(int probeId)
 {
   QString settingName;
-  if (probeId == 10) {
-    settingName = QString("FAST-General (C5-2 60mm).xml");
-  } else if (probeId == 12) {
-    settingName = QString("GEN-General (BPL9-5 55mm).xml");
-  } else if (probeId == 13) {
-    settingName = QString("GEN-General (BPC8-4 10mm).xml");
-  } else if (probeId == 14) {
-    settingName = QString("GEN-General (PAXY).xml");
-  } else if (probeId == 15) {
-    settingName = QString("GEN-General (4DC7-3 40mm).xml");
+
+  // first we test if a config file is provided
+  if(usingProbeConfigFile){
+	bool probeContainedInFile(false);
+	for(unsigned int i=0; i < probeConfigFileNames.size(); i++) {
+      if(probeConfigFileNames.at(i).first == probeId){
+		settingName = QString::fromStdString(probeConfigFileNames.at(i).second);
+		probeContainedInFile = true;
+	  }
+	}
+	if(!probeContainedInFile) {
+      throw vpException(vpException::fatalError, std::string("Cannot find current probe id in \
+		  config file provided with --probeSettingsFile option."));
+	}
+  }
+  else {
+    if (probeId == 10) {
+      settingName = QString("FAST-General (C5-2 60mm).xml");
+    } else if (probeId == 12) {
+      settingName = QString("GEN-General (BPL9-5 55mm).xml");
+    } else if (probeId == 13) {
+      settingName = QString("GEN-General (BPC8-4 10mm).xml");
+    } else if (probeId == 14) {
+      settingName = QString("GEN-General (PAXY).xml");
+    } else if (probeId == 15) {
+      settingName = QString("GEN-General (4DC7-3 40mm).xml");
+    }
+    else{
+      throw vpException(vpException::fatalError, std::string("Cannot compute current probe settings filename.\
+		  Try to add a probe config file using --probeSettingsFile option at server startup."));
+    }
   }
   return settingName;
 }
@@ -962,8 +985,11 @@ void usNetworkServer::writeOnSocketFromOtherThread() { emit(writeOnSocketSignal(
 void usNetworkServer::writeOnSocketSlot()
 {
   QByteArray block;
-  std::cout << "writing header on socket" << std::endl;
-  std::cout << "image number : " << imageHeader.frameCount << std::endl;
+
+  if(verboseMode) {
+    std::cout << "writing header on socket" << std::endl;
+    std::cout << "image number : " << imageHeader.frameCount << std::endl;
+  }
   QDataStream out(&block, QIODevice::WriteOnly);
   out.setVersion(QDataStream::Qt_5_0);
   out << imageHeader.headerId;
@@ -987,8 +1013,10 @@ void usNetworkServer::writeOnSocketSlot()
   out << imageHeader.framesPerVolume;
   out << imageHeader.motorRadius;
   out << imageHeader.motorType;
-  std::cout << "writing image on socket" << std::endl;
-
+  
+  if(verboseMode) {
+	std::cout << "writing image on socket" << std::endl;
+  }
   if (imageHeader.imageType == 1) { // post scan
     out.writeRawData((char *)postScanImage, imageHeader.dataLength);
   } else if (imageHeader.imageType == 0) { // pre-scan
@@ -1005,12 +1033,13 @@ void usNetworkServer::writeOnSocketSlot()
     dataWrittenSize = connectionSoc->write(block);
   }
 
-  std::cout << "written data size = " << dataWrittenSize << std::endl;
-
+  if(verboseMode) {
+    std::cout << "written data size = " << dataWrittenSize << std::endl;
+  }
   // for bi-plane we send a second image
   if (biPlane && imageHeader.imageType == 1) {
     QByteArray block;
-    std::cout << "writing 2nd header" << std::endl;
+    //std::cout << "writing 2nd header" << std::endl;
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_5_0);
     out << imageHeader.headerId;
@@ -1034,10 +1063,58 @@ void usNetworkServer::writeOnSocketSlot()
     out << imageHeader.framesPerVolume;
     out << imageHeader.motorRadius;
     out << imageHeader.motorType;
-    std::cout << "writing 2nd image" << std::endl;
+    
+  if(verboseMode) {
+	std::cout << "writing 2nd image" << std::endl;
+  }
     out.writeRawData((char *)secondBiplaneImage, imageHeader.dataLength);
     imageHeader.frameCount++;
 
     connectionSoc->write(block);
   }
+}
+
+void usNetworkServer::quitApp() {
+  connectionAboutToClose();
+  qApp->exit();
+}
+
+void usNetworkServer::useProbeConfigFile(std::string configFileName) {
+  usingProbeConfigFile = true;
+
+  // opens config file provided
+  std::ifstream file;
+  if (!vpIoTools::checkFilename(configFileName)) {
+    std::cout << "file does not exist\n";
+  }
+
+  file.open(configFileName.c_str(), std::ifstream::in);
+  if (!file.good()) {
+    throw vpException(vpException::ioError, std::string("Error opening probe config file."));
+  }
+
+  // fills the vector of probes id and associated config filenames
+  int probeId;
+  std::string keyNum, keyFileName;
+  std::string::iterator it;
+  while (file.good()) {
+    std::getline(file, keyNum, ' ');
+    it = keyNum.end();
+    keyNum.erase(std::remove(keyNum.begin(), keyNum.end(), ' '), it);
+
+	probeId = stoi(keyNum);
+    std::getline(file, keyFileName, '\n');
+
+	std::pair<int, std::string> newElement;
+	newElement.first = probeId;
+    newElement.second = keyFileName;
+
+	probeConfigFileNames.push_back(newElement);
+  }
+  file.close();
+}
+
+
+void usNetworkServer::setVerbose() {
+  verboseMode = true;
 }

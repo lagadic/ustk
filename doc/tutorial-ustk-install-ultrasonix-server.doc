@@ -90,6 +90,25 @@ On Ubuntu, you can run clients that are already provided as tutorials in:
 
 Other examples are provided in the same folder.
 
+\subsection ustk_server_run_probe_settings Use custom probes
+In our lab, ustk server application is used with 5 probes only (C5-2, BPL9-5, BPC8-4, bi-plane, and 4DC7-3). So default imaging parameters are set from xml settings files provided by ultrasonix in our server application.
+If you want to use some other probes, you can prepare a file to link probe ids with ultrasonix imaging pararameters config filenames. Here is an example of config file content:
+\code
+10 FAST-General (C5-2 60mm).xml
+12 GEN-General (BPL9-5 55mm).xml
+13 GEN-General (BPC8-4 10mm).xml
+14 GEN-General (PAXY).xml
+15 GEN-General (4DC7-3 40mm).xml
+\endcode
+This is the default configuration of the application if no config file is provided.
+
+Once your file (let's call it probeParameters.txt) is created, put it near ustk-ultrasonixServer binary. Then in a console, go into ustk-ultrasonixServer binary folder and run:
+\code
+ustk-ultrasonix-server.exe --probeSettingsFile probeParameters.txt
+\endcode
+
+This will take into account your imaging parameters file corresponding to the probe plugged when you initialize the server application.
+
 \section ustk_server_next_tutorial Next tutorial
 Once the server application is running on your Ultrasonix station, you can then go to the next \ref tutorial-ustk-grabber-ultrasonix.
 
