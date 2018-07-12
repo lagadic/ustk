@@ -76,11 +76,11 @@ public:
     //! Data saving
 
         //! Text
-        friend std::ostream &operator<<(std::ostream &s, const usTissueModelPolynomial &tissue);
-        friend std::istream &operator>>(std::istream &s, usTissueModelPolynomial &tissue);
+        friend VISP_EXPORT std::ostream &operator<<(std::ostream &s, const usTissueModelPolynomial &tissue);
+        friend VISP_EXPORT std::istream &operator>>(std::istream &s, usTissueModelPolynomial &tissue);
         //! Binary
-        friend std::ostream &operator<<=(std::ostream &s, const usTissueModelPolynomial &tissue);
-        friend std::istream &operator>>=(std::istream &s, usTissueModelPolynomial &tissue);
+        friend VISP_EXPORT std::ostream &operator<<=(std::ostream &s, const usTissueModelPolynomial &tissue);
+        friend VISP_EXPORT std::istream &operator>>=(std::istream &s, usTissueModelPolynomial &tissue);
 };
 
 VISP_EXPORT std::ostream &operator<<(std::ostream &s, const usTissueModelPolynomial &tissue);

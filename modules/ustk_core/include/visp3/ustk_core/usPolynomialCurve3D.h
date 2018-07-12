@@ -393,7 +393,7 @@ public:
    */
   void scale(double s);
   
-  friend std::ostream &operator<<(std::ostream &s, const usPolynomialCurve3D &spg);
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &s, const usPolynomialCurve3D &spg);
   
 
 protected:

@@ -83,11 +83,11 @@ public:
     //! Data saving
 
         //! Text
-        friend std::ostream &operator<<(std::ostream &s, const usVirtualSpring &spg);
-        friend std::istream &operator>>(std::istream &s, usVirtualSpring &spg);
+        friend VISP_EXPORT std::ostream &operator<<(std::ostream &s, const usVirtualSpring &spg);
+        friend VISP_EXPORT std::istream &operator>>(std::istream &s, usVirtualSpring &spg);
         //! Binary
-        friend std::ostream &operator<<=(std::ostream &s, const usVirtualSpring &spg);
-        friend std::istream &operator>>=(std::istream &s, usVirtualSpring &spg);
+        friend VISP_EXPORT std::ostream &operator<<=(std::ostream &s, const usVirtualSpring &spg);
+        friend VISP_EXPORT std::istream &operator>>=(std::istream &s, usVirtualSpring &spg);
 };
 
 VISP_EXPORT std::ostream &operator<<(std::ostream &s, const usVirtualSpring &spg);

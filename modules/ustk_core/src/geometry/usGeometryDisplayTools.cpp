@@ -79,8 +79,8 @@ void displayFrame(const vpImage<ImageDataType> &I, const vpHomogeneousMatrix &im
         vpDisplay::displayArrow(I, origin_y, origin_x, origin_y+20*imageMframe[1][j], origin_x+20*imageMframe[0][j], color[j], 5, 5, 1);
     }
 }
-template void displayFrame<unsigned char>(const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double);
-template void displayFrame<vpRGBa>(const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double);
+template VISP_EXPORT void displayFrame<unsigned char>(const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double);
+template VISP_EXPORT void displayFrame<vpRGBa>(const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double);
 
 //! Display usOrientedPlane3D
 
@@ -102,8 +102,8 @@ void display(const usOrientedPlane3D &plane, const vpImage<ImageDataType> &I, co
     vpDisplay::displayCross(I, y, x, 7, color);
     vpDisplay::displayLine(I, y-dx, x+dy, y+dx, x-dy , color);
 }
-template void display(const usOrientedPlane3D&, const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double, const vpColor&);
-template void display(const usOrientedPlane3D&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double, const vpColor&);
+template VISP_EXPORT void display(const usOrientedPlane3D&, const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double, const vpColor&);
+template VISP_EXPORT void display(const usOrientedPlane3D&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double, const vpColor&);
 
 //! Display usPolynomialCurve2D
 
@@ -134,8 +134,8 @@ void display(const usPolynomialCurve2D &curve, const vpImage<ImageDataType> &I, 
         vpDisplay::displayLine(I, y0,x0, y1,x1, color);
     }
 }
-template void display<unsigned char>(const usPolynomialCurve2D&, const vpImage<unsigned char>&, double, double, const vpColor&, int);
-template void display<vpRGBa>(const usPolynomialCurve2D&, const vpImage<vpRGBa>&, double, double, const vpColor&, int);
+template VISP_EXPORT void display<unsigned char>(const usPolynomialCurve2D&, const vpImage<unsigned char>&, double, double, const vpColor&, int);
+template VISP_EXPORT void display<vpRGBa>(const usPolynomialCurve2D&, const vpImage<vpRGBa>&, double, double, const vpColor&, int);
 
 //! Display usPolynomialCurve3D
 
@@ -177,8 +177,8 @@ void display(const usPolynomialCurve3D &curve, const vpImage<ImageDataType> &I, 
     }
 }
 
-template void display<unsigned char>(const usPolynomialCurve3D&, const vpImage<unsigned char>&, const vpHomogeneousMatrix &, double, double, const vpColor &, int, double);
-template void display<vpRGBa>(const usPolynomialCurve3D&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix &, double, double, const vpColor &, int, double);
+template VISP_EXPORT void display<unsigned char>(const usPolynomialCurve3D&, const vpImage<unsigned char>&, const vpHomogeneousMatrix &, double, double, const vpColor &, int, double);
+template VISP_EXPORT void display<vpRGBa>(const usPolynomialCurve3D&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix &, double, double, const vpColor &, int, double);
 
 template<class ImageDataType>
 void displayCurvatureFromShape(const usPolynomialCurve3D &curve, const vpImage<ImageDataType> &I, const vpHomogeneousMatrix &imageMworld, double Xscale, double Yscale, const vpColor &color)
@@ -213,8 +213,8 @@ void displayCurvatureFromShape(const usPolynomialCurve3D &curve, const vpImage<I
     thetaxy = atan2(axy*sin(thetaxy), bxy*cos(thetaxy));
     vpDisplay::displayEllipse(I, centerXY, axy, bxy, thetaxy, false, color);
 }
-template void displayCurvatureFromShape<unsigned char>(const usPolynomialCurve3D&, const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double, const vpColor&);
-template void displayCurvatureFromShape<vpRGBa>(const usPolynomialCurve3D&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double, const vpColor&);
+template VISP_EXPORT void displayCurvatureFromShape<unsigned char>(const usPolynomialCurve3D&, const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double, const vpColor&);
+template VISP_EXPORT void displayCurvatureFromShape<vpRGBa>(const usPolynomialCurve3D&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double, const vpColor&);
 
 //! Display usBSpline3D
 
@@ -223,8 +223,8 @@ void displayLine(const usBSpline3D &spline, const vpImage<ImageDataType> &I, con
 {
     for(int i=0 ; i<spline.getNbSegments() ; i++) usGeometryDisplayTools::display(spline.accessSegment(i), I, imageMworld, Xscale, Yscale, color, nbRenderingLinesPerSegment, visibilityDistance);
 }
-template void displayLine<unsigned char>(const usBSpline3D&, const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double, const vpColor&, int, double);
-template void displayLine<vpRGBa>(const usBSpline3D&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double, const vpColor&, int, double);
+template VISP_EXPORT void displayLine<unsigned char>(const usBSpline3D&, const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double, const vpColor&, int, double);
+template VISP_EXPORT void displayLine<vpRGBa>(const usBSpline3D&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double, const vpColor&, int, double);
 
 template<class ImageDataType>
 void displayExtremities(const usBSpline3D &spline, const vpImage<ImageDataType> &I, const vpHomogeneousMatrix &imageMworld, double Xscale, double Yscale, const vpColor &color, double visibilityDistance)
@@ -250,8 +250,8 @@ void displayExtremities(const usBSpline3D &spline, const vpImage<ImageDataType> 
         if(fabs(z)<visibilityDistance) vpDisplay::displayCross(I, y,x, 7, color);
     }
 }
-template void displayExtremities<unsigned char>(const usBSpline3D&, const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double, const vpColor&, double);
-template void displayExtremities<vpRGBa>(const usBSpline3D&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double, const vpColor&, double);
+template VISP_EXPORT void displayExtremities<unsigned char>(const usBSpline3D&, const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double, const vpColor&, double);
+template VISP_EXPORT void displayExtremities<vpRGBa>(const usBSpline3D&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double, const vpColor&, double);
 
 template<class ImageDataType>
 void display(const usBSpline3D &spline, const vpImage<ImageDataType> &I, const vpHomogeneousMatrix &imageMworld, double Xscale, double Yscale, const vpColor &color, int nbRenderingLines, double visibilityDistance)
@@ -259,8 +259,8 @@ void display(const usBSpline3D &spline, const vpImage<ImageDataType> &I, const v
     displayLine(spline, I, imageMworld, Xscale, Yscale, color, nbRenderingLines, visibilityDistance);
     displayExtremities(spline, I, imageMworld, Xscale, Yscale, color, visibilityDistance);      
 }
-template void display<unsigned char>(const usBSpline3D&, const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double, const vpColor&, int, double);
-template void display<vpRGBa>(const usBSpline3D&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double, const vpColor&, int, double);
+template VISP_EXPORT void display<unsigned char>(const usBSpline3D&, const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double, const vpColor&, int, double);
+template VISP_EXPORT void display<vpRGBa>(const usBSpline3D&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double, const vpColor&, int, double);
 
 template<class ImageDataType>
 void displayCurvatureFromShape(const usBSpline3D &spline, const vpImage<ImageDataType> &I, const vpHomogeneousMatrix &imageMworld, double Xscale, double Yscale, const vpColor &color)
@@ -295,7 +295,7 @@ void displayCurvatureFromShape(const usBSpline3D &spline, const vpImage<ImageDat
     thetaxy = atan2(axy*sin(thetaxy), bxy*cos(thetaxy));
     vpDisplay::displayEllipse(I, centerXY, axy, bxy, thetaxy, false, color);
 }
-template void displayCurvatureFromShape<unsigned char>(const usBSpline3D&, const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double, const vpColor&);
-template void displayCurvatureFromShape<vpRGBa>(const usBSpline3D&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double, const vpColor&);
+template VISP_EXPORT void displayCurvatureFromShape<unsigned char>(const usBSpline3D&, const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double, const vpColor&);
+template VISP_EXPORT void displayCurvatureFromShape<vpRGBa>(const usBSpline3D&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double, const vpColor&);
 
 } // namespace usGeometryDisplayTools

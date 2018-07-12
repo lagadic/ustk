@@ -1129,12 +1129,12 @@ void usPolynomialCurve3D::changeCoefficientsToFitBoundaries(double startParamete
 
     
     double beta = (m_startParameter*endParameter - m_endParameter*startParameter) / (endParameter-startParameter);
-    double beta_pow[m_order+1];
+    vpColVector beta_pow(m_order+1);
     beta_pow[0] = 1;
     for(unsigned int i=1 ; i<=m_order ; i++) beta_pow[i] = beta*beta_pow[i-1];
 
     double alpha = (m_endParameter-m_startParameter) / (endParameter-startParameter);
-    double alpha_pow[m_order+1];
+    vpColVector alpha_pow(m_order+1);
     alpha_pow[0] = 1;
     for(unsigned int i=1 ; i<=m_order ; i++) alpha_pow[i] = alpha*alpha_pow[i-1];
 

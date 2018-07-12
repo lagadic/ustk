@@ -193,11 +193,11 @@ public:
     //! Data saving
 
         //! Text
-        friend std::ostream &operator<<(std::ostream &s, const usNeedleInsertionModelRayleighRitzSpline &model);
-        friend std::istream &operator>>(std::istream &s, usNeedleInsertionModelRayleighRitzSpline &model);
+        friend VISP_EXPORT std::ostream &operator<<(std::ostream &s, const usNeedleInsertionModelRayleighRitzSpline &model);
+        friend VISP_EXPORT std::istream &operator>>(std::istream &s, usNeedleInsertionModelRayleighRitzSpline &model);
         //! Binary
-        friend std::ostream &operator<<=(std::ostream &s, const usNeedleInsertionModelRayleighRitzSpline &model);
-        friend std::istream &operator>>=(std::istream &s, usNeedleInsertionModelRayleighRitzSpline &model);
+        friend VISP_EXPORT std::ostream &operator<<=(std::ostream &s, const usNeedleInsertionModelRayleighRitzSpline &model);
+        friend VISP_EXPORT std::istream &operator>>=(std::istream &s, usNeedleInsertionModelRayleighRitzSpline &model);
 };
 
 VISP_EXPORT std::ostream &operator<<(std::ostream &s, const usNeedleInsertionModelRayleighRitzSpline &model);

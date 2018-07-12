@@ -77,11 +77,11 @@ public:
     //! Data saving
 
         //! Text
-        friend std::ostream &operator<<(std::ostream &s, const usOrientedPlane3D &plane);
-        friend std::istream &operator>>(std::istream &s, usOrientedPlane3D &plane);
+        friend VISP_EXPORT std::ostream &operator<<(std::ostream &s, const usOrientedPlane3D &plane);
+        friend VISP_EXPORT std::istream &operator>>(std::istream &s, usOrientedPlane3D &plane);
         //! Binary
-        friend std::ostream &operator<<=(std::ostream &s, const usOrientedPlane3D &plane);
-        friend std::istream &operator>>=(std::istream &s, usOrientedPlane3D &plane);
+        friend VISP_EXPORT std::ostream &operator<<=(std::ostream &s, const usOrientedPlane3D &plane);
+        friend VISP_EXPORT std::istream &operator>>=(std::istream &s, usOrientedPlane3D &plane);
 };
 
 

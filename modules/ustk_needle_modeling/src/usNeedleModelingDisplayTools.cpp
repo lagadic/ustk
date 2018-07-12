@@ -50,16 +50,16 @@ void displayBase(const usNeedleModelBaseTip &needleModel, const vpImage<ImageDat
 {
     usGeometryDisplayTools::displayFrame(I, imageMworld * needleModel.getWorldMbase(), Xscale, Yscale);
 }
-template void displayBase<unsigned char>(const usNeedleModelBaseTip&, const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double);
-template void displayBase<vpRGBa>(const usNeedleModelBaseTip&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double);
+template VISP_EXPORT void displayBase<unsigned char>(const usNeedleModelBaseTip&, const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double);
+template VISP_EXPORT void displayBase<vpRGBa>(const usNeedleModelBaseTip&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double);
 
 template<class ImageDataType>
 void displayTip(const usNeedleModelBaseTip &needleModel, const vpImage<ImageDataType> &I, const vpHomogeneousMatrix &imageMworld, double Xscale, double Yscale)
 {
     usGeometryDisplayTools::displayFrame(I, imageMworld * needleModel.getWorldMtip(), Xscale, Yscale);
 }
-template void displayTip<unsigned char>(const usNeedleModelBaseTip&, const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double);
-template void displayTip<vpRGBa>(const usNeedleModelBaseTip&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double);
+template VISP_EXPORT void displayTip<unsigned char>(const usNeedleModelBaseTip&, const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double);
+template VISP_EXPORT void displayTip<vpRGBa>(const usNeedleModelBaseTip&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double);
 
 template<class ImageDataType>
 void display(const usNeedleModelBaseTip &needleModel, const vpImage<ImageDataType> &I, const vpHomogeneousMatrix &imageMworld, double Xscale, double Yscale)
@@ -67,8 +67,8 @@ void display(const usNeedleModelBaseTip &needleModel, const vpImage<ImageDataTyp
     displayBase(needleModel, I, imageMworld, Xscale, Yscale);
     displayTip(needleModel, I, imageMworld, Xscale, Yscale);
 }
-template void display(const usNeedleModelBaseTip &needleModel, const vpImage<unsigned char> &I, const vpHomogeneousMatrix &imageMworld, double Xscale, double Yscale);
-template void display(const usNeedleModelBaseTip &needleModel, const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &imageMworld, double Xscale, double Yscale);
+template VISP_EXPORT void display(const usNeedleModelBaseTip &needleModel, const vpImage<unsigned char> &I, const vpHomogeneousMatrix &imageMworld, double Xscale, double Yscale);
+template VISP_EXPORT void display(const usNeedleModelBaseTip &needleModel, const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &imageMworld, double Xscale, double Yscale);
 
 //! Display usNeedleModelPolynomial
 
@@ -106,8 +106,8 @@ void displayNeedle(const usNeedleModelPolynomial &needleModel, const vpImage<Ima
     }
     display((const usNeedleModelBaseTip&)needleModel, I, imageMworld, Xscale, Yscale);
 }
-template void displayNeedle<unsigned char>(const usNeedleModelPolynomial&, const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double, bool);
-template void displayNeedle<vpRGBa>(const usNeedleModelPolynomial&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double, bool);
+template VISP_EXPORT void displayNeedle<unsigned char>(const usNeedleModelPolynomial&, const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double, bool);
+template VISP_EXPORT void displayNeedle<vpRGBa>(const usNeedleModelPolynomial&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double, bool);
 
 template<class ImageDataType>
 void displayBaseStaticTorsor(const usNeedleModelPolynomial &needleModel, const vpImage<ImageDataType> &I, const vpHomogeneousMatrix &imageMworld, double Xscale, double Yscale)
@@ -135,16 +135,16 @@ void displayBaseStaticTorsor(const usNeedleModelPolynomial &needleModel, const v
     vpDisplay::displayArrow(I, y, x, y+100*force_y, x+100*force_x, vpColor::red, 5, 5, 3);
     vpDisplay::displayArrow(I, y, x, y+3000*moment_y, x+3000*moment_x, vpColor::green, 5, 5, 3);
 }
-template void displayBaseStaticTorsor<unsigned char>(const usNeedleModelPolynomial&, const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double);
-template void displayBaseStaticTorsor<vpRGBa>(const usNeedleModelPolynomial&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double);
+template VISP_EXPORT void displayBaseStaticTorsor<unsigned char>(const usNeedleModelPolynomial&, const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double);
+template VISP_EXPORT void displayBaseStaticTorsor<vpRGBa>(const usNeedleModelPolynomial&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double);
 
 template<class ImageDataType>
 void displayCurvatureFromShape(const usNeedleModelPolynomial &needleModel, const vpImage<ImageDataType> &I, const vpHomogeneousMatrix &imageMworld, double Xscale, double Yscale)
 {
     usGeometryDisplayTools::displayCurvatureFromShape(needleModel, I, imageMworld, Xscale, Yscale);
 }
-template void displayCurvatureFromShape<unsigned char>(const usNeedleModelPolynomial&, const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double);
-template void displayCurvatureFromShape<vpRGBa>(const usNeedleModelPolynomial&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double);
+template VISP_EXPORT void displayCurvatureFromShape<unsigned char>(const usNeedleModelPolynomial&, const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double);
+template VISP_EXPORT void displayCurvatureFromShape<vpRGBa>(const usNeedleModelPolynomial&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double);
 
 template<class ImageDataType>
 void display(const usNeedleModelPolynomial &needleModel, const vpImage<ImageDataType> &I, const vpHomogeneousMatrix &imageMworld, double Xscale, double Yscale, bool displayFullBody)
@@ -153,8 +153,8 @@ void display(const usNeedleModelPolynomial &needleModel, const vpImage<ImageData
     displayBaseStaticTorsor(needleModel, I, imageMworld, Xscale, Yscale);
     displayCurvatureFromShape(needleModel, I, imageMworld, Xscale, Yscale);
 }
-template void display<unsigned char>(const usNeedleModelPolynomial&, const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double, bool);
-template void display<vpRGBa>(const usNeedleModelPolynomial&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double, bool);
+template VISP_EXPORT void display<unsigned char>(const usNeedleModelPolynomial&, const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double, bool);
+template VISP_EXPORT void display<vpRGBa>(const usNeedleModelPolynomial&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double, bool);
 
 //! Display usNeedleModelSpline
 
@@ -191,8 +191,8 @@ void displayNeedle(const usNeedleModelSpline &needleModel, const vpImage<ImageDa
     usGeometryDisplayTools::displayExtremities((const usBSpline3D&)needleModel, I, imageMworld, Xscale, Yscale, vpColor::red);
     display((const usNeedleModelBaseTip&)needleModel, I, imageMworld, Xscale, Yscale);
 }
-template void displayNeedle<unsigned char>(const usNeedleModelSpline&, const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double, bool);
-template void displayNeedle<vpRGBa>(const usNeedleModelSpline&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double, bool);
+template VISP_EXPORT void displayNeedle<unsigned char>(const usNeedleModelSpline&, const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double, bool);
+template VISP_EXPORT void displayNeedle<vpRGBa>(const usNeedleModelSpline&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double, bool);
 
 template<class ImageDataType>
 void displayBaseStaticTorsor(const usNeedleModelSpline &needleModel, const vpImage<ImageDataType> &I, const vpHomogeneousMatrix &imageMworld, double Xscale, double Yscale)
@@ -220,16 +220,16 @@ void displayBaseStaticTorsor(const usNeedleModelSpline &needleModel, const vpIma
     vpDisplay::displayArrow(I, y, x, y+100*force_y, x+100*force_x, vpColor::red, 5, 5, 3);
     vpDisplay::displayArrow(I, y, x, y+3000*moment_y, x+3000*moment_x, vpColor::green, 5, 5, 3);
 }
-template void displayBaseStaticTorsor<unsigned char>(const usNeedleModelSpline &needleModel, const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double);
-template void displayBaseStaticTorsor<vpRGBa>(const usNeedleModelSpline &needleModel, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double);
+template VISP_EXPORT void displayBaseStaticTorsor<unsigned char>(const usNeedleModelSpline &needleModel, const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double);
+template VISP_EXPORT void displayBaseStaticTorsor<vpRGBa>(const usNeedleModelSpline &needleModel, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double);
 
 template<class ImageDataType>
 void displayCurvatureFromShape(const usNeedleModelSpline &needleModel, const vpImage<ImageDataType> &I, const vpHomogeneousMatrix &imageMworld, double Xscale, double Yscale)
 {
     usGeometryDisplayTools::displayCurvatureFromShape(needleModel, I, imageMworld, Xscale, Yscale);
 }
-template void displayCurvatureFromShape<unsigned char>(const usNeedleModelSpline&, const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double);
-template void displayCurvatureFromShape<vpRGBa>(const usNeedleModelSpline&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double);
+template VISP_EXPORT void displayCurvatureFromShape<unsigned char>(const usNeedleModelSpline&, const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double);
+template VISP_EXPORT void displayCurvatureFromShape<vpRGBa>(const usNeedleModelSpline&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double);
 
 template<class ImageDataType>
 void display(const usNeedleModelSpline &needleModel, const vpImage<ImageDataType> &I, const vpHomogeneousMatrix &imageMworld, double Xscale, double Yscale, bool displayFullBody)
@@ -238,8 +238,8 @@ void display(const usNeedleModelSpline &needleModel, const vpImage<ImageDataType
     displayBaseStaticTorsor(needleModel, I, imageMworld, Xscale, Yscale);
     displayCurvatureFromShape(needleModel, I, imageMworld, Xscale, Yscale);
 }
-template void display<unsigned char>(const usNeedleModelSpline&, const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double, bool);
-template void display<vpRGBa>(const usNeedleModelSpline&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double, bool);
+template VISP_EXPORT void display<unsigned char>(const usNeedleModelSpline&, const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double, bool);
+template VISP_EXPORT void display<vpRGBa>(const usNeedleModelSpline&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double, bool);
 
 //! Display usVirtualSpring
 
@@ -248,8 +248,8 @@ void display(const usVirtualSpring &spring, const vpImage<ImageType> &I, const v
 {
     usGeometryDisplayTools::display((const usOrientedPlane3D&)spring, I, imageMworld, Xscale, Yscale, vpColor::green);
 }
-template void display<unsigned char>(const usVirtualSpring&, const vpImage<unsigned char> &, const vpHomogeneousMatrix &, double, double);
-template void display<vpRGBa>(const usVirtualSpring&, const vpImage<vpRGBa> &, const vpHomogeneousMatrix &, double, double);
+template VISP_EXPORT void display<unsigned char>(const usVirtualSpring&, const vpImage<unsigned char> &, const vpHomogeneousMatrix &, double, double);
+template VISP_EXPORT void display<vpRGBa>(const usVirtualSpring&, const vpImage<vpRGBa> &, const vpHomogeneousMatrix &, double, double);
 
 //! Display usTissueModelSpline
 
@@ -259,8 +259,8 @@ void display(const usTissueModelSpline &tissue, const vpImage<ImageDataType> &I,
     usGeometryDisplayTools::display(tissue.accessSurface(), I, imageMworld, Xscale, Yscale, vpColor::black);
     usGeometryDisplayTools::display(tissue.accessPath(), I, imageMworld, Xscale, Yscale, vpColor::blue);
 }
-template void display<unsigned char>(const usTissueModelSpline&, const vpImage<unsigned char> &, const vpHomogeneousMatrix &, double, double);
-template void display<vpRGBa>(const usTissueModelSpline&, const vpImage<vpRGBa> &, const vpHomogeneousMatrix &, double, double);
+template VISP_EXPORT void display<unsigned char>(const usTissueModelSpline&, const vpImage<unsigned char> &, const vpHomogeneousMatrix &, double, double);
+template VISP_EXPORT void display<vpRGBa>(const usTissueModelSpline&, const vpImage<vpRGBa> &, const vpHomogeneousMatrix &, double, double);
 
 
 //! Display usNeedleTip
@@ -270,8 +270,8 @@ void display(const usNeedleTip &tip, const vpImage<ImageDataType> &I, const vpHo
 {
     usGeometryDisplayTools::displayFrame(I, imageMworld * tip.getWorldMbase().inverse(), Xscale, Yscale);
 }
-template void display<unsigned char>(const usNeedleTip&, const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double);
-template void display<vpRGBa>(const usNeedleTip&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double);
+template VISP_EXPORT void display<unsigned char>(const usNeedleTip&, const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double);
+template VISP_EXPORT void display<vpRGBa>(const usNeedleTip&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double);
 
 //! Display usNeedleTipActuated
 
@@ -312,8 +312,8 @@ void display(const usNeedleTipActuated &tip, const vpImage<ImageDataType> &I, co
         vpDisplay::displayLine(I, y[i],x[i], y[(i+1)%3], x[(i+1)%3], vpColor::red);
     }
 }
-template void display<unsigned char>(const usNeedleTipActuated&, const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double);
-template void display<vpRGBa>(const usNeedleTipActuated&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double);
+template VISP_EXPORT void display<unsigned char>(const usNeedleTipActuated&, const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double);
+template VISP_EXPORT void display<vpRGBa>(const usNeedleTipActuated&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double);
 
 //! Display usNeedleTipBeveled
 
@@ -351,8 +351,8 @@ void display(const usNeedleTipBeveled &tip, const vpImage<ImageDataType> &I, con
         vpDisplay::displayLine(I, y[i],x[i], y[(i+1)%3], x[(i+1)%3], vpColor::red);
     }
 }
-template void display<unsigned char>(const usNeedleTipBeveled&, const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double);
-template void display<vpRGBa>(const usNeedleTipBeveled&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double);
+template VISP_EXPORT void display<unsigned char>(const usNeedleTipBeveled&, const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double);
+template VISP_EXPORT void display<vpRGBa>(const usNeedleTipBeveled&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double);
 
 //! Display usNeedleTipPrebent
 
@@ -393,8 +393,8 @@ void display(const usNeedleTipPrebent &tip, const vpImage<ImageDataType> &I, con
         vpDisplay::displayLine(I, y[i],x[i], y[(i+1)%3], x[(i+1)%3], vpColor::red);
     }
 }
-template void display<unsigned char>(const usNeedleTipPrebent&, const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double);
-template void display<vpRGBa>(const usNeedleTipPrebent&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double);
+template VISP_EXPORT void display<unsigned char>(const usNeedleTipPrebent&, const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double);
+template VISP_EXPORT void display<vpRGBa>(const usNeedleTipPrebent&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double);
 
 //! Display usNeedleTipSymmetric
 
@@ -434,8 +434,8 @@ void display(const usNeedleTipSymmetric &tip, const vpImage<ImageDataType> &I, c
         vpDisplay::displayLine(I, y[i],x[i], y[(i+1)%3], x[(i+1)%3], vpColor::red);
     }
 }
-template void display<unsigned char>(const usNeedleTipSymmetric&, const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double);
-template void display<vpRGBa>(const usNeedleTipSymmetric&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double);
+template VISP_EXPORT void display<unsigned char>(const usNeedleTipSymmetric&, const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double);
+template VISP_EXPORT void display<vpRGBa>(const usNeedleTipSymmetric&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double);
 
 //! Display usNeedleInsertionModelKinematic
 
@@ -444,8 +444,8 @@ void display(const usNeedleInsertionModelKinematic &model, const vpImage<ImageDa
 {
     display(model.accessNeedle(), I, imageMworld, Xscale, Yscale);
 }
-template void display<unsigned char>(const usNeedleInsertionModelKinematic&, const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double);
-template void display<vpRGBa>(const usNeedleInsertionModelKinematic&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double);
+template VISP_EXPORT void display<unsigned char>(const usNeedleInsertionModelKinematic&, const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double);
+template VISP_EXPORT void display<vpRGBa>(const usNeedleInsertionModelKinematic&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double);
 
 //! Display usNeedleInsertionModelRayleighRitzSpline
 
@@ -492,8 +492,8 @@ void displayTissueLayers(const usNeedleInsertionModelRayleighRitzSpline &model, 
         }
     }
 }
-template void displayTissueLayers<unsigned char>(const usNeedleInsertionModelRayleighRitzSpline&, const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double);
-template void displayTissueLayers<vpRGBa>(const usNeedleInsertionModelRayleighRitzSpline&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double);
+template VISP_EXPORT void displayTissueLayers<unsigned char>(const usNeedleInsertionModelRayleighRitzSpline&, const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double);
+template VISP_EXPORT void displayTissueLayers<vpRGBa>(const usNeedleInsertionModelRayleighRitzSpline&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double);
 
 template<class ImageDataType>
 void displayInteraction(const usNeedleInsertionModelRayleighRitzSpline &model, const vpImage<ImageDataType> &I, const vpHomogeneousMatrix &imageMworld, double Xscale, double Yscale)
@@ -535,8 +535,8 @@ void displayInteraction(const usNeedleInsertionModelRayleighRitzSpline &model, c
         vpDisplay::displayArrow(I, y,x,yr,xr,vpColor::black);
     }
 }
-template void displayInteraction<unsigned char>(const usNeedleInsertionModelRayleighRitzSpline&, const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double);
-template void displayInteraction<vpRGBa>(const usNeedleInsertionModelRayleighRitzSpline&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double);
+template VISP_EXPORT void displayInteraction<unsigned char>(const usNeedleInsertionModelRayleighRitzSpline&, const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double);
+template VISP_EXPORT void displayInteraction<vpRGBa>(const usNeedleInsertionModelRayleighRitzSpline&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double);
 
 template<class ImageDataType>
 void display(const usNeedleInsertionModelRayleighRitzSpline &model, const vpImage<ImageDataType> &I, const vpHomogeneousMatrix &imageMworld, double Xscale, double Yscale, bool displayFullBody)
@@ -569,8 +569,8 @@ void display(const usNeedleInsertionModelRayleighRitzSpline &model, const vpImag
     displayTissueLayers(model, I, imageMworld, Xscale, Yscale);
     displayInteraction(model, I, imageMworld, Xscale, Yscale);
 }
-template void display<unsigned char>(const usNeedleInsertionModelRayleighRitzSpline&, const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double, bool);
-template void display<vpRGBa>(const usNeedleInsertionModelRayleighRitzSpline&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double, bool);
+template VISP_EXPORT void display<unsigned char>(const usNeedleInsertionModelRayleighRitzSpline&, const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double, bool);
+template VISP_EXPORT void display<vpRGBa>(const usNeedleInsertionModelRayleighRitzSpline&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double, bool);
 
 //! Display usNeedleInsertionModelVirtualSprings
 
@@ -587,8 +587,8 @@ void display(const usNeedleInsertionModelVirtualSprings &model, const vpImage<Im
     //displayBaseStaticTorsor(model.accessNeedle(), I, imageMworld, Xscale, Yscale);
     //displayCurvatureFromShape(model.accessNeedle(), I, imageMworld, Xscale, Yscale);
 }
-template void display<unsigned char>(const usNeedleInsertionModelVirtualSprings&, const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double, bool);
-template void display<vpRGBa>(const usNeedleInsertionModelVirtualSprings&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double, bool);
+template VISP_EXPORT void display<unsigned char>(const usNeedleInsertionModelVirtualSprings&, const vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double, bool);
+template VISP_EXPORT void display<vpRGBa>(const usNeedleInsertionModelVirtualSprings&, const vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double, bool);
 
 
 

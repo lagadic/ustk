@@ -66,11 +66,11 @@ public:
     //! Data saving
 
         //! Text
-        friend std::ostream &operator<<(std::ostream &s, const usNeedleTipBeveled &tip);
-        friend std::istream &operator>>(std::istream &s, usNeedleTipBeveled &tip);
+        friend VISP_EXPORT std::ostream &operator<<(std::ostream &s, const usNeedleTipBeveled &tip);
+        friend VISP_EXPORT std::istream &operator>>(std::istream &s, usNeedleTipBeveled &tip);
         //! Binary
-        friend std::ostream &operator<<=(std::ostream &s, const usNeedleTipBeveled &tip);
-        friend std::istream &operator>>=(std::istream &s, usNeedleTipBeveled &tip);
+        friend VISP_EXPORT std::ostream &operator<<=(std::ostream &s, const usNeedleTipBeveled &tip);
+        friend VISP_EXPORT std::istream &operator>>=(std::istream &s, usNeedleTipBeveled &tip);
         
 private:
     void updateTipPose();

@@ -109,11 +109,11 @@ public:
     //! Data saving
 
         //! Text
-        friend std::ostream &operator<<(std::ostream &s, const usNeedleModelBaseTip &needle);
-        friend std::istream &operator>>(std::istream &s, usNeedleModelBaseTip &needle);
+        friend VISP_EXPORT std::ostream &operator<<(std::ostream &s, const usNeedleModelBaseTip &needle);
+        friend VISP_EXPORT std::istream &operator>>(std::istream &s, usNeedleModelBaseTip &needle);
         //! Binary
-        friend std::ostream &operator<<=(std::ostream &s, const usNeedleModelBaseTip &needle);
-        friend std::istream &operator>>=(std::istream &s, usNeedleModelBaseTip &needle);
+        friend VISP_EXPORT std::ostream &operator<<=(std::ostream &s, const usNeedleModelBaseTip &needle);
+        friend VISP_EXPORT std::istream &operator>>=(std::istream &s, usNeedleModelBaseTip &needle);
 };
 
 VISP_EXPORT std::ostream &operator<<(std::ostream &s, const usNeedleModelBaseTip &needle);

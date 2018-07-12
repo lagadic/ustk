@@ -44,11 +44,11 @@ public:
     //! Data saving
 
         //! Text
-        friend std::ostream &operator<<(std::ostream &s, const usTissueModelSpline &tissue);
-        friend std::istream &operator>>(std::istream &s, usTissueModelSpline &tissue);
+        friend VISP_EXPORT std::ostream &operator<<(std::ostream &s, const usTissueModelSpline &tissue);
+        friend VISP_EXPORT std::istream &operator>>(std::istream &s, usTissueModelSpline &tissue);
         //! Binary
-        friend std::ostream &operator<<=(std::ostream &s, const usTissueModelSpline &tissue);
-        friend std::istream &operator>>=(std::istream &s, usTissueModelSpline &tissue);
+        friend VISP_EXPORT std::ostream &operator<<=(std::ostream &s, const usTissueModelSpline &tissue);
+        friend VISP_EXPORT std::istream &operator>>=(std::istream &s, usTissueModelSpline &tissue);
 };
 
 VISP_EXPORT std::ostream &operator<<(std::ostream &s, const usTissueModelSpline &tissue);

@@ -79,11 +79,11 @@ public:
     //! Data saving
 
         //! Text
-        friend std::ostream &operator<<(std::ostream &s, const usNeedleTip &tip);
-        friend std::istream &operator>>(std::istream &s, usNeedleTip &tip);
+        friend VISP_EXPORT std::ostream &operator<<(std::ostream &s, const usNeedleTip &tip);
+        friend VISP_EXPORT std::istream &operator>>(std::istream &s, usNeedleTip &tip);
         //! Binary
-        friend std::ostream &operator<<=(std::ostream &s, const usNeedleTip &tip);
-        friend std::istream &operator>>=(std::istream &s, usNeedleTip &tip);
+        friend VISP_EXPORT std::ostream &operator<<=(std::ostream &s, const usNeedleTip &tip);
+        friend VISP_EXPORT std::istream &operator>>=(std::istream &s, usNeedleTip &tip);
         
 private:
         
