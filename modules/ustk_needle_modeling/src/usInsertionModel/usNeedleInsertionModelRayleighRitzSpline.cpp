@@ -131,6 +131,7 @@ void usNeedleInsertionModelRayleighRitzSpline::loadPreset(const ModelPreset pres
         case ModelPreset::BiopsyCannula :
         {
             m_needle.loadPreset(usNeedleModelSpline::NeedlePreset::BiopsyCannula);
+            this->setNeedleTipType(NeedleTipType::BeveledTip);
             usNeedleTipBeveled *t = dynamic_cast<usNeedleTipBeveled*>(m_needleTip);
             double d = m_needle.getOuterDiameter();
             t->setDiameter(d);
@@ -141,6 +142,7 @@ void usNeedleInsertionModelRayleighRitzSpline::loadPreset(const ModelPreset pres
         case ModelPreset::Symmetric :
         {
             m_needle.loadPreset(usNeedleModelSpline::NeedlePreset::Symmetric);
+            this->setNeedleTipType(NeedleTipType::SymmetricTip);
             usNeedleTipSymmetric *t = dynamic_cast<usNeedleTipSymmetric*>(m_needleTip);
             double d = m_needle.getOuterDiameter();
             t->setDiameter(d);
@@ -2698,9 +2700,9 @@ std::ostream &operator<<(std::ostream &s, const usNeedleInsertionModelRayleighRi
 
 std::istream &operator>>(std::istream &s, usNeedleInsertionModelRayleighRitzSpline &model)
 {
-    char c[40];
+    std::string c;
     s >> c;
-    if(strcmp(c,"usNeedleInsertionModelRayleighRitzSpline"))
+    if(c != "usNeedleInsertionModelRayleighRitzSpline")
     {
         vpException e(vpException::ioError, "Stream does not contain usNeedleInsertionModelRayleighRitzSpline data");
         throw e;
@@ -2714,21 +2716,25 @@ std::istream &operator>>(std::istream &s, usNeedleInsertionModelRayleighRitzSpli
     {
         case 0:
         {
+            model.setNeedleTipType(usNeedleInsertionModelRayleighRitzSpline::NeedleTipType::ActuatedTip);
             s >> *dynamic_cast<usNeedleTipActuated*>(model.m_needleTip);
             break;
         }
         case 1:
         {
+            model.setNeedleTipType(usNeedleInsertionModelRayleighRitzSpline::NeedleTipType::BeveledTip);
             s >> *dynamic_cast<usNeedleTipBeveled*>(model.m_needleTip);
             break;
         }
         case 2:
         {
+            model.setNeedleTipType(usNeedleInsertionModelRayleighRitzSpline::NeedleTipType::PrebentTip);
             s >> *dynamic_cast<usNeedleTipPrebent*>(model.m_needleTip);
             break;
         }
         case 3:
         {
+            model.setNeedleTipType(usNeedleInsertionModelRayleighRitzSpline::NeedleTipType::SymmetricTip);
             s >> *dynamic_cast<usNeedleTipSymmetric*>(model.m_needleTip);
             break;
         }
@@ -2745,6 +2751,7 @@ std::istream &operator>>(std::istream &s, usNeedleInsertionModelRayleighRitzSpli
     s >> n;
     model.m_restDilatationFactor.resize(n);
     for(int i=0 ; i<n ; i++) s >> model.m_restDilatationFactor.at(i);
+
     return s;
 }
 

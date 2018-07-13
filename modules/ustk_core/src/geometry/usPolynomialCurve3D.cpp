@@ -1208,3 +1208,49 @@ std::ostream &operator<<(std::ostream &s, const usPolynomialCurve3D &seg)
     s.flush();
     return s;
 }
+
+std::istream &operator>>(std::istream &s, usPolynomialCurve3D &seg)
+{
+    std::string c;
+    s >> c;
+    if(c != "usPolynomialCurve3D")
+    {
+        vpException e(vpException::ioError, "operator>>(std::istream&, Polynomial3D&): Stream does not contain usPolynomialCurve3D data");
+        throw e;
+    }
+    s >> seg.m_order;
+    seg.m_polynomialCoefficients.resize(3,seg.m_order+1);
+    for(unsigned int i=0 ; i<3 ; i++) for(unsigned int j=0 ; j<seg.m_order+1 ; j++) s >> seg.m_polynomialCoefficients[i][j];
+    s >> seg.m_startParameter;
+    s >> seg.m_endParameter;
+    s.get();
+    return s;
+}
+
+std::ostream &operator<<=(std::ostream &s, const usPolynomialCurve3D &seg)
+{
+    s.write("usPolynomialCurve3D",20);
+    s.write((char*)&(seg.m_order),sizeof(int));
+    for(unsigned int i=0 ; i<3 ; i++) for(unsigned int j=0 ; j<seg.m_order+1 ; j++) s.write((char*)&(seg.m_polynomialCoefficients[i][j]), sizeof(double));
+    s.write((char*)&(seg.m_startParameter), sizeof(double));
+    s.write((char*)&(seg.m_endParameter), sizeof(double));
+    s.flush();
+    return s;
+}
+
+std::istream &operator>>=(std::istream &s, usPolynomialCurve3D &seg)
+{
+    char c[20];
+    s.read(c,20);
+    if(strcmp(c,"usPolynomialCurve3D"))
+    {
+        vpException e(vpException::ioError, "operator>>=(std::istream&, Polynomial3D&): Stream does not contain usPolynomialCurve3D data");
+        throw e;
+    }
+    s.read((char*)&(seg.m_order), sizeof(int));
+    seg.m_polynomialCoefficients.resize(3,seg.m_order+1);
+    for(unsigned int i=0 ; i<3 ; i++) for(unsigned int j=0 ; j<seg.m_order+1 ; j++) s.read((char*)&(seg.m_polynomialCoefficients[i][j]), sizeof(double));
+    s.read((char*)&(seg.m_startParameter), sizeof(double));
+    s.read((char*)&(seg.m_endParameter), sizeof(double));
+    return s;
+}

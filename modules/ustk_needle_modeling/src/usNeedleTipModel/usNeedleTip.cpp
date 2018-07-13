@@ -152,8 +152,8 @@ vpColVector usNeedleTip::getBaseAxisZ() const
 std::ostream &operator<<(std::ostream &s, const usNeedleTip &tip)
 {
     s << "usNeedleTip\n";
-    s << tip.m_basePose;
-    s << tip.m_tipPose;
+    s << tip.m_basePose << '\n';
+    s << tip.m_tipPose << '\n';
     s.flush();
     return s;
 }
@@ -169,8 +169,10 @@ std::istream &operator>>(std::istream &s, usNeedleTip &tip)
     }
     for(int i=0 ; i<6 ; i++) s >> tip.m_basePose[i];
     for(int i=0 ; i<6 ; i++) s >> tip.m_tipPose[i];
+    s.get();
     tip.m_worldMbase.buildFrom(tip.m_basePose);
     tip.m_worldMtip.buildFrom(tip.m_tipPose);
+
     return s;
 }
 

@@ -386,7 +386,7 @@ std::ostream &operator<<(std::ostream &s, const usNeedleModelPolynomial &needle)
 {
     s << "usNeedleModelPolynomial\n";
     s << *((usNeedleModelBaseTip*)(&needle));
-    // TODO DATA SAVE s << *((usPolynomialCurve3D*)(&needle));
+    s << *((usPolynomialCurve3D*)(&needle));
     s << needle.m_outerDiameter << '\n';
     s << needle.m_insideDiameter << '\n';
     s << needle.m_needleYoungModulus << '\n';
@@ -397,15 +397,15 @@ std::ostream &operator<<(std::ostream &s, const usNeedleModelPolynomial &needle)
 
 std::istream &operator>>(std::istream &s, usNeedleModelPolynomial &needle)
 {
-    char c[26];
+    std::string c;
     s >> c;
-    if(strcmp(c,"usNeedleModelPolynomial"))
+    if(c != "usNeedleModelPolynomial")
     {
         vpException e(vpException::ioError, "Stream does not contain usNeedleModelPolynomial data");
         throw e;
     }
     s >> (*(usNeedleModelBaseTip*)(&needle));
-    // TODO DATAT SAVE s >> (*(usPolynomialCurve3D*)(&needle));
+    s >> (*(usPolynomialCurve3D*)(&needle));
     s >> needle.m_outerDiameter;
     s >> needle.m_insideDiameter;
     s >> needle.m_needleYoungModulus;
@@ -415,9 +415,9 @@ std::istream &operator>>(std::istream &s, usNeedleModelPolynomial &needle)
 
 std::ostream &operator<<=(std::ostream &s, const usNeedleModelPolynomial &needle)
 {
-    s.write("usNeedleModelPolynomial",22);
+    s.write("usNeedleModelPolynomial",24);
     s <<= *((usNeedleModelBaseTip*)(&needle));
-    // TODO DATAT SAVE s <<= *((usPolynomialCurve3D*)(&needle));
+    s <<= *((usPolynomialCurve3D*)(&needle));
     s.write((char*)&(needle.m_outerDiameter), sizeof(double));
     s.write((char*)&(needle.m_insideDiameter), sizeof(double));
     s.write((char*)&(needle.m_needleYoungModulus), sizeof(double));
@@ -428,15 +428,15 @@ std::ostream &operator<<=(std::ostream &s, const usNeedleModelPolynomial &needle
 
 std::istream &operator>>=(std::istream &s, usNeedleModelPolynomial &needle)
 {
-    char c[22];
-    s.read(c,22);
+    char c[24];
+    s.read(c,24);
     if(strcmp(c,"usNeedleModelPolynomial"))
     {
         vpException e(vpException::ioError, "Stream does not contain usNeedleModelPolynomial data");
         throw e;
     }
     s >>= *((usNeedleModelBaseTip*)(&needle));
-    // TODO DATAT SAVE s >>= *((usPolynomialCurve3D*)(&needle));
+    s >>= *((usPolynomialCurve3D*)(&needle));
     s.read((char*)&(needle.m_outerDiameter), sizeof(double));
     s.read((char*)&(needle.m_insideDiameter), sizeof(double));
     s.read((char*)&(needle.m_needleYoungModulus), sizeof(double));

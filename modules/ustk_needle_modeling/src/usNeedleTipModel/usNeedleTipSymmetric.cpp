@@ -119,6 +119,7 @@ std::istream &operator>>(std::istream &s, usNeedleTipSymmetric &tip)
     s >> (usNeedleTip&)tip;
     s >> tip._diameter;
     s >> tip._length;
+    s.get();
 
     return s;
 }

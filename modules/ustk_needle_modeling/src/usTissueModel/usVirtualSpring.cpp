@@ -196,12 +196,14 @@ std::istream &operator>>(std::istream &s, usVirtualSpring &spg)
     s >> spg.m_AllowPositionUpdate;
     s >> spg.m_AllowDirectionUpdate;
     s >> spg.m_AllowStiffnessUpdate;
+    s.get();
+    
     return s;
 }
 
 std::ostream &operator<<=(std::ostream &s, const usVirtualSpring &spg)
 {
-    s.write("usVirtualSpring",14);
+    s.write("usVirtualSpring",16);
     s <<= *((usOrientedPlane3D*)&spg);
     s.write((char*)&(spg.m_stiffness), sizeof(double));
     s.write((char*)&(spg.m_IsActive), sizeof(bool));
@@ -215,8 +217,8 @@ std::ostream &operator<<=(std::ostream &s, const usVirtualSpring &spg)
 
 std::istream &operator>>=(std::istream &s, usVirtualSpring &spg)
 {
-    char c[14];
-    s.read(c,14);
+    char c[16];
+    s.read(c,16);
     if(strcmp(c,"usVirtualSpring"))
     {
         vpException e(vpException::ioError, "operator>>=(std::istream&, usVirtualSpring&): Stream does not contain usVirtualSpring data");

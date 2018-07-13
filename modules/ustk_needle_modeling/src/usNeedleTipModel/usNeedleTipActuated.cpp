@@ -168,7 +168,8 @@ std::istream &operator>>(std::istream &s, usNeedleTipActuated &tip)
     s >> tip._length;
     s >> tip._angle;
     s >> tip._steeringAngle;
-
+    s.get();
+    
     return s;
 }
 

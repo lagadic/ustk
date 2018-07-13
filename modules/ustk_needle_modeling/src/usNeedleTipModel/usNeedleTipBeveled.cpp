@@ -119,13 +119,14 @@ std::istream &operator>>(std::istream &s, usNeedleTipBeveled &tip)
     s >> (usNeedleTip&)tip;
     s >> tip._diameter;
     s >> tip._length;
-
+    s.get();
+    
     return s;
 }
 
 std::ostream &operator<<=(std::ostream &s, const usNeedleTipBeveled &tip)
 {
-    s.write("usNeedleTipBeveled",11);
+    s.write("usNeedleTipBeveled",19);
 
     s <<= (const usNeedleTip&)tip;
     s.write((char*)&(tip._diameter), sizeof(double));
@@ -137,8 +138,8 @@ std::ostream &operator<<=(std::ostream &s, const usNeedleTipBeveled &tip)
 
 std::istream &operator>>=(std::istream &s, usNeedleTipBeveled &tip)
 {
-    char c[11];
-    s.read(c,11);
+    char c[19];
+    s.read(c,19);
     if(strcmp(c,"usNeedleTipBeveled"))
     {
         vpException e(vpException::ioError, "Stream does not contain usNeedleTipBeveled data");

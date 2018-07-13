@@ -102,9 +102,20 @@ public:
 
         double getCurvatureFromShape(double start, double end, vpColVector &center3D, vpColVector &direction3D) const;
 
-        friend VISP_EXPORT std::ostream &operator<<(std::ostream &s, const usBSpline3D &needle);
+        //! Data saving
+        
+            //! Text
+            friend VISP_EXPORT std::ostream &operator<<(std::ostream &s, const usBSpline3D &spline);
+            friend VISP_EXPORT std::istream &operator>>(std::istream &s, usBSpline3D &spline);
+            //! Binary
+            friend VISP_EXPORT std::ostream &operator<<=(std::ostream &s, const usBSpline3D &spline);
+            friend VISP_EXPORT std::istream &operator>>=(std::istream &s, usBSpline3D &spline);
 };
 
-VISP_EXPORT std::ostream &operator<<(std::ostream &s, const usBSpline3D &needle);
+VISP_EXPORT std::ostream &operator<<(std::ostream &s, const usBSpline3D &spline);
+VISP_EXPORT std::istream &operator>>(std::istream &s, usBSpline3D &spline);
+
+VISP_EXPORT std::ostream &operator<<=(std::ostream &s, const usBSpline3D &spline);
+VISP_EXPORT std::istream &operator>>=(std::istream &s, usBSpline3D &spline);
 
 #endif // usBSpline3D_h

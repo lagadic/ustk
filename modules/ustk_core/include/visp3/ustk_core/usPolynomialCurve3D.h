@@ -393,8 +393,15 @@ public:
    */
   void scale(double s);
   
-  friend VISP_EXPORT std::ostream &operator<<(std::ostream &s, const usPolynomialCurve3D &spg);
+  //! Data saving
   
+        //!Text
+      friend VISP_EXPORT std::ostream &operator<<(std::ostream &s, const usPolynomialCurve3D &seg);
+      friend VISP_EXPORT std::istream &operator>>(std::istream &s, usPolynomialCurve3D &seg);
+      //! Binary
+      friend VISP_EXPORT std::ostream &operator<<=(std::ostream &s, const usPolynomialCurve3D &seg);
+      friend VISP_EXPORT std::istream &operator>>=(std::istream &s, usPolynomialCurve3D &seg);
+      
 
 protected:
   unsigned int m_order; // Order of the polynomial curve
@@ -403,6 +410,10 @@ protected:
   vpMatrix m_polynomialCoefficients; // coefficients of the polynomial curve
 };
 
-VISP_EXPORT std::ostream &operator<<(std::ostream &s, const usPolynomialCurve3D &spg);
+VISP_EXPORT std::ostream &operator<<(std::ostream &s, const usPolynomialCurve3D &seg);
+VISP_EXPORT std::istream &operator>>(std::istream &s, usPolynomialCurve3D &seg);
+
+VISP_EXPORT std::ostream &operator<<=(std::ostream &s, const usPolynomialCurve3D &seg);
+VISP_EXPORT std::istream &operator>>=(std::istream &s, usPolynomialCurve3D &seg);
 
 #endif // __usPolynomialCurve3D_h_

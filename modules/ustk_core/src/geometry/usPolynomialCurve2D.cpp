@@ -1082,3 +1082,64 @@ void usPolynomialCurve2D::scale(double s)
 {
     m_polynomialCoefficients = s * m_polynomialCoefficients;
 }
+
+std::ostream &operator<<(std::ostream &s, const usPolynomialCurve2D &seg)
+{
+    s << "usPolynomialCurve2D\n";
+    s << seg.m_order << '\n';
+    for(int i=0 ; i<2 ; i++)
+    {
+        for(unsigned int j=0 ; j<seg.m_order+1 ; j++) s << seg.m_polynomialCoefficients[i][j] << " ";
+        s << '\n';
+    }
+    s << seg.m_startParameter << '\n';
+    s << seg.m_endParameter << '\n';
+    s.flush();
+    return s;
+}
+
+std::istream &operator>>(std::istream &s, usPolynomialCurve2D &seg)
+{
+    std::string c;
+    s >> c;
+    if(c != "usPolynomialCurve2D")
+    {
+        vpException e(vpException::ioError, "operator>>(std::istream&, Polynomial2D&): Stream does not contain usPolynomialCurve2D data");
+        throw e;
+    }
+    s >> seg.m_order;
+    seg.m_polynomialCoefficients.resize(2,seg.m_order+1);
+    for(unsigned int i=0 ; i<2 ; i++) for(unsigned int j=0 ; j<seg.m_order+1 ; j++) s >> seg.m_polynomialCoefficients[i][j];
+    s >> seg.m_startParameter;
+    s >> seg.m_endParameter;
+    s.get();
+    return s;
+}
+
+std::ostream &operator<<=(std::ostream &s, const usPolynomialCurve2D &seg)
+{
+    s.write("usPolynomialCurve2D",20);
+    s.write((char*)&(seg.m_order),sizeof(int));
+    for(unsigned int i=0 ; i<2 ; i++) for(unsigned int j=0 ; j<seg.m_order+1 ; j++) s.write((char*)&(seg.m_polynomialCoefficients[i][j]), sizeof(double));
+    s.write((char*)&(seg.m_startParameter), sizeof(double));
+    s.write((char*)&(seg.m_endParameter), sizeof(double));
+    s.flush();
+    return s;
+}
+
+std::istream &operator>>=(std::istream &s, usPolynomialCurve2D &seg)
+{
+    char c[20];
+    s.read(c,20);
+    if(strcmp(c,"usPolynomialCurve2D"))
+    {
+        vpException e(vpException::ioError, "operator>>=(std::istream&, Polynomial2D&): Stream does not contain usPolynomialCurve2D data");
+        throw e;
+    }
+    s.read((char*)&(seg.m_order), sizeof(int));
+    seg.m_polynomialCoefficients.resize(2,seg.m_order+1);
+    for(unsigned int i=0 ; i<2 ; i++) for(unsigned int j=0 ; j<seg.m_order+1 ; j++) s.read((char*)&(seg.m_polynomialCoefficients[i][j]), sizeof(double));
+    s.read((char*)&(seg.m_startParameter), sizeof(double));
+    s.read((char*)&(seg.m_endParameter), sizeof(double));
+    return s;
+}

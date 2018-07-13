@@ -583,7 +583,7 @@ std::ostream &operator<<(std::ostream &s, const usNeedleModelSpline &needle)
 
     int n = needle.m_spline.size();
     s << n << '\n';
-    // TODO DATA SAVING for(int i=0 ; i<n ; i++) s << needle.m_spline.at(i);
+    for(int i=0 ; i<n ; i++) s << needle.m_spline.at(i);
 
     s.flush();
     return s;
@@ -593,9 +593,9 @@ std::istream &operator>>(std::istream &s, usNeedleModelSpline &needle)
 {
     s >> (*(usNeedleModelBaseTip*)(&needle));
 
-    char c[26];
+    std::string c;
     s >> c;
-    if(strcmp(c,"usNeedleModelSpline"))
+    if(c != "usNeedleModelSpline")
     {
         vpException e(vpException::ioError, "Stream does not contain usNeedleModelSpline data");
         throw e;
@@ -609,7 +609,7 @@ std::istream &operator>>(std::istream &s, usNeedleModelSpline &needle)
     s >> n;
     needle.m_spline.clear();
     needle.m_spline.resize(n);
-    // TODO DATA SAVING for(int i=0 ; i<n ; i++) s >> needle.m_spline.at(i);
+    for(int i=0 ; i<n ; i++) s >> needle.m_spline.at(i);
 
     return s;
 }
@@ -618,7 +618,7 @@ std::ostream &operator<<=(std::ostream &s, const usNeedleModelSpline &needle)
 {
     s <<= *((usNeedleModelBaseTip*)(&needle));
 
-    s.write("usNeedleModelSpline",18);
+    s.write("usNeedleModelSpline",20);
     s.write((char*)&(needle.m_length), sizeof(double));
     s.write((char*)&(needle.m_outerDiameter), sizeof(double));
     s.write((char*)&(needle.m_insideDiameter), sizeof(double));
@@ -626,7 +626,7 @@ std::ostream &operator<<=(std::ostream &s, const usNeedleModelSpline &needle)
 
     int n = needle.m_spline.size();
     s.write((char*)&n, sizeof(int));
-    // TODO DATA SAVING for(int i=0 ; i<n ; i++) s <<= needle.m_spline.at(i);
+    for(int i=0 ; i<n ; i++) s <<= needle.m_spline.at(i);
 
     s.flush();
     return s;
@@ -636,8 +636,8 @@ std::istream &operator>>=(std::istream &s, usNeedleModelSpline &needle)
 {
     s >>= *((usNeedleModelBaseTip*)(&needle));
 
-    char c[18];
-    s.read(c,18);
+    char c[20];
+    s.read(c,20);
     if(strcmp(c,"usNeedleModelSpline"))
     {
         vpException e(vpException::ioError, "Stream does not contain usNeedleModelSpline data");
@@ -652,7 +652,7 @@ std::istream &operator>>=(std::istream &s, usNeedleModelSpline &needle)
     s.read((char*)&n, sizeof(int));
     needle.m_spline.clear();
     needle.m_spline.resize(n);
-    // TODO DATA SAVING for(int i=0 ; i<n ; i++) s >>= needle.m_spline.at(i);
+    for(int i=0 ; i<n ; i++) s >>= needle.m_spline.at(i);
 
     return s;
 }

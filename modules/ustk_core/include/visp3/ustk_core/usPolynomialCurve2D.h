@@ -378,12 +378,27 @@ public:
    * Scale the polynomial curve.
    */
   void scale(double s);
+  
+  //! Data saving
 
+      //! Text
+      friend VISP_EXPORT std::ostream &operator<<(std::ostream &s, const usPolynomialCurve2D &seg);
+      friend VISP_EXPORT std::istream &operator>>(std::istream &s, usPolynomialCurve2D &seg);
+      //! Binary
+      friend VISP_EXPORT std::ostream &operator<<=(std::ostream &s, const usPolynomialCurve2D &seg);
+      friend VISP_EXPORT std::istream &operator>>=(std::istream &s, usPolynomialCurve2D &seg);
+  
 protected:
   unsigned int m_order; // Order of the polynomial curve
   double m_startParameter; // starting value of the parametric variable
   double m_endParameter; // ending value of the parametric variable
   vpMatrix m_polynomialCoefficients; // coefficients of the polynomial curve
 };
+
+VISP_EXPORT std::ostream &operator<<(std::ostream &s, const usPolynomialCurve2D &seg);
+VISP_EXPORT std::istream &operator>>(std::istream &s, usPolynomialCurve2D &seg);
+
+VISP_EXPORT std::ostream &operator<<=(std::ostream &s, const usPolynomialCurve2D &seg);
+VISP_EXPORT std::istream &operator>>=(std::istream &s, usPolynomialCurve2D &seg);
 
 #endif // __usPolynomialCurve2D_h_

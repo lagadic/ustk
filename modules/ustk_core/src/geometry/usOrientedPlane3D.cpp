@@ -153,7 +153,8 @@ void usOrientedPlane3D::moveInWorldFrame(double x, double y, double z, double tx
 std::ostream &operator<<(std::ostream &s, const usOrientedPlane3D &plane)
 {
     s << "usOrientedPlane3D\n";
-    for(int i=0 ; i<6 ; i++) s << plane.m_pose[i] << " ";
+    s << plane.m_pose[0];
+    for(int i=1 ; i<6 ; i++) s  << " " << plane.m_pose[i];
     s << '\n';
     s.flush();
     return s;
@@ -170,6 +171,7 @@ std::istream &operator>>(std::istream &s, usOrientedPlane3D &plane)
     }
     vpPoseVector pose;
     for(int i=0 ; i<6 ; i++) s >> pose[i];
+    s.get();
     plane.setPose(pose);
     return s;
 }

@@ -747,14 +747,62 @@ double usBSpline3D::getCurvatureFromShape(double start, double end, vpColVector 
     return k;*/
 }
 
-std::ostream &operator<<(std::ostream &s, const usBSpline3D &needle)
+std::ostream &operator<<(std::ostream &s, const usBSpline3D &spline)
 {
     s << "usBSpline3D\n";
 
-    unsigned int n = needle.m_spline.size();
+    unsigned int n = spline.m_spline.size();
     s << n << '\n';
-    for(unsigned int i=0 ; i<n ; i++) s << needle.m_spline.at(i);
+    for(unsigned int i=0 ; i<n ; i++) s << spline.m_spline.at(i);
 
     s.flush();
+    return s;
+}
+
+std::istream &operator>>(std::istream &s, usBSpline3D &spline)
+{
+    std::string c;
+    s >> c;
+    if(c != "usBSpline3D")
+    {
+        vpException e(vpException::ioError, "Stream does not contain BSpline3D data");
+        throw e;
+    }
+
+    int n = 0;
+    s >> n;
+    spline.m_spline.clear();
+    spline.m_spline.resize(n);
+    for(int i=0 ; i<n ; i++) s >> spline.m_spline.at(i);
+    return s;
+}
+
+std::ostream &operator<<=(std::ostream &s, const usBSpline3D &spline)
+{
+    s.write("usBSpline3D",12);
+
+    int n = spline.m_spline.size();
+    s.write((char*)&n, sizeof(int));
+    for(int i=0 ; i<n ; i++) s <<= spline.m_spline.at(i);
+
+    s.flush();
+    return s;
+}
+
+std::istream &operator>>=(std::istream &s, usBSpline3D &spline)
+{
+    char c[12];
+    s.read(c,12);
+    if(strcmp(c,"usBSpline3D"))
+    {
+        vpException e(vpException::ioError, "Stream does not contain BSpline3D data");
+        throw e;
+    }
+
+    int n = 0;
+    s.read((char*)&n, sizeof(int));
+    spline.m_spline.clear();
+    spline.m_spline.resize(n);
+    for(int i=0 ; i<n ; i++) s >>= spline.m_spline.at(i);
     return s;
 }

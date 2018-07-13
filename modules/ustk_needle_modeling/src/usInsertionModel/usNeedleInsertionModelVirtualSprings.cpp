@@ -2153,9 +2153,9 @@ std::ostream &operator<<(std::ostream &s, const usNeedleInsertionModelVirtualSpr
 
 std::istream &operator>>(std::istream &s, usNeedleInsertionModelVirtualSprings &needle)
 {
-    char c[26];
+    std::string c;
     s >> c;
-    if(strcmp(c,"usNeedleInsertionModelVirtualSprings"))
+    if(c != "usNeedleInsertionModelVirtualSprings")
     {
         vpException e(vpException::ioError, "operator>>=(std::istream&, usNeedleInsertionModelVirtualSprings&): Stream does not contain usNeedleInsertionModelVirtualSprings data");
         throw e;
@@ -2202,12 +2202,13 @@ std::istream &operator>>(std::istream &s, usNeedleInsertionModelVirtualSprings &
     s >> needle.m_tipSpringsIndex;
     s >> needle.m_nbMinTipSprings;
     s >> needle.m_nbMaxTipSprings;
+    s.get();
     return s;
 }
 
 std::ostream &operator<<=(std::ostream &s, const usNeedleInsertionModelVirtualSprings &needle)
 {
-    s.write("usNeedleInsertionModelVirtualSprings",26);
+    s.write("usNeedleInsertionModelVirtualSprings",37);
     s <<= needle.m_needle;
     s.write((char*)&(needle.m_tipForce), sizeof(double));
     s.write((char*)&(needle.m_tipMoment), sizeof(double));
@@ -2250,8 +2251,8 @@ std::ostream &operator<<=(std::ostream &s, const usNeedleInsertionModelVirtualSp
 
 std::istream &operator>>=(std::istream &s, usNeedleInsertionModelVirtualSprings &needle)
 {
-    char c[26];
-    s.read(c,26);
+    char c[37];
+    s.read(c,37);
     if(strcmp(c,"usNeedleInsertionModelVirtualSprings"))
     {
         vpException e(vpException::ioError, "operator>>=(std::istream&, usNeedleInsertionModelVirtualSprings&): Stream does not contain usNeedleInsertionModelVirtualSprings data");

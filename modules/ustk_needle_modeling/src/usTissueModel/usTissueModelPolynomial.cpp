@@ -137,7 +137,7 @@ std::ostream &operator<<(std::ostream &s, const usTissueModelPolynomial &tissue)
 {
     s << "usTissueModelPolynomial\n";
     s << tissue.m_surface;
-    // TODO DATA SAVING s << tissue.m_path;
+    s << tissue.m_path;
 
     s.flush();
     return s;
@@ -145,23 +145,23 @@ std::ostream &operator<<(std::ostream &s, const usTissueModelPolynomial &tissue)
 
 std::istream &operator>>(std::istream &s, usTissueModelPolynomial &tissue)
 {
-    char c[18];
+    std::string c;
     s >> c;
-    if(strcmp(c,"usTissueModelPolynomial"))
+    if(c != "usTissueModelPolynomial")
     {
         vpException e(vpException::ioError, "Stream does not contain usTissueModelPolynomial data");
         throw e;
     }
     s >> tissue.m_surface;
-    // TODO DATA SAVING s >> tissue.m_path;
+    s >> tissue.m_path;
     return s;
 }
 
 std::ostream &operator<<=(std::ostream &s, const usTissueModelPolynomial &tissue)
 {
-    s.write("usTissueModelPolynomial",18);
+    s.write("usTissueModelPolynomial",24);
     s <<= tissue.m_surface;
-    // TODO DATA SAVING s <<= tissue.m_path;
+    s <<= tissue.m_path;
 
     s.flush();
     return s;
@@ -169,14 +169,14 @@ std::ostream &operator<<=(std::ostream &s, const usTissueModelPolynomial &tissue
 
 std::istream &operator>>=(std::istream &s, usTissueModelPolynomial &tissue)
 {
-    char c[18];
-    s.read(c,18);
+    char c[24];
+    s.read(c,24);
     if(strcmp(c,"usTissueModelPolynomial"))
     {
         vpException e(vpException::ioError, "Stream does not contain usTissueModelPolynomial data");
         throw e;
     }
     s >>= tissue.m_surface;
-    // TODO DATA SAVING s >>= tissue.m_path;
+    s >>= tissue.m_path;
     return s;
 }

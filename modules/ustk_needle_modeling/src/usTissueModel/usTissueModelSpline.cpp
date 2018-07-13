@@ -140,7 +140,7 @@ std::ostream &operator<<(std::ostream &s, const usTissueModelSpline &tissue)
 {
     s << "usTissueModelSpline\n";
     s << tissue.m_surface;
-    // TODO DATA SAVING s << tissue.m_path;
+    s << tissue.m_path;
 
     s.flush();
     return s;
@@ -148,23 +148,23 @@ std::ostream &operator<<(std::ostream &s, const usTissueModelSpline &tissue)
 
 std::istream &operator>>(std::istream &s, usTissueModelSpline &tissue)
 {
-    char c[18];
+    std::string c;
     s >> c;
-    if(strcmp(c,"usTissueModelSpline"))
+    if(c != "usTissueModelSpline")
     {
         vpException e(vpException::ioError, "Stream does not contain usTissueModelSpline data");
         throw e;
     }
     s >> tissue.m_surface;
-    // TODO DATA SAVING s >> tissue.m_path;
+    s >> tissue.m_path;
     return s;
 }
 
 std::ostream &operator<<=(std::ostream &s, const usTissueModelSpline &tissue)
 {
-    s.write("usTissueModelSpline",18);
+    s.write("usTissueModelSpline",20);
     s <<= tissue.m_surface;
-    // TODO DATA SAVING s <<= tissue.m_path;
+    s <<= tissue.m_path;
 
     s.flush();
     return s;
@@ -172,14 +172,14 @@ std::ostream &operator<<=(std::ostream &s, const usTissueModelSpline &tissue)
 
 std::istream &operator>>=(std::istream &s, usTissueModelSpline &tissue)
 {
-    char c[18];
-    s.read(c,18);
+    char c[20];
+    s.read(c,20);
     if(strcmp(c,"usTissueModelSpline"))
     {
         vpException e(vpException::ioError, "Stream does not contain usTissueModelSpline data");
         throw e;
     }
     s >>= tissue.m_surface;
-    // TODO DATA SAVING s >>= tissue.m_path;
+    s >>= tissue.m_path;
     return s;
 }

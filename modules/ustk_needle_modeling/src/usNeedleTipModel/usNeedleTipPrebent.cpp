@@ -140,7 +140,8 @@ std::istream &operator>>(std::istream &s, usNeedleTipPrebent &tip)
     s >> tip._diameter;
     s >> tip._length;
     s >> tip._angle;
-
+    s.get();
+    
     return s;
 }
 
