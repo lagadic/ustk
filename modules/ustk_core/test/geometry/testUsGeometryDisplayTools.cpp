@@ -93,16 +93,16 @@ int main()
     d1 = new vpDisplayX(I1, 0,0, "Display unsigned char");
     d2 = new vpDisplayX(I2, d1->getWindowXPosition()+d1->getWidth(), d1->getWindowYPosition(), "Display vpRGBa");
 #elif defined(VISP_HAVE_OPENCV)
-    d1 = new vpDisplayOpenCV(I1, "Display unsigned char");
+    d1 = new vpDisplayOpenCV(I1, 0,0, "Display unsigned char");
     d2 = new vpDisplayOpenCV(I2, d1->getWindowXPosition()+d1->getWidth(), d1->getWindowYPosition(), "Display vpRGBa");
 #elif defined(VISP_HAVE_GTK)
-    d1 = new vpDisplayGTK(I1, "Display unsigned char");
+    d1 = new vpDisplayGTK(I1, 0,0, "Display unsigned char");
     d2 = new vpDisplayGTK(I2, d1->getWindowXPosition()+d1->getWidth(), d1->getWindowYPosition(), "Display vpRGBa");
 #elif defined(VISP_HAVE_GDI)
-    d1 = new vpDisplayGDI(I1, "Display unsigned char");
+    d1 = new vpDisplayGDI(I1, 0,0, "Display unsigned char");
     d2 = new vpDisplayGDI(I2, d1->getWindowXPosition()+d1->getWidth(), d1->getWindowYPosition(), "Display vpRGBa");
 #elif defined(VISP_HAVE_D3D9)
-    d1 = new vpDisplayD3d(I1, "Display unsigned char");
+    d1 = new vpDisplayD3d(I1, 0,0, "Display unsigned char");
     d2 = new vpDisplayD3d(I2, d1->getWindowXPosition()+d1->getWidth(), d1->getWindowYPosition(), "Display vpRGBa");
 #endif
     }
