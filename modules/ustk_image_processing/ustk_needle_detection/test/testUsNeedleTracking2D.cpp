@@ -75,7 +75,7 @@ int main()
   reader.acquire(I);
 
   // Initialize the needle model
-  usPolynomialCurve2D needle(2);
+  usPolynomialCurve2D needle(1);
   vpMatrix controlPoints(2, 2);
 
   // initial needle position for needle insertion sequence of ustk-dataset repo
@@ -83,7 +83,7 @@ int main()
   controlPoints[1][0] = 218;
   controlPoints[0][1] = 211;
   controlPoints[1][1] = 236;
-  needle.setControlPoints(controlPoints.t());
+  needle.setControlPoints(controlPoints);
 
   // Initialization of the needle detector
   usNeedleTrackerSIR2D needleDetector;
@@ -147,7 +147,7 @@ int main()
     entryPose = needleDetector.getNeedle()->getPoint(0.0);
     std::cout << "Tip position: (" << tipMean[0] << "," << tipMean[1] << ")" << std::endl;
     std::cout << "Needle length: " << needleDetector.getNeedle()->getLength() << std::endl;
-    std::cout << "Number of control points: " << needleDetector.getNeedle()->getOrder() << std::endl;
+    std::cout << "Number of control points: " << needleDetector.getNeedle()->getOrder()+1 << std::endl;
 
     // Output
     if (std::abs(tipMean[0] - tipGroundTruth.at(i)[0]) > 2 || std::abs(tipMean[1] - tipGroundTruth.at(i)[1]) > 2) {

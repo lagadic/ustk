@@ -30,7 +30,7 @@
 #
 #############################################################################
 
-vp_add_module(ustk_needle_detection visp_ustk_core)
+vp_add_module(ustk_needle_detection visp_core visp_gui visp_ustk_core)
 
 vp_glob_module_sources()
 vp_module_include_directories()

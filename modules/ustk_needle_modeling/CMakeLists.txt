@@ -30,21 +30,12 @@
 #
 #############################################################################
 
-if(USE_FFTW)
-  list(APPEND opt_incs ${FFTW_INCLUDE_DIRS})
-  list(APPEND opt_libs ${FFTW_LIBRARIES})
-endif()
-
-vp_add_module(ustk_core visp_io)
+IF(USE_CPP11)
+vp_add_module(ustk_needle_modeling visp_core visp_ustk_core visp_ustk_needle_detection)
 
 vp_glob_module_sources()
+vp_module_include_directories()
+vp_create_module()
 
-vp_module_include_directories(${opt_incs})
-vp_create_module(${opt_libs})
-
-vp_add_tests(DEPENDS_ON visp_ustk_core visp_gui)
-
-vp_add_config_file("cmake/templates/usConfig.h.in")
-
-# export USTK_HAVE_* cmake vars in VISPConfig.cmake
-vp_cmake_configure("cmake/templates/VISPConfig-ustk_core.cmake.in")
+vp_add_tests(DEPENDS_ON visp_ustk_needle_modeling)
+ENDIF()
