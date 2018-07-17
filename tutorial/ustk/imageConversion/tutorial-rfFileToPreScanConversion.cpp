@@ -5,9 +5,9 @@
 #ifdef USTK_HAVE_FFTW
 
 #include <visp3/core/vpTime.h>
+#include <visp3/ustk_core/usImageIo.h>
 #include <visp3/ustk_core/usImageRF3D.h>
 #include <visp3/ustk_core/usRFToPreScan3DConverter.h>
-#include <visp3/ustk_core/usImageIo.h>
 
 int main()
 {

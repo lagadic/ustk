@@ -116,7 +116,7 @@ void usImageDisplayWidget::updateFrame(const usImagePreScan2D<unsigned char> img
 void usImageDisplayWidget::resizeEvent(QResizeEvent *event)
 {
   m_label->resize(event->size());
-  if(m_QImage.size() != QSize(0,0)) { // excludes init case
+  if (m_QImage.size() != QSize(0, 0)) { // excludes init case
     QImage I = m_QImage.convertToFormat(QImage::Format_RGB888);
     I = I.scaled(this->width(), this->height());
     m_pixmap = QPixmap::fromImage(I);

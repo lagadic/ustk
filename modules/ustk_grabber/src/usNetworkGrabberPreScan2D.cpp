@@ -168,7 +168,7 @@ void usNetworkGrabberPreScan2D::dataArrived()
     m_grabbedImage.setTransducerRadius(m_imageHeader.transducerRadius);
     m_grabbedImage.setScanLinePitch(m_imageHeader.scanLinePitch);
     m_grabbedImage.setDepth(m_imageHeader.imageDepth / 1000.0);
-    m_grabbedImage.setAxialResolution(m_grabbedImage.getDepth()/m_imageHeader.frameHeight);
+    m_grabbedImage.setAxialResolution(m_grabbedImage.getDepth() / m_imageHeader.frameHeight);
     m_grabbedImage.setTransducerConvexity(m_imageHeader.transducerRadius != 0.);
     m_grabbedImage.setTransmitFrequency(m_imageHeader.transmitFrequency);
     m_grabbedImage.setSamplingFrequency(m_imageHeader.samplingFrequency);

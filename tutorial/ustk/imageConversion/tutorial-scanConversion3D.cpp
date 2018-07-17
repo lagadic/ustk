@@ -1,6 +1,6 @@
 #include <visp3/core/vpTime.h>
-#include <visp3/ustk_core/usPreScanToPostScan3DConverter.h>
 #include <visp3/ustk_core/usImageIo.h>
+#include <visp3/ustk_core/usPreScanToPostScan3DConverter.h>
 #include <visp3/ustk_core/usSequenceReader.h>
 
 int main(int argc, char **argv)

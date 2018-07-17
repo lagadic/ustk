@@ -32,151 +32,127 @@
 
 #include <visp3/ustk_needle_modeling/usTissueModelPolynomial.h>
 
+usTissueModelPolynomial::usTissueModelPolynomial() : m_surface(), m_path() {}
 
-usTissueModelPolynomial::usTissueModelPolynomial():
-    m_surface(),
-    m_path()
+usTissueModelPolynomial::usTissueModelPolynomial(const usTissueModelPolynomial &tissue)
+  : m_surface(tissue.m_surface), m_path(tissue.m_path)
 {
 }
 
-usTissueModelPolynomial::usTissueModelPolynomial(const usTissueModelPolynomial &tissue):
-    m_surface(tissue.m_surface),
-    m_path(tissue.m_path)
+usTissueModelPolynomial::~usTissueModelPolynomial() {}
+
+const usTissueModelPolynomial &usTissueModelPolynomial::operator=(const usTissueModelPolynomial &tissue)
 {
+  m_surface = tissue.m_surface;
+  m_path = tissue.m_path;
+
+  return *this;
 }
 
-usTissueModelPolynomial::~usTissueModelPolynomial()
-{
-}
+usTissueModelPolynomial *usTissueModelPolynomial::clone() const { return new usTissueModelPolynomial(*this); }
 
-const usTissueModelPolynomial& usTissueModelPolynomial::operator=(const usTissueModelPolynomial &tissue)
-{
-    m_surface = tissue.m_surface;
-    m_path = tissue.m_path;
+const usOrientedPlane3D &usTissueModelPolynomial::accessSurface() const { return m_surface; }
 
-    return *this;
-}
+usOrientedPlane3D &usTissueModelPolynomial::accessSurface() { return m_surface; }
 
-usTissueModelPolynomial* usTissueModelPolynomial::clone() const
-{
-    return new usTissueModelPolynomial(*this);
-}
+const usPolynomialCurve3D &usTissueModelPolynomial::accessPath() const { return m_path; }
 
-const usOrientedPlane3D &usTissueModelPolynomial::accessSurface() const
-{
-    return m_surface;
-}
-
-usOrientedPlane3D &usTissueModelPolynomial::accessSurface()
-{
-    return m_surface;
-}
-
-const usPolynomialCurve3D &usTissueModelPolynomial::accessPath() const
-{
-    return m_path;
-}
-
-usPolynomialCurve3D usTissueModelPolynomial::accessPath()
-{
-    return m_path;
-}
+usPolynomialCurve3D usTissueModelPolynomial::accessPath() { return m_path; }
 
 bool usTissueModelPolynomial::moveInWorldFrame(const vpHomogeneousMatrix &H)
 {
-    m_surface.moveInWorldFrame(H);
-    m_path.move(H);
+  m_surface.moveInWorldFrame(H);
+  m_path.move(H);
 
-    return true;
+  return true;
 }
 
 bool usTissueModelPolynomial::moveInWorldFrame(double x, double y, double z, double tx, double ty, double tz)
 {
-    return this->moveInWorldFrame(vpHomogeneousMatrix(x,y,z,tx,ty,tz));
+  return this->moveInWorldFrame(vpHomogeneousMatrix(x, y, z, tx, ty, tz));
 }
 
 bool usTissueModelPolynomial::move(const vpHomogeneousMatrix &H)
 {
-    vpPoseVector ptu(this->getPose());
+  vpPoseVector ptu(this->getPose());
 
-    vpHomogeneousMatrix M(ptu);
-    M = M*H*M.inverse();
-    m_surface.moveInWorldFrame(M);
-    m_path.move(M);
+  vpHomogeneousMatrix M(ptu);
+  M = M * H * M.inverse();
+  m_surface.moveInWorldFrame(M);
+  m_path.move(M);
 
-    return true;
+  return true;
 }
 
 bool usTissueModelPolynomial::move(double x, double y, double z, double tx, double ty, double tz)
 {
-    return this->move(vpHomogeneousMatrix(x,y,z,tx,ty,tz));
+  return this->move(vpHomogeneousMatrix(x, y, z, tx, ty, tz));
 }
 
 bool usTissueModelPolynomial::setPose(const vpPoseVector &p)
 {
-    vpPoseVector ptu(this->getPose());
-    
-    vpHomogeneousMatrix M(vpHomogeneousMatrix(p) * vpHomogeneousMatrix(ptu).inverse());
-    m_surface.moveInWorldFrame(M);
-    m_path.move(M);
+  vpPoseVector ptu(this->getPose());
 
-    return true;
+  vpHomogeneousMatrix M(vpHomogeneousMatrix(p) * vpHomogeneousMatrix(ptu).inverse());
+  m_surface.moveInWorldFrame(M);
+  m_path.move(M);
+
+  return true;
 }
 
 vpPoseVector usTissueModelPolynomial::getPose() const
 {
-    vpPoseVector ptu = m_surface.getPose();
+  vpPoseVector ptu = m_surface.getPose();
 
-    vpColVector p = m_path.getPoint(0);
-    for(int i=0 ; i<3 ; i++) ptu[i] = p[i];
+  vpColVector p = m_path.getPoint(0);
+  for (int i = 0; i < 3; i++)
+    ptu[i] = p[i];
 
-    return ptu;
+  return ptu;
 }
 
 std::ostream &operator<<(std::ostream &s, const usTissueModelPolynomial &tissue)
 {
-    s << "usTissueModelPolynomial\n";
-    s << tissue.m_surface;
-    s << tissue.m_path;
+  s << "usTissueModelPolynomial\n";
+  s << tissue.m_surface;
+  s << tissue.m_path;
 
-    s.flush();
-    return s;
+  s.flush();
+  return s;
 }
 
 std::istream &operator>>(std::istream &s, usTissueModelPolynomial &tissue)
 {
-    std::string c;
-    s >> c;
-    if(c != "usTissueModelPolynomial")
-    {
-        vpException e(vpException::ioError, "Stream does not contain usTissueModelPolynomial data");
-        throw e;
-    }
-    s >> tissue.m_surface;
-    s >> tissue.m_path;
-    return s;
+  std::string c;
+  s >> c;
+  if (c != "usTissueModelPolynomial") {
+    vpException e(vpException::ioError, "Stream does not contain usTissueModelPolynomial data");
+    throw e;
+  }
+  s >> tissue.m_surface;
+  s >> tissue.m_path;
+  return s;
 }
 
 std::ostream &operator<<=(std::ostream &s, const usTissueModelPolynomial &tissue)
 {
-    s.write("usTissueModelPolynomial",24);
-    s <<= tissue.m_surface;
-    s <<= tissue.m_path;
+  s.write("usTissueModelPolynomial", 24);
+  s <<= tissue.m_surface;
+  s <<= tissue.m_path;
 
-    s.flush();
-    return s;
+  s.flush();
+  return s;
 }
 
 std::istream &operator>>=(std::istream &s, usTissueModelPolynomial &tissue)
 {
-    char c[24];
-    s.read(c,24);
-    if(strcmp(c,"usTissueModelPolynomial"))
-    {
-        vpException e(vpException::ioError, "Stream does not contain usTissueModelPolynomial data");
-        throw e;
-    }
-    s >>= tissue.m_surface;
-    s >>= tissue.m_path;
-    return s;
+  char c[24];
+  s.read(c, 24);
+  if (strcmp(c, "usTissueModelPolynomial")) {
+    vpException e(vpException::ioError, "Stream does not contain usTissueModelPolynomial data");
+    throw e;
+  }
+  s >>= tissue.m_surface;
+  s >>= tissue.m_path;
+  return s;
 }

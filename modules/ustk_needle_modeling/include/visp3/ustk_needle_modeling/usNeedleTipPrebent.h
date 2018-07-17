@@ -42,47 +42,44 @@
 
 #include <visp3/ustk_needle_modeling/usNeedleTip.h>
 
-
 class VISP_EXPORT usNeedleTipPrebent : public usNeedleTip
 {
 protected:
-
-    double _diameter;
-    double _length;
-    double _angle; //rad
+  double _diameter;
+  double _length;
+  double _angle; // rad
 
 public:
+  //! Constructors, destructors
 
-    //! Constructors, destructors
+  usNeedleTipPrebent();
+  usNeedleTipPrebent(const usNeedleTipPrebent &needle);
+  virtual ~usNeedleTipPrebent();
+  virtual usNeedleTipPrebent &operator=(const usNeedleTipPrebent &needle);
+  virtual usNeedleTipPrebent *clone() const; // Polymorph copy method
 
-    usNeedleTipPrebent();
-    usNeedleTipPrebent(const usNeedleTipPrebent &needle);
-    virtual ~usNeedleTipPrebent();
-    virtual usNeedleTipPrebent &operator=(const usNeedleTipPrebent &needle);
-    virtual usNeedleTipPrebent* clone() const; // Polymorph copy method
+  //! Parameters setters and getters
 
-    //! Parameters setters and getters
+  void setDiameter(double diameter);
+  double getDiameter() const;
+  void setLength(double l);
+  double getLength() const;
+  void setAngleRad(double angle);
+  double getAngleRad() const;
+  void setAngleDeg(double angle);
+  double getAngleDeg() const;
 
-    void setDiameter(double diameter);
-    double getDiameter() const;
-    void setLength(double l);
-    double getLength() const;
-    void setAngleRad(double angle);
-    double getAngleRad() const;
-    void setAngleDeg(double angle);
-    double getAngleDeg() const;
+  //! Data saving
 
-    //! Data saving
+  //! Text
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &s, const usNeedleTipPrebent &tip);
+  friend VISP_EXPORT std::istream &operator>>(std::istream &s, usNeedleTipPrebent &tip);
+  //! Binary
+  friend VISP_EXPORT std::ostream &operator<<=(std::ostream &s, const usNeedleTipPrebent &tip);
+  friend VISP_EXPORT std::istream &operator>>=(std::istream &s, usNeedleTipPrebent &tip);
 
-        //! Text
-        friend VISP_EXPORT std::ostream &operator<<(std::ostream &s, const usNeedleTipPrebent &tip);
-        friend VISP_EXPORT std::istream &operator>>(std::istream &s, usNeedleTipPrebent &tip);
-        //! Binary
-        friend VISP_EXPORT std::ostream &operator<<=(std::ostream &s, const usNeedleTipPrebent &tip);
-        friend VISP_EXPORT std::istream &operator>>=(std::istream &s, usNeedleTipPrebent &tip);
-        
 private:
-    void updateTipPose();
+  void updateTipPose();
 };
 
 VISP_EXPORT std::ostream &operator<<(std::ostream &s, const usNeedleTipPrebent &tip);

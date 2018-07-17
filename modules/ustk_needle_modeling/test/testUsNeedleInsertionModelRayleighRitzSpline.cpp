@@ -40,7 +40,8 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9)
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI) ||         \
+    defined(VISP_HAVE_D3D9)
 
 #include <visp3/ustk_needle_modeling/usNeedleInsertionModelRayleighRitzSpline.h>
 #include <visp3/ustk_needle_modeling/usNeedleModelingDisplayTools.h>
@@ -61,57 +62,56 @@
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpPoseVector.h>
 
-
 int main()
 {
-    usNeedleInsertionModelRayleighRitzSpline n;
+  usNeedleInsertionModelRayleighRitzSpline n;
 
-    n.loadPreset(usNeedleInsertionModelRayleighRitzSpline::ModelPreset::BiopsyNeedle);
-    n.accessNeedle().setOuterDiameter(0.001);
-    n.accessNeedle().setInsideDiameter(0.0007);
-    n.accessNeedle().setNeedleYoungModulus(75e9);
-    n.accessNeedle().setFullLength(0.1);
-    
-    n.accessNeedle().accessSegment(0).setOrder(3);
-    n.setStiffnessPerUnitLength(0, 10000);
-    
-    n.setPathUpdateType(usNeedleInsertionModelRayleighRitzSpline::PathUpdateType::WithTipPosition);
-    n.setPathUpdateLengthThreshold(0.001);
-        
-    n.setBasePose(vpPoseVector(0,0,0.1, M_PI,0,0));
+  n.loadPreset(usNeedleInsertionModelRayleighRitzSpline::ModelPreset::BiopsyNeedle);
+  n.accessNeedle().setOuterDiameter(0.001);
+  n.accessNeedle().setInsideDiameter(0.0007);
+  n.accessNeedle().setNeedleYoungModulus(75e9);
+  n.accessNeedle().setFullLength(0.1);
 
-    n.accessTissue().accessSurface().setPosition(n.accessNeedle().getTipPosition()+0.01*n.accessNeedle().getTipDirection());
-    n.accessTissue().accessSurface().setDirection(n.accessNeedle().getTipDirection());
+  n.accessNeedle().accessSegment(0).setOrder(3);
+  n.setStiffnessPerUnitLength(0, 10000);
 
-    n.setNeedleTipType(usNeedleInsertionModelRayleighRitzSpline::NeedleTipType::ActuatedTip);
-    dynamic_cast<usNeedleTipActuated&>(n.accessNeedleTip()).setDiameter(2*n.accessNeedle().getOuterDiameter());
-    dynamic_cast<usNeedleTipActuated&>(n.accessNeedleTip()).setLength(0.005);
-    dynamic_cast<usNeedleTipActuated&>(n.accessNeedleTip()).setTipAngleDeg(5);
-    dynamic_cast<usNeedleTipActuated&>(n.accessNeedleTip()).setSteeringAngleDeg(90);
-    
-    n.setSolvingMethod(usNeedleInsertionModelRayleighRitzSpline::SolvingMethod::FixedBeamLength);
-    
-    n.updateState();
+  n.setPathUpdateType(usNeedleInsertionModelRayleighRitzSpline::PathUpdateType::WithTipPosition);
+  n.setPathUpdateLengthThreshold(0.001);
 
-    usNeedleInsertionModelRayleighRitzSpline n1(n);
-    n1.moveBaseWorldFrame(0.01,0,0,0,0,0);
-    
-    vpImage<unsigned char> I1(700, 500, 255);
-    
+  n.setBasePose(vpPoseVector(0, 0, 0.1, M_PI, 0, 0));
+
+  n.accessTissue().accessSurface().setPosition(n.accessNeedle().getTipPosition() +
+                                               0.01 * n.accessNeedle().getTipDirection());
+  n.accessTissue().accessSurface().setDirection(n.accessNeedle().getTipDirection());
+
+  n.setNeedleTipType(usNeedleInsertionModelRayleighRitzSpline::NeedleTipType::ActuatedTip);
+  dynamic_cast<usNeedleTipActuated &>(n.accessNeedleTip()).setDiameter(2 * n.accessNeedle().getOuterDiameter());
+  dynamic_cast<usNeedleTipActuated &>(n.accessNeedleTip()).setLength(0.005);
+  dynamic_cast<usNeedleTipActuated &>(n.accessNeedleTip()).setTipAngleDeg(5);
+  dynamic_cast<usNeedleTipActuated &>(n.accessNeedleTip()).setSteeringAngleDeg(90);
+
+  n.setSolvingMethod(usNeedleInsertionModelRayleighRitzSpline::SolvingMethod::FixedBeamLength);
+
+  n.updateState();
+
+  usNeedleInsertionModelRayleighRitzSpline n1(n);
+  n1.moveBaseWorldFrame(0.01, 0, 0, 0, 0, 0);
+
+  vpImage<unsigned char> I1(700, 500, 255);
+
 #if defined(VISP_HAVE_X11)
-    vpDisplayX *d1;
+  vpDisplayX *d1;
 #elif defined(VISP_HAVE_OPENCV)
-    vpDisplayOpenCV *d1;
+  vpDisplayOpenCV *d1;
 #elif defined(VISP_HAVE_GTK)
-    vpDisplayGTK *d1;
+  vpDisplayGTK *d1;
 #elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI *d1;
+  vpDisplayGDI *d1;
 #elif defined(VISP_HAVE_D3D9)
-    vpDisplayD3D *d1;
+  vpDisplayD3D *d1;
 #endif
-    
-    try
-    {
+
+  try {
 #if defined(VISP_HAVE_X11)
     d1 = new vpDisplayX(I1);
 #elif defined(VISP_HAVE_OPENCV)
@@ -123,42 +123,38 @@ int main()
 #elif defined(VISP_HAVE_D3D9)
     d1 = new vpDisplayD3D(I1);
 #endif
-    }
-    catch(std::exception &e)
-    {
-        std::cout << "testUsNeedleInsertionModelRayleighRitzSpline: could not initialize display:\n" << e.what() << std::endl;
-        return 0;
-    }
-    
-    for(int i=0 ; i<3000 ; i++)
-    {        
-        if(i > 500 && i < 1000)
-        {
-            n1.accessNeedle().setFullLength(n1.accessNeedle().getFullLength()+0.00002);
-            n1.updateState();
-        }
-        
-        if(i > 500)
-        {
-            dynamic_cast<usNeedleTipActuated&>(n.accessNeedleTip()).setTipAngleDeg(0.1*(i%400));            
-            dynamic_cast<usNeedleTipActuated&>(n.accessNeedleTip()).setSteeringAngleDeg(i%360);
-            n.updateState();
-        }
-
-        n.moveBase(0,0,0.0001,0,0,0.01);
-        n1.moveBase(0,0,0.0001,0,0,0.01);
-        
-        vpDisplay::display(I1);
-        
-        usNeedleModelingDisplayTools::display(n, I1, vpHomogeneousMatrix(0.08 ,0.1, 0.2, M_PI/2,0,0), 3000,3000);
-        usNeedleModelingDisplayTools::display(n1, I1, vpHomogeneousMatrix(0.08 ,0.1, 0.2, M_PI/2,0,0), 3000,3000);
-        
-        vpDisplay::flush(I1);
-    }
-
-    delete d1;
-
+  } catch (std::exception &e) {
+    std::cout << "testUsNeedleInsertionModelRayleighRitzSpline: could not initialize display:\n"
+              << e.what() << std::endl;
     return 0;
+  }
+
+  for (int i = 0; i < 3000; i++) {
+    if (i > 500 && i < 1000) {
+      n1.accessNeedle().setFullLength(n1.accessNeedle().getFullLength() + 0.00002);
+      n1.updateState();
+    }
+
+    if (i > 500) {
+      dynamic_cast<usNeedleTipActuated &>(n.accessNeedleTip()).setTipAngleDeg(0.1 * (i % 400));
+      dynamic_cast<usNeedleTipActuated &>(n.accessNeedleTip()).setSteeringAngleDeg(i % 360);
+      n.updateState();
+    }
+
+    n.moveBase(0, 0, 0.0001, 0, 0, 0.01);
+    n1.moveBase(0, 0, 0.0001, 0, 0, 0.01);
+
+    vpDisplay::display(I1);
+
+    usNeedleModelingDisplayTools::display(n, I1, vpHomogeneousMatrix(0.08, 0.1, 0.2, M_PI / 2, 0, 0), 3000, 3000);
+    usNeedleModelingDisplayTools::display(n1, I1, vpHomogeneousMatrix(0.08, 0.1, 0.2, M_PI / 2, 0, 0), 3000, 3000);
+
+    vpDisplay::flush(I1);
+  }
+
+  delete d1;
+
+  return 0;
 }
 
 #else
@@ -167,10 +163,9 @@ int main()
 
 int main()
 {
-    std::cout << "No display to start testUsNeedleInsertionModelRayleighRitzSpline" << std::endl;
-    
-    return 0;
+  std::cout << "No display to start testUsNeedleInsertionModelRayleighRitzSpline" << std::endl;
+
+  return 0;
 }
 
 #endif
-

@@ -46,10 +46,10 @@
 
 #include <visp3/ustk_core/usImageRF2D.h>
 #include <visp3/ustk_core/usImageRF3D.h>
+#include <visp3/ustk_core/usMHDSequenceWriter.h>
 #include <visp3/ustk_grabber/usFrameGrabbedInfo.h>
 #include <visp3/ustk_grabber/usNetworkGrabber.h>
 #include <visp3/ustk_grabber/usVolumeGrabbedInfo.h>
-#include <visp3/ustk_core/usMHDSequenceWriter.h>
 
 /**
  * @class usNetworkGrabberRF3D

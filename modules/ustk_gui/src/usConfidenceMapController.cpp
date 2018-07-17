@@ -42,14 +42,18 @@
 /**
 * Constructor.
 */
-usConfidenceMapController::usConfidenceMapController(QObject *parent): QObject(parent), m_confidenceProcessor(),m_confidenceMap(), m_gain(5),m_activated(false)  {}
+usConfidenceMapController::usConfidenceMapController(QObject *parent)
+  : QObject(parent), m_confidenceProcessor(), m_confidenceMap(), m_gain(5), m_activated(false)
+{
+}
 
 usConfidenceMapController::~usConfidenceMapController() {}
 
-void usConfidenceMapController::updateImage(usImagePreScan2D<unsigned char> image) {
-  m_confidenceProcessor.run(m_confidenceMap,image);
+void usConfidenceMapController::updateImage(usImagePreScan2D<unsigned char> image)
+{
+  m_confidenceProcessor.run(m_confidenceMap, image);
 
-  //robot orientation control law
+  // robot orientation control law
 
   // confidence barycenter
   double I_sum = 0.0;
@@ -67,26 +71,20 @@ void usConfidenceMapController::updateImage(usImagePreScan2D<unsigned char> imag
   // compute error angle (taget = barycenter on the central scanline)
   double thetaError = yc * m_confidenceMap.getScanLinePitch() - m_confidenceMap.getFieldOfView() / 2.0;
 
-  //emit current confidence barycenter angle (in rad) for display purpose
+  // emit current confidence barycenter angle (in rad) for display purpose
 
   emit(confidenceMap(m_confidenceMap));
   emit(confidenceBarycenterAngle(yc));
 
-  //proportionnal control (unit 10-1 deg per second)
-  if(m_activated)
+  // proportionnal control (unit 10-1 deg per second)
+  if (m_activated)
     emit(updateProbeOrientation(vpMath::deg(m_gain * thetaError) * 10));
 }
 
-void  usConfidenceMapController::setPropotionnalControlGain(const double gain) {
-  m_gain=gain;
-}
+void usConfidenceMapController::setPropotionnalControlGain(const double gain) { m_gain = gain; }
 
-double usConfidenceMapController::getPropotionnalControlGain() const {
-  return m_gain;
-}
+double usConfidenceMapController::getPropotionnalControlGain() const { return m_gain; }
 
-void usConfidenceMapController::activateController(bool activate) {
-  m_activated = activate;
-}
+void usConfidenceMapController::activateController(bool activate) { m_activated = activate; }
 
 #endif

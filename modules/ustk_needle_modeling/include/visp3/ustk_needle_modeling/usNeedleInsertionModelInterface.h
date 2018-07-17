@@ -37,34 +37,33 @@
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpPoseVector.h>
 
-
 class VISP_EXPORT usNeedleInsertionModelInterface
 {
 public:
+  //! The following methods should be redefined in the derived classes
 
-    //! The following methods should be redefined in the derived classes
+  virtual bool setBasePose(
+      const vpPoseVector &pose) = 0; // must set the base pose and automatically update the whole state of the model
+  virtual vpPoseVector getBasePose() const = 0;
 
-    virtual bool setBasePose(const vpPoseVector &pose)=0; //must set the base pose and automatically update the whole state of the model
-    virtual vpPoseVector getBasePose() const=0;
+  //! These function simply overload the previous ones
+  bool setBasePose(double tx, double ty, double tz, double thetax, double thetay, double thetaz);
+  bool setBasePose(const vpHomogeneousMatrix &Hpose);
 
-    //! These function simply overload the previous ones
-    bool setBasePose(double tx, double ty, double tz, double thetax, double thetay, double thetaz);
-    bool setBasePose(const vpHomogeneousMatrix &Hpose);
+  vpHomogeneousMatrix getWorldMbase() const;
+  vpColVector getBasePosition() const;
 
-    vpHomogeneousMatrix getWorldMbase() const;
-    vpColVector getBasePosition() const;
+  bool moveBase(const vpColVector &v, double time);
+  bool moveBase(double tx, double ty, double tz, double thetax, double thetay, double thetaz);
+  bool moveBase(const vpPoseVector &pose);
+  bool moveBase(const vpColVector &v);
+  bool moveBase(const vpHomogeneousMatrix &Hmotion);
 
-    bool moveBase(const vpColVector &v, double time);
-    bool moveBase(double tx, double ty, double tz, double thetax, double thetay, double thetaz);
-    bool moveBase(const vpPoseVector &pose);
-    bool moveBase(const vpColVector &v);
-    bool moveBase(const vpHomogeneousMatrix &Hmotion);
-
-    bool moveBaseWorldFrame(const vpColVector &command, double time);
-    bool moveBaseWorldFrame(double tx, double ty, double tz, double thetax, double thetay, double thetaz);
-    bool moveBaseWorldFrame(const vpPoseVector &pose);
-    bool moveBaseWorldFrame(const vpColVector &v);
-    bool moveBaseWorldFrame(const vpHomogeneousMatrix &Hmotion);
+  bool moveBaseWorldFrame(const vpColVector &command, double time);
+  bool moveBaseWorldFrame(double tx, double ty, double tz, double thetax, double thetay, double thetaz);
+  bool moveBaseWorldFrame(const vpPoseVector &pose);
+  bool moveBaseWorldFrame(const vpColVector &v);
+  bool moveBaseWorldFrame(const vpHomogeneousMatrix &Hmotion);
 };
 
 #endif // __usNeedleInsertionModelInterface_h

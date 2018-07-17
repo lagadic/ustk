@@ -36,97 +36,77 @@
 #include <visp3/core/vpExponentialMap.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 
+usNeedleInsertionModelKinematic::usNeedleInsertionModelKinematic() : m_needle(), m_naturalCurvature(0) {}
 
-usNeedleInsertionModelKinematic::usNeedleInsertionModelKinematic() :
-    m_needle(),
-    m_naturalCurvature(0)
+usNeedleInsertionModelKinematic::usNeedleInsertionModelKinematic(const usNeedleInsertionModelKinematic &needle)
+  : m_needle(needle.m_needle), m_naturalCurvature(needle.m_naturalCurvature)
 {
 }
 
-usNeedleInsertionModelKinematic::usNeedleInsertionModelKinematic(const usNeedleInsertionModelKinematic &needle) :
-    m_needle(needle.m_needle),
-    m_naturalCurvature(needle.m_naturalCurvature)
+usNeedleInsertionModelKinematic::~usNeedleInsertionModelKinematic() {}
+
+usNeedleInsertionModelKinematic &usNeedleInsertionModelKinematic::
+operator=(const usNeedleInsertionModelKinematic &needle)
 {
+  m_needle = needle.m_needle;
+
+  m_naturalCurvature = needle.m_naturalCurvature;
+
+  return (*this);
 }
 
-usNeedleInsertionModelKinematic::~usNeedleInsertionModelKinematic()
+usNeedleInsertionModelKinematic *usNeedleInsertionModelKinematic::clone() const
 {
-
-}
-
-usNeedleInsertionModelKinematic &usNeedleInsertionModelKinematic::operator=(const usNeedleInsertionModelKinematic &needle)
-{
-    m_needle = needle.m_needle;
-
-    m_naturalCurvature = needle.m_naturalCurvature;
-
-    return (*this);
-}
-
-usNeedleInsertionModelKinematic* usNeedleInsertionModelKinematic::clone() const
-{
-    return new usNeedleInsertionModelKinematic(*this);
+  return new usNeedleInsertionModelKinematic(*this);
 }
 
 void usNeedleInsertionModelKinematic::setNaturalCurvature(double naturalCurvature)
 {
-    m_naturalCurvature = naturalCurvature;
+  m_naturalCurvature = naturalCurvature;
 }
 
-double usNeedleInsertionModelKinematic::getNaturalCurvature() const
-{
-    return m_naturalCurvature;
-}
+double usNeedleInsertionModelKinematic::getNaturalCurvature() const { return m_naturalCurvature; }
 
-const usNeedleModelBaseTip &usNeedleInsertionModelKinematic::accessNeedle() const
-{
-    return m_needle;
-}
+const usNeedleModelBaseTip &usNeedleInsertionModelKinematic::accessNeedle() const { return m_needle; }
 
-usNeedleModelBaseTip &usNeedleInsertionModelKinematic::accessNeedle()
-{
-    return m_needle;
-}
+usNeedleModelBaseTip &usNeedleInsertionModelKinematic::accessNeedle() { return m_needle; }
 
 bool usNeedleInsertionModelKinematic::moveBase(double vz, double wz, double time)
 {
-    vpColVector command(6,0);
-    command[2] = vz;
-    command[5] = wz;
+  vpColVector command(6, 0);
+  command[2] = vz;
+  command[5] = wz;
 
-    return this->usNeedleInsertionModelInterface::moveBase(command, time);
+  return this->usNeedleInsertionModelInterface::moveBase(command, time);
 }
 
 bool usNeedleInsertionModelKinematic::moveBase(double controlCurvature, double vz, double wz, double time)
 {
-    double naturalCurvature = m_naturalCurvature;
-    m_naturalCurvature = controlCurvature;
+  double naturalCurvature = m_naturalCurvature;
+  m_naturalCurvature = controlCurvature;
 
-    bool moved = this->moveBase(vz, wz, time);
+  bool moved = this->moveBase(vz, wz, time);
 
-    m_naturalCurvature = naturalCurvature;
+  m_naturalCurvature = naturalCurvature;
 
-    return moved;
+  return moved;
 }
 
 bool usNeedleInsertionModelKinematic::setBasePose(const vpPoseVector &pose)
 {
-    vpHomogeneousMatrix H(pose);
-    vpColVector baseVelocity = vpExponentialMap::inverse(m_needle.getWorldMbase().inverse()*H,1);
+  vpHomogeneousMatrix H(pose);
+  vpColVector baseVelocity = vpExponentialMap::inverse(m_needle.getWorldMbase().inverse() * H, 1);
 
-    m_needle.setBasePose(pose);
-    
-    vpColVector tipVelocity(6,0);
-    tipVelocity[2] = baseVelocity[2];
-    tipVelocity[3] = m_naturalCurvature*tipVelocity[2];
-    tipVelocity[5] = baseVelocity[5];
-    
-    m_needle.moveTip(tipVelocity, 1);
+  m_needle.setBasePose(pose);
 
-    return true;
+  vpColVector tipVelocity(6, 0);
+  tipVelocity[2] = baseVelocity[2];
+  tipVelocity[3] = m_naturalCurvature * tipVelocity[2];
+  tipVelocity[5] = baseVelocity[5];
+
+  m_needle.moveTip(tipVelocity, 1);
+
+  return true;
 }
 
-vpPoseVector usNeedleInsertionModelKinematic::getBasePose() const
-{
-    return m_needle.getBasePose();
-}
+vpPoseVector usNeedleInsertionModelKinematic::getBasePose() const { return m_needle.getBasePose(); }

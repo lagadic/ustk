@@ -42,14 +42,14 @@
 
 #if (defined(USTK_HAVE_VTK_QT) || defined(USTK_HAVE_QT5)) && defined(VISP_HAVE_MODULE_USTK_TEMPLATE_TRACKING)
 
-#include <QObject>
 #include <QApplication>
-#include <visp3/ustk_template_tracking/usDenseTracker2D.h>
+#include <QObject>
 #include <visp3/ustk_confidence_map/usScanlineConfidence2D.h>
-#include <visp3/ustk_core/usPreScanToPostScan2DConverter.h>
-#include <visp3/ustk_core/usImagePreScan2D.h>
 #include <visp3/ustk_core/usImagePostScan2D.h>
+#include <visp3/ustk_core/usImagePreScan2D.h>
 #include <visp3/ustk_core/usPixelMeterConversion.h>
+#include <visp3/ustk_core/usPreScanToPostScan2DConverter.h>
+#include <visp3/ustk_template_tracking/usDenseTracker2D.h>
 
 /**
  * @class usRectangleVisualServoingController
@@ -62,7 +62,6 @@ class VISP_EXPORT usRectangleVisualServoingController : public QObject
 public:
   usRectangleVisualServoingController(QObject *parent = NULL);
   virtual ~usRectangleVisualServoingController();
-
 
 signals:
   void confidenceBarycenterAngle(double theta);

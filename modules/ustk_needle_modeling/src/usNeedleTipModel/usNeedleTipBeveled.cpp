@@ -35,130 +35,106 @@
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 
+usNeedleTipBeveled::usNeedleTipBeveled() : usNeedleTip(), _diameter(0.001), _length(0.001) {}
 
-usNeedleTipBeveled::usNeedleTipBeveled() :
-    usNeedleTip(),
-    _diameter(0.001),
-    _length(0.001)
-{
-
-}
-
-usNeedleTipBeveled::usNeedleTipBeveled(const usNeedleTipBeveled &tip):
-    usNeedleTip(tip),
-    _diameter(tip._diameter),
-    _length(tip._length)
+usNeedleTipBeveled::usNeedleTipBeveled(const usNeedleTipBeveled &tip)
+  : usNeedleTip(tip), _diameter(tip._diameter), _length(tip._length)
 {
 }
 
-usNeedleTipBeveled::~usNeedleTipBeveled()
+usNeedleTipBeveled::~usNeedleTipBeveled() {}
+
+usNeedleTipBeveled &usNeedleTipBeveled::operator=(const usNeedleTipBeveled &tip)
 {
+  this->usNeedleTip::operator=(tip);
+
+  _diameter = tip._diameter;
+  _length = tip._length;
+
+  return (*this);
 }
 
-usNeedleTipBeveled& usNeedleTipBeveled::operator=(const usNeedleTipBeveled &tip)
-{
-    this->usNeedleTip::operator=(tip);
-
-    _diameter = tip._diameter;
-    _length = tip._length;
-
-    return (*this);
-}
-
-usNeedleTipBeveled* usNeedleTipBeveled::clone() const
-{
-    return new usNeedleTipBeveled(*this);
-}
+usNeedleTipBeveled *usNeedleTipBeveled::clone() const { return new usNeedleTipBeveled(*this); }
 
 void usNeedleTipBeveled::setDiameter(double diameter)
 {
-    if(diameter > 0) _diameter = diameter;
+  if (diameter > 0)
+    _diameter = diameter;
 }
 
-double usNeedleTipBeveled::getDiameter() const
-{
-    return _diameter;
-}
+double usNeedleTipBeveled::getDiameter() const { return _diameter; }
 
 void usNeedleTipBeveled::setLength(double l)
 {
-    if(l >= 0) _length = l;
+  if (l >= 0)
+    _length = l;
 }
 
-double usNeedleTipBeveled::getLength() const
-{
-    return _length;
-}
+double usNeedleTipBeveled::getLength() const { return _length; }
 
-double usNeedleTipBeveled::getAngle() const
-{
-    return atan2(_diameter,_length);
-}
+double usNeedleTipBeveled::getAngle() const { return atan2(_diameter, _length); }
 
 std::ostream &operator<<(std::ostream &s, const usNeedleTipBeveled &tip)
 {
-    s << "usNeedleTipBeveled\n";
-    s << (const usNeedleTip&)tip;
+  s << "usNeedleTipBeveled\n";
+  s << (const usNeedleTip &)tip;
 
-    s << tip._diameter << '\n';
-    s << tip._length << '\n';
+  s << tip._diameter << '\n';
+  s << tip._length << '\n';
 
-    s.flush();
-    return s;
+  s.flush();
+  return s;
 }
 
 std::istream &operator>>(std::istream &s, usNeedleTipBeveled &tip)
 {
-    std::string c;
-    s >> c;
-    if(c != "usNeedleTipBeveled")
-    {
-        vpException e(vpException::ioError, "Stream does not contain usNeedleTipBeveled data");
-        throw e;
-    }
-    s >> (usNeedleTip&)tip;
-    s >> tip._diameter;
-    s >> tip._length;
-    s.get();
-    
-    return s;
+  std::string c;
+  s >> c;
+  if (c != "usNeedleTipBeveled") {
+    vpException e(vpException::ioError, "Stream does not contain usNeedleTipBeveled data");
+    throw e;
+  }
+  s >> (usNeedleTip &)tip;
+  s >> tip._diameter;
+  s >> tip._length;
+  s.get();
+
+  return s;
 }
 
 std::ostream &operator<<=(std::ostream &s, const usNeedleTipBeveled &tip)
 {
-    s.write("usNeedleTipBeveled",19);
+  s.write("usNeedleTipBeveled", 19);
 
-    s <<= (const usNeedleTip&)tip;
-    s.write((char*)&(tip._diameter), sizeof(double));
-    s.write((char*)&(tip._length), sizeof(double));
+  s <<= (const usNeedleTip &)tip;
+  s.write((char *)&(tip._diameter), sizeof(double));
+  s.write((char *)&(tip._length), sizeof(double));
 
-    s.flush();
-    return s;
+  s.flush();
+  return s;
 }
 
 std::istream &operator>>=(std::istream &s, usNeedleTipBeveled &tip)
 {
-    char c[19];
-    s.read(c,19);
-    if(strcmp(c,"usNeedleTipBeveled"))
-    {
-        vpException e(vpException::ioError, "Stream does not contain usNeedleTipBeveled data");
-        throw e;
-    }
+  char c[19];
+  s.read(c, 19);
+  if (strcmp(c, "usNeedleTipBeveled")) {
+    vpException e(vpException::ioError, "Stream does not contain usNeedleTipBeveled data");
+    throw e;
+  }
 
-    s >>= (usNeedleTip&)tip;
-    s.read((char*)&(tip._diameter), sizeof(double));
-    s.read((char*)&(tip._length), sizeof(double));
-    return s;
+  s >>= (usNeedleTip &)tip;
+  s.read((char *)&(tip._diameter), sizeof(double));
+  s.read((char *)&(tip._length), sizeof(double));
+  return s;
 }
-
 
 void usNeedleTipBeveled::updateTipPose()
 {
-    double angle = this->getAngle()/2;
+  double angle = this->getAngle() / 2;
 
-    vpHomogeneousMatrix H(0,_diameter/2,_length,angle,0,0);
+  vpHomogeneousMatrix H(0, _diameter / 2, _length, angle, 0, 0);
 
-    m_worldMtip =m_worldMbase*H;
-    m_tipPose.buildFrom(m_worldMtip);
+  m_worldMtip = m_worldMbase * H;
+  m_tipPose.buildFrom(m_worldMtip);
 }

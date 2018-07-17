@@ -134,11 +134,13 @@ vpThread::Return displayFunction(vpThread::Args args)
       tracker.update(postScan_);
       rectangle = tracker.getTarget();
 
-      usPixelMeterConversion::convert(postScan_, rectangle.getCenter().get_j(), rectangle.getCenter().get_i(), xtarget, ytarget);
+      usPixelMeterConversion::convert(postScan_, rectangle.getCenter().get_j(), rectangle.getCenter().get_i(), xtarget,
+                                      ytarget);
 
       std::cout << "Height resolution : " << postScan_.getHeightResolution() << std::endl;
       std::cout << "Width resolution : " << postScan_.getWidthResolution() << std::endl;
-      std::cout << "Center i = " << rectangle.getCenter().get_i() << ", j = " << rectangle.getCenter().get_j() << std::endl;
+      std::cout << "Center i = " << rectangle.getCenter().get_i() << ", j = " << rectangle.getCenter().get_j()
+                << std::endl;
       std::cout << "xtarget = " << xtarget << ", ytarget = " << ytarget << std::endl;
 
       double time = (vpTime::measureTimeMs() - startTime) / 1000.0;
@@ -163,14 +165,22 @@ vpThread::Return displayFunction(vpThread::Args args)
       // Display the image
       vpDisplay::display(postScan_);
 
-      vpDisplay::displayLine(postScan_, static_cast<int>(rectangle.getTopLeft().get_i()), static_cast<int>(rectangle.getTopLeft().get_j()),
-                             static_cast<int>(rectangle.getBottomLeft().get_i()), static_cast<int>(rectangle.getBottomLeft().get_j()), vpColor::red);
-      vpDisplay::displayLine(postScan_, static_cast<int>(rectangle.getBottomLeft().get_i()), static_cast<int>(rectangle.getBottomLeft().get_j()),
-                             static_cast<int>(rectangle.getBottomRight().get_i()), static_cast<int>(rectangle.getBottomRight().get_j()), vpColor::red);
-      vpDisplay::displayLine(postScan_, static_cast<int>(rectangle.getBottomRight().get_i()), static_cast<int>(rectangle.getBottomRight().get_j()),
-                             static_cast<int>(rectangle.getTopRight().get_i()), static_cast<int>(rectangle.getTopRight().get_j()), vpColor::red);
-      vpDisplay::displayLine(postScan_, static_cast<int>(rectangle.getTopRight().get_i()), static_cast<int>(rectangle.getTopRight().get_j()),
-                             static_cast<int>(rectangle.getTopLeft().get_i()), static_cast<int>(rectangle.getTopLeft().get_j()), vpColor::red);
+      vpDisplay::displayLine(postScan_, static_cast<int>(rectangle.getTopLeft().get_i()),
+                             static_cast<int>(rectangle.getTopLeft().get_j()),
+                             static_cast<int>(rectangle.getBottomLeft().get_i()),
+                             static_cast<int>(rectangle.getBottomLeft().get_j()), vpColor::red);
+      vpDisplay::displayLine(postScan_, static_cast<int>(rectangle.getBottomLeft().get_i()),
+                             static_cast<int>(rectangle.getBottomLeft().get_j()),
+                             static_cast<int>(rectangle.getBottomRight().get_i()),
+                             static_cast<int>(rectangle.getBottomRight().get_j()), vpColor::red);
+      vpDisplay::displayLine(postScan_, static_cast<int>(rectangle.getBottomRight().get_i()),
+                             static_cast<int>(rectangle.getBottomRight().get_j()),
+                             static_cast<int>(rectangle.getTopRight().get_i()),
+                             static_cast<int>(rectangle.getTopRight().get_j()), vpColor::red);
+      vpDisplay::displayLine(postScan_, static_cast<int>(rectangle.getTopRight().get_i()),
+                             static_cast<int>(rectangle.getTopRight().get_j()),
+                             static_cast<int>(rectangle.getTopLeft().get_i()),
+                             static_cast<int>(rectangle.getTopLeft().get_j()), vpColor::red);
 
       // Trigger end of acquisition with a mouse click
       vpDisplay::displayText(postScan_, 10, 10, "Click to exit...", vpColor::red);

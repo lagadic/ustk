@@ -749,7 +749,8 @@ int usNetworkGrabber::getTransmitFrequency() { return m_acquisitionParamters.get
 /**
 * Sets the  motor position of 4DC7 probe to the middle.
 */
-void usNetworkGrabber::center3DProbeMotor() {
+void usNetworkGrabber::center3DProbeMotor()
+{
   setMotorPosition(40);
   sendAcquisitionParameters();
 }
