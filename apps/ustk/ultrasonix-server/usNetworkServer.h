@@ -16,8 +16,8 @@
 
 // Ultrasonix SDK includes
 #include <ImagingModes.h>
-#include <porta_params_def.h>
 #include <porta.h>
+#include <porta_params_def.h>
 #include <utx_opt.h>
 
 #if USTK_PORTA_VERSION_MAJOR > 5
@@ -30,12 +30,11 @@
 
 #include <cmath>
 #include <ctime>
-#include <iostream>
-#include <vector>
-#include <string>
-#include <sstream>
 #include <fstream>
 #include <iostream>
+#include <sstream>
+#include <string>
+#include <vector>
 
 #include <usPortaConfig.h>
 #include <visp3/core/vpException.h>

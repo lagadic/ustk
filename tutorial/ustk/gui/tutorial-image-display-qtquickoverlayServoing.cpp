@@ -3,7 +3,8 @@
 #include <iostream>
 #include <visp3/ustk_core/usConfig.h>
 
-#if defined(VISP_HAVE_MODULE_USTK_GUI) && defined(VISP_HAVE_MODULE_USTK_TEMPLATE_TRACKING) && defined(VISP_HAVE_VIPER850) && (defined(USTK_HAVE_VTK_QT5) || defined(USTK_HAVE_QT5))
+#if defined(VISP_HAVE_MODULE_USTK_GUI) && defined(VISP_HAVE_MODULE_USTK_TEMPLATE_TRACKING) &&                          \
+    defined(VISP_HAVE_VIPER850) && (defined(USTK_HAVE_VTK_QT5) || defined(USTK_HAVE_QT5))
 
 #include <visp3/ustk_core/usImageIo.h>
 #include <visp3/ustk_grabber/usNetworkGrabberPreScan2D.h>
@@ -112,12 +113,14 @@ int main(int argc, char **argv)
 
   // features display
   QObject::connect(visualServoingController, SIGNAL(trackerXError(double)), widget, SLOT(updateXError(double)));
-  QObject::connect(visualServoingController, SIGNAL(confidenceBarycenterAngle(double)), widget, SLOT(updateConfidenceAngle(double)));
-  QObject::connect(visualServoingController, SIGNAL(confidenceMap(usImagePreScan2D<unsigned char>)), widget, SLOT(updateConfidenceMap(usImagePreScan2D<unsigned char>)));
+  QObject::connect(visualServoingController, SIGNAL(confidenceBarycenterAngle(double)), widget,
+                   SLOT(updateConfidenceAngle(double)));
+  QObject::connect(visualServoingController, SIGNAL(confidenceMap(usImagePreScan2D<unsigned char>)), widget,
+                   SLOT(updateConfidenceMap(usImagePreScan2D<unsigned char>)));
 
   QMainWindow window;
   window.setCentralWidget(centralWidget);
-  window.resize(1200,650);
+  window.resize(1200, 650);
   window.show();
 
   return app.exec();

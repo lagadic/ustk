@@ -10,9 +10,9 @@
 #include <QStringList>
 #include <QtCore/QThread>
 
+#include <visp3/ustk_core/usImageIo.h>
 #include <visp3/ustk_core/usRFToPreScan2DConverter.h>
 #include <visp3/ustk_grabber/usNetworkGrabberRF2D.h>
-#include <visp3/ustk_core/usImageIo.h>
 
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayOpenCV.h>

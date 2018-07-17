@@ -42,22 +42,26 @@
 /**
 * Constructor.
 */
-usRectangleVisualServoingController::usRectangleVisualServoingController(QObject *parent): QObject(parent), m_tracker(),
-m_confidenceProcess(),m_converter(),m_imagePreScan(),m_confidencePreScan(),m_imagePostScan(),m_trackerActivated(false) ,m_controllerActivated(false)  {}
+usRectangleVisualServoingController::usRectangleVisualServoingController(QObject *parent)
+  : QObject(parent), m_tracker(), m_confidenceProcess(), m_converter(), m_imagePreScan(), m_confidencePreScan(),
+    m_imagePostScan(), m_trackerActivated(false), m_controllerActivated(false)
+{
+}
 
 usRectangleVisualServoingController::~usRectangleVisualServoingController() {}
 
-void usRectangleVisualServoingController::updateImage(usImagePreScan2D<unsigned char> image) {
+void usRectangleVisualServoingController::updateImage(usImagePreScan2D<unsigned char> image)
+{
 
   m_imagePreScan = image;
 
   // convert to post-scan
-  m_converter.convert(m_imagePreScan,m_imagePostScan);
+  m_converter.convert(m_imagePreScan, m_imagePostScan);
   emit(newPostScanFrame(m_imagePostScan));
   qApp->processEvents();
 
   // run the tracking process and get the result
-  if(m_tracker.isInit()) {
+  if (m_tracker.isInit()) {
 
     double xtarget, ytarget;
 
@@ -66,10 +70,11 @@ void usRectangleVisualServoingController::updateImage(usImagePreScan2D<unsigned 
     m_tracker.update(m_imagePostScan);
     vpRectOriented rectangle = m_tracker.getTarget();
 
-    if(m_trackerActivated)
+    if (m_trackerActivated)
       emit(newRectTracked(rectangle));
 
-    usPixelMeterConversion::convert(m_imagePostScan, rectangle.getCenter().get_j(), rectangle.getCenter().get_i(), xtarget, ytarget);
+    usPixelMeterConversion::convert(m_imagePostScan, rectangle.getCenter().get_j(), rectangle.getCenter().get_i(),
+                                    xtarget, ytarget);
 
     double ttarget = atan2(xtarget, ytarget);
 
@@ -101,44 +106,40 @@ void usRectangleVisualServoingController::updateImage(usImagePreScan2D<unsigned 
 
     // computing velocities
     double xControlVelocity = -lambda_t * xtarget + lambda_c * (tc - ttarget) * ytarget; // meters per second
-    double thetaZControlVelocity = lambda_c * (tc - ttarget);// radians per second
+    double thetaZControlVelocity = lambda_c * (tc - ttarget);                            // radians per second
 
     // send command
-    if(m_controllerActivated) {
+    if (m_controllerActivated) {
       emit(updateProbeZOrientation(vpMath::deg(thetaZControlVelocity) * 10)); // 10-1 deg per second
-      emit(updatePobeXVelocity(xControlVelocity * 1000)); // mm per second
+      emit(updatePobeXVelocity(xControlVelocity * 1000));                     // mm per second
     }
   }
 }
 
-void usRectangleVisualServoingController::initTracker(vpRectOriented rect) {
-  if(m_imagePostScan.getSize()!=0)
-    m_tracker.init(m_imagePostScan,rect);
+void usRectangleVisualServoingController::initTracker(vpRectOriented rect)
+{
+  if (m_imagePostScan.getSize() != 0)
+    m_tracker.init(m_imagePostScan, rect);
   else
-    throw(vpException(vpException::fatalError,"No frames sent to controller, cannot init tracker"));
+    throw(vpException(vpException::fatalError, "No frames sent to controller, cannot init tracker"));
   m_trackerActivated = true;
 }
 
 void usRectangleVisualServoingController::activateController(bool activate)
 {
   m_controllerActivated = activate;
-  if(!activate) {
+  if (!activate) {
     emit(updateProbeZOrientation(0));
     emit(updatePobeXVelocity(0));
   }
 }
 
-void usRectangleVisualServoingController::activateController()
-{
-  activateController(true);
-}
+void usRectangleVisualServoingController::activateController() { activateController(true); }
 
-void usRectangleVisualServoingController::disactivateController()
-{
-  activateController(false);
-}
+void usRectangleVisualServoingController::disactivateController() { activateController(false); }
 
-void usRectangleVisualServoingController::stopTracking() {
+void usRectangleVisualServoingController::stopTracking()
+{
   m_trackerActivated = false;
   m_controllerActivated = false;
   emit(updateProbeZOrientation(0));

@@ -46,7 +46,7 @@
 * Constructor.
 */
 usImageDisplayWidgetQmlOverlayServoing::usImageDisplayWidgetQmlOverlayServoing()
-  : usImageDisplayWidget(), m_qQuickOverlay(),m_useFeatureDisplay(false), m_confidence(), m_plot(),m_startTime()
+  : usImageDisplayWidget(), m_qQuickOverlay(), m_useFeatureDisplay(false), m_confidence(), m_plot(), m_startTime()
 {
   this->setMinimumSize(200, 200);
   m_qQuickOverlay = new QQuickWidget(m_label);
@@ -115,11 +115,11 @@ void usImageDisplayWidgetQmlOverlayServoing::updateFrame(const usImagePreScan2D<
   m_label->setPixmap(m_pixmap);
   m_label->update();
 
-  //update feature display
-  if(m_useFeatureDisplay) {
+  // update feature display
+  if (m_useFeatureDisplay) {
 #if (defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
-    if(m_confidence.getSize()>0) {
-      if(m_confidence.display == NULL)
+    if (m_confidence.getSize() > 0) {
+      if (m_confidence.display == NULL)
         m_display->init(m_confidence);
       vpDisplay::display(m_confidence);
     }
@@ -257,7 +257,8 @@ void usImageDisplayWidgetQmlOverlayServoing::startTrackingSlot()
   emit(startTrackingRect(displayImageToRealImageDimentions(displayRect)));
 }
 
-void usImageDisplayWidgetQmlOverlayServoing::enableFeaturesDisplay() {
+void usImageDisplayWidgetQmlOverlayServoing::enableFeaturesDisplay()
+{
   m_useFeatureDisplay = true;
 
   m_plot.init(2);
@@ -272,37 +273,38 @@ void usImageDisplayWidgetQmlOverlayServoing::enableFeaturesDisplay() {
   m_startTime = vpTime::measureTimeMs();
 }
 
-void usImageDisplayWidgetQmlOverlayServoing::disableFeaturesDisplay() {
-  m_useFeatureDisplay = false;
-}
+void usImageDisplayWidgetQmlOverlayServoing::disableFeaturesDisplay() { m_useFeatureDisplay = false; }
 
-
-void usImageDisplayWidgetQmlOverlayServoing::updateConfidenceAngle(double scanline) {
+void usImageDisplayWidgetQmlOverlayServoing::updateConfidenceAngle(double scanline)
+{
 #if (defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
-  if(m_useFeatureDisplay) {
+  if (m_useFeatureDisplay) {
     vpImagePoint p0 = vpImagePoint(0, scanline);
-    vpImagePoint p1 = vpImagePoint(m_confidence.getHeight()-1, scanline);
-    vpImagePoint p2 = vpImagePoint(0, m_confidence.getWidth()/2);
-    vpImagePoint p3 = vpImagePoint(m_confidence.getHeight()-1, m_confidence.getWidth()/2);
-    vpDisplay::displayLine(m_confidence,p0,p1,vpColor::red);
-    vpDisplay::displayLine(m_confidence,p2,p3,vpColor::green);
+    vpImagePoint p1 = vpImagePoint(m_confidence.getHeight() - 1, scanline);
+    vpImagePoint p2 = vpImagePoint(0, m_confidence.getWidth() / 2);
+    vpImagePoint p3 = vpImagePoint(m_confidence.getHeight() - 1, m_confidence.getWidth() / 2);
+    vpDisplay::displayLine(m_confidence, p0, p1, vpColor::red);
+    vpDisplay::displayLine(m_confidence, p2, p3, vpColor::green);
     vpDisplay::flush(m_confidence);
 
     // plot errors
-    m_plot.plot(0, 0, vpTime::measureTimeMs()-m_startTime, vpMath::deg(scanline * m_confidence.getScanLinePitch() - m_confidence.getFieldOfView() / 2.0));
+    m_plot.plot(0, 0, vpTime::measureTimeMs() - m_startTime,
+                vpMath::deg(scanline * m_confidence.getScanLinePitch() - m_confidence.getFieldOfView() / 2.0));
   }
 #endif
 }
 
-void usImageDisplayWidgetQmlOverlayServoing::updateConfidenceMap(usImagePreScan2D<unsigned char> confidence) {
+void usImageDisplayWidgetQmlOverlayServoing::updateConfidenceMap(usImagePreScan2D<unsigned char> confidence)
+{
   m_confidence = confidence;
 }
 
-void usImageDisplayWidgetQmlOverlayServoing::updateXError(double error) {
+void usImageDisplayWidgetQmlOverlayServoing::updateXError(double error)
+{
 #if (defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
-  if(m_useFeatureDisplay) {
+  if (m_useFeatureDisplay) {
     // plot errors
-    m_plot.plot(1, 0, vpTime::measureTimeMs()-m_startTime, error);
+    m_plot.plot(1, 0, vpTime::measureTimeMs() - m_startTime, error);
   }
 #endif
 }

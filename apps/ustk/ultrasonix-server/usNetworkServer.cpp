@@ -43,7 +43,7 @@ usNetworkServer::usNetworkServer(QObject *parent) : QObject(parent)
   usingProbeConfigFile = false;
   verboseMode = false;
 
-  connect(this, SIGNAL(writeOnSocketSignal()), this, SLOT(writeOnSocketSlot()));  
+  connect(this, SIGNAL(writeOnSocketSignal()), this, SLOT(writeOnSocketSlot()));
 }
 
 usNetworkServer::~usNetworkServer() {}
@@ -204,7 +204,7 @@ int portaCallback(void *param, unsigned char *addr, int blockIndex, int)
 bool portaCallback(void *param, unsigned char *addr, int blockIndex, int)
 #endif
 {
-  //std::cout << "new frame acquired" << std::endl;
+  // std::cout << "new frame acquired" << std::endl;
   usNetworkServer *server = (usNetworkServer *)param;
   porta *portaInstance = server->getPorta();
   QTcpSocket *socket = server->getSocket();
@@ -222,7 +222,7 @@ bool portaCallback(void *param, unsigned char *addr, int blockIndex, int)
     server->motorOffsetSkipped = true;
   }
 
-  //std::cout << "frame count = " << server->imageHeader.frameCount << std::endl;
+  // std::cout << "frame count = " << server->imageHeader.frameCount << std::endl;
   unsigned char *beginImage;
   // filling image header
 
@@ -241,7 +241,7 @@ bool portaCallback(void *param, unsigned char *addr, int blockIndex, int)
     // bi-plande case
     if (portaInstance->getCurrentMode() == BiplaneMode) {
       portaInstance->getBwImage(1, server->secondBiplaneImage, false);
-      //std::cout << "getting 2nd image from bi plane" << std::endl;
+      // std::cout << "getting 2nd image from bi plane" << std::endl;
     }
     server->imageHeader.pixelHeight = my / 1000000.0;
     server->imageHeader.pixelWidth = mx / 1000000.0;
@@ -783,20 +783,19 @@ QString usNetworkServer::getProbeSettingsFromId(int probeId)
   QString settingName;
 
   // first we test if a config file is provided
-  if(usingProbeConfigFile){
-	bool probeContainedInFile(false);
-	for(unsigned int i=0; i < probeConfigFileNames.size(); i++) {
-      if(probeConfigFileNames.at(i).first == probeId){
-		settingName = QString::fromStdString(probeConfigFileNames.at(i).second);
-		probeContainedInFile = true;
-	  }
-	}
-	if(!probeContainedInFile) {
+  if (usingProbeConfigFile) {
+    bool probeContainedInFile(false);
+    for (unsigned int i = 0; i < probeConfigFileNames.size(); i++) {
+      if (probeConfigFileNames.at(i).first == probeId) {
+        settingName = QString::fromStdString(probeConfigFileNames.at(i).second);
+        probeContainedInFile = true;
+      }
+    }
+    if (!probeContainedInFile) {
       throw vpException(vpException::fatalError, std::string("Cannot find current probe id in \
 		  config file provided with --probeSettingsFile option."));
-	}
-  }
-  else {
+    }
+  } else {
     if (probeId == 10) {
       settingName = QString("FAST-General (C5-2 60mm).xml");
     } else if (probeId == 12) {
@@ -807,8 +806,7 @@ QString usNetworkServer::getProbeSettingsFromId(int probeId)
       settingName = QString("GEN-General (PAXY).xml");
     } else if (probeId == 15) {
       settingName = QString("GEN-General (4DC7-3 40mm).xml");
-    }
-    else{
+    } else {
       throw vpException(vpException::fatalError, std::string("Cannot compute current probe settings filename.\
 		  Try to add a probe config file using --probeSettingsFile option at server startup."));
     }
@@ -986,7 +984,7 @@ void usNetworkServer::writeOnSocketSlot()
 {
   QByteArray block;
 
-  if(verboseMode) {
+  if (verboseMode) {
     std::cout << "writing header on socket" << std::endl;
     std::cout << "image number : " << imageHeader.frameCount << std::endl;
   }
@@ -1013,9 +1011,9 @@ void usNetworkServer::writeOnSocketSlot()
   out << imageHeader.framesPerVolume;
   out << imageHeader.motorRadius;
   out << imageHeader.motorType;
-  
-  if(verboseMode) {
-	std::cout << "writing image on socket" << std::endl;
+
+  if (verboseMode) {
+    std::cout << "writing image on socket" << std::endl;
   }
   if (imageHeader.imageType == 1) { // post scan
     out.writeRawData((char *)postScanImage, imageHeader.dataLength);
@@ -1033,13 +1031,13 @@ void usNetworkServer::writeOnSocketSlot()
     dataWrittenSize = connectionSoc->write(block);
   }
 
-  if(verboseMode) {
+  if (verboseMode) {
     std::cout << "written data size = " << dataWrittenSize << std::endl;
   }
   // for bi-plane we send a second image
   if (biPlane && imageHeader.imageType == 1) {
     QByteArray block;
-    //std::cout << "writing 2nd header" << std::endl;
+    // std::cout << "writing 2nd header" << std::endl;
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_5_0);
     out << imageHeader.headerId;
@@ -1063,10 +1061,10 @@ void usNetworkServer::writeOnSocketSlot()
     out << imageHeader.framesPerVolume;
     out << imageHeader.motorRadius;
     out << imageHeader.motorType;
-    
-  if(verboseMode) {
-	std::cout << "writing 2nd image" << std::endl;
-  }
+
+    if (verboseMode) {
+      std::cout << "writing 2nd image" << std::endl;
+    }
     out.writeRawData((char *)secondBiplaneImage, imageHeader.dataLength);
     imageHeader.frameCount++;
 
@@ -1074,12 +1072,14 @@ void usNetworkServer::writeOnSocketSlot()
   }
 }
 
-void usNetworkServer::quitApp() {
+void usNetworkServer::quitApp()
+{
   connectionAboutToClose();
   qApp->exit();
 }
 
-void usNetworkServer::useProbeConfigFile(std::string configFileName) {
+void usNetworkServer::useProbeConfigFile(std::string configFileName)
+{
   usingProbeConfigFile = true;
 
   // opens config file provided
@@ -1102,19 +1102,16 @@ void usNetworkServer::useProbeConfigFile(std::string configFileName) {
     it = keyNum.end();
     keyNum.erase(std::remove(keyNum.begin(), keyNum.end(), ' '), it);
 
-	probeId = stoi(keyNum);
+    probeId = stoi(keyNum);
     std::getline(file, keyFileName, '\n');
 
-	std::pair<int, std::string> newElement;
-	newElement.first = probeId;
+    std::pair<int, std::string> newElement;
+    newElement.first = probeId;
     newElement.second = keyFileName;
 
-	probeConfigFileNames.push_back(newElement);
+    probeConfigFileNames.push_back(newElement);
   }
   file.close();
 }
 
-
-void usNetworkServer::setVerbose() {
-  verboseMode = true;
-}
+void usNetworkServer::setVerbose() { verboseMode = true; }

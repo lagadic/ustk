@@ -43,7 +43,8 @@
 * Constructor.
 */
 usImageDisplayWidgetRobotControl::usImageDisplayWidgetRobotControl()
-  : usImageDisplayWidget(), m_controlArrowsActivated(false), m_leftArrow(), m_rightArrow(), m_confidenceServoingButton(),m_useFeatureDisplay(false), m_confidence(), m_plot(),m_startTime()
+  : usImageDisplayWidget(), m_controlArrowsActivated(false), m_leftArrow(), m_rightArrow(),
+    m_confidenceServoingButton(), m_useFeatureDisplay(false), m_confidence(), m_plot(), m_startTime()
 {
   this->setMinimumSize(200, 200);
 
@@ -125,11 +126,11 @@ void usImageDisplayWidgetRobotControl::updateFrame(const usImagePreScan2D<unsign
   if (m_controlArrowsActivated)
     enableControlArrows();
 
-  //update feature display
-  if(m_useFeatureDisplay) {
+  // update feature display
+  if (m_useFeatureDisplay) {
 #if (defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
-    if(m_confidence.getSize()>0) {
-      if(m_confidence.display == NULL)
+    if (m_confidence.getSize() > 0) {
+      if (m_confidence.display == NULL)
         m_display->init(m_confidence);
       vpDisplay::display(m_confidence);
     }
@@ -146,7 +147,8 @@ void usImageDisplayWidgetRobotControl::resizeEvent(QResizeEvent *event)
   m_label->setPixmap(m_pixmap);
   m_label->update();
 
-  m_confidenceServoingButton.setGeometry((this->width() / 2) - m_confidenceServoingButton.size().width() / 2, 10, 40, 40);
+  m_confidenceServoingButton.setGeometry((this->width() / 2) - m_confidenceServoingButton.size().width() / 2, 10, 40,
+                                         40);
   m_confidenceServoingButton.raise();
 
   if (m_controlArrowsActivated)
@@ -160,7 +162,7 @@ void usImageDisplayWidgetRobotControl::enableControlArrows()
   m_leftArrow.setVisible(true);
   m_rightArrow.setVisible(true);
   m_leftArrow.setGeometry(10, (this->height() / 2) - m_leftArrow.size().height() / 2, 40, 40);
-  m_rightArrow.setGeometry(this->width() - 50, (this->height() / 2)  - m_rightArrow.size().height() / 2, 40, 40);
+  m_rightArrow.setGeometry(this->width() - 50, (this->height() / 2) - m_rightArrow.size().height() / 2, 40, 40);
   m_leftArrow.raise();
   m_rightArrow.raise();
 }
@@ -172,14 +174,14 @@ void usImageDisplayWidgetRobotControl::disableControlArrows()
   m_rightArrow.hide();
 }
 
-void usImageDisplayWidgetRobotControl::updateConfidenceServoingStatus(bool activate) {
-  if(activate) {
+void usImageDisplayWidgetRobotControl::updateConfidenceServoingStatus(bool activate)
+{
+  if (activate) {
     QPalette pal = m_confidenceServoingButton.palette();
     pal.setColor(QPalette::Button, QColor(Qt::red));
     m_confidenceServoingButton.setPalette(pal);
     m_confidenceServoingButton.update();
-  }
-  else{
+  } else {
     QPalette pal = m_confidenceServoingButton.palette();
     pal.setColor(QPalette::Button, QColor(Qt::green));
     m_confidenceServoingButton.setPalette(pal);
@@ -189,7 +191,8 @@ void usImageDisplayWidgetRobotControl::updateConfidenceServoingStatus(bool activ
   emit(confidenceServoing(activate));
 }
 
-void usImageDisplayWidgetRobotControl::enableFeaturesDisplay() {
+void usImageDisplayWidgetRobotControl::enableFeaturesDisplay()
+{
   m_useFeatureDisplay = true;
 
   m_plot.init(1);
@@ -200,28 +203,29 @@ void usImageDisplayWidgetRobotControl::enableFeaturesDisplay() {
   m_startTime = vpTime::measureTimeMs();
 }
 
-void usImageDisplayWidgetRobotControl::disableFeaturesDisplay() {
-  m_useFeatureDisplay = false;
-}
+void usImageDisplayWidgetRobotControl::disableFeaturesDisplay() { m_useFeatureDisplay = false; }
 
-void usImageDisplayWidgetRobotControl::updateConfidenceAngle(double sanline) {
+void usImageDisplayWidgetRobotControl::updateConfidenceAngle(double sanline)
+{
 #if (defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
-  if(m_useFeatureDisplay) {
+  if (m_useFeatureDisplay) {
     vpImagePoint p0 = vpImagePoint(0, sanline);
-    vpImagePoint p1 = vpImagePoint(m_confidence.getHeight()-1, sanline);
-    vpImagePoint p2 = vpImagePoint(0, m_confidence.getWidth()/2);
-    vpImagePoint p3 = vpImagePoint(m_confidence.getHeight()-1, m_confidence.getWidth()/2);
-    vpDisplay::displayLine(m_confidence,p0,p1,vpColor::red);
-    vpDisplay::displayLine(m_confidence,p2,p3,vpColor::green);
+    vpImagePoint p1 = vpImagePoint(m_confidence.getHeight() - 1, sanline);
+    vpImagePoint p2 = vpImagePoint(0, m_confidence.getWidth() / 2);
+    vpImagePoint p3 = vpImagePoint(m_confidence.getHeight() - 1, m_confidence.getWidth() / 2);
+    vpDisplay::displayLine(m_confidence, p0, p1, vpColor::red);
+    vpDisplay::displayLine(m_confidence, p2, p3, vpColor::green);
     vpDisplay::flush(m_confidence);
 
     // plot errors
-    m_plot.plot(0, 0, vpTime::measureTimeMs()-m_startTime, vpMath::deg(sanline * m_confidence.getScanLinePitch() - m_confidence.getFieldOfView() / 2.0));
+    m_plot.plot(0, 0, vpTime::measureTimeMs() - m_startTime,
+                vpMath::deg(sanline * m_confidence.getScanLinePitch() - m_confidence.getFieldOfView() / 2.0));
   }
 #endif
 }
 
-void usImageDisplayWidgetRobotControl::updateConfidenceMap(usImagePreScan2D<unsigned char> confidence) {
+void usImageDisplayWidgetRobotControl::updateConfidenceMap(usImagePreScan2D<unsigned char> confidence)
+{
   m_confidence = confidence;
 }
 #endif

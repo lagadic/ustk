@@ -84,12 +84,12 @@ int main(int argc, char **argv)
 
       // processing display
       if (displayInit) {
-        if(vpDisplay::getClick(*grabbedFrame[0], false) || vpDisplay::getClick(*grabbedFrame[1], false))
+        if (vpDisplay::getClick(*grabbedFrame[0], false) || vpDisplay::getClick(*grabbedFrame[1], false))
           captureRunning = false;
         vpDisplay::display(*(grabbedFrame[0]));
         vpDisplay::display(*(grabbedFrame[1]));
-        vpDisplay::displayText(*grabbedFrame[0],20,20,std::string("Click to exit..."),vpColor::red);
-        vpDisplay::displayText(*grabbedFrame[1],20,20,std::string("Click to exit..."),vpColor::red);
+        vpDisplay::displayText(*grabbedFrame[0], 20, 20, std::string("Click to exit..."), vpColor::red);
+        vpDisplay::displayText(*grabbedFrame[1], 20, 20, std::string("Click to exit..."), vpColor::red);
         vpDisplay::flush(*(grabbedFrame[0]));
         vpDisplay::flush(*(grabbedFrame[1]));
       }

@@ -6,11 +6,11 @@
 #if defined(VISP_HAVE_MODULE_USTK_GUI) && defined(VISP_HAVE_MODULE_USTK_GRABBER) && defined(VISP_HAVE_VIPER850)
 
 #include <visp3/ustk_grabber/usNetworkGrabberPreScan2D.h>
+#include <visp3/ustk_gui/usConfidenceMapController.h>
 #include <visp3/ustk_gui/usImageDisplayWidgetRobotControl.h>
 #include <visp3/ustk_gui/usRobotManualControlWidget.h>
 #include <visp3/ustk_gui/usUltrasonixClientWidget.h>
 #include <visp3/ustk_gui/usViper850WrapperVelocityControl.h>
-#include <visp3/ustk_gui/usConfidenceMapController.h>
 
 #include <QApplication>
 #include <QHBoxLayout>
@@ -44,8 +44,8 @@ int main(int argc, char **argv)
   threadRobotControl->start();
   viperControl.run();
 
-  //confidence-map-based controller
-  usConfidenceMapController * confidenceController = new usConfidenceMapController();
+  // confidence-map-based controller
+  usConfidenceMapController *confidenceController = new usConfidenceMapController();
   QThread *confidenceThread = new QThread();
   confidenceController->moveToThread(confidenceThread);
   confidenceThread->start();
@@ -58,7 +58,7 @@ int main(int argc, char **argv)
 
   QMainWindow window;
   window.setCentralWidget(centralWidget);
-  window.resize(1280,480);
+  window.resize(1280, 480);
   window.show();
 
   // sliders robot controls
@@ -102,13 +102,16 @@ int main(int argc, char **argv)
   QObject::connect(qtGrabber, SIGNAL(newFrame(usImagePreScan2D<unsigned char>)), widget,
                    SLOT(updateFrame(usImagePreScan2D<unsigned char>)));
 
-  //confidence controller
+  // confidence controller
   QObject::connect(qtGrabber, SIGNAL(newFrame(usImagePreScan2D<unsigned char>)), confidenceController,
                    SLOT(updateImage(usImagePreScan2D<unsigned char>)));
   QObject::connect(widget, SIGNAL(confidenceServoing(bool)), confidenceController, SLOT(activateController(bool)));
-  QObject::connect(confidenceController, SIGNAL(updateProbeOrientation(int)), &viperControl, SLOT(setZAngularVelocity(int)));
-  QObject::connect(confidenceController, SIGNAL(confidenceBarycenterAngle(double)), widget, SLOT(updateConfidenceAngle(double)));
-  QObject::connect(confidenceController, SIGNAL(confidenceMap(usImagePreScan2D<unsigned char>)), widget, SLOT(updateConfidenceMap(usImagePreScan2D<unsigned char>)));
+  QObject::connect(confidenceController, SIGNAL(updateProbeOrientation(int)), &viperControl,
+                   SLOT(setZAngularVelocity(int)));
+  QObject::connect(confidenceController, SIGNAL(confidenceBarycenterAngle(double)), widget,
+                   SLOT(updateConfidenceAngle(double)));
+  QObject::connect(confidenceController, SIGNAL(confidenceMap(usImagePreScan2D<unsigned char>)), widget,
+                   SLOT(updateConfidenceMap(usImagePreScan2D<unsigned char>)));
 
   app.exec();
 

@@ -35,21 +35,18 @@ int main(int argc, char **argv)
   // setting acquisition parameters
   usNetworkGrabber::usInitHeaderSent header;
   if (qApp->arguments().contains(QString("--probeID"))) {
-        header.probeId = qApp->arguments().at(qApp->arguments().indexOf(QString("--probeID")) + 1).toInt();
-  }
-  else
-    header.probeId = 15;    // 4DC7 id = 15 by default
+    header.probeId = qApp->arguments().at(qApp->arguments().indexOf(QString("--probeID")) + 1).toInt();
+  } else
+    header.probeId = 15; // 4DC7 id = 15 by default
 
   if (qApp->arguments().contains(QString("--slotID"))) {
     header.slotId = qApp->arguments().at(qApp->arguments().indexOf(QString("--slotID")) + 1).toInt();
-  }
-  else
-    header.slotId = 0;      // top slot id = 0 by default
+  } else
+    header.slotId = 0; // top slot id = 0 by default
 
   if (qApp->arguments().contains(QString("--imagingMode"))) {
-        header.imagingMode = qApp->arguments().at(qApp->arguments().indexOf(QString("--imagingMode")) + 1).toInt();
-  }
-  else
+    header.imagingMode = qApp->arguments().at(qApp->arguments().indexOf(QString("--imagingMode")) + 1).toInt();
+  } else
     header.imagingMode = 12; // RF = 12
 
   // prepare image;
@@ -103,10 +100,10 @@ int main(int argc, char **argv)
 
       // processing display
       if (displayInit) {
-        if(vpDisplay::getClick(preScanImage, false))
+        if (vpDisplay::getClick(preScanImage, false))
           captureRunning = false;
         vpDisplay::display(preScanImage);
-        vpDisplay::displayText(preScanImage,20,20,std::string("Click to exit..."),vpColor::red);
+        vpDisplay::displayText(preScanImage, 20, 20, std::string("Click to exit..."), vpColor::red);
         vpDisplay::flush(preScanImage);
       }
     } else {

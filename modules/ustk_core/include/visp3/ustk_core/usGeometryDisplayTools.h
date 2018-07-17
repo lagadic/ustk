@@ -39,45 +39,64 @@
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpImage.h>
 
+#include <visp3/ustk_core/usBSpline3D.h>
 #include <visp3/ustk_core/usOrientedPlane3D.h>
 #include <visp3/ustk_core/usPolynomialCurve2D.h>
 #include <visp3/ustk_core/usPolynomialCurve3D.h>
-#include <visp3/ustk_core/usBSpline3D.h>
-
 
 namespace usGeometryDisplayTools
 {
 
-template<class ImageDataType>
-VISP_EXPORT void displayFrame(const vpImage<ImageDataType> &I, const vpHomogeneousMatrix &imageMFrame, double Xscale = 3000, double Yscale = 3000);
+template <class ImageDataType>
+VISP_EXPORT void displayFrame(const vpImage<ImageDataType> &I, const vpHomogeneousMatrix &imageMFrame,
+                              double Xscale = 3000, double Yscale = 3000);
 
 //! Display usOrientedPlane3D
 
 template <class ImageDataType>
-VISP_EXPORT void display(const usOrientedPlane3D &plane, const vpImage<ImageDataType> &I, const vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000, const vpColor &color = vpColor::green);
+VISP_EXPORT void display(const usOrientedPlane3D &plane, const vpImage<ImageDataType> &I,
+                         const vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000,
+                         const vpColor &color = vpColor::green);
 
 //! Display usPolynomialCurve2D
 
-template<class ImageDataType>
-VISP_EXPORT void display(const usPolynomialCurve2D &curve, const vpImage<ImageDataType> &I, double Xscale = 3000, double Yscale =3000, const vpColor &color = vpColor::red, int nbRenderingLines = 10);
+template <class ImageDataType>
+VISP_EXPORT void display(const usPolynomialCurve2D &curve, const vpImage<ImageDataType> &I, double Xscale = 3000,
+                         double Yscale = 3000, const vpColor &color = vpColor::red, int nbRenderingLines = 10);
 
 //! Display usPolynomialCurve3D
 
-template<class ImageDataType>
-VISP_EXPORT void display(const usPolynomialCurve3D &curve, const vpImage<ImageDataType> &I, const vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale =3000, const vpColor &color = vpColor::red, int nbRenderingLines = 10, double visibilityDistance=std::numeric_limits<double>::infinity());
-template<class ImageDataType>
-VISP_EXPORT void displayCurvatureFromShape(const usPolynomialCurve3D &spline, const vpImage<ImageDataType> &I, const vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000, const vpColor &color = vpColor::black);
+template <class ImageDataType>
+VISP_EXPORT void display(const usPolynomialCurve3D &curve, const vpImage<ImageDataType> &I,
+                         const vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000,
+                         const vpColor &color = vpColor::red, int nbRenderingLines = 10,
+                         double visibilityDistance = std::numeric_limits<double>::infinity());
+template <class ImageDataType>
+VISP_EXPORT void displayCurvatureFromShape(const usPolynomialCurve3D &spline, const vpImage<ImageDataType> &I,
+                                           const vpHomogeneousMatrix &imageMworld, double Xscale = 3000,
+                                           double Yscale = 3000, const vpColor &color = vpColor::black);
 
 //! Display usBSpline3D
 
-template<class ImageDataType>
-VISP_EXPORT void displayLine(const usBSpline3D &spline, const vpImage<ImageDataType> &I, const vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000, const vpColor &color = vpColor::red, int nbRenderingLinesPerSegment = 10, double visibilityDistance=std::numeric_limits<double>::infinity());
-template<class ImageDataType>
-VISP_EXPORT void displayExtremities(const usBSpline3D &spline, const vpImage<ImageDataType> &I, const vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000, const vpColor &color = vpColor::red, double visibilityDistance=std::numeric_limits<double>::infinity());
-template<class ImageDataType>
-VISP_EXPORT void display(const usBSpline3D &spline, const vpImage<ImageDataType> &I, const vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale =3000, const vpColor &color = vpColor::red, int nbRenderingLines = 10, double visibilityDistance=std::numeric_limits<double>::infinity());
-template<class ImageDataType>
-VISP_EXPORT void displayCurvatureFromShape(const usBSpline3D &spline, const vpImage<ImageDataType> &I, const vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000, const vpColor &color = vpColor::black);
+template <class ImageDataType>
+VISP_EXPORT void displayLine(const usBSpline3D &spline, const vpImage<ImageDataType> &I,
+                             const vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000,
+                             const vpColor &color = vpColor::red, int nbRenderingLinesPerSegment = 10,
+                             double visibilityDistance = std::numeric_limits<double>::infinity());
+template <class ImageDataType>
+VISP_EXPORT void displayExtremities(const usBSpline3D &spline, const vpImage<ImageDataType> &I,
+                                    const vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000,
+                                    const vpColor &color = vpColor::red,
+                                    double visibilityDistance = std::numeric_limits<double>::infinity());
+template <class ImageDataType>
+VISP_EXPORT void display(const usBSpline3D &spline, const vpImage<ImageDataType> &I,
+                         const vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000,
+                         const vpColor &color = vpColor::red, int nbRenderingLines = 10,
+                         double visibilityDistance = std::numeric_limits<double>::infinity());
+template <class ImageDataType>
+VISP_EXPORT void displayCurvatureFromShape(const usBSpline3D &spline, const vpImage<ImageDataType> &I,
+                                           const vpHomogeneousMatrix &imageMworld, double Xscale = 3000,
+                                           double Yscale = 3000, const vpColor &color = vpColor::black);
 
 } // namespace usGeometryDisplayTools
 

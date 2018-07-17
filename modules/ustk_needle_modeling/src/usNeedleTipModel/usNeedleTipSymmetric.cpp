@@ -35,127 +35,104 @@
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 
+usNeedleTipSymmetric::usNeedleTipSymmetric() : usNeedleTip(), _diameter(0.001), _length(0.001) {}
 
-usNeedleTipSymmetric::usNeedleTipSymmetric() :
-    usNeedleTip(),
-    _diameter(0.001),
-    _length(0.001)
-{
-
-}
-
-usNeedleTipSymmetric::usNeedleTipSymmetric(const usNeedleTipSymmetric &tip):
-    usNeedleTip(tip),
-    _diameter(tip._diameter),
-    _length(tip._length)
+usNeedleTipSymmetric::usNeedleTipSymmetric(const usNeedleTipSymmetric &tip)
+  : usNeedleTip(tip), _diameter(tip._diameter), _length(tip._length)
 {
 }
 
-usNeedleTipSymmetric::~usNeedleTipSymmetric()
+usNeedleTipSymmetric::~usNeedleTipSymmetric() {}
+
+usNeedleTipSymmetric &usNeedleTipSymmetric::operator=(const usNeedleTipSymmetric &tip)
 {
+  this->usNeedleTip::operator=(tip);
+
+  _diameter = tip._diameter;
+  _length = tip._length;
+
+  return (*this);
 }
 
-usNeedleTipSymmetric& usNeedleTipSymmetric::operator=(const usNeedleTipSymmetric &tip)
-{
-    this->usNeedleTip::operator=(tip);
-
-    _diameter = tip._diameter;
-    _length = tip._length;
-
-    return (*this);
-}
-
-usNeedleTipSymmetric* usNeedleTipSymmetric::clone() const
-{
-    return new usNeedleTipSymmetric(*this);
-}
+usNeedleTipSymmetric *usNeedleTipSymmetric::clone() const { return new usNeedleTipSymmetric(*this); }
 
 void usNeedleTipSymmetric::setDiameter(double diameter)
 {
-    if(diameter > 0) _diameter = diameter;
+  if (diameter > 0)
+    _diameter = diameter;
 }
 
-double usNeedleTipSymmetric::getDiameter() const
-{
-    return _diameter;
-}
+double usNeedleTipSymmetric::getDiameter() const { return _diameter; }
 
 void usNeedleTipSymmetric::setLength(double l)
 {
-    if(l >= 0) _length = l;
+  if (l >= 0)
+    _length = l;
 }
 
-double usNeedleTipSymmetric::getLength() const
-{
-    return _length;
-}
+double usNeedleTipSymmetric::getLength() const { return _length; }
 
-double usNeedleTipSymmetric::getAngle() const
-{
-    return atan2(_diameter/2,_length);
-}
+double usNeedleTipSymmetric::getAngle() const { return atan2(_diameter / 2, _length); }
 
 std::ostream &operator<<(std::ostream &s, const usNeedleTipSymmetric &tip)
 {
-    s << "usNeedleTipSymmetric\n";
-    s << (const usNeedleTip&)tip;
+  s << "usNeedleTipSymmetric\n";
+  s << (const usNeedleTip &)tip;
 
-    s << tip._diameter << '\n';
-    s << tip._length << '\n';
+  s << tip._diameter << '\n';
+  s << tip._length << '\n';
 
-    s.flush();
-    return s;
+  s.flush();
+  return s;
 }
 
 std::istream &operator>>(std::istream &s, usNeedleTipSymmetric &tip)
 {
-    std::string c;
-    s >> c;
-    if(c != "usNeedleTipSymmetric")
-    {
-        vpException e(vpException::ioError, "Stream does not contain usNeedleTipSymmetric data");
-        throw e;
-    }
-    s >> (usNeedleTip&)tip;
-    s >> tip._diameter;
-    s >> tip._length;
-    s.get();
+  std::string c;
+  s >> c;
+  if (c != "usNeedleTipSymmetric") {
+    vpException e(vpException::ioError, "Stream does not contain usNeedleTipSymmetric data");
+    throw e;
+  }
+  s >> (usNeedleTip &)tip;
+  s >> tip._diameter;
+  s >> tip._length;
+  s.get();
 
-    return s;
+  return s;
 }
 
 std::ostream &operator<<=(std::ostream &s, const usNeedleTipSymmetric &tip)
 {
-    s.write("usNeedleTipSymmetric",21);
+  s.write("usNeedleTipSymmetric", 21);
 
-    s <<= (const usNeedleTip&)tip;
-    s.write((char*)&(tip._diameter), sizeof(double));
-    s.write((char*)&(tip._length), sizeof(double));
+  s <<= (const usNeedleTip &)tip;
+  s.write((char *)&(tip._diameter), sizeof(double));
+  s.write((char *)&(tip._length), sizeof(double));
 
-    s.flush();
-    return s;
+  s.flush();
+  return s;
 }
 
 std::istream &operator>>=(std::istream &s, usNeedleTipSymmetric &tip)
 {
-    char c[21];
-    s.read(c,21);
-    if(strcmp(c,"usNeedleTipSymmetric"))
-    {
-        vpException e(vpException::ioError, "Stream does not contain usNeedleTipSymmetric data");
-        throw e;
-    }
+  char c[21];
+  s.read(c, 21);
+  if (strcmp(c, "usNeedleTipSymmetric")) {
+    vpException e(vpException::ioError, "Stream does not contain usNeedleTipSymmetric data");
+    throw e;
+  }
 
-    s >>= (usNeedleTip&)tip;
-    s.read((char*)&(tip._diameter), sizeof(double));
-    s.read((char*)&(tip._length), sizeof(double));
-    return s;
+  s >>= (usNeedleTip &)tip;
+  s.read((char *)&(tip._diameter), sizeof(double));
+  s.read((char *)&(tip._length), sizeof(double));
+  return s;
 }
 
 void usNeedleTipSymmetric::updateTipPose()
 {
-    vpHomogeneousMatrix H(0,0,_length,0,0,0);
+  vpHomogeneousMatrix H(0, 0, _length, 0, 0, 0);
 
-    m_worldMtip = m_worldMbase*H;
-    m_tipPose.buildFrom(m_worldMtip);
+  m_worldMtip = m_worldMbase * H;
+  m_tipPose.buildFrom(m_worldMtip);
 }

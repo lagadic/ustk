@@ -2,9 +2,9 @@
 
 #ifdef USTK_HAVE_FFTW
 
-#include <visp3/ustk_core/usRFToPreScan2DConverter.h>
 #include <visp3/ustk_core/usMHDSequenceReader.h>
 #include <visp3/ustk_core/usMHDSequenceWriter.h>
+#include <visp3/ustk_core/usRFToPreScan2DConverter.h>
 
 int main(int argc, char **argv)
 {

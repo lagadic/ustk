@@ -72,7 +72,8 @@ void usViper850WrapperVelocityControl::run()
   }
 }
 
-void usViper850WrapperVelocityControl::stop() {
+void usViper850WrapperVelocityControl::stop()
+{
 
   // stop loop
   m_run = false;
@@ -296,7 +297,7 @@ void usViper850WrapperVelocityControl::controlLoopAutomatic()
       // Compute the force/torque control law in the sensor frame (propotionnal + derivate controller)
       v_s = lambdaProportionnal * sEs + lambdaDerivate * (sEs - sEs_last) + lambdaIntegral * sEs_sum;
 
-      //set other speeds
+      // set other speeds
       v_s[0] = 0.0;
       v_s[1] = 0.0;
       v_s[3] = 0.0;
@@ -306,7 +307,7 @@ void usViper850WrapperVelocityControl::controlLoopAutomatic()
       vpVelocityTwistMatrix eVs;
       sVe.inverse(eVs);
 
-      vpColVector v_e =  velocityProbeContact;
+      vpColVector v_e = velocityProbeContact;
       v_e[1] = 0.0;
 
       ve = eVs * v_s + this->eVp * v_e;
@@ -416,15 +417,9 @@ void usViper850WrapperVelocityControl::stopAutomaticForceControl()
   emit(startControlLoop()); // go back to manual mode
 }
 
-void usViper850WrapperVelocityControl::moveLeft() {
-  velocityProbeContact[0] = 0.01;
-}
+void usViper850WrapperVelocityControl::moveLeft() { velocityProbeContact[0] = 0.01; }
 
-void usViper850WrapperVelocityControl::moveRight() {
-  velocityProbeContact[0] = -0.01;
-}
+void usViper850WrapperVelocityControl::moveRight() { velocityProbeContact[0] = -0.01; }
 
-void usViper850WrapperVelocityControl::stopMoveLateral() {
-  velocityProbeContact[0] = 0;
-}
+void usViper850WrapperVelocityControl::stopMoveLateral() { velocityProbeContact[0] = 0; }
 #endif

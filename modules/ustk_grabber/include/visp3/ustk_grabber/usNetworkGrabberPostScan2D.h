@@ -45,9 +45,9 @@
 #include <vector>
 
 #include <visp3/ustk_core/usImagePostScan2D.h>
+#include <visp3/ustk_core/usMHDSequenceWriter.h>
 #include <visp3/ustk_grabber/usFrameGrabbedInfo.h>
 #include <visp3/ustk_grabber/usNetworkGrabber.h>
-#include <visp3/ustk_core/usMHDSequenceWriter.h>
 
 /**
  * @class usNetworkGrabberPostScan2D

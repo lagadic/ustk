@@ -35,8 +35,8 @@
 #if defined(USTK_HAVE_FFTW)
 
 #include <visp3/io/vpImageIo.h>
-#include <visp3/ustk_elastography/usElastography.h>
 #include <visp3/ustk_core/usImageIo.h>
+#include <visp3/ustk_elastography/usElastography.h>
 
 int main()
 {

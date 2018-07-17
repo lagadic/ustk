@@ -72,7 +72,7 @@ public:
   * @param frameNumber Volume size in the third dimension (orthogonal to ultrasound 2D frames).
   */
   usImage3D(unsigned int height, unsigned int width, unsigned int frameNumber);
-  
+
   /**
   * Constructor. Set the dimensions of the volume. Initialize the data container with the specified value.
   * @param height Volume height.
@@ -278,14 +278,13 @@ inline void usImage3D<Type>::init(unsigned int height, unsigned int width, unsig
 }
 
 template <class Type>
-usImage3D<Type>::usImage3D()
-    : m_width(0), m_height(0), m_numberOfFrames(0), m_size(0), bitmap(NULL), framPointer(NULL)
+usImage3D<Type>::usImage3D() : m_width(0), m_height(0), m_numberOfFrames(0), m_size(0), bitmap(NULL), framPointer(NULL)
 {
 }
 
 template <class Type>
 usImage3D<Type>::usImage3D(unsigned int height, unsigned int width, unsigned int frameNumber)
-    : m_width(0), m_height(0), m_numberOfFrames(0), m_size(0), bitmap(NULL), framPointer(NULL)
+  : m_width(0), m_height(0), m_numberOfFrames(0), m_size(0), bitmap(NULL), framPointer(NULL)
 {
   this->init(height, width, frameNumber);
   this->initData(Type());
@@ -293,19 +292,21 @@ usImage3D<Type>::usImage3D(unsigned int height, unsigned int width, unsigned int
 
 template <class Type>
 usImage3D<Type>::usImage3D(unsigned int height, unsigned int width, unsigned int frameNumber, Type initialValue)
-    : m_width(0), m_height(0), m_numberOfFrames(0), m_size(0), bitmap(NULL), framPointer(NULL)
+  : m_width(0), m_height(0), m_numberOfFrames(0), m_size(0), bitmap(NULL), framPointer(NULL)
 {
   this->init(height, width, frameNumber);
   this->initData(initialValue);
 }
 
-template <class Type> usImage3D<Type>::usImage3D(const usImage3D<Type> &volume, const bool copy)
-    : m_width(0), m_height(0), m_numberOfFrames(0), m_size(0), bitmap(NULL), framPointer(NULL)
+template <class Type>
+usImage3D<Type>::usImage3D(const usImage3D<Type> &volume, const bool copy)
+  : m_width(0), m_height(0), m_numberOfFrames(0), m_size(0), bitmap(NULL), framPointer(NULL)
 {
   this->init(volume.getHeight(), volume.getWidth(), volume.getNumberOfFrames());
 
   // deep copy
-  if(copy) memcpy(bitmap, volume.bitmap, m_size * sizeof(Type));
+  if (copy)
+    memcpy(bitmap, volume.bitmap, m_size * sizeof(Type));
 }
 
 template <class Type> usImage3D<Type>::~usImage3D()
@@ -374,6 +375,6 @@ template <class Type> void usImage3D<Type>::initData(Type value)
 
 template <class Type> void usImage3D<Type>::resize(unsigned int height, unsigned int width, unsigned int numberOfFrames)
 {
-    this->init(height, width, numberOfFrames);
+  this->init(height, width, numberOfFrames);
 }
 #endif // __usImage3D_h_

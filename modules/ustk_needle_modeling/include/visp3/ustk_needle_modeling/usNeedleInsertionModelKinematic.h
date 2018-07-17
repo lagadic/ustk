@@ -38,46 +38,42 @@
 #include <visp3/ustk_needle_modeling/usNeedleInsertionModelInterface.h>
 #include <visp3/ustk_needle_modeling/usNeedleModelBaseTip.h>
 
-
 class VISP_EXPORT usNeedleInsertionModelKinematic : public usNeedleInsertionModelInterface
 {
 
 protected:
+  usNeedleModelBaseTip m_needle;
 
-    usNeedleModelBaseTip m_needle;
-
-    double m_naturalCurvature; //!< needle curvature parameter
+  double m_naturalCurvature; //!< needle curvature parameter
 
 public:
+  //! Constructors, destructors
+  usNeedleInsertionModelKinematic();
+  usNeedleInsertionModelKinematic(const usNeedleInsertionModelKinematic &needle);
+  ~usNeedleInsertionModelKinematic();
+  usNeedleInsertionModelKinematic &operator=(const usNeedleInsertionModelKinematic &needle);
+  virtual usNeedleInsertionModelKinematic *clone() const; // Polymorph copy method
 
-    //! Constructors, destructors
-    usNeedleInsertionModelKinematic();
-    usNeedleInsertionModelKinematic(const usNeedleInsertionModelKinematic &needle);
-    ~usNeedleInsertionModelKinematic();
-    usNeedleInsertionModelKinematic &operator=(const usNeedleInsertionModelKinematic &needle);
-    virtual usNeedleInsertionModelKinematic* clone() const;// Polymorph copy method
+  //! Parameters setters and getters
 
-    //! Parameters setters and getters
+  //! Curvature
 
-        //! Curvature
+  void setNaturalCurvature(double naturalCurvature);
+  double getNaturalCurvature() const;
 
-        void setNaturalCurvature(double naturalCurvature);
-        double getNaturalCurvature() const;
+  //! Needle
 
-        //! Needle
+  const usNeedleModelBaseTip &accessNeedle() const;
+  usNeedleModelBaseTip &accessNeedle();
 
-        const usNeedleModelBaseTip &accessNeedle() const;
-        usNeedleModelBaseTip &accessNeedle();
+  //! Control of the needle
 
-    //! Control of the needle
+  using usNeedleInsertionModelInterface::moveBase;
+  bool moveBase(double vz, double wz, double time);
+  bool moveBase(double controlCurvature, double vz, double wz, double time);
 
-    using usNeedleInsertionModelInterface::moveBase;
-    bool moveBase(double vz, double wz, double time);
-    bool moveBase(double controlCurvature, double vz, double wz, double time);
-
-    bool setBasePose(const vpPoseVector &pose);
-    vpPoseVector getBasePose() const;
+  bool setBasePose(const vpPoseVector &pose);
+  vpPoseVector getBasePose() const;
 };
-
 
 #endif // __usNeedleInsertionModelKinematic_h

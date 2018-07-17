@@ -256,12 +256,12 @@ void usNetworkGrabberPreScan3D::includeFrameInVolume()
     m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->setScanLineNumber(m_grabbedImage.getHeight());
     m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setImagePreScanSettings(m_grabbedImage);
     m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setScanLineNumber(m_grabbedImage.getHeight());
-    
+
     m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC)->setMotorSettings(m_motorSettings);
     m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->setMotorSettings(m_motorSettings);
     m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setMotorSettings(m_motorSettings);
   }
-  
+
   m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)
       ->resize(m_grabbedImage.getWidth(), m_grabbedImage.getHeight(), m_motorSettings.getFrameNumber());
 

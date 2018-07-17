@@ -3,8 +3,8 @@
 #ifdef USTK_HAVE_FFTW
 
 #include <visp3/core/vpTime.h>
-#include <visp3/ustk_core/usRFToPostScan2DConverter.h>
 #include <visp3/ustk_core/usImageIo.h>
+#include <visp3/ustk_core/usRFToPostScan2DConverter.h>
 
 int main(int argc, char **argv)
 {

@@ -44,9 +44,9 @@
 #if (defined(USTK_HAVE_VTK_QT) || defined(USTK_HAVE_QT5)) && defined(VISP_HAVE_MODULE_USTK_TEMPLATE_TRACKING)
 
 #include <QObject>
-#include <visp3/ustk_template_tracking/usDenseTracker2D.h>
 #include <visp3/ustk_core/usImagePostScan2D.h>
 #include <visp3/ustk_core/usImagePreScan2D.h>
+#include <visp3/ustk_template_tracking/usDenseTracker2D.h>
 
 /**
  * @class usTracker2DQtWrapper

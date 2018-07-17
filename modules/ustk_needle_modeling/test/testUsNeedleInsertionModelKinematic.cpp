@@ -40,7 +40,8 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9)
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI) ||         \
+    defined(VISP_HAVE_D3D9)
 
 #include <visp3/ustk_needle_modeling/usNeedleInsertionModelKinematic.h>
 #include <visp3/ustk_needle_modeling/usNeedleModelingDisplayTools.h>
@@ -61,37 +62,35 @@
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpPoseVector.h>
 
-
 int main()
-{  
-    usNeedleInsertionModelKinematic n;
-    n.accessNeedle().setBasePose(vpPoseVector(0,0,0.1, M_PI/sqrt(2),M_PI/sqrt(2),0));
-    n.accessNeedle().setTipPose(vpPoseVector(0,0,0, M_PI/sqrt(2),M_PI/sqrt(2),0));
-    n.setNaturalCurvature(1/0.05);
-    
-    usNeedleInsertionModelKinematic n1;
-    n1.accessNeedle().setBasePose(vpPoseVector(0.01,0,0.1, M_PI/sqrt(2),M_PI/sqrt(2),0));
-    n1.accessNeedle().setTipPose(vpPoseVector(0.01,0,0, M_PI/sqrt(2),M_PI/sqrt(2),0));
-    n1.setNaturalCurvature(1/0.2);
-    
-    usOrientedPlane3D surface(n.accessNeedle().getTipPose());
-    
-    vpImage<unsigned char> I1(700, 500, 255);
+{
+  usNeedleInsertionModelKinematic n;
+  n.accessNeedle().setBasePose(vpPoseVector(0, 0, 0.1, M_PI / sqrt(2), M_PI / sqrt(2), 0));
+  n.accessNeedle().setTipPose(vpPoseVector(0, 0, 0, M_PI / sqrt(2), M_PI / sqrt(2), 0));
+  n.setNaturalCurvature(1 / 0.05);
+
+  usNeedleInsertionModelKinematic n1;
+  n1.accessNeedle().setBasePose(vpPoseVector(0.01, 0, 0.1, M_PI / sqrt(2), M_PI / sqrt(2), 0));
+  n1.accessNeedle().setTipPose(vpPoseVector(0.01, 0, 0, M_PI / sqrt(2), M_PI / sqrt(2), 0));
+  n1.setNaturalCurvature(1 / 0.2);
+
+  usOrientedPlane3D surface(n.accessNeedle().getTipPose());
+
+  vpImage<unsigned char> I1(700, 500, 255);
 
 #if defined(VISP_HAVE_X11)
-    vpDisplayX *d1;
+  vpDisplayX *d1;
 #elif defined(VISP_HAVE_OPENCV)
-    vpDisplayOpenCV *d1;
+  vpDisplayOpenCV *d1;
 #elif defined(VISP_HAVE_GTK)
-    vpDisplayGTK *d1;
+  vpDisplayGTK *d1;
 #elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI *d1;
+  vpDisplayGDI *d1;
 #elif defined(VISP_HAVE_D3D9)
-    vpDisplayD3D *d1;
+  vpDisplayD3D *d1;
 #endif
-    
-    try
-    {
+
+  try {
 #if defined(VISP_HAVE_X11)
     d1 = new vpDisplayX(I1);
 #elif defined(VISP_HAVE_OPENCV)
@@ -103,30 +102,27 @@ int main()
 #elif defined(VISP_HAVE_D3D9)
     d1 = new vpDisplayD3D(I1);
 #endif
-    }
-    catch(std::exception &e)
-    {
-        std::cout << "testUsNeedleInsertionModelKinematic: could not initialize display:\n" << e.what() << std::endl;
-        return 0;
-    }
-    
-    for(int i=0 ; i<1000 ; i++)
-    {        
-        n.moveBase(0,0,0.0001,0,0,0.01);
-        n1.moveBase(0,0,0.0001,0,0,0.01);
-        
-        vpDisplay::display(I1);
-        
-        usNeedleModelingDisplayTools::display(n, I1, vpHomogeneousMatrix(0.08 ,0.1, 0.2, M_PI/2,0,0), 3000,3000);
-        usNeedleModelingDisplayTools::display(n1, I1, vpHomogeneousMatrix(0.08 ,0.1, 0.2, M_PI/2,0,0), 3000,3000);
-        usGeometryDisplayTools::display(surface, I1, vpHomogeneousMatrix(0.08 ,0.1, 0.2, M_PI/2,0,0), 3000,3000);
-        
-        vpDisplay::flush(I1);
-    }
-    
-    delete d1;
-
+  } catch (std::exception &e) {
+    std::cout << "testUsNeedleInsertionModelKinematic: could not initialize display:\n" << e.what() << std::endl;
     return 0;
+  }
+
+  for (int i = 0; i < 1000; i++) {
+    n.moveBase(0, 0, 0.0001, 0, 0, 0.01);
+    n1.moveBase(0, 0, 0.0001, 0, 0, 0.01);
+
+    vpDisplay::display(I1);
+
+    usNeedleModelingDisplayTools::display(n, I1, vpHomogeneousMatrix(0.08, 0.1, 0.2, M_PI / 2, 0, 0), 3000, 3000);
+    usNeedleModelingDisplayTools::display(n1, I1, vpHomogeneousMatrix(0.08, 0.1, 0.2, M_PI / 2, 0, 0), 3000, 3000);
+    usGeometryDisplayTools::display(surface, I1, vpHomogeneousMatrix(0.08, 0.1, 0.2, M_PI / 2, 0, 0), 3000, 3000);
+
+    vpDisplay::flush(I1);
+  }
+
+  delete d1;
+
+  return 0;
 }
 
 #else
@@ -135,9 +131,9 @@ int main()
 
 int main()
 {
-    std::cout << "No display to start testUsNeedleInsertionModelKinematic" << std::endl;
-    
-    return 0;
+  std::cout << "No display to start testUsNeedleInsertionModelKinematic" << std::endl;
+
+  return 0;
 }
 
 #endif

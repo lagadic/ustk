@@ -40,95 +40,102 @@
 #include <visp3/ustk_core/usBSpline3D.h>
 #include <visp3/ustk_needle_modeling/usNeedleModelBaseTip.h>
 
-
 class VISP_EXPORT usNeedleModelSpline : public usNeedleModelBaseTip, public usBSpline3D
 {
 public:
-
-    enum class NeedlePreset : int {BiopsyNeedle, BiopsyCannula, Symmetric, AbayazidRRM13, MisraRSRO10_PlastisolA, RoesthuisAM12, SteelSoftTissue, SRL_ActuatedFBG, SRL_BiopsySimple, SRL_BiopsyNID};
+  enum class NeedlePreset : int {
+    BiopsyNeedle,
+    BiopsyCannula,
+    Symmetric,
+    AbayazidRRM13,
+    MisraRSRO10_PlastisolA,
+    RoesthuisAM12,
+    SteelSoftTissue,
+    SRL_ActuatedFBG,
+    SRL_BiopsySimple,
+    SRL_BiopsyNID
+  };
 
 protected:
+  //! Needle parameters
 
-    //! Needle parameters
-
-    double m_length;
-    double m_outerDiameter;
-    double m_insideDiameter;
-    double m_needleYoungModulus;
+  double m_length;
+  double m_outerDiameter;
+  double m_insideDiameter;
+  double m_needleYoungModulus;
 
 public:
+  //! Constructors, destructor
 
-    //! Constructors, destructor
+  usNeedleModelSpline();
+  usNeedleModelSpline(const usNeedleModelSpline &needle);
+  virtual ~usNeedleModelSpline();
+  const usNeedleModelSpline &operator=(const usNeedleModelSpline &needle);
 
-    usNeedleModelSpline();
-    usNeedleModelSpline(const usNeedleModelSpline &needle);
-    virtual ~usNeedleModelSpline();
-    const usNeedleModelSpline &operator=(const usNeedleModelSpline &needle);
+  virtual usNeedleModelSpline *clone() const { return new usNeedleModelSpline(*this); } // Polymorph copy method
 
-    virtual usNeedleModelSpline* clone() const {return new usNeedleModelSpline(*this);} // Polymorph copy method
+  //! Parameters saving and loading
 
-    //! Parameters saving and loading
+  void loadPreset(const NeedlePreset preset);
 
-    void loadPreset(const NeedlePreset preset);
+  //! Parameters setters and getters
 
-    //! Parameters setters and getters
+  //! Needle parameters
 
-        //! Needle parameters
+  void setFullLength(double length);
+  double getFullLength() const;
 
-        void setFullLength(double length);
-        double getFullLength() const;
+  void setOuterDiameter(double diameter);
+  double getOuterDiameter() const;
 
-        void setOuterDiameter(double diameter);
-        double getOuterDiameter() const;
+  void setInsideDiameter(double diameter);
+  double getInsideDiameter() const;
 
-        void setInsideDiameter(double diameter);
-        double getInsideDiameter() const;
+  void setNeedleYoungModulus(double E);
+  double getNeedleYoungModulus() const;
 
-        void setNeedleYoungModulus(double E);
-        double getNeedleYoungModulus() const;
+  double getEI() const;
 
-        double getEI() const;
+  //! Spline definition
 
-    //! Spline definition
+  void init();
 
-        void init();
+  //! Measure model information
 
-    //! Measure model information
+  //! Needle position
 
-        //! Needle position
+  vpColVector getNeedlePoint(double l) const;
+  vpColVector getNeedleDirection(double l) const;
 
-        vpColVector getNeedlePoint(double l) const;
-        vpColVector getNeedleDirection(double l) const;
+  double getDistanceFromPoint(const vpColVector &P, double start = 0, double stop = -1, double threshold = 1e-5) const;
 
-        double getDistanceFromPoint(const vpColVector &P, double start = 0, double stop = -1, double threshold = 1e-5) const;
+  //! Needle bending
 
-        //! Needle bending
+  double getBendingEnergy() const;
 
-        double getBendingEnergy() const;
+  //! Force at base
 
-        //! Force at base
+  vpColVector getBaseStaticTorsor() const;
 
-        vpColVector getBaseStaticTorsor() const;
+  //! Curvature
 
-        //! Curvature
+  double getCurvatureFromNeedleShape(double start, double end, vpColVector &center3D, vpColVector &direction3D) const;
 
-        double getCurvatureFromNeedleShape(double start, double end, vpColVector &center3D, vpColVector &direction3D) const;
+  //! Display
 
-    //! Display
+  void showNeedlePoints() const;
+  void showNeedleDirections() const;
+  void showNeedleSegmentCoef() const;
+  void showNeedleSegmentLength() const;
 
-    void showNeedlePoints() const;
-    void showNeedleDirections() const;
-    void showNeedleSegmentCoef() const;
-    void showNeedleSegmentLength() const;
-    
-    //! Data saving
+  //! Data saving
 
-        //! Text
-        friend VISP_EXPORT std::ostream &operator<<(std::ostream &s, const usNeedleModelSpline &needle);
-        friend VISP_EXPORT std::istream &operator>>(std::istream &s, usNeedleModelSpline &needle);
-        //! Binary
-        friend VISP_EXPORT std::ostream &operator<<=(std::ostream &s, const usNeedleModelSpline &needle);
-        friend VISP_EXPORT std::istream &operator>>=(std::istream &s, usNeedleModelSpline &needle);
+  //! Text
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &s, const usNeedleModelSpline &needle);
+  friend VISP_EXPORT std::istream &operator>>(std::istream &s, usNeedleModelSpline &needle);
+  //! Binary
+  friend VISP_EXPORT std::ostream &operator<<=(std::ostream &s, const usNeedleModelSpline &needle);
+  friend VISP_EXPORT std::istream &operator>>=(std::istream &s, usNeedleModelSpline &needle);
 };
 
 VISP_EXPORT std::ostream &operator<<(std::ostream &s, const usNeedleModelSpline &needle);

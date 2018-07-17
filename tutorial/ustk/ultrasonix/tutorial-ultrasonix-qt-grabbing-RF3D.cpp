@@ -9,9 +9,9 @@
 #include <QApplication>
 #include <QtCore/QThread>
 
+#include <visp3/ustk_core/usImageIo.h>
 #include <visp3/ustk_core/usRFToPreScan3DConverter.h>
 #include <visp3/ustk_grabber/usNetworkGrabberRF3D.h>
-#include <visp3/ustk_core/usImageIo.h>
 
 int main(int argc, char **argv)
 {

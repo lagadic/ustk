@@ -42,222 +42,235 @@
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpRGBa.h>
 
+#include <visp3/ustk_core/usOrientedPlane3D.h>
 #include <visp3/ustk_needle_modeling/usNeedleInsertionModelInterface.h>
 #include <visp3/ustk_needle_modeling/usNeedleModelSpline.h>
-#include <visp3/ustk_core/usOrientedPlane3D.h>
 #include <visp3/ustk_needle_modeling/usVirtualSpring.h>
-
 
 class VISP_EXPORT usNeedleInsertionModelVirtualSprings : public usNeedleInsertionModelInterface
 {
 public:
-
-    enum class InsertionType : int {ForceInsert, ForceRemove, NaturalBehavior};
-    enum class ModelPreset : int {BiopsyNeedle, BiopsyCannula, AbayazidRRM13, MisraRSRO10_PlastisolA, RoesthuisAM12, SteelSoftTissue, SRL_BiopsyNID};
+  enum class InsertionType : int { ForceInsert, ForceRemove, NaturalBehavior };
+  enum class ModelPreset : int {
+    BiopsyNeedle,
+    BiopsyCannula,
+    AbayazidRRM13,
+    MisraRSRO10_PlastisolA,
+    RoesthuisAM12,
+    SteelSoftTissue,
+    SRL_BiopsyNID
+  };
 
 protected:
+  //! Needle parameters
 
-    //! Needle parameters
+  usNeedleModelSpline m_needle;
 
-    usNeedleModelSpline m_needle;
+  double m_tipForce;
+  double m_tipMoment;
+  double m_cutAngle; // degree
+  double m_bevelLength;
 
-    double m_tipForce;
-    double m_tipMoment;
-    double m_cutAngle; //degree
-    double m_bevelLength;
+  //! Tissue parameters
 
-    //! Tissue parameters
+  double m_defaultSpringStiffness;
+  double m_stiffnessPerUnitLength;
 
-    double m_defaultSpringStiffness;
-    double m_stiffnessPerUnitLength;
+  //! Model Parameters
 
-    //! Model Parameters
+  //! Tissue
 
-        //! Tissue
+  std::vector<usVirtualSpring> m_springs;                  // active springs used for calculation
+  std::vector<usVirtualSpring> m_inactiveAutoAddedSprings; // springs that have been automatically added by the model
+                                                           // and that are currently disactivated
+  std::vector<usVirtualSpring> m_inactiveMeasureSprings;   // springs that have been added by the user and that are
+                                                           // currently disactivated (not reached)
+  usOrientedPlane3D m_tissueSurface;
+  double m_interSpringDistance;    // distance between successive springs
+  double m_interTipSpringDistance; // distance between successive springs at the tip
 
-        std::vector<usVirtualSpring> m_springs; // active springs used for calculation
-        std::vector<usVirtualSpring> m_inactiveAutoAddedSprings; // springs that have been automatically added by the model and that are currently disactivated
-        std::vector<usVirtualSpring> m_inactiveMeasureSprings; // springs that have been added by the user and that are currently disactivated (not reached)
-        usOrientedPlane3D m_tissueSurface;
-        double m_interSpringDistance; // distance between successive springs
-        double m_interTipSpringDistance; // distance between successive springs at the tip
+  //! Internal
 
-        //! Internal
+  //! Linear system solving
 
-            //! Linear system solving
+  bool m_IsStateConsistent;
 
-            bool m_IsStateConsistent;
+  //! Segments lengths measurement
 
-            //! Segments lengths measurement
+  bool m_LastSegmentLengthComputed;
 
-            bool m_LastSegmentLengthComputed;
+  //! Insertion type
 
-            //! Insertion type
+  InsertionType m_insertionBehavior;
+  bool m_IsInserting;
+  bool m_AllowSpringAddition;
+  bool m_AllowSpringRemoval;
+  bool m_AutomaticSpringAddition;
 
-            InsertionType m_insertionBehavior;
-            bool m_IsInserting;
-            bool m_AllowSpringAddition;
-            bool m_AllowSpringRemoval;
-            bool m_AutomaticSpringAddition;
+  //! Tip springs
 
-            //! Tip springs
-
-            int m_tipSpringsIndex;
-            int m_nbMinTipSprings;
-            int m_nbMaxTipSprings;
+  int m_tipSpringsIndex;
+  int m_nbMinTipSprings;
+  int m_nbMaxTipSprings;
 
 public:
+  //! Constructors, destructor
 
-    //! Constructors, destructor
+  usNeedleInsertionModelVirtualSprings();
+  usNeedleInsertionModelVirtualSprings(const usNeedleInsertionModelVirtualSprings &needle);
+  virtual ~usNeedleInsertionModelVirtualSprings();
+  const usNeedleInsertionModelVirtualSprings &operator=(const usNeedleInsertionModelVirtualSprings &needle);
+  virtual usNeedleInsertionModelVirtualSprings *clone() const; // Polymorph copy method
 
-    usNeedleInsertionModelVirtualSprings();
-    usNeedleInsertionModelVirtualSprings(const usNeedleInsertionModelVirtualSprings &needle);
-    virtual ~usNeedleInsertionModelVirtualSprings();
-    const usNeedleInsertionModelVirtualSprings &operator=(const usNeedleInsertionModelVirtualSprings &needle);
-    virtual usNeedleInsertionModelVirtualSprings* clone() const; // Polymorph copy method
+  //! Parameters saving and loading
 
-    //! Parameters saving and loading
+  void loadPreset(const ModelPreset preset);
 
-    void loadPreset(const ModelPreset preset);
+  //! Parameters setters and getters
 
-    //! Parameters setters and getters
+  //! Needle parameters
 
-        //! Needle parameters
+  void setTipForce(double tipForce);
+  double getTipForce();
 
-        void setTipForce(double tipForce);
-        double getTipForce();
-        
-        void setBevelAngle(double angle);
-        double getBevelAngle() const;
+  void setBevelAngle(double angle);
+  double getBevelAngle() const;
 
-        //! Tissue parameters
+  //! Tissue parameters
 
-        void setDefaultSpringStiffness(double K);
-        double getDefaultSpringStiffness() const;
+  void setDefaultSpringStiffness(double K);
+  double getDefaultSpringStiffness() const;
 
-        void setStiffnessPerUnitLength(double K);
-        double getStiffnessPerUnitLength() const;
+  void setStiffnessPerUnitLength(double K);
+  double getStiffnessPerUnitLength() const;
 
-        int getNbSprings() const;
-        int getNbMeasureSprings() const;
+  int getNbSprings() const;
+  int getNbMeasureSprings() const;
 
-        //! Model parameters
+  //! Model parameters
 
-            //! Needle
+  //! Needle
 
-            const usNeedleModelSpline &accessNeedle() const;
-            usNeedleModelSpline &accessNeedle();
-            vpColVector getInsertionPoint() const;
-            double getNeedleFreeLength() const;
-            double getInsertionDepth() const;
+  const usNeedleModelSpline &accessNeedle() const;
+  usNeedleModelSpline &accessNeedle();
+  vpColVector getInsertionPoint() const;
+  double getNeedleFreeLength() const;
+  double getInsertionDepth() const;
 
-            //! Tissue
+  //! Tissue
 
-            const usOrientedPlane3D &accessSurface() const;
-            usOrientedPlane3D &accessSurface();
-            const usVirtualSpring &accessSpring(int i) const;
-            void setInterSpringDistance(double interSpringDistance);
-            double getInterSpringDistance() const;
-            void setInterTipSpringDistance(double interTipSpringDistance);
-            double getInterTipSpringDistance() const;
+  const usOrientedPlane3D &accessSurface() const;
+  usOrientedPlane3D &accessSurface();
+  const usVirtualSpring &accessSpring(int i) const;
+  void setInterSpringDistance(double interSpringDistance);
+  double getInterSpringDistance() const;
+  void setInterTipSpringDistance(double interTipSpringDistance);
+  double getInterTipSpringDistance() const;
 
-            void setNbMinTipSprings(int nb);
-            int getNbMinTipSprings() const;
+  void setNbMinTipSprings(int nb);
+  int getNbMinTipSprings() const;
 
-            void setNbMaxTipSprings(int nb);
-            int getNbMaxTipSprings() const;
+  void setNbMaxTipSprings(int nb);
+  int getNbMaxTipSprings() const;
 
-            //! Internal
+  //! Internal
 
-            void AllowSpringAddition(bool flag);
-            void AllowSpringRemoval(bool flag);
+  void AllowSpringAddition(bool flag);
+  void AllowSpringRemoval(bool flag);
 
-            void setInsertionBehavior(InsertionType type);
-            InsertionType getInsertionBehavior() const;
+  void setInsertionBehavior(InsertionType type);
+  InsertionType getInsertionBehavior() const;
 
-            void setAutomaticSpringAddition(bool flag);
-            bool getAutomaticSpringAddition() const;
+  void setAutomaticSpringAddition(bool flag);
+  bool getAutomaticSpringAddition() const;
 
-    //! Measure model information
+  //! Measure model information
 
-        //! Needle position
+  //! Needle position
 
-        double getPathDistanceFromPoint(const vpColVector &P) const;
+  double getPathDistanceFromPoint(const vpColVector &P) const;
 
-        //! Tissue deformation energy
+  //! Tissue deformation energy
 
-        double getTissueDeformationEnergy() const;
-        double getSurfaceTissueStretch() const;
-        double getMaxTissueStretch() const;
-        double getMeanTissueStretch() const;
+  double getTissueDeformationEnergy() const;
+  double getSurfaceTissueStretch() const;
+  double getMaxTissueStretch() const;
+  double getMeanTissueStretch() const;
 
-    //! Control of the needle
+  //! Control of the needle
 
-        //! Control of the needle
+  //! Control of the needle
 
-        bool setBasePose(const vpPoseVector &p);
-        vpPoseVector getBasePose() const;
+  bool setBasePose(const vpPoseVector &p);
+  vpPoseVector getBasePose() const;
 
-    //! Control of the tissue
+  //! Control of the tissue
 
-    void addMeasureSpring(const vpColVector &p, const vpColVector &d); // Add a spring in space and recompute stiffnesses in vicinity to keep the tissue property
+  void addMeasureSpring(
+      const vpColVector &p,
+      const vpColVector &d); // Add a spring in space and recompute stiffnesses in vicinity to keep the tissue property
 
-    bool setSpringPosition(int index, const vpColVector &P, bool update = false);
-    bool setSpringDirection(int index, const vpColVector &D, bool update = false);
-    void setSpringStiffness(int index, double K, bool update = false);
-    bool moveSpringPosition(int index, const vpColVector &dP, bool update = false);
-    bool moveSpringDirection(int index, const vpThetaUVector &thetaU, bool update = false);
-    void addSpringStiffness(int index, double dK, bool update = false);
+  bool setSpringPosition(int index, const vpColVector &P, bool update = false);
+  bool setSpringDirection(int index, const vpColVector &D, bool update = false);
+  void setSpringStiffness(int index, double K, bool update = false);
+  bool moveSpringPosition(int index, const vpColVector &dP, bool update = false);
+  bool moveSpringDirection(int index, const vpThetaUVector &thetaU, bool update = false);
+  void addSpringStiffness(int index, double dK, bool update = false);
 
-    void setSurfaceAtTip();
+  void setSurfaceAtTip();
 
-    //! Internal model command
+  //! Internal model command
 
-    int addInsertionPoint(usVirtualSpring spg);
-    int addInsertionPoint(const vpColVector &p, const vpColVector &d); // Add a spring in space and recompute stiffnesses in vicinity to keep the tissue property
+  int addInsertionPoint(usVirtualSpring spg);
+  int addInsertionPoint(
+      const vpColVector &p,
+      const vpColVector &d); // Add a spring in space and recompute stiffnesses in vicinity to keep the tissue property
 
-    void addInsertionPointOnSegmentHard(int segment, double s); // Add a spring on the needle with default spring stiffness
-    void addInsertionPointAtTipHard();
-    void addInsertionPointOnSegment(int segment, double s); // Add a spring on the needle and recompute stiffnesses in vicinity to keep the tissue property
-    void addInsertionPointAtTip();
+  void addInsertionPointOnSegmentHard(int segment,
+                                      double s); // Add a spring on the needle with default spring stiffness
+  void addInsertionPointAtTipHard();
+  void addInsertionPointOnSegment(
+      int segment,
+      double s); // Add a spring on the needle and recompute stiffnesses in vicinity to keep the tissue property
+  void addInsertionPointAtTip();
 
-    void removeInsertionPointsHard(int first, int last = -1);
-    void removeLastInsertionPointHard();
-    void removeInsertionPoints(int first, int last = -1);
-    void removeLastInsertionPoint();
-    void removeAutoAddedSprings();
+  void removeInsertionPointsHard(int first, int last = -1);
+  void removeLastInsertionPointHard();
+  void removeInsertionPoints(int first, int last = -1);
+  void removeLastInsertionPoint();
+  void removeAutoAddedSprings();
 
-    void fusionSprings(int firstSpring, int lastSpring);
+  void fusionSprings(int firstSpring, int lastSpring);
 
-    void updateSpringsStiffness();
-    void updateCutAngle();
-    void updateTipForce();
-    void updateInsertionDirections();
+  void updateSpringsStiffness();
+  void updateCutAngle();
+  void updateTipForce();
+  void updateInsertionDirections();
 
-    bool checkInactiveMeasureSprings();
+  bool checkInactiveMeasureSprings();
 
-    void solveSegmentsParametersSparseEigen();
-    void solveSegmentsParametersOpenCV();
-    void solveSegmentsParametersViSP();
-    void solveSegmentsParameters();
-    void computeSegmentsLengths();
-    bool addRemoveSprings();
-    bool updateState();
+  void solveSegmentsParametersSparseEigen();
+  void solveSegmentsParametersOpenCV();
+  void solveSegmentsParametersViSP();
+  void solveSegmentsParameters();
+  void computeSegmentsLengths();
+  bool addRemoveSprings();
+  bool updateState();
 
-    //! Display
+  //! Display
 
-    void showInsertionPoints() const;
-    void showInsertionDirections() const;
-    void showStiffnesses() const;
+  void showInsertionPoints() const;
+  void showInsertionDirections() const;
+  void showStiffnesses() const;
 
-    //! Data saving
+  //! Data saving
 
-        //! Text
-        friend VISP_EXPORT std::ostream &operator<<(std::ostream &s, const usNeedleInsertionModelVirtualSprings &needle);
-        friend VISP_EXPORT std::istream &operator>>(std::istream &s, usNeedleInsertionModelVirtualSprings &needle);
-        //! Binary
-        friend VISP_EXPORT std::ostream &operator<<=(std::ostream &s, const usNeedleInsertionModelVirtualSprings &needle);
-        friend VISP_EXPORT std::istream &operator>>=(std::istream &s, usNeedleInsertionModelVirtualSprings &needle);
+  //! Text
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &s, const usNeedleInsertionModelVirtualSprings &needle);
+  friend VISP_EXPORT std::istream &operator>>(std::istream &s, usNeedleInsertionModelVirtualSprings &needle);
+  //! Binary
+  friend VISP_EXPORT std::ostream &operator<<=(std::ostream &s, const usNeedleInsertionModelVirtualSprings &needle);
+  friend VISP_EXPORT std::istream &operator>>=(std::istream &s, usNeedleInsertionModelVirtualSprings &needle);
 };
 
 VISP_EXPORT std::ostream &operator<<(std::ostream &s, const usNeedleInsertionModelVirtualSprings &needle);

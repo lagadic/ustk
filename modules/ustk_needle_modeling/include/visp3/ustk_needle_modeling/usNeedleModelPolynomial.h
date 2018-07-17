@@ -37,86 +37,89 @@
 
 #include <visp3/core/vpColVector.h>
 
-#include <visp3/ustk_needle_modeling/usNeedleModelBaseTip.h>
 #include <visp3/ustk_core/usPolynomialCurve3D.h>
-
+#include <visp3/ustk_needle_modeling/usNeedleModelBaseTip.h>
 
 class VISP_EXPORT usNeedleModelPolynomial : public usNeedleModelBaseTip, public usPolynomialCurve3D
 {
 public:
-
-    enum class NeedlePreset : int {BiopsyNeedle, BiopsyCannula, AbayazidRRM13, MisraRSRO10_PlastisolA, RoesthuisAM12, SteelSoftTissue};
+  enum class NeedlePreset : int {
+    BiopsyNeedle,
+    BiopsyCannula,
+    AbayazidRRM13,
+    MisraRSRO10_PlastisolA,
+    RoesthuisAM12,
+    SteelSoftTissue
+  };
 
 protected:
+  //! Needle parameters
 
-    //! Needle parameters
-
-    double m_outerDiameter;
-    double m_insideDiameter;
-    double m_needleYoungModulus;
+  double m_outerDiameter;
+  double m_insideDiameter;
+  double m_needleYoungModulus;
 
 public:
+  //! Constructors, destructor
 
-    //! Constructors, destructor
+  usNeedleModelPolynomial();
+  usNeedleModelPolynomial(const usNeedleModelPolynomial &needle);
+  virtual ~usNeedleModelPolynomial();
+  const usNeedleModelPolynomial &operator=(const usNeedleModelPolynomial &needle);
 
-    usNeedleModelPolynomial();
-    usNeedleModelPolynomial(const usNeedleModelPolynomial &needle);
-    virtual ~usNeedleModelPolynomial();
-    const usNeedleModelPolynomial &operator=(const usNeedleModelPolynomial &needle);
+  virtual usNeedleModelPolynomial *clone() const { return new usNeedleModelPolynomial(*this); } // Polymorph copy method
 
-    virtual usNeedleModelPolynomial* clone() const {return new usNeedleModelPolynomial(*this);} // Polymorph copy method
+  //! Parameters saving and loading
 
-    //! Parameters saving and loading
+  void loadPreset(const NeedlePreset preset);
 
-    void loadPreset(const NeedlePreset preset);
+  //! Parameters setters and getters
 
-    //! Parameters setters and getters
+  //! Needle parameters
 
-        //! Needle parameters
+  void setOuterDiameter(double diameter);
+  double getOuterDiameter() const;
 
-        void setOuterDiameter(double diameter);
-        double getOuterDiameter() const;
+  void setInsideDiameter(double diameter);
+  double getInsideDiameter() const;
 
-        void setInsideDiameter(double diameter);
-        double getInsideDiameter() const;
+  void setNeedleYoungModulus(double E);
+  double getNeedleYoungModulus() const;
 
-        void setNeedleYoungModulus(double E);
-        double getNeedleYoungModulus() const;
+  double getEI() const;
 
-        double getEI() const;
+  //! Spline definition
 
-    //! Spline definition
+  void init();
 
-        void init();
+  //! Measure model information
 
-    //! Measure model information
+  //! Needle position
 
-        //! Needle position
+  vpColVector getNeedlePoint(double l) const;
+  vpColVector getNeedleDirection(double l) const;
+  double getDistanceFromPoint(const vpColVector &P, double start = 0, double stop = -1, double threshold = 1e-5) const;
 
-        vpColVector getNeedlePoint(double l) const;
-        vpColVector getNeedleDirection(double l) const;
-        double getDistanceFromPoint(const vpColVector &P, double start = 0, double stop = -1, double threshold = 1e-5) const;
+  //! Needle bending
 
-        //! Needle bending
+  double getBendingEnergy() const;
 
-        double getBendingEnergy() const;
+  //! Force at base
 
-        //! Force at base
+  vpColVector getBaseStaticTorsor() const;
 
-        vpColVector getBaseStaticTorsor() const;
+  //! Curvature
 
-        //! Curvature
+  double getCurvatureFromNeedleShape(double start, double end, vpColVector &center3D, vpColVector &direction3D) const;
 
-        double getCurvatureFromNeedleShape(double start, double end, vpColVector &center3D, vpColVector &direction3D) const;
+  //! Data saving
 
-    //! Data saving
-
-        //! Text
-        friend VISP_EXPORT std::ostream &operator<<(std::ostream &s, const usNeedleModelPolynomial &needle);
-        friend VISP_EXPORT std::istream &operator>>(std::istream &s, usNeedleModelPolynomial &needle);
-        //! Binary
-        friend VISP_EXPORT std::ostream &operator<<=(std::ostream &s, const usNeedleModelPolynomial &needle);
-        friend VISP_EXPORT std::istream &operator>>=(std::istream &s, usNeedleModelPolynomial &needle);
+  //! Text
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &s, const usNeedleModelPolynomial &needle);
+  friend VISP_EXPORT std::istream &operator>>(std::istream &s, usNeedleModelPolynomial &needle);
+  //! Binary
+  friend VISP_EXPORT std::ostream &operator<<=(std::ostream &s, const usNeedleModelPolynomial &needle);
+  friend VISP_EXPORT std::istream &operator>>=(std::istream &s, usNeedleModelPolynomial &needle);
 };
 
 VISP_EXPORT std::ostream &operator<<(std::ostream &s, const usNeedleModelPolynomial &needle);

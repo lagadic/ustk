@@ -38,49 +38,46 @@
 #include <visp3/ustk_core/usOrientedPlane3D.h>
 #include <visp3/ustk_core/usPolynomialCurve3D.h>
 
-
 class VISP_EXPORT usTissueModelPolynomial
 {
 public:
+  //! Tissue parameters
 
-    //! Tissue parameters
-
-    usOrientedPlane3D m_surface;
-    usPolynomialCurve3D m_path;
+  usOrientedPlane3D m_surface;
+  usPolynomialCurve3D m_path;
 
 public:
+  //! Constructors, destructor
 
-    //! Constructors, destructor
+  usTissueModelPolynomial();
+  usTissueModelPolynomial(const usTissueModelPolynomial &tissue);
+  virtual ~usTissueModelPolynomial();
+  const usTissueModelPolynomial &operator=(const usTissueModelPolynomial &tissue);
 
-    usTissueModelPolynomial();
-    usTissueModelPolynomial(const usTissueModelPolynomial &tissue);
-    virtual ~usTissueModelPolynomial();
-    const usTissueModelPolynomial &operator=(const usTissueModelPolynomial &tissue);
+  virtual usTissueModelPolynomial *clone() const; // Polymorph copy method
 
-    virtual usTissueModelPolynomial* clone() const; // Polymorph copy method
+  //! Parameters setters and getters
 
-    //! Parameters setters and getters
+  const usOrientedPlane3D &accessSurface() const;
+  usOrientedPlane3D &accessSurface();
+  const usPolynomialCurve3D &accessPath() const;
+  usPolynomialCurve3D accessPath();
 
-    const usOrientedPlane3D &accessSurface() const;
-    usOrientedPlane3D &accessSurface();
-    const usPolynomialCurve3D &accessPath() const;
-    usPolynomialCurve3D accessPath();
+  bool moveInWorldFrame(const vpHomogeneousMatrix &H);
+  bool moveInWorldFrame(double x, double y, double z, double tx, double ty, double tz);
+  bool move(const vpHomogeneousMatrix &H);
+  bool move(double x, double y, double z, double tx, double ty, double tz);
+  bool setPose(const vpPoseVector &p);
+  vpPoseVector getPose() const;
 
-    bool moveInWorldFrame(const vpHomogeneousMatrix &H);
-    bool moveInWorldFrame(double x, double y, double z, double tx, double ty, double tz);
-    bool move(const vpHomogeneousMatrix &H);
-    bool move(double x, double y, double z, double tx, double ty, double tz);
-    bool setPose(const vpPoseVector &p);
-    vpPoseVector getPose() const;
-        
-    //! Data saving
+  //! Data saving
 
-        //! Text
-        friend VISP_EXPORT std::ostream &operator<<(std::ostream &s, const usTissueModelPolynomial &tissue);
-        friend VISP_EXPORT std::istream &operator>>(std::istream &s, usTissueModelPolynomial &tissue);
-        //! Binary
-        friend VISP_EXPORT std::ostream &operator<<=(std::ostream &s, const usTissueModelPolynomial &tissue);
-        friend VISP_EXPORT std::istream &operator>>=(std::istream &s, usTissueModelPolynomial &tissue);
+  //! Text
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &s, const usTissueModelPolynomial &tissue);
+  friend VISP_EXPORT std::istream &operator>>(std::istream &s, usTissueModelPolynomial &tissue);
+  //! Binary
+  friend VISP_EXPORT std::ostream &operator<<=(std::ostream &s, const usTissueModelPolynomial &tissue);
+  friend VISP_EXPORT std::istream &operator>>=(std::istream &s, usTissueModelPolynomial &tissue);
 };
 
 VISP_EXPORT std::ostream &operator<<(std::ostream &s, const usTissueModelPolynomial &tissue);
