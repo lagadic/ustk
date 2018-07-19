@@ -38,23 +38,18 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9)
-
-#include <visp3/ustk_core/usGeometryDisplayTools.h>
-
-#if defined(VISP_HAVE_X11)
-#include <visp3/gui/vpDisplayX.h>
-#elif defined(VISP_HAVE_OPENCV)
-#include <visp3/gui/vpDisplayOpenCV.h>
-#elif defined(VISP_HAVE_GTK)
-#include <visp3/gui/vpDisplayGTK.h>
-#elif defined(VISP_HAVE_GDI)
-#include <visp3/gui/vpDisplayGDI.h>
-#elif defined(VISP_HAVE_D3D9)
-#include <visp3/gui/vpDisplayD3D.h>
-#endif
-
+#include <iostream>
+#include <stdlib.h>
+#include <string>
 #include <vector>
+
+#include <visp3/gui/vpDisplayD3D.h>
+#include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayGTK.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayX.h>
+
+#include <visp3/io/vpParseArgv.h>
 
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
@@ -62,55 +57,271 @@
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpRGBa.h>
 
+#include <visp3/ustk_core/usGeometryDisplayTools.h>
 
-int main()
+// List of allowed command line options
+#define GETOPTARGS "hlt:d"
+
+typedef enum { vpX11, vpGTK, vpGDI, vpD3D, vpCV } vpDisplayType;
+
+void usage(const char *name, const char *badparam, vpDisplayType &dtype);
+bool getOptions(int argc, const char **argv, vpDisplayType &dtype, bool &list, bool &display);
+
+/*!
+
+  Print the program options.
+
+  \param name : Program name.
+  \param badparam : Bad parameter name.
+  \param ipath: Input image path.
+  \param dtype : Type of video device.
+
+ */
+void usage(const char *name, const char *badparam, vpDisplayType &dtype)
 {
-    std::cout << "Start testUsGeometryDisplayTools" << std::endl;
-    
+  fprintf(stdout, "\n\
+Test the display functions in usGeometryDisplayTools.\n\
+\n\
+SYNOPSIS\n\
+  %s [-t <type of video device>] [-l] [-d] [-h]\n\
+", name);
+
+  std::string display;
+  switch (dtype) {
+  case vpX11:
+    display = "X11";
+    break;
+  case vpGTK:
+    display = "GTK";
+    break;
+  case vpGDI:
+    display = "GDI";
+    break;
+  case vpD3D:
+    display = "D3D";
+    break;
+  case vpCV:
+    display = "CV";
+    break;
+  }
+
+  fprintf(stdout, "\n\
+OPTIONS:                                               Default\n\
+\n\
+  -t <type of video device>                            \"%s\"\n\
+     String specifying the video device to use.\n\
+     Possible values:\n\
+       \"X11\": only on UNIX platforms,\n\
+       \"GTK\": on all plaforms,\n\
+       \"GDI\": only on Windows platform (Graphics Device Interface),\n\
+       \"D3D\": only on Windows platform (Direct3D).\n\
+       \"CV\" : (OpenCV).\n\
+\n\
+  -l\n\
+     Print the list of video-devices available and exit.\n\
+\n\
+  -d \n\
+     Turn off the display.\n\
+\n\
+  -h\n\
+     Print the help.\n\n", display.c_str());
+
+  if (badparam)
+    fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
+}
+
+/*!
+
+  Set the program options.
+
+  \param argc : Command line number of parameters.
+  \param argv : Array of command line parameters.
+  \param dtype : Type of video device.
+  \param list : Set as true,list the available video-devices.
+  \param display : Set as true, activates the image display. This is
+  the default configuration. When set to false, the display is
+  disabled. This can be useful for automatic tests using crontab
+  under Unix or using the task manager under Windows.
+
+  \return false if the program has to be stopped, true otherwise.
+
+*/
+bool getOptions(int argc, const char **argv, vpDisplayType &dtype, bool &list, bool &display)
+{
+    const char *optarg_;
+    int c;
+    std::string sDisplayType;
+    while((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1)
+    {
+
+        switch (c)
+        {
+            case 'l':
+                list = true;
+                break;
+            case 't':
+                sDisplayType = optarg_;
+                // Parse the display type option
+                if(sDisplayType.compare("X11") == 0) dtype = vpX11;
+                else if (sDisplayType.compare("GTK") == 0) dtype = vpGTK;
+                else if (sDisplayType.compare("GDI") == 0) dtype = vpGDI;
+                else if (sDisplayType.compare("D3D") == 0) dtype = vpD3D;
+                else if (sDisplayType.compare("CV") == 0) dtype = vpCV;
+                
+                break;
+            case 'h':
+                usage(argv[0], NULL, dtype);
+                return false;
+                break;
+            case 'd':
+                display = false;
+                break;
+
+            default:
+                usage(argv[0], optarg_, dtype);
+                return false;
+                break;
+        }
+    }
+
+    if((c == 1) || (c == -1))
+    {
+        // standalone param or error
+        usage(argv[0], NULL, dtype);
+        std::cerr << "ERROR: " << std::endl;
+        std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
+        return false;
+    }
+
+    return true;
+}
+
+
+
+int main(int argc, const char **argv)
+{
+    bool opt_list = false;   // To print the list of video devices
+    vpDisplayType opt_dtype; // Type of display to use
+    bool opt_display = true;
+
+// Default display is one available
+#if defined VISP_HAVE_GTK
+    opt_dtype = vpGTK;
+#elif defined VISP_HAVE_X11
+    opt_dtype = vpX11;
+#elif defined VISP_HAVE_GDI
+    opt_dtype = vpGDI;
+#elif defined VISP_HAVE_D3D9
+    opt_dtype = vpD3D;
+#elif defined VISP_HAVE_OPENCV
+    opt_dtype = vpCV;
+#endif
+
+    // Read the command line options
+    if(!getOptions(argc, argv, opt_dtype, opt_list, opt_display)) exit(-1);
+
+    // Print the list of video-devices available
+    if (opt_list) {
+      unsigned nbDevices = 0;
+      std::cout << "List of video-devices available: \n";
+#if defined VISP_HAVE_GTK
+      std::cout << "  GTK (use \"-t GTK\" option to use it)\n";
+      nbDevices++;
+#endif
+#if defined VISP_HAVE_X11
+      std::cout << "  X11 (use \"-t X11\" option to use it)\n";
+      nbDevices++;
+#endif
+#if defined VISP_HAVE_GDI
+      std::cout << "  GDI (use \"-t GDI\" option to use it)\n";
+      nbDevices++;
+#endif
+#if defined VISP_HAVE_D3D9
+      std::cout << "  D3D (use \"-t D3D\" option to use it)\n";
+      nbDevices++;
+#endif
+#if defined VISP_HAVE_OPENCV
+      std::cout << "  CV (use \"-t CV\" option to use it)\n";
+      nbDevices++;
+#endif
+      if (!nbDevices) {
+        std::cout << "  No display is available\n";
+      }
+      return (0);
+    }
+
     vpImage<unsigned char> I1(700, 500, 255);
     vpImage<vpRGBa> I2(700, 500, vpRGBa(255,255,255,255));
     
-#if defined(VISP_HAVE_X11)
-    vpDisplayX *d1;
-    vpDisplayX *d2;
-#elif defined(VISP_HAVE_OPENCV)
-    vpDisplayOpenCV *d1;
-    vpDisplayOpenCV *d2;
-#elif defined(VISP_HAVE_GTK)
-    vpDisplayGTK *d1;
-    vpDisplayGTK *d2;
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI *d1;
-    vpDisplayGDI *d2;
-#elif defined(VISP_HAVE_D3D9)
-    vpDisplayD3d *d1;
-    vpDisplayD3d *d2;
-#endif
-            
-    try
+    vpDisplay *display1 = nullptr;
+    vpDisplay *display2 = nullptr;
+
+    switch (opt_dtype)
     {
-#if defined(VISP_HAVE_X11)
-    d1 = new vpDisplayX(I1, 0,0, "Display unsigned char");
-    d2 = new vpDisplayX(I2, d1->getWindowXPosition()+d1->getWidth(), d1->getWindowYPosition(), "Display vpRGBa");
-#elif defined(VISP_HAVE_OPENCV)
-    d1 = new vpDisplayOpenCV(I1, 0,0, "Display unsigned char");
-    d2 = new vpDisplayOpenCV(I2, d1->getWindowXPosition()+d1->getWidth(), d1->getWindowYPosition(), "Display vpRGBa");
-#elif defined(VISP_HAVE_GTK)
-    d1 = new vpDisplayGTK(I1, 0,0, "Display unsigned char");
-    d2 = new vpDisplayGTK(I2, d1->getWindowXPosition()+d1->getWidth(), d1->getWindowYPosition(), "Display vpRGBa");
-#elif defined(VISP_HAVE_GDI)
-    d1 = new vpDisplayGDI(I1, 0,0, "Display unsigned char");
-    d2 = new vpDisplayGDI(I2, d1->getWindowXPosition()+d1->getWidth(), d1->getWindowYPosition(), "Display vpRGBa");
-#elif defined(VISP_HAVE_D3D9)
-    d1 = new vpDisplayD3d(I1, 0,0, "Display unsigned char");
-    d2 = new vpDisplayD3d(I2, d1->getWindowXPosition()+d1->getWidth(), d1->getWindowYPosition(), "Display vpRGBa");
+        case vpX11:
+            std::cout << "Requested X11 display functionnalities..." << std::endl;
+#if defined VISP_HAVE_X11
+            display1 = new vpDisplayX;
+            display2 = new vpDisplayX;
+#else
+            std::cout << "  Sorry, X11 video device is not available.\n";
+            std::cout << "Use \"" << argv[0] << " -l\" to print the list of available devices.\n";
+            return 0;
 #endif
+            break;
+        case vpGTK:
+            std::cout << "Requested GTK display functionnalities..." << std::endl;
+#if defined VISP_HAVE_GTK
+            display1 = new vpDisplayGTK;
+            display2 = new vpDisplayGTK;
+#else
+            std::cout << "  Sorry, GTK video device is not available.\n";
+            std::cout << "Use \"" << argv[0] << " -l\" to print the list of available devices.\n";
+            return 0;
+#endif
+            break;
+        case vpGDI:
+            std::cout << "Requested GDI display functionnalities..." << std::endl;
+#if defined VISP_HAVE_GDI
+            display1 = new vpDisplayGDI;
+            display2 = new vpDisplayGDI;
+#else
+            std::cout << "  Sorry, GDI video device is not available.\n";
+            std::cout << "Use \"" << argv[0] << " -l\" to print the list of available devices.\n";
+            return 0;
+#endif
+            break;
+        case vpD3D:
+            std::cout << "Requested D3D display functionnalities..." << std::endl;
+#if defined VISP_HAVE_D3D9
+            display1 = new vpDisplayD3D;
+            display2 = new vpDisplayD3D;
+#else
+            std::cout << "  Sorry, D3D video device is not available.\n";
+            std::cout << "Use \"" << argv[0] << " -l\" to print the list of available devices.\n";
+            return 0;
+#endif
+            break;
+        case vpCV:
+            std::cout << "Requested OpenCV display functionnalities..." << std::endl;
+#if defined(VISP_HAVE_OPENCV)
+            display1 = new vpDisplayOpenCV;
+            display2 = new vpDisplayOpenCV;
+#else
+            std::cout << "  Sorry, OpenCV video device is not available.\n";
+            std::cout << "Use \"" << argv[0] << " -l\" to print the list of available devices.\n";
+            return 0;
+#endif
+            break;
     }
-    catch(std::exception &e)
+
+    if(opt_display)
     {
-        std::cout << "testUsGeometryDisplayTools: could not initialize display:\n" << e.what() << std::endl;
-        return 0;
+        display1->init(I1, 0,0, "Display unsigned char");
+        display2->init(I2, display1->getWindowXPosition()+display1->getWidth(), display1->getWindowYPosition(), "Display vpRGBa");
     }
+    
+    std::cout << "Start test testUsGeometryDisplayTools" << std::endl;
         
     usOrientedPlane3D plane(vpPoseVector(0,0,0.05, 0,M_PI/4,0));
     
@@ -174,21 +385,8 @@ int main()
     
     vpTime::wait(2000);
     
-    delete d1;
-    delete d2;
+    delete display1;
+    delete display2;
     
     return 0;
 }
-
-#else
-
-#include <iostream>
-
-int main()
-{
-    std::cout << "No display to start testUsGeometryDisplayTools" << std::endl;
-    
-    return 0;
-}
-
-#endif
