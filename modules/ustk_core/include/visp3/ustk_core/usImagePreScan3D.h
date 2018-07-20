@@ -346,7 +346,7 @@ template <class Type> void usImagePreScan3D<Type>::getFrame(usImagePreScan2D<Typ
 
   // offset to access the frame in the volume
   int offset = index * this->getHeight() * this->getWidth();
-  Type *frameBeginning = this->getData() + offset;
+  const Type *frameBeginning = this->getConstData() + offset;
 
   // copy
   for (unsigned int i = 0; i < this->getWidth(); i++) {

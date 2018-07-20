@@ -264,29 +264,29 @@ void usNetworkGrabberRF3D::includeFrameInVolume()
   m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setMotorSettings(m_motorSettings);
 
   m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)
-      ->resize(m_grabbedImage.getWidth(), m_grabbedImage.getHeight(), m_motorSettings.getFrameNumber());
+      ->resize(m_grabbedImage.getHeight(), m_grabbedImage.getWidth(), m_motorSettings.getFrameNumber());
 
   // Inserting frame in volume
   int volumeIndex = m_grabbedImage.getFrameCount() / m_grabbedImage.getFramesPerVolume();    // from 0
-  int framePostition = m_grabbedImage.getFrameCount() % m_grabbedImage.getFramesPerVolume(); // from 0 to FPV-1
+  int framePosition = m_grabbedImage.getFrameCount() % m_grabbedImage.getFramesPerVolume(); // from 0 to FPV-1
 
   // setting timestamps
   if (volumeIndex % 2 != 0) // case of backward moving motor (opposite to Z direction)
-    framePostition = m_grabbedImage.getFramesPerVolume() - framePostition - 1;
+    framePosition = m_grabbedImage.getFramesPerVolume() - framePosition - 1;
 
-  m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->addTimeStamp(m_grabbedImage.getTimeStamp(), framePostition);
+  m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->addTimeStamp(m_grabbedImage.getTimeStamp(), framePosition);
   m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setVolumeCount(volumeIndex);
 
   for (unsigned int i = 0; i < m_grabbedImage.getHeight(); i++) {
     for (unsigned int j = 0; j < m_grabbedImage.getWidth(); j++) {
-      (*m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC))(i, j, framePostition, m_grabbedImage(i, j));
+      (*m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC))(i, j, framePosition, m_grabbedImage(i, j));
     }
   }
 
   // we reach the end of a volume
   if (m_firstFrameAvailable &&
-      ((framePostition == 0 && !m_motorSweepingInZDirection) ||
-       (framePostition == (int)m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getFrameNumber() - 1 &&
+      ((framePosition == 0 && !m_motorSweepingInZDirection) ||
+       (framePosition == (int)m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getFrameNumber() - 1 &&
         m_motorSweepingInZDirection))) {
     // Now CURRENT_FILLED_FRAME_POSITION_IN_VEC has become the last frame received
     // So we switch pointers beween MOST_RECENT_FRAME_POSITION_IN_VEC and CURRENT_FILLED_FRAME_POSITION_IN_VEC
