@@ -68,43 +68,39 @@ int main(int argc, char **argv)
 
   // our local grabbing loop
   do {
-    if (qtGrabber->isFirstFrameAvailable()) {
-      grabbedFrame = qtGrabber->acquire();
-      confidenceProcessor.run(confidence, *grabbedFrame);
-      // local copy for vpDisplay
-      // localFrame = *grabbedFrame;
+    grabbedFrame = qtGrabber->acquire();
+    confidenceProcessor.run(confidence, *grabbedFrame);
+    // local copy for vpDisplay
+    // localFrame = *grabbedFrame;
 
-      std::cout << "MAIN THREAD received frame No : " << grabbedFrame->getFrameCount() << std::endl;
+    std::cout << "MAIN THREAD received frame No : " << grabbedFrame->getFrameCount() << std::endl;
 
-      std::cout << *grabbedFrame << std::endl;
+    std::cout << *grabbedFrame << std::endl;
 
-      // init display
-      if (!displayInit && grabbedFrame->getHeight() != 0 && grabbedFrame->getWidth() != 0) {
+    // init display
+    if (!displayInit && grabbedFrame->getHeight() != 0 && grabbedFrame->getWidth() != 0) {
 #if defined(VISP_HAVE_X11)
-        display = new vpDisplayX(*grabbedFrame);
-        displayConf = new vpDisplayX(confidence);
+      display = new vpDisplayX(*grabbedFrame);
+      displayConf = new vpDisplayX(confidence);
 #elif defined(VISP_HAVE_GDI)
-        display = new vpDisplayGDI(*grabbedFrame);
-        displayConf = new vpDisplayGDI(confidence);
+      display = new vpDisplayGDI(*grabbedFrame);
+      displayConf = new vpDisplayGDI(confidence);
 #endif
-        qtGrabber->useVpDisplay(display);
-        displayInit = true;
-      }
+      qtGrabber->useVpDisplay(display);
+      displayInit = true;
+    }
 
-      // processing display
-      if (displayInit) {
-        if (vpDisplay::getClick(*grabbedFrame, false))
-          captureRunning = false;
-        vpDisplay::display(*grabbedFrame);
-        vpDisplay::displayText(*grabbedFrame, 20, 20, std::string("Click to exit..."), vpColor::red);
-        vpDisplay::flush(*grabbedFrame);
-        vpDisplay::display(confidence);
-        vpDisplay::displayText(confidence, 20, 20, std::string("Click to exit..."), vpColor::red);
-        vpDisplay::flush(confidence);
-        // vpTime::wait(10); // wait to simulate a local process running on last frame frabbed
-      }
-    } else {
-      vpTime::wait(10);
+    // processing display
+    if (displayInit) {
+      if (vpDisplay::getClick(*grabbedFrame, false))
+        captureRunning = false;
+      vpDisplay::display(*grabbedFrame);
+      vpDisplay::displayText(*grabbedFrame, 20, 20, std::string("Click to exit..."), vpColor::red);
+      vpDisplay::flush(*grabbedFrame);
+      vpDisplay::display(confidence);
+      vpDisplay::displayText(confidence, 20, 20, std::string("Click to exit..."), vpColor::red);
+      vpDisplay::flush(confidence);
+      // vpTime::wait(10); // wait to simulate a local process running on last frame frabbed
     }
   } while (captureRunning);
 

@@ -50,7 +50,6 @@ int main(int argc, char **argv)
 
   // our local grabbing loop
   do {
-    if (qtGrabber->isFirstFrameAvailable()) {
       grabbedVolume = qtGrabber->acquire();
 
       std::cout << "MAIN THREAD received volume No : " << grabbedVolume->getVolumeCount() << std::endl;
@@ -60,12 +59,11 @@ int main(int argc, char **argv)
 
       QString filename = QString("volume") + QString::number(grabbedVolume->getVolumeCount()) + QString(".mhd");
       usImageIo::write(preScanImage, filename.toStdString());
-    } else {
-      vpTime::wait(10);
-    }
   } while (captureRunning);
+    
+  qtGrabber->stopAcquisition();
 
-  return app.exec();
+  return 0;
 }
 
 #else

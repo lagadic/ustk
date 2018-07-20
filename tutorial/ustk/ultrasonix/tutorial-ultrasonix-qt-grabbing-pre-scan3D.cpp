@@ -54,21 +54,20 @@ int main(int argc, char **argv)
 
   // our grabbing loop
   do {
-    if (qtGrabber->isFirstFrameAvailable()) {
-      grabbedFrame = qtGrabber->acquire();
+    grabbedFrame = qtGrabber->acquire();
 
-      std::cout << "MAIN THREAD received volume No : " << grabbedFrame->getVolumeCount() << std::endl;
+    std::cout << "MAIN THREAD received volume No : " << grabbedFrame->getVolumeCount() << std::endl;
 
-      char buffer[FILENAME_MAX];
-      sprintf(buffer, "volumePreScan%d.mhd", grabbedFrame->getVolumeCount());
+    char buffer[FILENAME_MAX];
+    sprintf(buffer, "volumePreScan%d.mhd", grabbedFrame->getVolumeCount());
 
-      usImageIo::write(*grabbedFrame, buffer);
-    } else {
-      vpTime::wait(10);
-    }
+    usImageIo::write(*grabbedFrame, buffer);
+
   } while (captureRunning);
+  
+  qtGrabber->stopAcquisition();
 
-  return app.exec();
+  return 0;
 }
 
 #else

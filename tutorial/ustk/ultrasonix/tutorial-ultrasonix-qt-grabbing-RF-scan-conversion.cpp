@@ -81,43 +81,39 @@ int main(int argc, char **argv)
 
   // our local grabbing loop
   do {
-    if (qtGrabber->isFirstFrameAvailable()) {
-      grabbedFrame = qtGrabber->acquire();
+    grabbedFrame = qtGrabber->acquire();
 
-      std::cout << "MAIN THREAD received frame No : " << grabbedFrame->getFrameCount() << std::endl;
+    std::cout << "MAIN THREAD received frame No : " << grabbedFrame->getFrameCount() << std::endl;
 
-      double startTime = vpTime::measureTimeMs();
-      // convert RF to pre-scan to display something ...
-      converterRF.convert(*grabbedFrame, preScanImage);
+    double startTime = vpTime::measureTimeMs();
+    // convert RF to pre-scan to display something ...
+    converterRF.convert(*grabbedFrame, preScanImage);
 
-      double endRFConvertTime = vpTime::measureTimeMs();
-      std::cout << "RF conversion time (sec) = " << (endRFConvertTime - startTime) / 1000.0 << std::endl;
+    double endRFConvertTime = vpTime::measureTimeMs();
+    std::cout << "RF conversion time (sec) = " << (endRFConvertTime - startTime) / 1000.0 << std::endl;
 
-      scanConverter.convert(preScanImage, postscanImage);
+    scanConverter.convert(preScanImage, postscanImage);
 
-      double endScanConvertTime = vpTime::measureTimeMs();
-      std::cout << "scan-conversion time (sec) = " << (endScanConvertTime - endRFConvertTime) / 1000.0 << std::endl;
+    double endScanConvertTime = vpTime::measureTimeMs();
+    std::cout << "scan-conversion time (sec) = " << (endScanConvertTime - endRFConvertTime) / 1000.0 << std::endl;
 
-      // init display
-      if (!displayInit && postscanImage.getHeight() != 0 && postscanImage.getWidth() != 0) {
+    // init display
+    if (!displayInit && postscanImage.getHeight() != 0 && postscanImage.getWidth() != 0) {
 #if defined(VISP_HAVE_X11)
-        display = new vpDisplayX(postscanImage);
+      display = new vpDisplayX(postscanImage);
 #elif defined(VISP_HAVE_GDI)
-        display = new vpDisplayGDI(postscanImage);
+      display = new vpDisplayGDI(postscanImage);
 #endif
-        displayInit = true;
-      }
+      displayInit = true;
+    }
 
-      // processing display
-      if (displayInit) {
-        if (vpDisplay::getClick(postscanImage, false))
-          captureRunning = false;
-        vpDisplay::display(postscanImage);
-        vpDisplay::displayText(postscanImage, 20, 20, std::string("Click to exit..."), vpColor::red);
-        vpDisplay::flush(postscanImage);
-      }
-    } else {
-      vpTime::wait(10);
+    // processing display
+    if (displayInit) {
+      if (vpDisplay::getClick(postscanImage, false))
+        captureRunning = false;
+      vpDisplay::display(postscanImage);
+      vpDisplay::displayText(postscanImage, 20, 20, std::string("Click to exit..."), vpColor::red);
+      vpDisplay::flush(postscanImage);
     }
   } while (captureRunning);
 

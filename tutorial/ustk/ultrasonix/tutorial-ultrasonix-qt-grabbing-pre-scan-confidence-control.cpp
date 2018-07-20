@@ -331,79 +331,77 @@ int main(int argc, char **argv)
 
   // our local grabbing loop
   do {
-    if (qtGrabber->isFirstFrameAvailable()) {
-      grabbedFrame = qtGrabber->acquire();
-      confidenceProcessor.run(confidence, *grabbedFrame);
+    grabbedFrame = qtGrabber->acquire();
+    confidenceProcessor.run(confidence, *grabbedFrame);
 
-      // Confidence barycenter computation
+    // Confidence barycenter computation
 
-      // sum first
-      double I_sum = 0.0;
-      for (unsigned int i = 0; i < confidence.getHeight(); ++i)
-        for (unsigned int j = 0; j < confidence.getWidth(); ++j)
-          I_sum += static_cast<double>(confidence[i][j]);
+    // sum first
+    double I_sum = 0.0;
+    for (unsigned int i = 0; i < confidence.getHeight(); ++i)
+      for (unsigned int j = 0; j < confidence.getWidth(); ++j)
+        I_sum += static_cast<double>(confidence[i][j]);
 
-      double yc = 0.0;
-      for (unsigned int x = 0; x < confidence.getHeight(); ++x)
-        for (unsigned int y = 0; y < confidence.getWidth(); ++y) {
-          yc += y * confidence[x][y];
-        }
-      yc /= I_sum;
-
-      double tc = yc * confidence.getScanLinePitch() - confidence.getFieldOfView() / 2.0;
-
-      {
-        vpMutex::vpScopedLock lock(s_mutex_control_velocity);
-        s_controlVelocity = 0.0;
-        s_controlVelocity[5] = lambdaVisualError * tc;
+    double yc = 0.0;
+    for (unsigned int x = 0; x < confidence.getHeight(); ++x)
+      for (unsigned int y = 0; y < confidence.getWidth(); ++y) {
+        yc += y * confidence[x][y];
       }
+    yc /= I_sum;
 
-      s_mutex_capture.lock();
-      s_capture_state = capture_started;
-      s_mutex_capture.unlock();
+    double tc = yc * confidence.getScanLinePitch() - confidence.getFieldOfView() / 2.0;
 
-      // std::cout << "MAIN THREAD received frame No : " << grabbedFrame->getFrameCount() << std::endl;
+    {
+      vpMutex::vpScopedLock lock(s_mutex_control_velocity);
+      s_controlVelocity = 0.0;
+      s_controlVelocity[5] = lambdaVisualError * tc;
+    }
 
-      // init display
-      if (!displayInit && grabbedFrame->getHeight() != 0 && grabbedFrame->getWidth() != 0) {
+    s_mutex_capture.lock();
+    s_capture_state = capture_started;
+    s_mutex_capture.unlock();
+
+    // std::cout << "MAIN THREAD received frame No : " << grabbedFrame->getFrameCount() << std::endl;
+
+    // init display
+    if (!displayInit && grabbedFrame->getHeight() != 0 && grabbedFrame->getWidth() != 0) {
 #ifdef VISP_HAVE_X11
-        display = new vpDisplayX(*grabbedFrame);
-        displayConf = new vpDisplayX(confidence, (*grabbedFrame).getWidth() + 60, 10);
+      display = new vpDisplayX(*grabbedFrame);
+      displayConf = new vpDisplayX(confidence, (*grabbedFrame).getWidth() + 60, 10);
 #elif defined(VISP_HAVE_GDI)
-        display = new vpDisplayGDI(*grabbedFrame);
-        displayConf = new vpDisplayGDI(confidence, (*grabbedFrame).getWidth() + 60, 10);
+      display = new vpDisplayGDI(*grabbedFrame);
+      displayConf = new vpDisplayGDI(confidence, (*grabbedFrame).getWidth() + 60, 10);
 #endif
-        qtGrabber->useVpDisplay(display);
-        displayInit = true;
-      }
+      qtGrabber->useVpDisplay(display);
+      displayInit = true;
+    }
 
-      // processing display
-      if (displayInit) {
-        vpDisplay::display(*grabbedFrame);
-        vpDisplay::display(confidence);
+    // processing display
+    if (displayInit) {
+      vpDisplay::display(*grabbedFrame);
+      vpDisplay::display(confidence);
 
-        // display target barycenter (image center)
-        vpDisplay::displayText(confidence, 10, 10, "target", vpColor::green);
-        vpDisplay::displayLine(confidence, 0, confidence.getWidth() / 2 - 1, confidence.getHeight() - 1,
-                               confidence.getWidth() / 2 - 1, vpColor::green);
+      // display target barycenter (image center)
+      vpDisplay::displayText(confidence, 10, 10, "target", vpColor::green);
+      vpDisplay::displayLine(confidence, 0, confidence.getWidth() / 2 - 1, confidence.getHeight() - 1,
+                             confidence.getWidth() / 2 - 1, vpColor::green);
 
-        // dispay current confidence barycenter
-        vpDisplay::displayText(confidence, 25, 10, "current", vpColor::red);
-        vpDisplay::displayLine(confidence, 0, static_cast<int>(yc), confidence.getHeight() - 1, static_cast<int>(yc),
-                               vpColor::red);
-        if (vpDisplay::getClick(confidence, false))
-          captureRunning = false;
-        if (vpDisplay::getClick(*grabbedFrame, false))
-          captureRunning = false;
+      // dispay current confidence barycenter
+      vpDisplay::displayText(confidence, 25, 10, "current", vpColor::red);
+      vpDisplay::displayLine(confidence, 0, static_cast<int>(yc), confidence.getHeight() - 1, static_cast<int>(yc),
+                             vpColor::red);
+      if (vpDisplay::getClick(confidence, false))
+        captureRunning = false;
+      if (vpDisplay::getClick(*grabbedFrame, false))
+        captureRunning = false;
 
-        vpDisplay::flush(*grabbedFrame);
-        vpDisplay::flush(confidence);
-        vpTime::wait(10); // wait to simulate a local process running on last frame frabbed
-      }
-    } else {
-      vpTime::wait(100);
+      vpDisplay::flush(*grabbedFrame);
+      vpDisplay::flush(confidence);
+      vpTime::wait(10); // wait to simulate a local process running on last frame frabbed
     }
   } while (captureRunning);
+  
+  qtGrabber->stopAcquisition();
 
   std::cout << "stop capture" << std::endl;
   if (displayInit) {
@@ -433,7 +431,6 @@ int main(int argc, char **argv)
 
   // end grabber
   qtGrabber->disconnect();
-  grabbingThread->exit();
   app.quit();
 
   std::cout << "end main thread" << std::endl;
