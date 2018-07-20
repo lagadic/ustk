@@ -106,9 +106,6 @@ private:
   bool m_firstFrameAvailable;
   bool m_firstVolumeAvailable;
 
-  // to manage ptrs switch init
-  bool m_swichOutputInit;
-
   // to know motor sweep direction for volume grabbed
   bool m_motorSweepingInZDirection;
 

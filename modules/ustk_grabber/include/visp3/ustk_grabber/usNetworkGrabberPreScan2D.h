@@ -98,9 +98,6 @@ private:
   std::vector<usFrameGrabbedInfo<usImagePreScan2D<unsigned char> > *> m_outputBuffer;
   bool m_firstFrameAvailable;
 
-  // to manage ptrs switch init
-  bool m_swichOutputInit;
-
   // to manage the recording process
   bool m_recordingOn;
   usMHDSequenceWriter m_sequenceWriter;

@@ -55,8 +55,6 @@ usNetworkGrabberPostScanBiPlan::usNetworkGrabberPostScanBiPlan(usNetworkGrabber 
 
   m_firstFrameAvailable = false;
 
-  m_swichOutputInit = false;
-
   connect(m_tcpSocket, SIGNAL(readyRead()), this, SLOT(dataArrived()));
 }
 
@@ -269,54 +267,32 @@ void usNetworkGrabberPostScanBiPlan::dataArrived()
 */
 std::vector<usFrameGrabbedInfo<usImagePostScan2D<unsigned char> > *> usNetworkGrabberPostScanBiPlan::acquire()
 {
-  // check if the first frame is arrived
-  if (!m_firstFrameAvailable) {
-    throw(vpException(vpException::fatalError, "first frame not yet grabbed, cannot acquire"));
-  }
-
-  // user grabs too fast
-  if (m_outputBuffer1.at(OUTPUT_FRAME_POSITION_IN_VEC)->getFrameCount() ==
-          m_outputBuffer1.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getFrameCount() + 1 &&
-      m_outputBuffer2.at(OUTPUT_FRAME_POSITION_IN_VEC)->getFrameCount() ==
-          m_outputBuffer2.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getFrameCount() + 1) {
+  // manage first frame or if user grabs too fast
+  if (!m_firstFrameAvailable ||
+      (m_outputBuffer1.at(OUTPUT_FRAME_POSITION_IN_VEC)->getFrameCount() >=
+           m_outputBuffer1.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getFrameCount() &&
+       m_outputBuffer2.at(OUTPUT_FRAME_POSITION_IN_VEC)->getFrameCount() >=
+           m_outputBuffer2.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getFrameCount())) {
     // we wait until a new frame is available
     QEventLoop loop;
     loop.connect(this, SIGNAL(newFrameAvailable()), SLOT(quit()));
     loop.exec();
-
-    // switch pointers
-    usFrameGrabbedInfo<usImagePostScan2D<unsigned char> > *savePtr = m_outputBuffer1.at(OUTPUT_FRAME_POSITION_IN_VEC);
-    m_outputBuffer1.at(OUTPUT_FRAME_POSITION_IN_VEC) = m_outputBuffer1.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
-    m_outputBuffer1.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
-
-    savePtr = m_outputBuffer2.at(OUTPUT_FRAME_POSITION_IN_VEC);
-    m_outputBuffer2.at(OUTPUT_FRAME_POSITION_IN_VEC) = m_outputBuffer2.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
-    m_outputBuffer2.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
-
-    m_swichOutputInit = true;
   }
 
-  // if more recent frame available
-  else if ((m_outputBuffer1.at(OUTPUT_FRAME_POSITION_IN_VEC)->getFrameCount() <
-                m_outputBuffer1.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getFrameCount() &&
-            m_outputBuffer2.at(OUTPUT_FRAME_POSITION_IN_VEC)->getFrameCount() <
-                m_outputBuffer2.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getFrameCount()) ||
-           !m_swichOutputInit) {
-    // switch pointers (output <-> mostRecentFilled)
-    usFrameGrabbedInfo<usImagePostScan2D<unsigned char> > *savePtr = m_outputBuffer1.at(OUTPUT_FRAME_POSITION_IN_VEC);
-    m_outputBuffer1.at(OUTPUT_FRAME_POSITION_IN_VEC) = m_outputBuffer1.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
-    m_outputBuffer1.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
+  // switch pointers
+  usFrameGrabbedInfo<usImagePostScan2D<unsigned char> > *savePtr = m_outputBuffer1.at(OUTPUT_FRAME_POSITION_IN_VEC);
+  m_outputBuffer1.at(OUTPUT_FRAME_POSITION_IN_VEC) = m_outputBuffer1.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
+  m_outputBuffer1.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
 
-    savePtr = m_outputBuffer2.at(OUTPUT_FRAME_POSITION_IN_VEC);
-    m_outputBuffer2.at(OUTPUT_FRAME_POSITION_IN_VEC) = m_outputBuffer2.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
-    m_outputBuffer2.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
-    m_swichOutputInit = true;
-  }
+  savePtr = m_outputBuffer2.at(OUTPUT_FRAME_POSITION_IN_VEC);
+  m_outputBuffer2.at(OUTPUT_FRAME_POSITION_IN_VEC) = m_outputBuffer2.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
+  m_outputBuffer2.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
 
   // return the pointers on the two images
   std::vector<usFrameGrabbedInfo<usImagePostScan2D<unsigned char> > *> ret;
   ret.push_back(m_outputBuffer1.at(OUTPUT_FRAME_POSITION_IN_VEC));
   ret.push_back(m_outputBuffer2.at(OUTPUT_FRAME_POSITION_IN_VEC));
+  
   return ret;
 }
 

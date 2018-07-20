@@ -88,8 +88,6 @@ private:
 
   bool m_firstFrameAvailable;
 
-  // to manage ptrs switch init
-  bool m_swichOutputInit;
 };
 
 #endif // QT4 || QT5
