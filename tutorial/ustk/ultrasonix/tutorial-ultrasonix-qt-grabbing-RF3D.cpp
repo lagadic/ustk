@@ -18,8 +18,6 @@ int main(int argc, char **argv)
   // QT application
   QApplication app(argc, argv);
 
-  QThread *grabbingThread = new QThread();
-
   usNetworkGrabberRF3D *qtGrabber = new usNetworkGrabberRF3D();
   qtGrabber->connectToServer();
   // qtGrabber->setVerbose(true);
@@ -47,10 +45,6 @@ int main(int argc, char **argv)
   qtGrabber->sendAcquisitionParameters();
 
   qtGrabber->runAcquisition();
-
-  // Move the grabber object to another thread
-  qtGrabber->moveToThread(grabbingThread);
-  grabbingThread->start();
 
   std::cout << "waiting ultrasound initialisation..." << std::endl;
 

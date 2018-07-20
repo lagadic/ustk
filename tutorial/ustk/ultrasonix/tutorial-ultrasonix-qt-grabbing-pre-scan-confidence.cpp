@@ -21,8 +21,6 @@ int main(int argc, char **argv)
   // QT application
   QApplication app(argc, argv);
 
-  QThread *grabbingThread = new QThread();
-
   usNetworkGrabberPreScan2D *qtGrabber = new usNetworkGrabberPreScan2D();
   qtGrabber->connectToServer();
 
@@ -67,10 +65,6 @@ int main(int argc, char **argv)
   qtGrabber->initAcquisition(header);
 
   qtGrabber->runAcquisition();
-
-  // Move the grabber object to another thread, and run it
-  qtGrabber->moveToThread(grabbingThread);
-  grabbingThread->start();
 
   // our local grabbing loop
   do {

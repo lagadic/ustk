@@ -278,8 +278,6 @@ int main(int argc, char **argv)
   // QT application
   QApplication app(argc, argv);
 
-  QThread *grabbingThread = new QThread();
-
   usNetworkGrabberPreScan2D *qtGrabber = new usNetworkGrabberPreScan2D();
   qtGrabber->connectToServer();
 
@@ -325,10 +323,6 @@ int main(int argc, char **argv)
   qtGrabber->sendAcquisitionParameters();
 
   qtGrabber->runAcquisition();
-
-  // Move the grabber object to another thread, and run it
-  qtGrabber->moveToThread(grabbingThread);
-  grabbingThread->start();
 
   // start robot control thread
   vpThread thread_control((vpThread::Fn)controlFunction);

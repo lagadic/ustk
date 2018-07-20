@@ -66,6 +66,8 @@ usNetworkGrabber::usNetworkGrabber(QObject *parent) : QObject(parent)
 
   m_isInit = false;
   m_isRunning = false;
+  
+  m_thread = NULL;
 
   QObject::connect(this, SIGNAL(serverUpdateEnded(bool)), this, SLOT(serverUpdated(bool)));
   QObject::connect(this, SIGNAL(runAcquisitionSignal(bool)), this, SLOT(sendRunSignal(bool)));
@@ -637,12 +639,18 @@ void usNetworkGrabber::setTransmitFrequency(int transmitFrequency)
 }
 
 /**
-* Sends the command to run the acquisition on the ulstrasound station.
+* Sends the command to run the acquisition on the ultrasound station and start a new thread to run the data reception
 */
 void usNetworkGrabber::runAcquisition()
 {
+  if (m_thread == NULL) {
+    m_thread = new QThread;
+    this->moveToThread(m_thread);
+    m_thread->start();
+  }
   emit runAcquisitionSignal(true);
-  vpTime::wait(10); // workaround to allow calling run / stop methods one just after another
+
+  //vpTime::wait(10); // workaround to allow calling run / stop methods one just after another
 }
 
 /**
@@ -654,6 +662,7 @@ void usNetworkGrabber::runAcquisition()
 void usNetworkGrabber::stopAcquisition()
 {
   emit runAcquisitionSignal(false);
+
   vpTime::wait(10); // workaround to allow calling run / stop methods one just after another
 }
 
