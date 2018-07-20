@@ -52,7 +52,7 @@ usNetworkGrabberRF3D::usNetworkGrabberRF3D(usNetworkGrabber *parent) : usNetwork
   m_firstFrameAvailable = false;
   m_firstVolumeAvailable = false;
 
-  m_motorSweepingInZDirection = true;
+  m_motorSweepingInZDirection = false;
 
   m_recordingOn = false;
   m_firstImageTimestamp = 0;
@@ -271,7 +271,7 @@ void usNetworkGrabberRF3D::includeFrameInVolume()
   int framePosition = m_grabbedImage.getFrameCount() % m_grabbedImage.getFramesPerVolume(); // from 0 to FPV-1
 
   // setting timestamps
-  if (volumeIndex % 2 != 0) // case of backward moving motor (opposite to Z direction)
+  if (volumeIndex % 2 == 0) // case of backward moving motor (opposite to Z direction)
     framePosition = m_grabbedImage.getFramesPerVolume() - framePosition - 1;
 
   m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->addTimeStamp(m_grabbedImage.getTimeStamp(), framePosition);
@@ -301,7 +301,7 @@ void usNetworkGrabberRF3D::includeFrameInVolume()
                                     m_firstImageTimestamp);
       m_sequenceWriter.write(*m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC), timestampsToWrite);
     }
-    if (volumeIndex % 2 != 0) // case of backward moving motor (opposite to Z direction)
+    if (volumeIndex % 2 == 0) // case of backward moving motor (opposite to Z direction)
       m_motorSweepingInZDirection = true;
     else
       m_motorSweepingInZDirection = false;
