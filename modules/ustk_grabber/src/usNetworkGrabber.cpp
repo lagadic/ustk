@@ -79,6 +79,13 @@ usNetworkGrabber::usNetworkGrabber(QObject *parent) : QObject(parent)
 */
 usNetworkGrabber::~usNetworkGrabber()
 {
+  this->stopAcquisition();
+  if(m_thread) {
+    m_thread->quit();
+    m_thread->wait();
+    delete m_thread;
+    m_thread = NULL;
+  }
   if (m_tcpSocket->isOpen())
     m_tcpSocket->close();
 }
