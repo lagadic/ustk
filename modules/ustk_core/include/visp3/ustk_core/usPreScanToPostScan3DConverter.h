@@ -53,9 +53,11 @@
  * This class allows to convert 3D pre-scan ultrasound images to post-scan.
  * The converter can be initialized through init() and then applied through convert().
  * This class accepts only images acquired by a convex transducer and a tilting motor for now.
- *
- * @warning Converting with this class uses a lot of RAM when computing the LUTs in init().
- *
+ * The optimization method used to perform the conversion can be set through setConverterOptimizationMethod() before the call to init().
+ * 
+ * @warning Converting with *_REDUCED_LOOKUP_TABLE or *_FULL_LOOKUP_TABLE optimizations method can use a lot of RAM when computing the LUTs in init().
+ * @warning Converting with *_DIRECT_CONVERSION optimization methods can lead to long conversion time.
+ * 
  * Considering the following usImagePreScan3D image as input:
  * \image html img-usImagePreScan3D.png
  * this class generates an usImagePostScan3D (convex or linear) as output:
@@ -75,7 +77,7 @@ int main()
   unsigned int frames = 10;
   double transducerRadius = 0.045;
   double scanLinePitch = 0.0012;
-  unsigned int scanLineNumber = 256;
+  unsigned int scanLineNumber = width;
   bool isTransducerConvex = true;
   double axialResolution = 0.002;
   double framePitch = 0.002;
@@ -105,6 +107,18 @@ int main()
  */
 class VISP_EXPORT usPreScanToPostScan3DConverter
 {
+public:
+  typedef enum {
+    SINGLE_THREAD_DIRECT_CONVERSION,
+    MULTI_THREAD_DIRECT_CONVERSION,
+    GPU_DIRECT_CONVERSION,
+    SINGLE_THREAD_FULL_LOOKUP_TABLE,
+    MULTI_THREAD_FULL_LOOKUP_TABLE,
+    GPU_FULL_LOOKUP_TABLE,
+    SINGLE_THREAD_REDUCED_LOOKUP_TABLE,
+    MULTI_THREAD_REDUCED_LOOKUP_TABLE,
+    GPU_REDUCED_LOOKUP_TABLE
+  } usConverterOptimizationMethod;
 protected:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
   class usVoxelWeightAndIndex
@@ -114,9 +128,20 @@ protected:
     unsigned int m_inputIndex[8];
     double m_W[8];
   };
+  class usVoxelWeightAndIndexReducedMemory
+  {
+      friend class usPreScanToPostScan3DConverter;
+      unsigned int m_outputIndex;
+      unsigned int m_inputIndex;
+      double m_W[3];
+  };
 #endif
-  std::vector<usVoxelWeightAndIndex> m_lookupTable1;
-  std::vector<usVoxelWeightAndIndex> m_lookupTable2;
+  
+  usConverterOptimizationMethod m_converterOptimizationMethod;
+  usConverterOptimizationMethod m_conversionOptimizationMethodUsedAtInit;
+
+  std::vector<usVoxelWeightAndIndex> m_lookupTables[2];
+  std::vector<usVoxelWeightAndIndexReducedMemory> m_reducedLookupTables[2];
 
   usImagePreScan3D<unsigned char> m_VpreScan;
 
@@ -139,6 +164,9 @@ public:
 
   void init(const usImagePreScan3D<unsigned char> &preScanImage, double down = 1);
 
+  void setConverterOptimizationMethod(usConverterOptimizationMethod method);
+  usConverterOptimizationMethod setConverterOptimizationMethod() const {return m_converterOptimizationMethod;}
+  
   double getResolution() const { return m_resolution; }
 
   void SweepInZdirection(bool flag) { m_SweepInZdirection = flag; }
