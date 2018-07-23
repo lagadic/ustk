@@ -40,7 +40,7 @@
  * Default constructor.
  */
 usPreScanToPostScan3DConverter::usPreScanToPostScan3DConverter()
-  : m_VpreScan(), m_VpostScan(), m_resolution(), m_SweepInZdirection(true), m_initDone(false)
+  : m_VpreScan(), m_downSamplingFactor(1), m_resolution(), m_SweepInZdirection(true), m_initDone(false)
 {
 }
 
@@ -50,8 +50,8 @@ usPreScanToPostScan3DConverter::usPreScanToPostScan3DConverter()
  * @param down Downsampling factor (sample number divided by this number).
  */
 usPreScanToPostScan3DConverter::usPreScanToPostScan3DConverter(const usImagePreScan3D<unsigned char> &preScanImage,
-                                                               int down)
-  : m_VpreScan(), m_VpostScan(), m_resolution(), m_SweepInZdirection(true), m_initDone(false)
+                                                               double down)
+  : m_VpreScan(), m_downSamplingFactor(1), m_resolution(), m_SweepInZdirection(true), m_initDone(false)
 {
   this->init(preScanImage, down);
 }
@@ -61,24 +61,30 @@ usPreScanToPostScan3DConverter::usPreScanToPostScan3DConverter(const usImagePreS
  * @param preScanImage Pre-scan image to convert, with settings filled (transducer and motor).
  * @param down Down-sampling factor.
  */
-void usPreScanToPostScan3DConverter::init(const usImagePreScan3D<unsigned char> &preScanImage, int down)
+void usPreScanToPostScan3DConverter::init(const usImagePreScan3D<unsigned char> &preScanImage, double down)
 {
   if (!preScanImage.isTransducerConvex() || !(preScanImage.getMotorType() == usMotorSettings::TiltingMotor))
     throw(vpException(vpException::functionNotImplementedError,
                       "3D scan-conversion available only for convex transducer and tilting motor"));
 
+  if (down <= 0)
+    throw(vpException(vpException::badValue, "downsampling factor should b positive"));
+  
+  
   // compare pre-scan image parameters, to avoid recomputing all the init process if parameters are the same
   if (((usMotorSettings)m_VpreScan) == ((usMotorSettings)preScanImage) &&
       ((usImagePreScanSettings)m_VpreScan) == ((usImagePreScanSettings)preScanImage) &&
       m_VpreScan.getWidth() == preScanImage.getWidth() && m_VpreScan.getHeight() == preScanImage.getHeight() &&
       m_VpreScan.getNumberOfFrames() == preScanImage.getNumberOfFrames() &&
-      m_resolution == down * m_VpreScan.getAxialResolution()) {
+      m_resolution == down * m_VpreScan.getAxialResolution() &&
+      m_downSamplingFactor == down) {
     m_VpreScan = preScanImage; // update image content
     return;
   }
 
   m_VpreScan = preScanImage;
   m_resolution = down * m_VpreScan.getAxialResolution();
+  m_downSamplingFactor = down;
 
   int X = m_VpreScan.getWidth();
   int Y = m_VpreScan.getHeight();
@@ -100,17 +106,28 @@ void usPreScanToPostScan3DConverter::init(const usImagePreScan3D<unsigned char> 
 
   unsigned int nbXY = m_nbX * m_nbY;
   unsigned int XY = X * Y;
-
-  usVoxelWeightAndIndex m;
+  
+  try
+  {
+      long int LUTmaxSize = (long int)m_nbX*(long int)m_nbY*(long int)m_nbZ;
+      if(m_lookupTable1.size()>0) m_lookupTable1.clear();
+      if(m_lookupTable2.size()>0) m_lookupTable2.clear();
+      // reserve to avoid reallocation during the LUT filling
+      m_lookupTable1.reserve(LUTmaxSize);
+      m_lookupTable2.reserve(LUTmaxSize);
+  }
+  catch(std::exception &e)
+  {
+      throw vpException(vpException::ioError, "usPreScanToPostScan3DConverter::init: %s \n Volume should maybe be downsampled", e.what());
+  }
 
   for (unsigned int x = 0; x < m_nbX; x++) {
     double xx = m_resolution * x - xmax;
     for (unsigned int y = 0; y < m_nbY; y++) {
       double yy = ymin + m_resolution * y;
-      /*  BUG WHEN USING OPENMP FOR INIT : some black voxels appears in the middle of the image with no reason
       #ifdef VISP_HAVE_OPENMP
       #pragma omp parallel for
-      #endif*/
+      #endif
       for (unsigned int z = 0; z < m_nbZ; z++) {
         double zz = m_resolution * z - zmax;
         double i, j, k;
@@ -121,6 +138,8 @@ void usPreScanToPostScan3DConverter::init(const usImagePreScan3D<unsigned char> 
         double kk = floor(k);
 
         if (ii >= 0 && jj >= 0 && kk >= 0 && ii + 1 < X && jj + 1 < Y && kk + 1 < Z) {
+          usVoxelWeightAndIndex m;
+          
           m.m_outputIndex = x + m_nbX * y + nbXY * z;
 
           double u = i - ii;
@@ -157,9 +176,9 @@ void usPreScanToPostScan3DConverter::init(const usImagePreScan3D<unsigned char> 
           m.m_inputIndex[5] = (unsigned int)(ii + 1 + Xjj + XYKK1);
           m.m_inputIndex[6] = (unsigned int)(ii + Xjj1 + XYKK1);
           m.m_inputIndex[7] = (unsigned int)(ii + 1 + Xjj1 + XYKK1);
-          /*#ifdef VISP_HAVE_OPENMP
+          #ifdef VISP_HAVE_OPENMP
           #pragma omp critical
-          #endif*/
+          #endif
           m_lookupTable1.push_back(m);
         }
 
@@ -208,9 +227,9 @@ void usPreScanToPostScan3DConverter::init(const usImagePreScan3D<unsigned char> 
           m.m_inputIndex[5] = (unsigned int)(ii + 1 + Xjj + XYKK1);
           m.m_inputIndex[6] = (unsigned int)(ii + Xjj1 + XYKK1);
           m.m_inputIndex[7] = (unsigned int)(ii + 1 + Xjj1 + XYKK1);
-          /*#ifdef VISP_HAVE_OPENMP
+          #ifdef VISP_HAVE_OPENMP
           #pragma omp critical
-          #endif*/
+          #endif
           m_lookupTable2.push_back(m);
         }
       }
@@ -227,38 +246,20 @@ void usPreScanToPostScan3DConverter::init(const usImagePreScan3D<unsigned char> 
 usPreScanToPostScan3DConverter::~usPreScanToPostScan3DConverter() {}
 
 /**
- * Get post-scan volume.
- * @param V post-scan image converted.
- */
-void usPreScanToPostScan3DConverter::getVolume(usImagePostScan3D<unsigned char> &V) { V = m_VpostScan; }
-
-/**
- * Get post-scan volume.
- * @return Post-scan image converted.
- */
-usImagePostScan3D<unsigned char> usPreScanToPostScan3DConverter::getVolume() { return m_VpostScan; }
-
-/**
  * Conversion method : compute the scan-conversion 3D and write the post-scan image settings.
  * @param [out] postScanImage The result of the scan-conversion.
  * @param [in] preScanImage Pre-scan image to convert.
  * @param [in] downSamplingFactor Down-sampling factor, to change the output resolution (optionnal).
  */
 void usPreScanToPostScan3DConverter::convert(usImagePostScan3D<unsigned char> &postScanImage,
-                                             const usImagePreScan3D<unsigned char> &preScanImage,
-                                             int downSamplingFactor)
+                                             const usImagePreScan3D<unsigned char> &preScanImage)
 {
-  if (downSamplingFactor != 0) {
-    init(preScanImage, downSamplingFactor);
-  }
-
-  if (!m_initDone) {
-    init(preScanImage);
-  }
+  init(preScanImage, m_downSamplingFactor);
+  
   postScanImage.resize(m_nbY, m_nbX, m_nbZ);
+  postScanImage.initData(0);
   unsigned char *dataPost = postScanImage.getData();
-  const unsigned char *dataPre;
-  dataPre = preScanImage.getConstData();
+  const unsigned char *dataPre = preScanImage.getConstData();
 
   if (m_SweepInZdirection) {
 #ifdef VISP_HAVE_OPENMP
@@ -315,9 +316,8 @@ void usPreScanToPostScan3DConverter::convertPreScanCoordToPostScanCoord(double i
 
   const double r = m_VpreScan.getTransducerRadius() + i_preScan * m_VpreScan.getAxialResolution();
   const double phi = j_preScan * m_VpreScan.getScanLinePitch() - offsetPhi;
-  const double theta =
-      (sweepInZdirection ? 1 : -1) *
-      (m_VpreScan.getFramePitch() * Nframe * (j_preScan + Nline * k_preScan) / (Nframe * Nline - 1) - offsetTheta);
+  //const double theta = (sweepInZdirection ? 1 : -1) * (m_VpreScan.getFramePitch() * Nframe * (j_preScan + Nline * k_preScan) / (Nframe * Nline - 1) - offsetTheta);
+  const double theta = (m_VpreScan.getFramePitch() * Nframe * ((sweepInZdirection ? j_preScan : Nline-1-j_preScan) + Nline * k_preScan) / (Nframe * Nline - 1) - offsetTheta);
 
   const double cPhi = cos(phi);
 
@@ -359,10 +359,13 @@ void usPreScanToPostScan3DConverter::convertPostScanCoordToPreScanCoord(double i
     *j_preScan = jtmp;
   if (i_preScan)
     *i_preScan = (r - m_VpreScan.getTransducerRadius()) / m_VpreScan.getAxialResolution();
+  //if (k_preScan) {
+  // *k_preScan =
+  //      (Nframe * Nline - 1) *
+  //          (0.5 / Nline + (sweepInZdirection ? 1 : -1) * theta / (m_VpreScan.getFramePitch() * Nframe * Nline)) -
+  //      jtmp / Nline;
+  //}
   if (k_preScan) {
-    *k_preScan =
-        (Nframe * Nline - 1) *
-            (0.5 / Nline + (sweepInZdirection ? 1 : -1) * theta / (m_VpreScan.getFramePitch() * Nframe * Nline)) -
-        jtmp / Nline;
+    *k_preScan = (Nframe * Nline - 1) * (0.5 / Nline + theta / (m_VpreScan.getFramePitch() * Nframe * Nline)) - (sweepInZdirection ? jtmp : Nline-1-jtmp) / Nline;
   }
 }

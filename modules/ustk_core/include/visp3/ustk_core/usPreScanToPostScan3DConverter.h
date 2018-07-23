@@ -119,8 +119,8 @@ protected:
   std::vector<usVoxelWeightAndIndex> m_lookupTable2;
 
   usImagePreScan3D<unsigned char> m_VpreScan;
-  usImagePostScan3D<unsigned char> m_VpostScan;
 
+  double m_downSamplingFactor;
   double m_resolution;
   bool m_SweepInZdirection;
 
@@ -132,20 +132,14 @@ protected:
 
 public:
   usPreScanToPostScan3DConverter();
-  usPreScanToPostScan3DConverter(const usImagePreScan3D<unsigned char> &preScanImage, int down);
+  usPreScanToPostScan3DConverter(const usImagePreScan3D<unsigned char> &preScanImage, double down);
   virtual ~usPreScanToPostScan3DConverter();
 
-  void convert(usImagePostScan3D<unsigned char> &postScanImage, const usImagePreScan3D<unsigned char> &preScanImage,
-               int downSamplingFactor = 1);
+  void convert(usImagePostScan3D<unsigned char> &postScanImage, const usImagePreScan3D<unsigned char> &preScanImage);
 
-  void init(const usImagePreScan3D<unsigned char> &preScanImage, int down = 1);
+  void init(const usImagePreScan3D<unsigned char> &preScanImage, double down = 1);
 
-  double getResolution() const;
-
-  void getVolume(usImagePostScan3D<unsigned char> &V);
-  usImagePostScan3D<unsigned char> getVolume();
-
-  double getResolution() { return m_resolution; }
+  double getResolution() const { return m_resolution; }
 
   void SweepInZdirection(bool flag) { m_SweepInZdirection = flag; }
 
