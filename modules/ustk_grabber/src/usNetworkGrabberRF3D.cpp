@@ -52,8 +52,6 @@ usNetworkGrabberRF3D::usNetworkGrabberRF3D(usNetworkGrabber *parent) : usNetwork
   m_firstFrameAvailable = false;
   m_firstVolumeAvailable = false;
 
-  m_motorSweepingInZDirection = false;
-
   m_recordingOn = false;
   m_firstImageTimestamp = 0;
 
@@ -268,10 +266,11 @@ void usNetworkGrabberRF3D::includeFrameInVolume()
 
   // Inserting frame in volume
   int volumeIndex = m_grabbedImage.getFrameCount() / m_grabbedImage.getFramesPerVolume();    // from 0
+  bool motorSweepingInZDirection = (volumeIndex % 2 != 0);
   int framePosition = m_grabbedImage.getFrameCount() % m_grabbedImage.getFramesPerVolume(); // from 0 to FPV-1
 
   // setting timestamps
-  if (volumeIndex % 2 == 0) // case of backward moving motor (opposite to Z direction)
+  if (!motorSweepingInZDirection) // case of backward moving motor (opposite to Z direction)
     framePosition = m_grabbedImage.getFramesPerVolume() - framePosition - 1;
 
   m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->addTimeStamp(m_grabbedImage.getTimeStamp(), framePosition);
@@ -285,11 +284,11 @@ void usNetworkGrabberRF3D::includeFrameInVolume()
 
   // we reach the end of a volume
   if (m_firstFrameAvailable &&
-      ((framePosition == 0 && !m_motorSweepingInZDirection) ||
+      ((framePosition == 0 && !motorSweepingInZDirection) ||
        (framePosition == (int)m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getFrameNumber() - 1 &&
-        m_motorSweepingInZDirection))) {
+        motorSweepingInZDirection))) {
     // Now CURRENT_FILLED_FRAME_POSITION_IN_VEC has become the last frame received
-    // So we switch pointers beween MOST_RECENT_FRAME_POSITION_IN_VEC and CURRENT_FILLED_FRAME_POSITION_IN_VEC
+    // So we switch pointers between MOST_RECENT_FRAME_POSITION_IN_VEC and CURRENT_FILLED_FRAME_POSITION_IN_VEC
     usVolumeGrabbedInfo<usImageRF3D<short int> > *savePtr = m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC);
     m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
     m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
@@ -301,10 +300,6 @@ void usNetworkGrabberRF3D::includeFrameInVolume()
                                     m_firstImageTimestamp);
       m_sequenceWriter.write(*m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC), timestampsToWrite);
     }
-    if (volumeIndex % 2 == 0) // case of backward moving motor (opposite to Z direction)
-      m_motorSweepingInZDirection = true;
-    else
-      m_motorSweepingInZDirection = false;
     
     m_firstVolumeAvailable = true;
     emit(newVolumeAvailable());

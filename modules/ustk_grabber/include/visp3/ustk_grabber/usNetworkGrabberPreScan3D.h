@@ -106,9 +106,6 @@ private:
   bool m_firstFrameAvailable;
   bool m_firstVolumeAvailable;
 
-  // to know motor sweep direction for volume grabbed
-  bool m_motorSweepingInZDirection;
-
   // to manage the recording process
   bool m_recordingOn;
   usMHDSequenceWriter m_sequenceWriter;
