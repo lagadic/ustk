@@ -367,7 +367,7 @@ int main(int argc, const char **argv)
         statePlot->setLegend(0,0, "Ref");
         for(int i=0 ; i<nbNeedles ; i++) statePlot->setLegend(0,i+1,[i](){std::ostringstream t;t<<i;return t.str();}());
     }
-    
+
     double std_measure_position = 1e-3;
     double std_measure_tip_direction = 1e-3;
     double std_measure_force = 1e-3;
@@ -398,8 +398,8 @@ int main(int argc, const char **argv)
     {
       Kalman[i].setStateDynamicsType(usTissueTranslationEstimatorUKF::CONSTANT_VELOCITY);
       vpMatrix P(6,6,0);
-      P[3][3] = 0.01*0.01;
-      P[4][4] = 0.01*0.01;
+      P[3][3] = 0.0001*0.0001;
+      P[4][4] = 0.0001*0.0001;
       Kalman[i].setStateCovarianceMatrix(P);
       Kalman[i].setTissuePositionProcessNoiseVariance(std_process_position*std_process_position);
       Kalman[i].setTissueVelocityProcessNoiseVariance(std_process_velocity*std_process_velocity);

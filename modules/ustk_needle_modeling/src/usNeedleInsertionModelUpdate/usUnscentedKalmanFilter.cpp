@@ -32,7 +32,7 @@
 
 #include <visp3/ustk_needle_modeling/usUnscentedKalmanFilter.h>
 
-#if defined(VISP_HAVE_EIGEN3)
+#if 0&&defined(VISP_HAVE_EIGEN3)
 #include <Eigen/Cholesky>
 #elif defined(VISP_HAVE_LAPACK)
 #ifdef VISP_HAVE_LAPACK_BUILT_IN
@@ -50,7 +50,7 @@ vpMatrix root(const vpMatrix &M)
 
     vpMatrix sqrtM(M.getRows(), M.getCols());
     
-#if defined(VISP_HAVE_EIGEN3)
+#if 0&&defined(VISP_HAVE_EIGEN3)
     Eigen::MatrixXd Meigen(M.getRows(),M.getCols());
 
     for(unsigned int i =0 ; i<M.getRows() ; i++)
@@ -71,21 +71,14 @@ vpMatrix root(const vpMatrix &M)
         }
     }
 #elif defined(VISP_HAVE_LAPACK)
-    integer rowNum = (integer)M.getRows();
-    integer lda = (integer)rowNum;
-    integer info;
-  
-    sqrtM = M;
-    dpotrf_((char *)"L", &rowNum, sqrtM.data, &lda, &info);
-
-    if (info != 0)
-    {
-        vpMatrix I;
-        I.eye(M.getRows(),M.getCols());
-        sqrtM = M + std::numeric_limits<double>::epsilon() * I;
-        dpotrf_((char *)"L", &rowNum, sqrtM.data, &lda, &info);
-        if (info != 0) throw vpException(vpException::fatalError, "usUnscentedKalmanFilter: root cannot inverse by Cholesky with Lapack: error %d in dpotrf_()", info);
-    }
+      vpMatrix A(M);
+      vpColVector w;
+      vpMatrix V;
+      A.svdLapack(w,V);
+      for(unsigned int i=0 ; i<w.size() ; i++)
+      {
+          if(w[i] > 1e-8 * w[0]) sqrtM.insert(sqrt(w[i])*A.getCol(i), 0,i);
+      }
 #else
     throw vpException(vpException::notImplementedError, "usUnscentedKalmanFilter: not implemented without Eigen3 or Lapack");
 #endif
