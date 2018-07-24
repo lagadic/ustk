@@ -174,7 +174,10 @@ bool getOptions(int argc, const char **argv, vpDisplayType &dtype, bool &list, b
                 usage(argv[0], NULL, dtype);
                 return false;
                 break;
-                
+
+            case 'c':
+                break;
+
             case 'd':
                 display = false;
                 break;

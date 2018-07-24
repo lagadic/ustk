@@ -173,6 +173,10 @@ bool getOptions(int argc, const char **argv, vpDisplayType &dtype, bool &list, b
                 usage(argv[0], NULL, dtype);
                 return false;
                 break;
+
+            case 'c':
+                break;
+
             case 'd':
                 display = false;
                 break;
@@ -319,74 +323,74 @@ int main(int argc, const char **argv)
     {
         display1->init(I1, 0,0, "Display unsigned char");
         display2->init(I2, display1->getWindowXPosition()+display1->getWidth(), display1->getWindowYPosition(), "Display vpRGBa");
+    
+        std::cout << "Start test testUsGeometryDisplayTools" << std::endl;
+            
+        usOrientedPlane3D plane(vpPoseVector(0,0,0.05, 0,M_PI/4,0));
+        
+        std::vector<vpColVector> points2D(4, vpColVector(2,0));
+        points2D.at(0)[0] = 0.02;points2D.at(0)[1] = 0.02;
+        points2D.at(1)[0] = 0.02;points2D.at(1)[1] = 0.03;
+        points2D.at(2)[0] = 0.03;points2D.at(2)[1] = 0.03;
+        points2D.at(3)[0] = 0.02;points2D.at(3)[1] = 0.05;
+        usPolynomialCurve2D curve2D;
+        curve2D.defineFromPointsAuto(points2D, points2D.back()-points2D.front(),3);
+    
+        std::vector<vpColVector> points3D(4, vpColVector(3,0));
+        points3D.at(1)[0] = 0.02;
+        points3D.at(2)[1] = 0.02;points3D.at(2)[2] = 0.03;
+        points3D.at(3)[2] = 0.05;
+        usPolynomialCurve3D curve3D;
+        curve3D.defineFromPointsAuto(points3D, points3D.back()-points3D.front(),3);
+            
+        usBSpline3D spline;
+        std::vector<double> lengths(3);
+        lengths.at(0) = 0.02;lengths.at(1) = 0.04;lengths.at(2) = 0.04;
+        spline.defineFromPoints(points3D, lengths, 3);
+        
+        vpHomogeneousMatrix imageMworld(0.1, 0.1, 0.1, M_PI/2, 0, 0);
+    
+        vpDisplay::display(I1);
+        vpDisplay::display(I2);
+        
+        usGeometryDisplayTools::display(plane, I1, imageMworld, 3000, 3000, vpColor::green);
+        std::cout << "done: usGeometryDisplayTools::display(const usOrientedPlane3D&, vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double, const vpColor&);" << std::endl;
+        usGeometryDisplayTools::display(plane, I2, imageMworld, 3000, 3000, vpColor::green);
+        std::cout << "done: usGeometryDisplayTools::display(const usOrientedPlane3D&, vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double, const vpColor&);" << std::endl;
+        
+        usGeometryDisplayTools::display(curve2D, I1, 3000, 3000, vpColor::red, 10);
+        std::cout << "done: usGeometryDisplayTools::display(const usPolynomialCurve2D&, vpImage<unsigned char>&, double, double, const vpColor&);" << std::endl;
+        usGeometryDisplayTools::display(curve2D, I2, 3000, 3000, vpColor::red, 10);
+        std::cout << "done: usGeometryDisplayTools::display(const usPolynomialCurve2D&, vpImage<vpRGBa>&, double, double, const vpColor&);" << std::endl;
+        
+        usGeometryDisplayTools::display(curve3D, I1, imageMworld, 3000, 3000, vpColor::blue, 10, std::numeric_limits<double>::infinity());
+        std::cout << "done: usGeometryDisplayTools::display(const usPolynomialCurve3D&, vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double, const vpColor&, int, double);" << std::endl;
+        usGeometryDisplayTools::display(curve3D, I2, imageMworld, 3000, 3000, vpColor::blue, 10, std::numeric_limits<double>::infinity());
+        std::cout << "done: usGeometryDisplayTools::display(const usPolynomialCurve3D&, vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double, const vpColor&, int, double);" << std::endl;
+        
+        usGeometryDisplayTools::displayLine(spline, I1, imageMworld, 3000, 3000, vpColor::orange, 10, std::numeric_limits<double>::infinity());
+        std::cout << "done: usGeometryDisplayTools::displayLine(const usBSpline3D&, vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double, const vpColor&, int, double);" << std::endl;
+        usGeometryDisplayTools::displayLine(spline, I2, imageMworld, 3000, 3000, vpColor::orange, 10, std::numeric_limits<double>::infinity());
+        std::cout << "done: usGeometryDisplayTools::displayLine(const usBSpline3D&, vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double, const vpColor&, int, double);" << std::endl;
+        
+        usGeometryDisplayTools::displayExtremities(spline, I1, imageMworld, 3000, 3000, vpColor::orange, std::numeric_limits<double>::infinity());
+        std::cout << "done: usGeometryDisplayTools::displayExtremities(const usBSpline3D&, vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double, const vpColor&, double);" << std::endl;
+        usGeometryDisplayTools::displayExtremities(spline, I2, imageMworld, 3000, 3000, vpColor::orange, std::numeric_limits<double>::infinity());
+        std::cout << "done: usGeometryDisplayTools::displayExtremities(const usBSpline3D&, vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double, const vpColor&, double);" << std::endl;
+        
+        usGeometryDisplayTools::displayCurvatureFromShape(spline, I1, imageMworld, 3000, 3000, vpColor::orange);
+        std::cout << "done: usGeometryDisplayTools::displayCurvatureFromShape(const usBSpline3D&, vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double, const vpColor&);" << std::endl;
+        usGeometryDisplayTools::displayCurvatureFromShape(spline, I2, imageMworld, 3000, 3000, vpColor::orange);
+        std::cout << "done: usGeometryDisplayTools::displayCurvatureFromShape(const usBSpline3D&, vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double, const vpColor&);" << std::endl;
+        
+        vpDisplay::flush(I1);
+        vpDisplay::flush(I2);
+        
+        vpTime::wait(2000);
+    
+        delete display1;
+        delete display2;
     }
-    
-    std::cout << "Start test testUsGeometryDisplayTools" << std::endl;
-        
-    usOrientedPlane3D plane(vpPoseVector(0,0,0.05, 0,M_PI/4,0));
-    
-    std::vector<vpColVector> points2D(4, vpColVector(2,0));
-    points2D.at(0)[0] = 0.02;points2D.at(0)[1] = 0.02;
-    points2D.at(1)[0] = 0.02;points2D.at(1)[1] = 0.03;
-    points2D.at(2)[0] = 0.03;points2D.at(2)[1] = 0.03;
-    points2D.at(3)[0] = 0.02;points2D.at(3)[1] = 0.05;
-    usPolynomialCurve2D curve2D;
-    curve2D.defineFromPointsAuto(points2D, points2D.back()-points2D.front(),3);
-
-    std::vector<vpColVector> points3D(4, vpColVector(3,0));
-    points3D.at(1)[0] = 0.02;
-    points3D.at(2)[1] = 0.02;points3D.at(2)[2] = 0.03;
-    points3D.at(3)[2] = 0.05;
-    usPolynomialCurve3D curve3D;
-    curve3D.defineFromPointsAuto(points3D, points3D.back()-points3D.front(),3);
-        
-    usBSpline3D spline;
-    std::vector<double> lengths(3);
-    lengths.at(0) = 0.02;lengths.at(1) = 0.04;lengths.at(2) = 0.04;
-    spline.defineFromPoints(points3D, lengths, 3);
-    
-    vpHomogeneousMatrix imageMworld(0.1, 0.1, 0.1, M_PI/2, 0, 0);
-
-    vpDisplay::display(I1);
-    vpDisplay::display(I2);
-    
-    usGeometryDisplayTools::display(plane, I1, imageMworld, 3000, 3000, vpColor::green);
-    std::cout << "done: usGeometryDisplayTools::display(const usOrientedPlane3D&, vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double, const vpColor&);" << std::endl;
-    usGeometryDisplayTools::display(plane, I2, imageMworld, 3000, 3000, vpColor::green);
-    std::cout << "done: usGeometryDisplayTools::display(const usOrientedPlane3D&, vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double, const vpColor&);" << std::endl;
-    
-    usGeometryDisplayTools::display(curve2D, I1, 3000, 3000, vpColor::red, 10);
-    std::cout << "done: usGeometryDisplayTools::display(const usPolynomialCurve2D&, vpImage<unsigned char>&, double, double, const vpColor&);" << std::endl;
-    usGeometryDisplayTools::display(curve2D, I2, 3000, 3000, vpColor::red, 10);
-    std::cout << "done: usGeometryDisplayTools::display(const usPolynomialCurve2D&, vpImage<vpRGBa>&, double, double, const vpColor&);" << std::endl;
-    
-    usGeometryDisplayTools::display(curve3D, I1, imageMworld, 3000, 3000, vpColor::blue, 10, std::numeric_limits<double>::infinity());
-    std::cout << "done: usGeometryDisplayTools::display(const usPolynomialCurve3D&, vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double, const vpColor&, int, double);" << std::endl;
-    usGeometryDisplayTools::display(curve3D, I2, imageMworld, 3000, 3000, vpColor::blue, 10, std::numeric_limits<double>::infinity());
-    std::cout << "done: usGeometryDisplayTools::display(const usPolynomialCurve3D&, vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double, const vpColor&, int, double);" << std::endl;
-    
-    usGeometryDisplayTools::displayLine(spline, I1, imageMworld, 3000, 3000, vpColor::orange, 10, std::numeric_limits<double>::infinity());
-    std::cout << "done: usGeometryDisplayTools::displayLine(const usBSpline3D&, vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double, const vpColor&, int, double);" << std::endl;
-    usGeometryDisplayTools::displayLine(spline, I2, imageMworld, 3000, 3000, vpColor::orange, 10, std::numeric_limits<double>::infinity());
-    std::cout << "done: usGeometryDisplayTools::displayLine(const usBSpline3D&, vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double, const vpColor&, int, double);" << std::endl;
-    
-    usGeometryDisplayTools::displayExtremities(spline, I1, imageMworld, 3000, 3000, vpColor::orange, std::numeric_limits<double>::infinity());
-    std::cout << "done: usGeometryDisplayTools::displayExtremities(const usBSpline3D&, vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double, const vpColor&, double);" << std::endl;
-    usGeometryDisplayTools::displayExtremities(spline, I2, imageMworld, 3000, 3000, vpColor::orange, std::numeric_limits<double>::infinity());
-    std::cout << "done: usGeometryDisplayTools::displayExtremities(const usBSpline3D&, vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double, const vpColor&, double);" << std::endl;
-    
-    usGeometryDisplayTools::displayCurvatureFromShape(spline, I1, imageMworld, 3000, 3000, vpColor::orange);
-    std::cout << "done: usGeometryDisplayTools::displayCurvatureFromShape(const usBSpline3D&, vpImage<unsigned char>&, const vpHomogeneousMatrix&, double, double, const vpColor&);" << std::endl;
-    usGeometryDisplayTools::displayCurvatureFromShape(spline, I2, imageMworld, 3000, 3000, vpColor::orange);
-    std::cout << "done: usGeometryDisplayTools::displayCurvatureFromShape(const usBSpline3D&, vpImage<vpRGBa>&, const vpHomogeneousMatrix&, double, double, const vpColor&);" << std::endl;
-    
-    vpDisplay::flush(I1);
-    vpDisplay::flush(I2);
-    
-    vpTime::wait(2000);
-    
-    delete display1;
-    delete display2;
     
     return 0;
 }
