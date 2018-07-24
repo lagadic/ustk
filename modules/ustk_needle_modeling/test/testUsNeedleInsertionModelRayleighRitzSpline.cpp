@@ -60,7 +60,7 @@
 #include <visp3/ustk_needle_modeling/usNeedleModelingDisplayTools.h>
 
 // List of allowed command line options
-#define GETOPTARGS "hlt:d"
+#define GETOPTARGS "hlt:cd"
 
 typedef enum { vpX11, vpGTK, vpGDI, vpD3D, vpCV } vpDisplayType;
 
