@@ -374,7 +374,8 @@ int main(int argc, const char **argv)
         }
     }
     
-    delete display;
+    if(display) delete display;
 
     return 0;
+
 }

@@ -39,55 +39,52 @@
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpPoseVector.h>
 
-
 class VISP_EXPORT usNeedleTip
 {
 protected:
-    vpPoseVector m_basePose;
-    vpHomogeneousMatrix m_worldMbase;
-    vpPoseVector m_tipPose;
-    vpHomogeneousMatrix m_worldMtip;
-    
+  vpPoseVector m_basePose;
+  vpHomogeneousMatrix m_worldMbase;
+  vpPoseVector m_tipPose;
+  vpHomogeneousMatrix m_worldMtip;
+
 public:
+  //! Constructors, destructors
 
-    //! Constructors, destructors
+  usNeedleTip();
+  usNeedleTip(const usNeedleTip &needle);
+  virtual ~usNeedleTip();
+  virtual usNeedleTip &operator=(const usNeedleTip &needle);
+  virtual usNeedleTip *clone() const; // Polymorph copy method
 
-    usNeedleTip();
-    usNeedleTip(const usNeedleTip &needle);
-    virtual ~usNeedleTip();
-    virtual usNeedleTip &operator=(const usNeedleTip &needle);
-    virtual usNeedleTip* clone() const;  // Polymorph copy method
+  //! Parameters setters and getters
 
-    //! Parameters setters and getters
-    
-    void setBasePose(const vpPoseVector &pose);
-    vpPoseVector getBasePose() const;
-    void setWorldMbase(const vpHomogeneousMatrix &worldMbase);
-    vpHomogeneousMatrix getWorldMbase() const;
-    void setBasePosition(const vpColVector &position);
-    vpColVector getBasePosition() const;
-    
-    vpPoseVector getTipPose() const;
-    vpHomogeneousMatrix getWorldMtip() const;
-    vpColVector getTipPosition() const;
-    vpColVector getTipDirection() const;
-    
-    vpColVector getBaseAxisX() const;
-    vpColVector getBaseAxisY() const;
-    vpColVector getBaseAxisZ() const;
+  void setBasePose(const vpPoseVector &pose);
+  vpPoseVector getBasePose() const;
+  void setWorldMbase(const vpHomogeneousMatrix &worldMbase);
+  vpHomogeneousMatrix getWorldMbase() const;
+  void setBasePosition(const vpColVector &position);
+  vpColVector getBasePosition() const;
 
-    //! Data saving
+  vpPoseVector getTipPose() const;
+  vpHomogeneousMatrix getWorldMtip() const;
+  vpColVector getTipPosition() const;
+  vpColVector getTipDirection() const;
 
-        //! Text
-        friend VISP_EXPORT std::ostream &operator<<(std::ostream &s, const usNeedleTip &tip);
-        friend VISP_EXPORT std::istream &operator>>(std::istream &s, usNeedleTip &tip);
-        //! Binary
-        friend VISP_EXPORT std::ostream &operator<<=(std::ostream &s, const usNeedleTip &tip);
-        friend VISP_EXPORT std::istream &operator>>=(std::istream &s, usNeedleTip &tip);
-        
+  vpColVector getBaseAxisX() const;
+  vpColVector getBaseAxisY() const;
+  vpColVector getBaseAxisZ() const;
+
+  //! Data saving
+
+  //! Text
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &s, const usNeedleTip &tip);
+  friend VISP_EXPORT std::istream &operator>>(std::istream &s, usNeedleTip &tip);
+  //! Binary
+  friend VISP_EXPORT std::ostream &operator<<=(std::ostream &s, const usNeedleTip &tip);
+  friend VISP_EXPORT std::istream &operator>>=(std::istream &s, usNeedleTip &tip);
+
 private:
-        
-    virtual void updateTipPose();
+  virtual void updateTipPose();
 };
 
 VISP_EXPORT std::ostream &operator<<(std::ostream &s, const usNeedleTip &tip);

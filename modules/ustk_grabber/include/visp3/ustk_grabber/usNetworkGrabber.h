@@ -220,6 +220,9 @@ protected:
   // grabber state
   bool m_isInit;
   bool m_isRunning;
+
+  // separated thread to run the event loop
+  QThread *m_thread;
 };
 
 #endif // QT4 || QT5

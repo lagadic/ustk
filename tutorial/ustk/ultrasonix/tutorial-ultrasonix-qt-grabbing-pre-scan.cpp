@@ -19,8 +19,6 @@ int main(int argc, char **argv)
   // QT application
   QApplication app(argc, argv);
 
-  QThread *grabbingThread = new QThread();
-
   usNetworkGrabberPreScan2D *qtGrabber = new usNetworkGrabberPreScan2D();
   qtGrabber->connectToServer();
 
@@ -33,23 +31,19 @@ int main(int argc, char **argv)
   // setting acquisition parameters
   usNetworkGrabber::usInitHeaderSent header;
   if (qApp->arguments().contains(QString("--probeID"))) {
-        header.probeId = qApp->arguments().at(qApp->arguments().indexOf(QString("--probeID")) + 1).toInt();
-  }
-  else
-    header.probeId = 15;    // 4DC7 id = 15 by default
+    header.probeId = qApp->arguments().at(qApp->arguments().indexOf(QString("--probeID")) + 1).toInt();
+  } else
+    header.probeId = 15; // 4DC7 id = 15 by default
 
   if (qApp->arguments().contains(QString("--slotID"))) {
     header.slotId = qApp->arguments().at(qApp->arguments().indexOf(QString("--slotID")) + 1).toInt();
-  }
-  else
-    header.slotId = 0;      // top slot id = 0 by default
+  } else
+    header.slotId = 0; // top slot id = 0 by default
 
   if (qApp->arguments().contains(QString("--imagingMode"))) {
-        header.imagingMode = qApp->arguments().at(qApp->arguments().indexOf(QString("--imagingMode")) + 1).toInt();
-  }
-  else
+    header.imagingMode = qApp->arguments().at(qApp->arguments().indexOf(QString("--imagingMode")) + 1).toInt();
+  } else
     header.imagingMode = 0; // B-mode = 0 by default
-
 
   // prepare image;
   usFrameGrabbedInfo<usImagePreScan2D<unsigned char> > *grabbedFrame;
@@ -73,38 +67,30 @@ int main(int argc, char **argv)
   // Send the command to run the acquisition
   qtGrabber->runAcquisition();
 
-  // Move the grabber object to another thread, and run it
-  qtGrabber->moveToThread(grabbingThread);
-  grabbingThread->start();
-
   // our grabbing loop
   do {
-    if (qtGrabber->isFirstFrameAvailable()) {
-      grabbedFrame = qtGrabber->acquire();
+    grabbedFrame = qtGrabber->acquire();
 
-      std::cout << "MAIN THREAD received frame No : " << grabbedFrame->getFrameCount() << std::endl;
+    std::cout << "MAIN THREAD received frame No : " << grabbedFrame->getFrameCount() << std::endl;
 
-      // init display
-      if (!displayInit && grabbedFrame->getHeight() != 0 && grabbedFrame->getWidth() != 0) {
+    // init display
+    if (!displayInit && grabbedFrame->getHeight() != 0 && grabbedFrame->getWidth() != 0) {
 #if defined(VISP_HAVE_X11)
-        display = new vpDisplayX(*grabbedFrame);
+      display = new vpDisplayX(*grabbedFrame);
 #elif defined(VISP_HAVE_GDI)
-        display = new vpDisplayGDI(*grabbedFrame);
+      display = new vpDisplayGDI(*grabbedFrame);
 #endif
-        qtGrabber->useVpDisplay(display);
-        displayInit = true;
-      }
+      qtGrabber->useVpDisplay(display);
+      displayInit = true;
+    }
 
-      // processing display
-      if (displayInit) {
-        if(vpDisplay::getClick(*grabbedFrame, false))
-          captureRunning = false;
-        vpDisplay::display(*grabbedFrame);
-        vpDisplay::displayText(*grabbedFrame,20,20,std::string("Click to exit..."),vpColor::red);
-        vpDisplay::flush(*grabbedFrame);
-      }
-    } else {
-      vpTime::wait(10);
+    // processing display
+    if (displayInit) {
+      if (vpDisplay::getClick(*grabbedFrame, false))
+        captureRunning = false;
+      vpDisplay::display(*grabbedFrame);
+      vpDisplay::displayText(*grabbedFrame, 20, 20, std::string("Click to exit..."), vpColor::red);
+      vpDisplay::flush(*grabbedFrame);
     }
   } while (captureRunning);
 

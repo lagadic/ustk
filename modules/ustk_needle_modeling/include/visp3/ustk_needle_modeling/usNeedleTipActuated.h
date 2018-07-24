@@ -37,52 +37,49 @@
 
 #include <visp3/ustk_needle_modeling/usNeedleTip.h>
 
-
 class VISP_EXPORT usNeedleTipActuated : public usNeedleTip
 {
 protected:
-
-    double _diameter;
-    double _length;
-    double _angle; //rad   angle between needle axis and tip direction
-    double _steeringAngle; // rad   angle with respect to x axis
+  double _diameter;
+  double _length;
+  double _angle;         // rad   angle between needle axis and tip direction
+  double _steeringAngle; // rad   angle with respect to x axis
 
 public:
+  //! Constructors, destructors
 
-    //! Constructors, destructors
+  usNeedleTipActuated();
+  usNeedleTipActuated(const usNeedleTipActuated &needle);
+  virtual ~usNeedleTipActuated();
+  virtual usNeedleTipActuated &operator=(const usNeedleTipActuated &needle);
+  virtual usNeedleTipActuated *clone() const; // Polymorph copy method
 
-    usNeedleTipActuated();
-    usNeedleTipActuated(const usNeedleTipActuated &needle);
-    virtual ~usNeedleTipActuated();
-    virtual usNeedleTipActuated &operator=(const usNeedleTipActuated &needle);
-    virtual usNeedleTipActuated* clone() const; // Polymorph copy method
+  //! Parameters setters and getters
 
-    //! Parameters setters and getters
+  void setDiameter(double diameter);
+  double getDiameter() const;
+  void setLength(double l);
+  double getLength() const;
+  void setTipAngleRad(double angle);
+  double getTipAngleRad() const;
+  void setTipAngleDeg(double angle);
+  double getTipAngleDeg() const;
+  void setSteeringAngleRad(double angle);
+  double getSteeringAngleRad() const;
+  void setSteeringAngleDeg(double angle);
+  double getSteeringAngleDeg() const;
 
-    void setDiameter(double diameter);
-    double getDiameter() const ;
-    void setLength(double l);
-    double getLength() const;
-    void setTipAngleRad(double angle);
-    double getTipAngleRad() const;
-    void setTipAngleDeg(double angle);
-    double getTipAngleDeg() const;
-    void setSteeringAngleRad(double angle);
-    double getSteeringAngleRad() const;
-    void setSteeringAngleDeg(double angle);
-    double getSteeringAngleDeg() const;
+  //! Data saving
 
-    //! Data saving
+  //! Text
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &s, const usNeedleTipActuated &tip);
+  friend VISP_EXPORT std::istream &operator>>(std::istream &s, usNeedleTipActuated &tip);
+  //! Binary
+  friend VISP_EXPORT std::ostream &operator<<=(std::ostream &s, const usNeedleTipActuated &tip);
+  friend VISP_EXPORT std::istream &operator>>=(std::istream &s, usNeedleTipActuated &tip);
 
-        //! Text
-        friend VISP_EXPORT std::ostream &operator<<(std::ostream &s, const usNeedleTipActuated &tip);
-        friend VISP_EXPORT std::istream &operator>>(std::istream &s, usNeedleTipActuated &tip);
-        //! Binary
-        friend VISP_EXPORT std::ostream &operator<<=(std::ostream &s, const usNeedleTipActuated &tip);
-        friend VISP_EXPORT std::istream &operator>>=(std::istream &s, usNeedleTipActuated &tip);
-        
 private:
-    void updateTipPose();
+  void updateTipPose();
 };
 
 VISP_EXPORT std::ostream &operator<<(std::ostream &s, const usNeedleTipActuated &tip);

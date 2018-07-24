@@ -184,15 +184,15 @@ void usRobotManualControlWidget::robotInitialized(void)
   this->update();
 }
 
-void usRobotManualControlWidget::setRobotActivation() {
+void usRobotManualControlWidget::setRobotActivation()
+{
   if (startStopPushButton->text() == QString("Start robot")) {
     emit(startRobot());
     startStopPushButton->setText(QString("Stop robot"));
     labelRobotState->setText(QString("Robot OK, you can move it or stop it"));
     automaticForceButton->setEnabled(true);
     this->update();
-  }
-  else if (startStopPushButton->text() == QString("Stop robot")) {
+  } else if (startStopPushButton->text() == QString("Stop robot")) {
     emit(stopRobot());
     startStopPushButton->setText(QString("Start robot"));
     labelRobotState->setText(QString("Robot stopped"));
@@ -238,4 +238,3 @@ void usRobotManualControlWidget::activateAutomaticForceControlSlot()
     emit(disableAutomaticForceControl());
   }
 }
-

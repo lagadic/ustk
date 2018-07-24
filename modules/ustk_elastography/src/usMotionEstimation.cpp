@@ -293,5 +293,3 @@ vpMatrix usMotionEstimation::convert_mat2vpMatrix(mat vI)
 // Work arround to avoid warning: libvisp_ustk_elastograpy.a(usMotionEstimation.cpp.o) has no symbols
 void dummy_vpusMotionEstimation(){};
 #endif // ARMADILLO
-
-

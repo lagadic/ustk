@@ -16,8 +16,8 @@
 
 // Ultrasonix SDK includes
 #include <ImagingModes.h>
-#include <porta_params_def.h>
 #include <porta.h>
+#include <porta_params_def.h>
 #include <utx_opt.h>
 
 #if USTK_PORTA_VERSION_MAJOR > 5
@@ -30,10 +30,15 @@
 
 #include <cmath>
 #include <ctime>
+#include <fstream>
 #include <iostream>
+#include <sstream>
+#include <string>
 #include <vector>
 
 #include <usPortaConfig.h>
+#include <visp3/core/vpException.h>
+#include <visp3/core/vpIoTools.h>
 
 class usNetworkServer : public QObject
 {
@@ -140,6 +145,10 @@ public:
 
   void writeOnSocketFromOtherThread();
 
+  void useProbeConfigFile(std::string configFileName);
+
+  void setVerbose();
+
 signals:
   void writeOnSocketSignal();
 
@@ -157,6 +166,8 @@ private slots:
   void readIncomingData();
 
   void writeOnSocketSlot();
+
+  void quitApp();
 
 private:
   // Variable(socket) to store listening tcpserver
@@ -176,6 +187,11 @@ private:
   usInitHeaderConfirmation confirmHeader;
 
   bool initWithoutUpdate;
+
+  bool usingProbeConfigFile;
+  std::vector<std::pair<int, std::string> > probeConfigFileNames;
+
+  bool verboseMode;
 };
 
 #endif // US_NETWORK_GRABBER_H

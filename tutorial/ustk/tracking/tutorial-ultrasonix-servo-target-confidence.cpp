@@ -465,8 +465,6 @@ int main(int argc, char **argv)
   usNetworkGrabberPreScan2D *qtGrabber = new usNetworkGrabberPreScan2D();
   qtGrabber->connectToServer();
 
-  QThread *grabbingThread = new QThread();
-
   // setting acquisition parameters
   usNetworkGrabber::usInitHeaderSent header;
   header.probeId = 15;    // 4DC7 id = 15
@@ -480,10 +478,6 @@ int main(int argc, char **argv)
   qtGrabber->setMotorPosition(37);
   qtGrabber->sendAcquisitionParameters();
   qtGrabber->runAcquisition();
-
-  // Move the grabber object to another thread
-  qtGrabber->moveToThread(grabbingThread);
-  grabbingThread->start();
 
   bool stop_capture_ = false;
 

@@ -45,9 +45,9 @@
 #include <vector>
 
 #include <visp3/ustk_core/usImagePostScan2D.h>
+#include <visp3/ustk_core/usMHDSequenceWriter.h>
 #include <visp3/ustk_grabber/usFrameGrabbedInfo.h>
 #include <visp3/ustk_grabber/usNetworkGrabber.h>
-#include <visp3/ustk_core/usMHDSequenceWriter.h>
 
 /**
  * @class usNetworkGrabberPostScan2D
@@ -91,9 +91,6 @@ private:
   // Output images
   std::vector<usFrameGrabbedInfo<usImagePostScan2D<unsigned char> > *> m_outputBuffer;
   bool m_firstFrameAvailable;
-
-  // to manage ptrs switch init
-  bool m_swichOutputInit;
 
   // to manage the recording process
   bool m_recordingOn;

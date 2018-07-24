@@ -32,154 +32,129 @@
 
 #include <visp3/ustk_needle_modeling/usTissueModelSpline.h>
 
+usTissueModelSpline::usTissueModelSpline() : m_surface(), m_path() {}
 
-usTissueModelSpline::usTissueModelSpline():
-    m_surface(),
-    m_path()
+usTissueModelSpline::usTissueModelSpline(const usTissueModelSpline &tissue)
+  : m_surface(tissue.m_surface), m_path(tissue.m_path)
 {
 }
 
-usTissueModelSpline::usTissueModelSpline(const usTissueModelSpline &tissue):
-    m_surface(tissue.m_surface),
-    m_path(tissue.m_path)
+usTissueModelSpline::~usTissueModelSpline() {}
+
+const usTissueModelSpline &usTissueModelSpline::operator=(const usTissueModelSpline &tissue)
 {
+  m_surface = tissue.m_surface;
+  m_path = tissue.m_path;
+
+  return *this;
 }
 
-usTissueModelSpline::~usTissueModelSpline()
-{
-}
+usTissueModelSpline *usTissueModelSpline::clone() const { return new usTissueModelSpline(*this); }
 
-const usTissueModelSpline& usTissueModelSpline::operator=(const usTissueModelSpline &tissue)
-{
-    m_surface = tissue.m_surface;
-    m_path = tissue.m_path;
+const usOrientedPlane3D &usTissueModelSpline::accessSurface() const { return m_surface; }
 
-    return *this;
-}
+usOrientedPlane3D &usTissueModelSpline::accessSurface() { return m_surface; }
 
-usTissueModelSpline* usTissueModelSpline::clone() const
-{
-    return new usTissueModelSpline(*this);
-}
+const usBSpline3D &usTissueModelSpline::accessPath() const { return m_path; }
 
-const usOrientedPlane3D &usTissueModelSpline::accessSurface() const
-{
-    return m_surface;
-}
-
-usOrientedPlane3D &usTissueModelSpline::accessSurface()
-{
-    return m_surface;
-}
-
-const usBSpline3D &usTissueModelSpline::accessPath() const
-{
-    return m_path;
-}
-
-usBSpline3D &usTissueModelSpline::accessPath()
-{
-    return m_path;
-}
+usBSpline3D &usTissueModelSpline::accessPath() { return m_path; }
 
 bool usTissueModelSpline::moveInWorldFrame(const vpHomogeneousMatrix &H)
 {
-    m_surface.moveInWorldFrame(H);
-    m_path.move(H);
+  m_surface.moveInWorldFrame(H);
+  m_path.move(H);
 
-    return true;
+  return true;
 }
 
 bool usTissueModelSpline::moveInWorldFrame(double x, double y, double z, double tx, double ty, double tz)
 {
-    return this->moveInWorldFrame(vpHomogeneousMatrix(x,y,z,tx,ty,tz));
+  return this->moveInWorldFrame(vpHomogeneousMatrix(x, y, z, tx, ty, tz));
 }
 
 bool usTissueModelSpline::move(const vpHomogeneousMatrix &H)
 {
-    vpPoseVector ptu(this->getPose());
+  vpPoseVector ptu(this->getPose());
 
-    vpHomogeneousMatrix M(ptu);
-    M = M*H*M.inverse();
-    m_surface.moveInWorldFrame(M);
-    m_path.move(M);
+  vpHomogeneousMatrix M(ptu);
+  M = M * H * M.inverse();
+  m_surface.moveInWorldFrame(M);
+  m_path.move(M);
 
-    return true;
+  return true;
 }
 
 bool usTissueModelSpline::move(double x, double y, double z, double tx, double ty, double tz)
 {
-    return this->move(vpHomogeneousMatrix(x,y,z,tx,ty,tz));
+  return this->move(vpHomogeneousMatrix(x, y, z, tx, ty, tz));
 }
 
 bool usTissueModelSpline::setPose(const vpPoseVector &p)
 {
-    vpPoseVector ptu(this->getPose());
-    
-    vpHomogeneousMatrix M(vpHomogeneousMatrix(p) * vpHomogeneousMatrix(ptu).inverse());
-    m_surface.moveInWorldFrame(M);
-    m_path.move(M);
+  vpPoseVector ptu(this->getPose());
 
-    return true;
+  vpHomogeneousMatrix M(vpHomogeneousMatrix(p) * vpHomogeneousMatrix(ptu).inverse());
+  m_surface.moveInWorldFrame(M);
+  m_path.move(M);
+
+  return true;
 }
 
 vpPoseVector usTissueModelSpline::getPose() const
 {
-    vpPoseVector ptu = m_surface.getPose();
+  vpPoseVector ptu = m_surface.getPose();
 
-    if(m_path.getNbSegments()>0)
-    {
-        vpColVector p = m_path.getPoint(0);
-        for(int i=0 ; i<3 ; i++) ptu[i] = p[i];
-    }
-    
-    return ptu;
+  if (m_path.getNbSegments() > 0) {
+    vpColVector p = m_path.getPoint(0);
+    for (int i = 0; i < 3; i++)
+      ptu[i] = p[i];
+  }
+
+  return ptu;
 }
 
 std::ostream &operator<<(std::ostream &s, const usTissueModelSpline &tissue)
 {
-    s << "usTissueModelSpline\n";
-    s << tissue.m_surface;
-    s << tissue.m_path;
+  s << "usTissueModelSpline\n";
+  s << tissue.m_surface;
+  s << tissue.m_path;
 
-    s.flush();
-    return s;
+  s.flush();
+  return s;
 }
 
 std::istream &operator>>(std::istream &s, usTissueModelSpline &tissue)
 {
-    std::string c;
-    s >> c;
-    if(c != "usTissueModelSpline")
-    {
-        vpException e(vpException::ioError, "Stream does not contain usTissueModelSpline data");
-        throw e;
-    }
-    s >> tissue.m_surface;
-    s >> tissue.m_path;
-    return s;
+  std::string c;
+  s >> c;
+  if (c != "usTissueModelSpline") {
+    vpException e(vpException::ioError, "Stream does not contain usTissueModelSpline data");
+    throw e;
+  }
+  s >> tissue.m_surface;
+  s >> tissue.m_path;
+  return s;
 }
 
 std::ostream &operator<<=(std::ostream &s, const usTissueModelSpline &tissue)
 {
-    s.write("usTissueModelSpline",20);
-    s <<= tissue.m_surface;
-    s <<= tissue.m_path;
+  s.write("usTissueModelSpline", 20);
+  s <<= tissue.m_surface;
+  s <<= tissue.m_path;
 
-    s.flush();
-    return s;
+  s.flush();
+  return s;
 }
 
 std::istream &operator>>=(std::istream &s, usTissueModelSpline &tissue)
 {
-    char c[20];
-    s.read(c,20);
-    if(strcmp(c,"usTissueModelSpline"))
-    {
-        vpException e(vpException::ioError, "Stream does not contain usTissueModelSpline data");
-        throw e;
-    }
-    s >>= tissue.m_surface;
-    s >>= tissue.m_path;
-    return s;
+  char c[20];
+  s.read(c, 20);
+  if (strcmp(c, "usTissueModelSpline")) {
+    vpException e(vpException::ioError, "Stream does not contain usTissueModelSpline data");
+    throw e;
+  }
+  s >>= tissue.m_surface;
+  s >>= tissue.m_path;
+  return s;
 }

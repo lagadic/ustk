@@ -10,9 +10,9 @@
 #include <QStringList>
 #include <QtCore/QThread>
 
+#include <visp3/ustk_core/usImageIo.h>
 #include <visp3/ustk_core/usRFToPreScan2DConverter.h>
 #include <visp3/ustk_grabber/usNetworkGrabberRF2D.h>
-#include <visp3/ustk_core/usImageIo.h>
 
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
@@ -22,8 +22,6 @@ int main(int argc, char **argv)
 {
   // QT application
   QApplication app(argc, argv);
-
-  QThread *grabbingThread = new QThread();
 
   usNetworkGrabberRF2D *qtGrabber = new usNetworkGrabberRF2D();
   qtGrabber->setIPAddress("127.0.0.1"); // local loop, server must be running on same computer
@@ -63,10 +61,6 @@ int main(int argc, char **argv)
   qtGrabber->initAcquisition(header);
   std::cout << "init success" << std::endl;
   qtGrabber->runAcquisition();
-
-  // Move the grabber object to another thread
-  qtGrabber->moveToThread(grabbingThread);
-  grabbingThread->start();
 
   std::cout << "waiting ultrasound initialisation..." << std::endl;
 

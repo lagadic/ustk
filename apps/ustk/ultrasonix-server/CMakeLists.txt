@@ -42,6 +42,7 @@ set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 #endif()
 
 find_package(Porta)
+find_package(VISP REQUIRED visp_ustk_core)
 
 if(Porta_FOUND)
   OPTION(USE_SONIXTOUCH "Set to ON if you want to use the Sonixtouch" ON)
@@ -74,7 +75,7 @@ if(Porta_FOUND)
   QT5_WRAP_CPP(MOCSrcs ${QT_WRAP})
   add_executable(ustk-ultrasonixServer MACOSX_BUNDLE ${CPP_FILES} ${UISrcs} ${MOCSrcs})
 
-  target_link_libraries(ustk-ultrasonixServer Qt5::Widgets Qt5::Network ${Porta_LIBRARIES} )
+  target_link_libraries(ustk-ultrasonixServer Qt5::Widgets Qt5::Network ${Porta_LIBRARIES} ${VISP_LIBRARIES})
 
   configure_file("cmake/templates/usPortaConfig.h.in" "usPortaConfig.h")
 endif()

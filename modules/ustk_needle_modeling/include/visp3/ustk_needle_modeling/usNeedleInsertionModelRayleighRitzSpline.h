@@ -50,154 +50,166 @@
 #include <visp3/ustk_needle_modeling/usNeedleModelSpline.h>
 #include <visp3/ustk_needle_modeling/usTissueModelSpline.h>
 
-
 class VISP_EXPORT usNeedleInsertionModelRayleighRitzSpline : public usNeedleInsertionModelInterface
 {
 public:
+  enum class ModelPreset : int {
+    BiopsyNeedle,
+    BiopsyCannula,
+    Symmetric,
+    AbayazidRRM13,
+    MisraRSRO10_PlastisolA,
+    RoesthuisAM12,
+    SteelSoftTissue,
+    SRL_ActuatedFBG,
+    SRL_BiopsySimple,
+    SRL_BiopsyNID
+  };
+  enum class PathUpdateType : int { NoUpdate, WithTipPosition, WithTipDirection, WithTipMix };
+  enum class NeedleTipType : int { SymmetricTip, BeveledTip, PrebentTip, ActuatedTip };
+  enum class SolvingMethod : int { Classic, FixedBeamLength, NoBevel };
 
-    enum class ModelPreset: int {BiopsyNeedle, BiopsyCannula, Symmetric, AbayazidRRM13, MisraRSRO10_PlastisolA, RoesthuisAM12, SteelSoftTissue, SRL_ActuatedFBG, SRL_BiopsySimple, SRL_BiopsyNID};
-    enum class PathUpdateType: int {NoUpdate, WithTipPosition, WithTipDirection, WithTipMix};
-    enum class NeedleTipType: int {SymmetricTip, BeveledTip, PrebentTip, ActuatedTip};
-    enum class SolvingMethod: int {Classic, FixedBeamLength, NoBevel};
+public: // protected:
+  //! Model Parameters
 
-public://protected:
+  //! Needle
 
-    //! Model Parameters
+  usNeedleModelSpline m_needle;
 
-        //! Needle
+  usNeedleTip *m_needleTip;
+  NeedleTipType m_needleTipType;
 
-        usNeedleModelSpline m_needle;
+  //! Tissue
 
-        usNeedleTip *m_needleTip;
-        NeedleTipType m_needleTipType;
+  usTissueModelSpline m_tissue;
+  std::vector<double> m_stiffnessPerUnitLength;
+  std::vector<double> m_layerLength;
 
-        //! Tissue
+  //! Path update
 
-        usTissueModelSpline m_tissue;
-        std::vector<double> m_stiffnessPerUnitLength;
-        std::vector<double> m_layerLength;
-        
-        //! Path update
+  PathUpdateType m_pathUpdateType;
+  double m_pathUpdateLengthThreshold; // insertion step before adding a new segment to the rest path (min length of the
+                                      // rest path segment)
+  double m_pathUpdateMixCoefficient;  // coefficient to weight the effect of tip position update(1) and tip direction
+                                      // update(0) for Mix PathUpdateType
 
-        PathUpdateType m_pathUpdateType;
-        double m_pathUpdateLengthThreshold; // insertion step before adding a new segment to the rest path (min length of the rest path segment)
-        double m_pathUpdateMixCoefficient; // coefficient to weight the effect of tip position update(1) and tip direction update(0) for Mix PathUpdateType
+  //! Internal
 
-        //! Internal
+  //! Linear system solving
 
-            //! Linear system solving
-
-            SolvingMethod m_solvingMethod;
-            std::vector<double> m_restDilatationFactor;
+  SolvingMethod m_solvingMethod;
+  std::vector<double> m_restDilatationFactor;
 
 public:
+  //! Constructors, destructor
 
-    //! Constructors, destructor
+  usNeedleInsertionModelRayleighRitzSpline();
+  usNeedleInsertionModelRayleighRitzSpline(const usNeedleInsertionModelRayleighRitzSpline &model);
+  virtual ~usNeedleInsertionModelRayleighRitzSpline();
+  const usNeedleInsertionModelRayleighRitzSpline &operator=(const usNeedleInsertionModelRayleighRitzSpline &model);
+  virtual usNeedleInsertionModelRayleighRitzSpline *clone() const; // Polymorph copy method
 
-    usNeedleInsertionModelRayleighRitzSpline();
-    usNeedleInsertionModelRayleighRitzSpline(const usNeedleInsertionModelRayleighRitzSpline &model);
-    virtual ~usNeedleInsertionModelRayleighRitzSpline();
-    const usNeedleInsertionModelRayleighRitzSpline &operator=(const usNeedleInsertionModelRayleighRitzSpline &model);
-    virtual usNeedleInsertionModelRayleighRitzSpline* clone() const; // Polymorph copy method
+  //! Parameters saving and loading
 
-    //! Parameters saving and loading
+  void loadPreset(const ModelPreset preset);
 
-    void loadPreset(const ModelPreset preset);
+  //! Parameters setters and getters
 
-    //! Parameters setters and getters
+  //! Needle
 
-        //! Needle
+  const usNeedleModelSpline &accessNeedle() const;
+  usNeedleModelSpline &accessNeedle();
 
-        const usNeedleModelSpline &accessNeedle() const;
-        usNeedleModelSpline &accessNeedle();
+  usNeedleTip const &accessNeedleTip() const;
+  usNeedleTip &accessNeedleTip();
 
-        usNeedleTip const &accessNeedleTip() const;
-        usNeedleTip &accessNeedleTip();
-        
-        void setNeedleTipType(NeedleTipType type);
-        NeedleTipType getNeedleTipType() const;
+  void setNeedleTipType(NeedleTipType type);
+  NeedleTipType getNeedleTipType() const;
 
-        //! Tissue parameters
+  //! Tissue parameters
 
-        const usTissueModelSpline &accessTissue() const;
-        usTissueModelSpline &accessTissue();
+  const usTissueModelSpline &accessTissue() const;
+  usTissueModelSpline &accessTissue();
 
-        bool addTissueLayer(double K, double l);
+  bool addTissueLayer(double K, double l);
 
-        bool setStiffnessPerUnitLength(int i, double K);
-        bool setStiffnessPerUnitLength(double K);
-        double getStiffnessPerUnitLength(int i = 0) const;
+  bool setStiffnessPerUnitLength(int i, double K);
+  bool setStiffnessPerUnitLength(double K);
+  double getStiffnessPerUnitLength(int i = 0) const;
 
-        bool setLayerLength(int i, double l);
-        double getLayerLength(int i) const;
+  bool setLayerLength(int i, double l);
+  double getLayerLength(int i) const;
 
-        int getNbLayers() const;
-        int getNbCurrentLayers() const;
+  int getNbLayers() const;
+  int getNbCurrentLayers() const;
 
-        //! Model behavior
+  //! Model behavior
 
-        void setPathUpdateType(PathUpdateType type);
-        void setPathUpdateLengthThreshold(double length);
-        void setPathUpdateMixCoefficient(double coef);
-        void setSolvingMethod(SolvingMethod method);
+  void setPathUpdateType(PathUpdateType type);
+  void setPathUpdateLengthThreshold(double length);
+  void setPathUpdateMixCoefficient(double coef);
+  void setSolvingMethod(SolvingMethod method);
 
-        //! Model parameters
+  //! Model parameters
 
-            //! Needle
+  //! Needle
 
-            bool IsNeedleInserted() const;
-            double getNeedleFreeLength(int *seg = nullptr, double *param = nullptr) const;
-            double getInsertionDepth() const;
-            vpColVector getNeedleInsertionPoint() const;
-            vpColVector getTissueInsertionPoint() const;
+  bool IsNeedleInserted() const;
+  double getNeedleFreeLength(int *seg = nullptr, double *param = nullptr) const;
+  double getInsertionDepth() const;
+  vpColVector getNeedleInsertionPoint() const;
+  vpColVector getTissueInsertionPoint() const;
 
-            bool getCorrespondingPathPoint(double l, int &correspondingRestIndex, double &correspondingRestParam) const;
+  bool getCorrespondingPathPoint(double l, int &correspondingRestIndex, double &correspondingRestParam) const;
 
-    //! Measure model information
+  //! Measure model information
 
-        //! Tissue deformation energy
+  //! Tissue deformation energy
 
-        double getTissueDeformationEnergy() const;
-        double getSurfaceTissueStretch() const;
-        double getMaxTissueStretch(double *lmax = nullptr) const;
-        double getMeanTissueStretch() const;
+  double getTissueDeformationEnergy() const;
+  double getSurfaceTissueStretch() const;
+  double getMaxTissueStretch(double *lmax = nullptr) const;
+  double getMeanTissueStretch() const;
 
-        //! Curvature
+  //! Curvature
 
-        double getCurvatureFromKinematics() const;
+  double getCurvatureFromKinematics() const;
 
-    //! Control of the needle
+  //! Control of the needle
 
-    bool setBasePose(const vpPoseVector &p);
-    vpPoseVector getBasePose() const;
+  bool setBasePose(const vpPoseVector &p);
+  vpPoseVector getBasePose() const;
 
-    //! Control of the tissue
+  //! Control of the tissue
 
-    void setSurfaceAtTip();
-    bool cutPathToPoint(const vpColVector &P);
+  void setSurfaceAtTip();
+  bool cutPathToPoint(const vpColVector &P);
 
-    //! Internal model command
+  //! Internal model command
 
-    void solveSegmentsParametersSparseEigen(); // solve without bevel (less accurate at tip, but less expensive since equation independant on dimension)
-    void solveSegmentsParametersFullSparseEigen(); // solve with bevel (more accurate modeling of bevel effect, but slighly more expensive)
-    void solveSegmentsParametersFullSparseEigenFixedLength(); // solve with bevel + fixed size for sub splines
-    void solveSegmentsParametersDense(); // solve with dense method with bevel + fixed size for sub splines (very slow, only here for compatibility but should be avoided)
-    void fitLength();
-    void updateTipPose();
+  void solveSegmentsParametersSparseEigen();     // solve without bevel (less accurate at tip, but less expensive since
+                                                 // equation independant on dimension)
+  void solveSegmentsParametersFullSparseEigen(); // solve with bevel (more accurate modeling of bevel effect, but
+                                                 // slighly more expensive)
+  void solveSegmentsParametersFullSparseEigenFixedLength(); // solve with bevel + fixed size for sub splines
+  void solveSegmentsParametersDense(); // solve with dense method with bevel + fixed size for sub splines (very slow,
+                                       // only here for compatibility but should be avoided)
+  void fitLength();
+  void updateTipPose();
 
-    void solveSegmentsParameters();
-    virtual bool updateState();
+  void solveSegmentsParameters();
+  virtual bool updateState();
 
-    bool updatePath();
-    
-    //! Data saving
+  bool updatePath();
 
-        //! Text
-        friend VISP_EXPORT std::ostream &operator<<(std::ostream &s, const usNeedleInsertionModelRayleighRitzSpline &model);
-        friend VISP_EXPORT std::istream &operator>>(std::istream &s, usNeedleInsertionModelRayleighRitzSpline &model);
-        //! Binary
-        friend VISP_EXPORT std::ostream &operator<<=(std::ostream &s, const usNeedleInsertionModelRayleighRitzSpline &model);
-        friend VISP_EXPORT std::istream &operator>>=(std::istream &s, usNeedleInsertionModelRayleighRitzSpline &model);
+  //! Data saving
+
+  //! Text
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &s, const usNeedleInsertionModelRayleighRitzSpline &model);
+  friend VISP_EXPORT std::istream &operator>>(std::istream &s, usNeedleInsertionModelRayleighRitzSpline &model);
+  //! Binary
+  friend VISP_EXPORT std::ostream &operator<<=(std::ostream &s, const usNeedleInsertionModelRayleighRitzSpline &model);
+  friend VISP_EXPORT std::istream &operator>>=(std::istream &s, usNeedleInsertionModelRayleighRitzSpline &model);
 };
 
 VISP_EXPORT std::ostream &operator<<(std::ostream &s, const usNeedleInsertionModelRayleighRitzSpline &model);

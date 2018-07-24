@@ -53,8 +53,6 @@ usNetworkGrabberPreScan2D::usNetworkGrabberPreScan2D(usNetworkGrabber *parent) :
 
   m_firstFrameAvailable = false;
 
-  m_swichOutputInit = false;
-
   m_recordingOn = false;
   m_firstImageTimestamp = 0;
 
@@ -168,7 +166,7 @@ void usNetworkGrabberPreScan2D::dataArrived()
     m_grabbedImage.setTransducerRadius(m_imageHeader.transducerRadius);
     m_grabbedImage.setScanLinePitch(m_imageHeader.scanLinePitch);
     m_grabbedImage.setDepth(m_imageHeader.imageDepth / 1000.0);
-    m_grabbedImage.setAxialResolution(m_grabbedImage.getDepth()/m_imageHeader.frameHeight);
+    m_grabbedImage.setAxialResolution(m_grabbedImage.getDepth() / m_imageHeader.frameHeight);
     m_grabbedImage.setTransducerConvexity(m_imageHeader.transducerRadius != 0.);
     m_grabbedImage.setTransmitFrequency(m_imageHeader.transmitFrequency);
     m_grabbedImage.setSamplingFrequency(m_imageHeader.samplingFrequency);
@@ -257,36 +255,21 @@ void usNetworkGrabberPreScan2D::invertRowsCols()
 */
 usFrameGrabbedInfo<usImagePreScan2D<unsigned char> > *usNetworkGrabberPreScan2D::acquire()
 {
-  // check if the first frame is arrived
-  if (!m_firstFrameAvailable) {
-    throw(vpException(vpException::fatalError, "first frame not yet grabbed, cannot acquire"));
-  }
-
-  // user grabs too fast
-  if (m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC)->getFrameCount() ==
-      m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getFrameCount() + 1) {
+  // manage first frame or if user grabs too fast
+  if (!m_firstFrameAvailable ||
+      m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC)->getFrameCount() >=
+        m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getFrameCount()) {
     // we wait until a new frame is available
     QEventLoop loop;
     loop.connect(this, SIGNAL(newFrameAvailable()), SLOT(quit()));
     loop.exec();
-
-    // switch pointers
-    usFrameGrabbedInfo<usImagePreScan2D<unsigned char> > *savePtr = m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC);
-    m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
-    m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
-    m_swichOutputInit = true;
   }
 
-  // if more recent frame available
-  else if (m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC)->getFrameCount() <
-               m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getFrameCount() ||
-           !m_swichOutputInit) {
-    // switch pointers (output <-> mostRecentFilled)
-    usFrameGrabbedInfo<usImagePreScan2D<unsigned char> > *savePtr = m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC);
-    m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
-    m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
-    m_swichOutputInit = true;
-  }
+  // switch pointers
+  usFrameGrabbedInfo<usImagePreScan2D<unsigned char> > *savePtr = m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC);
+  m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
+  m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
+
   return m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC);
 }
 

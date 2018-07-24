@@ -46,10 +46,10 @@
 
 #include <visp3/ustk_core/usImageRF2D.h>
 #include <visp3/ustk_core/usImageRF3D.h>
+#include <visp3/ustk_core/usMHDSequenceWriter.h>
 #include <visp3/ustk_grabber/usFrameGrabbedInfo.h>
 #include <visp3/ustk_grabber/usNetworkGrabber.h>
 #include <visp3/ustk_grabber/usVolumeGrabbedInfo.h>
-#include <visp3/ustk_core/usMHDSequenceWriter.h>
 
 /**
  * @class usNetworkGrabberRF3D
@@ -104,12 +104,6 @@ private:
   std::vector<usVolumeGrabbedInfo<usImageRF3D<short int> > *> m_outputBuffer;
   bool m_firstFrameAvailable;
   bool m_firstVolumeAvailable;
-
-  // to manage ptrs switch init
-  bool m_swichOutputInit;
-
-  // to know motor sweep direction for volume grabbed
-  bool m_motorSweepingInZDirection;
 
   // to manage the recording process
   bool m_recordingOn;

@@ -39,16 +39,12 @@
 /**
  * Constructor.
  */
-usDenseTracker2D::usDenseTracker2D() {
-  m_isInit = false;
-}
+usDenseTracker2D::usDenseTracker2D() { m_isInit = false; }
 
 /**
  * Destructor.
  */
-usDenseTracker2D::~usDenseTracker2D() {
-
-}
+usDenseTracker2D::~usDenseTracker2D() {}
 
 /**
  * @brief Initialisation of the tracker : to call to set the region to track (R) in the image (I) before starting the
@@ -98,7 +94,7 @@ void usDenseTracker2D::init(const vpImage<unsigned char> &I, const vpRectOriente
  */
 void usDenseTracker2D::update(const vpImage<unsigned char> &I)
 {
-  if(m_isInit) {
+  if (m_isInit) {
     double gain = 0.6;
 
     unsigned int max_iter = 40;
@@ -131,7 +127,7 @@ void usDenseTracker2D::update(const vpImage<unsigned char> &I)
 
       // update target with old values and deplacements previously comuted
       m_target.setCenter(
-            vpImagePoint(m_target.getCenter().get_i() + gain * dx, m_target.getCenter().get_j() + gain * dy));
+          vpImagePoint(m_target.getCenter().get_i() + gain * dx, m_target.getCenter().get_j() + gain * dy));
       m_target.setOrientation(alpha + gain * da);
 
       ++i;
@@ -143,9 +139,10 @@ void usDenseTracker2D::update(const vpImage<unsigned char> &I)
  * @brief To call after update() at each new frame, to get the position of the ROI in the last acquired frame.
  * @return The rectangle pixel coordinates in the new frame.
  */
-vpRectOriented usDenseTracker2D::getTarget() const {
-  if(!m_isInit)
-    throw(vpException(vpException::fatalError,"usDenseTracker2D not initialized !"));
+vpRectOriented usDenseTracker2D::getTarget() const
+{
+  if (!m_isInit)
+    throw(vpException(vpException::fatalError, "usDenseTracker2D not initialized !"));
   return m_target;
 }
 
@@ -153,7 +150,4 @@ vpImage<unsigned char> &usDenseTracker2D::getTemplate() { return m_template; }
 
 vpImage<unsigned char> &usDenseTracker2D::getRegion() { return m_region; }
 
-
-bool usDenseTracker2D::isInit() {
-  return m_isInit;
-}
+bool usDenseTracker2D::isInit() { return m_isInit; }

@@ -18,8 +18,6 @@ int main(int argc, char **argv)
   // QT application
   QApplication app(argc, argv);
 
-  QThread *grabbingThread = new QThread();
-
   usNetworkGrabberPostScanBiPlan *qtGrabber = new usNetworkGrabberPostScanBiPlan();
   qtGrabber->connectToServer();
 
@@ -55,47 +53,39 @@ int main(int argc, char **argv)
   qtGrabber->sendAcquisitionParameters();
   qtGrabber->runAcquisition();
 
-  // Move the grabber object to another thread
-  qtGrabber->moveToThread(grabbingThread);
-  grabbingThread->start();
-
   std::cout << "waiting ultrasound initialisation..." << std::endl;
 
   // our local grabbing loop
   do {
-    if (qtGrabber->isFirstFrameAvailable()) {
+    grabbedFrame = qtGrabber->acquire();
 
-      grabbedFrame = qtGrabber->acquire();
+    std::cout << "MAIN THREAD received frame No : " << grabbedFrame[0]->getFrameCount() << " and "
+              << grabbedFrame[1]->getFrameCount() << std::endl;
 
-      std::cout << "MAIN THREAD received frame No : " << grabbedFrame[0]->getFrameCount() << " and "
-                << grabbedFrame[1]->getFrameCount() << std::endl;
-
-      // init display
-      if (!displayInit && grabbedFrame[0]->getHeight() != 0 && grabbedFrame[0]->getWidth() != 0) {
+    // init display
+    if (!displayInit && grabbedFrame[0]->getHeight() != 0 && grabbedFrame[0]->getWidth() != 0) {
 #if defined(VISP_HAVE_X11)
-        display1 = new vpDisplayX(*(grabbedFrame[0]));
-        display2 = new vpDisplayX(*(grabbedFrame[1]));
+      display1 = new vpDisplayX(*(grabbedFrame[0]));
+      display2 = new vpDisplayX(*(grabbedFrame[1]));
 #elif defined(VISP_HAVE_GDI)
-        display1 = new vpDisplayGDI(*(grabbedFrame[0]));
-        display2 = new vpDisplayGDI(*(grabbedFrame[1]));
+      display1 = new vpDisplayGDI(*(grabbedFrame[0]));
+      display2 = new vpDisplayGDI(*(grabbedFrame[1]));
 #endif
-        displayInit = true;
-      }
-
-      // processing display
-      if (displayInit) {
-        if(vpDisplay::getClick(*grabbedFrame[0], false) || vpDisplay::getClick(*grabbedFrame[1], false))
-          captureRunning = false;
-        vpDisplay::display(*(grabbedFrame[0]));
-        vpDisplay::display(*(grabbedFrame[1]));
-        vpDisplay::displayText(*grabbedFrame[0],20,20,std::string("Click to exit..."),vpColor::red);
-        vpDisplay::displayText(*grabbedFrame[1],20,20,std::string("Click to exit..."),vpColor::red);
-        vpDisplay::flush(*(grabbedFrame[0]));
-        vpDisplay::flush(*(grabbedFrame[1]));
-      }
-    } else {
-      vpTime::wait(10);
+      displayInit = true;
     }
+
+    // processing display
+    if (displayInit) {
+      if (vpDisplay::getClick(*grabbedFrame[0], false) || vpDisplay::getClick(*grabbedFrame[1], false))
+        captureRunning = false;
+      vpDisplay::display(*(grabbedFrame[0]));
+      vpDisplay::display(*(grabbedFrame[1]));
+      vpDisplay::displayText(*grabbedFrame[0], 20, 20, std::string("Click to exit..."), vpColor::red);
+      vpDisplay::displayText(*grabbedFrame[1], 20, 20, std::string("Click to exit..."), vpColor::red);
+      vpDisplay::flush(*(grabbedFrame[0]));
+      vpDisplay::flush(*(grabbedFrame[1]));
+    }
+
   } while (captureRunning);
 
   qtGrabber->stopAcquisition();

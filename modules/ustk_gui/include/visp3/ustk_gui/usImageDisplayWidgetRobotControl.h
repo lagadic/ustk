@@ -47,10 +47,10 @@
 
 #include <visp3/ustk_gui/usImageDisplayWidget.h>
 
+#include <visp3/core/vpTime.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpPlot.h>
-#include <visp3/core/vpTime.h>
 /**
  * @class usImageDisplayWidgetRobotControl
  * @brief Qt widget class for 2D ultrasound image display, containing robot control tools.
@@ -97,9 +97,9 @@ private:
   vpPlot m_plot;
   double m_startTime;
 #if defined(VISP_HAVE_GDI)
-  vpDisplayGDI * m_display;
+  vpDisplayGDI *m_display;
 #elif defined(VISP_HAVE_OPENCV)
-  vpDisplayOpenCV * m_display;
+  vpDisplayOpenCV *m_display;
 #endif
 };
 #endif // QT && ELASTOGRAPHY

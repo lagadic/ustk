@@ -21,8 +21,6 @@ int main(int argc, char **argv)
   // QT application
   QApplication app(argc, argv);
 
-  QThread *grabbingThread = new QThread();
-
   usNetworkGrabberPreScan3D *qtGrabber = new usNetworkGrabberPreScan3D();
   qtGrabber->connectToServer();
 
@@ -54,27 +52,22 @@ int main(int argc, char **argv)
   // Send the command to run the acquisition
   qtGrabber->runAcquisition();
 
-  // Move the grabber object to another thread, and run it
-  qtGrabber->moveToThread(grabbingThread);
-  grabbingThread->start();
-
   // our grabbing loop
   do {
-    if (qtGrabber->isFirstFrameAvailable()) {
-      grabbedFrame = qtGrabber->acquire();
+    grabbedFrame = qtGrabber->acquire();
 
-      std::cout << "MAIN THREAD received volume No : " << grabbedFrame->getVolumeCount() << std::endl;
+    std::cout << "MAIN THREAD received volume No : " << grabbedFrame->getVolumeCount() << std::endl;
 
-      char buffer[FILENAME_MAX];
-      sprintf(buffer, "volumePreScan%d.mhd", grabbedFrame->getVolumeCount());
+    char buffer[FILENAME_MAX];
+    sprintf(buffer, "volumePreScan%d.mhd", grabbedFrame->getVolumeCount());
 
-      usImageIo::write(*grabbedFrame, buffer);
-    } else {
-      vpTime::wait(10);
-    }
+    usImageIo::write(*grabbedFrame, buffer);
+
   } while (captureRunning);
+  
+  qtGrabber->stopAcquisition();
 
-  return app.exec();
+  return 0;
 }
 
 #else

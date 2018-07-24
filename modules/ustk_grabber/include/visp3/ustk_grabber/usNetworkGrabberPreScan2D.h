@@ -45,9 +45,9 @@
 #include <vector>
 
 #include <visp3/ustk_core/usImagePreScan2D.h>
+#include <visp3/ustk_core/usMHDSequenceWriter.h>
 #include <visp3/ustk_grabber/usFrameGrabbedInfo.h>
 #include <visp3/ustk_grabber/usNetworkGrabber.h>
-#include <visp3/ustk_core/usMHDSequenceWriter.h>
 
 /**
  * @class usNetworkGrabberPreScan2D
@@ -97,9 +97,6 @@ private:
   // Output images : we have to invert (i <-> j) in the image grabbed
   std::vector<usFrameGrabbedInfo<usImagePreScan2D<unsigned char> > *> m_outputBuffer;
   bool m_firstFrameAvailable;
-
-  // to manage ptrs switch init
-  bool m_swichOutputInit;
 
   // to manage the recording process
   bool m_recordingOn;

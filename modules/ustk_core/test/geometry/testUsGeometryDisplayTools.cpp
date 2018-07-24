@@ -388,8 +388,8 @@ int main(int argc, const char **argv)
         
         vpTime::wait(2000);
     
-        delete display1;
-        delete display2;
+        if(display1) delete display1;
+        if(display2) delete display2;
     }
     
     return 0;

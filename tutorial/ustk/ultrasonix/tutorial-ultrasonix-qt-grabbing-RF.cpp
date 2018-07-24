@@ -21,8 +21,6 @@ int main(int argc, char **argv)
   // QT application
   QApplication app(argc, argv);
 
-  QThread *grabbingThread = new QThread();
-
   usNetworkGrabberRF2D *qtGrabber = new usNetworkGrabberRF2D();
   qtGrabber->connectToServer();
 
@@ -35,21 +33,18 @@ int main(int argc, char **argv)
   // setting acquisition parameters
   usNetworkGrabber::usInitHeaderSent header;
   if (qApp->arguments().contains(QString("--probeID"))) {
-        header.probeId = qApp->arguments().at(qApp->arguments().indexOf(QString("--probeID")) + 1).toInt();
-  }
-  else
-    header.probeId = 15;    // 4DC7 id = 15 by default
+    header.probeId = qApp->arguments().at(qApp->arguments().indexOf(QString("--probeID")) + 1).toInt();
+  } else
+    header.probeId = 15; // 4DC7 id = 15 by default
 
   if (qApp->arguments().contains(QString("--slotID"))) {
     header.slotId = qApp->arguments().at(qApp->arguments().indexOf(QString("--slotID")) + 1).toInt();
-  }
-  else
-    header.slotId = 0;      // top slot id = 0 by default
+  } else
+    header.slotId = 0; // top slot id = 0 by default
 
   if (qApp->arguments().contains(QString("--imagingMode"))) {
-        header.imagingMode = qApp->arguments().at(qApp->arguments().indexOf(QString("--imagingMode")) + 1).toInt();
-  }
-  else
+    header.imagingMode = qApp->arguments().at(qApp->arguments().indexOf(QString("--imagingMode")) + 1).toInt();
+  } else
     header.imagingMode = 12; // RF = 12
 
   // prepare image;
@@ -72,45 +67,37 @@ int main(int argc, char **argv)
   qtGrabber->initAcquisition(header);
   qtGrabber->runAcquisition();
 
-  // Move the grabber object to another thread
-  qtGrabber->moveToThread(grabbingThread);
-  grabbingThread->start();
-
   std::cout << "waiting ultrasound initialisation..." << std::endl;
 
   // our local grabbing loop
   do {
-    if (qtGrabber->isFirstFrameAvailable()) {
-      grabbedFrame = qtGrabber->acquire();
+    grabbedFrame = qtGrabber->acquire();
 
-      std::cout << "MAIN THREAD received frame No : " << grabbedFrame->getFrameCount() << std::endl;
+    std::cout << "MAIN THREAD received frame No : " << grabbedFrame->getFrameCount() << std::endl;
 
-      // convert RF to pre-scan to display something ...
-      double t0 = vpTime::measureTimeMs();
-      converter.convert(*grabbedFrame, preScanImage);
-      double t1 = vpTime::measureTimeMs();
-      std::cout << "conversion time = " << t1 - t0 << std::endl;
+    // convert RF to pre-scan to display something ...
+    double t0 = vpTime::measureTimeMs();
+    converter.convert(*grabbedFrame, preScanImage);
+    double t1 = vpTime::measureTimeMs();
+    std::cout << "conversion time = " << t1 - t0 << std::endl;
 
-      // init display
-      if (!displayInit && preScanImage.getHeight() != 0 && preScanImage.getWidth() != 0) {
+    // init display
+    if (!displayInit && preScanImage.getHeight() != 0 && preScanImage.getWidth() != 0) {
 #if defined(VISP_HAVE_X11)
-        display = new vpDisplayX(preScanImage);
+      display = new vpDisplayX(preScanImage);
 #elif defined(VISP_HAVE_GDI)
-        display = new vpDisplayGDI(preScanImage);
+      display = new vpDisplayGDI(preScanImage);
 #endif
-        displayInit = true;
-      }
+      displayInit = true;
+    }
 
-      // processing display
-      if (displayInit) {
-        if(vpDisplay::getClick(preScanImage, false))
-          captureRunning = false;
-        vpDisplay::display(preScanImage);
-        vpDisplay::displayText(preScanImage,20,20,std::string("Click to exit..."),vpColor::red);
-        vpDisplay::flush(preScanImage);
-      }
-    } else {
-      vpTime::wait(10);
+    // processing display
+    if (displayInit) {
+      if (vpDisplay::getClick(preScanImage, false))
+        captureRunning = false;
+      vpDisplay::display(preScanImage);
+      vpDisplay::displayText(preScanImage, 20, 20, std::string("Click to exit..."), vpColor::red);
+      vpDisplay::flush(preScanImage);
     }
   } while (captureRunning);
 

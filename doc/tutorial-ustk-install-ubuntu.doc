@@ -102,6 +102,8 @@ $ cmake ../visp -DVISP_CONTRIB_MODULES_PATH=$USTK_WS/ustk -DBUILD_MODULE_visp_ar
 $ make -j4
 \endcode
 
+\note There are \ref ustk_ubuntu_issue that may appear and for which we propose fixes.
+
 \subsection ustk_ubuntu_manual_dataset How to install UsTK dataset
 
 Some examples or tutorials are working with ultrasound medical images. We propose a dataset that contains 2D or 3D ultrasound data in https://github.com/lagadic/ustk-dataset. To use this dataset you may set the `USTK_DATASET_PATH` environment variable like:
@@ -133,5 +135,31 @@ To uninstall UsTK, run:
 $ cd $USTK_WS/ustk-build
 $ make -j4 uninstall
 \endcode
+
+\section ustk_ubuntu_issue Known issues
+
+\subsection ustk_ubuntu_issue_libjproj No rule to make target '/usr/lib/x86_64-linux-gnu/libproj.so'
+
+This issue may appear on Ubuntu 16.04 LTS
+
+\code
+$ make
+make[3]: *** No rule to make target '/usr/lib/x86_64-linux-gnu/libproj.so', needed by 'lib/libvisp_ustk_gui.so.3.0.2'.  Stop.
+CMakeFiles/Makefile2:6995: recipe for target 'modules/ustk_gui/CMakeFiles/visp_ustk_gui.dir/all' failed
+\endcode
+
+This issue is related to vtk installation where `libproj.so` is a dependency that is not installed with vtk.
+
+\code
+$ grep libproj /usr/lib/cmake/vtk-6.2/VTKTargets.cmake
+INTERFACE_LINK_LIBRARIES "vtkIOXML;vtkInfovisLayout;vtkInteractionStyle;vtkInteractionWidgets;vtkRenderingCore;vtkViewsCore;/usr/lib/x86_64-linux-gnu/libproj.so"
+\endcode
+
+The fix consists in installing `libproj-dev` package:
+
+\code
+$ sudo apt-get install libproj-dev
+\endcode
+	
 
 */
