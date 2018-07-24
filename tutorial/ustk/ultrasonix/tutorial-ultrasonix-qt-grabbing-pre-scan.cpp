@@ -19,8 +19,6 @@ int main(int argc, char **argv)
   // QT application
   QApplication app(argc, argv);
 
-  QThread *grabbingThread = new QThread();
-
   usNetworkGrabberPreScan2D *qtGrabber = new usNetworkGrabberPreScan2D();
   qtGrabber->connectToServer();
 
@@ -69,38 +67,30 @@ int main(int argc, char **argv)
   // Send the command to run the acquisition
   qtGrabber->runAcquisition();
 
-  // Move the grabber object to another thread, and run it
-  qtGrabber->moveToThread(grabbingThread);
-  grabbingThread->start();
-
   // our grabbing loop
   do {
-    if (qtGrabber->isFirstFrameAvailable()) {
-      grabbedFrame = qtGrabber->acquire();
+    grabbedFrame = qtGrabber->acquire();
 
-      std::cout << "MAIN THREAD received frame No : " << grabbedFrame->getFrameCount() << std::endl;
+    std::cout << "MAIN THREAD received frame No : " << grabbedFrame->getFrameCount() << std::endl;
 
-      // init display
-      if (!displayInit && grabbedFrame->getHeight() != 0 && grabbedFrame->getWidth() != 0) {
+    // init display
+    if (!displayInit && grabbedFrame->getHeight() != 0 && grabbedFrame->getWidth() != 0) {
 #if defined(VISP_HAVE_X11)
-        display = new vpDisplayX(*grabbedFrame);
+      display = new vpDisplayX(*grabbedFrame);
 #elif defined(VISP_HAVE_GDI)
-        display = new vpDisplayGDI(*grabbedFrame);
+      display = new vpDisplayGDI(*grabbedFrame);
 #endif
-        qtGrabber->useVpDisplay(display);
-        displayInit = true;
-      }
+      qtGrabber->useVpDisplay(display);
+      displayInit = true;
+    }
 
-      // processing display
-      if (displayInit) {
-        if (vpDisplay::getClick(*grabbedFrame, false))
-          captureRunning = false;
-        vpDisplay::display(*grabbedFrame);
-        vpDisplay::displayText(*grabbedFrame, 20, 20, std::string("Click to exit..."), vpColor::red);
-        vpDisplay::flush(*grabbedFrame);
-      }
-    } else {
-      vpTime::wait(10);
+    // processing display
+    if (displayInit) {
+      if (vpDisplay::getClick(*grabbedFrame, false))
+        captureRunning = false;
+      vpDisplay::display(*grabbedFrame);
+      vpDisplay::displayText(*grabbedFrame, 20, 20, std::string("Click to exit..."), vpColor::red);
+      vpDisplay::flush(*grabbedFrame);
     }
   } while (captureRunning);
 

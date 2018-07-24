@@ -49,8 +49,6 @@ usNetworkGrabberRF2D::usNetworkGrabberRF2D(usNetworkGrabber *parent) : usNetwork
 
   m_firstFrameAvailable = false;
 
-  m_swichOutputInit = false;
-
   m_recordingOn = false;
   m_firstImageTimestamp = 0;
 
@@ -257,36 +255,21 @@ void usNetworkGrabberRF2D::dataArrived()
 */
 usFrameGrabbedInfo<usImageRF2D<short int> > *usNetworkGrabberRF2D::acquire()
 {
-  // check if the first frame is arrived
-  if (!m_firstFrameAvailable) {
-    throw(vpException(vpException::fatalError, "first frame not yet grabbed, cannot acquire"));
-  }
-
-  // user grabs too fast
-  if (m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC)->getFrameCount() ==
-      m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getFrameCount() + 1) {
+  // manage first frame or if user grabs too fast
+  if (!m_firstFrameAvailable ||
+      m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC)->getFrameCount() >=
+          m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getFrameCount()) {
     // we wait until a new frame is available
     QEventLoop loop;
     loop.connect(this, SIGNAL(newFrameAvailable()), SLOT(quit()));
     loop.exec();
-
-    // switch pointers
-    usFrameGrabbedInfo<usImageRF2D<short int> > *savePtr = m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC);
-    m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
-    m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
-    m_swichOutputInit = true;
   }
 
-  // if more recent frame available
-  else if (m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC)->getFrameCount() <
-               m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getFrameCount() ||
-           !m_swichOutputInit) {
-    // switch pointers (output <-> mostRecentFilled)
-    usFrameGrabbedInfo<usImageRF2D<short int> > *savePtr = m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC);
-    m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
-    m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
-    m_swichOutputInit = true;
-  }
+  // switch pointers
+  usFrameGrabbedInfo<usImageRF2D<short int> > *savePtr = m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC);
+  m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
+  m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
+
   return m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC);
 }
 

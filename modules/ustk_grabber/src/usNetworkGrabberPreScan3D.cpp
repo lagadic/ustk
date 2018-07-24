@@ -53,9 +53,6 @@ usNetworkGrabberPreScan3D::usNetworkGrabberPreScan3D(usNetworkGrabber *parent)
   m_firstFrameAvailable = false;
   m_firstVolumeAvailable = false;
 
-  m_swichOutputInit = false;
-  m_motorSweepingInZDirection = true;
-
   m_recordingOn = false;
   m_firstImageTimestamp = 0;
 
@@ -267,31 +264,33 @@ void usNetworkGrabberPreScan3D::includeFrameInVolume()
 
   // Inserting frame in volume by inverting rows and cols voxels (along x and y axis), to match ustk volume storage
   int volumeIndex = (m_grabbedImage.getFrameCount() / m_grabbedImage.getFramesPerVolume());    // from 0
-  int framePostition = (m_grabbedImage.getFrameCount() % m_grabbedImage.getFramesPerVolume()); // from 0 to FPV-1
+  bool motorSweepingInZDirection = (volumeIndex % 2 != 0);
+  int framePosition = (m_grabbedImage.getFrameCount() % m_grabbedImage.getFramesPerVolume()); // from 0 to FPV-1
 
   // setting timestamps
-  if (volumeIndex % 2 != 0) // case of backward moving motor (opposite to Z direction)
-    framePostition = m_grabbedImage.getFramesPerVolume() - framePostition - 1; // inverting frames order
+  if (!motorSweepingInZDirection) // case of backward moving motor (opposite to Z direction)
+    framePosition = m_grabbedImage.getFramesPerVolume() - framePosition - 1; // inverting frames order
 
-  m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->addTimeStamp(m_grabbedImage.getTimeStamp(), framePostition);
+  m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->addTimeStamp(m_grabbedImage.getTimeStamp(), framePosition);
   m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setVolumeCount(volumeIndex);
 
   for (unsigned int i = 0; i < m_grabbedImage.getHeight(); i++)
     for (unsigned int j = 0; j < m_grabbedImage.getWidth(); j++) {
-      (*m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC))(i, j, framePostition, m_grabbedImage(i, j));
+      (*m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC))(j, i, framePosition, m_grabbedImage(i, j));
     }
 
   // we reach the end of a volume
   if (m_firstFrameAvailable &&
-      ((framePostition == 0 && !m_motorSweepingInZDirection) ||
-       (framePostition == (int)m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getFrameNumber() - 1 &&
-        m_motorSweepingInZDirection))) {
+      ((framePosition == 0 && !motorSweepingInZDirection) ||
+       (framePosition == (int)m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getFrameNumber() - 1 &&
+        motorSweepingInZDirection))) {
     // Now CURRENT_FILLED_FRAME_POSITION_IN_VEC has become the last frame received
-    // So we switch pointers beween MOST_RECENT_FRAME_POSITION_IN_VEC and CURRENT_FILLED_FRAME_POSITION_IN_VEC
+    // So we switch pointers between MOST_RECENT_FRAME_POSITION_IN_VEC and CURRENT_FILLED_FRAME_POSITION_IN_VEC
     usVolumeGrabbedInfo<usImagePreScan3D<unsigned char> > *savePtr =
         m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC);
     m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
     m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
+    
     if (m_recordingOn) {
       std::vector<uint64_t> timestampsToWrite;
       for (unsigned int i = 0; i < m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getTimeStamps().size(); i++)
@@ -299,10 +298,8 @@ void usNetworkGrabberPreScan3D::includeFrameInVolume()
                                     m_firstImageTimestamp);
       m_sequenceWriter.write(*m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC), timestampsToWrite);
     }
-    if (volumeIndex % 2 != 0) // case of backward moving motor (opposite to Z direction)
-      m_motorSweepingInZDirection = true;
-    else
-      m_motorSweepingInZDirection = false;
+    
+    m_firstVolumeAvailable = true;
     emit(newVolumeAvailable());
   }
 
@@ -319,109 +316,41 @@ void usNetworkGrabberPreScan3D::includeFrameInVolume()
 */
 usVolumeGrabbedInfo<usImagePreScan3D<unsigned char> > *usNetworkGrabberPreScan3D::acquire()
 {
-  // manage first volume
-  if (!m_firstVolumeAvailable) {
+  // manage first volume or if user grabs too fast
+  if (!m_firstVolumeAvailable || 
+      m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC)->getVolumeCount() >=
+          m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getVolumeCount()) {
     // we wait until the first is available
     QEventLoop loop;
     loop.connect(this, SIGNAL(newVolumeAvailable()), SLOT(quit()));
     loop.exec();
+  }
 
-    // check parity
-    bool parityControl = false;
-    if (m_volumeField == ODD) {
-      if (m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getVolumeCount() % 2 == 1) {
-        parityControl = true;
-      }
-    } else if (m_volumeField == EVEN) {
-      if (m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getVolumeCount() % 2 == 0) {
-        parityControl = true;
-      }
-    } else {
+  // check parity
+  bool parityControl = false;
+  if (m_volumeField == ODD) {
+    if (m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getVolumeCount() % 2 == 1) {
       parityControl = true;
     }
-
-    // if parity not ok, we wait next volume
-    if (!parityControl) {
-      QEventLoop loop;
-      loop.connect(this, SIGNAL(newVolumeAvailable()), SLOT(quit()));
-      loop.exec();
+  } else if (m_volumeField == EVEN) {
+    if (m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getVolumeCount() % 2 == 0) {
+      parityControl = true;
     }
-
-    // switch pointers
-    usVolumeGrabbedInfo<usImagePreScan3D<unsigned char> > *savePtr = m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC);
-    m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
-    m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
-    m_swichOutputInit = true;
   } else {
-    // user grabs too fast
-    if (m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC)->getVolumeCount() ==
-        m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getVolumeCount() + 1) {
-      // we wait until a new frame is available
-      QEventLoop loop;
-      loop.connect(this, SIGNAL(newVolumeAvailable()), SLOT(quit()));
-      loop.exec();
-
-      // check parity
-      bool parityControl = false;
-      if (m_volumeField == ODD) {
-        if (m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getVolumeCount() % 2 == 1) {
-          parityControl = true;
-        }
-      } else if (m_volumeField == EVEN) {
-        if (m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getVolumeCount() % 2 == 0) {
-          parityControl = true;
-        }
-      } else {
-        parityControl = true;
-      }
-
-      // if parity not ok, we wait next volume
-      if (!parityControl) {
-        QEventLoop loop;
-        loop.connect(this, SIGNAL(newVolumeAvailable()), SLOT(quit()));
-        loop.exec();
-      }
-
-      // switch pointers
-      usVolumeGrabbedInfo<usImagePreScan3D<unsigned char> > *savePtr = m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC);
-      m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
-      m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
-      m_swichOutputInit = true;
-    }
-
-    // if more recent frame available
-    else if (m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC)->getVolumeCount() <
-                 m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getVolumeCount() ||
-             !m_swichOutputInit) {
-
-      // check parity
-      bool parityControl = false;
-      if (m_volumeField == ODD) {
-        if (m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getVolumeCount() % 2 == 1) {
-          parityControl = true;
-        }
-      } else if (m_volumeField == EVEN) {
-        if (m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getVolumeCount() % 2 == 0) {
-          parityControl = true;
-        }
-      } else {
-        parityControl = true;
-      }
-
-      // if parity not ok, we wait next volume
-      if (!parityControl) {
-        QEventLoop loop;
-        loop.connect(this, SIGNAL(newVolumeAvailable()), SLOT(quit()));
-        loop.exec();
-      }
-
-      // switch pointers (output <-> mostRecentFilled)
-      usVolumeGrabbedInfo<usImagePreScan3D<unsigned char> > *savePtr = m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC);
-      m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
-      m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
-      m_swichOutputInit = true;
-    }
+    parityControl = true;
   }
+  
+  // if parity not ok, we wait next volume
+  if (!parityControl) {
+    QEventLoop loop;
+    loop.connect(this, SIGNAL(newVolumeAvailable()), SLOT(quit()));
+    loop.exec();
+  }
+  
+  // switch pointers
+  usVolumeGrabbedInfo<usImagePreScan3D<unsigned char> > *savePtr = m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC);
+  m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
+  m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
 
   return m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC);
 }

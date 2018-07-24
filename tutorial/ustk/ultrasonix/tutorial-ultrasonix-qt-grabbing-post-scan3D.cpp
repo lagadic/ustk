@@ -21,8 +21,6 @@ int main(int argc, char **argv)
   // QT application
   QApplication app(argc, argv);
 
-  QThread *grabbingThread = new QThread();
-
   usNetworkGrabberPostScan2D *qtGrabber = new usNetworkGrabberPostScan2D();
   qtGrabber->connectToServer();
 
@@ -71,51 +69,45 @@ int main(int argc, char **argv)
   std::cout << "end update" << std::endl;
   qtGrabber->runAcquisition();
 
-  // Move the grabber object to another thread
-  qtGrabber->moveToThread(grabbingThread);
-  grabbingThread->start();
-
   std::cout << "waiting ultrasound initialisation..." << std::endl;
 
   // our local grabbing loop
   do {
-    if (qtGrabber->isFirstFrameAvailable()) {
-      grabbedFrame = qtGrabber->acquire();
+    grabbedFrame = qtGrabber->acquire();
 
-      std::cout << "MAIN THREAD received frame No : " << grabbedFrame->getFrameCount() << std::endl;
+    std::cout << "MAIN THREAD received frame No : " << grabbedFrame->getFrameCount() << std::endl;
 
-      std::cout << *grabbedFrame << std::endl;
+    std::cout << *grabbedFrame << std::endl;
 
-      char buffer[400];
-      sprintf(buffer, "frame%d.png", grabbedFrame->getFrameCount());
+    char buffer[400];
+    sprintf(buffer, "frame%d.png", grabbedFrame->getFrameCount());
 
-      // std::string fileName = "frame" + grabbedFrame->getFrameCount() + ".png";
-      vpImageIo::write(*grabbedFrame, buffer);
-      // init display
-      if (!displayInit && grabbedFrame->getHeight() != 0 && grabbedFrame->getWidth() != 0) {
+    // std::string fileName = "frame" + grabbedFrame->getFrameCount() + ".png";
+    vpImageIo::write(*grabbedFrame, buffer);
+    // init display
+    if (!displayInit && grabbedFrame->getHeight() != 0 && grabbedFrame->getWidth() != 0) {
 #if defined(VISP_HAVE_X11)
-        display = new vpDisplayX(*grabbedFrame);
+      display = new vpDisplayX(*grabbedFrame);
 #elif defined(VISP_HAVE_GDI)
-        display = new vpDisplayGDI(*grabbedFrame);
+      display = new vpDisplayGDI(*grabbedFrame);
 #endif
-        displayInit = true;
-      }
+      displayInit = true;
+    }
 
-      // processing display
-      if (displayInit) {
-        vpDisplay::display(*grabbedFrame);
-        vpDisplay::flush(*grabbedFrame);
-      }
-    } else {
-      vpTime::wait(10);
+    // processing display
+    if (displayInit) {
+      vpDisplay::display(*grabbedFrame);
+      vpDisplay::flush(*grabbedFrame);
     }
   } while (captureRunning);
+  
+  qtGrabber->stopAcquisition();
 
   if (displayInit) {
     delete display;
   }
 
-  return app.exec();
+  return 0;
 }
 
 #else

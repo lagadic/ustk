@@ -18,8 +18,6 @@ int main(int argc, char **argv)
   // QT application
   QApplication app(argc, argv);
 
-  QThread *grabbingThread = new QThread();
-
   usNetworkGrabberRF3D *qtGrabber = new usNetworkGrabberRF3D();
   qtGrabber->connectToServer();
   // qtGrabber->setVerbose(true);
@@ -48,15 +46,10 @@ int main(int argc, char **argv)
 
   qtGrabber->runAcquisition();
 
-  // Move the grabber object to another thread
-  qtGrabber->moveToThread(grabbingThread);
-  grabbingThread->start();
-
   std::cout << "waiting ultrasound initialisation..." << std::endl;
 
   // our local grabbing loop
   do {
-    if (qtGrabber->isFirstFrameAvailable()) {
       grabbedVolume = qtGrabber->acquire();
 
       std::cout << "MAIN THREAD received volume No : " << grabbedVolume->getVolumeCount() << std::endl;
@@ -66,12 +59,11 @@ int main(int argc, char **argv)
 
       QString filename = QString("volume") + QString::number(grabbedVolume->getVolumeCount()) + QString(".mhd");
       usImageIo::write(preScanImage, filename.toStdString());
-    } else {
-      vpTime::wait(10);
-    }
   } while (captureRunning);
+    
+  qtGrabber->stopAcquisition();
 
-  return app.exec();
+  return 0;
 }
 
 #else

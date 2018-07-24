@@ -233,7 +233,7 @@ usImageRF3D<Type>::usImageRF3D(const usImageRF3D &other)
   : usImagePreScanSettings(other), usMotorSettings(other), m_width(0), m_height(0), m_numberOfFrames(0), m_size(0),
     bitmap(NULL)
 {
-  init(other.getWidth(), other.getHeight(), other.getNumberOfFrames());
+  init(other.getHeight(), other.getWidth(), other.getNumberOfFrames());
   memcpy(bitmap, other.getConstData(), (size_t)(m_width * m_height * m_numberOfFrames * sizeof(Type)));
 }
 
@@ -259,7 +259,7 @@ template <class Type> usImageRF3D<Type>::~usImageRF3D()
 template <class Type> usImageRF3D<Type> &usImageRF3D<Type>::operator=(const usImageRF3D<Type> &other)
 {
   // allocation and resize
-  resize(other.getWidth(), other.getHeight(), other.getNumberOfFrames());
+  resize(other.getHeight(), other.getWidth(), other.getNumberOfFrames());
 
   // filling voxel values
   memcpy(bitmap, other.getConstData(), (size_t)(m_width * m_height * m_numberOfFrames * sizeof(Type)));
@@ -327,7 +327,7 @@ template <class Type> unsigned int usImageRF3D<Type>::getRFSampleNumber() const 
 template <class Type> void usImageRF3D<Type>::setScanLineNumber(unsigned int scanLineNumber)
 {
   if (scanLineNumber != m_width)
-    resize(scanLineNumber, getHeight(), getNumberOfFrames());
+    resize(getHeight(), scanLineNumber, getNumberOfFrames());
   usTransducerSettings::setScanLineNumber(scanLineNumber);
 }
 
@@ -340,7 +340,7 @@ template <class Type> void usImageRF3D<Type>::setScanLineNumber(unsigned int sca
 template <class Type> void usImageRF3D<Type>::setFrameNumber(unsigned int frameNumber)
 {
   if (frameNumber != m_numberOfFrames)
-    resize(getWidth(), getHeight(), frameNumber);
+    resize(getHeight(), getWidth(), frameNumber);
   usMotorSettings::setFrameNumber(frameNumber);
 }
 

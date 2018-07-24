@@ -33,8 +33,6 @@ int main(int argc, char **argv)
   usElastography *elastography = new usElastography;
   elastography->setROI(40, 2700, 50, 500);
 
-  QThread *grabbingThread = new QThread();
-
   usNetworkGrabberRF2D *qtGrabber = new usNetworkGrabberRF2D();
   qtGrabber->setIPAddress(ip.toStdString());
   qtGrabber->connectToServer();
@@ -71,10 +69,6 @@ int main(int argc, char **argv)
   qtGrabber->initAcquisition(header);
 
   qtGrabber->runAcquisition();
-
-  // Move the grabber object to another thread
-  qtGrabber->moveToThread(grabbingThread);
-  grabbingThread->start();
 
   writer.setSequenceFileName("./elastosequence.xml");
   writer.setImageFileName(std::string("./sequencepreElasto%04d.png"));

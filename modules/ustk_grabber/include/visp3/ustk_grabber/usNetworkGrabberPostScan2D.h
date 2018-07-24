@@ -92,9 +92,6 @@ private:
   std::vector<usFrameGrabbedInfo<usImagePostScan2D<unsigned char> > *> m_outputBuffer;
   bool m_firstFrameAvailable;
 
-  // to manage ptrs switch init
-  bool m_swichOutputInit;
-
   // to manage the recording process
   bool m_recordingOn;
   std::string m_recordingPath;

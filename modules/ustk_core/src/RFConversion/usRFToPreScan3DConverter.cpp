@@ -70,7 +70,7 @@ void usRFToPreScan3DConverter::convert(const usImageRF3D<short int> &rfImage,
       (((int)rfImage.getHeight()) != m_heightRF) || (((int)rfImage.getWidth()) != m_widthRF)) {
     init(rfImage.getHeight(), rfImage.getWidth(), rfImage.getNumberOfFrames());
   }
-  preScanImage.resize(rfImage.getHeight(), rfImage.getWidth() / getDecimationFactor(), rfImage.getNumberOfFrames());
+  preScanImage.resize(rfImage.getHeight() / getDecimationFactor(), rfImage.getWidth(), rfImage.getNumberOfFrames());
   // First we copy the transducer/motor settings
   preScanImage.setImagePreScanSettings(rfImage);
   preScanImage.setAxialResolution(rfImage.getDepth() / preScanImage.getHeight());
@@ -126,8 +126,10 @@ void usRFToPreScan3DConverter::init(int heightRF, int widthRF, int frameNumber)
   // first init
   if (!m_isInit) {
     m_converter = new usRFToPreScan2DConverter[frameNumber];
-    for (int i = 0; i < frameNumber; i++)
+    for (int i = 0; i < frameNumber; i++) {
       m_converter[i].init(widthRF, heightRF);
+      m_converter[i].setDecimationFactor(m_decimationFactor);
+    }
 
     m_isInit = true;
     m_frameNumber = frameNumber;
@@ -143,8 +145,10 @@ void usRFToPreScan3DConverter::init(int heightRF, int widthRF, int frameNumber)
     m_heightRF = heightRF;
     m_widthRF = widthRF;
     m_converter = new usRFToPreScan2DConverter[m_frameNumber];
-    for (int i = 0; i < m_frameNumber; i++)
+    for (int i = 0; i < m_frameNumber; i++) {
       m_converter[i].init(m_widthRF, m_heightRF);
+      m_converter[i].setDecimationFactor(m_decimationFactor);
+    }
   }
 }
 #endif

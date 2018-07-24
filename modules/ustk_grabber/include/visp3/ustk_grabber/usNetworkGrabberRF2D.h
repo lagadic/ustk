@@ -90,9 +90,6 @@ private:
   std::vector<usFrameGrabbedInfo<usImageRF2D<short int> > *> m_outputBuffer;
   bool m_firstFrameAvailable;
 
-  // to manage ptrs switch init
-  bool m_swichOutputInit;
-
   // to manage the recording process
   bool m_recordingOn;
   usMHDSequenceWriter m_sequenceWriter;

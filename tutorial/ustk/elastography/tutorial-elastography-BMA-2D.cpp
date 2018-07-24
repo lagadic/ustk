@@ -26,8 +26,6 @@ int main(int argc, char **argv)
   elastography->setMotionEstimator(usElastography::BMA_TAYLOR);
   elastography->setROI(40, 3200, 50, 500);
 
-  QThread *grabbingThread = new QThread();
-
   usNetworkGrabberRF2D *qtGrabber = new usNetworkGrabberRF2D();
   qtGrabber->setIPAddress("127.0.0.1");
   qtGrabber->connectToServer();
@@ -62,10 +60,6 @@ int main(int argc, char **argv)
   qtGrabber->initAcquisition(header);
 
   qtGrabber->runAcquisition();
-
-  // Move the grabber object to another thread
-  qtGrabber->moveToThread(grabbingThread);
-  grabbingThread->start();
 
   std::cout << "waiting ultrasound initialisation..." << std::endl;
 
