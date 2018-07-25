@@ -59,7 +59,9 @@
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpMatrix.h>
+#if defined(VISP_HAVE_DISPLAY)
 #include <visp3/gui/vpPlot.h>
+#endif
 #include <visp3/core/vpRGBa.h>
 
 #include <visp3/ustk_needle_modeling/usNeedleModelingDisplayTools.h>
@@ -265,6 +267,9 @@ int main(int argc, const char **argv)
     
     vpDisplay *display1 = nullptr;
     vpDisplay *display2 = nullptr;
+#if defined(VISP_HAVE_DISPLAY)
+    vpPlot *statePlot = NULL;
+#endif
 
     switch (opt_dtype)
     {
@@ -325,15 +330,28 @@ int main(int argc, const char **argv)
             break;
     }
 
+    std::cout << "Start test testUsTissueTranslationEstimatorUKF" << std::endl;
+    
+    const int nbNeedles = 6;
+        
     if(opt_display)
     {
         display1->init(I1, 0,0, "XZ");
         display2->init(I2, display1->getWindowXPosition()+display1->getWidth(), display1->getWindowYPosition(), "YZ");
+
+#if defined(VISP_HAVE_DISPLAY)
+        statePlot = new vpPlot;
+        statePlot->init(4);
+        for(int i=0 ; i<4 ; i++) statePlot->initGraph(i,1+nbNeedles);
+        statePlot->setTitle(0, "Tissue position X");
+        statePlot->setTitle(1, "Tissue position Y");
+        statePlot->setTitle(2, "Tissue velocity X");
+        statePlot->setTitle(3, "Tissue velocity Y");
+        statePlot->setLegend(0,0, "Ref");
+        for(int i=0 ; i<nbNeedles ; i++) statePlot->setLegend(0,i+1,[i](){std::ostringstream t;t<<i;return t.str();}());
+#endif
     }
     
-    std::cout << "Start test testUsTissueTranslationEstimatorUKF" << std::endl;
-
-    const int nbNeedles = 6;
     usNeedleInsertionModelRayleighRitzSpline needleRef;
     usNeedleInsertionModelRayleighRitzSpline needle[nbNeedles];
 
@@ -353,25 +371,11 @@ int main(int argc, const char **argv)
     needleRef.setSurfaceAtTip();
     for(int i = 0 ; i<nbNeedles ; i++) needle[i].setSurfaceAtTip();
 
-    vpPlot *statePlot = NULL;
-    if(opt_display)
-    {
-        statePlot = new vpPlot;
-        statePlot->init(4);
-        for(int i=0 ; i<4 ; i++) statePlot->initGraph(i,1+nbNeedles);
-        statePlot->setTitle(0, "Tissue position X");
-        statePlot->setTitle(1, "Tissue position Y");
-        statePlot->setTitle(2, "Tissue velocity X");
-        statePlot->setTitle(3, "Tissue velocity Y");
-        statePlot->setLegend(0,0, "Ref");
-        for(int i=0 ; i<nbNeedles ; i++) statePlot->setLegend(0,i+1,[i](){std::ostringstream t;t<<i;return t.str();}());
-    }
-
     double std_measure_position = 1e-3;
     double std_measure_tip_direction = 1e-3;
     double std_measure_force = 1e-3;
     double std_measure_torque = 1e-3;
-    double std_process_position_only = 1e-3;
+    double std_process_position_only = 1e-4;
     double std_process_position = 1e-7;
     double std_process_velocity = 1e-5;
 
@@ -397,6 +401,8 @@ int main(int argc, const char **argv)
     {
       Kalman[i].setStateDynamicsType(usTissueTranslationEstimatorUKF::CONSTANT_VELOCITY);
       vpMatrix P(6,6,0);
+      P[0][0] = std_process_position*std_process_position;
+      P[1][1] = std_process_position*std_process_position;
       P[3][3] = std_process_velocity*std_process_velocity;
       P[4][4] = std_process_velocity*std_process_velocity;
       Kalman[i].setStateCovarianceMatrix(P);
@@ -405,6 +411,8 @@ int main(int argc, const char **argv)
       
       Kalman[nbNeedles/2+i].setStateDynamicsType(usTissueTranslationEstimatorUKF::CONSTANT_POSITION);
       P.resize(3,3);
+      P[0][0] = std_process_position_only*std_process_position_only;
+      P[1][1] = std_process_position_only*std_process_position_only;
       Kalman[nbNeedles/2+i].setStateCovarianceMatrix(P);
       Kalman[nbNeedles/2+i].setTissuePositionProcessNoiseVariance(std_process_position_only*std_process_position_only);
     }
@@ -434,58 +442,70 @@ int main(int argc, const char **argv)
         {
             needleRef.accessTissue().move(0.0001,0,0,0,0,0);
             needleRef.updateState();
+#if defined(VISP_HAVE_DISPLAY)
             if(opt_display)
             {
                 statePlot->plot(2,0, time, 0.0001);
                 statePlot->plot(3,0, time, 0);
             }
+#endif
         }
         else if(i<200)
         {
             needleRef.accessTissue().move(0,0.0001,0,0,0,0);
             needleRef.updateState();
+#if defined(VISP_HAVE_DISPLAY)
             if(opt_display)
             {
                 statePlot->plot(2,0, time, 0);
                 statePlot->plot(3,0, time, 0.0001);
             }
+#endif
         }
         else if(i<300)
         {
             needleRef.accessTissue().move(-0.0002,0,0,0,0,0);
             needleRef.updateState();
+#if defined(VISP_HAVE_DISPLAY)
             if(opt_display)
             {
                 statePlot->plot(2,0, time, -0.0002);
                 statePlot->plot(3,0, time, 0);
             }
+#endif
         }
         else if(i<400)
         {
             needleRef.accessTissue().move(0,-0.0002,0,0,0,0);
             needleRef.updateState();
+#if defined(VISP_HAVE_DISPLAY)
             if(opt_display)
             {
                 statePlot->plot(2,0, time, 0);
                 statePlot->plot(3,0, time, -0.0002);
             }
+#endif
         }
         else
         {
             needleRef.accessTissue().move(0.0001,0.0001,0,0,0,0);
             needleRef.updateState();
+#if defined(VISP_HAVE_DISPLAY)
             if(opt_display)
             {
                 statePlot->plot(2,0, time, 0.0001);
                 statePlot->plot(3,0, time, 0.0001);
             }
+#endif
         }
         
+#if defined(VISP_HAVE_DISPLAY)
         if(opt_display)
         {
             statePlot->plot(0,0, time, needleRef.accessTissue().getPose()[0]);
             statePlot->plot(1,0, time, needleRef.accessTissue().getPose()[1]);
         }
+#endif
 
         int nbObs = floor(needleRef.getInsertionDepth()/0.005) + 2;
         double step = needleRef.getInsertionDepth()/(nbObs-1);
@@ -516,7 +536,7 @@ int main(int argc, const char **argv)
         {
             Kalman[i].applyStateToNeedle(needle[i]);
             needle[i].updateState();
-            if((vpColVector(needleRef.accessTissue().getPose(), 0,3) - vpColVector(needle[i].accessTissue().getPose(), 0,3)).euclideanNorm() > 0.002)
+            if((vpColVector(needleRef.accessTissue().getPose(), 0,3) - vpColVector(needle[i].accessTissue().getPose(), 0,3)).euclideanNorm() > 0.005)
             {
                 std::cout << "bad estimation for needle " << i << std::endl;
                 return 1;
@@ -533,27 +553,29 @@ int main(int argc, const char **argv)
             {
                 usNeedleModelingDisplayTools::display(needle[i], I1, vpHomogeneousMatrix(0.08, 0.1, 0.2, -M_PI / 2, 0, 0), 3000, 3000);
                 usNeedleModelingDisplayTools::display(needle[i], I2, vpHomogeneousMatrix(0.08, 0.1, 0.2, -2*M_PI / (3*sqrt(3)), 2*M_PI / (3*sqrt(3)), 2*M_PI / (3*sqrt(3))), 3000, 3000);
-
+#if defined(VISP_HAVE_DISPLAY)
                 statePlot->plot(0,1+i, time, needle[i].accessTissue().getPose()[0]);
                 statePlot->plot(1,1+i, time, needle[i].accessTissue().getPose()[1]);
+#endif
             }
+#if defined(VISP_HAVE_DISPLAY)
             for(int i=0 ; i<nbNeedles/2 ; i++)
             {
                 statePlot->plot(2,1+i, time, Kalman[i].getState()[3]);
                 statePlot->plot(3,1+i, time, Kalman[i].getState()[4]);
             }
+#endif
             vpDisplay::flush(I1);
             vpDisplay::flush(I2);
         }
         time += 1;
     }
     
-    if(opt_display)
-    {
-      delete display1;
-      delete display2;
-      delete statePlot;
-    }
+    if (display1) delete display1;
+    if (display2) delete display2;
+#if defined(VISP_HAVE_DISPLAY)
+    if (statePlot) delete statePlot;
+#endif
 
     return 0;
 }

@@ -32,7 +32,7 @@
 
 #include <visp3/ustk_needle_modeling/usUnscentedKalmanFilter.h>
 
-#if 0&&defined(VISP_HAVE_EIGEN3)
+#if defined(VISP_HAVE_EIGEN3)
 #include <Eigen/Cholesky>
 #elif defined(VISP_HAVE_LAPACK)
 #ifdef VISP_HAVE_LAPACK_BUILT_IN
@@ -50,7 +50,7 @@ vpMatrix root(const vpMatrix &M)
 
     vpMatrix sqrtM(M.getRows(), M.getCols());
     
-#if 0&&defined(VISP_HAVE_EIGEN3)
+#if defined(VISP_HAVE_EIGEN3)
     Eigen::MatrixXd Meigen(M.getRows(),M.getCols());
 
     for(unsigned int i =0 ; i<M.getRows() ; i++)
