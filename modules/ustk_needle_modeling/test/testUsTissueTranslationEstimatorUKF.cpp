@@ -56,7 +56,6 @@
 #include <visp3/io/vpParseArgv.h>
 
 #include <visp3/core/vpColVector.h>
-#include <visp3/core/vpGaussRand.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpMatrix.h>
@@ -372,7 +371,7 @@ int main(int argc, const char **argv)
     double std_measure_tip_direction = 1e-3;
     double std_measure_force = 1e-3;
     double std_measure_torque = 1e-3;
-    double std_process_position_only = 1e-4;
+    double std_process_position_only = 1e-3;
     double std_process_position = 1e-7;
     double std_process_velocity = 1e-5;
 
@@ -398,8 +397,8 @@ int main(int argc, const char **argv)
     {
       Kalman[i].setStateDynamicsType(usTissueTranslationEstimatorUKF::CONSTANT_VELOCITY);
       vpMatrix P(6,6,0);
-      P[3][3] = 0.0001*0.0001;
-      P[4][4] = 0.0001*0.0001;
+      P[3][3] = std_process_velocity*std_process_velocity;
+      P[4][4] = std_process_velocity*std_process_velocity;
       Kalman[i].setStateCovarianceMatrix(P);
       Kalman[i].setTissuePositionProcessNoiseVariance(std_process_position*std_process_position);
       Kalman[i].setTissueVelocityProcessNoiseVariance(std_process_velocity*std_process_velocity);
@@ -417,11 +416,6 @@ int main(int argc, const char **argv)
       Kalman[i+2].setMeasureType(usTissueTranslationEstimatorUKF::BASE_FORCE_TORQUE);
     }
       
-    vpGaussRand GR_points(std_measure_position,0,(long)vpTime::measureTimeMs());
-    vpGaussRand GR_tip_dir(std_measure_tip_direction,0,(long)vpTime::measureTimeMs());
-    vpGaussRand GR_force(std_measure_force,0,(long)vpTime::measureTimeMs());
-    vpGaussRand GR_torque(std_measure_torque,0,(long)vpTime::measureTimeMs());
-
     double time = 0;
     for(int i=0; i<500 ;i++)
     {
@@ -500,25 +494,14 @@ int main(int argc, const char **argv)
         for(int j=0 ; j<nbObs ; j++)
         {
             vpColVector p = needleRef.accessNeedle().getNeedlePoint(needleRef.accessNeedle().getParametricLength()-j*step);
-            for(int dim=0 ; dim<3 ; dim++) p[dim] += GR_points();
             CP.insert(3*j, p);
         }
         
         vpColVector tipMeasures(6);
         tipMeasures.insert(0, needleRef.accessNeedle().getTipPosition());
         tipMeasures.insert(3, needleRef.accessNeedle().getTipDirection());
-        for(int dim=0 ; dim<3 ; dim++)
-        { 
-            tipMeasures[dim] += GR_points();
-            tipMeasures[3+dim] += GR_tip_dir();
-        }
         
         vpColVector baseForceMeasures(needleRef.accessNeedle().getBaseStaticTorsor());
-        for(int dim=0 ; dim<3 ; dim++)
-        { 
-            baseForceMeasures[dim] += GR_force();
-            baseForceMeasures[3+dim] += GR_torque();
-        }
 
         for(int i=0 ; i<nbNeedles ; i++) Kalman[i].setPropagationTime(1.);
         
