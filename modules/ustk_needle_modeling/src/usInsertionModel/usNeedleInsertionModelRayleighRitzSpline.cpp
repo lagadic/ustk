@@ -2255,7 +2255,7 @@ void usNeedleInsertionModelRayleighRitzSpline::solveSegmentsParametersDense()
 
           for (int dimj = 0; dimj < 3; dimj++)
             for (int dimk = 0; dimk < 3; dimk++)
-              M[line + 3 * j + dimj][startIndex + 3 * k + dimk] = coefMat[dimj][dimk];
+              M[line + 3 * j + dimj][startIndex + 3 * k + dimk] += coefMat[dimj][dimk];
         }
       }
 
