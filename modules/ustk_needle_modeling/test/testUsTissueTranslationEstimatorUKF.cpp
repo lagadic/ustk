@@ -40,8 +40,6 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_LAPACK)
-
 #include <iostream>
 #include <stdlib.h>
 #include <string>
@@ -271,63 +269,66 @@ int main(int argc, const char **argv)
     vpPlot *statePlot = NULL;
 #endif
 
-    switch (opt_dtype)
+    if(opt_display)
     {
-        case vpX11:
-            std::cout << "Requested X11 display functionnalities..." << std::endl;
+      switch (opt_dtype)
+      {
+          case vpX11:
+              std::cout << "Requested X11 display functionnalities..." << std::endl;
 #if defined VISP_HAVE_X11
-            display1 = new vpDisplayX;
-            display2 = new vpDisplayX;
+              display1 = new vpDisplayX;
+              display2 = new vpDisplayX;
 #else
-            std::cout << "  Sorry, X11 video device is not available.\n";
-            std::cout << "Use \"" << argv[0] << " -l\" to print the list of available devices.\n";
-            return 0;
+              std::cout << "  Sorry, X11 video device is not available.\n";
+              std::cout << "Use \"" << argv[0] << " -l\" to print the list of available devices.\n";
+              return 0;
 #endif
-            break;
-        case vpGTK:
-            std::cout << "Requested GTK display functionnalities..." << std::endl;
+              break;
+          case vpGTK:
+              std::cout << "Requested GTK display functionnalities..." << std::endl;
 #if defined VISP_HAVE_GTK
-            display1 = new vpDisplayGTK;
-            display2 = new vpDisplayGTK;
+              display1 = new vpDisplayGTK;
+              display2 = new vpDisplayGTK;
 #else
-            std::cout << "  Sorry, GTK video device is not available.\n";
-            std::cout << "Use \"" << argv[0] << " -l\" to print the list of available devices.\n";
-            return 0;
+              std::cout << "  Sorry, GTK video device is not available.\n";
+              std::cout << "Use \"" << argv[0] << " -l\" to print the list of available devices.\n";
+              return 0;
 #endif
-            break;
-        case vpGDI:
-            std::cout << "Requested GDI display functionnalities..." << std::endl;
+              break;
+          case vpGDI:
+              std::cout << "Requested GDI display functionnalities..." << std::endl;
 #if defined VISP_HAVE_GDI
-            display1 = new vpDisplayGDI;
-            display2 = new vpDisplayGDI;
+              display1 = new vpDisplayGDI;
+              display2 = new vpDisplayGDI;
 #else
-            std::cout << "  Sorry, GDI video device is not available.\n";
-            std::cout << "Use \"" << argv[0] << " -l\" to print the list of available devices.\n";
-            return 0;
+              std::cout << "  Sorry, GDI video device is not available.\n";
+              std::cout << "Use \"" << argv[0] << " -l\" to print the list of available devices.\n";
+              return 0;
 #endif
-            break;
-        case vpD3D:
-            std::cout << "Requested D3D display functionnalities..." << std::endl;
+              break;
+          case vpD3D:
+              std::cout << "Requested D3D display functionnalities..." << std::endl;
 #if defined VISP_HAVE_D3D9
-            display1 = new vpDisplayD3D;
-            display2 = new vpDisplayD3D;
+              display1 = new vpDisplayD3D;
+              display2 = new vpDisplayD3D;
 #else
-            std::cout << "  Sorry, D3D video device is not available.\n";
-            std::cout << "Use \"" << argv[0] << " -l\" to print the list of available devices.\n";
-            return 0;
+              std::cout << "  Sorry, D3D video device is not available.\n";
+              std::cout << "Use \"" << argv[0] << " -l\" to print the list of available devices.\n";
+              return 0;
 #endif
-            break;
-        case vpCV:
-            std::cout << "Requested OpenCV display functionnalities..." << std::endl;
+              break;
+          case vpCV:
+              std::cout << "Requested OpenCV display functionnalities..." << std::endl;
 #if defined(VISP_HAVE_OPENCV)
-            display1 = new vpDisplayOpenCV;
-            display2 = new vpDisplayOpenCV;
+              display1 = new vpDisplayOpenCV;
+              display2 = new vpDisplayOpenCV;
 #else
-            std::cout << "  Sorry, OpenCV video device is not available.\n";
-            std::cout << "Use \"" << argv[0] << " -l\" to print the list of available devices.\n";
-            return 0;
+              std::cout << "  Sorry, OpenCV video device is not available.\n";
+              std::cout << "Use \"" << argv[0] << " -l\" to print the list of available devices.\n";
+              return 0;
 #endif
-            break;
+              break;
+      }
     }
 
     std::cout << "Start test testUsTissueTranslationEstimatorUKF" << std::endl;
@@ -579,15 +580,3 @@ int main(int argc, const char **argv)
 
     return 0;
 }
-
-#else
-
-#include <iostream>
-
-int main()
-{
-  std::cout << "testUSTissueTranslationEstimatorUKF cannot be run without Eigen3 or Lapack" << std::endl;
-  return 0;
-}
-
-#endif

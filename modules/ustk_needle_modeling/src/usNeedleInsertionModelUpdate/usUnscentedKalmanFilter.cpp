@@ -34,13 +34,6 @@
 
 #if defined(VISP_HAVE_EIGEN3)
 #include <Eigen/Cholesky>
-#elif defined(VISP_HAVE_LAPACK)
-#ifdef VISP_HAVE_LAPACK_BUILT_IN
-typedef long int integer;
-#else
-typedef int integer;
-#endif
-extern "C" void dpotrf_(char *uplo, integer *n, double *a, integer *lda, integer *info);
 #endif
 
 
@@ -70,17 +63,15 @@ vpMatrix root(const vpMatrix &M)
             sqrtM[i][j] = sqrtMeigen(i,j);
         }
     }
-#elif defined(VISP_HAVE_LAPACK)
+#else
       vpMatrix A(M);
       vpColVector w;
       vpMatrix V;
-      A.svdLapack(w,V);
+      A.svd(w,V);
       for(unsigned int i=0 ; i<w.size() ; i++)
       {
           if(w[i] > 1e-8 * w[0]) sqrtM.insert(sqrt(w[i])*A.getCol(i), 0,i);
       }
-#else
-    throw vpException(vpException::notImplementedError, "usUnscentedKalmanFilter: not implemented without Eigen3 or Lapack");
 #endif
     return sqrtM;
 }
