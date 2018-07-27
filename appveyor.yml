@@ -78,4 +78,4 @@ build_script:
   - dir %VISP_DLL_DIR%
   - if "%CMAKE_GENERATOR%"=="Visual Studio 14 2015 Win64" ctest -VV
   # Issue with exception on MinGW AppVeyor
-  - if "%CMAKE_GENERATOR%"=="MinGW Makefiles" ctest -E testMatrixException
+  - if "%CMAKE_GENERATOR%"=="MinGW Makefiles" ctest -VV -E testMatrixException
