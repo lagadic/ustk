@@ -32,8 +32,10 @@
 
 #include <visp3/ustk_needle_modeling/usUnscentedKalmanFilter.h>
 
+#include <iostream>
+
 #if defined(VISP_HAVE_EIGEN3)
-#include <Eigen/Cholesky>
+#include <eigen3/Eigen/Cholesky>
 #endif
 
 
@@ -67,7 +69,17 @@ vpMatrix root(const vpMatrix &M)
       vpMatrix A(M);
       vpColVector w;
       vpMatrix V;
-      A.svd(w,V);
+      try
+      {
+          A.svd(w,V);
+      }
+      catch(std::exception &e)
+      {
+        vpMatrix I;
+        I.eye(M.getCols());
+        A = M + std::numeric_limits<double>::epsilon() * I;
+        A.svd(w,V);
+      }
       for(unsigned int i=0 ; i<w.size() ; i++)
       {
           if(w[i] > 1e-8 * w[0]) sqrtM.insert(sqrt(w[i])*A.getCol(i), 0,i);
@@ -314,7 +326,7 @@ void usUnscentedKalmanFilter::computeMeasureNoiseCovarianceMatrix()
     
 }
 
-void usUnscentedKalmanFilter::generateSigmaPoints()
+bool usUnscentedKalmanFilter::generateSigmaPoints()
 {
     int augmentedStateDimension = 0;
     vpMatrix augmentedStateCovarianceMatrix;
@@ -368,7 +380,17 @@ void usUnscentedKalmanFilter::generateSigmaPoints()
         }
     }
     
-    vpMatrix rootP = root(augmentedStateCovarianceMatrix);
+    vpMatrix rootP;
+    
+    try
+    {
+        rootP = root(augmentedStateCovarianceMatrix);
+    }
+    catch (std::exception &e)
+    {
+        std::cout << "usUnscentedKalmanFilter::generateSigmaPoints failed: " << e.what() << std::endl;
+        return false;
+    }
     
     double alpha = 0;
     const double beta = 2;
@@ -428,19 +450,59 @@ void usUnscentedKalmanFilter::generateSigmaPoints()
         m_sigmaPointsMeanWeights[i] = m_sigmaPointsMeanWeights[i-1];
         m_sigmaPointsCovarianceWeights[i] = m_sigmaPointsCovarianceWeights[i-1];
     }
+    
+    return true;
 }
 
-void usUnscentedKalmanFilter::computePropagatedSigmaPoints()
+bool usUnscentedKalmanFilter::computePropagatedSigmaPoints()
 {
     m_sigmaPointsPropagated.resize(m_sigmaPointsInit.getRows(), m_sigmaPointsInit.getCols());
-    for(unsigned int i=0 ; i<m_sigmaPointsInit.getCols() ; i++) m_sigmaPointsPropagated.insert(this->propagateSigmaPoint(m_sigmaPointsInit.getCol(i)), 0,i);
+    for(unsigned int i=0 ; i<m_sigmaPointsInit.getCols() ; i++)
+    {
+        vpColVector propagatedSigmaPoint;
+        try
+        {
+            propagatedSigmaPoint = this->propagateSigmaPoint(m_sigmaPointsInit.getCol(i));
+        }
+        catch(std::exception &e)
+        {
+            std::cout << "usUnscentedKalmanFilter::computePropagatedSigmaPoints failed: " << e.what() << std::endl;
+            return false;
+        }
+        m_sigmaPointsPropagated.insert(propagatedSigmaPoint, 0,i);
+    }
+    return true;
 }
 
-void usUnscentedKalmanFilter::computeSigmaMeasures()
+bool usUnscentedKalmanFilter::computeSigmaMeasures()
 {
     m_sigmaPointsMeasure.resize(m_measureDimension, m_sigmaPointsPropagated.getCols());
-    vpColVector measureCenter(this->computeMeasureFromSigmaPoint(this->stateLog(m_state, m_state)));
-    for(unsigned int i=0 ; i<m_sigmaPointsPropagated.getCols() ; i++) m_sigmaPointsMeasure.insert(this->measureLog(this->computeMeasureFromSigmaPoint(m_sigmaPointsPropagated.getCol(i)), measureCenter), 0,i);
+    vpColVector measureCenter;
+    try
+    {
+        measureCenter = this->computeMeasureFromSigmaPoint(this->stateLog(m_state, m_state));
+    }
+    catch(std::exception &e)
+    {
+        std::cout << "usUnscentedKalmanFilter::computeSigmaMeasures failed: " << e.what() << std::endl;
+        return false;
+    }
+    
+    for(unsigned int i=0 ; i<m_sigmaPointsPropagated.getCols() ; i++)
+    {
+        vpColVector sigmaMeasure;
+        try
+        {
+            sigmaMeasure = this->computeMeasureFromSigmaPoint(m_sigmaPointsPropagated.getCol(i));
+        }
+        catch(std::exception &e)
+        {
+            std::cout << "usUnscentedKalmanFilter::computeSigmaMeasures failed: " << e.what() << std::endl;
+            return false;
+        }
+        m_sigmaPointsMeasure.insert(this->measureLog(sigmaMeasure, measureCenter), 0,i);
+    }
+    return true;
 }
 
 void usUnscentedKalmanFilter::computeMeansAndCovarianceMatricesFromSigmaPoints()
@@ -489,15 +551,24 @@ void usUnscentedKalmanFilter::computeMeansAndCovarianceMatricesFromSigmaPoints()
     }
 }
 
-void usUnscentedKalmanFilter::updateState()
+bool usUnscentedKalmanFilter::updateState()
 {
-    vpMatrix kalmanGain = m_stateMeasureSigmaCovarianceMatrix * m_measureSigmaCovarianceMatrix.pseudoInverse();
+    try
+    {
+        vpMatrix kalmanGain = m_stateMeasureSigmaCovarianceMatrix * m_measureSigmaCovarianceMatrix.pseudoInverse();
 
-    vpColVector Innov = this->measureLog(m_measure, this->computeMeasureFromSigmaPoint(this->stateLog(m_state, m_state))) - m_measureSigmaMean;
+        vpColVector Innov = this->measureLog(m_measure, this->computeMeasureFromSigmaPoint(this->stateLog(m_state, m_state))) - m_measureSigmaMean;
 
-    m_state = this->stateExp(m_stateSigmaMean + kalmanGain * Innov, m_state);
+        m_state = this->stateExp(m_stateSigmaMean + kalmanGain * Innov, m_state);
 
-    m_stateCovarianceMatrix = m_stateSigmaCovarianceMatrix - kalmanGain * m_measureSigmaCovarianceMatrix * kalmanGain.t();
+        m_stateCovarianceMatrix = m_stateSigmaCovarianceMatrix - kalmanGain * m_measureSigmaCovarianceMatrix * kalmanGain.t();
+    }
+    catch (std::exception &e)
+    {
+        std::cout << "usUnscentedKalmanFilter::updateState failed: " << e.what() << std::endl;
+        return false;
+    }
+    return true;
 }
 
 bool usUnscentedKalmanFilter::filter(const vpColVector &measure)
@@ -508,12 +579,12 @@ bool usUnscentedKalmanFilter::filter(const vpColVector &measure)
     
     if(m_computeProcessNoiseCovarianceMatrixAutomatically) this->computeProcessNoiseCovarianceMatrix();
     if(m_computeMeasureNoiseCovarianceMatrixAutomatically) this->computeMeasureNoiseCovarianceMatrix();
-    this->generateSigmaPoints();
-    this->computePropagatedSigmaPoints();
-    this->computeSigmaMeasures();
+    if(!this->generateSigmaPoints()) return false;
+    if(!this->computePropagatedSigmaPoints()) return false;
+    if(!this->computeSigmaMeasures()) return false;
     this->computeMeansAndCovarianceMatricesFromSigmaPoints();
     
-    this->updateState();
+    if(!this->updateState()) return false;
     
     return true;
 }

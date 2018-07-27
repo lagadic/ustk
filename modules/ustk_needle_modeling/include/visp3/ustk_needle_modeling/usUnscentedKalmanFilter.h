@@ -134,11 +134,11 @@ public:
     virtual bool checkConsistency(const vpColVector &measure);
     virtual void computeProcessNoiseCovarianceMatrix();
     virtual void computeMeasureNoiseCovarianceMatrix();
-    void generateSigmaPoints();
-    void computePropagatedSigmaPoints();
-    void computeSigmaMeasures();
+    bool generateSigmaPoints();
+    bool computePropagatedSigmaPoints();
+    bool computeSigmaMeasures();
     void computeMeansAndCovarianceMatricesFromSigmaPoints();
-    void updateState();
+    bool updateState();
     
     bool filter(const vpColVector &measure);
     
