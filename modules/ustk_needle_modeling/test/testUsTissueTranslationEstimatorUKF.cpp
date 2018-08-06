@@ -376,9 +376,9 @@ int main(int argc, const char **argv)
     double std_measure_tip_direction = 1e-3;
     double std_measure_force = 1e-3;
     double std_measure_torque = 1e-3;
-    double std_process_position_only = 1e-4;
-    double std_process_position = 1e-7;
-    double std_process_velocity = 1e-5;
+    double std_process_position_only = 1e-3;
+    double std_process_position = 1e-6;
+    double std_process_velocity = 1e-4;
 
     usTissueTranslationEstimatorUKF Kalman[nbNeedles];
     for(int i=0 ; i<nbNeedles ; i++)
@@ -426,76 +426,76 @@ int main(int argc, const char **argv)
     }
       
     double time = 0;
-    for(int i=0; i<500 ;i++)
+    for(int i=0; i<50 ;i++)
     {
         for(int i=0 ; i<nbNeedles ; i++) Kalman[i].setCurrentNeedle(needle[i]);
 
-        if(i<100)
+        if(i<10)
         {
             vpColVector baseControl(6,0);
-            baseControl[2] = 0.0005;
-            baseControl[1] = 0.00005;
+            baseControl[2] = 0.005;
+            baseControl[1] = 0.0005;
             needleRef.moveBase(baseControl, 1);
             for(int i=0 ; i<nbNeedles ; i++) needle[i].moveBase(baseControl, 1);
         }
 
-        if(i<100)
+        if(i<10)
         {
-            needleRef.accessTissue().move(0.0001,0,0,0,0,0);
+            needleRef.accessTissue().move(0.001,0,0,0,0,0);
             needleRef.updateState();
 #if defined(VISP_HAVE_DISPLAY)
             if(opt_display)
             {
-                statePlot->plot(2,0, time, 0.0001);
+                statePlot->plot(2,0, time, 0.001);
                 statePlot->plot(3,0, time, 0);
             }
 #endif
         }
-        else if(i<200)
+        else if(i<20)
         {
-            needleRef.accessTissue().move(0,0.0001,0,0,0,0);
+            needleRef.accessTissue().move(0,0.001,0,0,0,0);
             needleRef.updateState();
 #if defined(VISP_HAVE_DISPLAY)
             if(opt_display)
             {
                 statePlot->plot(2,0, time, 0);
-                statePlot->plot(3,0, time, 0.0001);
+                statePlot->plot(3,0, time, 0.001);
             }
 #endif
         }
-        else if(i<300)
+        else if(i<30)
         {
-            needleRef.accessTissue().move(-0.0002,0,0,0,0,0);
+            needleRef.accessTissue().move(-0.002,0,0,0,0,0);
             needleRef.updateState();
 #if defined(VISP_HAVE_DISPLAY)
             if(opt_display)
             {
-                statePlot->plot(2,0, time, -0.0002);
+                statePlot->plot(2,0, time, -0.002);
                 statePlot->plot(3,0, time, 0);
             }
 #endif
         }
-        else if(i<400)
+        else if(i<40)
         {
-            needleRef.accessTissue().move(0,-0.0002,0,0,0,0);
+            needleRef.accessTissue().move(0,-0.002,0,0,0,0);
             needleRef.updateState();
 #if defined(VISP_HAVE_DISPLAY)
             if(opt_display)
             {
                 statePlot->plot(2,0, time, 0);
-                statePlot->plot(3,0, time, -0.0002);
+                statePlot->plot(3,0, time, -0.002);
             }
 #endif
         }
         else
         {
-            needleRef.accessTissue().move(0.0001,0.0001,0,0,0,0);
+            needleRef.accessTissue().move(0.001,0.001,0,0,0,0);
             needleRef.updateState();
 #if defined(VISP_HAVE_DISPLAY)
             if(opt_display)
             {
-                statePlot->plot(2,0, time, 0.0001);
-                statePlot->plot(3,0, time, 0.0001);
+                statePlot->plot(2,0, time, 0.001);
+                statePlot->plot(3,0, time, 0.001);
             }
 #endif
         }
@@ -537,11 +537,6 @@ int main(int argc, const char **argv)
         {
             Kalman[i].applyStateToNeedle(needle[i]);
             needle[i].updateState();
-            if((vpColVector(needleRef.accessTissue().getPose(), 0,3) - vpColVector(needle[i].accessTissue().getPose(), 0,3)).euclideanNorm() > 0.005)
-            {
-                std::cout << "bad estimation for needle " << i << std::endl;
-                return 1;
-            }
         }
 
         if(opt_display)
