@@ -259,8 +259,10 @@ int main(int argc, const char **argv)
     
     vpDisplay *display = nullptr;
 
-    switch (opt_dtype)
+    if(opt_display)
     {
+      switch (opt_dtype)
+      {
         case vpX11:
             std::cout << "Requested X11 display functionnalities..." << std::endl;
 #if defined VISP_HAVE_X11
@@ -311,6 +313,7 @@ int main(int argc, const char **argv)
             return 0;
 #endif
             break;
+      }
     }
 
     if(opt_display) display->init(I);
@@ -347,23 +350,23 @@ int main(int argc, const char **argv)
     usNeedleInsertionModelRayleighRitzSpline n1(n);
     n1.moveBaseWorldFrame(0.01,0,0,0,0,0);
     
-    for(int i=0 ; i<3000 ; i++)
+    for(int i=0 ; i<300 ; i++)
     {        
-        if(i > 500 && i < 1000)
+        if(i > 50 && i < 100)
         {
-            n1.accessNeedle().setFullLength(n1.accessNeedle().getFullLength()+0.00002);
+            n1.accessNeedle().setFullLength(n1.accessNeedle().getFullLength()+0.0002);
             n1.updateState();
         }
         
-        if(i > 500)
+        if(i > 50)
         {
-            dynamic_cast<usNeedleTipActuated&>(n.accessNeedleTip()).setTipAngleDeg(0.1*(i%400));            
-            dynamic_cast<usNeedleTipActuated&>(n.accessNeedleTip()).setSteeringAngleDeg(i%360);
+            dynamic_cast<usNeedleTipActuated&>(n.accessNeedleTip()).setTipAngleDeg(0.1*(i%40));            
+            dynamic_cast<usNeedleTipActuated&>(n.accessNeedleTip()).setSteeringAngleDeg(i%36);
             n.updateState();
         }
 
-        n.moveBase(0,0,0.0001,0,0,0.01);
-        n1.moveBase(0,0,0.0001,0,0,0.01);
+        n.moveBase(0,0,0.001,0,0,0.1);
+        n1.moveBase(0,0,0.001,0,0,0.1);
         
         if(opt_display)
         {
