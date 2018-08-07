@@ -1243,6 +1243,11 @@ void usNeedleInsertionModelVirtualSprings::solveSegmentsParametersOpenCV()
 
   int line = 0;
   int col = 0;
+  
+  double EI = m_needle.getEI();
+  vpPoseVector basePose(m_needle.getBasePose());
+  vpHomogeneousMatrix worldMbase(m_needle.getWorldMbase());
+  vpHomogeneousMatrix worldMtip(m_needle.getWorldMtip());
 
   // Continuity
   for (int n = 0; n < nbSeg - 1; n++) {
@@ -1251,31 +1256,31 @@ void usNeedleInsertionModelVirtualSprings::solveSegmentsParametersOpenCV()
     for (int dim = 0; dim < 3; dim++) {
       // Order 0 (continuity) : 3 * (nbSeg-1) constraints
       col = 12 * n + 4 * dim;
-      M.at<double>(line, col) = s * s * s;
-      M.at<double>(line, col + 1) = s * s;
-      M.at<double>(line, col + 2) = s;
-      M.at<double>(line, col + 3) = 1;
+      M.at<double>(line, col) = 1;
+      M.at<double>(line, col + 1) = s;
+      M.at<double>(line, col + 2) = s * s;
+      M.at<double>(line, col + 3) = s * s * s;
 
       col = 12 * (n + 1) + 4 * dim;
-      M.at<double>(line, col) = 0;
+      M.at<double>(line, col) = -1;
       M.at<double>(line, col + 1) = 0;
       M.at<double>(line, col + 2) = 0;
-      M.at<double>(line, col + 3) = -1;
+      M.at<double>(line, col + 3) = 0;
 
       line++;
 
       // Order 1 (continuity of first derivative) : 3 * (nbSeg-1) constraints
       col = 12 * n + 4 * dim;
 
-      M.at<double>(line, col) = 3 * s * s;
-      M.at<double>(line, col + 1) = 2 * s;
-      M.at<double>(line, col + 2) = 1;
-      M.at<double>(line, col + 3) = 0;
+      M.at<double>(line, col) = 0;
+      M.at<double>(line, col + 1) = 1;
+      M.at<double>(line, col + 2) = 2 * s;
+      M.at<double>(line, col + 3) = 3 * s * s;
 
       col = 12 * (n + 1) + 4 * dim;
       M.at<double>(line, col) = 0;
-      M.at<double>(line, col + 1) = 0;
-      M.at<double>(line, col + 2) = -1;
+      M.at<double>(line, col + 1) = -1;
+      M.at<double>(line, col + 2) = 0;
       M.at<double>(line, col + 3) = 0;
 
       line++;
@@ -1283,15 +1288,15 @@ void usNeedleInsertionModelVirtualSprings::solveSegmentsParametersOpenCV()
       // Order 2 (continuity of second derivative) : 3 * (nbSeg-1) constraints
       col = 12 * n + 4 * dim;
 
-      M.at<double>(line, col) = 6 * s;
-      M.at<double>(line, col + 1) = 2;
-      M.at<double>(line, col + 2) = 0;
-      M.at<double>(line, col + 3) = 0;
+      M.at<double>(line, col) = 0;
+      M.at<double>(line, col + 1) = 0;
+      M.at<double>(line, col + 2) = 2;
+      M.at<double>(line, col + 3) = 6 * s;
 
       col = 12 * (n + 1) + 4 * dim;
       M.at<double>(line, col) = 0;
-      M.at<double>(line, col + 1) = -2;
-      M.at<double>(line, col + 2) = 0;
+      M.at<double>(line, col + 1) = 0;
+      M.at<double>(line, col + 2) = -2;
       M.at<double>(line, col + 3) = 0;
 
       line++;
@@ -1303,44 +1308,42 @@ void usNeedleInsertionModelVirtualSprings::solveSegmentsParametersOpenCV()
 
   if (m_needle.getNbSegments() > 1 && m_IsInserting) {
     vpColVector xtip(3);
-    xtip[0] = m_needle.getWorldMtip()[0][0];
-    xtip[1] = m_needle.getWorldMtip()[1][0];
-    xtip[2] = m_needle.getWorldMtip()[2][0];
+    xtip[0] = worldMtip[0][0];
+    xtip[1] = worldMtip[1][0];
+    xtip[2] = worldMtip[2][0];
 
     vpColVector z = m_springs.back().getDirection();
     vpColVector y = vpColVector::crossProd(z, xtip);
     y.normalize();
-    tipForceVector = y;
-    tipMomentVector = y;
+    tipForceVector = -y;
+    tipMomentVector = -y;
 
     tipForceVector *= m_tipForce;
     tipMomentVector *= m_tipMoment;
   }
 
-  double EI = m_needle.getEI();
-
   for (int dim = 0; dim < 3; dim++) {
     // Base conditions : 6 constraints
     col = 4 * dim;
 
-    M.at<double>(line, col + 3) = 1;
-    b.at<double>(line, 0) = m_needle.getBasePosition()[dim];
+    M.at<double>(line, col) = 1;
+    b.at<double>(line, 0) = basePose[dim];
     line++;
 
-    M.at<double>(line, col + 2) = 1;
-    b.at<double>(line, 0) = m_needle.getBaseDirection()[dim];
+    M.at<double>(line, col + 1) = 1;
+    b.at<double>(line, 0) = worldMbase[dim][2];
     line++;
 
     // Tip conditions : 6 constraints
     col = 12 * (nbSeg - 1) + 4 * dim;
 
-    M.at<double>(line, col) = 6 * EI;
+    M.at<double>(line, col + 3) = 6 * EI;
     b.at<double>(line, 0) = -tipForceVector[dim];
 
     line++;
 
-    M.at<double>(line, col) = 6 * m_needle.accessLastSegment().getParametricLength();
-    M.at<double>(line, col + 1) = 2;
+    M.at<double>(line, col + 3) = 6 * m_needle.accessLastSegment().getParametricLength();
+    M.at<double>(line, col + 2) = 2;
     b.at<double>(line) = -tipMomentVector[dim];
     line++;
   }
@@ -1386,24 +1389,24 @@ void usNeedleInsertionModelVirtualSprings::solveSegmentsParametersOpenCV()
 
     col = 12 * n;
 
-    M.at<double>(line, col) = 6 * EI * n1x_n;
-    M.at<double>(line, col + 4) = 6 * EI * n1y_n;
-    M.at<double>(line, col + 8) = 6 * EI * n1z_n;
-    M.at<double>(line + 1, col) = 6 * EI * n2x_n;
-    M.at<double>(line + 1, col + 4) = 6 * EI * n2y_n;
-    M.at<double>(line + 1, col + 8) = 6 * EI * n2z_n;
+    M.at<double>(line, col + 3) = 6 * EI * n1x_n;
+    M.at<double>(line, col + 3 + 4) = 6 * EI * n1y_n;
+    M.at<double>(line, col + 3 + 8) = 6 * EI * n1z_n;
+    M.at<double>(line + 1, col + 3) = 6 * EI * n2x_n;
+    M.at<double>(line + 1, col + 3 + 4) = 6 * EI * n2y_n;
+    M.at<double>(line + 1, col + 3 + 8) = 6 * EI * n2z_n;
     for (int i = 0; i < nbSeg - 1 - n; i++) {
       double K = m_springs.at(n + i).getStiffness();
       vpColVector p = m_springs.at(n + i).getPosition();
 
-      M.at<double>(line, col + 12 * (i + 1) + 3) = -K * n1x_n;
-      M.at<double>(line, col + 12 * (i + 1) + 3 + 4) = -K * n1y_n;
-      M.at<double>(line, col + 12 * (i + 1) + 3 + 8) = -K * n1z_n;
+      M.at<double>(line, col + 12 * (i + 1)) = -K * n1x_n;
+      M.at<double>(line, col + 12 * (i + 1) + 4) = -K * n1y_n;
+      M.at<double>(line, col + 12 * (i + 1) + 8) = -K * n1z_n;
       b.at<double>(line, 0) += -K * (p[0] * n1x_n + p[1] * n1y_n + p[2] * n1z_n);
 
-      M.at<double>(line + 1, col + 12 * (i + 1) + 3) = -K * n2x_n;
-      M.at<double>(line + 1, col + 12 * (i + 1) + 3 + 4) = -K * n2y_n;
-      M.at<double>(line + 1, col + 12 * (i + 1) + 3 + 8) = -K * n2z_n;
+      M.at<double>(line + 1, col + 12 * (i + 1)) = -K * n2x_n;
+      M.at<double>(line + 1, col + 12 * (i + 1) + 4) = -K * n2y_n;
+      M.at<double>(line + 1, col + 12 * (i + 1) + 8) = -K * n2z_n;
       b.at<double>(line + 1, 0) += -K * (p[0] * n2x_n + p[1] * n2y_n + p[2] * n2z_n);
     }
     b.at<double>(line, 0) += -vpColVector::dotProd(tipForceVector, n1m_n);
@@ -1414,9 +1417,9 @@ void usNeedleInsertionModelVirtualSprings::solveSegmentsParametersOpenCV()
     col = 12 * (n + 1);
     double dotProd = dx_n * px_n + dy_n * py_n + dz_n * pz_n;
 
-    M.at<double>(line, col + 0 + 3) = dx_n;
-    M.at<double>(line, col + 4 + 3) = dy_n;
-    M.at<double>(line, col + 8 + 3) = dz_n;
+    M.at<double>(line, col) = dx_n;
+    M.at<double>(line, col + 4) = dy_n;
+    M.at<double>(line, col + 8) = dz_n;
     b.at<double>(line, 0) = dotProd;
     line++;
   }
@@ -1441,7 +1444,7 @@ void usNeedleInsertionModelVirtualSprings::solveSegmentsParametersOpenCV()
   }
 
   // Compute new tip pose
-  vpRotationMatrix worldRbase(m_needle.getWorldMbase());
+  vpRotationMatrix worldRbase(worldMbase);
 
   vpRotationMatrix worldRtip(worldRbase);
 
@@ -1490,6 +1493,11 @@ void usNeedleInsertionModelVirtualSprings::solveSegmentsParametersViSP()
 
   int line = 0;
   int col = 0;
+  
+  double EI = m_needle.getEI();
+  vpPoseVector basePose(m_needle.getBasePose());
+  vpHomogeneousMatrix worldMbase(m_needle.getWorldMbase());
+  vpHomogeneousMatrix worldMtip(m_needle.getWorldMtip());
 
   // Continuity
   for (int n = 0; n < nbSeg - 1; n++) {
@@ -1498,31 +1506,31 @@ void usNeedleInsertionModelVirtualSprings::solveSegmentsParametersViSP()
     for (int dim = 0; dim < 3; dim++) {
       // Order 0 (continuity) : 3 * (nbSeg-1) constraints
       col = 12 * n + 4 * dim;
-      M[line][col] = s * s * s;
-      M[line][col + 1] = s * s;
-      M[line][col + 2] = s;
-      M[line][col + 3] = 1;
+      M[line][col] = 1;
+      M[line][col + 1] = s;
+      M[line][col + 2] = s * s;
+      M[line][col + 3] = s * s * s;
 
       col = 12 * (n + 1) + 4 * dim;
-      M[line][col] = 0;
+      M[line][col] = -1;
       M[line][col + 1] = 0;
       M[line][col + 2] = 0;
-      M[line][col + 3] = -1;
+      M[line][col + 3] = 0;
 
       line++;
 
       // Order 1 (continuity of first derivative) : 3 * (nbSeg-1) constraints
       col = 12 * n + 4 * dim;
 
-      M[line][col] = 3 * s * s;
-      M[line][col + 1] = 2 * s;
-      M[line][col + 2] = 1;
-      M[line][col + 3] = 0;
+      M[line][col] = 0;
+      M[line][col + 1] = 1;
+      M[line][col + 2] = 2 * s;
+      M[line][col + 3] = 3 * s * s;
 
       col = 12 * (n + 1) + 4 * dim;
       M[line][col] = 0;
-      M[line][col + 1] = 0;
-      M[line][col + 2] = -1;
+      M[line][col + 1] = -1;
+      M[line][col + 2] = 0;
       M[line][col + 3] = 0;
 
       line++;
@@ -1530,15 +1538,15 @@ void usNeedleInsertionModelVirtualSprings::solveSegmentsParametersViSP()
       // Order 2 (continuity of second derivative) : 3 * (nbSeg-1) constraints
       col = 12 * n + 4 * dim;
 
-      M[line][col] = 6 * s;
-      M[line][col + 1] = 2;
-      M[line][col + 2] = 0;
-      M[line][col + 3] = 0;
+      M[line][col] = 0;
+      M[line][col + 1] = 0;
+      M[line][col + 2] = 2;
+      M[line][col + 3] = 6 * s;
 
       col = 12 * (n + 1) + 4 * dim;
       M[line][col] = 0;
-      M[line][col + 1] = -2;
-      M[line][col + 2] = 0;
+      M[line][col + 1] = 0;
+      M[line][col + 2] = -2;
       M[line][col + 3] = 0;
 
       line++;
@@ -1550,44 +1558,42 @@ void usNeedleInsertionModelVirtualSprings::solveSegmentsParametersViSP()
 
   if (m_needle.getNbSegments() > 1 && m_IsInserting) {
     vpColVector xtip(3);
-    xtip[0] = m_needle.getWorldMtip()[0][0];
-    xtip[1] = m_needle.getWorldMtip()[1][0];
-    xtip[2] = m_needle.getWorldMtip()[2][0];
+    xtip[0] = worldMtip[0][0];
+    xtip[1] = worldMtip[1][0];
+    xtip[2] = worldMtip[2][0];
 
     vpColVector z = m_springs.back().getDirection();
     vpColVector y = vpColVector::crossProd(z, xtip);
     y.normalize();
-    tipForceVector = y;
-    tipMomentVector = y;
+    tipForceVector = -y;
+    tipMomentVector = -y;
 
     tipForceVector *= m_tipForce;
     tipMomentVector *= m_tipMoment;
   }
 
-  double EI = m_needle.getEI();
-
   for (int dim = 0; dim < 3; dim++) {
     // Base conditions : 6 constraints
     col = 4 * dim;
 
-    M[line][col + 3] = 1;
-    b[line] = m_needle.getBasePosition()[dim];
+    M[line][col] = 1;
+    b[line] = basePose[dim];
     line++;
 
-    M[line][col + 2] = 1;
-    b[line] = m_needle.getBaseDirection()[dim];
+    M[line][col + 1] = 1;
+    b[line] = worldMbase[dim][2];
     line++;
 
     // Tip conditions : 6 constraints
     col = 12 * (nbSeg - 1) + 4 * dim;
 
-    M[line][col] = 6 * EI;
+    M[line][col + 3] = 6 * EI;
     b[line] = -tipForceVector[dim];
 
     line++;
 
-    M[line][col] = 6 * m_needle.accessLastSegment().getParametricLength() * EI;
-    M[line][col + 1] = 2 * EI;
+    M[line][col + 3] = 6 * m_needle.accessLastSegment().getParametricLength() * EI;
+    M[line][col + 2] = 2 * EI;
     b[line] = -tipMomentVector[dim];
     line++;
   }
@@ -1633,25 +1639,25 @@ void usNeedleInsertionModelVirtualSprings::solveSegmentsParametersViSP()
 
     col = 12 * n;
 
-    M[line][col] = 6 * EI * n1x_n;
-    M[line][col + 4] = 6 * EI * n1y_n;
-    M[line][col + 8] = 6 * EI * n1z_n;
-    M[line + 1][col] = 6 * EI * n2x_n;
-    M[line + 1][col + 4] = 6 * EI * n2y_n;
-    M[line + 1][col + 8] = 6 * EI * n2z_n;
+    M[line][col + 3] = 6 * EI * n1x_n;
+    M[line][col + 3 + 4] = 6 * EI * n1y_n;
+    M[line][col + 3 + 8] = 6 * EI * n1z_n;
+    M[line + 1][col + 3] = 6 * EI * n2x_n;
+    M[line + 1][col + 3 + 4] = 6 * EI * n2y_n;
+    M[line + 1][col + 3 + 8] = 6 * EI * n2z_n;
     for (int i = 0; i < nbSeg - 1 - n; i++) {
       double K = m_springs.at(n + i).getStiffness();
       vpColVector p = m_springs.at(n + i).getPosition();
       double dot1 = vpColVector::dotProd(p, n1m_n);
-      M[line][col + 12 * (i + 1) + 3] = -K * n1x_n;
-      M[line][col + 12 * (i + 1) + 3 + 4] = -K * n1y_n;
-      M[line][col + 12 * (i + 1) + 3 + 8] = -K * n1z_n;
+      M[line][col + 12 * (i + 1)] = -K * n1x_n;
+      M[line][col + 12 * (i + 1) + 4] = -K * n1y_n;
+      M[line][col + 12 * (i + 1) + 8] = -K * n1z_n;
       b[line] += -K * dot1;
 
       double dot2 = vpColVector::dotProd(p, n2m_n);
-      M[line + 1][col + 12 * (i + 1) + 3] = -K * n2x_n;
-      M[line + 1][col + 12 * (i + 1) + 3 + 4] = -K * n2y_n;
-      M[line + 1][col + 12 * (i + 1) + 3 + 8] = -K * n2z_n;
+      M[line + 1][col + 12 * (i + 1)] = -K * n2x_n;
+      M[line + 1][col + 12 * (i + 1) + 4] = -K * n2y_n;
+      M[line + 1][col + 12 * (i + 1) + 8] = -K * n2z_n;
       b[line + 1] += -K * dot2;
     }
     b[line] += -vpColVector::dotProd(tipForceVector, n1m_n);
@@ -1663,9 +1669,9 @@ void usNeedleInsertionModelVirtualSprings::solveSegmentsParametersViSP()
     col = 12 * (n + 1);
     double dotProd = dx_n * px_n + dy_n * py_n + dz_n * pz_n;
 
-    M[line][col + 0 + 3] = dx_n;
-    M[line][col + 4 + 3] = dy_n;
-    M[line][col + 8 + 3] = dz_n;
+    M[line][col] = dx_n;
+    M[line][col + 4] = dy_n;
+    M[line][col + 8] = dz_n;
     b[line] = dotProd;
     line++;
   }
@@ -1691,7 +1697,7 @@ void usNeedleInsertionModelVirtualSprings::solveSegmentsParametersViSP()
   }
 
   // Compute new tip pose
-  vpRotationMatrix worldRbase(m_needle.getWorldMbase());
+  vpRotationMatrix worldRbase(worldMbase);
 
   vpRotationMatrix worldRtip(worldRbase);
 
