@@ -259,8 +259,10 @@ int main(int argc, const char **argv)
     
     vpDisplay *display = nullptr;
 
-    switch (opt_dtype)
+    if(opt_display)
     {
+      switch (opt_dtype)
+      {
         case vpX11:
             std::cout << "Requested X11 display functionnalities..." << std::endl;
 #if defined VISP_HAVE_X11
@@ -311,6 +313,7 @@ int main(int argc, const char **argv)
             return 0;
 #endif
             break;
+      }
     }
 
     if(opt_display) display->init(I);
@@ -327,10 +330,10 @@ int main(int argc, const char **argv)
     
     usOrientedPlane3D surface(n.accessNeedle().getTipPose());
     
-    for(int i=0 ; i<1000 ; i++)
+    for(int i=0 ; i<100 ; i++)
     {        
-        n.moveBase(0,0,0.0001,0,0,0.01);
-        n1.moveBase(0,0,0.0001,0,0,0.01);
+        n.moveBase(0,0,0.001,0,0,0.1);
+        n1.moveBase(0,0,0.001,0,0,0.1);
         
         if(opt_display)
         {
@@ -341,6 +344,7 @@ int main(int argc, const char **argv)
             usGeometryDisplayTools::display(surface, I, vpHomogeneousMatrix(0.08 ,0.1, 0.2, M_PI/2,0,0), 3000,3000);
             
             vpDisplay::flush(I);
+            vpTime::wait(50);
         }
     }
     

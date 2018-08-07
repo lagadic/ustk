@@ -260,8 +260,10 @@ int main(int argc, const char **argv)
     vpDisplay *display1 = nullptr;
     vpDisplay *display2 = nullptr;
 
-    switch (opt_dtype)
+    if(opt_display)
     {
+      switch (opt_dtype)
+      {
         case vpX11:
             std::cout << "Requested X11 display functionnalities..." << std::endl;
 #if defined VISP_HAVE_X11
@@ -317,6 +319,7 @@ int main(int argc, const char **argv)
             return 0;
 #endif
             break;
+      }
     }
 
     if(opt_display)

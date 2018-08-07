@@ -259,8 +259,10 @@ int main(int argc, const char **argv)
     
     vpDisplay *display = nullptr;
 
-    switch (opt_dtype)
+    if(opt_display)
     {
+      switch (opt_dtype)
+      {
         case vpX11:
             std::cout << "Requested X11 display functionnalities..." << std::endl;
 #if defined VISP_HAVE_X11
@@ -311,6 +313,7 @@ int main(int argc, const char **argv)
             return 0;
 #endif
             break;
+      }
     }
 
     if(opt_display) display->init(I);
@@ -345,22 +348,22 @@ int main(int argc, const char **argv)
     n.setSurfaceAtTip();
     n1.setSurfaceAtTip();
 
-    for(int i=0 ; i<3000 ; i++)
+    for(int i=0 ; i<300 ; i++)
     {    
-        if(i < 1000)
+        if(i < 100)
         {
-            n.moveBase(0,0,0.0001,0,0,0);
-            n1.moveBase(0,0,0.0001,0,0,0);
+            n.moveBase(0,0,0.001,0,0,0);
+            n1.moveBase(0,0,0.001,0,0,0);
         }
-        else if(i < 2000)
+        else if(i < 200)
         {
-            n.moveBase(0,0,-0.0001,0,0,0);
-            n1.moveBase(0,0,-0.0001,0,0,0);
+            n.moveBase(0,0,-0.001,0,0,0);
+            n1.moveBase(0,0,-0.001,0,0,0);
         }
         else
         {
-            n.moveBase(0,0,0.0001,0,0,0.005);
-            n1.moveBase(0,0,0.0001,0,0,0.005);
+            n.moveBase(0,0,0.001,0,0,0.05);
+            n1.moveBase(0,0,0.001,0,0,0.05);
         }
         
         if(opt_display)
