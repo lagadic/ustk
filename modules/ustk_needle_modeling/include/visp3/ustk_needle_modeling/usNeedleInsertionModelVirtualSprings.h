@@ -153,7 +153,9 @@ public:
 
   const usNeedleModelSpline &accessNeedle() const;
   usNeedleModelSpline &accessNeedle();
-  vpColVector getInsertionPoint() const;
+  bool IsNeedleInserted() const;
+  vpColVector getNeedleInsertionPoint() const;
+  vpColVector getTissueInsertionPoint() const;
   double getNeedleFreeLength() const;
   double getInsertionDepth() const;
 
@@ -194,7 +196,7 @@ public:
 
   double getTissueDeformationEnergy() const;
   double getSurfaceTissueStretch() const;
-  double getMaxTissueStretch() const;
+  double getMaxTissueStretch(double *lmax = nullptr) const;
   double getMeanTissueStretch() const;
 
   //! Control of the needle

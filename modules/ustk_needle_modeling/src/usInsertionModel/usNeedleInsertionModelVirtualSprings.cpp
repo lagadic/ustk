@@ -222,9 +222,15 @@ void usNeedleInsertionModelVirtualSprings::loadPreset(const ModelPreset preset)
   }
 }
 
-void usNeedleInsertionModelVirtualSprings::setTipForce(double tipForce) { m_tipForce = tipForce; }
+void usNeedleInsertionModelVirtualSprings::setTipForce(double tipForce)
+{
+  m_tipForce = tipForce;
+}
 
-double usNeedleInsertionModelVirtualSprings::getTipForce() { return m_tipForce; }
+double usNeedleInsertionModelVirtualSprings::getTipForce()
+{
+  return m_tipForce;
+}
 
 void usNeedleInsertionModelVirtualSprings::setBevelAngle(double angle)
 {
@@ -242,7 +248,10 @@ void usNeedleInsertionModelVirtualSprings::setDefaultSpringStiffness(double K)
     m_defaultSpringStiffness = K;
 }
 
-double usNeedleInsertionModelVirtualSprings::getDefaultSpringStiffness() const { return m_defaultSpringStiffness; }
+double usNeedleInsertionModelVirtualSprings::getDefaultSpringStiffness() const
+{
+  return m_defaultSpringStiffness;
+}
 
 void usNeedleInsertionModelVirtualSprings::setStiffnessPerUnitLength(double K)
 {
@@ -253,9 +262,15 @@ void usNeedleInsertionModelVirtualSprings::setStiffnessPerUnitLength(double K)
     m_stiffnessPerUnitLength = 0;
 }
 
-double usNeedleInsertionModelVirtualSprings::getStiffnessPerUnitLength() const { return m_stiffnessPerUnitLength; }
+double usNeedleInsertionModelVirtualSprings::getStiffnessPerUnitLength() const
+{
+  return m_stiffnessPerUnitLength;
+}
 
-int usNeedleInsertionModelVirtualSprings::getNbSprings() const { return m_springs.size(); }
+int usNeedleInsertionModelVirtualSprings::getNbSprings() const
+{
+  return m_springs.size();
+}
 
 int usNeedleInsertionModelVirtualSprings::getNbMeasureSprings() const
 {
@@ -265,11 +280,30 @@ int usNeedleInsertionModelVirtualSprings::getNbMeasureSprings() const
       n++;
   return n;
 }
-const usNeedleModelSpline &usNeedleInsertionModelVirtualSprings::accessNeedle() const { return m_needle; }
+const usNeedleModelSpline &usNeedleInsertionModelVirtualSprings::accessNeedle() const
+{
+  return m_needle;
+}
 
-usNeedleModelSpline &usNeedleInsertionModelVirtualSprings::accessNeedle() { return m_needle; }
+usNeedleModelSpline &usNeedleInsertionModelVirtualSprings::accessNeedle()
+{
+  return m_needle;
+}
 
-vpColVector usNeedleInsertionModelVirtualSprings::getInsertionPoint() const { return m_springs.front().getPosition(); }
+bool usNeedleInsertionModelVirtualSprings::IsNeedleInserted() const
+{
+  return usGeometryTools::IsPointInFrontOfPlane(m_needle.getTipPosition(), m_tissueSurface);
+}
+
+vpColVector usNeedleInsertionModelVirtualSprings::getNeedleInsertionPoint() const
+{
+  return m_needle.accessSegment(0).getEndPoint();
+}
+
+vpColVector usNeedleInsertionModelVirtualSprings::getTissueInsertionPoint() const
+{
+  return m_springs.front().getPosition();
+}
 
 double usNeedleInsertionModelVirtualSprings::getNeedleFreeLength() const
 {
@@ -284,18 +318,30 @@ double usNeedleInsertionModelVirtualSprings::getInsertionDepth() const
     return 0;
 }
 
-const usOrientedPlane3D &usNeedleInsertionModelVirtualSprings::accessSurface() const { return m_tissueSurface; }
+const usOrientedPlane3D &usNeedleInsertionModelVirtualSprings::accessSurface() const
+{
+  return m_tissueSurface;
+}
 
-usOrientedPlane3D &usNeedleInsertionModelVirtualSprings::accessSurface() { return m_tissueSurface; }
+usOrientedPlane3D &usNeedleInsertionModelVirtualSprings::accessSurface()
+{
+  return m_tissueSurface;
+}
 
-const usVirtualSpring &usNeedleInsertionModelVirtualSprings::accessSpring(int i) const { return m_springs.at(i); }
+const usVirtualSpring &usNeedleInsertionModelVirtualSprings::accessSpring(int i) const
+{
+  return m_springs.at(i);
+}
 
 void usNeedleInsertionModelVirtualSprings::setInterSpringDistance(double interSpringDistance)
 {
   m_interSpringDistance = interSpringDistance;
 }
 
-double usNeedleInsertionModelVirtualSprings::getInterSpringDistance() const { return m_interSpringDistance; }
+double usNeedleInsertionModelVirtualSprings::getInterSpringDistance() const
+{
+  return m_interSpringDistance;
+}
 
 void usNeedleInsertionModelVirtualSprings::setInterTipSpringDistance(double interTipSpringDistance)
 {
@@ -305,7 +351,10 @@ void usNeedleInsertionModelVirtualSprings::setInterTipSpringDistance(double inte
     m_interTipSpringDistance = m_interSpringDistance;
 }
 
-double usNeedleInsertionModelVirtualSprings::getInterTipSpringDistance() const { return m_interTipSpringDistance; }
+double usNeedleInsertionModelVirtualSprings::getInterTipSpringDistance() const
+{
+  return m_interTipSpringDistance;
+}
 
 void usNeedleInsertionModelVirtualSprings::setNbMinTipSprings(int nb)
 {
@@ -318,7 +367,10 @@ void usNeedleInsertionModelVirtualSprings::setNbMinTipSprings(int nb)
     m_nbMinTipSprings = 1;
 }
 
-int usNeedleInsertionModelVirtualSprings::getNbMinTipSprings() const { return m_nbMinTipSprings; }
+int usNeedleInsertionModelVirtualSprings::getNbMinTipSprings() const
+{
+  return m_nbMinTipSprings;
+}
 
 void usNeedleInsertionModelVirtualSprings::setNbMaxTipSprings(int nb)
 {
@@ -331,22 +383,40 @@ void usNeedleInsertionModelVirtualSprings::setNbMaxTipSprings(int nb)
     m_nbMaxTipSprings = 1;
 }
 
-int usNeedleInsertionModelVirtualSprings::getNbMaxTipSprings() const { return m_nbMaxTipSprings; }
+int usNeedleInsertionModelVirtualSprings::getNbMaxTipSprings() const
+{
+  return m_nbMaxTipSprings;
+}
 
-void usNeedleInsertionModelVirtualSprings::AllowSpringAddition(bool flag) { m_AllowSpringAddition = flag; }
+void usNeedleInsertionModelVirtualSprings::AllowSpringAddition(bool flag)
+{
+  m_AllowSpringAddition = flag;
+}
 
-void usNeedleInsertionModelVirtualSprings::AllowSpringRemoval(bool flag) { m_AllowSpringRemoval = flag; }
+void usNeedleInsertionModelVirtualSprings::AllowSpringRemoval(bool flag)
+{
+  m_AllowSpringRemoval = flag;
+}
 
-void usNeedleInsertionModelVirtualSprings::setInsertionBehavior(InsertionType type) { m_insertionBehavior = type; }
+void usNeedleInsertionModelVirtualSprings::setInsertionBehavior(InsertionType type)
+{
+  m_insertionBehavior = type;
+}
 
 usNeedleInsertionModelVirtualSprings::InsertionType usNeedleInsertionModelVirtualSprings::getInsertionBehavior() const
 {
   return m_insertionBehavior;
 }
 
-void usNeedleInsertionModelVirtualSprings::setAutomaticSpringAddition(bool flag) { m_AutomaticSpringAddition = flag; }
+void usNeedleInsertionModelVirtualSprings::setAutomaticSpringAddition(bool flag)
+{
+  m_AutomaticSpringAddition = flag;
+}
 
-bool usNeedleInsertionModelVirtualSprings::getAutomaticSpringAddition() const { return m_AutomaticSpringAddition; }
+bool usNeedleInsertionModelVirtualSprings::getAutomaticSpringAddition() const
+{
+  return m_AutomaticSpringAddition;
+}
 
 double usNeedleInsertionModelVirtualSprings::getPathDistanceFromPoint(const vpColVector &P) const
 {
@@ -382,23 +452,36 @@ double usNeedleInsertionModelVirtualSprings::getTissueDeformationEnergy() const
 
 double usNeedleInsertionModelVirtualSprings::getSurfaceTissueStretch() const
 {
-  double s = 0;
-  double l = this->getNeedleFreeLength();
-  if (l < this->accessNeedle().getParametricLength())
-    s = (this->accessNeedle().getPoint(l) - this->getInsertionPoint()).euclideanNorm();
+  if (!this->IsNeedleInserted() || (m_springs.size() < 1))
+    return 0;
 
-  return s;
+  return (this->getTissueInsertionPoint() - this->getNeedleInsertionPoint()).euclideanNorm();
 }
 
-double usNeedleInsertionModelVirtualSprings::getMaxTissueStretch() const
+double usNeedleInsertionModelVirtualSprings::getMaxTissueStretch(double *lmax) const
 {
+  if (!this->IsNeedleInserted()) {
+    if (lmax != nullptr)
+      *lmax = 0;
+    return 0;
+  }
+  
   double max = 0;
+  double maxL = 0;
+  double totalLength = 0;
 
   for (unsigned int i = 0; i < m_springs.size(); i++) {
     double d = (m_springs.at(i).getPosition() - m_needle.accessSegment(i).getEndPoint()).euclideanNorm();
-    if (d > max)
+    totalLength += m_needle.accessSegment(i).getParametricLength();
+    
+    if (d > max) {
       max = d;
+      maxL = totalLength;
+    }
   }
+  
+  if (lmax != nullptr)
+    *lmax = maxL;
 
   return max;
 }
