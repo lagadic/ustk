@@ -203,6 +203,7 @@ public:
 
   //! Control of the needle
 
+  using usNeedleInsertionModelInterface::setBasePose;
   bool setBasePose(const vpPoseVector &p);
   vpPoseVector getBasePose() const;
 

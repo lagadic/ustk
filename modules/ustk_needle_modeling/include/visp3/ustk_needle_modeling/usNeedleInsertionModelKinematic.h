@@ -72,6 +72,7 @@ public:
   bool moveBase(double vz, double wz, double time);
   bool moveBase(double controlCurvature, double vz, double wz, double time);
 
+  using usNeedleInsertionModelInterface::setBasePose;
   bool setBasePose(const vpPoseVector &pose);
   vpPoseVector getBasePose() const;
 };
