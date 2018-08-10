@@ -35,6 +35,11 @@ if(USE_FFTW)
   list(APPEND opt_libs ${FFTW_LIBRARIES})
 endif()
 
+IF(CUDA_FOUND)
+  CUDA_ADD_LIBRARY(ustk_core_cuda ./src/scanConversion/usPreScanToPostScan3DConverter.cu) 
+  list(APPEND opt_libs ustk_core_cuda)
+ENDIF(CUDA_FOUND)
+
 vp_add_module(ustk_core visp_io)
 
 vp_glob_module_sources()

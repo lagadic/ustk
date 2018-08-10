@@ -26,6 +26,7 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Authors:
+ * Jason Chevrie
  * Marc Pouliquen
  *
  *****************************************************************************/
@@ -579,9 +580,13 @@ void usPreScanToPostScan3DConverter::convert(usImagePostScan3D<unsigned char> &p
     break;
   }
   case GPU_DIRECT_CONVERSION: {
+#ifdef USTK_HAVE_CUDA
+    this->GPUDirectConversion(dataPost, dataPre);
+#else
     throw vpException(
         vpException::notImplementedError,
         "usPreScanToPostScan3DConverter::convert: using method GPU_DIRECT_CONVERSION is not implemented yet");
+#endif
     break;
   }
   case SINGLE_THREAD_FULL_LOOKUP_TABLE: {
