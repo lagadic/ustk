@@ -259,7 +259,7 @@ template <class Type> usImageRF3D<Type>::~usImageRF3D()
 template <class Type> usImageRF3D<Type> &usImageRF3D<Type>::operator=(const usImageRF3D<Type> &other)
 {
   // allocation and resize
-  resize(other.getWidth(), other.getHeight(), other.getNumberOfFrames());
+  resize(other.getHeight(), other.getWidth(), other.getNumberOfFrames());
 
   // filling voxel values
   memcpy(bitmap, other.getConstData(), (size_t)(m_width * m_height * m_numberOfFrames * sizeof(Type)));
@@ -399,6 +399,8 @@ template <class Type> void usImageRF3D<Type>::getFrame(usImageRF2D<Type> &image,
     throw(vpException(vpException::badValue, "usImageRF3D::getFrame : frame index out of volume"));
 
   image.resize(this->getHeight(), this->getWidth());
+
+  image.setImagePreScanSettings(getImagePreScanSettings());
 
   // offset to access the frame beginning in the volume
   int offset = index * this->getHeight() * this->getWidth();

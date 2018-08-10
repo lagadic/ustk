@@ -180,10 +180,9 @@ usImage3D<unsigned char> usElastography3D::run()
 
       outputFrame = m_elastography2DProcessor.run();
       outputVolume.resize(outputFrame.getHeight(), outputFrame.getWidth(), m_framesInROI);
-
       for (unsigned int row = 0; row < outputFrame.getHeight(); row++) {
         for (unsigned int col = 0; col < outputFrame.getWidth(); col++) {
-          outputVolume(row, col, m_framesInROI, outputFrame[row][col]);
+          outputVolume(row, col, i - m_frameBeginROI, outputFrame[row][col]);
         }
       }
     }
