@@ -326,7 +326,6 @@ vpImage<unsigned char> usElastography::run()
       }
     }
   }
-
   return m_StrainMap;
 }
 #endif // QT

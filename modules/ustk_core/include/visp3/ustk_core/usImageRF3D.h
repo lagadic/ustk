@@ -400,6 +400,8 @@ template <class Type> void usImageRF3D<Type>::getFrame(usImageRF2D<Type> &image,
 
   image.resize(this->getHeight(), this->getWidth());
 
+  image.setImagePreScanSettings(getImagePreScanSettings());
+
   // offset to access the frame beginning in the volume
   int offset = index * this->getHeight() * this->getWidth();
   const Type *frameBeginning = this->getConstData() + offset;
