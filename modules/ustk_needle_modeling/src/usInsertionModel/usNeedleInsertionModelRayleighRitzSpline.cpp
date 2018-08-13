@@ -219,6 +219,17 @@ void usNeedleInsertionModelRayleighRitzSpline::loadPreset(const ModelPreset pres
       this->setStiffnessPerUnitLength(i, 20000);
     break;
   }
+  case ModelPreset::NDI_Pink_Stylet: {
+    m_needle.loadPreset(usNeedleModelSpline::NeedlePreset::NDI_Pink_Stylet);
+    this->setNeedleTipType(NeedleTipType::BeveledTip);
+    usNeedleTipBeveled *t = dynamic_cast<usNeedleTipBeveled *>(m_needleTip);
+    double d = m_needle.getOuterDiameter();
+    t->setDiameter(d);
+    t->setLength(d / tan(M_PI / 180 * 26));
+    for (unsigned int i = 0; i < m_stiffnessPerUnitLength.size(); i++)
+      this->setStiffnessPerUnitLength(i, 20000);
+    break;
+  }
   }
 }
 

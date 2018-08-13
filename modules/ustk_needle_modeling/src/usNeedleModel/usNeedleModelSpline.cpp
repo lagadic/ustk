@@ -143,6 +143,13 @@ void usNeedleModelSpline::loadPreset(const NeedlePreset preset)
     this->setNeedleYoungModulus(200e9);
     break;
   }
+  case NeedlePreset::NDI_Pink_Stylet: {
+    this->setFullLength(0.148);
+    this->setOuterDiameter(0.00105);
+    this->setInsideDiameter(0.000838);
+    this->setNeedleYoungModulus(200e9);
+    break;
+  }
   }
 }
 

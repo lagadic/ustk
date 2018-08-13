@@ -58,7 +58,8 @@ public:
     MisraRSRO10_PlastisolA,
     RoesthuisAM12,
     SteelSoftTissue,
-    SRL_BiopsyNID
+    SRL_BiopsyNID,
+    NDI_Pink_Stylet
   };
 
 protected:

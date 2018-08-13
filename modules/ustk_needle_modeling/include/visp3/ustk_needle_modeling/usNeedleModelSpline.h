@@ -53,7 +53,8 @@ public:
     SteelSoftTissue,
     SRL_ActuatedFBG,
     SRL_BiopsySimple,
-    SRL_BiopsyNID
+    SRL_BiopsyNID,
+    NDI_Pink_Stylet
   };
 
 protected:
