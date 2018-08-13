@@ -58,7 +58,8 @@ public:
     MisraRSRO10_PlastisolA,
     RoesthuisAM12,
     SteelSoftTissue,
-    SRL_BiopsyNID
+    SRL_BiopsyNID,
+    NDI_Pink_Stylet
   };
 
 protected:
@@ -203,6 +204,7 @@ public:
 
   //! Control of the needle
 
+  using usNeedleInsertionModelInterface::setBasePose;
   bool setBasePose(const vpPoseVector &p);
   vpPoseVector getBasePose() const;
 

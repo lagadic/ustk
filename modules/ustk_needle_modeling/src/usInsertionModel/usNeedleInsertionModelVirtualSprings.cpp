@@ -219,6 +219,16 @@ void usNeedleInsertionModelVirtualSprings::loadPreset(const ModelPreset preset)
     this->setBevelAngle(M_PI / 180 * 30);
     break;
   }
+  case ModelPreset::NDI_Pink_Stylet: {
+    m_needle.loadPreset(usNeedleModelSpline::NeedlePreset::NDI_Pink_Stylet);
+    this->setInterSpringDistance(0.005);
+    this->setInterTipSpringDistance(0.0005);
+    this->setNbMinTipSprings(10);
+    this->setNbMaxTipSprings(12);
+    this->setStiffnessPerUnitLength(20000);
+    this->setBevelAngle(M_PI / 180 * 26);
+    break;
+  }
   }
 }
 

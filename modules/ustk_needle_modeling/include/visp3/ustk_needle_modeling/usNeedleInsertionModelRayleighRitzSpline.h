@@ -63,7 +63,8 @@ public:
     SteelSoftTissue,
     SRL_ActuatedFBG,
     SRL_BiopsySimple,
-    SRL_BiopsyNID
+    SRL_BiopsyNID,
+    NDI_Pink_Stylet
   };
   enum class PathUpdateType : int { NoUpdate, WithTipPosition, WithTipDirection, WithTipMix };
   enum class NeedleTipType : int { SymmetricTip, BeveledTip, PrebentTip, ActuatedTip };
@@ -177,6 +178,7 @@ public:
 
   //! Control of the needle
 
+  using usNeedleInsertionModelInterface::setBasePose;
   bool setBasePose(const vpPoseVector &p);
   vpPoseVector getBasePose() const;
 
