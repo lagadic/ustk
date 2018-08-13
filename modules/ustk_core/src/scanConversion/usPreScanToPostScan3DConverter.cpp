@@ -221,15 +221,16 @@ void usPreScanToPostScan3DConverter::init(const usImagePreScan3D<unsigned char> 
                                               "method or downsample the volume",
                         e.what());
     }
-    for (unsigned int sweepingDirection = 0; sweepingDirection < 2; sweepingDirection++) {
-      for (unsigned int x = 0; x < m_nbX; x++) {
-        double xx = m_resolution * x - xmax;
-        for (unsigned int y = 0; y < m_nbY; y++) {
-          double yy = ymin + m_resolution * y;
+
+    for (unsigned int sweepingDirection = 0 ; sweepingDirection < 2 ; sweepingDirection++) {
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
-          for (int z = 0; z < (int)m_nbZ; z++) {
+      for (int x = 0; x < (int)m_nbX; x++) {
+        double xx = m_resolution * x - xmax;
+        for (unsigned int y = 0; y < m_nbY; y++) {
+          double yy = ymin + m_resolution * y;
+          for (unsigned int z = 0; z < m_nbZ; z++) {
             double zz = m_resolution * z - zmax;
             double i, j, k;
             usPreScanToPostScan3DConverter::convertPostScanCoordToPreScanCoord(yy, xx, zz, &j, &i, &k,
@@ -360,14 +361,14 @@ void usPreScanToPostScan3DConverter::init(const usImagePreScan3D<unsigned char> 
                         e.what());
     }
     for (unsigned int sweepingDirection = 0; sweepingDirection < 2; sweepingDirection++) {
-      for (unsigned int x = 0; x < m_nbX; x++) {
-        double xx = m_resolution * x - xmax;
-        for (unsigned int y = 0; y < m_nbY; y++) {
-          double yy = ymin + m_resolution * y;
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
-          for (int z = 0; z < (int)m_nbZ; z++) {
+      for (int x = 0; x < (int)m_nbX; x++) {
+        double xx = m_resolution * x - xmax;
+        for (unsigned int y = 0; y < m_nbY; y++) {
+          double yy = ymin + m_resolution * y;
+          for (unsigned int z = 0; z < m_nbZ; z++) {
             double zz = m_resolution * z - zmax;
             double i, j, k;
             usPreScanToPostScan3DConverter::convertPostScanCoordToPreScanCoord(yy, xx, zz, &j, &i, &k,
@@ -523,14 +524,14 @@ void usPreScanToPostScan3DConverter::convert(usImagePostScan3D<unsigned char> &p
     unsigned int nbXY = m_nbX * m_nbY;
     unsigned int XY = X * Y;
 
-    for (unsigned int x = 0; x < m_nbX; x++) {
-      double xx = m_resolution * x - xmax;
-      for (unsigned int y = 0; y < m_nbY; y++) {
-        double yy = ymin + m_resolution * y;
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
-        for (int z = 0; z < (int)m_nbZ; z++) {
+    for (int x = 0; x < (int)m_nbX; x++) {
+      double xx = m_resolution * x - xmax;
+      for (unsigned int y = 0; y < m_nbY; y++) {
+        double yy = ymin + m_resolution * y;
+        for (unsigned int z = 0; z < m_nbZ; z++) {
           double zz = m_resolution * z - zmax;
           double i, j, k;
           usPreScanToPostScan3DConverter::convertPostScanCoordToPreScanCoord(yy, xx, zz, &j, &i, &k,
