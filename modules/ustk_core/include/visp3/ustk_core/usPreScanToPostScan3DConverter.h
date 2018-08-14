@@ -178,10 +178,6 @@ private:
                                           double *k_postScan = NULL, bool sweepInZdirection = true);
   void convertPostScanCoordToPreScanCoord(double x, double y, double z, double *i = NULL, double *j = NULL,
                                           double *k = NULL, bool sweepInZdirection = true);
-#ifdef USTK_HAVE_CUDA
-  void GPUDirectConversion(unsigned char *dataPost, const unsigned char *dataPre);
-  void kernelPostScanVoxelDirect(unsigned char *dataPost, const unsigned char *dataPre, int X, int Y, int Z, double xmax_post, double ymin_post, double zmax_post);
-#endif
 };
 
 #endif // __usPreScanToPostScan3DConverter_h_

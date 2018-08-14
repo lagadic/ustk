@@ -30,31 +30,12 @@
  *
  *****************************************************************************/
 
-#include <visp3/ustk_core/usPreScanToPostScan3DConverter.h>
+#include <cuda.h>
 
-#ifdef USTK_HAVE_CUDA
-void usPreScanToPostScan3DConverter::GPUDirectConversion()
-{
-    int X = m_VpreScan.getWidth();
-    int Y = m_VpreScan.getHeight();
-    int Z = m_VpreScan.getNumberOfFrames();
+#include <visp3/core/vpException.h>
     
-    double xmax;
-    double ymin;
-    double ymax;
-    double zmax;
-    
-    usPreScanToPostScan3DConverter::convertPreScanCoordToPostScanCoord(0.0, X, Z, &ymin, NULL, NULL);
-    usPreScanToPostScan3DConverter::convertPreScanCoordToPostScanCoord((double)Y, X / 2.0, Z / 2.0, &ymax, NULL, NULL);
-    usPreScanToPostScan3DConverter::convertPreScanCoordToPostScanCoord((double)Y, (double)X, Z / 2.0, NULL, &xmax, NULL);
-    usPreScanToPostScan3DConverter::convertPreScanCoordToPostScanCoord((double)Y, X / 2.0, Z, NULL, NULL, &zmax);
-    
-    dim3 threadsPerBlock(8, 8, 8);
-    dim3 numBlocks(m_nbX/threadsPerBlock.x, m_nbY/threadsPerBlock.y, m_nbZ/threadsPerBlock.z);
-    usPreScanToPostScan3DConverter::kernelPostScanVoxelDirect<<<numBlocks,threadsPerBlock>>>(dataPost, dataPre, X, Y, Z, xmax, ymin, zmax);
-}
-    
-__global__ void usPreScanToPostScan3DConverter::kernelPostScanVoxelDirect(unsigned char *dataPost, const unsigned char *dataPre, int X, int Y, int Z, double xmax_post, double ymin_post, double zmax_post)
+
+__global__ void kernelPostScanVoxelDirect(unsigned char *dataPost, const unsigned char *dataPre, unsigned int m_nbX, unsigned int m_nbY, unsigned int m_nbZ, int X, int Y, int Z, double m_resolution, double xmax, double ymin, double zmax, unsigned int frameNumber, unsigned int scanLineNumber, double transducerRadius, double motorRadius, double scanLinePitch, double axialResolution, double framePitch, bool sweepInZdirection)
 {
     uint x = (blockIdx.x * blockDim.x) + threadIdx.x;
     uint y = (blockIdx.y * blockDim.y) + threadIdx.y;
@@ -65,12 +46,22 @@ __global__ void usPreScanToPostScan3DConverter::kernelPostScanVoxelDirect(unsign
     unsigned int nbXY = m_nbX * m_nbY;
     unsigned int XY = X * Y;
 
-    double xx = m_resolution * x - xmax_post;
-    double yy = ymin_post + m_resolution * y;
-    double zz = m_resolution * z - zmax_post;
+    double xx = m_resolution * x - xmax;
+    double yy = ymin + m_resolution * y;
+    double zz = m_resolution * z - zmax;
 
     double i, j, k;
-    usPreScanToPostScan3DConverter::convertPostScanCoordToPreScanCoord(yy, xx, zz, &j, &i, &k, m_SweepInZdirection);
+
+    double radiusOffset = transducerRadius - motorRadius;
+    double rProbe = radiusOffset + sqrt(yy * yy + zz * zz);
+    double r = sqrt(rProbe * rProbe + xx * xx);
+    double phi = atan(xx / rProbe);
+    double theta = atan(zz / yy);
+
+    double itmp = phi / scanLinePitch + 0.5 * (scanLineNumber - 1);
+    i = itmp;
+    j = (r - transducerRadius) / axialResolution;
+    k = (frameNumber * scanLineNumber - 1) * (0.5 / scanLineNumber + theta / (framePitch * frameNumber * scanLineNumber)) - (sweepInZdirection ? itmp : scanLineNumber-1-itmp) / scanLineNumber;
   
     double ii = floor(i);
     double jj = floor(j);
@@ -114,9 +105,41 @@ __global__ void usPreScanToPostScan3DConverter::kernelPostScanVoxelDirect(unsign
                                   (unsigned int)(ii + 1 + Xjj1 + XYKK1)};
         
         double val = 0;
-        for (int j = 0; j < 8; j++) val += W[j] * dataPre[index[j]];
+        for (int n = 0; n < 8; n++) val += W[n] * dataPre[index[n]];
         dataPost[x + m_nbX * y + nbXY * z] = (unsigned char)val;
     }
 }
 
-#endif
+void GPUDirectConversionWrapper(unsigned char *dataPost, const unsigned char *dataPre, unsigned int m_nbX, unsigned int m_nbY, unsigned int m_nbZ, int X, int Y, int Z, double m_resolution, double xmax, double ymin, double zmax, unsigned int frameNumber, unsigned int scanLineNumber, double transducerRadius, double motorRadius, double scanLinePitch, double axialResolution, double framePitch, bool sweepInZdirection)
+{   
+    unsigned char *dataPostDevice;
+    unsigned int sizePost = m_nbX*m_nbY*m_nbZ*sizeof(unsigned char);
+    unsigned char *dataPreDevice;
+    unsigned int sizePre = X*Y*Z*sizeof(unsigned char);
+
+	cudaError_t codePost = cudaMalloc((void**)&dataPostDevice, sizePost);
+    if(codePost != cudaSuccess) throw vpException(vpException::memoryAllocationError, "usPreScanToPostScan3DConverter::GPUDirectConversionWrapper: GPU memory allocation error (%d Bytes)", sizePost);
+    cudaError_t codePre = cudaMalloc((void**)&dataPreDevice, sizePre);
+    if(codePre != cudaSuccess) throw vpException(vpException::memoryAllocationError, "usPreScanToPostScan3DConverter::GPUDirectConversionWrapper: GPU memory allocation error (%d Bytes)", sizePost);
+
+    codePost = cudaMemset(dataPostDevice, 0, sizePost);
+    if(codePost != cudaSuccess) throw vpException(vpException::memoryAllocationError, "usPreScanToPostScan3DConverter::GPUDirectConversionWrapper: GPU memory set error");
+    codePre = cudaMemcpy(dataPreDevice, dataPre, sizePre, cudaMemcpyHostToDevice);
+    if(codePre != cudaSuccess) throw vpException(vpException::memoryAllocationError, "usPreScanToPostScan3DConverter::GPUDirectConversionWrapper: GPU memory copy error");
+
+    unsigned int *count;
+    count = new unsigned int;
+    unsigned int *countDevice;
+    cudaMalloc((void**)&countDevice, sizeof(unsigned int));
+    cudaMemset(countDevice, 0, sizeof(unsigned int));
+
+    dim3 threadsPerBlock(8, 8, 8);
+    dim3 numBlocks((m_nbX+threadsPerBlock.x-1)/threadsPerBlock.x, (m_nbY+threadsPerBlock.y-1)/threadsPerBlock.y, (m_nbZ+threadsPerBlock.z-1)/threadsPerBlock.z);
+std::cout << numBlocks.x << " " << numBlocks.y << " "  << numBlocks.z << std::endl;
+    kernelPostScanVoxelDirect<<<numBlocks,threadsPerBlock>>>(dataPostDevice, dataPreDevice, m_nbX, m_nbY, m_nbZ, X, Y, Z, m_resolution, xmax, ymin, zmax, frameNumber, scanLineNumber, transducerRadius, motorRadius, scanLinePitch, axialResolution, framePitch, sweepInZdirection);
+
+    codePost = cudaMemcpy(dataPost, dataPostDevice, sizePost, cudaMemcpyDeviceToHost);
+    if(codePost != cudaSuccess) throw vpException(vpException::memoryAllocationError, "usPreScanToPostScan3DConverter::GPUDirectConversionWrapper: GPU memory copy error");
+    cudaFree(dataPostDevice);
+    cudaFree(dataPreDevice);
+}

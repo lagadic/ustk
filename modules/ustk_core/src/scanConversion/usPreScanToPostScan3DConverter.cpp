@@ -37,6 +37,10 @@
 #include <omp.h>
 #endif
 
+#ifdef USTK_HAVE_CUDA
+extern void GPUDirectConversionWrapper(unsigned char *dataPost, const unsigned char *dataPre, unsigned int m_nbX, unsigned int m_nbY, unsigned int m_nbZ, int X, int Y, int Z, double m_resolution, double xmax, double ymin, double zmax, unsigned int frameNumber, unsigned int scanLineNumber, double transducerRadius, double motorRadius, double scanLinePitch, double axialResolution, double framePitch, bool sweepInZdirection);
+#endif
+
 /**
  * Default constructor.
  */
@@ -127,9 +131,6 @@ void usPreScanToPostScan3DConverter::init(const usImagePreScan3D<unsigned char> 
     break;
   }
   case GPU_DIRECT_CONVERSION: {
-    throw vpException(
-        vpException::notImplementedError,
-        "usPreScanToPostScan3DConverter::init: using method GPU_DIRECT_CONVERSION is not implemented yet");
     break;
   }
   case SINGLE_THREAD_FULL_LOOKUP_TABLE: {
@@ -496,8 +497,9 @@ void usPreScanToPostScan3DConverter::convert(usImagePostScan3D<unsigned char> &p
                                      (unsigned int)(ii + Xjj1 + XYKK1), (unsigned int)(ii + 1 + Xjj1 + XYKK1)};
 
             double val = 0;
-            for (int j = 0; j < 8; j++)
-              val += W[j] * dataPre[index[j]];
+            for (int n = 0; n < 8; n++) 
+              val += W[n] * dataPre[index[n]];
+            
             dataPost[x + m_nbX * y + nbXY * z] = (unsigned char)val;
           }
         }
@@ -568,8 +570,8 @@ void usPreScanToPostScan3DConverter::convert(usImagePostScan3D<unsigned char> &p
                                      (unsigned int)(ii + Xjj1 + XYKK1), (unsigned int)(ii + 1 + Xjj1 + XYKK1)};
 
             double val = 0;
-            for (int j = 0; j < 8; j++)
-              val += W[j] * dataPre[index[j]];
+            for (int n = 0; n < 8; n++) 
+              val += W[n] * dataPre[index[n]];
 #ifdef VISP_HAVE_OPENMP
 #pragma omp critical
 #endif
@@ -582,7 +584,21 @@ void usPreScanToPostScan3DConverter::convert(usImagePostScan3D<unsigned char> &p
   }
   case GPU_DIRECT_CONVERSION: {
 #ifdef USTK_HAVE_CUDA
-    this->GPUDirectConversion(dataPost, dataPre);
+    int X = m_VpreScan.getWidth();
+    int Y = m_VpreScan.getHeight();
+    int Z = m_VpreScan.getNumberOfFrames();
+    
+    double xmax;
+    double ymin;
+    double ymax;
+    double zmax;
+    
+    usPreScanToPostScan3DConverter::convertPreScanCoordToPostScanCoord(0.0, X, Z, &ymin, NULL, NULL);
+    usPreScanToPostScan3DConverter::convertPreScanCoordToPostScanCoord((double)Y, X / 2.0, Z / 2.0, &ymax, NULL, NULL);
+    usPreScanToPostScan3DConverter::convertPreScanCoordToPostScanCoord((double)Y, (double)X, Z / 2.0, NULL, &xmax, NULL);
+    usPreScanToPostScan3DConverter::convertPreScanCoordToPostScanCoord((double)Y, X / 2.0, Z, NULL, NULL, &zmax);
+    
+    GPUDirectConversionWrapper(dataPost, dataPre, m_nbX, m_nbY, m_nbZ, X, Y, Z, m_resolution, xmax, ymin, zmax, m_VpreScan.getFrameNumber(), m_VpreScan.getScanLineNumber(), m_VpreScan.getTransducerRadius(), m_VpreScan.getMotorRadius(), m_VpreScan.getScanLinePitch(), m_VpreScan.getAxialResolution(), m_VpreScan.getFramePitch(), m_SweepInZdirection);
 #else
     throw vpException(
         vpException::notImplementedError,
@@ -728,9 +744,6 @@ void usPreScanToPostScan3DConverter::setConverterOptimizationMethod(usConverterO
     break;
   }
   case GPU_DIRECT_CONVERSION: {
-    throw vpException(vpException::notImplementedError, "usPreScanToPostScan3DConverter::"
-                                                        "setConverterOptimizationMethod: using method "
-                                                        "GPU_DIRECT_CONVERSION is not implemented yet");
     break;
   }
   case GPU_FULL_LOOKUP_TABLE: {
