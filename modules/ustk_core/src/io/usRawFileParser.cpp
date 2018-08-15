@@ -49,13 +49,7 @@
 void usRawFileParser::read(usImage3D<unsigned char> &image3D, const std::string &rawFilename)
 {
   std::ifstream fileStream(rawFilename.c_str(), std::ios::in | std::ios::binary);
-  unsigned int i = 0;
-  while (i < image3D.getSize()) {
-    char c;
-    fileStream.get(c);
-    image3D.getData()[i] = c;
-    i++;
-  }
+  fileStream.read((char *)image3D.getData(), image3D.getSize()*sizeof(unsigned char));
   fileStream.close();
 }
 
@@ -67,11 +61,7 @@ void usRawFileParser::read(usImage3D<unsigned char> &image3D, const std::string 
 void usRawFileParser::write(const usImage3D<unsigned char> &image3D, const std::string &rawFilename)
 {
   std::fstream fileStream(rawFilename.c_str(), std::ios::out | std::ios::binary);
-  unsigned int i = 0;
-  while (i < image3D.getSize()) {
-    fileStream.put(image3D.getConstData()[i]);
-    i++;
-  }
+  fileStream.write((const char*)image3D.getConstData(), image3D.getSize()*sizeof(unsigned char));
   fileStream.close();
 }
 
@@ -83,11 +73,7 @@ void usRawFileParser::write(const usImage3D<unsigned char> &image3D, const std::
 void usRawFileParser::read(usImageRF3D<short> &image3D, const std::string &rawFilename)
 {
   std::ifstream fileStream(rawFilename.c_str(), std::ios::in | std::ios::binary);
-  unsigned int i = 0;
-  while (i < image3D.getSize()) {
-    fileStream.read((char *)(image3D.bitmap + i), sizeof(short));
-    i++;
-  }
+  fileStream.read((char*)image3D.bitmap, image3D.getSize()*sizeof(short));
   fileStream.close();
 }
 
@@ -99,11 +85,7 @@ void usRawFileParser::read(usImageRF3D<short> &image3D, const std::string &rawFi
 void usRawFileParser::write(const usImageRF3D<short> &image3D, const std::string &rawFilename)
 {
   std::fstream fileStream(rawFilename.c_str(), std::ios::out | std::ios::binary);
-  unsigned int i = 0;
-  while (i < image3D.getSize()) {
-    fileStream.write((char *)(image3D.getConstData() + i), sizeof(short));
-    i++;
-  }
+  fileStream.write((const char*)image3D.getConstData(), image3D.getSize()*sizeof(short));
   fileStream.close();
 }
 
