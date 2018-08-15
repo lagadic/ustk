@@ -433,6 +433,9 @@ void usPreScanToPostScan3DConverter::convert(usImagePostScan3D<unsigned char> &p
 
   postScanImage.resize(m_nbY, m_nbX, m_nbZ);
   postScanImage.initData(0);
+  (usTransducerSettings&)postScanImage = (const usTransducerSettings&)preScanImage;
+  (usMotorSettings&)postScanImage = (const usMotorSettings&)preScanImage;
+            
   unsigned char *dataPost = postScanImage.getData();
   const unsigned char *dataPre = preScanImage.getConstData();
 
