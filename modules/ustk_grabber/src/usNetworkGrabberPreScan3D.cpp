@@ -187,7 +187,7 @@ void usNetworkGrabberPreScan3D::dataArrived()
     m_motorSettings.setMotorRadius(m_imageHeader.motorRadius);
 
     // set data info
-    m_grabbedImage.setFrameCount(m_imageHeader.frameCount);
+    m_grabbedImage.setFrameCount(m_imageHeader.frameCount>1?(m_imageHeader.frameCount-1):0);
     m_grabbedImage.setFramesPerVolume(m_imageHeader.framesPerVolume);
 
     m_grabbedImage.setTimeStamp(m_imageHeader.timeStamp);
