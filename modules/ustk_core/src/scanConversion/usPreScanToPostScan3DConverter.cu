@@ -127,15 +127,8 @@ void GPUDirectConversionWrapper(unsigned char *dataPost, const unsigned char *da
     codePre = cudaMemcpy(dataPreDevice, dataPre, sizePre, cudaMemcpyHostToDevice);
     if(codePre != cudaSuccess) throw vpException(vpException::memoryAllocationError, "usPreScanToPostScan3DConverter::GPUDirectConversionWrapper: GPU memory copy error");
 
-    unsigned int *count;
-    count = new unsigned int;
-    unsigned int *countDevice;
-    cudaMalloc((void**)&countDevice, sizeof(unsigned int));
-    cudaMemset(countDevice, 0, sizeof(unsigned int));
-
     dim3 threadsPerBlock(8, 8, 8);
     dim3 numBlocks((m_nbX+threadsPerBlock.x-1)/threadsPerBlock.x, (m_nbY+threadsPerBlock.y-1)/threadsPerBlock.y, (m_nbZ+threadsPerBlock.z-1)/threadsPerBlock.z);
-std::cout << numBlocks.x << " " << numBlocks.y << " "  << numBlocks.z << std::endl;
     kernelPostScanVoxelDirect<<<numBlocks,threadsPerBlock>>>(dataPostDevice, dataPreDevice, m_nbX, m_nbY, m_nbZ, X, Y, Z, m_resolution, xmax, ymin, zmax, frameNumber, scanLineNumber, transducerRadius, motorRadius, scanLinePitch, axialResolution, framePitch, sweepInZdirection);
 
     codePost = cudaMemcpy(dataPost, dataPostDevice, sizePost, cudaMemcpyDeviceToHost);
