@@ -298,7 +298,8 @@ vpColVector usTissueTranslationEstimatorUKF::computeMeasureFromSigmaPoint(const 
                 usGeometryTools::projectPointOnCurve(vpColVector(m_measure, 3*i,3), testNeedle.accessNeedle(), -1, &(index.at(i)), &(l.at(i)));
             }
             
-            testNeedle.accessTissue().setPose(vpPoseVector(sigmaPoint[0], sigmaPoint[1], sigmaPoint[2], 0, 0, 0));
+            vpPoseVector p(testNeedle.accessTissue().getPose());
+            testNeedle.accessTissue().setPose(vpPoseVector(sigmaPoint[0], sigmaPoint[1], sigmaPoint[2], p[3], p[4], p[5]));
             testNeedle.updateState();
         
             vpColVector measure(m_measure.size());
@@ -310,7 +311,8 @@ vpColVector usTissueTranslationEstimatorUKF::computeMeasureFromSigmaPoint(const 
         {
             usNeedleInsertionModelRayleighRitzSpline testNeedle(m_needle);
         
-            testNeedle.accessTissue().setPose(vpPoseVector(sigmaPoint[0], sigmaPoint[1], sigmaPoint[2], 0, 0, 0));
+            vpPoseVector p(testNeedle.accessTissue().getPose());
+            testNeedle.accessTissue().setPose(vpPoseVector(sigmaPoint[0], sigmaPoint[1], sigmaPoint[2], p[3], p[4], p[5]));
             testNeedle.updateState();
     
             vpColVector measure(6);
@@ -323,7 +325,8 @@ vpColVector usTissueTranslationEstimatorUKF::computeMeasureFromSigmaPoint(const 
         {
             usNeedleInsertionModelRayleighRitzSpline testNeedle(m_needle);
 
-            testNeedle.accessTissue().setPose(vpPoseVector(sigmaPoint[0], sigmaPoint[1], sigmaPoint[2], 0, 0, 0));
+            vpPoseVector p(testNeedle.accessTissue().getPose());
+            testNeedle.accessTissue().setPose(vpPoseVector(sigmaPoint[0], sigmaPoint[1], sigmaPoint[2], p[3], p[4], p[5]));
             testNeedle.updateState();
     
             vpColVector measure(testNeedle.accessNeedle().getBaseStaticTorsor());
