@@ -260,86 +260,6 @@ bool portaCallback(void *param, unsigned char *addr, int blockIndex, int)
     server->imageHeader.pixelHeight = 0;
     server->imageHeader.pixelWidth = 0;
   }
-  /*
-  QByteArray block;
-  std::cout << "writing header on socket" << std::endl;
-  QDataStream out(&block, QIODevice::WriteOnly);
-  out.setVersion(QDataStream::Qt_5_0);
-  out << server->imageHeader.headerId;
-  out << server->imageHeader.frameCount;
-  out << server->imageHeader.timeStamp;
-  out << server->imageHeader.dataRate;
-  out << server->imageHeader.dataLength;
-  out << server->imageHeader.ss;
-  out << server->imageHeader.imageType;
-  out << server->imageHeader.frameWidth;
-  out << server->imageHeader.frameHeight;
-  out << server->imageHeader.pixelWidth;
-  out << server->imageHeader.pixelHeight;
-  out << server->imageHeader.transmitFrequency;
-  out << server->imageHeader.samplingFrequency;
-  out << server->imageHeader.transducerRadius;
-  out << server->imageHeader.scanLinePitch;
-  out << server->imageHeader.scanLineNumber;
-  out << server->imageHeader.imageDepth;
-  out << server->imageHeader.degPerFrame;
-  out << server->imageHeader.framesPerVolume;
-  out << server->imageHeader.motorRadius;
-  out << server->imageHeader.motorType;
-  std::cout << "writing image on socket" << std::endl;
-
-  if (server->imageHeader.imageType == 1) { // post scan
-    out.writeRawData((char *)server->postScanImage, server->imageHeader.dataLength);
-  } else if (server->imageHeader.imageType == 0) { // pre-scan
-    out.writeRawData((char *)beginImage, server->imageHeader.dataLength);
-  } else if (server->imageHeader.imageType == 2) { // RF
-    out.writeRawData((char *)beginImage, server->imageHeader.dataLength);
-  }
-
-  quint64 dataWrittenSize=0;
-
-  if (server->motorOffsetSkipped && (motorStatus == 1)) { // 3D but offset skipped
-    dataWrittenSize = socket->write(block);
-  } else if (motorStatus == 0) { // 2D
-    dataWrittenSize = socket->write(block);
-  }
-
-  std::cout << "written data size = " << dataWrittenSize << std::endl;
-
-  // for bi-plane we send a second image
-  if (portaInstance->getCurrentMode() == BiplaneMode && server->imageHeader.imageType == 1) {
-    QByteArray block;
-    std::cout << "writing 2nd header" << std::endl;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_5_0);
-    out << server->imageHeader.headerId;
-    out << server->imageHeader.frameCount;
-    out << server->imageHeader.timeStamp;
-    out << server->imageHeader.dataRate;
-    out << server->imageHeader.dataLength;
-    out << server->imageHeader.ss;
-    out << server->imageHeader.imageType;
-    out << server->imageHeader.frameWidth;
-    out << server->imageHeader.frameHeight;
-    out << server->imageHeader.pixelWidth;
-    out << server->imageHeader.pixelHeight;
-    out << server->imageHeader.transmitFrequency;
-    out << server->imageHeader.samplingFrequency;
-    out << server->imageHeader.transducerRadius;
-    out << server->imageHeader.scanLinePitch;
-    out << server->imageHeader.scanLineNumber;
-    out << server->imageHeader.imageDepth;
-    out << server->imageHeader.degPerFrame;
-    out << server->imageHeader.framesPerVolume;
-    out << server->imageHeader.motorRadius;
-    out << server->imageHeader.motorType;
-    std::cout << "writing 2nd image" << std::endl;
-    out.writeRawData((char *)server->secondBiplaneImage, server->imageHeader.dataLength);
-    server->imageHeader.frameCount++;
-
-    socket->write(block);
-  }
-  */
 
   server->beginImage = (char *)beginImage;
   server->motorStatus = motorStatus;
@@ -347,27 +267,6 @@ bool portaCallback(void *param, unsigned char *addr, int blockIndex, int)
 
   server->writeOnSocketFromOtherThread();
 
-  /*std::cout << "headerId = " << server->imageHeader.headerId  << std::endl;
-  std::cout << "frameCount = " << server->imageHeader.frameCount  << std::endl;
-  std::cout << "timeStamp = " << server->imageHeader.timeStamp  << std::endl;
-  std::cout << "dataLength = " << server->imageHeader.dataLength  << std::endl;
-  std::cout << "ss = " << server->imageHeader.ss  << std::endl;
-  std::cout << "imageType = " << server->imageHeader.imageType  << std::endl;
-  std::cout << "frameWidth = " << server->imageHeader.frameWidth  << std::endl;
-  std::cout << "frameHeight = " << server->imageHeader.frameHeight  << std::endl;
-  std::cout << "pixelWidth = " << server->imageHeader.pixelWidth  << std::endl;
-  std::cout << "pixelHeight = " << server->imageHeader.pixelHeight  << std::endl;
-  std::cout << "transmitFrequency = " << server->imageHeader.transmitFrequency  << std::endl;
-  std::cout << "samplingFrequency = " << server->imageHeader.samplingFrequency  << std::endl;
-  std::cout << "transducerRadius = " << server->imageHeader.transducerRadius  << std::endl;
-  std::cout << "scanLinePitch = " << server->imageHeader.scanLinePitch  << std::endl;
-  std::cout << "scanLineNumber = " << server->imageHeader.scanLineNumber  << std::endl;
-  std::cout << "degPerFrame = " << server->imageHeader.degPerFrame  << std::endl;
-  std::cout << "framesPerVolume = " << server->imageHeader.framesPerVolume  << std::endl;
-  std::cout << "motorRadius = " << server->imageHeader.motorRadius << std::endl;
-  std::cout << "motorType = " << server->imageHeader.motorType << std::endl;
-
-  std::cout << "steps = " << portaInstance->getParam(prmMotorSteps) << std::endl;*/
   return true;
 }
 
@@ -393,8 +292,6 @@ int portaCallbackImage(void *param, int id, int)
     server->motorOffsetSkipped = true;
   }
 
-  // std::cout << "frame count = " << server->imageHeader.frameCount << std::endl;
-  // std::cout << "image size = " << portaInstance->getFrameSize() << std::endl;
   unsigned char *beginImage;
   // filling image header
 
@@ -428,102 +325,12 @@ int portaCallbackImage(void *param, int id, int)
     server->imageHeader.pixelWidth = 0;
   }
 
-  QByteArray block;
-  std::cout << "writing header" << std::endl;
-  QDataStream out(&block, QIODevice::WriteOnly);
-  out.setVersion(QDataStream::Qt_5_0);
-  out << server->imageHeader.headerId;
-  out << server->imageHeader.frameCount;
-  out << server->imageHeader.timeStamp;
-  out << server->imageHeader.dataRate;
-  out << server->imageHeader.dataLength;
-  out << server->imageHeader.ss;
-  out << server->imageHeader.imageType;
-  out << server->imageHeader.frameWidth;
-  out << server->imageHeader.frameHeight;
-  out << server->imageHeader.pixelWidth;
-  out << server->imageHeader.pixelHeight;
-  out << server->imageHeader.transmitFrequency;
-  out << server->imageHeader.samplingFrequency;
-  out << server->imageHeader.transducerRadius;
-  out << server->imageHeader.scanLinePitch;
-  out << server->imageHeader.scanLineNumber;
-  out << server->imageHeader.imageDepth;
-  out << server->imageHeader.degPerFrame;
-  out << server->imageHeader.framesPerVolume;
-  out << server->imageHeader.motorRadius;
-  out << server->imageHeader.motorType;
-  std::cout << "writing image" << std::endl;
+  server->beginImage = (char *)beginImage;
+  server->motorStatus = motorStatus;
+  server->biPlane = portaInstance->getCurrentMode() == BiplaneMode;
 
-  if (server->imageHeader.imageType == 1) { // post scan
-    out.writeRawData((char *)server->postScanImage, server->imageHeader.dataLength);
-  } else if (server->imageHeader.imageType == 0) { // pre-scan
-    out.writeRawData((char *)beginImage, server->imageHeader.dataLength);
-  }
+  server->writeOnSocketFromOtherThread();
 
-  if (server->motorOffsetSkipped && (motorStatus == 1)) { // 3D but offset skipped
-    socket->write(block);
-  } else if (motorStatus == 0) { // 2D
-    socket->write(block);
-  }
-
-  // for bi-plane we send a second image
-  if (portaInstance->getCurrentMode() == BiplaneMode && server->imageHeader.imageType == 1) {
-    QByteArray block;
-    std::cout << "writing 2nd header" << std::endl;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_5_0);
-    out << server->imageHeader.headerId;
-    out << server->imageHeader.frameCount;
-    out << server->imageHeader.timeStamp;
-    out << server->imageHeader.dataRate;
-    out << server->imageHeader.dataLength;
-    out << server->imageHeader.ss;
-    out << server->imageHeader.imageType;
-    out << server->imageHeader.frameWidth;
-    out << server->imageHeader.frameHeight;
-    out << server->imageHeader.pixelWidth;
-    out << server->imageHeader.pixelHeight;
-    out << server->imageHeader.transmitFrequency;
-    out << server->imageHeader.samplingFrequency;
-    out << server->imageHeader.transducerRadius;
-    out << server->imageHeader.scanLinePitch;
-    out << server->imageHeader.scanLineNumber;
-    out << server->imageHeader.imageDepth;
-    out << server->imageHeader.degPerFrame;
-    out << server->imageHeader.framesPerVolume;
-    out << server->imageHeader.motorRadius;
-    out << server->imageHeader.motorType;
-    std::cout << "writing 2nd image" << std::endl;
-    out.writeRawData((char *)server->secondBiplaneImage, server->imageHeader.dataLength);
-    server->imageHeader.frameCount++;
-
-    socket->write(block);
-  }
-
-  std::cout << "everything sent" << std::endl;
-
-  /*std::cout << "headerId = " << server->imageHeader.headerId  << std::endl;
-  std::cout << "frameCount = " << server->imageHeader.frameCount  << std::endl;
-  std::cout << "timeStamp = " << server->imageHeader.timeStamp  << std::endl;
-  std::cout << "dataLength = " << server->imageHeader.dataLength  << std::endl;
-  std::cout << "ss = " << server->imageHeader.ss  << std::endl;
-  std::cout << "imageType = " << server->imageHeader.imageType  << std::endl;
-  std::cout << "frameWidth = " << server->imageHeader.frameWidth  << std::endl;
-  std::cout << "frameHeight = " << server->imageHeader.frameHeight  << std::endl;
-  std::cout << "pixelWidth = " << server->imageHeader.pixelWidth  << std::endl;
-  std::cout << "pixelHeight = " << server->imageHeader.pixelHeight  << std::endl;
-  std::cout << "transmitFrequency = " << server->imageHeader.transmitFrequency  << std::endl;
-  std::cout << "samplingFrequency = " << server->imageHeader.samplingFrequency  << std::endl;
-  std::cout << "transducerRadius = " << server->imageHeader.transducerRadius  << std::endl;
-  std::cout << "scanLinePitch = " << server->imageHeader.scanLinePitch  << std::endl;
-  std::cout << "scanLineNumber = " << server->imageHeader.scanLineNumber  << std::endl;
-  std::cout << "degPerFrame = " << server->imageHeader.degPerFrame  << std::endl;
-  std::cout << "framesPerVolume = " << server->imageHeader.framesPerVolume  << std::endl;
-  std::cout << "motorRadius = " << server->imageHeader.motorRadius << std::endl;
-  std::cout << "motorType = " << server->imageHeader.motorType << std::endl;
-
-  std::cout << "steps = " << portaInstance->getParam(prmMotorSteps) << std::endl;*/
   return true;
 }
 #endif
