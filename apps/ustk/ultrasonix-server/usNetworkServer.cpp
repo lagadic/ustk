@@ -25,25 +25,7 @@ usNetworkServer::usNetworkServer(QObject *parent) : QObject(parent)
     std::cout << "error initializing porta sdk !" << std::endl;
   }
 
-  // init TCP server
-  // set : acceptTheConnection() will be called whenever there is a new connection
-  connect(&tcpServer, SIGNAL(newConnection()), this, SLOT(acceptTheConnection()));
-
-  // Start listening on port 8080
-  QString portNum = QString::number(8080);
-  bool status = tcpServer.listen(QHostAddress::Any, portNum.toUShort());
-
-  // Check, if the server did start correctly or not
-  if (status == true) {
-    std::cout << "TCP server Started\nServer now listening on port# " << portNum.toStdString() << std::endl;
-  } else {
-    std::cout << "TCP server start failure" << tcpServer.errorString().toStdString() << std::endl;
-  }
-
-  usingProbeConfigFile = false;
-  verboseMode = false;
-
-  connect(this, SIGNAL(writeOnSocketSignal()), this, SLOT(writeOnSocketSlot()));
+ connectionSoc = NULL;
 }
 
 usNetworkServer::~usNetworkServer() {}
@@ -193,8 +175,10 @@ void usNetworkServer::connectionAboutToClose()
 
   if (m_porta->isImaging())
     m_porta->stopImage();
+
   // Close the connection (Say bye)
-  connectionSoc->close();
+  if(connectionSoc)
+    connectionSoc->close();
 }
 
 /// The callback provided to porta to be called when a new frame is acquired from the cine buffer.
@@ -922,3 +906,29 @@ void usNetworkServer::useProbeConfigFile(std::string configFileName)
 }
 
 void usNetworkServer::setVerbose() { verboseMode = true; }
+
+void usNetworkServer::startServerSlot() {
+  // init TCP server
+  // set : acceptTheConnection() will be called whenever there is a new connection
+  connect(&tcpServer, SIGNAL(newConnection()), this, SLOT(acceptTheConnection()));
+
+  // Start listening on port 8080
+  QString portNum = QString::number(8080);
+  bool status = tcpServer.listen(QHostAddress::Any, portNum.toUShort());
+
+  // Check, if the server did start correctly or not
+  if (status == true) {
+    std::cout << "TCP server Started\nServer now listening on port# " << portNum.toStdString() << std::endl;
+  } else {
+    std::cout << "TCP server start failure" << tcpServer.errorString().toStdString() << std::endl;
+  }
+
+  usingProbeConfigFile = false;
+  verboseMode = false;
+
+  connect(this, SIGNAL(writeOnSocketSignal()), this, SLOT(writeOnSocketSlot()));
+}
+
+void usNetworkServer::stopServerSlot() {
+  quitApp();
+}

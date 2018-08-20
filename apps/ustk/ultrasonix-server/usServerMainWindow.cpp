@@ -1,15 +1,25 @@
 #include "usServerMainWindow.h"
 
-usServerMainWindow::usServerMainWindow(QObject *parent) : QObject(parent)
+usServerMainWindow::usServerMainWindow(QObject *parent)
 {
-  m_startButton = new QPushButton(this);
-  m_stopButton = new QPushButton(this);
+  m_startStopButton = new QPushButton(QString("Start server"), this);
+  m_isStarted = false;
 
-  connect(m_startButton, SIGNAL(clicked()), this, SIGNAL(startServer()));
-  connect(m_stopButton, SIGNAL(clicked()), this, SIGNAL(stopServer()));
+  connect(m_startStopButton, SIGNAL(clicked()), this, SLOT(startStopSlot()));
 }
 
 usServerMainWindow::~usServerMainWindow() {
-  delete m_startButton;
-  delete m_stopButton;
+  delete m_startStopButton;
+}
+
+void usServerMainWindow::startStopSlot() {
+  if(m_isStarted) {
+    m_isStarted = false;
+    emit(stopServer());
+  }
+  else {
+    m_isStarted = true;
+    emit(startServer());
+	m_startStopButton->setText(QString("Stop server"));
+  }
 }

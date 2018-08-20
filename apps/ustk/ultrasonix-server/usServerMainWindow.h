@@ -12,15 +12,17 @@ class usServerMainWindow : public QMainWindow
 public:
   usServerMainWindow(QObject *parent = 0);
   ~usServerMainWindow();
+  
+public slots:
+  void startStopSlot();
 
 signals:
   void startServer();
   void stopServer();
 
 private:
-  QPushButton * m_startButton;
-  QPushButton * m_stopButton;
-
+  QPushButton * m_startStopButton;
+  bool m_isStarted;
 };
 
 #endif // US_SERVER_MAIN_WINDOW_H
