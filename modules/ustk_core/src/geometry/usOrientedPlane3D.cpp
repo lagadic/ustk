@@ -43,9 +43,9 @@ usOrientedPlane3D::usOrientedPlane3D(const usOrientedPlane3D &plane)
 {
 }
 
-usOrientedPlane3D::usOrientedPlane3D(const vpPoseVector &pose) : usOrientedPlane3D() { this->setPose(pose); }
+usOrientedPlane3D::usOrientedPlane3D(const vpPoseVector &pose) : m_direction(3, 0), m_pose(pose) { }
 
-usOrientedPlane3D::usOrientedPlane3D(const vpColVector &p, const vpColVector &d) : usOrientedPlane3D()
+usOrientedPlane3D::usOrientedPlane3D(const vpColVector &p, const vpColVector &d) : m_direction(3, 0), m_pose(0, 0, 0, 0, 0, 0)
 {
   this->setPosition(p);
   this->setDirection(d);
