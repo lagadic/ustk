@@ -60,7 +60,7 @@ usNetworkGrabber::usNetworkGrabber(QObject *parent) : QObject(parent)
 
   m_connect = false;
 
-  m_acquisitionParamters = usAcquisitionParameters();
+  m_acquisitionParameters = usAcquisitionParameters();
   m_confirmHeader = usInitHeaderConfirmation();
   m_imageHeader = us::usImageHeader();
 
@@ -325,33 +325,33 @@ void usNetworkGrabber::sendAcquisitionParametersSlot()
   // Writing on the stream. Warning : order matters ! (must be the same as on server side when reading)
 
   stream << 2; // update id = 2
-  stream << m_acquisitionParamters.getTransmitFrequency();
-  stream << m_acquisitionParamters.getSamplingFrequency();
-  stream << m_acquisitionParamters.getImagingMode();
-  stream << m_acquisitionParamters.getPostScanMode();
-  stream << m_acquisitionParamters.getPostScanHeigh();
-  stream << m_acquisitionParamters.getPostScanWidth();
-  stream << m_acquisitionParamters.getImageDepth();
-  stream << m_acquisitionParamters.getSector();
-  stream << m_acquisitionParamters.getActivateMotor();
-  stream << m_acquisitionParamters.getMotorPosition();
-  stream << m_acquisitionParamters.getFramesPerVolume();
-  stream << m_acquisitionParamters.getSepsPerFrame();
+  stream << m_acquisitionParameters.getTransmitFrequency();
+  stream << m_acquisitionParameters.getSamplingFrequency();
+  stream << m_acquisitionParameters.getImagingMode();
+  stream << m_acquisitionParameters.getPostScanMode();
+  stream << m_acquisitionParameters.getPostScanHeigh();
+  stream << m_acquisitionParameters.getPostScanWidth();
+  stream << m_acquisitionParameters.getImageDepth();
+  stream << m_acquisitionParameters.getSector();
+  stream << m_acquisitionParameters.getActivateMotor();
+  stream << m_acquisitionParameters.getMotorPosition();
+  stream << m_acquisitionParameters.getFramesPerVolume();
+  stream << m_acquisitionParameters.getSepsPerFrame();
 
   if (m_verbose) {
     std::cout << "UPDATE SENT : " << std::endl;
-    std::cout << "TransmitFrequency = " << m_acquisitionParamters.getTransmitFrequency() << std::endl;
-    std::cout << "SamplingFrequency = " << m_acquisitionParamters.getSamplingFrequency() << std::endl;
-    std::cout << "ImagingMode = " << m_acquisitionParamters.getImagingMode() << std::endl;
-    std::cout << "PostScanMode = " << m_acquisitionParamters.getPostScanMode() << std::endl;
-    std::cout << "PostScanHeigh = " << m_acquisitionParamters.getPostScanHeigh() << std::endl;
-    std::cout << "PostScanWidth = " << m_acquisitionParamters.getPostScanWidth() << std::endl;
-    std::cout << "ImageDepth = " << m_acquisitionParamters.getImageDepth() << std::endl;
-    std::cout << "Sector = " << m_acquisitionParamters.getSector() << std::endl;
-    std::cout << "ActivateMotor = " << m_acquisitionParamters.getActivateMotor() << std::endl;
-    std::cout << "MotorPosition = " << m_acquisitionParamters.getMotorPosition() << std::endl;
-    std::cout << "FramesPerVolume = " << m_acquisitionParamters.getFramesPerVolume() << std::endl;
-    std::cout << "anglePerFrame = " << m_acquisitionParamters.getSepsPerFrame() << std::endl;
+    std::cout << "TransmitFrequency = " << m_acquisitionParameters.getTransmitFrequency() << std::endl;
+    std::cout << "SamplingFrequency = " << m_acquisitionParameters.getSamplingFrequency() << std::endl;
+    std::cout << "ImagingMode = " << m_acquisitionParameters.getImagingMode() << std::endl;
+    std::cout << "PostScanMode = " << m_acquisitionParameters.getPostScanMode() << std::endl;
+    std::cout << "PostScanHeigh = " << m_acquisitionParameters.getPostScanHeigh() << std::endl;
+    std::cout << "PostScanWidth = " << m_acquisitionParameters.getPostScanWidth() << std::endl;
+    std::cout << "ImageDepth = " << m_acquisitionParameters.getImageDepth() << std::endl;
+    std::cout << "Sector = " << m_acquisitionParameters.getSector() << std::endl;
+    std::cout << "ActivateMotor = " << m_acquisitionParameters.getActivateMotor() << std::endl;
+    std::cout << "MotorPosition = " << m_acquisitionParameters.getMotorPosition() << std::endl;
+    std::cout << "FramesPerVolume = " << m_acquisitionParameters.getFramesPerVolume() << std::endl;
+    std::cout << "anglePerFrame = " << m_acquisitionParameters.getSepsPerFrame() << std::endl;
   }
   m_tcpSocket->write(block);
 
@@ -472,68 +472,68 @@ void usNetworkGrabber::readAcquisitionParameters(QDataStream &stream)
     std::cout << "anglePerFrameMax = " << anglePerFrameMax << std::endl;
   }
 
-  m_acquisitionParamters.setTransmitFrequency(transmitFrequency);
-  m_acquisitionParamters.setSamplingFrequency(samplingFrequency);
-  m_acquisitionParamters.setImagingMode(imagingMode);
-  m_acquisitionParamters.setPostScanMode(postScanMode);
-  m_acquisitionParamters.setPostScanHeigh(postScanHeigh);
-  m_acquisitionParamters.setPostScanWidth(postScanWidth);
-  m_acquisitionParamters.setImageDepth(imageDepth);
-  m_acquisitionParamters.setSector(sector);
-  m_acquisitionParamters.setActivateMotor(activateMotor);
-  m_acquisitionParamters.setMotorPosition(motorPosition);
-  m_acquisitionParamters.setFramesPerVolume(framesPerVolume);
+  m_acquisitionParameters.setTransmitFrequency(transmitFrequency);
+  m_acquisitionParameters.setSamplingFrequency(samplingFrequency);
+  m_acquisitionParameters.setImagingMode(imagingMode);
+  m_acquisitionParameters.setPostScanMode(postScanMode);
+  m_acquisitionParameters.setPostScanHeigh(postScanHeigh);
+  m_acquisitionParameters.setPostScanWidth(postScanWidth);
+  m_acquisitionParameters.setImageDepth(imageDepth);
+  m_acquisitionParameters.setSector(sector);
+  m_acquisitionParameters.setActivateMotor(activateMotor);
+  m_acquisitionParameters.setMotorPosition(motorPosition);
+  m_acquisitionParameters.setFramesPerVolume(framesPerVolume);
   if (anglePerFrame == 0)
-    m_acquisitionParamters.setSepsPerFrame(usAcquisitionParameters::US_STATIC_MOTOR);
+    m_acquisitionParameters.setSepsPerFrame(usAcquisitionParameters::US_STATIC_MOTOR);
   else if (anglePerFrame == 2)
-    m_acquisitionParamters.setSepsPerFrame(usAcquisitionParameters::US_ANGLE_PITCH_1);
+    m_acquisitionParameters.setSepsPerFrame(usAcquisitionParameters::US_ANGLE_PITCH_1);
   else if (anglePerFrame == 4)
-    m_acquisitionParamters.setSepsPerFrame(usAcquisitionParameters::US_ANGLE_PITCH_2);
+    m_acquisitionParameters.setSepsPerFrame(usAcquisitionParameters::US_ANGLE_PITCH_2);
   else if (anglePerFrame == 8)
-    m_acquisitionParamters.setSepsPerFrame(usAcquisitionParameters::US_ANGLE_PITCH_3);
+    m_acquisitionParameters.setSepsPerFrame(usAcquisitionParameters::US_ANGLE_PITCH_3);
   else if (anglePerFrame == 16)
-    m_acquisitionParamters.setSepsPerFrame(usAcquisitionParameters::US_ANGLE_PITCH_4);
+    m_acquisitionParameters.setSepsPerFrame(usAcquisitionParameters::US_ANGLE_PITCH_4);
   else if (anglePerFrame == 32)
-    m_acquisitionParamters.setSepsPerFrame(usAcquisitionParameters::US_ANGLE_PITCH_5);
+    m_acquisitionParameters.setSepsPerFrame(usAcquisitionParameters::US_ANGLE_PITCH_5);
 
-  m_acquisitionParamters.setTransmitFrequencyMin(transmitFrequencyMin);
-  m_acquisitionParamters.setSamplingFrequencyMin(samplingFrequencyMin);
-  m_acquisitionParamters.setImagingModeMin(imagingModeMin);
-  m_acquisitionParamters.setImageDepthMin(imageDepthMin);
-  m_acquisitionParamters.setSectorMin(sectorMin);
-  m_acquisitionParamters.setMotorPositionMin(motorPositionMin);
+  m_acquisitionParameters.setTransmitFrequencyMin(transmitFrequencyMin);
+  m_acquisitionParameters.setSamplingFrequencyMin(samplingFrequencyMin);
+  m_acquisitionParameters.setImagingModeMin(imagingModeMin);
+  m_acquisitionParameters.setImageDepthMin(imageDepthMin);
+  m_acquisitionParameters.setSectorMin(sectorMin);
+  m_acquisitionParameters.setMotorPositionMin(motorPositionMin);
   if (anglePerFrame == 0)
-    m_acquisitionParamters.setSepsPerFrameMin(usAcquisitionParameters::US_STATIC_MOTOR);
+    m_acquisitionParameters.setSepsPerFrameMin(usAcquisitionParameters::US_STATIC_MOTOR);
   else if (anglePerFrame == 2)
-    m_acquisitionParamters.setSepsPerFrameMin(usAcquisitionParameters::US_ANGLE_PITCH_1);
+    m_acquisitionParameters.setSepsPerFrameMin(usAcquisitionParameters::US_ANGLE_PITCH_1);
   else if (anglePerFrame == 4)
-    m_acquisitionParamters.setSepsPerFrameMin(usAcquisitionParameters::US_ANGLE_PITCH_2);
+    m_acquisitionParameters.setSepsPerFrameMin(usAcquisitionParameters::US_ANGLE_PITCH_2);
   else if (anglePerFrame == 8)
-    m_acquisitionParamters.setSepsPerFrameMin(usAcquisitionParameters::US_ANGLE_PITCH_3);
+    m_acquisitionParameters.setSepsPerFrameMin(usAcquisitionParameters::US_ANGLE_PITCH_3);
   else if (anglePerFrame == 16)
-    m_acquisitionParamters.setSepsPerFrameMin(usAcquisitionParameters::US_ANGLE_PITCH_4);
+    m_acquisitionParameters.setSepsPerFrameMin(usAcquisitionParameters::US_ANGLE_PITCH_4);
   else if (anglePerFrame == 32)
-    m_acquisitionParamters.setSepsPerFrameMin(usAcquisitionParameters::US_ANGLE_PITCH_5);
+    m_acquisitionParameters.setSepsPerFrameMin(usAcquisitionParameters::US_ANGLE_PITCH_5);
 
-  m_acquisitionParamters.setTransmitFrequencyMax(transmitFrequencyMax);
-  m_acquisitionParamters.setSamplingFrequencyMax(samplingFrequencyMax);
-  m_acquisitionParamters.setImagingModeMax(imagingModeMax);
-  m_acquisitionParamters.setImageDepthMax(imageDepthMax);
-  m_acquisitionParamters.setSectorMax(sectorMax);
-  m_acquisitionParamters.setMotorPositionMax(motorPositionMax);
-  m_acquisitionParamters.setFramesPerVolumeMax(framesPerVolumeMax);
+  m_acquisitionParameters.setTransmitFrequencyMax(transmitFrequencyMax);
+  m_acquisitionParameters.setSamplingFrequencyMax(samplingFrequencyMax);
+  m_acquisitionParameters.setImagingModeMax(imagingModeMax);
+  m_acquisitionParameters.setImageDepthMax(imageDepthMax);
+  m_acquisitionParameters.setSectorMax(sectorMax);
+  m_acquisitionParameters.setMotorPositionMax(motorPositionMax);
+  m_acquisitionParameters.setFramesPerVolumeMax(framesPerVolumeMax);
   if (anglePerFrame == 0)
-    m_acquisitionParamters.setSepsPerFrameMax(usAcquisitionParameters::US_STATIC_MOTOR);
+    m_acquisitionParameters.setSepsPerFrameMax(usAcquisitionParameters::US_STATIC_MOTOR);
   else if (anglePerFrame == 2)
-    m_acquisitionParamters.setSepsPerFrameMax(usAcquisitionParameters::US_ANGLE_PITCH_1);
+    m_acquisitionParameters.setSepsPerFrameMax(usAcquisitionParameters::US_ANGLE_PITCH_1);
   else if (anglePerFrame == 4)
-    m_acquisitionParamters.setSepsPerFrameMax(usAcquisitionParameters::US_ANGLE_PITCH_2);
+    m_acquisitionParameters.setSepsPerFrameMax(usAcquisitionParameters::US_ANGLE_PITCH_2);
   else if (anglePerFrame == 8)
-    m_acquisitionParamters.setSepsPerFrameMax(usAcquisitionParameters::US_ANGLE_PITCH_3);
+    m_acquisitionParameters.setSepsPerFrameMax(usAcquisitionParameters::US_ANGLE_PITCH_3);
   else if (anglePerFrame == 16)
-    m_acquisitionParamters.setSepsPerFrameMax(usAcquisitionParameters::US_ANGLE_PITCH_4);
+    m_acquisitionParameters.setSepsPerFrameMax(usAcquisitionParameters::US_ANGLE_PITCH_4);
   else if (anglePerFrame == 32)
-    m_acquisitionParamters.setSepsPerFrameMax(usAcquisitionParameters::US_ANGLE_PITCH_5);
+    m_acquisitionParameters.setSepsPerFrameMax(usAcquisitionParameters::US_ANGLE_PITCH_5);
 }
 
 /**
@@ -541,7 +541,7 @@ void usNetworkGrabber::readAcquisitionParameters(QDataStream &stream)
 */
 void usNetworkGrabber::setMotorActivation(bool activateMotor)
 {
-  m_acquisitionParamters.setActivateMotor(activateMotor);
+  m_acquisitionParameters.setActivateMotor(activateMotor);
 }
 
 /**
@@ -549,7 +549,7 @@ void usNetworkGrabber::setMotorActivation(bool activateMotor)
 */
 void usNetworkGrabber::setStepsPerFrame(usAcquisitionParameters::usMotorStep stepsPerFrame)
 {
-  m_acquisitionParamters.setSepsPerFrame(stepsPerFrame);
+  m_acquisitionParameters.setSepsPerFrame(stepsPerFrame);
 }
 
 /**
@@ -557,12 +557,12 @@ void usNetworkGrabber::setStepsPerFrame(usAcquisitionParameters::usMotorStep ste
 */
 void usNetworkGrabber::setFramesPerVolume(int framesPerVolume)
 {
-  if (framesPerVolume < m_acquisitionParamters.getFramesPerVolumeMin() ||
-      framesPerVolume > m_acquisitionParamters.getFramesPerVolumeMax() ||
+  if (framesPerVolume < m_acquisitionParameters.getFramesPerVolumeMin() ||
+      framesPerVolume > m_acquisitionParameters.getFramesPerVolumeMax() ||
       framesPerVolume % 2 == 0) // odd number of frames per volume required
     throw(vpException(vpException::badValue),
           "Number of frames per volume must be odd, and between min and max values");
-  m_acquisitionParamters.setFramesPerVolume(framesPerVolume);
+  m_acquisitionParameters.setFramesPerVolume(framesPerVolume);
 }
 
 /**
@@ -570,9 +570,9 @@ void usNetworkGrabber::setFramesPerVolume(int framesPerVolume)
 */
 void usNetworkGrabber::setImageDepth(int imageDepth)
 {
-  if (imageDepth < m_acquisitionParamters.getImageDepthMin() || imageDepth > m_acquisitionParamters.getImageDepthMax())
+  if (imageDepth < m_acquisitionParameters.getImageDepthMin() || imageDepth > m_acquisitionParameters.getImageDepthMax())
     throw(vpException(vpException::badValue), "Image depth must be included between min and max values");
-  m_acquisitionParamters.setImageDepth(imageDepth);
+  m_acquisitionParameters.setImageDepth(imageDepth);
 }
 
 /**
@@ -580,10 +580,10 @@ void usNetworkGrabber::setImageDepth(int imageDepth)
 */
 void usNetworkGrabber::setImagingMode(int imagingMode)
 {
-  if (imagingMode < m_acquisitionParamters.getImagingModeMin() ||
-      imagingMode > m_acquisitionParamters.getImagingModeMax())
+  if (imagingMode < m_acquisitionParameters.getImagingModeMin() ||
+      imagingMode > m_acquisitionParameters.getImagingModeMax())
     throw(vpException(vpException::badValue), "Imaging mode out of range");
-  m_acquisitionParamters.setImagingMode(imagingMode);
+  m_acquisitionParameters.setImagingMode(imagingMode);
 }
 
 /**
@@ -591,36 +591,36 @@ void usNetworkGrabber::setImagingMode(int imagingMode)
 */
 void usNetworkGrabber::setMotorPosition(int motorPosition)
 {
-  if (motorPosition < m_acquisitionParamters.getMotorPositionMin() ||
-      motorPosition > m_acquisitionParamters.getMotorPositionMax())
+  if (motorPosition < m_acquisitionParameters.getMotorPositionMin() ||
+      motorPosition > m_acquisitionParameters.getMotorPositionMax())
     throw(vpException(vpException::badValue), "Motor poisition out of range");
-  m_acquisitionParamters.setMotorPosition(motorPosition);
+  m_acquisitionParameters.setMotorPosition(motorPosition);
 }
 
 /**
 * Setter for post-scan image height.
 */
-void usNetworkGrabber::setPostScanHeigh(int postScanHeigh) { m_acquisitionParamters.setPostScanHeigh(postScanHeigh); }
+void usNetworkGrabber::setPostScanHeigh(int postScanHeigh) { m_acquisitionParameters.setPostScanHeigh(postScanHeigh); }
 
 /**
 * Setter for post-scan mode : true for post-scan, false for pre-scan.
 */
-void usNetworkGrabber::setPostScanMode(bool postScanMode) { m_acquisitionParamters.setPostScanMode(postScanMode); }
+void usNetworkGrabber::setPostScanMode(bool postScanMode) { m_acquisitionParameters.setPostScanMode(postScanMode); }
 
 /**
 * Setter for post-scan image width.
 */
-void usNetworkGrabber::setPostScanWidth(int postScanWidth) { m_acquisitionParamters.setPostScanWidth(postScanWidth); }
+void usNetworkGrabber::setPostScanWidth(int postScanWidth) { m_acquisitionParameters.setPostScanWidth(postScanWidth); }
 
 /**
 * Setter for samplingFrequency (Hz).
 */
 void usNetworkGrabber::setSamplingFrequency(int samplingFrequency)
 {
-  if (samplingFrequency < m_acquisitionParamters.getSamplingFrequencyMin() ||
-      samplingFrequency > m_acquisitionParamters.getSamplingFrequencyMax())
+  if (samplingFrequency < m_acquisitionParameters.getSamplingFrequencyMin() ||
+      samplingFrequency > m_acquisitionParameters.getSamplingFrequencyMax())
     throw(vpException(vpException::badValue), "Sampling frequency out of range");
-  m_acquisitionParamters.setSamplingFrequency(samplingFrequency);
+  m_acquisitionParameters.setSamplingFrequency(samplingFrequency);
 }
 
 /**
@@ -628,9 +628,9 @@ void usNetworkGrabber::setSamplingFrequency(int samplingFrequency)
 */
 void usNetworkGrabber::setSector(int sector)
 {
-  if (sector < m_acquisitionParamters.getSectorMin() || sector > m_acquisitionParamters.getSectorMax())
+  if (sector < m_acquisitionParameters.getSectorMin() || sector > m_acquisitionParameters.getSectorMax())
     throw(vpException(vpException::badValue), "Sector out of range");
-  m_acquisitionParamters.setSector(sector);
+  m_acquisitionParameters.setSector(sector);
 }
 
 /**
@@ -638,11 +638,11 @@ void usNetworkGrabber::setSector(int sector)
 */
 void usNetworkGrabber::setTransmitFrequency(int transmitFrequency)
 {
-  if (transmitFrequency < m_acquisitionParamters.getTransmitFrequencyMin() ||
-      transmitFrequency > m_acquisitionParamters.getTransmitFrequencyMax())
+  if (transmitFrequency < m_acquisitionParameters.getTransmitFrequencyMin() ||
+      transmitFrequency > m_acquisitionParameters.getTransmitFrequencyMax())
     throw(vpException(vpException::badValue), "Transmit frequency out of range");
 
-  m_acquisitionParamters.setTransmitFrequency(transmitFrequency);
+  m_acquisitionParameters.setTransmitFrequency(transmitFrequency);
 }
 
 /**
@@ -702,65 +702,65 @@ void usNetworkGrabber::sendRunSignal(bool run)
 /**
 * Getter for motor activation : true to sweep the motor the motor during the acquisition, false to let it static.
 */
-bool usNetworkGrabber::getMotorActivation() { return m_acquisitionParamters.getActivateMotor(); }
+bool usNetworkGrabber::getMotorActivation() { return m_acquisitionParameters.getActivateMotor(); }
 
 /**
 * Getter for steps between two sucessive frames (angle). See usAcquisitionParameters::usMotorSteps
 */
 usAcquisitionParameters::usMotorStep usNetworkGrabber::getStepsPerFrame()
 {
-  return m_acquisitionParamters.getSepsPerFrame();
+  return m_acquisitionParameters.getSepsPerFrame();
 }
 
 /**
 * Getter for the number of frames per volume, in 3D acquisition.
 */
-int usNetworkGrabber::getFramesPerVolume() { return m_acquisitionParamters.getFramesPerVolume(); }
+int usNetworkGrabber::getFramesPerVolume() { return m_acquisitionParameters.getFramesPerVolume(); }
 
 /**
 * Getter for image depth (meters).
 */
-int usNetworkGrabber::getImageDepth() { return m_acquisitionParamters.getImageDepth(); }
+int usNetworkGrabber::getImageDepth() { return m_acquisitionParameters.getImageDepth(); }
 
 /**
 * Getter for imaging mode (0 : B-Mode, 12 : RF).
 */
-int usNetworkGrabber::getImagingMode() { return m_acquisitionParamters.getImagingMode(); }
+int usNetworkGrabber::getImagingMode() { return m_acquisitionParameters.getImagingMode(); }
 
 /**
 * Getter for a static motor position (in angle from the beginning position).
 */
-int usNetworkGrabber::getMotorPosition() { return m_acquisitionParamters.getMotorPosition(); }
+int usNetworkGrabber::getMotorPosition() { return m_acquisitionParameters.getMotorPosition(); }
 
 /**
 * Getter for post-scan image height.
 */
-int usNetworkGrabber::getPostScanHeigh() { return m_acquisitionParamters.getPostScanHeigh(); }
+int usNetworkGrabber::getPostScanHeigh() { return m_acquisitionParameters.getPostScanHeigh(); }
 
 /**
 * Getter for post-scan mode : true for post-scan, false for pre-scan.
 */
-bool usNetworkGrabber::getPostScanMode() { return m_acquisitionParamters.getPostScanMode(); }
+bool usNetworkGrabber::getPostScanMode() { return m_acquisitionParameters.getPostScanMode(); }
 
 /**
 * Getter for post-scan image width.
 */
-int usNetworkGrabber::getPostScanWidth() { return m_acquisitionParamters.getPostScanWidth(); }
+int usNetworkGrabber::getPostScanWidth() { return m_acquisitionParameters.getPostScanWidth(); }
 
 /**
 * Getter for samplingFrequency (Hz).
 */
-int usNetworkGrabber::getSamplingFrequency() { return m_acquisitionParamters.getSamplingFrequency(); }
+int usNetworkGrabber::getSamplingFrequency() { return m_acquisitionParameters.getSamplingFrequency(); }
 
 /**
 * Getter for sector (percentage of the number of transducers to use).
 */
-int usNetworkGrabber::getSector() { return m_acquisitionParamters.getSector(); }
+int usNetworkGrabber::getSector() { return m_acquisitionParameters.getSector(); }
 
 /**
 * Getter for transmitFrequency (Hz).
 */
-int usNetworkGrabber::getTransmitFrequency() { return m_acquisitionParamters.getTransmitFrequency(); }
+int usNetworkGrabber::getTransmitFrequency() { return m_acquisitionParameters.getTransmitFrequency(); }
 
 /**
 * Sets the  motor position of 4DC7 probe to the middle.

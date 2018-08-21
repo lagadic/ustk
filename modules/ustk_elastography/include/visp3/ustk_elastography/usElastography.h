@@ -70,13 +70,13 @@ public:
   virtual ~usElastography();
 
   double getFPS(void) { return m_FPS; }
-  double getfs(void) { return m_fs; }
+  double getSamplingFrequency(void) { return m_samplingFrequency; }
 
   vpImage<unsigned char> run();
 
   void setDecimationFactor(unsigned int decimationFactor) { m_decimationFactor = decimationFactor; }
   void setFPS(double fps);
-  void setfs(double fs);
+  void setSamplingFrequency(double samplingFrequency);
   void setLSQpercentage(double per);
   void setMotionEstimator(MotionEstimator t_mest) { m_mEstimatior = t_mest; }
   void setPostCompression(const usImageRF2D<short> &Post);
@@ -97,7 +97,7 @@ private:
   bool m_isloadPre;
   bool m_isloadPost;
   double m_FPS;
-  double m_fs;
+  double m_samplingFrequency;
   double m_c;
   double m_min_str;
   double m_max_str;
