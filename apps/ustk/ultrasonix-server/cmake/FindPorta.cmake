@@ -78,7 +78,7 @@ if(Porta_LIBRARIES AND Porta_INCLUDE_DIRS)
 
 else()
   set(Porta_FOUND FALSE)
-  message(STATUS "Could not find Porta (if you are on a ulstrasonix machine, make sure you properly filled PORTA_DIR environment variable).")
+  message(STATUS "Could not find Porta (if you are on an Ultrasonix machine, make sure you properly filled PORTA_DIR environment variable).")
 endif()
  
 mark_as_advanced(
