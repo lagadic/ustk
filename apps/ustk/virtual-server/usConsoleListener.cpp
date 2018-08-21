@@ -38,7 +38,11 @@
  */
 usConsoleListener::usConsoleListener()
 {
+#if defined(_WIN32)
+  m_notifier = new QSocketNotifier(_fileno(stdin), QSocketNotifier::Read, this);
+#else
   m_notifier = new QSocketNotifier(fileno(stdin), QSocketNotifier::Read, this);
+#endif
   connect(m_notifier, SIGNAL(activated(int)), this, SLOT(readCommand()));
 }
 
