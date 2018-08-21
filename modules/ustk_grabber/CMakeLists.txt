@@ -43,7 +43,10 @@ if(USE_QT5)
   set(config_ "NONE" "RELEASE" "DEBUG" "RELEASEWITHDEBINFO" "RELWITHDEBINFO")
   foreach(lib_ ${Qt5_COMPONENTS})
     foreach(imp_config_ ${config_})
-      get_target_property(lib_property_${imp_config_}_ ${lib_} IMPORTED_LOCATION_${imp_config_})
+      get_target_property(lib_property_${imp_config_}_ ${lib_} IMPORTED_IMPLIB_${imp_config_})
+      if(NOT EXISTS "${lib_property_${imp_config_}_}")
+        get_target_property(lib_property_${imp_config_}_ ${lib_} IMPORTED_LOCATION_${imp_config_})
+      endif()
       # Under Unix, there is no specific suffix for PCL/VTK libraries.
       # Under Windows, we add the "optimized", "debug" specific keywords
       if(WIN32 AND EXISTS "${lib_property_${imp_config_}_}" AND "${imp_config_}" MATCHES "RELEASE") # also valid for RELEASEWITHDEBINFO
