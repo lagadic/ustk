@@ -66,6 +66,24 @@ To build the application, there are two ways:
 
 If the build is successful, you can now run the server application located in `<workspace>/visp-ustk-build/apps/ustk/ultrasonix-server/Release/ustk-ultrasonix-server.exe` (see below).
 
+\section ustk_server_tips_tricks Tips & Tricks
+
+Here are some advices to resolve some known issues in particular use of the application.
+
+\subsection ustk_server_tips_tricks_imaging_modes Compile error with porta 6
+
+If you are using porta 6 SDK, you will probably face a compile issue in the header file provided by Ultrasonix (porta_wrapper.h) : unknown type name 'imagingModes'.
+This error is due to a missing header file : imagingModes.h. Simply include this header in porta_wrapper.h to correct the issue.
+
+\subsection ustk_server_tips_tricks_init_usm_pci Porta hardware initialization error
+
+If you are using a sonixtouch station, you'll have to change the default parameters to initialize porta. With this hardware, the usm and pci version have to be set to 4 (the default values in the server application are 3 as we use a previous hardware).
+To set those values, you can use the --pci and --usm options as follow:
+\code
+C:\...> ustk-ultrasonix-server.exe --usm 4 --pci 4
+\endcode
+This will solve the initialization issues for sonixTouch stations.
+
 \section ustk_server_run Running the server application
 
 Before running the application, verify that a ultrasound probe is connected to your station, and that your station is connected to a network.
