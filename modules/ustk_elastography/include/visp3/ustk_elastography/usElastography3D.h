@@ -66,20 +66,20 @@ public:
   virtual ~usElastography3D();
 
   double getFPS(void);
-  double getfs(void);
+  double getSamplingFrequency(void);
 
   usImage3D<unsigned char> run();
 
   void setDecimationFactor(unsigned int decimationFactor);
   void setFPS(double fps);
-  void setfs(double fs);
+  void setSamplingFrequency(double samplingFrequency);
   void setLSQpercentage(double per);
   void setMotionEstimator(usElastography::MotionEstimator t_mest);
   void setPostCompression(const usImageRF3D<short> &Post);
   void setPreCompression(const usImageRF3D<short> &Pre);
   void setROI(int tx, int ty, int tz, int tw, int th, int tf);
 
-  void updateRF(const usImageRF3D<short int> &image);
+  void updateRF(const usImageRF3D<short int> &volume);
   void updateROIPos(int tx, int ty, int tz);
 
 private:

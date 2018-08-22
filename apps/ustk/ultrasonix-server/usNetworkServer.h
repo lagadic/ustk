@@ -146,8 +146,12 @@ public:
   void writeOnSocketFromOtherThread();
 
   void useProbeConfigFile(std::string configFileName);
-
+  
   void setVerbose();
+  
+  void setUSMVersion(int usmVersion);
+
+  void setPCIVersion(int pciVersion);
 
 public slots:
   void startServerSlot();
@@ -196,6 +200,9 @@ private:
   std::vector<std::pair<int, std::string> > probeConfigFileNames;
 
   bool verboseMode;
+  
+  int m_usmVersion;
+  int m_pciVersion;
 };
 
 #endif // US_NETWORK_GRABBER_H

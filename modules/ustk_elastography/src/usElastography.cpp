@@ -47,7 +47,7 @@ usElastography::usElastography()
   // Frame rate in fps
   m_FPS = 24.0;
   // Sampling frequency
-  m_fs = 40e6;
+  m_samplingFrequency = 40e6;
   // speed of the sound
   m_c = 1540.0;
   m_isloadPre = false;
@@ -78,7 +78,7 @@ usElastography::usElastography(usImageRF2D<short int> &Pre, usImageRF2D<short in
   setPostCompression(Post);
   m_Lsqper = 0.01;
   m_FPS = 24.0;
-  m_fs = 40e6;
+  m_samplingFrequency = 40e6;
   m_c = 1540.0;
   m_setROI = false;
   m_mEstimatior = OF;
@@ -124,16 +124,16 @@ void usElastography::setPostCompression(const usImageRF2D<short int> &Post)
 void usElastography::setLSQpercentage(double per) { m_Lsqper = per; }
 
 /**
-* Setter for LSQ strain percentage.
-* @param fps LSQ strain percentage.
+* Setter for frames per second parameter of the acquisition.
+* @param fps Frames per second.
 */
 void usElastography::setFPS(double fps) { m_FPS = fps; }
 
 /**
 * Setter for sampling frequency of the ultrasound wave.
-* @param fs Sampling frequency in Hertz.
+* @param samplingFrequency Sampling frequency in Hertz.
 */
-void usElastography::setfs(double fs) { m_fs = fs; }
+void usElastography::setSamplingFrequency(double samplingFrequency) { m_samplingFrequency = samplingFrequency; }
 
 /**
 * Updater of pre/post compressed image : sets the new image as pre-compressed image for process, and sets the old
@@ -210,8 +210,8 @@ vpImage<unsigned char> usElastography::run()
       // Step 0: BMA
       m_ME.init(m_PreROI, m_PostROI, 2, 20, 2, 120);
       m_ME.run();
-      // U = m_ME.getU_vp() * (m_c * (m_PRF / (2.0 * m_fs)));
-      V = m_ME.getV_vp() * (m_c * (m_FPS / (2.0 * m_fs)));
+      // U = m_ME.getU_vp() * (m_c * (m_PRF / (2.0 * m_samplingFrequency)));
+      V = m_ME.getV_vp() * (m_c * (m_FPS / (2.0 * m_samplingFrequency)));
       m_h_m = m_PreROI.getHeight();
       m_w_m = m_PreROI.getWidth();
 #else
@@ -285,8 +285,8 @@ vpImage<unsigned char> usElastography::run()
           b.data[1] = -sgdty_w;
 
           X = M.pseudoInverse() * b;
-          // U[l][k] = X.data[0] * (m_c * (m_PRF / (2.0 * m_fs))); //lateral displacements
-          V[l][k] = X.data[1] * (m_c * (m_FPS / (2.0 * m_fs))); // axial displacements
+          // U[l][k] = X.data[0] * (m_c * (m_PRF / (2.0 * m_samplingFrequency))); //lateral displacements
+          V[l][k] = X.data[1] * (m_c * (m_FPS / (2.0 * m_samplingFrequency))); // axial displacements
           l++;
         }
         k++;
@@ -297,7 +297,7 @@ vpImage<unsigned char> usElastography::run()
     vV = usSignalProcessing::BilinearInterpolation(V, m_w_m, m_h_m);
     /// Strain estimation
     /// "LSQ strain estimation"
-    double kappa = (2.0 * m_fs) / (m_c * m_FPS);
+    double kappa = (2.0 * m_samplingFrequency) / (m_c * m_FPS);
     double d_m = m_Lsqper * m_h_m; // 20.0; //Good value in phantom
     double n = d_m + 1;
     // Filter kernel

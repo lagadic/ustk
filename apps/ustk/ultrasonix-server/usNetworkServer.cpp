@@ -7,23 +7,9 @@ usNetworkServer::usNetworkServer(QObject *parent) : QObject(parent)
   // creating porta object
   m_porta = new porta;
   std::cout << "porta instance created" << std::endl;
-
-  // porta settings
-  char *portaFirmware = USTK_PORTA_FIRMWARE_PATH;
-  char *portaSettings = USTK_PORTA_SETTINGS_PATH;
-  char *portaLicense = USTK_PORTA_LICENSE_PATH;
-  char *portaLut = "";
-
-  int usm = 3; // us module version 3 (MDP/TOUCH)
-  int pci = 3;
-  int highVoltage = 0; // true only if version 2
-
-  // init porta
-  bool initPortaSucess = m_porta->init(256 * 1024 * 1024, portaFirmware, portaSettings, portaLicense, portaLut, usm,
-                                       pci, highVoltage, 0, 64);
-  if (!initPortaSucess) {
-    std::cout << "error initializing porta sdk !" << std::endl;
-  }
+  
+  m_usmVersion = 3;
+  m_pciVersion = 3;
 
  connectionSoc = NULL;
 }
@@ -908,6 +894,22 @@ void usNetworkServer::useProbeConfigFile(std::string configFileName)
 void usNetworkServer::setVerbose() { verboseMode = true; }
 
 void usNetworkServer::startServerSlot() {
+  // porta settings
+  char *portaFirmware = USTK_PORTA_FIRMWARE_PATH;
+  char *portaSettings = USTK_PORTA_SETTINGS_PATH;
+  char *portaLicense = USTK_PORTA_LICENSE_PATH;
+  char *portaLut = "";
+
+  int highVoltage = 0; // true only if version 2
+
+  // init porta
+  bool initPortaSucess = m_porta->init(256 * 1024 * 1024, portaFirmware, portaSettings, portaLicense, portaLut, m_usmVersion,
+                                       m_pciVersion, highVoltage, 0, 64);
+  if (!initPortaSucess) {
+    std::cout << "error initializing porta sdk !" << std::endl;
+  }
+
+
   // init TCP server
   // set : acceptTheConnection() will be called whenever there is a new connection
   connect(&tcpServer, SIGNAL(newConnection()), this, SLOT(acceptTheConnection()));
@@ -931,4 +933,13 @@ void usNetworkServer::startServerSlot() {
 
 void usNetworkServer::stopServerSlot() {
   quitApp();
+}
+
+
+void usNetworkServer::setUSMVersion(int usmVersion) {
+ m_usmVersion = usmVersion;
+}
+
+void usNetworkServer::setPCIVersion(int pciVersion) {
+  m_pciVersion = pciVersion;
 }

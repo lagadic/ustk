@@ -98,9 +98,12 @@ void usElastography3D::setFPS(double fps) { m_elastography2DProcessor.setFPS(fps
 
 /**
 * Setter for sampling frequency of the ultrasound wave.
-* @param fs Sampling frequency in Hertz.
+* @param samplingFrequency Sampling frequency in Hertz.
 */
-void usElastography3D::setfs(double fs) { m_elastography2DProcessor.setfs(fs); }
+void usElastography3D::setSamplingFrequency(double samplingFrequency)
+{
+  m_elastography2DProcessor.setSamplingFrequency(samplingFrequency);
+}
 
 void usElastography3D::setMotionEstimator(usElastography::MotionEstimator t_mest)
 {
@@ -109,7 +112,7 @@ void usElastography3D::setMotionEstimator(usElastography::MotionEstimator t_mest
 
 double usElastography3D::getFPS(void) { return m_elastography2DProcessor.getFPS(); }
 
-double usElastography3D::getfs(void) { return m_elastography2DProcessor.getfs(); }
+double usElastography3D::getSamplingFrequency(void) { return m_elastography2DProcessor.getSamplingFrequency(); }
 
 void usElastography3D::setDecimationFactor(unsigned int decimationFactor)
 {
@@ -153,7 +156,7 @@ void usElastography3D::setROI(int tx, int ty, int tz, int tw, int th, int tf)
 * ROI position update, allows to move the ROI in the image.
 * @param tx New top left column of the ROI.
 * @param ty New top left row of the ROI.
-* @param ty New top left frame of the ROI.
+* @param tz New top left frame of the ROI.
 */
 void usElastography3D::updateROIPos(int tx, int ty, int tz)
 {

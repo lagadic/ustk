@@ -208,7 +208,7 @@ protected:
   int m_bytesLeftToRead;
 
   // acquisition parameters
-  usAcquisitionParameters m_acquisitionParamters;
+  usAcquisitionParameters m_acquisitionParameters;
 
   // To know if the update was sucessfull on server side
   bool m_updateParametersSucess;
