@@ -31,7 +31,8 @@
  *****************************************************************************/
 
 import QtQuick 2.5
-import QtQuick.Controls 2.1
+// import QtQuick.Controls 2.1 // Not working on lunar with Ubuntu 16.04
+import QtQuick.Controls 1.4
 Item {
   width: 400
   height: 200
@@ -72,7 +73,8 @@ Item {
       anchors.bottom: parent.bottom
       anchors.rightMargin: 10
 
-      contentItem: Text {
+      // Removed to make it working on lunar with Ubuntu 16.04
+      /* contentItem: Text {
         text: trackingButton.text
         font: trackingButton.font
         opacity: enabled ? 1.0 : 0.3
@@ -80,9 +82,10 @@ Item {
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
         elide: Text.ElideRight
-      }
+      } */
 
-      background: Rectangle {
+
+      /* background: Rectangle {
         implicitWidth: 100
         implicitHeight: 40
         opacity: enabled ? 1 : 0.3
@@ -90,6 +93,7 @@ Item {
         border.width: 1
         radius: 4
       }
+*/
       onClicked: {
         if(selection) {
           if(!trackingActive) {
