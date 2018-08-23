@@ -69,9 +69,9 @@ void displayFrame(const vpImage<ImageDataType> &I, const vpHomogeneousMatrix &im
 
   // Display frame
   vpColor color[3] = {vpColor::red, vpColor::green, vpColor::blue};
-  for (int i = 0; i < 3; i++) {
-    int j = order[i];
-    vpDisplay::displayArrow(I, origin_y, origin_x, origin_y + 20 * imageMframe[1][j], origin_x + 20 * imageMframe[0][j],
+  for (unsigned int i = 0; i < 3; i++) {
+    unsigned int j = (unsigned int)order[i];
+    vpDisplay::displayArrow(I, (int)origin_y, (int)origin_x, (int)(origin_y + 20 * imageMframe[1][j]), (int)(origin_x + 20 * imageMframe[0][j]),
                             color[j], 5, 5, 1);
   }
 }
@@ -97,8 +97,8 @@ void display(const usOrientedPlane3D &plane, const vpImage<ImageDataType> &I, co
   double dx = 0.1 * Xscale * imageDirection[0];
   double dy = 0.1 * Yscale * imageDirection[1];
 
-  vpDisplay::displayCross(I, y, x, 7, color);
-  vpDisplay::displayLine(I, y - dx, x + dy, y + dx, x - dy, color);
+  vpDisplay::displayCross(I, (int)y, (int)x, 7, color);
+  vpDisplay::displayLine(I, (int)(y - dx), (int)(x + dy), (int)(y + dx), (int)(x - dy), color);
 }
 template VISP_EXPORT void display(const usOrientedPlane3D &, const vpImage<unsigned char> &,
                                   const vpHomogeneousMatrix &, double, double, const vpColor &);
@@ -132,7 +132,7 @@ void display(const usPolynomialCurve2D &curve, const vpImage<ImageDataType> &I, 
     x1 = Xscale * imagePoints[0][i + 1];
     y1 = Yscale * imagePoints[1][i + 1];
 
-    vpDisplay::displayLine(I, y0, x0, y1, x1, color);
+    vpDisplay::displayLine(I, (int)y0, (int)x0, (int)y1, (int)x1, color);
   }
 }
 template VISP_EXPORT void display<unsigned char>(const usPolynomialCurve2D &, const vpImage<unsigned char> &, double,
@@ -178,7 +178,7 @@ void display(const usPolynomialCurve3D &curve, const vpImage<ImageDataType> &I, 
     z1 = imagePoints[2][i + 1];
 
     if ((vpMath::sign(z0) != vpMath::sign(z1)) || ((fabs(z0) < visibilityDistance) && (fabs(z1) < visibilityDistance)))
-      vpDisplay::displayLine(I, y0, x0, y1, x1, color);
+      vpDisplay::displayLine(I, (int)y0, (int)x0, (int)y1, (int)x1, color);
   }
 }
 
@@ -275,7 +275,7 @@ void displayExtremities(const usBSpline3D &spline, const vpImage<ImageDataType> 
     double y = Yscale * imagePoints[1][i];
     double z = imagePoints[2][i];
     if (fabs(z) < visibilityDistance)
-      vpDisplay::displayCross(I, y, x, 7, color);
+      vpDisplay::displayCross(I, (int)y, (int)x, 7, color);
   }
 }
 template VISP_EXPORT void displayExtremities<unsigned char>(const usBSpline3D &, const vpImage<unsigned char> &,
