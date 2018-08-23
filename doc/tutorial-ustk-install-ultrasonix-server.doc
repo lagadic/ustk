@@ -50,7 +50,7 @@ You may now download ViSP and UsTK source codes:
 Then you can configure the project using CMake: 
 - Run `cmake-gui`, and specify the source directory of ViSP (`<workspace>/visp`), and put the build directory (`<workspace>/visp-ustk-build`).
 - In the `VISP_CONTRIB_MODULES_PATH` option, enter the location of UsTK source code (`<workspace>/ustk`).
-- Click "Configure" button, and verify that porta and Qt have been found correctly with CMake checking that cmake option `USE_QT5` is true and `PORTA_LIBRARIES` is correctly filled with your path.
+- Click "Configure" button, and verify that Porta and Qt have been found correctly with CMake checking that cmake option `USE_QT5` is true and `PORTA_LIBRARIES` is correctly filled with your path.
 - Set `Porta_LICENSE_PATH` variable to the path that contains `licenses_web` file generally located in `C:/Ultrasonix/SDK/porta/license`
 - Click "Generate" button
 
@@ -65,24 +65,6 @@ To build the application, there are two ways:
 2. Or open directly `ustk-ultrasonix-server.sln` Visual Studio solution located in `<workspace>/visp-ustk-build/apps/ustk/ultrasonix-server` folder. Once opened in Visual Studio 2010, select **Release** in configuration manager and build the project.
 
 If the build is successful, you can now run the server application located in `<workspace>/visp-ustk-build/apps/ustk/ultrasonix-server/Release/ustk-ultrasonix-server.exe` (see below).
-
-\section ustk_server_tips_tricks Tips & Tricks
-
-Here are some advices to resolve some known issues in particular use of the application.
-
-\subsection ustk_server_tips_tricks_imaging_modes Compile error with porta 6
-
-If you are using porta 6 SDK, you will probably face a compile issue in the header file provided by Ultrasonix (porta_wrapper.h) : unknown type name 'imagingModes'.
-This error is due to a missing header file : imagingModes.h. Simply include this header in porta_wrapper.h to correct the issue.
-
-\subsection ustk_server_tips_tricks_init_usm_pci Porta hardware initialization error
-
-If you are using a sonixtouch station, you'll have to change the default parameters to initialize porta. With this hardware, the usm and pci version have to be set to 4 (the default values in the server application are 3 as we use a previous hardware).
-To set those values, you can use the --pci and --usm options as follow:
-\code
-C:\...> ustk-ultrasonix-server.exe --usm 4 --pci 4
-\endcode
-This will solve the initialization issues for sonixTouch stations.
 
 \section ustk_server_run Running the server application
 
@@ -126,6 +108,45 @@ ustk-ultrasonix-server.exe --probeSettingsFile probeParameters.txt
 \endcode
 
 This will take into account your imaging parameters file corresponding to the probe plugged when you initialize the server application.
+
+\section ustk_server_tips_tricks Tips & Tricks
+
+Here are some advices to resolve some known issues that may occur during application building or usage.
+
+\subsection ustk_server_tips_tricks_qt5core Compile error with Qt5Core that conflicts with target machine type x64
+
+When building the application, if you face the following build issue:
+\code
+Qt5Core.lib(Qt5Core.dll) : fatal error LNK1112: module machine type 'X86' conflicts with target machine type 'x64'
+\endcode
+It meeans that with CMakeGUI you configure ViSP or the application with `Visual Studio 2010 Win64`. Since you downloaded and installed Qt 5.5 for Visual Studio 2010 (Win32) you have this conflict.
+
+To solve this issue:
+- open CMakeGUI
+  - remove the cache
+  - configure the project with `Visual Studio 2010`
+\image html img-ustk-msvc-win64-issue.jpg
+  - generate the solution files
+  .
+- open the solution file in Visual Studio 2010 and build again the application 
+. 
+
+\subsection ustk_server_tips_tricks_imaging_modes Compile error with Porta 6
+
+If you are using porta 6 SDK, you will probably face a compile issue in the header file provided by Ultrasonix:
+\code
+(porta_wrapper.h) : unknown type name 'imagingModes'.
+\endcode
+This error is due to a missing header file: `imagingModes.h`. Simply include this header in `porta_wrapper.h` to correct the issue.
+
+\subsection ustk_server_tips_tricks_init_usm_pci Porta hardware initialization error with SonixTablet
+
+If you are using a SonixTablet station, you'll have to change the default parameters to initialize porta. With this hardware, the usm and pci version have to be set to 4 (the default values in the server application are set to 3 and correspond to the right parameters for a SonixTouch machinestation).
+To set those values, you can use the `--pci` and `--usm` options as follow:
+\code
+C:\...> ustk-ultrasonix-server.exe --usm 4 --pci 4
+\endcode
+This will solve the initialization issues for SonixTablet stations.
 
 \section ustk_server_next_tutorial Next tutorial
 Once the server application is running on your Ultrasonix station, you can then go to the next \ref tutorial-ustk-grabber-ultrasonix.
