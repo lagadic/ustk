@@ -715,19 +715,20 @@ bool usNeedleInsertionModelRayleighRitzSpline::cutPathToPoint(const vpColVector 
     throw vpException(vpException::dimensionError,
                       "usNeedleInsertionModelRayleighRitzSpline::cutPathToPoint: invalid vector dimension");
 
+  if (!usGeometryTools::IsPointInFrontOfPlane(P, m_tissue.accessSurface())) return false;
+  
   vpColVector lastPoint(3);
   vpColVector lastDirection(3);
   if (m_tissue.accessPath().getNbSegments() > 0) {
     lastPoint = m_tissue.accessPath().accessLastSegment().getEndPoint();
     lastDirection = m_needle.getTipDirection(); // m_tissue.accessPath().accessLastSegment().getEndTangent();
-  } else if (usGeometryTools::IsPointInFrontOfPlane(P, m_tissue.accessSurface())) {
+  } else {
     lastDirection = m_needle.getTipDirection();
     lastPoint = usGeometryTools::projectPointOnPlane(P, m_tissue.accessSurface(), lastDirection);
-  } else
-    return false;
+  }
 
   if (vpColVector::dotProd(P - lastPoint, lastDirection) > m_pathUpdateLengthThreshold) {
-    if ((P - m_needle.getBasePosition()).euclideanNorm() > m_needle.getFullLength() + 0.05) {
+    if ((P - m_needle.getBasePosition()).euclideanNorm() > 1.1*m_needle.getFullLength()) {
       std::cout << "Warning usNeedleInsertionModelRayleighRitzSpline::cutPathToPoint: cut point is inconsistent with "
                    "current needle state"
                 << std::endl;
@@ -770,7 +771,7 @@ void usNeedleInsertionModelRayleighRitzSpline::solveSegmentsParametersSparseEige
     vpColVector d(3);
     for (int i = 0; i < 3; i++)
       d[i] = m_needle.getWorldMbase()[i][2];
-    double cosTheta = fabs(vpColVector::dotProd(m_tissue.accessSurface().getDirection(), d));
+    double cosTheta = vpColVector::dotProd(m_tissue.accessSurface().getDirection(), d);
     if (cosTheta > std::numeric_limits<double>::epsilon())
       trueFreeLength = fabs(usGeometryTools::getPointPlaneDistance(p, m_tissue.accessSurface())) / cosTheta;
     else
@@ -859,6 +860,7 @@ void usNeedleInsertionModelRayleighRitzSpline::solveSegmentsParametersSparseEige
     // Continuity
 
     double *tmp = new double[nbSegCoef];
+
     if (order > 0) // Order 0
     {
       tmp[0] = 1;
@@ -1079,7 +1081,7 @@ void usNeedleInsertionModelRayleighRitzSpline::solveSegmentsParametersFullSparse
     vpColVector d(3);
     for (int i = 0; i < 3; i++)
       d[i] = m_needle.getWorldMbase()[i][2];
-    double cosTheta = fabs(vpColVector::dotProd(m_tissue.accessSurface().getDirection(), d));
+    double cosTheta = vpColVector::dotProd(m_tissue.accessSurface().getDirection(), d);
     if (cosTheta > std::numeric_limits<double>::epsilon())
       trueFreeLength = fabs(usGeometryTools::getPointPlaneDistance(p, m_tissue.accessSurface())) / cosTheta;
     else
@@ -1358,7 +1360,7 @@ void usNeedleInsertionModelRayleighRitzSpline::solveSegmentsParametersFullSparse
     double segLength = m_needle.accessLastSegment().getParametricLength();
     double LbevMin = 0;
     if (currentDepth == 0) {
-      double cosTheta = fabs(vpColVector::dotProd(m_tissue.accessSurface().getDirection(), bevelSegment));
+      double cosTheta = vpColVector::dotProd(m_tissue.accessSurface().getDirection(), bevelSegment);
       if (cosTheta > std::numeric_limits<double>::epsilon())
         LbevMin =
             fabs(usGeometryTools::getPointPlaneDistance(m_needleTip->getBasePosition(), m_tissue.accessSurface())) /
@@ -1519,7 +1521,7 @@ void usNeedleInsertionModelRayleighRitzSpline::solveSegmentsParametersFullSparse
     vpColVector d(3);
     for (int i = 0; i < 3; i++)
       d[i] = m_needle.getWorldMbase()[i][2];
-    double cosTheta = fabs(vpColVector::dotProd(m_tissue.accessSurface().getDirection(), d));
+    double cosTheta = vpColVector::dotProd(m_tissue.accessSurface().getDirection(), d);
     if (cosTheta > std::numeric_limits<double>::epsilon())
       trueFreeLength = fabs(usGeometryTools::getPointPlaneDistance(p, m_tissue.accessSurface())) / cosTheta;
     else
@@ -1617,6 +1619,7 @@ void usNeedleInsertionModelRayleighRitzSpline::solveSegmentsParametersFullSparse
     // Continuity
 
     double *tmp = new double[nbSegCoef];
+
     if (order > 0) // Order 0
     {
       tmp[0] = 1;
@@ -1796,7 +1799,7 @@ void usNeedleInsertionModelRayleighRitzSpline::solveSegmentsParametersFullSparse
     double segLength = m_needle.accessLastSegment().getParametricLength();
     double LbevMin = 0;
     if (currentDepth == 0) {
-      double cosTheta = fabs(vpColVector::dotProd(m_tissue.accessSurface().getDirection(), bevelSegment));
+      double cosTheta = vpColVector::dotProd(m_tissue.accessSurface().getDirection(), bevelSegment);
       if (cosTheta > std::numeric_limits<double>::epsilon())
         LbevMin =
             fabs(usGeometryTools::getPointPlaneDistance(m_needleTip->getBasePosition(), m_tissue.accessSurface())) /
@@ -1956,7 +1959,7 @@ void usNeedleInsertionModelRayleighRitzSpline::solveSegmentsParametersDense()
     vpColVector d(3);
     for (int i = 0; i < 3; i++)
       d[i] = m_needle.getWorldMbase()[i][2];
-    double cosTheta = fabs(vpColVector::dotProd(m_tissue.accessSurface().getDirection(), d));
+    double cosTheta = vpColVector::dotProd(m_tissue.accessSurface().getDirection(), d);
     if (cosTheta > std::numeric_limits<double>::epsilon())
       trueFreeLength = fabs(usGeometryTools::getPointPlaneDistance(p, m_tissue.accessSurface())) / cosTheta;
     else
@@ -2230,7 +2233,7 @@ void usNeedleInsertionModelRayleighRitzSpline::solveSegmentsParametersDense()
     double segLength = m_needle.accessLastSegment().getParametricLength();
     double LbevMin = 0;
     if (currentDepth == 0) {
-      double cosTheta = fabs(vpColVector::dotProd(m_tissue.accessSurface().getDirection(), bevelSegment));
+      double cosTheta = vpColVector::dotProd(m_tissue.accessSurface().getDirection(), bevelSegment);
       if (cosTheta > std::numeric_limits<double>::epsilon())
         LbevMin =
             fabs(usGeometryTools::getPointPlaneDistance(m_needleTip->getBasePosition(), m_tissue.accessSurface())) /
