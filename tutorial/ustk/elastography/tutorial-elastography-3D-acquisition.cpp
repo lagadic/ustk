@@ -3,7 +3,7 @@
 #include <iostream>
 #include <visp3/ustk_core/usConfig.h>
 
-#if defined(USTK_HAVE_FFTW)
+#if (defined(USTK_HAVE_QT5) || defined(USTK_HAVE_VTK_QT)) && defined(USTK_HAVE_FFTW)
 
 #include <QApplication>
 #include <QtCore/QThread>
@@ -22,18 +22,19 @@ int main(int argc, char **argv)
 
   // record directories
   if (qApp->arguments().contains(QString("--preCompressed"))) {
-    preCompressedDirectory = qApp->arguments().at(qApp->arguments().indexOf(QString("--preCompressed")) + 1).toStdString();
-  }
-  else {
+    preCompressedDirectory =
+        qApp->arguments().at(qApp->arguments().indexOf(QString("--preCompressed")) + 1).toStdString();
+  } else {
     std::cout << "You need to specify the directory to record the pre-compressed volumes with --preCompressed option\n";
-    throw vpException(vpException::fatalError, "No output directory specified for pre-compressed volumes !" );
+    throw vpException(vpException::fatalError, "No output directory specified for pre-compressed volumes !");
   }
   if (qApp->arguments().contains(QString("--postCompressed"))) {
-    postCompressedDirectory = qApp->arguments().at(qApp->arguments().indexOf(QString("--postCompressed")) + 1).toStdString();
-  }
-  else {
-    std::cout << "You need to specify the directory to record the post-compressed volumes with --postCompressed option\n";
-    throw vpException(vpException::fatalError, "No output directory specified for post-compressed volumes !" );
+    postCompressedDirectory =
+        qApp->arguments().at(qApp->arguments().indexOf(QString("--postCompressed")) + 1).toStdString();
+  } else {
+    std::cout
+        << "You need to specify the directory to record the post-compressed volumes with --postCompressed option\n";
+    throw vpException(vpException::fatalError, "No output directory specified for post-compressed volumes !");
   }
 
   // setting acquisition parameters
@@ -121,8 +122,7 @@ int main(int argc, char **argv)
 #else
 int main()
 {
-  std::cout << "You should intall FFTW to run this tutorial"
-            << std::endl;
+  std::cout << "You should intall FFTW and Qt to run this tutorial" << std::endl;
   return 0;
 }
 
