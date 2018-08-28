@@ -41,6 +41,7 @@ set(tutorial_cpp
   tutorial-elastography-BMA-2D.cpp
   tutorial-elastography-2D-basic.cpp
   tutorial-elastography-2D-separate-displays.cpp
+  tutorial-elastography-3D-acquisition.cpp
   tutorial-elastography-3D-basic.cpp)
 
 foreach(cpp ${tutorial_cpp})

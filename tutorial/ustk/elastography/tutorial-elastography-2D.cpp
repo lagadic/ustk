@@ -25,6 +25,7 @@ int main(int argc, char **argv)
   // QT application
   QApplication app(argc, argv);
   QString ip;
+  // by default we use the virtual server, based on a palpation dataset
   if (app.arguments().contains(QString("--ip")))
     ip = app.arguments().at(qApp->arguments().indexOf(QString("--ip")) + 1);
   else
