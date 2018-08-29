@@ -531,6 +531,8 @@ vpTranslationVector ICPPointCloudRelativePosition(std::vector<vpColVector> &P1, 
   (void)P1;
   (void)P2;
   (void)worldRprobe;
+  (void)res;
+  (void)initialGuess;
   throw vpException(vpException::notImplementedError,
                     "usGeometryTools::ICPPointCloudRelativePosition: non implement yet");
 }
@@ -540,6 +542,8 @@ vpRotationMatrix ICPPointCloudRelativeRotation(std::vector<vpColVector> &P1, std
 {
   (void)P1;
   (void)P2;
+  (void)res;
+  (void)initialGuess;
   throw vpException(vpException::notImplementedError,
                     "usGeometryTools::ICPPointCloudRelativeRotation: non implement yet");
 }
