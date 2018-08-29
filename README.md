@@ -38,7 +38,7 @@ This UsTK project requires the following libraries :
 	- How to install VTK on OS X
 
 			$ brew update
-			$ brew install vtk —-with-qt5
+			$ brew install vtk —-with-qt
 
 	- How to install VTK on Ubuntu 16.04 LTS
 
