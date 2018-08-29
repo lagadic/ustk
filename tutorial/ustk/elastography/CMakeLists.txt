@@ -34,6 +34,7 @@ project(tutorial-ustk-elastography)
 
 cmake_minimum_required(VERSION 2.8.12)
 
+set(VISP_FIND_QUIETLY TRUE)
 find_package(VISP COMPONENTS visp_ustk_elastography OPTIONAL_COMPONENTS visp_ustk_gui)
 
 set(tutorial_cpp
