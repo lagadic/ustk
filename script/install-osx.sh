@@ -10,7 +10,7 @@ echo "Installing dependencies..."
 brew install cmake
 brew install opencv
 brew install libxml2
-brew install vtk —-with-qt5
+brew install vtk —-with-qt
 brew install fftw
 brew install armadillo
 
