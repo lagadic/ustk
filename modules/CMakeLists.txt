@@ -47,6 +47,13 @@ set(USTK_BINARY_DIR "${CMAKE_BINARY_DIR}")
 # To include FindFFTW.cmake
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/ustk_core/cmake")
 
+# UsTK requires C++11
+if(NOT USE_CPP11 AND CPP11_FOUND)
+  unset(USE_CPP11)
+  set(USE_CPP11 ON CACHE BOOL "Include c++11 support" FORCE)
+endif()
+
+# UsTK third-party detection
 VP_OPTION(USE_FFTW "FFTW" "" "Include fftw support" "" ON)
 VP_OPTION(USE_ARMADILLO "Armadillo" "" "Include armadillo support" "" ON)
 VP_OPTION(USE_VTK  "VTK"  QUIET "Include vtk support"  "" ON)
