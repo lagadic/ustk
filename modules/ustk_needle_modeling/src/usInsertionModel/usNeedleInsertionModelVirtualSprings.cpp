@@ -388,7 +388,7 @@ void usNeedleInsertionModelVirtualSprings::setNbMaxTipSprings(int nb)
     if (nb >= m_nbMinTipSprings)
       m_nbMaxTipSprings = nb;
     else
-      m_nbMaxTipSprings = m_nbMaxTipSprings;
+      m_nbMaxTipSprings = m_nbMinTipSprings;
   } else
     m_nbMaxTipSprings = 1;
 }
@@ -475,7 +475,7 @@ double usNeedleInsertionModelVirtualSprings::getMaxTissueStretch(double *lmax) c
       *lmax = 0;
     return 0;
   }
-  
+
   double max = 0;
   double maxL = 0;
   double totalLength = 0;
@@ -483,13 +483,13 @@ double usNeedleInsertionModelVirtualSprings::getMaxTissueStretch(double *lmax) c
   for (unsigned int i = 0; i < m_springs.size(); i++) {
     double d = (m_springs.at(i).getPosition() - m_needle.accessSegment(i).getEndPoint()).euclideanNorm();
     totalLength += m_needle.accessSegment(i).getParametricLength();
-    
+
     if (d > max) {
       max = d;
       maxL = totalLength;
     }
   }
-  
+
   if (lmax != nullptr)
     *lmax = maxL;
 
@@ -1336,7 +1336,7 @@ void usNeedleInsertionModelVirtualSprings::solveSegmentsParametersOpenCV()
 
   int line = 0;
   int col = 0;
-  
+
   double EI = m_needle.getEI();
   vpPoseVector basePose(m_needle.getBasePose());
   vpHomogeneousMatrix worldMbase(m_needle.getWorldMbase());
@@ -1586,7 +1586,7 @@ void usNeedleInsertionModelVirtualSprings::solveSegmentsParametersViSP()
 
   int line = 0;
   int col = 0;
-  
+
   double EI = m_needle.getEI();
   vpPoseVector basePose(m_needle.getBasePose());
   vpHomogeneousMatrix worldMbase(m_needle.getWorldMbase());
