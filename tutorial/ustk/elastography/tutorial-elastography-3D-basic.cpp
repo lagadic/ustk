@@ -13,8 +13,10 @@ int main()
   // input volumes
   usImageRF3D<short int> preComp, postComp;
 
-  if( us::getDataSetPath().empty()) {
-    std::cout << "You should set USTK_DATASET_PATH environment var to access to ustk dataset containing RF volumes for elastography" << std::endl;
+  if (us::getDataSetPath().empty()) {
+    std::cout << "You should set USTK_DATASET_PATH environment var to access to ustk dataset containing RF volumes for "
+                 "elastography"
+              << std::endl;
     return 0;
   }
 
@@ -32,9 +34,9 @@ int main()
 
   elastResult.setData(elsastoProcess.run());
 
-  usImageIo::write(elastResult, us::getDataSetPath() + std::string("/elastResult.mhd"));
+  usImageIo::write(elastResult, std::string("elastResult.mhd"));
 
-  std::cout << "output written in " << us::getDataSetPath() + std::string("/elastResult.mhd") << std::endl;
+  std::cout << "output written in elastResult.mhd" << std::endl;
 
   return 0;
 }

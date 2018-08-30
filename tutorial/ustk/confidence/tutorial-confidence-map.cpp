@@ -38,7 +38,7 @@ int main(int argc, const char *argv[])
   confidenceProcess.run(confidence, image);
 
   std::string outFileName = std::string("confidence.xml");
-  std::cout << outFileName << std::endl;
+  std::cout << " Outuput " << outFileName << " written" << std::endl;
 
   usImageIo::write(confidence, outFileName);
 
