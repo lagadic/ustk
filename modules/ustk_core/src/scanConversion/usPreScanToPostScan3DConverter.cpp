@@ -122,7 +122,9 @@ void usPreScanToPostScan3DConverter::init(const usImagePreScan3D<unsigned char> 
     std::vector<usVoxelWeightAndIndexReducedMemory>().swap(m_reducedLookupTables[0]);
   if (m_reducedLookupTables[1].size() > 0)
     std::vector<usVoxelWeightAndIndexReducedMemory>().swap(m_reducedLookupTables[1]);
+#ifdef USTK_HAVE_CUDA
   this->GPUFreeLookupTables();
+#endif
   
   switch (m_converterOptimizationMethod) {
   case SINGLE_THREAD_DIRECT_CONVERSION: {
