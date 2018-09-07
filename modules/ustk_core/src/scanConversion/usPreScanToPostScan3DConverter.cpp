@@ -46,7 +46,7 @@ extern void GPUDirectConversionWrapper(unsigned char *dataPost, const unsigned c
  */
 usPreScanToPostScan3DConverter::usPreScanToPostScan3DConverter()
   : m_converterOptimizationMethod(SINGLE_THREAD_REDUCED_LOOKUP_TABLE),
-    m_conversionOptimizationMethodUsedAtInit(SINGLE_THREAD_DIRECT_CONVERSION), m_VpreScan(), m_downSamplingFactor(1),
+    m_conversionOptimizationMethodUsedAtInit(SINGLE_THREAD_DIRECT_CONVERSION), m_GPULookupTables{NULL, NULL}, m_GPULookupTablesSize{0,0}, m_VpreScan(), m_downSamplingFactor(1),
     m_resolution(), m_SweepInZdirection(true), m_initDone(false)
 {
 }
@@ -122,7 +122,8 @@ void usPreScanToPostScan3DConverter::init(const usImagePreScan3D<unsigned char> 
     std::vector<usVoxelWeightAndIndexReducedMemory>().swap(m_reducedLookupTables[0]);
   if (m_reducedLookupTables[1].size() > 0)
     std::vector<usVoxelWeightAndIndexReducedMemory>().swap(m_reducedLookupTables[1]);
-
+  this->GPUFreeLookupTables();
+  
   switch (m_converterOptimizationMethod) {
   case SINGLE_THREAD_DIRECT_CONVERSION: {
     break;
@@ -294,9 +295,16 @@ void usPreScanToPostScan3DConverter::init(const usImagePreScan3D<unsigned char> 
     break;
   }
   case GPU_FULL_LOOKUP_TABLE: {
+#ifdef USTK_HAVE_CUDA
+    this->GPUAllocateFullLookupTables();
+    this->GPUFillFullLookupTables();
+std::cout << "LUT 1 size (bytes) : " << sizeof(usVoxelWeightAndIndex) * m_GPULookupTablesSize[0] << std::endl;
+    std::cout << "LUT 2 size (bytes) : " << sizeof(usVoxelWeightAndIndex) * m_GPULookupTablesSize[1] << std::endl;
+#else
     throw vpException(
         vpException::notImplementedError,
         "usPreScanToPostScan3DConverter::init: using method GPU_FULL_LOOKUP_TABLE is not implemented yet");
+#endif
     break;
   }
   case SINGLE_THREAD_REDUCED_LOOKUP_TABLE: {
@@ -405,9 +413,16 @@ void usPreScanToPostScan3DConverter::init(const usImagePreScan3D<unsigned char> 
     break;
   }
   case GPU_REDUCED_LOOKUP_TABLE: {
+#ifdef USTK_HAVE_CUDA
+    this->GPUAllocateReducedLookupTables();
+    this->GPUFillReducedLookupTables();
+    std::cout << "LUT 1 size (bytes) : " << sizeof(usVoxelWeightAndIndexReducedMemory) * m_GPULookupTablesSize[0] << std::endl;
+    std::cout << "LUT 2 size (bytes) : " << sizeof(usVoxelWeightAndIndexReducedMemory) * m_GPULookupTablesSize[1] << std::endl;
+#else
     throw vpException(
         vpException::notImplementedError,
         "usPreScanToPostScan3DConverter::init: using method GPU_REDUCED_LOOKUP_TABLE is not implemented yet");
+#endif
     break;
   }
   }
@@ -587,21 +602,7 @@ void usPreScanToPostScan3DConverter::convert(usImagePostScan3D<unsigned char> &p
   }
   case GPU_DIRECT_CONVERSION: {
 #ifdef USTK_HAVE_CUDA
-    int X = m_VpreScan.getWidth();
-    int Y = m_VpreScan.getHeight();
-    int Z = m_VpreScan.getNumberOfFrames();
-    
-    double xmax;
-    double ymin;
-    double ymax;
-    double zmax;
-    
-    usPreScanToPostScan3DConverter::convertPreScanCoordToPostScanCoord(0.0, X, Z, &ymin, NULL, NULL);
-    usPreScanToPostScan3DConverter::convertPreScanCoordToPostScanCoord((double)Y, X / 2.0, Z / 2.0, &ymax, NULL, NULL);
-    usPreScanToPostScan3DConverter::convertPreScanCoordToPostScanCoord((double)Y, (double)X, Z / 2.0, NULL, &xmax, NULL);
-    usPreScanToPostScan3DConverter::convertPreScanCoordToPostScanCoord((double)Y, X / 2.0, Z, NULL, NULL, &zmax);
-    
-    GPUDirectConversionWrapper(dataPost, dataPre, m_nbX, m_nbY, m_nbZ, X, Y, Z, m_resolution, xmax, ymin, zmax, m_VpreScan.getFrameNumber(), m_VpreScan.getScanLineNumber(), m_VpreScan.getTransducerRadius(), m_VpreScan.getMotorRadius(), m_VpreScan.getScanLinePitch(), m_VpreScan.getAxialResolution(), m_VpreScan.getFramePitch(), m_SweepInZdirection);
+    this->GPUDirectConversion(dataPost, dataPre);
 #else
     throw vpException(
         vpException::notImplementedError,
@@ -633,9 +634,13 @@ void usPreScanToPostScan3DConverter::convert(usImagePostScan3D<unsigned char> &p
     break;
   }
   case GPU_FULL_LOOKUP_TABLE: {
+#ifdef USTK_HAVE_CUDA
+    this->GPUFullLookupTableConversion(dataPost, dataPre);
+#else
     throw vpException(
         vpException::notImplementedError,
         "usPreScanToPostScan3DConverter::convert: using method GPU_FULL_LOOKUP_TABLE is not implemented yet");
+#endif
     break;
   }
   case SINGLE_THREAD_REDUCED_LOOKUP_TABLE: {
@@ -666,7 +671,7 @@ void usPreScanToPostScan3DConverter::convert(usImagePostScan3D<unsigned char> &p
       double val = 0;
       for (int j = 0; j < 8; j++)
         val += W[j] * dataPre[index[j]];
-      dataPost[m_reducedLookupTables[d][i].m_outputIndex] = (unsigned char)val;
+      dataPost[m.m_outputIndex] = (unsigned char)val;
     }
     break;
   }
@@ -701,14 +706,18 @@ void usPreScanToPostScan3DConverter::convert(usImagePostScan3D<unsigned char> &p
       double val = 0;
       for (int j = 0; j < 8; j++)
         val += W[j] * dataPre[index[j]];
-      dataPost[m_reducedLookupTables[d][i].m_outputIndex] = (unsigned char)val;
+      dataPost[m.m_outputIndex] = (unsigned char)val;
     }
     break;
   }
   case GPU_REDUCED_LOOKUP_TABLE: {
+#ifdef USTK_HAVE_CUDA
+    this->GPUReducedLookupTableConversion(dataPost, dataPre);
+#else
     throw vpException(
         vpException::notImplementedError,
         "usPreScanToPostScan3DConverter::convert: using method GPU_REDUCED_LOOKUP_TABLE is not implemented yet");
+#endif
     break;
   }
   }
@@ -746,19 +755,14 @@ void usPreScanToPostScan3DConverter::setConverterOptimizationMethod(usConverterO
 #endif
     break;
   }
-  case GPU_DIRECT_CONVERSION: {
-    break;
-  }
-  case GPU_FULL_LOOKUP_TABLE: {
-    throw vpException(vpException::notImplementedError, "usPreScanToPostScan3DConverter::"
-                                                        "setConverterOptimizationMethod: using method "
-                                                        "GPU_FULL_LOOKUP_TABLE is not implemented yet");
-    break;
-  }
+  case GPU_DIRECT_CONVERSION:
+  case GPU_FULL_LOOKUP_TABLE:
   case GPU_REDUCED_LOOKUP_TABLE: {
+#ifndef USTK_HAVE_CUDA
     throw vpException(vpException::notImplementedError, "usPreScanToPostScan3DConverter::"
-                                                        "setConverterOptimizationMethod: using method "
-                                                        "GPU_REDUCED_LOOKUP_TABLE is not implemented yet");
+                                                        "setConverterOptimizationMethod: cannot use "
+                                                        "GPU conversion without CUDA");
+#endif
     break;
   }
   }

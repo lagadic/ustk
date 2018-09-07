@@ -95,6 +95,7 @@ endif()
 
 if(USE_CUDA)
   set(CUDA_SEPARABLE_COMPILATION ON)
+  set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS};-arch=sm_30;-lineinfo)
 endif()
 
 VP_SET(USTK_HAVE_QT5  TRUE IF USE_QT5)

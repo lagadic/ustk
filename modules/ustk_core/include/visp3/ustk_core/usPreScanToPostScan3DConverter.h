@@ -141,8 +141,11 @@ protected:
   usConverterOptimizationMethod m_converterOptimizationMethod;
   usConverterOptimizationMethod m_conversionOptimizationMethodUsedAtInit;
 
+
   std::vector<usVoxelWeightAndIndex> m_lookupTables[2];
   std::vector<usVoxelWeightAndIndexReducedMemory> m_reducedLookupTables[2];
+  void *m_GPULookupTables[2];
+  long int m_GPULookupTablesSize[2];
 
   usImagePreScan3D<unsigned char> m_VpreScan;
 
@@ -178,6 +181,19 @@ private:
                                           double *k_postScan = NULL, bool sweepInZdirection = true);
   void convertPostScanCoordToPreScanCoord(double x, double y, double z, double *i = NULL, double *j = NULL,
                                           double *k = NULL, bool sweepInZdirection = true);
+#ifdef USTK_HAVE_CUDA
+  void GPUDirectConversion(unsigned char *dataPost, const unsigned char *dataPre);
+
+  void GPUFreeLookupTables();
+
+  void GPUAllocateFullLookupTables();
+  void GPUFillFullLookupTables();
+  void GPUFullLookupTableConversion(unsigned char *dataPost, const unsigned char *dataPre);
+
+  void GPUAllocateReducedLookupTables();
+  void GPUFillReducedLookupTables();
+  void GPUReducedLookupTableConversion(unsigned char *dataPost, const unsigned char *dataPre);
+#endif
 };
 
 #endif // __usPreScanToPostScan3DConverter_h_
