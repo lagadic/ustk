@@ -187,14 +187,9 @@ void usNetworkGrabberPreScan3D::dataArrived()
     m_motorSettings.setMotorRadius(m_imageHeader.motorRadius);
 
     // set data info
-    m_grabbedImage.setFrameCount(m_imageHeader.frameCount);
+    m_grabbedImage.setFrameCount(m_imageHeader.frameCount>1?(m_imageHeader.frameCount-1):0);
     m_grabbedImage.setFramesPerVolume(m_imageHeader.framesPerVolume);
 
-    // warning if timestamps are close (< 10 ms)
-    if (m_imageHeader.timeStamp - m_grabbedImage.getTimeStamp() < 10) {
-      std::cout << "WARNING : new image received with an acquisition timestamp close to previous image (<10ms)"
-                << std::endl;
-    }
     m_grabbedImage.setTimeStamp(m_imageHeader.timeStamp);
 
     m_grabbedImage.resize(m_imageHeader.frameWidth, m_imageHeader.frameHeight);
