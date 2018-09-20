@@ -35,11 +35,34 @@ if(USE_FFTW)
   list(APPEND opt_libs ${FFTW_LIBRARIES})
 endif()
 
+IF(CUDA_FOUND)
+  IF(NOT VISP_INITIAL_PASS)
+    CUDA_INCLUDE_DIRECTORIES(${VISP_MODULE_visp_ustk_core_LOCATION}/include)
+    CUDA_INCLUDE_DIRECTORIES(${VISP_MODULE_visp_ustk_core_INC_DEP})
+    foreach(d ${VISP_MODULE_visp_ustk_core_DEPS})
+      if(d MATCHES "^visp_" AND HAVE_${d})
+        if(EXISTS "${VISP_MODULE_${d}_LOCATION}/include")
+          CUDA_INCLUDE_DIRECTORIES(${VISP_MODULE_${d}_LOCATION}/include)
+        endif()
+          CUDA_INCLUDE_DIRECTORIES(${VISP_MODULE_${d}_INC_DEP})
+      endif()
+    endforeach()
+    CUDA_ADD_LIBRARY(ustk_core_cuda  ./src/scanConversion/usPreScanToPostScan3DConverter.cu STATIC)
+    vp_install_target(ustk_core_cuda EXPORT VISPModules OPTIONAL
+    RUNTIME DESTINATION ${VISP_BIN_INSTALL_PATH} COMPONENT libs
+    LIBRARY DESTINATION ${VISP_LIB_INSTALL_PATH} COMPONENT libs
+    ARCHIVE DESTINATION ${VISP_LIB_INSTALL_PATH} COMPONENT dev
+    )
+  ENDIF(NOT VISP_INITIAL_PASS)
+  list(APPEND opt_libs ustk_core_cuda)
+ENDIF(CUDA_FOUND)
+
 vp_add_module(ustk_core visp_io)
 
 vp_glob_module_sources()
 
 vp_module_include_directories(${opt_incs})
+
 vp_create_module(${opt_libs})
 
 vp_add_tests(DEPENDS_ON visp_ustk_core visp_gui)
@@ -48,3 +71,4 @@ vp_add_config_file("cmake/templates/usConfig.h.in")
 
 # export USTK_HAVE_* cmake vars in VISPConfig.cmake
 vp_cmake_configure("cmake/templates/VISPConfig-ustk_core.cmake.in")
+

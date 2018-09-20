@@ -26,6 +26,7 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Authors:
+ * Jason Chevrie
  * Marc Pouliquen
  *
  *****************************************************************************/
@@ -36,12 +37,16 @@
 #include <omp.h>
 #endif
 
+#ifdef USTK_HAVE_CUDA
+extern void GPUDirectConversionWrapper(unsigned char *dataPost, const unsigned char *dataPre, unsigned int m_nbX, unsigned int m_nbY, unsigned int m_nbZ, int X, int Y, int Z, double m_resolution, double xmax, double ymin, double zmax, unsigned int frameNumber, unsigned int scanLineNumber, double transducerRadius, double motorRadius, double scanLinePitch, double axialResolution, double framePitch, bool sweepInZdirection);
+#endif
+
 /**
  * Default constructor.
  */
 usPreScanToPostScan3DConverter::usPreScanToPostScan3DConverter()
   : m_converterOptimizationMethod(SINGLE_THREAD_REDUCED_LOOKUP_TABLE),
-    m_conversionOptimizationMethodUsedAtInit(SINGLE_THREAD_DIRECT_CONVERSION), m_VpreScan(), m_downSamplingFactor(1),
+    m_conversionOptimizationMethodUsedAtInit(SINGLE_THREAD_DIRECT_CONVERSION), m_GPULookupTables{NULL, NULL}, m_GPULookupTablesSize{0,0}, m_VpreScan(), m_downSamplingFactor(1),
     m_resolution(), m_SweepInZdirection(true), m_initDone(false)
 {
 }
@@ -117,7 +122,10 @@ void usPreScanToPostScan3DConverter::init(const usImagePreScan3D<unsigned char> 
     std::vector<usVoxelWeightAndIndexReducedMemory>().swap(m_reducedLookupTables[0]);
   if (m_reducedLookupTables[1].size() > 0)
     std::vector<usVoxelWeightAndIndexReducedMemory>().swap(m_reducedLookupTables[1]);
-
+#ifdef USTK_HAVE_CUDA
+  this->GPUFreeLookupTables();
+#endif
+  
   switch (m_converterOptimizationMethod) {
   case SINGLE_THREAD_DIRECT_CONVERSION: {
     break;
@@ -126,9 +134,6 @@ void usPreScanToPostScan3DConverter::init(const usImagePreScan3D<unsigned char> 
     break;
   }
   case GPU_DIRECT_CONVERSION: {
-    throw vpException(
-        vpException::notImplementedError,
-        "usPreScanToPostScan3DConverter::init: using method GPU_DIRECT_CONVERSION is not implemented yet");
     break;
   }
   case SINGLE_THREAD_FULL_LOOKUP_TABLE: {
@@ -220,15 +225,16 @@ void usPreScanToPostScan3DConverter::init(const usImagePreScan3D<unsigned char> 
                                               "method or downsample the volume",
                         e.what());
     }
-    for (unsigned int sweepingDirection = 0; sweepingDirection < 2; sweepingDirection++) {
-      for (unsigned int x = 0; x < m_nbX; x++) {
-        double xx = m_resolution * x - xmax;
-        for (unsigned int y = 0; y < m_nbY; y++) {
-          double yy = ymin + m_resolution * y;
+
+    for (unsigned int sweepingDirection = 0 ; sweepingDirection < 2 ; sweepingDirection++) {
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
-          for (int z = 0; z < (int)m_nbZ; z++) {
+      for (int x = 0; x < (int)m_nbX; x++) {
+        double xx = m_resolution * x - xmax;
+        for (unsigned int y = 0; y < m_nbY; y++) {
+          double yy = ymin + m_resolution * y;
+          for (unsigned int z = 0; z < m_nbZ; z++) {
             double zz = m_resolution * z - zmax;
             double i, j, k;
             usPreScanToPostScan3DConverter::convertPostScanCoordToPreScanCoord(yy, xx, zz, &j, &i, &k,
@@ -291,9 +297,16 @@ void usPreScanToPostScan3DConverter::init(const usImagePreScan3D<unsigned char> 
     break;
   }
   case GPU_FULL_LOOKUP_TABLE: {
+#ifdef USTK_HAVE_CUDA
+    this->GPUAllocateFullLookupTables();
+    this->GPUFillFullLookupTables();
+std::cout << "LUT 1 size (bytes) : " << sizeof(usVoxelWeightAndIndex) * m_GPULookupTablesSize[0] << std::endl;
+    std::cout << "LUT 2 size (bytes) : " << sizeof(usVoxelWeightAndIndex) * m_GPULookupTablesSize[1] << std::endl;
+#else
     throw vpException(
         vpException::notImplementedError,
         "usPreScanToPostScan3DConverter::init: using method GPU_FULL_LOOKUP_TABLE is not implemented yet");
+#endif
     break;
   }
   case SINGLE_THREAD_REDUCED_LOOKUP_TABLE: {
@@ -359,14 +372,14 @@ void usPreScanToPostScan3DConverter::init(const usImagePreScan3D<unsigned char> 
                         e.what());
     }
     for (unsigned int sweepingDirection = 0; sweepingDirection < 2; sweepingDirection++) {
-      for (unsigned int x = 0; x < m_nbX; x++) {
-        double xx = m_resolution * x - xmax;
-        for (unsigned int y = 0; y < m_nbY; y++) {
-          double yy = ymin + m_resolution * y;
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
-          for (int z = 0; z < (int)m_nbZ; z++) {
+      for (int x = 0; x < (int)m_nbX; x++) {
+        double xx = m_resolution * x - xmax;
+        for (unsigned int y = 0; y < m_nbY; y++) {
+          double yy = ymin + m_resolution * y;
+          for (unsigned int z = 0; z < m_nbZ; z++) {
             double zz = m_resolution * z - zmax;
             double i, j, k;
             usPreScanToPostScan3DConverter::convertPostScanCoordToPreScanCoord(yy, xx, zz, &j, &i, &k,
@@ -402,9 +415,16 @@ void usPreScanToPostScan3DConverter::init(const usImagePreScan3D<unsigned char> 
     break;
   }
   case GPU_REDUCED_LOOKUP_TABLE: {
+#ifdef USTK_HAVE_CUDA
+    this->GPUAllocateReducedLookupTables();
+    this->GPUFillReducedLookupTables();
+    std::cout << "LUT 1 size (bytes) : " << sizeof(usVoxelWeightAndIndexReducedMemory) * m_GPULookupTablesSize[0] << std::endl;
+    std::cout << "LUT 2 size (bytes) : " << sizeof(usVoxelWeightAndIndexReducedMemory) * m_GPULookupTablesSize[1] << std::endl;
+#else
     throw vpException(
         vpException::notImplementedError,
         "usPreScanToPostScan3DConverter::init: using method GPU_REDUCED_LOOKUP_TABLE is not implemented yet");
+#endif
     break;
   }
   }
@@ -430,6 +450,9 @@ void usPreScanToPostScan3DConverter::convert(usImagePostScan3D<unsigned char> &p
 
   postScanImage.resize(m_nbY, m_nbX, m_nbZ);
   postScanImage.initData(0);
+  (usTransducerSettings&)postScanImage = (const usTransducerSettings&)preScanImage;
+  (usMotorSettings&)postScanImage = (const usMotorSettings&)preScanImage;
+            
   unsigned char *dataPost = postScanImage.getData();
   const unsigned char *dataPre = preScanImage.getConstData();
 
@@ -494,8 +517,9 @@ void usPreScanToPostScan3DConverter::convert(usImagePostScan3D<unsigned char> &p
                                      (unsigned int)(ii + Xjj1 + XYKK1), (unsigned int)(ii + 1 + Xjj1 + XYKK1)};
 
             double val = 0;
-            for (int j = 0; j < 8; j++)
-              val += W[j] * dataPre[index[j]];
+            for (int n = 0; n < 8; n++) 
+              val += W[n] * dataPre[index[n]];
+            
             dataPost[x + m_nbX * y + nbXY * z] = (unsigned char)val;
           }
         }
@@ -522,14 +546,14 @@ void usPreScanToPostScan3DConverter::convert(usImagePostScan3D<unsigned char> &p
     unsigned int nbXY = m_nbX * m_nbY;
     unsigned int XY = X * Y;
 
-    for (unsigned int x = 0; x < m_nbX; x++) {
-      double xx = m_resolution * x - xmax;
-      for (unsigned int y = 0; y < m_nbY; y++) {
-        double yy = ymin + m_resolution * y;
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
-        for (int z = 0; z < (int)m_nbZ; z++) {
+    for (int x = 0; x < (int)m_nbX; x++) {
+      double xx = m_resolution * x - xmax;
+      for (unsigned int y = 0; y < m_nbY; y++) {
+        double yy = ymin + m_resolution * y;
+        for (unsigned int z = 0; z < m_nbZ; z++) {
           double zz = m_resolution * z - zmax;
           double i, j, k;
           usPreScanToPostScan3DConverter::convertPostScanCoordToPreScanCoord(yy, xx, zz, &j, &i, &k,
@@ -566,8 +590,8 @@ void usPreScanToPostScan3DConverter::convert(usImagePostScan3D<unsigned char> &p
                                      (unsigned int)(ii + Xjj1 + XYKK1), (unsigned int)(ii + 1 + Xjj1 + XYKK1)};
 
             double val = 0;
-            for (int j = 0; j < 8; j++)
-              val += W[j] * dataPre[index[j]];
+            for (int n = 0; n < 8; n++) 
+              val += W[n] * dataPre[index[n]];
 #ifdef VISP_HAVE_OPENMP
 #pragma omp critical
 #endif
@@ -579,9 +603,13 @@ void usPreScanToPostScan3DConverter::convert(usImagePostScan3D<unsigned char> &p
     break;
   }
   case GPU_DIRECT_CONVERSION: {
+#ifdef USTK_HAVE_CUDA
+    this->GPUDirectConversion(dataPost, dataPre);
+#else
     throw vpException(
         vpException::notImplementedError,
         "usPreScanToPostScan3DConverter::convert: using method GPU_DIRECT_CONVERSION is not implemented yet");
+#endif
     break;
   }
   case SINGLE_THREAD_FULL_LOOKUP_TABLE: {
@@ -608,9 +636,13 @@ void usPreScanToPostScan3DConverter::convert(usImagePostScan3D<unsigned char> &p
     break;
   }
   case GPU_FULL_LOOKUP_TABLE: {
+#ifdef USTK_HAVE_CUDA
+    this->GPUFullLookupTableConversion(dataPost, dataPre);
+#else
     throw vpException(
         vpException::notImplementedError,
         "usPreScanToPostScan3DConverter::convert: using method GPU_FULL_LOOKUP_TABLE is not implemented yet");
+#endif
     break;
   }
   case SINGLE_THREAD_REDUCED_LOOKUP_TABLE: {
@@ -641,7 +673,7 @@ void usPreScanToPostScan3DConverter::convert(usImagePostScan3D<unsigned char> &p
       double val = 0;
       for (int j = 0; j < 8; j++)
         val += W[j] * dataPre[index[j]];
-      dataPost[m_reducedLookupTables[d][i].m_outputIndex] = (unsigned char)val;
+      dataPost[m.m_outputIndex] = (unsigned char)val;
     }
     break;
   }
@@ -676,14 +708,18 @@ void usPreScanToPostScan3DConverter::convert(usImagePostScan3D<unsigned char> &p
       double val = 0;
       for (int j = 0; j < 8; j++)
         val += W[j] * dataPre[index[j]];
-      dataPost[m_reducedLookupTables[d][i].m_outputIndex] = (unsigned char)val;
+      dataPost[m.m_outputIndex] = (unsigned char)val;
     }
     break;
   }
   case GPU_REDUCED_LOOKUP_TABLE: {
+#ifdef USTK_HAVE_CUDA
+    this->GPUReducedLookupTableConversion(dataPost, dataPre);
+#else
     throw vpException(
         vpException::notImplementedError,
         "usPreScanToPostScan3DConverter::convert: using method GPU_REDUCED_LOOKUP_TABLE is not implemented yet");
+#endif
     break;
   }
   }
@@ -721,22 +757,14 @@ void usPreScanToPostScan3DConverter::setConverterOptimizationMethod(usConverterO
 #endif
     break;
   }
-  case GPU_DIRECT_CONVERSION: {
-    throw vpException(vpException::notImplementedError, "usPreScanToPostScan3DConverter::"
-                                                        "setConverterOptimizationMethod: using method "
-                                                        "GPU_DIRECT_CONVERSION is not implemented yet");
-    break;
-  }
-  case GPU_FULL_LOOKUP_TABLE: {
-    throw vpException(vpException::notImplementedError, "usPreScanToPostScan3DConverter::"
-                                                        "setConverterOptimizationMethod: using method "
-                                                        "GPU_FULL_LOOKUP_TABLE is not implemented yet");
-    break;
-  }
+  case GPU_DIRECT_CONVERSION:
+  case GPU_FULL_LOOKUP_TABLE:
   case GPU_REDUCED_LOOKUP_TABLE: {
+#ifndef USTK_HAVE_CUDA
     throw vpException(vpException::notImplementedError, "usPreScanToPostScan3DConverter::"
-                                                        "setConverterOptimizationMethod: using method "
-                                                        "GPU_REDUCED_LOOKUP_TABLE is not implemented yet");
+                                                        "setConverterOptimizationMethod: cannot use "
+                                                        "GPU conversion without CUDA");
+#endif
     break;
   }
   }

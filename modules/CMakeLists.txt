@@ -57,6 +57,7 @@ endif()
 VP_OPTION(USE_FFTW "FFTW" "" "Include fftw support" "" ON)
 VP_OPTION(USE_ARMADILLO "Armadillo" "" "Include armadillo support" "" ON)
 VP_OPTION(USE_VTK  "VTK"  QUIET "Include vtk support"  "" ON)
+VP_OPTION(USE_CUDA  "CUDA"  QUIET "Include CUDA support"  "" ON)
 
 if(USE_VTK)
   if(NOT VTK_VERSION)
@@ -92,9 +93,15 @@ if(USE_VTK)
   endif()
 endif()
 
+if(USE_CUDA)
+  set(CUDA_SEPARABLE_COMPILATION ON)
+  set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS};-arch=sm_30;-lineinfo)
+endif()
+
 VP_SET(USTK_HAVE_QT5  TRUE IF USE_QT5)
 VP_SET(USTK_HAVE_FFTW TRUE IF USE_FFTW)
 VP_SET(USTK_HAVE_ARMADILLO TRUE IF USE_ARMADILLO)
+VP_SET(USTK_HAVE_CUDA TRUE IF USE_CUDA)
 
 #----------------------------------------------------------------------
 # Use "make ustk_doc" target to generate the documentation
@@ -132,5 +139,6 @@ status("    Use VTK:"           USE_VTK          THEN "yes (ver ${VTK_VERSION})"
 status("    Use Qt:"            USE_VTK          THEN "yes (ver ${VTK_QT_VERSION})" ELSE "no")
 status("    Use FFTW:"          USE_FFTW         THEN "yes" ELSE "no")
 status("    Use Armadillo:"     USE_ARMADILLO    THEN "yes (ver ${ARMADILLO_VERSION_STRING})" ELSE "no")
+status("    Use CUDA:"          USE_CUDA         THEN "yes (ver ${CUDA_VERSION_STRING})" ELSE "no")
 
 

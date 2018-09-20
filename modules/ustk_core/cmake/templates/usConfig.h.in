@@ -78,4 +78,7 @@
 // Defined if FFTW support available
 #cmakedefine USTK_HAVE_ARMADILLO
 
+// Defined if CUDA support available
+#cmakedefine USTK_HAVE_CUDA
+
 #endif
