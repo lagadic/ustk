@@ -20,8 +20,9 @@ branches:
   - master
 
 before_install:
-  - cd ${TRAVIS_BUILD_DIR} && { curl -O http://visp-doc.inria.fr/download/dataset/ViSP-images-3.0.0.zip ; cd -; }
-  - unzip ${TRAVIS_BUILD_DIR}/ViSP-images-3.0.0.zip -d ${TRAVIS_BUILD_DIR}
+  - git clone --depth 1 https://github.com/lagadic/ViSP-images ${TRAVIS_BUILD_DIR}/ViSP-images
+  #- cd ${TRAVIS_BUILD_DIR} && { curl -O http://visp-doc.inria.fr/download/dataset/visp-images-3.2.0.zip ; cd -; }
+  #- unzip ${TRAVIS_BUILD_DIR}/visp-images-3.2.0.zip -d ${TRAVIS_BUILD_DIR}
   - git clone --depth 1 https://github.com/lagadic/ustk-dataset.git /tmp/ustk-dataset
   - export USTK_DATASET_PATH=/tmp/ustk-dataset
   # Get libs for OSX
@@ -57,6 +58,5 @@ script:
 notifications:
   email:
     - Fabien.Spindler@inria.fr
-    - marc.pouliquen@inria.fr
   on_success: change
   on_failure: always
