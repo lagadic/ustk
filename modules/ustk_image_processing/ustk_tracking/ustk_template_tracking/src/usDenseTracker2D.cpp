@@ -117,7 +117,7 @@ void usDenseTracker2D::update(const vpImage<unsigned char> &I)
       vpColVector v = -gain * m_LI_inverse * e;
 
       rms0 = rms;
-      rms = e.euclideanNorm() / m_size;
+      rms = e.frobeniusNorm() / m_size;
 
       // extract deplacements to apply to follow the region
       double alpha = m_target.getOrientation();

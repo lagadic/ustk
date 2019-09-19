@@ -64,12 +64,12 @@ vpColVector usNeedleDetectionTools::geometricMedian(vpMatrix points, unsigned in
   while (diff > eps) {
     double norm = 0;
     for (unsigned int j = 0; j < npts; j++)
-      norm += 1 / (points.getRow(j).t() - oldMedian).euclideanNorm();
+      norm += 1 / (points.getRow(j).t() - oldMedian).frobeniusNorm();
     newMedian = 0;
     for (unsigned int j = 0; j < npts; j++)
-      newMedian += points.getRow(j).t() / (points.getRow(j).t() - oldMedian).euclideanNorm();
+      newMedian += points.getRow(j).t() / (points.getRow(j).t() - oldMedian).frobeniusNorm();
     newMedian /= norm;
-    diff = (oldMedian - newMedian).euclideanNorm();
+    diff = (oldMedian - newMedian).frobeniusNorm();
     oldMedian = newMedian;
   }
   return oldMedian;
@@ -178,7 +178,7 @@ bool usNeedleDetectionTools::findEntry(const vpMatrix &model, double *entry, uns
   for (unsigned int i = 1; i < nPoints; ++i)
     a[i] = a[i - 1] * t;
   p = model * a;
-  double l = (p - p0).euclideanNorm();
+  double l = (p - p0).frobeniusNorm();
   double dotProduct = 1.0;
   double bestDotProduct = DBL_MAX;
 
@@ -195,7 +195,7 @@ bool usNeedleDetectionTools::findEntry(const vpMatrix &model, double *entry, uns
     for (unsigned int i = 1; i < nPoints; ++i)
       a[i] = a[i - 1] * t;
     p = model * a;
-    dotProduct = std::abs(entryPlane * (p - origin)) / (p - origin).euclideanNorm();
+    dotProduct = std::abs(entryPlane * (p - origin)) / (p - origin).frobeniusNorm();
     if (dotProduct < bestDotProduct) {
       found = true;
       entry[0] = p[0];
@@ -231,7 +231,7 @@ double usNeedleDetectionTools::angle(double *p1, double *p2, double *q1, double 
     d1[i] = p1[i] - p2[i];
     d2[i] = q1[i] - q2[i];
   }
-  double orientation = vpColVector::dotProd(d1, d2) / (d1.euclideanNorm() * d2.euclideanNorm());
+  double orientation = vpColVector::dotProd(d1, d2) / (d1.frobeniusNorm() * d2.frobeniusNorm());
   return acos(orientation);
 }
 

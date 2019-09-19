@@ -44,7 +44,7 @@ void usVolumeProcessing::norm(const usImage3D<vpColVector> &src, usImage3D<doubl
   dst.resize(src.getHeight(), src.getWidth(), src.getNumberOfFrames());
 
   for (unsigned int i = 0; i < src.getSize(); i++)
-    dst.getData()[i] = src.getConstData()[i].euclideanNorm();
+    dst.getData()[i] = src.getConstData()[i].frobeniusNorm();
 }
 
 /**

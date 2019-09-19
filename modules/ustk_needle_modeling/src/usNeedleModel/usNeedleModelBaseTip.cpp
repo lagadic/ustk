@@ -144,7 +144,7 @@ void usNeedleModelBaseTip::moveBase(const vpColVector &control, double time)
         "usNeedleModelBaseTip::moveBase(const vpColVector&, double): invalid control vector dimension, should be 6");
   if (time <= std::numeric_limits<double>::epsilon())
     return;
-  if (control.euclideanNorm() <= std::numeric_limits<double>::epsilon())
+  if (control.frobeniusNorm() <= std::numeric_limits<double>::epsilon())
     return;
 
   vpHomogeneousMatrix Hmotion = vpExponentialMap::direct(control, time);
@@ -192,7 +192,7 @@ void usNeedleModelBaseTip::moveBaseWorldFrame(const vpColVector &control, double
                                                    "6");
   if (time <= std::numeric_limits<double>::epsilon())
     return;
-  if (control.euclideanNorm() <= std::numeric_limits<double>::epsilon())
+  if (control.frobeniusNorm() <= std::numeric_limits<double>::epsilon())
     return;
 
   vpHomogeneousMatrix Hmotion = vpExponentialMap::direct(control, time);
@@ -251,7 +251,7 @@ void usNeedleModelBaseTip::moveTip(const vpColVector &control, double time)
         "usNeedleModelBaseTip::moveTip(const vpColVector&, double): invalid control vector dimension, should be 6");
   if (time <= std::numeric_limits<double>::epsilon())
     return;
-  if (control.euclideanNorm() <= std::numeric_limits<double>::epsilon())
+  if (control.frobeniusNorm() <= std::numeric_limits<double>::epsilon())
     return;
 
   vpHomogeneousMatrix Hmotion = vpExponentialMap::direct(control, time);
@@ -298,7 +298,7 @@ void usNeedleModelBaseTip::moveTipWorldFrame(const vpColVector &control, double 
                                                    "double): invalid control vector dimension, should be 6");
   if (time <= std::numeric_limits<double>::epsilon())
     return;
-  if (control.euclideanNorm() <= std::numeric_limits<double>::epsilon())
+  if (control.frobeniusNorm() <= std::numeric_limits<double>::epsilon())
     return;
 
   vpHomogeneousMatrix Hmotion = vpExponentialMap::direct(control, time);

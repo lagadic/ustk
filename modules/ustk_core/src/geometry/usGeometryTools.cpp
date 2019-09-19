@@ -104,7 +104,7 @@ vpColVector getPlaneCurveCrossingPoint(const usPolynomialCurve3D &poly, const us
   vpColVector Pmid(poly.getPoint(mid));
   bool sideMid = IsPointInFrontOfPlane(Pmid, plane);
 
-  double d = (Pend - Pstart).euclideanNorm();
+  double d = (Pend - Pstart).frobeniusNorm();
 
   while ((sideStart != sideEnd) && (d > threshold)) {
     if (sideMid == sideStart) {
@@ -118,7 +118,7 @@ vpColVector getPlaneCurveCrossingPoint(const usPolynomialCurve3D &poly, const us
     mid = (start + end) / 2;
     Pmid = poly.getPoint(mid);
     sideMid = IsPointInFrontOfPlane(Pmid, plane);
-    d = (Pend - Pstart).euclideanNorm();
+    d = (Pend - Pstart).frobeniusNorm();
   }
 
   if (sideStart == sideEnd)
@@ -219,9 +219,9 @@ vpColVector projectPointOnCurve(const vpColVector &point, const usPolynomialCurv
 
   double middle = (start + stop) / 2;
   while ((stop - start) > threshold) {
-    double d0 = (poly.getPoint(start) - point).euclideanNorm();
-    double d1 = (poly.getPoint(middle) - point).euclideanNorm();
-    double d2 = (poly.getPoint(stop) - point).euclideanNorm();
+    double d0 = (poly.getPoint(start) - point).frobeniusNorm();
+    double d1 = (poly.getPoint(middle) - point).frobeniusNorm();
+    double d2 = (poly.getPoint(stop) - point).frobeniusNorm();
 
     if (d0 <= d1 && d0 < d2)
       stop = middle;
@@ -304,7 +304,7 @@ usPolynomialCurve3D convertBSplineToPolynomial(const usBSpline3D &spline, int or
     p.push_back(spline.getPoint(i * L / nbSegments));
   l.push_back(0);
   for (int i = 0; i < nbSegments; i++)
-    l.push_back(l.back() + (p.at(i + 1) - p.at(i)).euclideanNorm());
+    l.push_back(l.back() + (p.at(i + 1) - p.at(i)).frobeniusNorm());
 
   usPolynomialCurve3D P(order);
   P.defineFromPoints(p, l, order);
@@ -321,7 +321,7 @@ usBSpline3D convertPolynomialToBSpline(const usPolynomialCurve3D &poly, int nbSe
   for (int i = 0; i < nbPoints; i++)
     p.push_back(poly.getPoint(i * L / nbSegments));
   for (int i = 0; i < nbSegments; i++)
-    l.push_back((p.at(i + 1) - p.at(i)).euclideanNorm());
+    l.push_back((p.at(i + 1) - p.at(i)).frobeniusNorm());
 
   usBSpline3D S;
   S.defineFromPoints(p, l, order);
@@ -581,7 +581,7 @@ bool fitCircleTo2DPointCloud(const std::vector<vpColVector> &points, vpColVector
   center[0] = y[0] / 2;
   center[1] = y[1] / 2;
 
-  r = sqrt(y[2] + pow(center.euclideanNorm(), 2));
+  r = sqrt(y[2] + pow(center.frobeniusNorm(), 2));
 
   center += mean;
 
@@ -622,7 +622,7 @@ bool fitSphereTo3DPointCloud(const std::vector<vpColVector> &points, vpColVector
   center[1] = y[1] / 2;
   center[2] = y[2] / 2;
 
-  r = sqrt(y[3] + pow(center.euclideanNorm(), 2));
+  r = sqrt(y[3] + pow(center.frobeniusNorm(), 2));
 
   center += mean;
 

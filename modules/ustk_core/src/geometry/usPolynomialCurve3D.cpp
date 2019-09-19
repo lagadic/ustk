@@ -195,7 +195,7 @@ double usPolynomialCurve3D::getLength(int nbCountSeg) const
 
   double length = 0.0;
   for (int i = 0; i < nbCountSeg; i++)
-    length += (points.getCol(i) - points.getCol(i + 1)).euclideanNorm();
+    length += (points.getCol(i) - points.getCol(i + 1)).frobeniusNorm();
   return length;
 }
 
@@ -947,8 +947,8 @@ double usPolynomialCurve3D::getCurvature(double param) const
   vpColVector dX_dl = this->getDerivative(param, 1);
   vpColVector dX2_dl2 = this->getDerivative(param, 2);
 
-  double norm = dX_dl.euclideanNorm();
-  double curvature = vpColVector::crossProd(dX_dl, dX2_dl2).euclideanNorm() / pow(norm, 3);
+  double norm = dX_dl.frobeniusNorm();
+  double curvature = vpColVector::crossProd(dX_dl, dX2_dl2).frobeniusNorm() / pow(norm, 3);
 
   return curvature;
 }
@@ -1011,7 +1011,7 @@ double usPolynomialCurve3D::getCurvatureFromShape(double start, double end, vpCo
   // 2D nonlinear least square fitting (Coope93)
   vpColVector d(nbPoints);
   for (int i = 0; i < nbPoints; i++) {
-    d[i] = pow(P.t().getCol(i).euclideanNorm(), 2);
+    d[i] = pow(P.t().getCol(i).frobeniusNorm(), 2);
   }
 
   vpColVector x(nbPoints, 1);
@@ -1025,7 +1025,7 @@ double usPolynomialCurve3D::getCurvatureFromShape(double start, double end, vpCo
   center[0] = y[0] / 2;
   center[1] = y[1] / 2;
 
-  double r = sqrt(y[2] + pow(center.euclideanNorm(), 2));
+  double r = sqrt(y[2] + pow(center.frobeniusNorm(), 2));
 
   // Check validity
 
@@ -1057,13 +1057,13 @@ double usPolynomialCurve3D::getCurvatureFromShape(double start, double end, vpCo
       usPolynomialCurve3D seg(m_spline.back());
 
       vpColVector dX_dl = seg.getDerivative(seg.getParametricLength(),2);
-      if(dX_dl.euclideanNorm()<std::numeric_limits<double>::epsilon()) return 0;
+      if(dX_dl.frobeniusNorm()<std::numeric_limits<double>::epsilon()) return 0;
 
       vpColVector d2X_dl2 = seg.getDerivative(seg.getParametricLength(),2);
 
-      double k = vpColVector::crossProd(dX_dl, d2X_dl2).euclideanNorm() / pow(dX_dl.euclideanNorm(),3);
+      double k = vpColVector::crossProd(dX_dl, d2X_dl2).frobeniusNorm() / pow(dX_dl.frobeniusNorm(),3);
 
-      center3D = seg.getEndPoint() + 1/k * ( d2X_dl2 - 1/pow(dX_dl.euclideanNorm(),2) * vpColVector::dotProd(dX_dl,
+      center3D = seg.getEndPoint() + 1/k * ( d2X_dl2 - 1/pow(dX_dl.frobeniusNorm(),2) * vpColVector::dotProd(dX_dl,
      d2X_dl2)*dX_dl);
       direction3D = vpColVector::crossProd(dX_dl, d2X_dl2).normalize();
       return k;*/
@@ -1159,7 +1159,7 @@ double usPolynomialCurve3D::curveDistance(const usPolynomialCurve3D &n1, const u
   vpMatrix p2 = n2.getPolynomialCoefficients() * coords2;
   double distance = 0.0;
   for (unsigned int i = 0; i < 50; ++i)
-    distance += (p1.getCol(i) - p2.getCol(i)).euclideanNorm();
+    distance += (p1.getCol(i) - p2.getCol(i)).frobeniusNorm();
   distance /= 50;
   return distance;
 }

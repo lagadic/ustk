@@ -155,7 +155,7 @@ void usNeedleTrackerSIR2D::run(vpImage<unsigned char> &I, double v)
 
     // Get needle direction
     direction = m_particles[i]->getTangent(1.0);
-    direction /= direction.euclideanNorm();
+    direction /= direction.frobeniusNorm();
 
     // Compute eigen vectors
     for (unsigned int j = 0; j < 2; ++j)

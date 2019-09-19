@@ -591,7 +591,7 @@ bool usUnscentedKalmanFilter::filter(const vpColVector &measure)
 
 double usUnscentedKalmanFilter::stateNorm(const vpColVector &state) const
 {
-    return state.euclideanNorm();
+    return state.frobeniusNorm();
 }
 
 vpColVector usUnscentedKalmanFilter::measureLog(const vpColVector& measure, const vpColVector &measureCenter) const

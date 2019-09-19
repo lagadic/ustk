@@ -507,7 +507,7 @@ template <class ImageDataType>
 void displayTissueLayers(const usNeedleInsertionModelRayleighRitzSpline &model, const vpImage<ImageDataType> &I,
                          const vpHomogeneousMatrix &imageMworld, double Xscale, double Yscale)
 {
-  if (model.getNbLayers() < 2 || model.accessTissue().accessSurface().getDirection().euclideanNorm() == 0)
+  if (model.getNbLayers() < 2 || model.accessTissue().accessSurface().getDirection().frobeniusNorm() == 0)
     return;
 
   if (model.accessTissue().accessPath().getNbSegments() > 0) {

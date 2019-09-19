@@ -510,9 +510,9 @@ double usBSpline3D::getDistanceFromPoint(const vpColVector &P, double start, dou
 
   double middle = (start + stop) / 2;
   while ((stop - start) > threshold) {
-    double d0 = (this->getPoint(start) - P).euclideanNorm();
-    double d1 = (this->getPoint(middle) - P).euclideanNorm();
-    double d2 = (this->getPoint(stop) - P).euclideanNorm();
+    double d0 = (this->getPoint(start) - P).frobeniusNorm();
+    double d1 = (this->getPoint(middle) - P).frobeniusNorm();
+    double d2 = (this->getPoint(stop) - P).frobeniusNorm();
 
     if (d0 <= d1 && d0 < d2)
       stop = middle;
@@ -525,7 +525,7 @@ double usBSpline3D::getDistanceFromPoint(const vpColVector &P, double start, dou
     middle = (start + stop) / 2;
   }
 
-  double l = (this->getPoint(middle) - P).euclideanNorm();
+  double l = (this->getPoint(middle) - P).frobeniusNorm();
 
   return l;
 }
@@ -631,7 +631,7 @@ double usBSpline3D::getCurvatureFromShape(double start, double end, vpColVector 
   // 2D nonlinear least square fitting (Coope93)
   vpColVector d(nbPoints);
   for (int i = 0; i < nbPoints; i++) {
-    d[i] = pow(P.t().getCol(i).euclideanNorm(), 2);
+    d[i] = pow(P.t().getCol(i).frobeniusNorm(), 2);
   }
 
   vpColVector x(nbPoints, 1);
@@ -645,7 +645,7 @@ double usBSpline3D::getCurvatureFromShape(double start, double end, vpColVector 
   center[0] = y[0] / 2;
   center[1] = y[1] / 2;
 
-  double r = sqrt(y[2] + pow(center.euclideanNorm(), 2));
+  double r = sqrt(y[2] + pow(center.frobeniusNorm(), 2));
 
   // Check validity
 
@@ -677,13 +677,13 @@ double usBSpline3D::getCurvatureFromShape(double start, double end, vpColVector 
       usPolynomialCurve3D seg(m_spline.back());
 
       vpColVector dX_dl = seg.getDerivative(seg.getParametricLength(),2);
-      if(dX_dl.euclideanNorm()<std::numeric_limits<double>::epsilon()) return 0;
+      if(dX_dl.frobeniusNorm()<std::numeric_limits<double>::epsilon()) return 0;
 
       vpColVector d2X_dl2 = seg.getDerivative(seg.getParametricLength(),2);
 
-      double k = vpColVector::crossProd(dX_dl, d2X_dl2).euclideanNorm() / pow(dX_dl.euclideanNorm(),3);
+      double k = vpColVector::crossProd(dX_dl, d2X_dl2).frobeniusNorm() / pow(dX_dl.frobeniusNorm(),3);
 
-      center3D = seg.getEndPoint() + 1/k * ( d2X_dl2 - 1/pow(dX_dl.euclideanNorm(),2) * vpColVector::dotProd(dX_dl,
+      center3D = seg.getEndPoint() + 1/k * ( d2X_dl2 - 1/pow(dX_dl.frobeniusNorm(),2) * vpColVector::dotProd(dX_dl,
      d2X_dl2)*dX_dl);
       direction3D = vpColVector::crossProd(dX_dl, d2X_dl2).normalize();
       return k;*/

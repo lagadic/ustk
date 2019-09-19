@@ -92,12 +92,12 @@ void usOrientedPlane3D::setDirection(const vpColVector &D)
   if (D.size() != 3)
     return;
 
-  if (D.euclideanNorm() > std::numeric_limits<double>::epsilon()) {
-    if (m_direction.euclideanNorm() == 0)
+  if (D.frobeniusNorm() > std::numeric_limits<double>::epsilon()) {
+    if (m_direction.frobeniusNorm() == 0)
       m_direction[2] = 1;
     double cos = vpColVector::dotProd(m_direction, D);
     vpColVector u = vpColVector::crossProd(m_direction, D);
-    double sin = u.euclideanNorm();
+    double sin = u.frobeniusNorm();
     double theta = atan2(sin, cos);
     u = theta * u.normalize();
 

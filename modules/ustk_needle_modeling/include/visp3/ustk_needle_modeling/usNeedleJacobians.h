@@ -498,7 +498,7 @@ namespace usNeedleJacobians
   bool getJacobianBaseVelocityToSurfaceTissueStretch(const NeedleInsertionModel &model, vpMatrix &J)
   {
       vpColVector e = model.getNeedleInsertionPoint() - model.getTissueInsertionPoint();
-      double norm = e.euclideanNorm();
+      double norm = e.frobeniusNorm();
       if(norm <= std::numeric_limits<double>::epsilon()) return false;
       else e /= norm;
 

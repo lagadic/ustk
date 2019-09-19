@@ -236,9 +236,9 @@ double usNeedleModelSpline::getDistanceFromPoint(const vpColVector &P, double st
 
   double middle = (start + stop) / 2;
   while ((stop - start) > threshold) {
-    double d0 = (this->getNeedlePoint(start) - P).euclideanNorm();
-    double d1 = (this->getNeedlePoint(middle) - P).euclideanNorm();
-    double d2 = (this->getNeedlePoint(stop) - P).euclideanNorm();
+    double d0 = (this->getNeedlePoint(start) - P).frobeniusNorm();
+    double d1 = (this->getNeedlePoint(middle) - P).frobeniusNorm();
+    double d2 = (this->getNeedlePoint(stop) - P).frobeniusNorm();
 
     if (d0 <= d1 && d0 < d2)
       stop = middle;
@@ -251,7 +251,7 @@ double usNeedleModelSpline::getDistanceFromPoint(const vpColVector &P, double st
     middle = (start + stop) / 2;
   }
 
-  double l = (this->getNeedlePoint(middle) - P).euclideanNorm();
+  double l = (this->getNeedlePoint(middle) - P).frobeniusNorm();
 
   return l;
 }
@@ -268,8 +268,8 @@ double usNeedleModelSpline::getBendingEnergy() const
       vpColVector dX_dl = poly.getDerivative(poly.getStartParameter(), 1);
       vpColVector dX_dl_2 = poly2.getDerivative(poly2.getStartParameter(), 1);
 
-      double norm = dX_dl.euclideanNorm();
-      double curvature = vpColVector::crossProd(dX_dl, dX_dl_2).euclideanNorm() / pow(norm, 3);
+      double norm = dX_dl.frobeniusNorm();
+      double curvature = vpColVector::crossProd(dX_dl, dX_dl_2).frobeniusNorm() / pow(norm, 3);
 
       E += pow(curvature, 2);
     }
@@ -419,7 +419,7 @@ double usNeedleModelSpline::getCurvatureFromNeedleShape(double start, double end
   // 2D nonlinear least square fitting (Coope93)
   vpColVector d(nbPoints);
   for (int i = 0; i < nbPoints; i++) {
-    d[i] = pow(P.t().getCol(i).euclideanNorm(), 2);
+    d[i] = pow(P.t().getCol(i).frobeniusNorm(), 2);
   }
 
   vpColVector x(nbPoints, 1);
@@ -433,7 +433,7 @@ double usNeedleModelSpline::getCurvatureFromNeedleShape(double start, double end
   center[0] = y[0] / 2;
   center[1] = y[1] / 2;
 
-  double r = sqrt(y[2] + pow(center.euclideanNorm(), 2));
+  double r = sqrt(y[2] + pow(center.frobeniusNorm(), 2));
 
   // Check validity
 
@@ -465,13 +465,13 @@ double usNeedleModelSpline::getCurvatureFromNeedleShape(double start, double end
       usPolynomialCurve3D seg(m_spline.back());
 
       vpColVector dX_dl = seg.getDerivative(seg.getParametricLength(),2);
-      if(dX_dl.euclideanNorm()<std::numeric_limits<double>::epsilon()) return 0;
+      if(dX_dl.frobeniusNorm()<std::numeric_limits<double>::epsilon()) return 0;
 
       vpColVector d2X_dl2 = seg.getDerivative(seg.getParametricLength(),2);
 
-      double k = vpColVector::crossProd(dX_dl, d2X_dl2).euclideanNorm() / pow(dX_dl.euclideanNorm(),3);
+      double k = vpColVector::crossProd(dX_dl, d2X_dl2).frobeniusNorm() / pow(dX_dl.frobeniusNorm(),3);
 
-      center3D = seg.getEndPoint() + 1/k * ( d2X_dl2 - 1/pow(dX_dl.euclideanNorm(),2) * vpColVector::dotProd(dX_dl,
+      center3D = seg.getEndPoint() + 1/k * ( d2X_dl2 - 1/pow(dX_dl.frobeniusNorm(),2) * vpColVector::dotProd(dX_dl,
      d2X_dl2)*dX_dl);
       direction3D = vpColVector::crossProd(dX_dl, d2X_dl2).normalize();
       return k;*/

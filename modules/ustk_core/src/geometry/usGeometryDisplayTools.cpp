@@ -213,8 +213,8 @@ void displayCurvatureFromShape(const usPolynomialCurve3D &curve, const vpImage<I
 
   double thetaxy = atan2(Axy[1], Axy[0]);
   double axy = r;
-  double bxy = r * vpColVector::cross(Bxy, Dxy).euclideanNorm();
-  if (Bxy.euclideanNorm() < 0.5)
+  double bxy = r * vpColVector::cross(Bxy, Dxy).frobeniusNorm();
+  if (Bxy.frobeniusNorm() < 0.5)
     bxy = axy; // if normalization failed the circle is almost in the plane
 
   // Scaling
@@ -323,8 +323,8 @@ void displayCurvatureFromShape(const usBSpline3D &spline, const vpImage<ImageDat
 
   double thetaxy = atan2(Axy[1], Axy[0]);
   double axy = r;
-  double bxy = r * vpColVector::cross(Bxy, Dxy).euclideanNorm();
-  if (Bxy.euclideanNorm() < 0.5)
+  double bxy = r * vpColVector::cross(Bxy, Dxy).frobeniusNorm();
+  if (Bxy.frobeniusNorm() < 0.5)
     bxy = axy; // if normalization failed the circle is almost in the plane
 
   // Scaling

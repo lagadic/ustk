@@ -438,7 +438,7 @@ double usNeedleInsertionModelVirtualSprings::getPathDistanceFromPoint(const vpCo
 
   for (unsigned int i = 0; i < m_springs.size(); i++) {
     vpColVector p = usGeometryTools::projectPointOnPlane(P, m_springs.at(i));
-    double d = (m_springs.at(i).getPosition() - p).euclideanNorm();
+    double d = (m_springs.at(i).getPosition() - p).frobeniusNorm();
     if (d < min)
       min = d;
   }
@@ -452,7 +452,7 @@ double usNeedleInsertionModelVirtualSprings::getTissueDeformationEnergy() const
 
   for (unsigned int n = 0; n < m_springs.size(); n++) {
     double K = m_springs.at(n).getStiffness();
-    double l = (m_needle.accessSegment(n).getEndPoint() - m_springs.at(n).getPosition()).euclideanNorm();
+    double l = (m_needle.accessSegment(n).getEndPoint() - m_springs.at(n).getPosition()).frobeniusNorm();
 
     E += 0.5 * K * l * l;
   }
@@ -465,7 +465,7 @@ double usNeedleInsertionModelVirtualSprings::getSurfaceTissueStretch() const
   if (!this->IsNeedleInserted() || (m_springs.size() < 1))
     return 0;
 
-  return (this->getTissueInsertionPoint() - this->getNeedleInsertionPoint()).euclideanNorm();
+  return (this->getTissueInsertionPoint() - this->getNeedleInsertionPoint()).frobeniusNorm();
 }
 
 double usNeedleInsertionModelVirtualSprings::getMaxTissueStretch(double *lmax) const
@@ -481,7 +481,7 @@ double usNeedleInsertionModelVirtualSprings::getMaxTissueStretch(double *lmax) c
   double totalLength = 0;
 
   for (unsigned int i = 0; i < m_springs.size(); i++) {
-    double d = (m_springs.at(i).getPosition() - m_needle.accessSegment(i).getEndPoint()).euclideanNorm();
+    double d = (m_springs.at(i).getPosition() - m_needle.accessSegment(i).getEndPoint()).frobeniusNorm();
     totalLength += m_needle.accessSegment(i).getParametricLength();
 
     if (d > max) {
@@ -502,7 +502,7 @@ double usNeedleInsertionModelVirtualSprings::getMeanTissueStretch() const
   double L = this->getInsertionDepth();
 
   for (unsigned int i = 0; i < m_springs.size(); i++) {
-    double d = (m_springs.at(i).getPosition() - m_needle.accessSegment(i).getEndPoint()).euclideanNorm();
+    double d = (m_springs.at(i).getPosition() - m_needle.accessSegment(i).getEndPoint()).frobeniusNorm();
     double l1 = m_needle.accessSegment(i).getParametricLength();
     if (i == 0)
       l1 = 0;
@@ -1025,7 +1025,7 @@ void usNeedleInsertionModelVirtualSprings::updateCutAngle()
     ztip = (ztip - vpColVector::dotProd(ztip, xtip) * xtip).normalize();
     z = (z - vpColVector::dotProd(z, xtip) * xtip).normalize();
 
-    double vect = vpColVector::crossProd(z, ztip).euclideanNorm();
+    double vect = vpColVector::crossProd(z, ztip).frobeniusNorm();
     double dot = vpColVector::dotProd(z, ztip);
     m_cutAngle = 180 / M_PI * atan2(vect, dot);
   } else {
@@ -1294,7 +1294,7 @@ void usNeedleInsertionModelVirtualSprings::solveSegmentsParametersSparseEigen()
         vpColVector::crossProd(m_needle.accessSegment(i).getStartTangent(), m_needle.accessSegment(i).getEndTangent());
     double dot =
         vpColVector::dotProd(m_needle.accessSegment(i).getStartTangent(), m_needle.accessSegment(i).getEndTangent());
-    double theta = atan2(vect.euclideanNorm(), dot);
+    double theta = atan2(vect.frobeniusNorm(), dot);
     vect.normalize();
     vect = theta * vect;
     vpThetaUVector thetaU(vect[0], vect[1], vect[2]);
@@ -1546,7 +1546,7 @@ void usNeedleInsertionModelVirtualSprings::solveSegmentsParametersOpenCV()
         vpColVector::crossProd(m_needle.accessSegment(i).getStartTangent(), m_needle.accessSegment(i).getEndTangent());
     double dot =
         vpColVector::dotProd(m_needle.accessSegment(i).getStartTangent(), m_needle.accessSegment(i).getEndTangent());
-    double theta = atan2(vect.euclideanNorm(), dot);
+    double theta = atan2(vect.frobeniusNorm(), dot);
     vect.normalize();
     vect = theta * vect;
     vpThetaUVector thetaU(vect[0], vect[1], vect[2]);
@@ -1799,7 +1799,7 @@ void usNeedleInsertionModelVirtualSprings::solveSegmentsParametersViSP()
         vpColVector::crossProd(m_needle.accessSegment(i).getStartTangent(), m_needle.accessSegment(i).getEndTangent());
     double dot =
         vpColVector::dotProd(m_needle.accessSegment(i).getStartTangent(), m_needle.accessSegment(i).getEndTangent());
-    double theta = atan2(vect.euclideanNorm(), dot);
+    double theta = atan2(vect.frobeniusNorm(), dot);
     vect.normalize();
     vect = theta * vect;
     vpThetaUVector thetaU(vect[0], vect[1], vect[2]);
@@ -1850,7 +1850,7 @@ bool usNeedleInsertionModelVirtualSprings::addRemoveSprings()
   // If needle is not yet inserted
   if (m_springs.size() == 0) {
     // If the tissue surface has been defined
-    if (m_tissueSurface.getDirection().euclideanNorm() != 0) {
+    if (m_tissueSurface.getDirection().frobeniusNorm() != 0) {
       double s = m_needle.getFullLength();
       if (usGeometryTools::DoesSegmentCrossPlane(m_needle.accessSegment(0), m_tissueSurface))
         usGeometryTools::getPlaneCurveCrossingPoint(m_needle.accessSegment(0), m_tissueSurface, -1, &s);
@@ -2003,7 +2003,7 @@ void usNeedleInsertionModelVirtualSprings::addMeasureSpring(const vpColVector &p
     throw vpException(vpException::dimensionError,
                       "usNeedleInsertionModelVirtualSprings::addMeasureSpring: invalid vector dimension");
 
-  if (m_tissueSurface.getDirection().euclideanNorm() != 0 &&
+  if (m_tissueSurface.getDirection().frobeniusNorm() != 0 &&
       !usGeometryTools::IsPointInFrontOfPlane(p, m_tissueSurface)) {
     std::cerr
         << "Warning in usNeedleInsertionModelVirtualSprings::addMeasureSpring: cannot add spring outside of tissue"

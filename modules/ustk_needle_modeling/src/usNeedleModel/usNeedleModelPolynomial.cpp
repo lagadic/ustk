@@ -188,9 +188,9 @@ double usNeedleModelPolynomial::getDistanceFromPoint(const vpColVector &P, doubl
 
   double middle = (start + stop) / 2;
   while ((stop - start) > threshold) {
-    double d0 = (this->getNeedlePoint(start) - P).euclideanNorm();
-    double d1 = (this->getNeedlePoint(middle) - P).euclideanNorm();
-    double d2 = (this->getNeedlePoint(stop) - P).euclideanNorm();
+    double d0 = (this->getNeedlePoint(start) - P).frobeniusNorm();
+    double d1 = (this->getNeedlePoint(middle) - P).frobeniusNorm();
+    double d2 = (this->getNeedlePoint(stop) - P).frobeniusNorm();
 
     if (d0 <= d1 && d0 < d2)
       stop = middle;
@@ -203,7 +203,7 @@ double usNeedleModelPolynomial::getDistanceFromPoint(const vpColVector &P, doubl
     middle = (start + stop) / 2;
   }
 
-  double l = (this->getNeedlePoint(middle) - P).euclideanNorm();
+  double l = (this->getNeedlePoint(middle) - P).frobeniusNorm();
 
   return l;
 }
@@ -318,7 +318,7 @@ double usNeedleModelPolynomial::getCurvatureFromNeedleShape(double start, double
   // 2D nonlinear least square fitting (Coope93)
   vpColVector d(nbPoints);
   for (int i = 0; i < nbPoints; i++) {
-    d[i] = pow(P.t().getCol(i).euclideanNorm(), 2);
+    d[i] = pow(P.t().getCol(i).frobeniusNorm(), 2);
   }
 
   vpColVector x(nbPoints, 1);
@@ -332,7 +332,7 @@ double usNeedleModelPolynomial::getCurvatureFromNeedleShape(double start, double
   center[0] = y[0] / 2;
   center[1] = y[1] / 2;
 
-  double r = sqrt(y[2] + pow(center.euclideanNorm(), 2));
+  double r = sqrt(y[2] + pow(center.frobeniusNorm(), 2));
 
   // Check validity
 

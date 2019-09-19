@@ -186,7 +186,7 @@ void usTissueTranslationEstimatorUKF::applyStateToNeedle(usNeedleInsertionModelR
 bool usTissueTranslationEstimatorUKF::checkConsistency(const vpColVector &measure)
 {
     if(!m_needle.IsNeedleInserted()) return false;
-    if((vpColVector(m_state, 0,3) - vpColVector(m_needle.accessTissue().getPose(), 0,3)).euclideanNorm() > std::numeric_limits<double>::epsilon()) std::cout << "usTissueTranslationEstimatorUKF::checkConsistency: the state does not correspond to the needle model, make sure you used the method 'setCurrentNeedle' to initialize the state" << std::endl;
+    if((vpColVector(m_state, 0,3) - vpColVector(m_needle.accessTissue().getPose(), 0,3)).frobeniusNorm() > std::numeric_limits<double>::epsilon()) std::cout << "usTissueTranslationEstimatorUKF::checkConsistency: the state does not correspond to the needle model, make sure you used the method 'setCurrentNeedle' to initialize the state" << std::endl;
     
     if(m_measureType == usTissueTranslationEstimatorUKF::NEEDLE_BODY_POINTS)
     {
@@ -346,15 +346,15 @@ double usTissueTranslationEstimatorUKF::stateNorm(const vpColVector &state) cons
     {
         case usTissueTranslationEstimatorUKF::CONSTANT_POSITION:
         {
-            return vpColVector(state, 0,3).euclideanNorm();
+            return vpColVector(state, 0,3).frobeniusNorm();
         }
         case usTissueTranslationEstimatorUKF::CONSTANT_VELOCITY:
         {
-            return vpColVector(state, 0,3).euclideanNorm() + m_propagationTime * vpColVector(state, 3,3).euclideanNorm();
+            return vpColVector(state, 0,3).frobeniusNorm() + m_propagationTime * vpColVector(state, 3,3).frobeniusNorm();
         }  
         default:
         {
-            return state.euclideanNorm();
+            return state.frobeniusNorm();
         }
     }
 }
@@ -374,7 +374,7 @@ vpColVector usTissueTranslationEstimatorUKF::measureLog(const vpColVector& measu
     
             vpColVector d_init(measureCenter, 3,3);
             vpColVector d(measure, 3,3);
-            double angle = fabs(atan2(vpColVector::crossProd(d_init, d).euclideanNorm(), vpColVector::dotProd(d_init,d)));
+            double angle = fabs(atan2(vpColVector::crossProd(d_init, d).frobeniusNorm(), vpColVector::dotProd(d_init,d)));
             measureL.insert(3, angle * vpColVector::crossProd(d_init, d).normalize());
             
             return measureL;

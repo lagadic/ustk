@@ -552,7 +552,7 @@ void usVolumeProcessing::frangi(const usImage3D<Type> &src, usImage3D<double> &d
     else {
       double Rb = vpMath::abs(evalues[0]) / sqrt(vpMath::abs(evalues[1] * evalues[2]));
       double Ra = vpMath::abs(evalues[1] / evalues[2]);
-      double S = evalues.euclideanNorm();
+      double S = evalues.frobeniusNorm();
 
       v = (1.0 - exp(-vpMath::sqr(Ra) / (2.0 * vpMath::sqr(a)))) * exp(-vpMath::sqr(Rb) / (2.0 * vpMath::sqr(b))) *
           (1.0 - exp(-vpMath::sqr(S) / (2.0 * vpMath::sqr(c))));

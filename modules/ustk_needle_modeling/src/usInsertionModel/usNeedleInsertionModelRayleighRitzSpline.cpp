@@ -550,7 +550,7 @@ double usNeedleInsertionModelRayleighRitzSpline::getSurfaceTissueStretch() const
   if (!this->IsNeedleInserted() || (m_tissue.accessPath().getNbSegments() < 1))
     return 0;
 
-  return (this->getTissueInsertionPoint() - this->getNeedleInsertionPoint()).euclideanNorm();
+  return (this->getTissueInsertionPoint() - this->getNeedleInsertionPoint()).frobeniusNorm();
 }
 
 double usNeedleInsertionModelRayleighRitzSpline::getMaxTissueStretch(double *lmax) const
@@ -589,7 +589,7 @@ double usNeedleInsertionModelRayleighRitzSpline::getMaxTissueStretch(double *lma
       Pn = segment.getPoint(l);
 
       if (this->getCorrespondingPathPoint(totalLength + l, restIndex, restParameter)) {
-        double s = (Pn - m_tissue.accessPath().accessSegment(restIndex).getPoint(restParameter)).euclideanNorm();
+        double s = (Pn - m_tissue.accessPath().accessSegment(restIndex).getPoint(restParameter)).frobeniusNorm();
 
         if (s > max) {
           max = s;
@@ -604,7 +604,7 @@ double usNeedleInsertionModelRayleighRitzSpline::getMaxTissueStretch(double *lma
     Pn = segment.getPoint(l);
 
     if (this->getCorrespondingPathPoint(totalLength + l, restIndex, restParameter)) {
-      double s = (Pn - m_tissue.accessPath().accessSegment(restIndex).getPoint(restParameter)).euclideanNorm();
+      double s = (Pn - m_tissue.accessPath().accessSegment(restIndex).getPoint(restParameter)).frobeniusNorm();
 
       if (s > max) {
         max = s;
@@ -650,14 +650,14 @@ double usNeedleInsertionModelRayleighRitzSpline::getMeanTissueStretch() const
     double restParameter = -1;
     vpColVector Pn = segment.getPoint(l);
     if (this->getCorrespondingPathPoint(totalLength + l, restIndex, restParameter)) {
-      dmean += (Pn - m_tissue.accessPath().accessSegment(restIndex).getPoint(restParameter)).euclideanNorm() / 2;
+      dmean += (Pn - m_tissue.accessPath().accessSegment(restIndex).getPoint(restParameter)).frobeniusNorm() / 2;
     }
 
     while (l < length) {
       Pn = segment.getPoint(l);
 
       if (this->getCorrespondingPathPoint(totalLength + l, restIndex, restParameter)) {
-        dmean += (Pn - m_tissue.accessPath().accessSegment(restIndex).getPoint(restParameter)).euclideanNorm();
+        dmean += (Pn - m_tissue.accessPath().accessSegment(restIndex).getPoint(restParameter)).frobeniusNorm();
       }
 
       l += dl;
@@ -667,7 +667,7 @@ double usNeedleInsertionModelRayleighRitzSpline::getMeanTissueStretch() const
     Pn = segment.getPoint(l);
 
     if (this->getCorrespondingPathPoint(totalLength + l, restIndex, restParameter)) {
-      dmean += (Pn - m_tissue.accessPath().accessSegment(restIndex).getPoint(restParameter)).euclideanNorm() / 2;
+      dmean += (Pn - m_tissue.accessPath().accessSegment(restIndex).getPoint(restParameter)).frobeniusNorm() / 2;
     }
     mean += dl * dmean;
 
@@ -685,7 +685,7 @@ bool usNeedleInsertionModelRayleighRitzSpline::setBasePose(const vpPoseVector &p
 {
   // Set base position in worldframe if the base doesn't go under the tissue
 
-  if (m_tissue.accessSurface().getDirection().euclideanNorm() > 0) {
+  if (m_tissue.accessSurface().getDirection().frobeniusNorm() > 0) {
     vpColVector position(pose.getTranslationVector());
     if (usGeometryTools::IsPointInFrontOfPlane(position, m_tissue.accessSurface()))
       return false;
@@ -728,7 +728,7 @@ bool usNeedleInsertionModelRayleighRitzSpline::cutPathToPoint(const vpColVector 
   }
 
   if (vpColVector::dotProd(P - lastPoint, lastDirection) > m_pathUpdateLengthThreshold) {
-    if ((P - m_needle.getBasePosition()).euclideanNorm() > 1.1*m_needle.getFullLength()) {
+    if ((P - m_needle.getBasePosition()).frobeniusNorm() > 1.1*m_needle.getFullLength()) {
       std::cout << "Warning usNeedleInsertionModelRayleighRitzSpline::cutPathToPoint: cut point is inconsistent with "
                    "current needle state"
                 << std::endl;
@@ -740,7 +740,7 @@ bool usNeedleInsertionModelRayleighRitzSpline::cutPathToPoint(const vpColVector 
     M.insert(lastPoint, 0, 0);
     M.insert((P - lastPoint).normalize(), 0, 1);
     seg.setPolynomialCoefficients(M);
-    seg.setParametricLength((P - lastPoint).euclideanNorm());
+    seg.setParametricLength((P - lastPoint).frobeniusNorm());
     m_tissue.accessPath().addSegment(seg);
     return true;
   } else
@@ -1352,7 +1352,7 @@ void usNeedleInsertionModelRayleighRitzSpline::solveSegmentsParametersFullSparse
     vpRotationMatrix R(0, 0, 0);
 
     vpColVector bevelSegment = m_needleTip->getTipPosition() - m_needleTip->getBasePosition();
-    double bevLength = bevelSegment.euclideanNorm();
+    double bevLength = bevelSegment.frobeniusNorm();
     bevelSegment.normalize();
     vpColVector p = vpColVector::crossProd(m_needleTip->getBaseAxisZ(), bevelSegment);
     R.buildFrom(p[0], p[1], p[2]);
@@ -1791,7 +1791,7 @@ void usNeedleInsertionModelRayleighRitzSpline::solveSegmentsParametersFullSparse
     vpRotationMatrix R(0, 0, 0);
 
     vpColVector bevelSegment = m_needleTip->getTipPosition() - m_needleTip->getBasePosition();
-    double bevLength = bevelSegment.euclideanNorm();
+    double bevLength = bevelSegment.frobeniusNorm();
     bevelSegment.normalize();
     vpColVector p = vpColVector::crossProd(m_needleTip->getBaseAxisZ(), bevelSegment);
     R.buildFrom(p[0], p[1], p[2]);
@@ -2225,7 +2225,7 @@ void usNeedleInsertionModelRayleighRitzSpline::solveSegmentsParametersDense()
     vpRotationMatrix R(0, 0, 0);
 
     vpColVector bevelSegment = m_needleTip->getTipPosition() - m_needleTip->getBasePosition();
-    double bevLength = bevelSegment.euclideanNorm();
+    double bevLength = bevelSegment.frobeniusNorm();
     bevelSegment.normalize();
     vpColVector p = vpColVector::crossProd(m_needleTip->getBaseAxisZ(), bevelSegment);
     R.buildFrom(p[0], p[1], p[2]);
@@ -2376,7 +2376,7 @@ void usNeedleInsertionModelRayleighRitzSpline::updateTipPose()
       vpColVector::crossProd(m_needle.accessSegment(0).getStartTangent(), m_needle.accessLastSegment().getEndTangent());
   double dot =
       vpColVector::dotProd(m_needle.accessSegment(0).getStartTangent(), m_needle.accessLastSegment().getEndTangent());
-  double theta = atan2(vect.euclideanNorm(), dot);
+  double theta = atan2(vect.frobeniusNorm(), dot);
   vect.normalize();
   vect = theta * vect;
   vpThetaUVector thetaU(vect[0], vect[1], vect[2]);
@@ -2471,7 +2471,7 @@ bool usNeedleInsertionModelRayleighRitzSpline::updatePath()
     double restParam = -1;
     if (m_tissue.accessPath().getNbSegments() > 0) {
       this->getCorrespondingPathPoint(
-          m_needle.getFullLength() + (m_needleTip->getTipPosition() - m_needleTip->getBasePosition()).euclideanNorm(),
+          m_needle.getFullLength() + (m_needleTip->getTipPosition() - m_needleTip->getBasePosition()).frobeniusNorm(),
           restIndex, restParam);
       lastPoint = m_tissue.accessPath().accessLastSegment().getEndPoint();
       lastDirection = m_tissue.accessPath().accessLastSegment().getEndTangent();
@@ -2500,7 +2500,7 @@ bool usNeedleInsertionModelRayleighRitzSpline::updatePath()
 
       M.insert((1 * u).normalize(), 0, 1);
       seg.setPolynomialCoefficients(M);
-      seg.setParametricLength(u.euclideanNorm());
+      seg.setParametricLength(u.frobeniusNorm());
       m_tissue.accessPath().addSegment(seg);
       return true;
     } else
@@ -2513,7 +2513,7 @@ bool usNeedleInsertionModelRayleighRitzSpline::updatePath()
     double restParam = -1;
     if (m_tissue.accessPath().getNbSegments() > 0) {
       this->getCorrespondingPathPoint(
-          m_needle.getFullLength() + (m_needleTip->getTipPosition() - m_needleTip->getBasePosition()).euclideanNorm(),
+          m_needle.getFullLength() + (m_needleTip->getTipPosition() - m_needleTip->getBasePosition()).frobeniusNorm(),
           restIndex, restParam);
       lastPoint = m_tissue.accessPath().accessLastSegment().getEndPoint();
       lastDirection = m_tissue.accessPath().accessLastSegment().getEndTangent();
@@ -2543,7 +2543,7 @@ bool usNeedleInsertionModelRayleighRitzSpline::updatePath()
 
       M.insert((newPoint - lastPoint).normalize(), 0, 1);
       seg.setPolynomialCoefficients(M);
-      seg.setParametricLength((newPoint - lastPoint).euclideanNorm());
+      seg.setParametricLength((newPoint - lastPoint).frobeniusNorm());
       m_tissue.accessPath().addSegment(seg);
       return true;
     } else

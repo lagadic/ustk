@@ -56,7 +56,13 @@ int main(int argc, const char **argv)
   // Fill pre-scan volume with some data
 
   usImage3D<unsigned char> I(sampleNumber, scanLineNumber, frameNumber);
-  for(int k=0 ; k<frameNumber ; k+=2 ) for(int j=0 ; j<scanLineNumber ; j++ ) for(int i=0 ; i<sampleNumber ; i++ ) I(i,j,k,255); 
+  for(unsigned int k=0 ; k<frameNumber ; k+=2 ) {
+    for(unsigned int j=0 ; j<scanLineNumber ; j++ ) {
+      for(unsigned int i=0 ; i<sampleNumber ; i++ ) {
+        I(i,j,k,255);
+      }
+    }
+  }
   preScan.setData(I);
   
   // Fill pre-scan volume info

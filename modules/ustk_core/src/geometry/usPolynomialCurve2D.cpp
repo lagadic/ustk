@@ -196,7 +196,7 @@ double usPolynomialCurve2D::getLength(int nbCountSeg) const
 
   double length = 0.0;
   for (int i = 0; i < nbCountSeg; i++)
-    length += (points.getCol(i) - points.getCol(i + 1)).euclideanNorm();
+    length += (points.getCol(i) - points.getCol(i + 1)).frobeniusNorm();
   return length;
 }
 
@@ -942,7 +942,7 @@ double usPolynomialCurve2D::getCurvature(double param) const
   vpColVector dX_dl = this->getDerivative(param, 1);
   vpColVector dX2_dl2 = this->getDerivative(param, 2);
 
-  double norm = dX_dl.euclideanNorm();
+  double norm = dX_dl.frobeniusNorm();
   double curvature = (dX_dl[0] * dX2_dl2[1] - dX_dl[1] * dX2_dl2[0]) / pow(norm, 3);
 
   return curvature;
@@ -1038,7 +1038,7 @@ double usPolynomialCurve2D::curveDistance(const usPolynomialCurve2D &n1, const u
   vpMatrix p2 = n2.getPolynomialCoefficients() * coords2;
   double distance = 0.0;
   for (unsigned int i = 0; i < 50; ++i)
-    distance += (p1.getCol(i) - p2.getCol(i)).euclideanNorm();
+    distance += (p1.getCol(i) - p2.getCol(i)).frobeniusNorm();
   distance /= 50;
   return distance;
 }

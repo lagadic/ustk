@@ -69,7 +69,7 @@ bool usNeedleInsertionModelInterface::moveBase(const vpColVector &v, double time
 
   if (time <= std::numeric_limits<double>::epsilon())
     return true;
-  if (v.euclideanNorm() <= std::numeric_limits<double>::epsilon())
+  if (v.frobeniusNorm() <= std::numeric_limits<double>::epsilon())
     return true;
 
   return this->moveBase(vpExponentialMap::direct(v, time));
@@ -112,7 +112,7 @@ bool usNeedleInsertionModelInterface::moveBaseWorldFrame(const vpColVector &v, d
 
   if (time <= std::numeric_limits<double>::epsilon())
     return false;
-  if (v.euclideanNorm() <= std::numeric_limits<double>::epsilon())
+  if (v.frobeniusNorm() <= std::numeric_limits<double>::epsilon())
     return false;
 
   return this->moveBaseWorldFrame(vpExponentialMap::direct(v, time));
