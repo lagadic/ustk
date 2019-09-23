@@ -30,7 +30,7 @@
 #
 #############################################################################
 
-IF(USE_CPP11)
+IF(VISP_CXX_STANDARD GREATER VISP_CXX_STANDARD_98)
 vp_add_module(ustk_needle_modeling visp_core visp_ustk_core visp_ustk_needle_detection)
 
 vp_glob_module_sources()
