@@ -83,7 +83,7 @@ if(USE_VTK)
   set(AUTORCC_ON)
 
   # Create ustk_gui module, only if vtk found
-  vp_add_module(ustk_gui visp_ustk_core visp_ustk_elastography visp_ustk_grabber visp_robot visp_ustk_confidence_map visp_ustk_template_tracking)
+  vp_add_module(ustk_gui visp_ustk_core visp_ustk_grabber visp_robot visp_ustk_confidence_map visp_ustk_template_tracking OPTIONAL visp_ustk_elastography)
   vp_glob_module_sources(${UI_RESOURCES})
   vp_module_include_directories(${opt_incs})
   vp_create_module(${opt_libs})

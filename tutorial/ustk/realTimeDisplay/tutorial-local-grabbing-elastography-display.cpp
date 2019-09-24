@@ -3,7 +3,7 @@
 #include <iostream>
 #include <visp3/ustk_core/usConfig.h>
 
-#if defined(VISP_HAVE_MODULE_USTK_GUI) && defined(VISP_HAVE_MODULE_USTK_GRABBER)
+#if defined(VISP_HAVE_MODULE_USTK_GUI) && defined(VISP_HAVE_MODULE_USTK_GRABBER) && defined(VISP_HAVE_MODULE_USTK_ELASTOGRAPHY)
 
 #include <visp3/ustk_grabber/usNetworkGrabberRF2D.h>
 #include <visp3/ustk_gui/usElastographyDisplayWidget.h>
