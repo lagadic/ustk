@@ -34,70 +34,34 @@ if(USE_VTK)
   include(${VTK_USE_FILE})
 
   list(APPEND opt_incs ${VTK_INCLUDE_DIRS})
-
-  # Check for vtk dependencies
-  foreach(lib_ ${VTK_LIBRARIES})
-    if(${lib_} MATCHES "^(vtk.*)")
-      get_target_property(imported_dependency_ ${lib_} INTERFACE_LINK_LIBRARIES)
-      if(imported_dependency_)
-        list(APPEND vtk_opt_libs_deps_ ${imported_dependency_})
-      endif()
-    endif()
-  endforeach()
-  vp_list_unique(vtk_opt_libs_deps_)
-  list(APPEND VTK_LIBRARIES ${vtk_opt_libs_deps_})
-
-  # list(APPEND opt_libs ${VTK_LIBRARIES})
-  # Using VTK_LIBRARIES works to build visp/ustk library, examples, demos and test thanks to the components,
-  # but not tutorials when they are build outside ViSP as they are stand alone CMake projects that use
-  # ViSP as a 3rd party.
-  # To be clear VTK_LIBRARIES contains VTK 3rd party such as vtkalglib and not /usr/local/Cellar/vtk/6.3.0/lib/libvtkalglib-6.3.1.dylib
-  # full path as requested to use ViSP as 3rd party. This is the case for all VTK libraries we depend on.
-  # The build of works with VTK_LIBRARIES since in that case thanks to vtkalglib properties, CMake
-  # is able to find the real name and location of the libraries.
-  # But when ViSP is used as a 3rd party where it should import VTK libraries, it doesn't work with
-  # VTK_LIBRARIES.
-  # The solution here is to get the full location of VTK_LIBRARIES libraries thanks to the properties and link
-  # with these names.
-  # An other way could be to include vtkConfig.cmake, but in that case, visp-config and visp.pc
-  # will not be able to give the names of VTK libraries when used without CMake.
-
-  set(config_ "NONE" "RELEASE" "DEBUG" "RELEASEWITHDEBINFO" "RELWITHDEBINFO")
-  foreach(lib_ ${VTK_LIBRARIES})
-    if(${lib_} MATCHES "^(vtk.*)")
-      foreach(imp_config_ ${config_})
-        # next line seems not useful. TODO: check if calling IMPORTED_LOCATION_ is enough
-        get_target_property(lib_property_${imp_config_}_ ${lib_} IMPORTED_IMPLIB_${imp_config_})
-        if(NOT EXISTS ${lib_property_${imp_config_}_})
-          get_target_property(lib_property_${imp_config_}_ ${lib_} IMPORTED_LOCATION_${imp_config_})
-        endif()
-        # Under Unix, there is no specific suffix for PCL/VTK libraries.         # Under Windows, we add the "optimized", "debug" specific keywords
-        if(WIN32 AND EXISTS "${lib_property_${imp_config_}_}" AND "${imp_config_}" MATCHES "RELEASE") # also valid for RELEASEWITHDEBINFO
-          list(APPEND opt_libs optimized "${lib_property_${imp_config_}_}")
-        elseif(WIN32 AND EXISTS "${lib_property_${imp_config_}_}" AND "${imp_config_}" MATCHES "DEBUG")
-          list(APPEND opt_libs debug     "${lib_property_${imp_config_}_}")
-        elseif(EXISTS "${lib_property_${imp_config_}_}")
-          list(APPEND opt_libs "${lib_property_${imp_config_}_}")
-        endif()
-      endforeach()
-    else() # not a vtk library
-      list(APPEND opt_libs "${lib_}")
-    endif()
-  endforeach()
+  vp_get_interface_link_libraries(VTK_LIBRARIES vtk_link_libraries_)
+#  message("vtk_link_libraries_: ${vtk_link_libraries_}")
+  list(APPEND opt_libs ${vtk_link_libraries_})
 
   # Instruct CMake to run moc automatically when needed.
   set(CMAKE_AUTOMOC ON)
 
   # Find Qt version corresponding to the Qt version used to compile VTK (4 or 5)
   if(VTK_QT_VERSION VERSION_EQUAL "5")
-    find_package(Qt5 COMPONENTS Widgets QuickWidgets REQUIRED QUIET)
+    find_package(Qt5 COMPONENTS Gui Widgets QuickWidgets REQUIRED QUIET)
     qt5_wrap_ui(UI_Srcs ${UIs})
 
     qt5_add_resources(UI_RESOURCES resources/resources.qrc)
     set_property(SOURCE ${UI_RESOURCES} PROPERTY SKIP_AUTOMOC ON) # To avoid CMP0071 warning
 
+    list(APPEND opt_incs "${Qt5Gui_INCLUDE_DIRS}")
     list(APPEND opt_incs "${Qt5Widgets_INCLUDE_DIRS}")
-    list(APPEND opt_libs Qt5::Widgets Qt5::Gui Qt5::QuickWidgets)
+    list(APPEND opt_incs "${Qt5QuickWidgets_INCLUDE_DIRS}")
+
+    # The following line allows to build visp, but doesn't allow to build a project that uses
+    # visp as 3rd party:
+    # list(APPEND opt_libs ${Qt5Widgets_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5QuickWidgets_LIBRARIES})
+    # Instead we get the corresponding interface link libraries that we can propagate with visp
+    # when visp is used as a 3rd party:
+    set(Qt5_COMPONENTS ${Qt5Widgets_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5QuickWidgets_LIBRARIES})
+    vp_get_interface_link_libraries(Qt5_COMPONENTS qt5_link_libraries_)
+#    message("qt5_link_libraries_: ${qt5_link_libraries_}")
+    list(APPEND opt_libs ${qt5_link_libraries_})
 
   elseif(VTK_QT_VERSION VERSION_EQUAL "4")
     find_package(Qt4 REQUIRED QtGui QtCore OPTIONAL_COMPONENTS QtNetwork)
