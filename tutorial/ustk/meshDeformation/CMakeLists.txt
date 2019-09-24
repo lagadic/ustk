@@ -1,5 +1,5 @@
-PROJECT(mesh_deformation)
- 
+project(mesh_deformation)
+
 cmake_minimum_required(VERSION 2.8)
 
 find_package(VISP REQUIRED visp_ustk_gui)
@@ -8,8 +8,8 @@ if(POLICY CMP0020)
   cmake_policy(SET CMP0020 NEW)
 endif()
 
-FIND_PACKAGE(Qt5Widgets)
-FIND_PACKAGE(Qt5Gui)
+find_package(Qt5Widgets)
+find_package(Qt5Gui)
 
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
