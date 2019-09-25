@@ -38,46 +38,15 @@ if(USE_QT5)
   list(APPEND opt_incs "${Qt5Network_INCLUDE_DIRS}")
   list(APPEND opt_incs "${Qt5Widgets_INCLUDE_DIRS}")
 
+  # The following line allows to build visp, but doesn't allow to build a project that uses
+  # visp as 3rd party:
+  # list(APPEND opt_libs ${Qt5Core_LIBRARIES} ${Qt5Network_LIBRARIES} ${Qt5Widgets_LIBRARIES})
+  # Instead we get the corresponding interface link libraries that we can propagate with visp
+  #  when visp is used as a 3rd party:
   set(Qt5_COMPONENTS ${Qt5Core_LIBRARIES} ${Qt5Network_LIBRARIES} ${Qt5Widgets_LIBRARIES})
-
-  set(config_ "NONE" "RELEASE" "DEBUG" "RELEASEWITHDEBINFO" "RELWITHDEBINFO")
-  foreach(lib_ ${Qt5_COMPONENTS})
-    foreach(imp_config_ ${config_})
-      get_target_property(lib_property_${imp_config_}_ ${lib_} IMPORTED_IMPLIB_${imp_config_})
-      if(NOT EXISTS "${lib_property_${imp_config_}_}")
-        get_target_property(lib_property_${imp_config_}_ ${lib_} IMPORTED_LOCATION_${imp_config_})
-      endif()
-      # Under Unix, there is no specific suffix for PCL/VTK libraries.
-      # Under Windows, we add the "optimized", "debug" specific keywords
-      if(WIN32 AND EXISTS "${lib_property_${imp_config_}_}" AND "${imp_config_}" MATCHES "RELEASE") # also valid for RELEASEWITHDEBINFO
-        list(APPEND opt_libs optimized "${lib_property_${imp_config_}_}")
-      elseif(WIN32 AND EXISTS "${lib_property_${imp_config_}_}" AND "${imp_config_}" MATCHES "DEBUG")
-        list(APPEND opt_libs debug     "${lib_property_${imp_config_}_}")
-      elseif(EXISTS "${lib_property_${imp_config_}_}")
-        list(APPEND opt_libs "${lib_property_${imp_config_}_}")
-      endif()
-      get_target_property(lib_deps_${imp_config_}_ ${lib_} IMPORTED_LINK_INTERFACE_LIBRARIES_${imp_config_})
-
-      if(EXISTS "${lib_deps_${imp_config_}_}")
-        foreach(deps_ ${lib_deps_${imp_config_}_})
-          list(FIND Qt5_COMPONENTS ${deps_} deps_is_qt5_component_)
-          if(deps_is_qt5_component_ LESS 0)
-            get_target_property(deps_location_ ${deps_} IMPORTED_LOCATION_${imp_config_})
-            if(EXISTS "${deps_location_}")
-              if(WIN32 AND "${imp_config_}" MATCHES "RELEASE")
-                list(APPEND opt_libs optimized ${deps_location_})
-              elseif(WIN32 AND "${imp_config_}" MATCHES "DEBUG")
-                list(APPEND opt_libs debug ${deps_location_})
-              else()
-                list(APPEND opt_libs ${deps_location_})
-              endif()
-            endif()
-          endif()
-        endforeach()
-      endif()
-    endforeach()
-  endforeach()
-
+  vp_get_interface_link_libraries(Qt5_COMPONENTS qt5_link_libraries_)
+#  message("qt5_link_libraries_: ${qt5_link_libraries_}")
+  list(APPEND opt_libs ${qt5_link_libraries_})
 endif()
 
 if(USE_VTK)
@@ -92,38 +61,17 @@ if(USE_VTK)
     qt5_wrap_ui(UI_Srcs ${UIs})
 
     list(APPEND opt_incs "${Qt5Widgets_INCLUDE_DIRS}")
-    list(APPEND opt_libs Qt5::Widgets Qt5::Network)
+    list(APPEND opt_incs "${Qt5Network_INCLUDE_DIRS}")
 
-    foreach(lib_ ${Qt5Network_LIBRARIES})
-      foreach(imp_config_ ${config_})
-        get_target_property(lib_property_${imp_config_}_ ${lib_} IMPORTED_LOCATION_${imp_config_})
-        # Under Unix, there is no specific suffix for PCL/VTK libraries.         # Under Windows, we add the "optimized", "debug" specific keywords
-        if(WIN32 AND EXISTS "${lib_property_${imp_config_}_}" AND "${imp_config_}" MATCHES "RELEASE") # also valid for RELEASEWITHDEBINFO
-          list(APPEND opt_libs optimized "${component_property_${imp_config_}_}")
-        elseif(WIN32 AND EXISTS "${lib_property_${imp_config_}_}" AND "${imp_config_}" MATCHES "DEBUG")
-          list(APPEND opt_libs debug     "${lib_property_${imp_config_}_}")
-        elseif(EXISTS "${lib_property_${imp_config_}_}")
-          list(APPEND opt_libs "${lib_property_${imp_config_}_}")
-        endif()
-        get_target_property(lib_deps_${imp_config_}_ ${lib_} IMPORTED_LINK_INTERFACE_LIBRARIES_${imp_config_})
-
-        if(lib_deps_${imp_config_}_)
-          foreach(deps_ ${lib_deps_${imp_config_}_})
-            get_target_property(deps_location_ ${deps_} IMPORTED_LOCATION_${imp_config_})
-            if(EXISTS "${deps_location_}")
-              if(WIN32 AND "${imp_config_}" MATCHES "RELEASE")
-                list(APPEND opt_libs optimized ${deps_location_})
-              elseif(WIN32 AND "${imp_config_}" MATCHES "DEBUG")
-                list(APPEND opt_libs debug ${deps_location_})
-              else()
-                list(APPEND opt_libs ${deps_location_})
-              endif()
-            endif()
-          endforeach()
-        endif()
-
-      endforeach()
-    endforeach()
+    # The following line allows to build visp, but doesn't allow to build a project that uses
+    # visp as 3rd party:
+    # list(APPEND opt_libs ${Qt5Widgets_LIBRARIES} ${Qt5Network_LIBRARIES})
+    # Instead we get the corresponding interface link libraries that we can propagate with visp
+    #  when visp is used as a 3rd party:
+    set(Qt5_COMPONENTS ${Qt5Widgets_LIBRARIES} ${Qt5Network_LIBRARIES})
+    vp_get_interface_link_libraries(Qt5_COMPONENTS qt5_link_libraries_)
+#    message("qt5_link_libraries_: ${qt5_link_libraries_}")
+    list(APPEND opt_libs ${qt5_link_libraries_})
 
   elseif(VTK_QT_VERSION VERSION_EQUAL "4")
     find_package(Qt4 REQUIRED QtGui QtCore)
