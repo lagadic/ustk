@@ -49,5 +49,5 @@ foreach(cpp ${tutorial_ultrasonix_cpp})
 endforeach()
 
 if(APPLE)
-  vp_set_source_file_compile_flag(tutorial-local-grabbing-elastography-display.cpp -Wno-unused-parameter)
+  visp_set_source_file_compile_flag(tutorial-local-grabbing-elastography-display.cpp -Wno-unused-parameter)
 endif()
