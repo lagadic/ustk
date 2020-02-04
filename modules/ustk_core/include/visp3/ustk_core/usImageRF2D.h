@@ -93,18 +93,18 @@ int main()
 
   usImageRF2D<short> rf2d(RFSampleNumber, scanLineNumber);
 
-// sets the RF samples values contained in the .raw file in the bitmap of
-//the usImageRF2D, and the settings contained in the mhd header.
-usImageIo::read(rf2d, "path/to/file.mhd");
+  // sets the RF samples values contained in the .raw file in the bitmap of
+  //the usImageRF2D, and the settings contained in the mhd header.
+  usImageIo::read(rf2d, "path/to/file.mhd");
 
-//sets your own settings
-rf2d.setTransducerRadius(transducerRadius);
-rf2d.setScanLinePitch(scanLinePitch);
-rf2d.setScanLineNumber(scanLineNumber);
-rf2d.setTransducerConvexity(isTransducerConvex);
-rf2d.setAxialResolution(axialResolution);
+  //sets your own settings
+  rf2d.setTransducerRadius(transducerRadius);
+  rf2d.setScanLinePitch(scanLinePitch);
+  rf2d.setScanLineNumber(scanLineNumber);
+  rf2d.setTransducerConvexity(isTransducerConvex);
+  rf2d.setAxialResolution(axialResolution);
 
-return 0;
+  return 0;
 }
 \endcode */
 

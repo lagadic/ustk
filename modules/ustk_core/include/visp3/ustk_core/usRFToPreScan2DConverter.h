@@ -84,11 +84,10 @@ int main()
   rfImage.setScanLineNumber(scanLineNumber);
   rfImage.setTransducerConvexity(isTransducerConvex);
   rfImage.setAxialResolution(axialResolution);
-  rfImage.setData(I);
 
   usImagePreScan2D<unsigned char> prescanImage; // output
   usRFToPreScan2DConverter converter;
-  converter.convert(rfImage,prescanImage);
+  converter.convert(rfImage, prescanImage);
 }
  * \endcode
  */

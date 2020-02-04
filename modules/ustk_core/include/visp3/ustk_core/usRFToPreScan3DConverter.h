@@ -91,7 +91,6 @@ int main()
   rfImage.setMotorRadius(motorRadius);
   rfImage.setMotorType(usMotorSettings::TiltingMotor);
   rfImage.setFramePitch(framePitch);
-  rfImage.setData(I);
 
   usImagePreScan3D<unsigned char> prescanImage; // output
   usRFToPreScan3DConverter converter;

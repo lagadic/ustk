@@ -79,8 +79,6 @@ int main()
   rfImage.setScanLineNumber(scanLineNumber);
   rfImage.setTransducerConvexity(isTransducerConvex);
   rfImage.setAxialResolution(axialResolution);
-  rfImage.setData(I);
-
 
   usImagePostScan2D<unsigned char> postscanImage;
   postscanImage.setHeightResolution(0.0005);

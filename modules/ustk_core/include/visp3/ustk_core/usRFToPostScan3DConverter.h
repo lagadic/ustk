@@ -82,8 +82,6 @@ int main()
   rfImage.setMotorType(usMotorSettings::TiltingMotor);
   rfImage.setFramePitch(framePitch);
 
-  rfImage.setData(I);
-
   usImagePostScan3D<unsigned char> postscanImage; // output
   usRFToPostScan3DConverter converter;
   converter.convert(rfImage,postscanImage);

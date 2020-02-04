@@ -83,7 +83,7 @@ int main()
 
   usImagePreScan2D <unsigned char> preScan; // converter output
   usPostScanToPreScan2DConverter backConverter;
-  backConverter.convert(postScan2d,preScan); // preScan is now an image built from postScan image
+  backConverter.convert(postScan2d, preScan, 480); // preScan is now an image built from postScan image
 }
  * \endcode
  */
