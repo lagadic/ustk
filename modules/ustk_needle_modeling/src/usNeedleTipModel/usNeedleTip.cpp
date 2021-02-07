@@ -167,5 +167,5 @@ std::istream &operator>>=(std::istream &s, usNeedleTip &tip)
 void usNeedleTip::updateTipPose()
 {
   m_tipPose = m_basePose;
-  m_worldMtip = m_worldMtip;
+  //m_worldMtip = m_worldMtip;
 }
