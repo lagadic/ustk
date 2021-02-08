@@ -49,6 +49,7 @@
 int main()
 {
   std::string xml_filename;
+  double error_max = 4.;
 
   // Get the ustk-dataset package path or USTK_DATASET_PATH environment variable value
   if (xml_filename.empty()) {
@@ -150,16 +151,18 @@ int main()
     std::cout << "Number of control points: " << needleDetector.getNeedle()->getOrder() + 1 << std::endl;
 
     // Output
-    if (std::abs(tipMean[0] - tipGroundTruth.at(i)[0]) > 2 || std::abs(tipMean[1] - tipGroundTruth.at(i)[1]) > 2) {
-      std::cout << "Error exeeds the test threshold(2), i error=" << std::abs(tipMean[0] - tipGroundTruth.at(i)[0])
+    double error = sqrt(vpMath::sqr(tipMean[0] - tipGroundTruth.at(i)[0]) + vpMath::sqr(tipMean[1] - tipGroundTruth.at(i)[1]));
+    if (error > error_max) {
+      std::cout << "Error " << error << " exeeds " << error_max << " with i error=" << std::abs(tipMean[0] - tipGroundTruth.at(i)[0])
                 << ", j error= " << std::abs(tipMean[1] - tipGroundTruth.at(i)[1]) << std::endl;
 
-      return 1;
+      return EXIT_FAILURE;
     }
   }
   tipGroundTruth.clear();
 
-  return 0;
+  std::cout << "Test succeed" << std::endl; 
+  return EXIT_SUCCESS;
 }
 
 #else
