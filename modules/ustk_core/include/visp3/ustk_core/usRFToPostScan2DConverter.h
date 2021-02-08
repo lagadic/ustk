@@ -59,10 +59,14 @@
  * Here is an example to show how to use it :
  *
  * \code
+#include <visp3/core/vpImage.h>
 #include <visp3/ustk_core/usRFToPostScan2DConverter.h>
+#include <visp3/ustk_core/usImageRF2D.h>
+#include <visp3/ustk_core/usImagePostScan2D.h>
 
 int main()
 {
+#if defined(USTK_HAVE_FFTW)
   // example of 2D post-scan image settings
   unsigned int width = 320;
   unsigned int height = 240;
@@ -86,6 +90,9 @@ int main()
   usRFToPostScan2DConverter converter;
   converter.setConversionParameters(postscanImage,rfImage.getRFSampleNumber()/10,rfImage.getScanLineNumber(),10);
   converter.convert(rfImage,postscanImage);
+#endif
+
+  return 0;
 }
  * \endcode
  *

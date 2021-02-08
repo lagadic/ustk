@@ -56,9 +56,13 @@
  *
  * \code
 #include <visp3/ustk_core/usRFToPostScan3DConverter.h>
+#include <visp3/ustk_core/usImage3D.h>
+#include <visp3/ustk_core/usImageRF3D.h>
+#include <visp3/ustk_core/usImagePostScan3D.h>
 
 int main()
 {
+#if defined(USTK_HAVE_FFTW)
   // example of 2D post-scan image settings
   unsigned int width = 320;
   unsigned int height = 240;
@@ -85,6 +89,8 @@ int main()
   usImagePostScan3D<unsigned char> postscanImage; // output
   usRFToPostScan3DConverter converter;
   converter.convert(rfImage,postscanImage);
+#endif
+  return 0;
 }
  * \endcode
  */
