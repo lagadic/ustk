@@ -5,8 +5,10 @@ os:
   - osx
 
 env:
-  - VISP_INPUT_IMAGE_PATH=${TRAVIS_BUILD_DIR}
-  
+  global:
+    - VISP_INPUT_IMAGE_PATH=${TRAVIS_BUILD_DIR}/visp-images
+    - USTK_DATASET_PATH=${TRAVIS_BUILD_DIR}/ustk-dataset
+
 compiler:
   - gcc
   - clang
@@ -20,11 +22,8 @@ branches:
   - master
 
 before_install:
-  - git clone --depth 1 https://github.com/lagadic/ViSP-images ${TRAVIS_BUILD_DIR}/ViSP-images
-  #- cd ${TRAVIS_BUILD_DIR} && { curl -O http://visp-doc.inria.fr/download/dataset/visp-images-3.2.0.zip ; cd -; }
-  #- unzip ${TRAVIS_BUILD_DIR}/visp-images-3.2.0.zip -d ${TRAVIS_BUILD_DIR}
-  - git clone --depth 1 https://github.com/lagadic/ustk-dataset.git /tmp/ustk-dataset
-  - export USTK_DATASET_PATH=/tmp/ustk-dataset
+  - git clone --depth 1 https://github.com/lagadic/visp-images ${TRAVIS_BUILD_DIR}/visp-images
+  - git clone --depth 1 https://github.com/lagadic/ustk-dataset ${TRAVIS_BUILD_DIR}/ustk-dataset
   # Get libs for OSX
   - "if [ $TRAVIS_OS_NAME = 'osx' ]; then brew update; fi"
   - "if [ $TRAVIS_OS_NAME = 'osx' ]; then brew install libxml2 gsl; fi"
@@ -43,17 +42,22 @@ before_install:
   - "if [ $TRAVIS_OS_NAME = 'linux' ]; then sudo apt-get install -qq libjpeg-dev libpng12-dev; fi"
   - "if [ $TRAVIS_OS_NAME = 'linux' ]; then sudo apt-get install -qq libfftw3-dev; fi"
 
+  # Workaround for linux + bionic + clang config where during test libomp.so is not found:
+  # error while loading shared libraries: libomp.so: cannot open shared object file: No such file or directory
+  #- "if [ $TRAVIS_OS_NAME = 'linux' ] && [ $TRAVIS_COMPILER = 'clang' ]; then sudo apt-get install -qq locate; sudo updatedb; locate libomp.so; fi"
+  - "if [ $TRAVIS_OS_NAME = 'linux' ] && [ $TRAVIS_COMPILER = 'clang' ]; then export LD_LIBRARY_PATH=/usr/local/clang-5.0.0/lib:$LD_LIBRARY_PATH; fi"
+
 before_script:
   - git clone https://github.com/lagadic/visp.git /tmp/visp
   - mkdir build
   - cd build
-  - cmake /tmp/visp -DVISP_CONTRIB_MODULES_PATH=.. -DUSE_CPP11=ON -DBUILD_MODULE_visp_ar=OFF -DBUILD_MODULE_visp_blob=OFF -DBUILD_MODULE_visp_detection=OFF -DBUILD_MODULE_visp_imgproc=OFF -DBUILD_MODULE_visp_klt=OFF -DBUILD_MODULE_visp_mbt=OFF -DBUILD_MODULE_visp_me=OFF -DBUILD_MODULE_visp_tt=OFF -DBUILD_MODULE_visp_tt_mi=OFF -DBUILD_MODULE_visp_vision=OFF -DBUILD_MODULE_visp_visual_features=OFF -DBUILD_MODULE_visp_vs=OFF -DBUILD_MODULE_visp_java=OFF
+  - cmake /tmp/visp -DVISP_CONTRIB_MODULES_PATH=.. -DBUILD_MODULE_visp_ar=OFF -DBUILD_MODULE_visp_blob=OFF -DBUILD_MODULE_visp_detection=OFF -DBUILD_MODULE_visp_imgproc=OFF -DBUILD_MODULE_visp_klt=OFF -DBUILD_MODULE_visp_mbt=OFF -DBUILD_MODULE_visp_me=OFF -DBUILD_MODULE_visp_tt=OFF -DBUILD_MODULE_visp_tt_mi=OFF -DBUILD_MODULE_visp_vision=OFF -DBUILD_MODULE_visp_visual_features=OFF -DBUILD_MODULE_visp_vs=OFF -DBUILD_MODULE_visp_java=OFF
   # Show 3rd parties that are detected
   - cat ViSP-third-party.txt
 
 script: 
   - make
-  - ctest
+  - ctest --output-on-failure
 
 notifications:
   email:
