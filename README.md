@@ -1,6 +1,6 @@
 # Ultrasound Tool Kit - UsTK
 
-Copyright (C) 2016-2017 by Inria.
+Copyright (C) 2016-2021 by Inria.
 
 Platform | Build Status |
 -------- | ------------ |
