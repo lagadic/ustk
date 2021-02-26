@@ -27,6 +27,7 @@
  *
  * Authors:
  * Pierre Chatelain
+ * Alexandre Krupa
  *
  *****************************************************************************/
 
@@ -97,7 +98,7 @@ void usDenseTracker2D::update(const vpImage<unsigned char> &I)
   if (m_isInit) {
     double gain = 0.6;
 
-    unsigned int max_iter = 40;
+    unsigned int max_iter = 50;
     unsigned int i = 0;
     double rms = 1.0;
     double rms0 = 0.0;
