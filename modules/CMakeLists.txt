@@ -36,9 +36,9 @@
 
 #-----------------------------------------------------------------------------
 # ustk version number.
-set(USTK_VERSION_MAJOR "1")
+set(USTK_VERSION_MAJOR "2")
 set(USTK_VERSION_MINOR "0")
-set(USTK_VERSION_PATCH "0")
+set(USTK_VERSION_PATCH "1")
 set(USTK_VERSION "${USTK_VERSION_MAJOR}.${USTK_VERSION_MINOR}.${USTK_VERSION_PATCH}")
 
 set(USTK_DOC_DIR "${CMAKE_BINARY_DIR}/doc-ustk")
