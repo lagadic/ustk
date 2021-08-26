@@ -4,7 +4,7 @@ Copyright (C) 2016-2021 by Inria.
 
 Platform | Build Status |
 -------- | ------------ |
-Linux and OS X | [![Build Status](https://travis-ci.com/lagadic/ustk.png)](https://travis-ci.com/lagadic/ustk) |
+Linux and OS X | [![Build Status](https://app.travis-ci.com/lagadic/ustk.svg?branch=master)](https://app.travis-ci.com/lagadic/ustk) |
 Windows | [![Build status](https://ci.appveyor.com/api/projects/status/25t7wcl7akdw3nmw/branch/master?svg=true)](https://ci.appveyor.com/project/fspindle/ustk/branch/master) |
 
 
