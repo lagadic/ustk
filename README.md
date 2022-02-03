@@ -21,11 +21,11 @@ This UsTK project requires the following libraries :
 			$ brew update
 			$ brew install libxml2
 
-	- How to install XML2 on Ubuntu 16.04 LTS
+	- How to install XML2 on Ubuntu 16.04 LTS or higher
 
 			$ sudo apt-get install libxml2-dev
 
-	- How to install XML2 on Fedora 23
+	- How to install XML2 on Fedora 23 or higher
 
 			$ sudo yum install libxml2-devel
       
@@ -40,11 +40,11 @@ This UsTK project requires the following libraries :
 			$ brew update
 			$ brew install vtk —-with-qt
 
-	- How to install VTK on Ubuntu 16.04 LTS
+	- How to install VTK on Ubuntu 16.04 LTS or higher
 
 			$ sudo apt-get install libvtk6-qt-dev
 
-	- How to install VTK on Fedora 23
+	- How to install VTK on Fedora 23 or higher
 
 			$ sudo yum install vtk-devel vtk-qt
       
@@ -79,11 +79,11 @@ This UsTK project requires the following libraries :
 			$ brew update
 			$ brew install fftw
 		
-	- How to install FFTW on Ubuntu 16.04 LTS
+	- How to install FFTW on Ubuntu 16.04 LTS or higher
   
 			$ sudo apt-get install libfftw3-dev
 			
-	- How to install FFTW on Fedora 23
+	- How to install FFTW on Fedora 23 or higher
 
 			$ sudo yum install fftw
 		
