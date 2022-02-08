@@ -32,7 +32,7 @@
 
 project(tutorial-real-time-display)
 
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.0)
 
 find_package(VISP REQUIRED visp_ustk_grabber visp_ustk_gui)
 
