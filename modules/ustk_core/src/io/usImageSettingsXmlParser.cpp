@@ -71,6 +71,15 @@ usImageSettingsXmlParser::usImageSettingsXmlParser()
 }
 
 /**
+* Copy constructor.
+*/
+usImageSettingsXmlParser::usImageSettingsXmlParser(const usImageSettingsXmlParser &twinparser)
+  : vpXmlParser()
+{
+  *this = twinparser;
+}
+
+/**
 * Assignement operator.
 * @param twinparser usImageSettingsXmlParser to assign.
 */
