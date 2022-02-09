@@ -56,7 +56,11 @@
 #include <QtWidgets/QPushButton>
 #endif
 // VTK includes
+#if USTK_HAVE_VTK_VERSION < 0x090000
 #include <QVTKWidget.h>
+#else
+#include <QVTKOpenGLStereoWidget.h>
+#endif
 
 /**
  * @class usViewerWidget
@@ -64,12 +68,16 @@
  * @ingroup module_ustk_gui
  */
 
+#if USTK_HAVE_VTK_VERSION < 0x090000
 class VISP_EXPORT usViewerWidget : public QVTKWidget
+#else
+class VISP_EXPORT usViewerWidget : public QVTKOpenGLStereoWidget
+#endif
 {
   Q_OBJECT
 public:
   // Constructor/Destructor
-  usViewerWidget(QWidget *parent = NULL, Qt::WindowFlags f = 0);
+  usViewerWidget(QWidget *parent = NULL, Qt::WindowFlags f = Qt::WindowFlags());
   virtual ~usViewerWidget();
 
   void paintEvent(QPaintEvent *event);

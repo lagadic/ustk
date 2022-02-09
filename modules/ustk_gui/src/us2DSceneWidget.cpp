@@ -143,7 +143,11 @@ void us2DSceneWidget::init()
   m_renderer->AddActor(m_actor);
 
   // Setup render window
+#if USTK_HAVE_VTK_VERSION < 0x090000
   vtkRenderWindow *renderWindow = this->GetRenderWindow();
+#else
+  vtkRenderWindow *renderWindow = this->renderWindow();
+#endif
   renderWindow->AddRenderer(m_renderer);
 
   // Set up the interaction
@@ -248,7 +252,11 @@ void us2DSceneWidget::updateImageData(vtkImageData *imageData)
   m_renderer->AddActor(m_actor);
 
   // render the view with the new actor
+#if USTK_HAVE_VTK_VERSION < 0x090000
   GetRenderWindow()->Render();
+#else
+  renderWindow()->Render();
+#endif
 }
 
 /**
@@ -267,7 +275,11 @@ void us2DSceneWidget::changeMatrix(vpHomogeneousMatrix matrix)
 */
 void us2DSceneWidget::wheelEvent(QWheelEvent *event)
 {
+#if USTK_HAVE_VTK_VERSION < 0x090000
   int increment = event->delta() / 120;
+#else
+  int increment = event->angleDelta().y() / 120;
+#endif
 
   // To improve : mean of the 3 spacings according to the plane orientation
   double sliceSpacing = m_imageData->GetSpacing()[2];
@@ -397,7 +409,11 @@ void us2DSceneWidget::saveViewSlot()
 void us2DSceneWidget::getCurrentSlice(usImagePostScan2D<unsigned char> &image2D)
 {
   // Render to update the view and avoid getting an empty 2D image at reslice output
+#if USTK_HAVE_VTK_VERSION < 0x090000
   this->GetRenderWindow()->Render();
+#else
+  renderWindow()->Render();
+#endif
 
   // convert current VTK slice to a usImagePostScan2D
   vtkSmartPointer<vtkImageData> vtkImage2D;
@@ -492,13 +508,21 @@ void us2DSceneWidget::drawLine(double u1, double v1, double w1, double u2, doubl
   lineActor->SetUserMatrix(matrix);
 
   m_renderer->AddActor(lineActor);
+#if USTK_HAVE_VTK_VERSION < 0x090000
   GetRenderWindow()->Render();
+#else
+  renderWindow()->Render();
+#endif
 }
 
 /**
 * Slot used to recompute the view (if something shared changed in another view)
 */
+#if USTK_HAVE_VTK_VERSION < 0x090000
 void us2DSceneWidget::updateView() { GetRenderWindow()->Render(); }
+#else
+void us2DSceneWidget::updateView() { renderWindow()->Render(); }
+#endif
 
 /**
 * Blocking getClick method : waits for user to pick a voxel, and return the voxel coordinates in (u,v,w) coordinates

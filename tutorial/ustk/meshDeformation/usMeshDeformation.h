@@ -84,7 +84,11 @@
 #elif defined USTK_HAVE_VTK_QT5
 #include <QApplication>
 #include <QKeyEvent>
+#if USTK_HAVE_VTK_VERSION < 0x090000
 #include <QVTKWidget.h>
+#else
+#include <QVTKOpenGLWidget.h>
+#endif
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QPushButton>
@@ -101,7 +105,7 @@ class usMeshDeformation : public usViewerWidget
   Q_OBJECT
 public:
   // Constructor/Destructor
-  usMeshDeformation(QWidget *parent = NULL, Qt::WindowFlags f = 0);
+  usMeshDeformation(QWidget *parent = NULL, Qt::WindowFlags f = Qt::WindowFlags());
   ~usMeshDeformation();
 
   void keyPressEvent(QKeyEvent *event);

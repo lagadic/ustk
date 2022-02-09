@@ -72,7 +72,11 @@
 #include <QtWidgets/QPushButton>
 #endif
 
+#if USTK_HAVE_VTK_VERSION < 0x090000
 #include <QVTKWidget.h>
+#else
+#include <QVTKOpenGLStereoWidget.h>
+#endif
 
 /**
  * @class us3DSceneWidget
@@ -117,7 +121,7 @@ class VISP_EXPORT us3DSceneWidget : public usViewerWidget
   Q_OBJECT
 public:
   // Constructor/Destructor
-  us3DSceneWidget(QWidget *parent = NULL, Qt::WindowFlags f = 0);
+  us3DSceneWidget(QWidget *parent = NULL, Qt::WindowFlags f = Qt::WindowFlags());
   ~us3DSceneWidget() {}
 
   vtkPolyData *getContour1();

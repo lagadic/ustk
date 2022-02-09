@@ -81,6 +81,10 @@
 #include <QDesktopWidget>
 #include <QResizeEvent>
 
+#if !(USTK_HAVE_VTK_VERSION < 0x090000)
+#include <QScreen>
+#endif
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 //----------------------------------------------------------------------------
 class vtkResliceCursorCallback : public vtkCommand
@@ -124,6 +128,7 @@ usMedicalImageViewer::usMedicalImageViewer(std::string imageFileName)
     riw[i] = vtkSmartPointer<vtkResliceImageViewer>::New();
   }
 
+#if USTK_HAVE_VTK_VERSION < 0x090000
   this->view1->SetRenderWindow(riw[0]->GetRenderWindow());
   riw[0]->SetupInteractor(this->view1->GetRenderWindow()->GetInteractor());
 
@@ -132,6 +137,16 @@ usMedicalImageViewer::usMedicalImageViewer(std::string imageFileName)
 
   this->view3->SetRenderWindow(riw[2]->GetRenderWindow());
   riw[2]->SetupInteractor(this->view3->GetRenderWindow()->GetInteractor());
+#else
+  this->view1->setRenderWindow(riw[0]->GetRenderWindow());
+  riw[0]->SetupInteractor(this->view1->renderWindow()->GetInteractor());
+
+  this->view2->setRenderWindow(riw[1]->GetRenderWindow());
+  riw[1]->SetupInteractor(this->view2->renderWindow()->GetInteractor());
+
+  this->view3->setRenderWindow(riw[2]->GetRenderWindow());
+  riw[2]->SetupInteractor(this->view3->renderWindow()->GetInteractor());
+#endif
 
   for (int i = 0; i < 3; i++) {
     // make them all share the same reslice cursor object.
@@ -173,7 +188,12 @@ usMedicalImageViewer::usMedicalImageViewer(std::string imageFileName)
     riw[i]->Render();
   }
 
+#if USTK_HAVE_VTK_VERSION < 0x090000
   this->view4->GetRenderWindow()->GetRenderers()->GetFirstRenderer()->GetActiveCamera()->SetRoll(180);
+#else
+  this->view4->renderWindow()->GetRenderers()->GetFirstRenderer()->GetActiveCamera()->SetRoll(180);
+#endif
+
   // Set up action signals and slots
   connect(this->resetButton, SIGNAL(pressed()), this, SLOT(ResetViews()));
   ResetViews();
@@ -206,9 +226,15 @@ void usMedicalImageViewer::ResetColorMap()
 */
 void usMedicalImageViewer::Render()
 {
+#if USTK_HAVE_VTK_VERSION < 0x090000
   this->view1->GetRenderWindow()->Render();
   this->view2->GetRenderWindow()->Render();
   this->view3->GetRenderWindow()->Render();
+#else
+  this->view1->renderWindow()->Render();
+  this->view2->renderWindow()->Render();
+  this->view3->renderWindow()->Render();
+#endif
 
   this->view1->update();
   this->view2->update();
@@ -262,7 +288,11 @@ void usMedicalImageViewer::AddDistanceMeasurementToView(int i)
 void usMedicalImageViewer::setupUi()
 {
   this->setMinimumSize(640, 480);
+#if USTK_HAVE_VTK_VERSION < 0x090000
   QRect screenRect = QApplication::desktop()->screenGeometry();
+#else
+  QRect screenRect = QApplication::screens()[0]->geometry();
+#endif
   this->resize(screenRect.size());
 
   gridLayoutWidget = new QWidget(this);

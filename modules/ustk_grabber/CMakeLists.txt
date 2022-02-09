@@ -50,7 +50,7 @@ if(USE_QT5)
 endif()
 
 if(USE_VTK)
-  include(${VTK_USE_FILE})
+  #include(${VTK_USE_FILE})
 
   # Instruct CMake to run moc automatically when needed.
   set(CMAKE_AUTOMOC ON)

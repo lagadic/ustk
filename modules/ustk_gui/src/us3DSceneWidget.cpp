@@ -260,7 +260,11 @@ void us3DSceneWidget::init()
   renderer->ResetCamera();
 
   // Setup render window
+#if USTK_HAVE_VTK_VERSION < 0x090000
   vtkRenderWindow *renderWindow = this->GetRenderWindow();
+#else
+  vtkRenderWindow *renderWindow = this->renderWindow();
+#endif
   renderWindow->AddRenderer(renderer);
 
   // Interaction style with the 3D image
@@ -284,7 +288,11 @@ void us3DSceneWidget::setImageData(vtkImageData *imageData)
   imageResliceMapper3->SetInputData(imageData);
 
   // renderer->Render();
+#if USTK_HAVE_VTK_VERSION < 0x090000
   this->GetRenderWindow()->Render();
+#else
+  this->renderWindow()->Render();
+#endif
 }
 
 /**
@@ -396,7 +404,11 @@ void us3DSceneWidget::updateImageData(vtkImageData *imageData)
   renderer->AddActor(imageSlice2);
   renderer->AddActor(imageSlice3);
 
+#if USTK_HAVE_VTK_VERSION < 0x090000
   GetRenderWindow()->Render();
+#else
+  renderWindow()->Render();
+#endif
 }
 
 /**
