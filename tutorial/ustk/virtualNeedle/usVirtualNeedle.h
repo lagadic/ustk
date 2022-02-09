@@ -83,7 +83,11 @@
 #elif defined USTK_HAVE_VTK_QT5
 #include <QApplication>
 #include <QKeyEvent>
+#if USTK_HAVE_VTK_VERSION < 0x090000
 #include <QVTKWidget.h>
+#else
+#include <QVTKOpenGLWidget.h>
+#endif
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QPushButton>
@@ -100,7 +104,7 @@ class usVirtualNeedle : public usViewerWidget
   Q_OBJECT
 public:
   // Constructor/Destructor
-  usVirtualNeedle(QWidget *parent = NULL, Qt::WindowFlags f = 0);
+  usVirtualNeedle(QWidget *parent = NULL, Qt::WindowFlags f = Qt::WindowFlags());
   virtual ~usVirtualNeedle() {}
 
   void keyPressEvent(QKeyEvent *event);

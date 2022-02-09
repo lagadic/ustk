@@ -56,7 +56,7 @@ $ brew install libxml2
 
 - [VTK](http://www.vtk.org/) with Qt4 or Qt5 support: VTK library is used by UsTK for visualization (GUI). This 3rd party could be installed from existing pre-build packages.
 \code
-$ brew install vtk —-with-qt5
+$ brew install vtk
 \endcode
 
 - [FFTW](http://www.fftw.org/): FFTW library is used by RF to pre-scan converters. This 3rd party could be installed from existing pre-build packages.

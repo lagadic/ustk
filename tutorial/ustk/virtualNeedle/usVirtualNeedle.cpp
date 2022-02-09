@@ -80,7 +80,11 @@ usVirtualNeedle::usVirtualNeedle(QWidget *parent, Qt::WindowFlags f) : usViewerW
   renderer->ResetCamera();
 
   // Setup render window
+#if USTK_HAVE_VTK_VERSION < 0x090000
   vtkRenderWindow *renderWindow = this->GetRenderWindow();
+#else
+  vtkRenderWindow *renderWindow = this->renderWindow();
+#endif
   renderWindow->AddRenderer(renderer);
 }
 /*
@@ -136,13 +140,21 @@ void usVirtualNeedle::keyPressEvent(QKeyEvent *event)
     point1[2] += 0.001;
     m_meshPolyData->GetPoints()->SetPoint(0, point1);
     m_meshPolyData->GetPoints()->Modified();
+#if USTK_HAVE_VTK_VERSION < 0x090000
     this->GetRenderWindow()->Render();
+#else
+    this->renderWindow()->Render();
+#endif
   } else if (event->key() == Qt::Key_0) { // move first point of the mesh of - 1mm along Z
     double *point1 = m_meshPolyData->GetPoints()->GetPoint(0);
     point1[2] -= 0.001;
     m_meshPolyData->GetPoints()->SetPoint(0, point1);
     m_meshPolyData->GetPoints()->Modified();
+#if USTK_HAVE_VTK_VERSION < 0x090000
     this->GetRenderWindow()->Render();
+#else
+    this->renderWindow()->Render();
+#endif
   } else {
     usViewerWidget::keyPressEvent(event);
   }
@@ -191,7 +203,11 @@ void usVirtualNeedle::updateNeedlePosition(vpHomogeneousMatrix transform)
     usVTKConverter::convert(newTransform, vtkNewtransform);
 
     m_needleActor->SetUserMatrix(vtkNewtransform);
+#if USTK_HAVE_VTK_VERSION < 0x090000
     this->GetRenderWindow()->Render();
+#else
+    this->renderWindow()->Render();
+#endif
   }
 }
 
@@ -205,6 +221,13 @@ vtkPoints *usVirtualNeedle::getMeshPoints() { return m_meshPolyData->GetPoints()
 /**
 * To render the scene, after some updates done on objects.
 */
-void usVirtualNeedle::render() { this->GetRenderWindow()->Render(); }
+void usVirtualNeedle::render()
+{
+#if USTK_HAVE_VTK_VERSION < 0x090000
+  this->GetRenderWindow()->Render();
+#else
+  this->renderWindow()->Render();
+#endif
+}
 
 #endif

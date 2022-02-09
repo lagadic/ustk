@@ -31,7 +31,7 @@
 #############################################################################
 
 if(USE_VTK)
-  include(${VTK_USE_FILE})
+  #include(${VTK_USE_FILE})
 
   list(APPEND opt_incs ${VTK_INCLUDE_DIRS})
   vp_get_interface_link_libraries(VTK_LIBRARIES vtk_link_libraries_)

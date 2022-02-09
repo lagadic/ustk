@@ -148,7 +148,11 @@ void us3DSceneSlicing::ResetViews() { this->Render(); }
 */
 void us3DSceneSlicing::Render()
 {
+#if USTK_HAVE_VTK_VERSION < 0x090000
   this->view->GetRenderWindow()->Render();
+#else
+  this->view->renderWindow()->Render();
+#endif
 
   this->view->update();
 }

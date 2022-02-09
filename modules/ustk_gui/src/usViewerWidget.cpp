@@ -52,7 +52,11 @@
 /**
 * Constructor.
 */
+#if USTK_HAVE_VTK_VERSION < 0x090000
 usViewerWidget::usViewerWidget(QWidget *parent, Qt::WindowFlags f) : QVTKWidget(parent, f) {}
+#else
+usViewerWidget::usViewerWidget(QWidget *parent, Qt::WindowFlags f) : QVTKOpenGLStereoWidget(parent, f) {}
+#endif
 
 usViewerWidget::~usViewerWidget() {}
 
@@ -60,5 +64,9 @@ usViewerWidget::~usViewerWidget() {}
 * Qt paint event overload if needed to update Qt widget
 * @param event QPAintEvent.
 */
+#if USTK_HAVE_VTK_VERSION < 0x090000
 void usViewerWidget::paintEvent(QPaintEvent *event) { QVTKWidget::paintEvent(event); }
+#else
+void usViewerWidget::paintEvent(QPaintEvent *event) { QVTKOpenGLStereoWidget::paintEvent(event); }
+#endif
 #endif

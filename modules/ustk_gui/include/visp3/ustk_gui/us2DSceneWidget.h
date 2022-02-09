@@ -114,7 +114,11 @@
 #include <QtWidgets/QPushButton>
 #endif
 
+#if USTK_HAVE_VTK_VERSION < 0x090000
 #include <QVTKWidget.h>
+#else
+#include <QVTKOpenGLStereoWidget.h>
+#endif
 
 /**
  * @class us2DSceneWidget
@@ -127,7 +131,7 @@ class VISP_EXPORT us2DSceneWidget : public usViewerWidget
   Q_OBJECT
 public:
   // Constructor/Destructor
-  us2DSceneWidget(QWidget *parent = NULL, Qt::WindowFlags f = 0);
+  us2DSceneWidget(QWidget *parent = NULL, Qt::WindowFlags f = Qt::WindowFlags());
   ~us2DSceneWidget() {}
 
   void drawLine(double u1, double v1, double w1, double u2, double v2, double w2);

@@ -52,7 +52,11 @@ usMeshDeformation::usMeshDeformation(QWidget *parent, Qt::WindowFlags f) : usVie
   renderer->ResetCamera();
 
   // Setup render window
+#if USTK_HAVE_VTK_VERSION < 0x090000
   vtkRenderWindow *renderWindow = this->GetRenderWindow();
+#else
+  vtkRenderWindow *renderWindow = this->renderWindow();
+#endif
   renderWindow->AddRenderer(renderer);
 }
 
@@ -75,13 +79,21 @@ void usMeshDeformation::keyPressEvent(QKeyEvent *event)
     point1[1] += 1;
     m_meshPolyData->GetPoints()->SetPoint(0, point1);
     m_meshPolyData->GetPoints()->Modified();
+#if USTK_HAVE_VTK_VERSION < 0x090000
     this->GetRenderWindow()->Render();
+#else
+    this->renderWindow()->Render();
+#endif
   } else if (event->key() == Qt::Key_Down) { // move first point of the mesh of along Y
     double *point1 = m_meshPolyData->GetPoints()->GetPoint(0);
     point1[1] -= 1;
     m_meshPolyData->GetPoints()->SetPoint(0, point1);
     m_meshPolyData->GetPoints()->Modified();
+#if USTK_HAVE_VTK_VERSION < 0x090000
     this->GetRenderWindow()->Render();
+#else
+    this->renderWindow()->Render();
+#endif
   } else {
     usViewerWidget::keyPressEvent(event);
   }
@@ -129,7 +141,11 @@ void usMeshDeformation::updateMeshPosition(vpHomogeneousMatrix transform)
     usVTKConverter::convert(newTransform, vtkNewtransform);
 
     m_meshActor->SetUserMatrix(vtkNewtransform);
+#if USTK_HAVE_VTK_VERSION < 0x090000
     this->GetRenderWindow()->Render();
+#else
+    this->renderWindow()->Render();
+#endif
   }
 }
 
@@ -143,6 +159,13 @@ vtkPoints *usMeshDeformation::getMeshPoints() { return m_meshPolyData->GetPoints
 /**
 * To render the scene, after some updates done on objects.
 */
-void usMeshDeformation::render() { this->GetRenderWindow()->Render(); }
+void usMeshDeformation::render()
+{
+#if USTK_HAVE_VTK_VERSION < 0x090000
+  this->GetRenderWindow()->Render();
+#else
+  this->renderWindow()->Render();
+#endif
+}
 
 #endif
