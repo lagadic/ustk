@@ -43,7 +43,7 @@ install:
 
   # visp
   #- git clone https://github.com/lagadic/visp C:\projects\visp\visp
-  - git clone --branch feat_ci https://github.com/fspindle/visp C:\projects\visp\visp
+  - git clone --branch feat_update_various https://github.com/fspindle/visp C:\projects\visp\visp
   - set VISP_SRC_DIR=C:\projects\visp\visp
 
 # ustk clone directory
