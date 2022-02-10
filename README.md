@@ -4,8 +4,9 @@ Copyright (C) 2016-2021 by Inria.
 
 Platform | Build Status |
 -------- | ------------ |
-Linux and OS X | [![Build Status](https://app.travis-ci.com/lagadic/ustk.svg?branch=master)](https://app.travis-ci.com/lagadic/ustk) |
-Windows | [![Build status](https://ci.appveyor.com/api/projects/status/25t7wcl7akdw3nmw/branch/master?svg=true)](https://ci.appveyor.com/project/fspindle/ustk/branch/master) |
+Ubuntu | [![ubuntu workflow](https://github.com/lagadic/ustk/actions/workflows/ubuntu-ustk.yml/badge.svg)](https://github.com/lagadic/ustk/actions/workflows/ubuntu-ustk.yml)
+macOS | [![macOS workflow](https://github.com/lagadic/ustk/actions/workflows/macos-ustk.yml/badge.svg)](https://github.com/lagadic/ustk/actions/workflows/macos-ustk.yml)
+Windows | [![Build status](https://ci.appveyor.com/api/projects/status/25t7wcl7akdw3nmw/branch/master?svg=true)](https://ci.appveyor.com/project/fspindle/ustk/branch/master)
 
 
 ## Dependencies
@@ -37,8 +38,7 @@ This UsTK project requires the following libraries :
 
 	- How to install VTK on OS X
 
-			$ brew update
-			$ brew install vtk —-with-qt
+			$ brew install vtk
 
 	- How to install VTK on Ubuntu 16.04 LTS or higher
 
