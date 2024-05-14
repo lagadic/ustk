@@ -30,9 +30,9 @@
 #
 #############################################################################
 
-project(tutorial-ultrasonix)
+cmake_minimum_required(VERSION 3.5)
 
-cmake_minimum_required(VERSION 3.0)
+project(tutorial-ultrasonix)
 
 find_package(VISP REQUIRED visp_ustk_grabber visp_sensor visp_robot)
 

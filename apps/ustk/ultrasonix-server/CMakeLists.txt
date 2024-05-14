@@ -31,9 +31,9 @@
 #
 #############################################################################
 
-project(ustk-ultrasonix-server)
+cmake_minimum_required(VERSION 3.5)
 
-cmake_minimum_required(VERSION 3.0)
+project(ustk-ultrasonix-server)
 
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
@@ -54,7 +54,7 @@ if(Porta_FOUND)
   include_directories(${Porta_INCLUDE_DIRS})
   add_definitions(-DSETTINGS_PATH=\"${Porta_SETTINGS_PATH}/\")
   add_definitions(-DFIRMWARE_PATH=\"${Porta_FIRMWARE_PATH}/\")
-  
+
   find_package(VISP REQUIRED visp_core)
   find_package(Qt5Widgets REQUIRED)
   find_package(Qt5Network REQUIRED)

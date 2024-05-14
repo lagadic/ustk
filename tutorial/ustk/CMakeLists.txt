@@ -30,9 +30,9 @@
 #
 #############################################################################
 
-project(visp-tutorial-ustk)
+cmake_minimum_required(VERSION 3.5)
 
-cmake_minimum_required(VERSION 3.0)
+project(visp-tutorial-ustk)
 
 find_package(VISP REQUIRED)
 

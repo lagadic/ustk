@@ -30,9 +30,9 @@
 #
 #############################################################################
 
-project(tutorial-ustk-confidence)
+cmake_minimum_required(VERSION 3.5)
 
-cmake_minimum_required(VERSION 3.0)
+project(tutorial-ustk-confidence)
 
 find_package(VISP REQUIRED visp_ustk_confidence_map)
 
