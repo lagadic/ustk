@@ -30,9 +30,9 @@
 #
 #############################################################################
 
-project(tutorial-needle-detection-2D)
+cmake_minimum_required(VERSION 3.5)
 
-cmake_minimum_required(VERSION 3.0)
+project(tutorial-needle-detection-2D)
 
 find_package(VISP REQUIRED visp_ustk_needle_detection)
 

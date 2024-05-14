@@ -72,3 +72,4 @@ vp_add_config_file("cmake/templates/usConfig.h.in")
 # export USTK_HAVE_* cmake vars in VISPConfig.cmake
 vp_cmake_configure("cmake/templates/VISPConfig-ustk_core.cmake.in")
 
+vp_set_source_file_compile_flag(src/geometry/usBSpline3D.cpp -Wno-unused-but-set-variable)

@@ -30,9 +30,9 @@
 #
 #############################################################################
 
-project(tutorial-sonosite)
+cmake_minimum_required(VERSION 3.5)
 
-cmake_minimum_required(VERSION 3.0)
+project(tutorial-sonosite)
 
 find_package(VISP REQUIRED visp_ustk_confidence_map visp_ustk_template_tracking visp_robot)
 

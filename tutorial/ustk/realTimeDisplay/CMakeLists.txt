@@ -30,9 +30,9 @@
 #
 #############################################################################
 
-project(tutorial-real-time-display)
+cmake_minimum_required(VERSION 3.5)
 
-cmake_minimum_required(VERSION 3.0)
+project(tutorial-real-time-display)
 
 find_package(VISP REQUIRED visp_ustk_grabber visp_ustk_gui)
 

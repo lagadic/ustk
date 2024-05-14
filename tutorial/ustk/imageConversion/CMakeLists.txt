@@ -30,9 +30,9 @@
 #
 #############################################################################
 
-project(tutorial-scan-conversion)
+cmake_minimum_required(VERSION 3.5)
 
-cmake_minimum_required(VERSION 3.0)
+project(tutorial-scan-conversion)
 
 find_package(VISP REQUIRED visp_ustk_core)
 
