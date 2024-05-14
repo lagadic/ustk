@@ -184,7 +184,8 @@ int main(int argc, const char *argv[])
     try {
       // Create the dirname
       vpIoTools::makeDirectory(dirname);
-    } catch (...) {
+    }
+    catch (...) {
       usage(argv[0], NULL, opath, username);
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Cannot create " << dirname << std::endl;
@@ -326,8 +327,9 @@ int main(int argc, const char *argv[])
     ofile << std::endl;
 
     // Display
-    char *noChar = new char[(int)ceil(log10(n0 + 1)) + 1];
-    sprintf(noChar, "%d", n0);
+    int size = static_cast<int>(ceil(log10(n0 + 1))) + 1
+      char *noChar = new char[size];
+    snprintf(noChar, size, "%d", n0);
     windowTitle = std::string("Frame ") + std::string(noChar);
     delete[] noChar;
     vpDisplay::setTitle(I, windowTitle);

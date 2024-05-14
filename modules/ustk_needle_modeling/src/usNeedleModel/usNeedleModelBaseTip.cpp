@@ -35,15 +35,14 @@
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpExponentialMap.h>
 
-usNeedleModelBaseTip::usNeedleModelBaseTip() : m_basePose(), m_worldMbase(), m_tipPose(), m_worldMtip() {}
+usNeedleModelBaseTip::usNeedleModelBaseTip() : m_basePose(), m_worldMbase(), m_tipPose(), m_worldMtip() { }
 
 usNeedleModelBaseTip::usNeedleModelBaseTip(const usNeedleModelBaseTip &needle)
   : m_basePose(needle.m_basePose), m_worldMbase(needle.m_worldMbase), m_tipPose(needle.m_tipPose),
-    m_worldMtip(needle.m_worldMtip)
-{
-}
+  m_worldMtip(needle.m_worldMtip)
+{ }
 
-usNeedleModelBaseTip::~usNeedleModelBaseTip() {}
+usNeedleModelBaseTip::~usNeedleModelBaseTip() { }
 
 usNeedleModelBaseTip &usNeedleModelBaseTip::operator=(const usNeedleModelBaseTip &needle)
 {
@@ -61,7 +60,7 @@ vpPoseVector usNeedleModelBaseTip::getBasePose() const { return m_basePose; }
 
 vpHomogeneousMatrix usNeedleModelBaseTip::getWorldMbase() const { return m_worldMbase; }
 
-vpColVector usNeedleModelBaseTip::getBasePosition() const { return m_basePose.getTranslationVector(); }
+vpColVector usNeedleModelBaseTip::getBasePosition() const { return vpColVector(m_basePose.getTranslationVector()); }
 
 vpColVector usNeedleModelBaseTip::getBaseDirection() const
 {
@@ -77,7 +76,7 @@ vpColVector usNeedleModelBaseTip::getBaseDirection() const
 vpPoseVector usNeedleModelBaseTip::getTipPose() const { return m_tipPose; }
 vpHomogeneousMatrix usNeedleModelBaseTip::getWorldMtip() const { return m_worldMtip; }
 
-vpColVector usNeedleModelBaseTip::getTipPosition() const { return m_tipPose.getTranslationVector(); }
+vpColVector usNeedleModelBaseTip::getTipPosition() const { return vpColVector(m_tipPose.getTranslationVector()); }
 
 vpColVector usNeedleModelBaseTip::getTipDirection() const
 {

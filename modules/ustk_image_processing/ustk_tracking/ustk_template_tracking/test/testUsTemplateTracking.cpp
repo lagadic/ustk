@@ -48,7 +48,8 @@ int main()
   std::string env_ipath = us::getDataSetPath();
   if (!env_ipath.empty()) {
     sequenceFilename = env_ipath + "/post-scan/trackingSequence2D/trackingSequence.xml";
-  } else {
+  }
+  else {
     std::cout << "You should set USTK_DATASET_PATH environment var to access to ustk dataset" << std::endl;
     return 0;
   }
@@ -81,7 +82,7 @@ int main()
 
     // get ground truth value
     char buffer[FILENAME_MAX];
-    sprintf(buffer, genericFilenameXmlRect.c_str(), iteration + 1);
+    snprintf(buffer, FILENAME_MAX, genericFilenameXmlRect.c_str(), iteration + 1);
     xmlSettingsReader.parse(std::string(buffer));
     groundTruthRectangle = xmlSettingsReader.getRectangle();
 

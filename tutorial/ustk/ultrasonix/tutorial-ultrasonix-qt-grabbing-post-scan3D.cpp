@@ -80,7 +80,7 @@ int main(int argc, char **argv)
     std::cout << *grabbedFrame << std::endl;
 
     char buffer[400];
-    sprintf(buffer, "frame%d.png", grabbedFrame->getFrameCount());
+    snprintf(buffer, 400, "frame%d.png", grabbedFrame->getFrameCount());
 
     // std::string fileName = "frame" + grabbedFrame->getFrameCount() + ".png";
     vpImageIo::write(*grabbedFrame, buffer);
@@ -100,7 +100,7 @@ int main(int argc, char **argv)
       vpDisplay::flush(*grabbedFrame);
     }
   } while (captureRunning);
-  
+
   qtGrabber->stopAcquisition();
 
   if (displayInit) {
@@ -114,7 +114,7 @@ int main(int argc, char **argv)
 int main()
 {
   std::cout << "You should intall Qt5 (with wigdets and network modules), and display X  to run this tutorial"
-            << std::endl;
+    << std::endl;
   return 0;
 }
 

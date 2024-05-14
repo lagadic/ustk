@@ -195,7 +195,7 @@ int main(int argc, const char *argv[])
       firstFrame(i, j, image(j, i, 0));
     }
   }
-  sprintf(buffer, base.c_str(), 10, 0);
+  snprintf(buffer, 300, base.c_str(), 10, 0);
   vpImageIo::write(firstFrame, buffer);
 
   // Reading all the sequence with the  reader

@@ -68,7 +68,7 @@ void displayFrame(const vpImage<ImageDataType> &I, const vpHomogeneousMatrix &im
   order[2] = zmin_index;
 
   // Display frame
-  vpColor color[3] = {vpColor::red, vpColor::green, vpColor::blue};
+  vpColor color[3] = { vpColor::red, vpColor::green, vpColor::blue };
   for (unsigned int i = 0; i < 3; i++) {
     unsigned int j = (unsigned int)order[i];
     vpDisplay::displayArrow(I, (int)origin_y, (int)origin_x, (int)(origin_y + 20 * imageMframe[1][j]), (int)(origin_x + 20 * imageMframe[0][j]),
@@ -115,10 +115,11 @@ void display(const usPolynomialCurve2D &curve, const vpImage<ImageDataType> &I, 
 
   std::vector<double> params(nbRenderingLines + 1);
   params.front() = curve.getStartParameter();
-  for (int i = 1; i < nbRenderingLines + 1; i++)
+  for (int i = 1; i < nbRenderingLines + 1; i++) {
     params.at(i) = params.at(i - 1) + step;
+  }
 
-  vpMatrix imagePoints = curve.getPoints(params);
+  vpMatrix imagePoints = curve.getPoints(vpColVector(params));
 
   double x0 = Xscale * imagePoints[0][0];
   double y0 = Yscale * imagePoints[1][0];
@@ -154,7 +155,7 @@ void display(const usPolynomialCurve3D &curve, const vpImage<ImageDataType> &I, 
   for (unsigned int i = 1; i < nbPoints; i++)
     params.at(i) = params.at(i - 1) + step;
 
-  vpMatrix points = curve.getPoints(params);
+  vpMatrix points = curve.getPoints(vpColVector(params));
 
   const vpMatrix R(imageMworld.getRotationMatrix());
   const vpMatrix T(imageMworld.getTranslationVector());

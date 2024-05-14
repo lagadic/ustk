@@ -38,6 +38,8 @@
 #include <iostream>
 #include <visp3/ustk_gui/usRobotManualControlWidget.h>
 
+#ifdef USTK_HAVE_VTK_QT
+
 usRobotManualControlWidget::usRobotManualControlWidget()
 {
   this->setStyleSheet("QGroupBox {  border: 2px solid Lightgray;}");
@@ -192,7 +194,8 @@ void usRobotManualControlWidget::setRobotActivation()
     labelRobotState->setText(QString("Robot OK, you can move it or stop it"));
     automaticForceButton->setEnabled(true);
     this->update();
-  } else if (startStopPushButton->text() == QString("Stop robot")) {
+  }
+  else if (startStopPushButton->text() == QString("Stop robot")) {
     emit(stopRobot());
     startStopPushButton->setText(QString("Start robot"));
     labelRobotState->setText(QString("Robot stopped"));
@@ -232,9 +235,12 @@ void usRobotManualControlWidget::activateAutomaticForceControlSlot()
     automaticForceButton->setText(QString("Disable automatic force control"));
     labelRobotState->setText("Automatic force control enabled");
     emit(activateAutomaticForceControl());
-  } else {
+  }
+  else {
     automaticForceButton->setText(QString("Enable automatic force control"));
     labelRobotState->setText("Manual robot control");
     emit(disableAutomaticForceControl());
   }
 }
+
+#endif
