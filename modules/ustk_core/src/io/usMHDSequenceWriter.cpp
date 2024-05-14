@@ -4,13 +4,12 @@
 * Constructor, initializes the member attribues.
 */
 usMHDSequenceWriter::usMHDSequenceWriter() : m_sequenceDirectory(), m_sequenceImageType(us::NOT_SET), m_imageCounter(0)
-{
-}
+{ }
 
 /**
 * Destructor.
 */
-usMHDSequenceWriter::~usMHDSequenceWriter() {}
+usMHDSequenceWriter::~usMHDSequenceWriter() { }
 
 /**
 * Setter for the directory where to write the mhd sequence. To call before calling write !
@@ -46,13 +45,13 @@ void usMHDSequenceWriter::write(const usImageRF2D<short int> &image, const uint6
   std::string rawImageFileName = m_sequenceDirectory + vpIoTools::path("/") + std::string("image%05d.raw");
 
   char mhdFileNamebuffer[FILENAME_MAX];
-  sprintf(mhdFileNamebuffer, mhdImageFileName.c_str(), m_imageCounter);
+  snprintf(mhdFileNamebuffer, FILENAME_MAX, mhdImageFileName.c_str(), m_imageCounter);
 
   char rawFileNamebuffer[FILENAME_MAX];
-  sprintf(rawFileNamebuffer, rawImageFileName.c_str(), m_imageCounter);
+  snprintf(rawFileNamebuffer, FILENAME_MAX, rawImageFileName.c_str(), m_imageCounter);
 
   char rawFileNamebufferMin[FILENAME_MAX]; // filename without path
-  sprintf(rawFileNamebufferMin, "image%05d.raw", m_imageCounter);
+  snprintf(rawFileNamebufferMin, FILENAME_MAX, "image%05d.raw", m_imageCounter);
 
   usMetaHeaderParser::MHDHeader header;
   header.dim[0] = image.getWidth();
@@ -96,20 +95,20 @@ void usMHDSequenceWriter::write(const usImagePreScan2D<unsigned char> &image, co
 
   if (m_sequenceImageType != us::PRESCAN_2D)
     throw(vpException(
-        vpException::badValue,
-        "usMHDSequenceWriter : trying to write a 2D pre-scan image in a sequence of another type of image !"));
+      vpException::badValue,
+      "usMHDSequenceWriter : trying to write a 2D pre-scan image in a sequence of another type of image !"));
 
   std::string mhdImageFileName = m_sequenceDirectory + vpIoTools::path("/") + std::string("image%05d.mhd");
   std::string rawImageFileName = m_sequenceDirectory + vpIoTools::path("/") + std::string("image%05d.raw");
 
   char mhdFileNamebuffer[FILENAME_MAX];
-  sprintf(mhdFileNamebuffer, mhdImageFileName.c_str(), m_imageCounter);
+  snprintf(mhdFileNamebuffer, FILENAME_MAX, mhdImageFileName.c_str(), m_imageCounter);
 
   char rawFileNamebuffer[FILENAME_MAX];
-  sprintf(rawFileNamebuffer, rawImageFileName.c_str(), m_imageCounter);
+  snprintf(rawFileNamebuffer, FILENAME_MAX, rawImageFileName.c_str(), m_imageCounter);
 
   char rawFileNamebufferMin[FILENAME_MAX]; // filename without path
-  sprintf(rawFileNamebufferMin, "image%05d.raw", m_imageCounter);
+  snprintf(rawFileNamebufferMin, FILENAME_MAX, "image%05d.raw", m_imageCounter);
 
   usMetaHeaderParser::MHDHeader header;
   header.dim[0] = image.getWidth();
@@ -159,13 +158,13 @@ void usMHDSequenceWriter::write(const usImagePostScan2D<unsigned char> &image, c
   std::string rawImageFileName = m_sequenceDirectory + vpIoTools::path("/") + std::string("image%05d.raw");
 
   char mhdFileNamebuffer[FILENAME_MAX];
-  sprintf(mhdFileNamebuffer, mhdImageFileName.c_str(), m_imageCounter);
+  snprintf(mhdFileNamebuffer, FILENAME_MAX, mhdImageFileName.c_str(), m_imageCounter);
 
   char rawFileNamebuffer[FILENAME_MAX];
-  sprintf(rawFileNamebuffer, rawImageFileName.c_str(), m_imageCounter);
+  snprintf(rawFileNamebuffer, FILENAME_MAX, rawImageFileName.c_str(), m_imageCounter);
 
   char rawFileNamebufferMin[FILENAME_MAX]; // filename without path
-  sprintf(rawFileNamebufferMin, "image%05d.raw", m_imageCounter);
+  snprintf(rawFileNamebufferMin, FILENAME_MAX, "image%05d.raw", m_imageCounter);
 
   usMetaHeaderParser::MHDHeader header;
   header.dim[0] = image.getWidth();
@@ -217,13 +216,13 @@ void usMHDSequenceWriter::write(const usImageRF3D<short int> &image, const std::
   std::string rawImageFileName = m_sequenceDirectory + vpIoTools::path("/") + std::string("image%05d.raw");
 
   char mhdFileNamebuffer[FILENAME_MAX];
-  sprintf(mhdFileNamebuffer, mhdImageFileName.c_str(), m_imageCounter);
+  snprintf(mhdFileNamebuffer, FILENAME_MAX, mhdImageFileName.c_str(), m_imageCounter);
 
   char rawFileNamebuffer[FILENAME_MAX];
-  sprintf(rawFileNamebuffer, rawImageFileName.c_str(), m_imageCounter);
+  snprintf(rawFileNamebuffer, FILENAME_MAX, rawImageFileName.c_str(), m_imageCounter);
 
   char rawFileNamebufferMin[FILENAME_MAX]; // filename without path
-  sprintf(rawFileNamebufferMin, "image%05d.raw", m_imageCounter);
+  snprintf(rawFileNamebufferMin, FILENAME_MAX, "image%05d.raw", m_imageCounter);
 
   usMetaHeaderParser::MHDHeader header;
   header.dim[0] = image.getWidth();
@@ -273,20 +272,20 @@ void usMHDSequenceWriter::write(const usImagePreScan3D<unsigned char> &image, co
 
   if (m_sequenceImageType != us::PRESCAN_3D)
     throw(vpException(
-        vpException::badValue,
-        "usMHDSequenceWriter : trying to write a 3D pre-scan image in a sequence of another type of image !"));
+      vpException::badValue,
+      "usMHDSequenceWriter : trying to write a 3D pre-scan image in a sequence of another type of image !"));
 
   std::string mhdImageFileName = m_sequenceDirectory + vpIoTools::path("/") + std::string("image%05d.mhd");
   std::string rawImageFileName = m_sequenceDirectory + vpIoTools::path("/") + std::string("image%05d.raw");
 
   char mhdFileNamebuffer[FILENAME_MAX];
-  sprintf(mhdFileNamebuffer, mhdImageFileName.c_str(), m_imageCounter);
+  snprintf(mhdFileNamebuffer, FILENAME_MAX, mhdImageFileName.c_str(), m_imageCounter);
 
   char rawFileNamebuffer[FILENAME_MAX];
-  sprintf(rawFileNamebuffer, rawImageFileName.c_str(), m_imageCounter);
+  snprintf(rawFileNamebuffer, FILENAME_MAX, rawImageFileName.c_str(), m_imageCounter);
 
   char rawFileNamebufferMin[FILENAME_MAX]; // filename without path
-  sprintf(rawFileNamebufferMin, "image%05d.raw", m_imageCounter);
+  snprintf(rawFileNamebufferMin, FILENAME_MAX, "image%05d.raw", m_imageCounter);
 
   usMetaHeaderParser::MHDHeader header;
   header.dim[0] = image.getWidth();
@@ -336,20 +335,20 @@ void usMHDSequenceWriter::write(const usImagePostScan3D<unsigned char> &image, c
 
   if (m_sequenceImageType != us::POSTSCAN_3D)
     throw(vpException(
-        vpException::badValue,
-        "usMHDSequenceWriter : trying to write a 3D post-scan image in a sequence of another type of image !"));
+      vpException::badValue,
+      "usMHDSequenceWriter : trying to write a 3D post-scan image in a sequence of another type of image !"));
 
   std::string mhdImageFileName = m_sequenceDirectory + vpIoTools::path("/") + std::string("image%05d.mhd");
   std::string rawImageFileName = m_sequenceDirectory + vpIoTools::path("/") + std::string("image%05d.raw");
 
   char mhdFileNamebuffer[FILENAME_MAX];
-  sprintf(mhdFileNamebuffer, mhdImageFileName.c_str(), m_imageCounter);
+  snprintf(mhdFileNamebuffer, FILENAME_MAX, mhdImageFileName.c_str(), m_imageCounter);
 
   char rawFileNamebuffer[FILENAME_MAX];
-  sprintf(rawFileNamebuffer, rawImageFileName.c_str(), m_imageCounter);
+  snprintf(rawFileNamebuffer, FILENAME_MAX, rawImageFileName.c_str(), m_imageCounter);
 
   char rawFileNamebufferMin[FILENAME_MAX]; // filename without path
-  sprintf(rawFileNamebufferMin, "image%05d.raw", m_imageCounter);
+  snprintf(rawFileNamebufferMin, FILENAME_MAX, "image%05d.raw", m_imageCounter);
 
   usMetaHeaderParser::MHDHeader header;
   header.dim[0] = image.getWidth();

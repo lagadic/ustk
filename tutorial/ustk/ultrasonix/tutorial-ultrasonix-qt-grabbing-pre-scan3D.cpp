@@ -59,12 +59,12 @@ int main(int argc, char **argv)
     std::cout << "MAIN THREAD received volume No : " << grabbedFrame->getVolumeCount() << std::endl;
 
     char buffer[FILENAME_MAX];
-    sprintf(buffer, "volumePreScan%d.mhd", grabbedFrame->getVolumeCount());
+    snprintf(buffer, FILENAME_MAX, "volumePreScan%d.mhd", grabbedFrame->getVolumeCount());
 
     usImageIo::write(*grabbedFrame, buffer);
 
   } while (captureRunning);
-  
+
   qtGrabber->stopAcquisition();
 
   return 0;
@@ -74,7 +74,7 @@ int main(int argc, char **argv)
 int main()
 {
   std::cout << "You should intall Qt5 (with wigdets and network modules), and display X to run this tutorial"
-            << std::endl;
+    << std::endl;
   return 0;
 }
 

@@ -129,7 +129,7 @@ void displayBaseStaticTorsor(const usNeedleModelPolynomial &needleModel, const v
   vpColVector worldForce(worldTorsor, 0, 3);
   vpColVector worldMoment(worldTorsor, 3, 3);
 
-  vpColVector imageBase = R * needleModel.getStartPoint() + T;
+  vpColVector imageBase = R * needleModel.getStartPoint() + vpColVector(T);
   vpColVector imageForce = R * worldForce;
   vpColVector imageMoment = R * worldMoment;
 
@@ -227,7 +227,7 @@ void displayBaseStaticTorsor(const usNeedleModelSpline &needleModel, const vpIma
   vpColVector worldForce(worldTorsor, 0, 3);
   vpColVector worldMoment(worldTorsor, 3, 3);
 
-  vpColVector imageBase = R * needleModel.accessSegment(0).getStartPoint() + T;
+  vpColVector imageBase = R * needleModel.accessSegment(0).getStartPoint() + vpColVector(T);
   vpColVector imageForce = R * worldForce;
   vpColVector imageMoment = R * worldMoment;
 
@@ -530,7 +530,8 @@ void displayTissueLayers(const usNeedleInsertionModelRayleighRitzSpline &model, 
 
       nextLayerLength += model.getLayerLength(i);
     }
-  } else {
+  }
+  else {
     double nextLayerLength = model.getLayerLength(0);
     vpColVector p = model.accessTissue().accessSurface().getPosition();
     vpColVector d = model.accessTissue().accessSurface().getDirection();

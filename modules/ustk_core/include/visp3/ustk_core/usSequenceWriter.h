@@ -112,9 +112,8 @@ private:
 template <class ImageType>
 usSequenceWriter<ImageType>::usSequenceWriter()
   : m_frame(), m_frameRate(0.0), m_firstFrame(0), m_firstFrameIsSet(false), m_frameCount(0), m_sequenceFileName(""),
-    m_genericImageFileName(""), m_headerFileNameIsSet(false), m_imageFileNameIsSet(false), is_open(false)
-{
-}
+  m_genericImageFileName(""), m_headerFileNameIsSet(false), m_imageFileNameIsSet(false), is_open(false)
+{ }
 
 /**
 * Destructor.
@@ -195,7 +194,7 @@ template <class ImageType> void usSequenceWriter<ImageType>::open(const ImageTyp
 
   // Reading image
   char buffer[FILENAME_MAX];
-  sprintf(buffer, m_genericImageFileName.c_str(), m_frameCount);
+  snprintf(buffer, FILENAME_MAX, m_genericImageFileName.c_str(), m_frameCount);
 
   // case of timestamp to add
   if (timestamp != 0) {
@@ -203,9 +202,9 @@ template <class ImageType> void usSequenceWriter<ImageType>::open(const ImageTyp
     std::string base = splitted.at(0);
     base.append(std::string(".%lld."));
     base.append(splitted.at(1));
-    sprintf(buffer, base.c_str(), timestamp);
+    snprintf(buffer, FILENAME_MAX, base.c_str(), timestamp);
     std::vector<std::string> splittedGeneric =
-        vpIoTools::splitChain(std::string(m_genericImageFileName), std::string("."));
+      vpIoTools::splitChain(std::string(m_genericImageFileName), std::string("."));
     m_genericImageFileName = splittedGeneric.at(0) + std::string(".TIMESTAMP.") + splittedGeneric.at(1);
   }
 
@@ -298,7 +297,7 @@ template <class ImageType> void usSequenceWriter<ImageType>::saveImage(const Ima
 
   // Writing image
   char buffer[FILENAME_MAX];
-  sprintf(buffer, m_genericImageFileName.c_str(), m_frameCount);
+  snprintf(buffer, FILENAME_MAX, m_genericImageFileName.c_str(), m_frameCount);
 
   // case of timestamp to add
   if (timestamp != 0) {
@@ -306,7 +305,7 @@ template <class ImageType> void usSequenceWriter<ImageType>::saveImage(const Ima
     std::string base = splitted.at(0);
     base.append(std::string(".%lld."));
     base.append(splitted.at(2));
-    sprintf(buffer, base.c_str(), timestamp);
+    snprintf(buffer, FILENAME_MAX, base.c_str(), timestamp);
   }
 
   std::string imageFileName = vpIoTools::getParent(m_sequenceFileName) + vpIoTools::path("/") + buffer;
