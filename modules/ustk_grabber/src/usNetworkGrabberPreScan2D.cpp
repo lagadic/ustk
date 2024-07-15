@@ -62,7 +62,7 @@ usNetworkGrabberPreScan2D::usNetworkGrabberPreScan2D(usNetworkGrabber *parent) :
 /**
 * Destructor.
 */
-usNetworkGrabberPreScan2D::~usNetworkGrabberPreScan2D() {}
+usNetworkGrabberPreScan2D::~usNetworkGrabberPreScan2D() { }
 
 /**
 * Slot called when data is coming on the network.
@@ -73,7 +73,9 @@ void usNetworkGrabberPreScan2D::dataArrived()
   ////////////////// HEADER READING //////////////////
   QDataStream in;
   in.setDevice(m_tcpSocket);
-#if (defined(USTK_HAVE_QT5) || defined(USTK_HAVE_VTK_QT5))
+#if defined(USTK_HAVE_VTK_QT6)
+  in.setVersion(QDataStream::Qt_6_0);
+#elif (defined(USTK_HAVE_QT5) || defined(USTK_HAVE_VTK_QT5))
   in.setVersion(QDataStream::Qt_5_0);
 #elif defined(USTK_HAVE_VTK_QT4)
   in.setVersion(QDataStream::Qt_4_8);
@@ -86,7 +88,8 @@ void usNetworkGrabberPreScan2D::dataArrived()
     in >> headerType;
     if (m_verbose)
       std::cout << "header received, type = " << headerType << std::endl;
-  } else {
+  }
+  else {
     headerType = 0; // not a header received, but a part of a frame
   }
   // init confirm header received
@@ -225,7 +228,7 @@ void usNetworkGrabberPreScan2D::invertRowsCols()
   m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setTimeStamp(m_grabbedImage.getTimeStamp());
 
   m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)
-      ->resize(m_grabbedImage.getWidth(), m_grabbedImage.getHeight());
+    ->resize(m_grabbedImage.getWidth(), m_grabbedImage.getHeight());
 
   for (unsigned int i = 0; i < m_grabbedImage.getHeight(); i++)
     for (unsigned int j = 0; j < m_grabbedImage.getWidth(); j++)
@@ -234,7 +237,7 @@ void usNetworkGrabberPreScan2D::invertRowsCols()
   // Now CURRENT_FILLED_FRAME_POSITION_IN_VEC has become the last frame received
   // So we switch pointers beween MOST_RECENT_FRAME_POSITION_IN_VEC and CURRENT_FILLED_FRAME_POSITION_IN_VEC
   usFrameGrabbedInfo<usImagePreScan2D<unsigned char> > *savePtr =
-      m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC);
+    m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC);
   m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC) = m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC);
   m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
   if (m_recordingOn)

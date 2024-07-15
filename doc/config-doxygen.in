@@ -45,7 +45,7 @@ PROJECT_BRIEF          =
 # exceed 55 pixels and the maximum width should not exceed 200 pixels.
 # Doxygen will copy the logo to the output directory.
 
-PROJECT_LOGO           = 
+PROJECT_LOGO           =
 
 # The OUTPUT_DIRECTORY tag is used to specify the (relative or absolute)
 # base path where the generated documentation will be put.
@@ -130,7 +130,7 @@ FULL_PATH_NAMES        = YES
 # relative paths, which will be relative from the directory where doxygen is
 # started.
 
-STRIP_FROM_PATH        = 
+STRIP_FROM_PATH        =
 
 # The STRIP_FROM_INC_PATH tag can be used to strip a user-defined part of
 # the path mentioned in the documentation of a class, which tells
@@ -1598,10 +1598,11 @@ PREDEFINED             = DOXYGEN_SHOULD_SKIP_THIS \
                          __APPLE__ \
                          __MACH__ \
                          USTK_HAVE_VTK_QT \
-			 USTK_HAVE_QT5 \
-			 USTK_HAVE_FFTW	\
-			 USTK_HAVE_ARMADILLO \
-			 VISP_HAVE_MODULE_USTK_ELASTOGRAPHY
+                         USTK_HAVE_QT5 \
+                         USTK_HAVE_QT6 \
+                         USTK_HAVE_FFTW \
+                         USTK_HAVE_ARMADILLO \
+                         VISP_HAVE_MODULE_USTK_ELASTOGRAPHY
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then
 # this tag can be used to specify a list of macro names that should be expanded.

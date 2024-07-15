@@ -66,7 +66,7 @@ usNetworkGrabber::usNetworkGrabber(QObject *parent) : QObject(parent)
 
   m_isInit = false;
   m_isRunning = false;
-  
+
   m_thread = NULL;
 
   QObject::connect(this, SIGNAL(serverUpdateEnded(bool)), this, SLOT(serverUpdated(bool)));
@@ -80,7 +80,7 @@ usNetworkGrabber::usNetworkGrabber(QObject *parent) : QObject(parent)
 usNetworkGrabber::~usNetworkGrabber()
 {
   this->stopAcquisition();
-  if(m_thread) {
+  if (m_thread) {
     m_thread->quit();
     m_thread->wait();
     delete m_thread;
@@ -144,7 +144,8 @@ void usNetworkGrabber::processConnectionToServer()
       if (m_verbose) {
         std::cout << "socket is open." << std::endl;
       }
-    } else {
+    }
+    else {
       if (m_verbose) {
         std::cout << "socket not is open." << std::endl;
       }
@@ -155,7 +156,8 @@ void usNetworkGrabber::processConnectionToServer()
         std::cout << "socket is readable." << std::endl;
       }
     }
-  } else
+  }
+  else
     m_tcpSocket->close();
 }
 
@@ -211,7 +213,9 @@ bool usNetworkGrabber::initAcquisition(const usNetworkGrabber::usInitHeaderSent 
 
   QByteArray block;
   QDataStream out(&block, QIODevice::WriteOnly);
-#if (defined(USTK_HAVE_QT5) || defined(USTK_HAVE_VTK_QT5))
+#if defined(USTK_HAVE_VTK_QT6)
+  out.setVersion(QDataStream::Qt_6_0);
+#elif (defined(USTK_HAVE_QT5) || defined(USTK_HAVE_VTK_QT5))
   out.setVersion(QDataStream::Qt_5_0);
 #elif defined(USTK_HAVE_VTK_QT4)
   out.setVersion(QDataStream::Qt_4_8);
@@ -256,7 +260,9 @@ void usNetworkGrabber::initAcquisitionSlot(usInitHeaderSent header)
 
   QByteArray block;
   QDataStream out(&block, QIODevice::WriteOnly);
-#if (defined(USTK_HAVE_QT5) || defined(USTK_HAVE_VTK_QT5))
+#if defined(USTK_HAVE_VTK_QT6)
+  out.setVersion(QDataStream::Qt_6_0);
+#elif (defined(USTK_HAVE_QT5) || defined(USTK_HAVE_VTK_QT5))
   out.setVersion(QDataStream::Qt_5_0);
 #elif defined(USTK_HAVE_VTK_QT4)
   out.setVersion(QDataStream::Qt_4_8);
@@ -314,7 +320,9 @@ void usNetworkGrabber::sendAcquisitionParametersSlot()
 
   QByteArray block;
   QDataStream stream(&block, QIODevice::WriteOnly);
-#if (defined(USTK_HAVE_QT5) || defined(USTK_HAVE_VTK_QT5))
+#if defined(USTK_HAVE_VTK_QT6)
+  stream.setVersion(QDataStream::Qt_6_0);
+#elif (defined(USTK_HAVE_QT5) || defined(USTK_HAVE_VTK_QT5))
   stream.setVersion(QDataStream::Qt_5_0);
 #elif defined(USTK_HAVE_VTK_QT4)
   stream.setVersion(QDataStream::Qt_4_8);
@@ -684,7 +692,9 @@ void usNetworkGrabber::sendRunSignal(bool run)
 
   QByteArray block;
   QDataStream out(&block, QIODevice::WriteOnly);
-#if (defined(USTK_HAVE_QT5) || defined(USTK_HAVE_VTK_QT5))
+#if defined(USTK_HAVE_VTK_QT6)
+  out.setVersion(QDataStream::Qt_6_0);
+#elif (defined(USTK_HAVE_QT5) || defined(USTK_HAVE_VTK_QT5))
   out.setVersion(QDataStream::Qt_5_0);
 #elif defined(USTK_HAVE_VTK_QT4)
   out.setVersion(QDataStream::Qt_4_8);
