@@ -63,7 +63,7 @@ usNetworkGrabberRF3D::usNetworkGrabberRF3D(usNetworkGrabber *parent) : usNetwork
 /**
 * Destructor.
 */
-usNetworkGrabberRF3D::~usNetworkGrabberRF3D() {}
+usNetworkGrabberRF3D::~usNetworkGrabberRF3D() { }
 
 /**
 * Slot called when data is coming on the network.
@@ -74,7 +74,9 @@ void usNetworkGrabberRF3D::dataArrived()
   ////////////////// HEADER READING //////////////////
   QDataStream in;
   in.setDevice(m_tcpSocket);
-#if (defined(USTK_HAVE_QT5) || defined(USTK_HAVE_VTK_QT5))
+#if defined(USTK_HAVE_VTK_QT6)
+  in.setVersion(QDataStream::Qt_6_0);
+#elif (defined(USTK_HAVE_QT5) || defined(USTK_HAVE_VTK_QT5))
   in.setVersion(QDataStream::Qt_5_0);
 #elif defined(USTK_HAVE_VTK_QT4)
   in.setVersion(QDataStream::Qt_4_8);
@@ -87,7 +89,8 @@ void usNetworkGrabberRF3D::dataArrived()
     in >> headerType;
     if (m_verbose)
       std::cout << "header received, type = " << headerType << std::endl;
-  } else {
+  }
+  else {
     headerType = 0; // not a header received, but a part of a frame
   }
   // init confirm header received
@@ -192,7 +195,7 @@ void usNetworkGrabberRF3D::dataArrived()
     // warning if timestamps are close (< 10 ms)
     if (m_imageHeader.timeStamp - m_grabbedImage.getTimeStamp() < 10) {
       std::cout << "WARNING : new image received with an acquisition timestamp close to previous image (<10ms)"
-                << std::endl;
+        << std::endl;
     }
     m_grabbedImage.setTimeStamp(m_imageHeader.timeStamp);
 
@@ -217,8 +220,8 @@ void usNetworkGrabberRF3D::dataArrived()
       std::cout << "local image size = " << m_grabbedImage.getNumberOfPixel() << std::endl;
     }
     m_bytesLeftToRead -=
-        in.readRawData((char *)m_grabbedImage.bitmap + ((m_grabbedImage.getNumberOfPixel() * 2) - m_bytesLeftToRead),
-                       m_bytesLeftToRead);
+      in.readRawData((char *)m_grabbedImage.bitmap + ((m_grabbedImage.getNumberOfPixel() * 2) - m_bytesLeftToRead),
+                     m_bytesLeftToRead);
 
     if (m_bytesLeftToRead == 0) { // we've read the last part of the frame.
       includeFrameInVolume();
@@ -235,7 +238,7 @@ void usNetworkGrabberRF3D::includeFrameInVolume()
   if (m_firstFrameAvailable) {
     // we test if the image settings are still the same for the new frame arrived
     usImagePreScanSettings currentSettings =
-        m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getImagePreScanSettings();
+      m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getImagePreScanSettings();
     if (currentSettings.getAxialResolution() != m_grabbedImage.getAxialResolution() ||
         currentSettings.getTransducerRadius() != m_grabbedImage.getTransducerRadius() ||
         currentSettings.getScanLinePitch() != m_grabbedImage.getScanLinePitch() ||
@@ -246,7 +249,8 @@ void usNetworkGrabberRF3D::includeFrameInVolume()
 
       throw(vpException(vpException::badValue, "Transducer settings changed during acquisition, somethink went wrong"));
     }
-  } else { // init case
+  }
+  else { // init case
     m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC)->setImagePreScanSettings(m_grabbedImage);
     m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->setImagePreScanSettings(m_grabbedImage);
   }
@@ -255,16 +259,17 @@ void usNetworkGrabberRF3D::includeFrameInVolume()
   if (m_firstFrameAvailable) {
     if (m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getMotorSettings() != m_motorSettings)
       throw(vpException(vpException::badValue, "Motor settings changed during acquisition, somethink went wrong"));
-  } else { // init case
+  }
+  else { // init case
     m_outputBuffer.at(OUTPUT_FRAME_POSITION_IN_VEC)->setMotorSettings(m_motorSettings);
     m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->setMotorSettings(m_motorSettings);
   }
   m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setMotorSettings(m_motorSettings);
 
   m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)
-      ->resize(m_grabbedImage.getHeight(), m_grabbedImage.getWidth(), m_motorSettings.getFrameNumber());
+    ->resize(m_grabbedImage.getHeight(), m_grabbedImage.getWidth(), m_motorSettings.getFrameNumber());
 
-  // Inserting frame in volume
+// Inserting frame in volume
   int volumeIndex = m_grabbedImage.getFrameCount() / m_grabbedImage.getFramesPerVolume();    // from 0
   bool motorSweepingInZDirection = (volumeIndex % 2 != 0);
   int framePosition = m_grabbedImage.getFrameCount() % m_grabbedImage.getFramesPerVolume(); // from 0 to FPV-1
@@ -300,7 +305,7 @@ void usNetworkGrabberRF3D::includeFrameInVolume()
                                     m_firstImageTimestamp);
       m_sequenceWriter.write(*m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC), timestampsToWrite);
     }
-    
+
     m_firstVolumeAvailable = true;
     emit(newVolumeAvailable());
   }
@@ -334,11 +339,13 @@ usVolumeGrabbedInfo<usImageRF3D<short int> > *usNetworkGrabberRF3D::acquire()
     if (m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getVolumeCount() % 2 == 1) {
       parityControl = true;
     }
-  } else if (m_volumeField == EVEN) {
+  }
+  else if (m_volumeField == EVEN) {
     if (m_outputBuffer.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getVolumeCount() % 2 == 0) {
       parityControl = true;
     }
-  } else {
+  }
+  else {
     parityControl = true;
   }
 

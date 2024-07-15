@@ -78,7 +78,10 @@ endif()
 
 if(USE_VTK)
   set(USTK_HAVE_VTK_VERSION "(${VTK_VERSION_MAJOR}<<16 | ${VTK_VERSION_MINOR}<<8 | ${VTK_VERSION_PATCH})") # for usConfig.h
-  if(VTK_QT_VERSION VERSION_EQUAL "5") # Qt5 not working yet
+  if(VTK_QT_VERSION VERSION_EQUAL "6")
+    set(USTK_HAVE_VTK_QT6 TRUE)
+    set(USTK_HAVE_VTK_QT TRUE)
+  elseif(VTK_QT_VERSION VERSION_EQUAL "5") # Qt5 not working yet
     set(USTK_HAVE_VTK_QT5 TRUE)
     set(USTK_HAVE_VTK_QT TRUE)
   elseif(VTK_QT_VERSION VERSION_EQUAL "4")

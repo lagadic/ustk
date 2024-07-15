@@ -4,7 +4,7 @@
 #include <visp3/ustk_core/usConfig.h>
 
 #if defined(VISP_HAVE_MODULE_USTK_GUI) && defined(VISP_HAVE_MODULE_USTK_TEMPLATE_TRACKING) &&                          \
-    (defined(USTK_HAVE_VTK_QT5) || defined(USTK_HAVE_QT5))
+    (defined(USTK_HAVE_VTK_QT5) || defined(USTK_HAVE_QT5) || defined(USTK_HAVE_QT6))
 
 #include <visp3/ustk_core/usImageIo.h>
 #include <visp3/ustk_grabber/usNetworkGrabberPreScan2D.h>
@@ -77,7 +77,7 @@ int main(int argc, char **argv)
 int main()
 {
   std::cout << "You should build ustk_gui and ustk_template_tracking and use Qt5 library to run this tutorial"
-            << std::endl;
+    << std::endl;
   return 0;
 }
 

@@ -61,7 +61,7 @@ usNetworkGrabberPostScanBiPlan::usNetworkGrabberPostScanBiPlan(usNetworkGrabber 
 /**
 * Destructor.
 */
-usNetworkGrabberPostScanBiPlan::~usNetworkGrabberPostScanBiPlan() {}
+usNetworkGrabberPostScanBiPlan::~usNetworkGrabberPostScanBiPlan() { }
 
 /**
 * Slot called when data is coming on the network.
@@ -72,7 +72,9 @@ void usNetworkGrabberPostScanBiPlan::dataArrived()
   ////////////////// HEADER READING //////////////////
   QDataStream in;
   in.setDevice(m_tcpSocket);
-#if (defined(USTK_HAVE_QT5) || defined(USTK_HAVE_VTK_QT5))
+#if defined(USTK_HAVE_VTK_QT6)
+  in.setVersion(QDataStream::Qt_6_0);
+#elif (defined(USTK_HAVE_QT5) || defined(USTK_HAVE_VTK_QT5))
   in.setVersion(QDataStream::Qt_5_0);
 #elif defined(USTK_HAVE_VTK_QT4)
   in.setVersion(QDataStream::Qt_4_8);
@@ -86,7 +88,8 @@ void usNetworkGrabberPostScanBiPlan::dataArrived()
   std::vector<usFrameGrabbedInfo<usImagePostScan2D<unsigned char> > *> *refOnBufferToFill;
   if (m_bufferToFill == 1) {
     refOnBufferToFill = &m_outputBuffer1;
-  } else {
+  }
+  else {
     refOnBufferToFill = &m_outputBuffer2;
   }
 
@@ -94,7 +97,8 @@ void usNetworkGrabberPostScanBiPlan::dataArrived()
     in >> headerType;
     if (m_verbose)
       std::cout << "header received, type = " << headerType << std::endl;
-  } else {
+  }
+  else {
     headerType = 0; // not a header received, but a part of a frame
   }
   // init confirm header received
@@ -187,21 +191,22 @@ void usNetworkGrabberPostScanBiPlan::dataArrived()
     }
 
     refOnBufferToFill->at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)
-        ->resize(m_imageHeader.frameHeight, m_imageHeader.frameWidth);
+      ->resize(m_imageHeader.frameHeight, m_imageHeader.frameWidth);
 
-    // pixel size
+  // pixel size
     if (refOnBufferToFill->at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getTransducerRadius() > 0) { // convex probe
       refOnBufferToFill->at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setWidthResolution(m_imageHeader.pixelWidth);
 
       refOnBufferToFill->at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setHeightResolution(m_imageHeader.pixelHeight);
-    } else { // linear probe
+    }
+    else { // linear probe
       refOnBufferToFill->at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)
-          ->setWidthResolution(refOnBufferToFill->at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getScanLinePitch() /
-                               refOnBufferToFill->at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getWidth());
+        ->setWidthResolution(refOnBufferToFill->at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getScanLinePitch() /
+                             refOnBufferToFill->at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getWidth());
 
       refOnBufferToFill->at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)
-          ->setHeightResolution(refOnBufferToFill->at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getDepth() /
-                                refOnBufferToFill->at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getHeight());
+        ->setHeightResolution(refOnBufferToFill->at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getDepth() /
+                              refOnBufferToFill->at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getHeight());
     }
     // read image content
     m_bytesLeftToRead = m_imageHeader.dataLength;
@@ -214,9 +219,9 @@ void usNetworkGrabberPostScanBiPlan::dataArrived()
       // So we switch pointers beween MOST_RECENT_FRAME_POSITION_IN_VEC and CURRENT_FILLED_FRAME_POSITION_IN_VEC
       {
         usFrameGrabbedInfo<usImagePostScan2D<unsigned char> > *savePtr =
-            refOnBufferToFill->at(CURRENT_FILLED_FRAME_POSITION_IN_VEC);
+          refOnBufferToFill->at(CURRENT_FILLED_FRAME_POSITION_IN_VEC);
         refOnBufferToFill->at(CURRENT_FILLED_FRAME_POSITION_IN_VEC) =
-            refOnBufferToFill->at(MOST_RECENT_FRAME_POSITION_IN_VEC);
+          refOnBufferToFill->at(MOST_RECENT_FRAME_POSITION_IN_VEC);
         refOnBufferToFill->at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
       }
       m_bufferToFill = (m_bufferToFill == 1) ? 2 : 1;
@@ -235,20 +240,20 @@ void usNetworkGrabberPostScanBiPlan::dataArrived()
     if (m_verbose) {
       std::cout << "reading following part of the frame, left to read = " << m_bytesLeftToRead << std::endl;
       std::cout << "local image size = " << refOnBufferToFill->at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getSize()
-                << std::endl;
+        << std::endl;
     }
     m_bytesLeftToRead -=
-        in.readRawData((char *)refOnBufferToFill->at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->bitmap +
-                           (refOnBufferToFill->at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getSize() - m_bytesLeftToRead),
-                       m_bytesLeftToRead);
+      in.readRawData((char *)refOnBufferToFill->at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->bitmap +
+                         (refOnBufferToFill->at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getSize() - m_bytesLeftToRead),
+                     m_bytesLeftToRead);
 
     if (m_bytesLeftToRead == 0) { // we've read the last part of the frame.
       // Now CURRENT_FILLED_FRAME_POSITION_IN_VEC has become the last frame received
       // So we switch pointers beween MOST_RECENT_FRAME_POSITION_IN_VEC and CURRENT_FILLED_FRAME_POSITION_IN_VEC
       usFrameGrabbedInfo<usImagePostScan2D<unsigned char> > *savePtr =
-          refOnBufferToFill->at(CURRENT_FILLED_FRAME_POSITION_IN_VEC);
+        refOnBufferToFill->at(CURRENT_FILLED_FRAME_POSITION_IN_VEC);
       refOnBufferToFill->at(CURRENT_FILLED_FRAME_POSITION_IN_VEC) =
-          refOnBufferToFill->at(MOST_RECENT_FRAME_POSITION_IN_VEC);
+        refOnBufferToFill->at(MOST_RECENT_FRAME_POSITION_IN_VEC);
       refOnBufferToFill->at(MOST_RECENT_FRAME_POSITION_IN_VEC) = savePtr;
       m_bufferToFill = (m_bufferToFill == 1) ? 2 : 1;
       if (m_bufferToFill == 1) { // we just read image 2
@@ -270,10 +275,10 @@ std::vector<usFrameGrabbedInfo<usImagePostScan2D<unsigned char> > *> usNetworkGr
   // manage first frame or if user grabs too fast
   if (!m_firstFrameAvailable ||
       (m_outputBuffer1.at(OUTPUT_FRAME_POSITION_IN_VEC)->getFrameCount() >=
-           m_outputBuffer1.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getFrameCount() &&
+       m_outputBuffer1.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getFrameCount() &&
        m_outputBuffer2.at(OUTPUT_FRAME_POSITION_IN_VEC)->getFrameCount() >=
-           m_outputBuffer2.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getFrameCount())) {
-    // we wait until a new frame is available
+       m_outputBuffer2.at(MOST_RECENT_FRAME_POSITION_IN_VEC)->getFrameCount())) {
+// we wait until a new frame is available
     QEventLoop loop;
     loop.connect(this, SIGNAL(newFrameAvailable()), SLOT(quit()));
     loop.exec();
@@ -292,7 +297,7 @@ std::vector<usFrameGrabbedInfo<usImagePostScan2D<unsigned char> > *> usNetworkGr
   std::vector<usFrameGrabbedInfo<usImagePostScan2D<unsigned char> > *> ret;
   ret.push_back(m_outputBuffer1.at(OUTPUT_FRAME_POSITION_IN_VEC));
   ret.push_back(m_outputBuffer2.at(OUTPUT_FRAME_POSITION_IN_VEC));
-  
+
   return ret;
 }
 

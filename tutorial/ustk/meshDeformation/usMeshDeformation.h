@@ -81,7 +81,7 @@
 #include <QtGui/QGridLayout>
 #include <QtGui/QMainWindow>
 #include <QtGui/QPushButton>
-#elif defined USTK_HAVE_VTK_QT5
+#elif defined(USTK_HAVE_VTK_QT5) || defined(USTK_HAVE_QT5)
 #include <QApplication>
 #include <QKeyEvent>
 #if USTK_HAVE_VTK_VERSION < 0x090000

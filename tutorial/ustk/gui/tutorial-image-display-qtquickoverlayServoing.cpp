@@ -4,7 +4,7 @@
 #include <visp3/ustk_core/usConfig.h>
 
 #if defined(VISP_HAVE_MODULE_USTK_GUI) && defined(VISP_HAVE_MODULE_USTK_TEMPLATE_TRACKING) &&                          \
-    defined(VISP_HAVE_VIPER850) && (defined(USTK_HAVE_VTK_QT5) || defined(USTK_HAVE_QT5))
+    defined(VISP_HAVE_VIPER850) && (defined(USTK_HAVE_VTK_QT5) || defined(USTK_HAVE_QT5) || defined(USTK_HAVE_QT6))
 
 #include <visp3/ustk_core/usImageIo.h>
 #include <visp3/ustk_grabber/usNetworkGrabberPreScan2D.h>
