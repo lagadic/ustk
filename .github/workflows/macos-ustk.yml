@@ -7,23 +7,23 @@ on:
   schedule:
     - cron: '0 2 * * SUN'
 
+# https://stackoverflow.com/questions/66335225/how-to-cancel-previous-runs-in-the-pr-when-you-push-new-commitsupdate-the-curre#comment133398800_72408109
+# https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#concurrency
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
+  cancel-in-progress: true
+
 jobs:
   build-macos:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-11.0]
+        os: [macos-latest]
 
     steps:
-    # https://github.com/marketplace/actions/cancel-workflow-action
-    - name: Cancel Previous Runs
-      uses: styfle/cancel-workflow-action@0.9.1
-      with:
-        access_token: ${{ github.token }}
-
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Print system information
       run: |
@@ -34,15 +34,7 @@ jobs:
       run: system_profiler SPSoftwareDataType
 
     - name: Install dependencies
-      run: brew install libpng libjpeg libdc1394 opencv pcl librealsense zbar vtk fftw armadillo
-
-    # qt@5 is as a requested dependency for vtk and thus for pcl 1.12.1
-    # qt@5 is keg-only, which means it was not symlinked into /usr/local
-    - name: Workaround to detect qt5
-      run: |
-        brew link --force qt5
-        sudo ln -s $(brew --prefix qt5)/mkspecs /usr/local/mkspecs
-        sudo ln -s $(brew --prefix qt5)/plugins /usr/local/plugins
+      run: brew install libpng libjpeg-turbo opencv vtk fftw armadillo
 
     - name: Clone visp-images
       run: |
@@ -64,12 +56,8 @@ jobs:
       run: |
         git clone --depth 1 https://github.com/lagadic/ustk-sample ${HOME}/ustk-sample
 
-    # Openblas location is exported explicitly because openblas is keg-only,
-    # which means it was not symlinked into /usr/local/.
     - name: Configure CMake
       run: |
-        export LDFLAGS="-L/usr/local/opt/openblas/lib"
-        export CPPFLAGS="-I/usr/local/opt/openblas/include"
         mkdir build
         cd build
         cmake ${HOME}/visp -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/tmp/usr/local -DVISP_CONTRIB_MODULES_PATH=${GITHUB_WORKSPACE}/modules
