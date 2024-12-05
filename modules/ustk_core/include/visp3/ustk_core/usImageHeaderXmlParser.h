@@ -32,7 +32,7 @@
 
 /**
  * @file usImageHeaderXmlParser.h
- * @brief Input/output operations between ultrasound image header and the assiciated xml files. Used for virtual server.
+ * @brief Input/output operations between ultrasound image header and the associated xml files. Used for virtual server.
  */
 
 #ifndef __usImageHeaderXmlParser_h_
@@ -52,7 +52,7 @@
 
 /**
  * @class usImageHeaderXmlParser
- * @brief Input/output operations between ultrasound image header and the assiciated xml files. Used for virtual server.
+ * @brief Input/output operations between ultrasound image header and the associated xml files. Used for virtual server.
  * @ingroup module_ustk_grabber
  */
 class VISP_EXPORT usImageHeaderXmlParser : public vpXmlParser
@@ -61,7 +61,8 @@ public:
   usImageHeaderXmlParser();
   virtual ~usImageHeaderXmlParser();
 
-  typedef enum {
+  typedef enum
+  {
     CODE_XML_BAD = -1,
     CODE_XML_FRAME_COUNT,
     CODE_XML_TIME_STAMP,
