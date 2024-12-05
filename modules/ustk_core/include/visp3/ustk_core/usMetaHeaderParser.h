@@ -33,7 +33,7 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 /**
 * @file usMetaHeaderParser.h
-* @brief Input/output operations between ultrasound image settings and the assiciated mhd files.
+* @brief Input/output operations between ultrasound image settings and the associated mhd files.
 */
 
 #ifndef __usMetaHeaderParser_h_
@@ -66,7 +66,8 @@ class VISP_EXPORT usMetaHeaderParser
 {
 
 public:
-  typedef enum {
+  typedef enum
+  {
     MET_UNKNOWN = -1,
     MET_UCHAR,
     MET_SHORT,
@@ -74,7 +75,8 @@ public:
   } ElementType;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-  struct MHDHeader {
+  struct MHDHeader
+  {
     std::string MHDFileName;
     std::string rawFileName;
     unsigned int numberOfDimensions;

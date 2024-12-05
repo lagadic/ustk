@@ -33,7 +33,7 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 /**
 * @file usRawFileParser.h
-* @brief Input/output operations between ultrasound images and the assiciated raw files.
+* @brief Input/output operations between ultrasound images and the associated raw files.
 */
 
 #ifndef __usRawFileParser_h_
