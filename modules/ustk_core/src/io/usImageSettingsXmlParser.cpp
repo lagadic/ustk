@@ -38,6 +38,8 @@
 #include <visp3/ustk_core/usImageSettingsXmlParser.h>
 #ifdef VISP_HAVE_XML2
 
+#include <libxml/parser.h>
+
 /**
 * Default constructor.
 */
