@@ -30,7 +30,7 @@
 #
 #############################################################################
 
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.10)
 
 project(tutorial-ultrasonix)
 
@@ -57,4 +57,3 @@ foreach(cpp ${tutorial_ultrasonix_cpp})
     visp_add_dependency(${cpp} "tutorials")
   endif()
 endforeach()
-

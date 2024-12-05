@@ -30,7 +30,7 @@
 #
 #############################################################################
 
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.10)
 
 project(visp-apps-ustk)
 
@@ -59,4 +59,3 @@ endif()
 
 visp_add_subdirectory(ultrasonix-server REQUIRED_DEPS visp_core)
 visp_add_subdirectory(virtual-server    REQUIRED_DEPS visp_ustk_core)
-

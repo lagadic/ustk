@@ -31,7 +31,7 @@
 #
 #############################################################################
 
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.10)
 
 set(CMAKE_AUTOMOC ON)
 
@@ -54,4 +54,3 @@ if(USTK_HAVE_VTK_QT5 OR USTK_HAVE_QT5)
 
   endif()
 endif()
-
