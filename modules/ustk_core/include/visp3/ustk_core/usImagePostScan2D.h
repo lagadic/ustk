@@ -135,8 +135,7 @@ private:
 template <class Type>
 usImagePostScan2D<Type>::usImagePostScan2D()
   : vpImage<Type>(), usTransducerSettings(), m_widthResolution(0.0), m_heightResolution(0.0)
-{
-}
+{ }
 
 /**
 * Copy constructor from an other 2D post-scan image.
@@ -145,9 +144,8 @@ usImagePostScan2D<Type>::usImagePostScan2D()
 template <class Type>
 usImagePostScan2D<Type>::usImagePostScan2D(const usImagePostScan2D<Type> &other)
   : vpImage<Type>(other), usTransducerSettings(other), m_widthResolution(other.getWidthResolution()),
-    m_heightResolution(other.getHeightResolution())
-{
-}
+  m_heightResolution(other.getHeightResolution())
+{ }
 
 /**
 * Constructor from an image and transducer settings.
@@ -160,17 +158,16 @@ template <class Type>
 usImagePostScan2D<Type>::usImagePostScan2D(const vpImage<Type> &image, const usTransducerSettings &transducerSettings,
                                            double widthResolution, double heightResolution)
   : vpImage<Type>(image), usTransducerSettings(transducerSettings), m_widthResolution(widthResolution),
-    m_heightResolution(heightResolution)
-{
-}
+  m_heightResolution(heightResolution)
+{ }
 
 /**
 * Destructor.
 */
-template <class Type> usImagePostScan2D<Type>::~usImagePostScan2D() {}
+template <class Type> usImagePostScan2D<Type>::~usImagePostScan2D() { }
 
 /**
-* Assignement operator.
+* Assignment operator.
 */
 template <class Type> usImagePostScan2D<Type> &usImagePostScan2D<Type>::operator=(const usImagePostScan2D<Type> &other)
 {
@@ -202,9 +199,9 @@ template <class Type> bool usImagePostScan2D<Type>::operator==(const usImagePost
 template <class Type> std::ostream &operator<<(std::ostream &out, const usImagePostScan2D<Type> &other)
 {
   return out << static_cast<const usTransducerSettings &>(other) << "image width : " << other.getWidth() << std::endl
-             << "image height : " << other.getHeight() << std::endl
-             << "image width resolution : " << other.getWidthResolution() << std::endl
-             << "image height resolution : " << other.getHeightResolution() << std::endl;
+    << "image height : " << other.getHeight() << std::endl
+    << "image width resolution : " << other.getWidthResolution() << std::endl
+    << "image height resolution : " << other.getHeightResolution() << std::endl;
 }
 
 /**

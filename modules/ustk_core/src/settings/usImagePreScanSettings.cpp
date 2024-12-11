@@ -42,7 +42,7 @@
 /**
 * Default constructor, all parameters set with default values.
 */
-usImagePreScanSettings::usImagePreScanSettings() : usTransducerSettings(), m_axialResolution(0.0) {}
+usImagePreScanSettings::usImagePreScanSettings() : usTransducerSettings(), m_axialResolution(0.0) { }
 
 /**
 * Copy constructor.
@@ -50,8 +50,7 @@ usImagePreScanSettings::usImagePreScanSettings() : usTransducerSettings(), m_axi
 */
 usImagePreScanSettings::usImagePreScanSettings(const usImagePreScanSettings &other)
   : usTransducerSettings(other), m_axialResolution(other.getAxialResolution())
-{
-}
+{ }
 
 /**
 * Full settings constructor.
@@ -61,8 +60,7 @@ usImagePreScanSettings::usImagePreScanSettings(const usImagePreScanSettings &oth
 */
 usImagePreScanSettings::usImagePreScanSettings(const usTransducerSettings &transducerSettings, double axialResolution)
   : usTransducerSettings(transducerSettings), m_axialResolution(axialResolution)
-{
-}
+{ }
 
 /**
 * Copy constructor.
@@ -76,10 +74,10 @@ void usImagePreScanSettings::setImagePreScanSettings(const usImagePreScanSetting
 /**
 * Destructor.
 */
-usImagePreScanSettings::~usImagePreScanSettings() {}
+usImagePreScanSettings::~usImagePreScanSettings() { }
 
 /**
-* Assignement operator.
+* Assignment operator.
 * @param other usImagePreScanSettings to copy.
 */
 usImagePreScanSettings &usImagePreScanSettings::operator=(const usImagePreScanSettings &other)
@@ -105,7 +103,7 @@ bool usImagePreScanSettings::operator==(const usImagePreScanSettings &other)
 template <class T> VISP_EXPORT std::ostream &operator<<(std::ostream &out, const usImagePreScanSettings &other)
 {
   return out << "Axial resolution : " << other.getAxialResolution() << std::endl
-             << static_cast<const usTransducerSettings &>(other) << std::endl;
+    << static_cast<const usTransducerSettings &>(other) << std::endl;
 }
 
 /**
