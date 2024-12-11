@@ -30,9 +30,18 @@
 #
 #############################################################################
 
+set(opt_incs "")
+set(opt_libs "")
+set(opt_libs_private "")
+
 if(USE_FFTW)
   list(APPEND opt_incs ${FFTW_INCLUDE_DIRS})
   list(APPEND opt_libs ${FFTW_LIBRARIES})
+endif()
+
+if(USE_XML2)
+  include_directories(${XML2_INCLUDE_DIRS})
+  list(APPEND opt_libs_private ${XML2_LIBRARIES})
 endif()
 
 IF(CUDA_FOUND)
@@ -57,7 +66,7 @@ IF(CUDA_FOUND)
   list(APPEND opt_libs ustk_core_cuda)
 ENDIF(CUDA_FOUND)
 
-vp_add_module(ustk_core visp_io)
+vp_add_module(ustk_core visp_io PRIVATE_OPTIONAL ${opt_libs_private})
 
 vp_glob_module_sources()
 
