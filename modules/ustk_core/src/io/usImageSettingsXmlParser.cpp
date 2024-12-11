@@ -36,6 +36,7 @@
  */
 
 #include <visp3/ustk_core/usImageSettingsXmlParser.h>
+
 #ifdef VISP_HAVE_XML2
 
 /**
@@ -80,7 +81,7 @@ usImageSettingsXmlParser::usImageSettingsXmlParser(const usImageSettingsXmlParse
 }
 
 /**
-* Assignement operator.
+* Assignment operator.
 * @param twinparser usImageSettingsXmlParser to assign.
 */
 usImageSettingsXmlParser &usImageSettingsXmlParser::operator=(const usImageSettingsXmlParser &twinparser)
