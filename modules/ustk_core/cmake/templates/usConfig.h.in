@@ -55,7 +55,7 @@
                                         USTK_VERSION_MINOR, \
                                         USTK_VERSION_PATCH)
 
-// Defined if VTK with Qt4 or Qt5 support available
+// Defined if VTK with Qt4, Qt5 or Qt6 support available
 #cmakedefine USTK_HAVE_VTK_QT
 
 // Defined if VTK with Qt4 support available
@@ -63,6 +63,9 @@
 
 // Defined if VTK with Qt5 support available
 #cmakedefine USTK_HAVE_VTK_QT5
+
+// Defined if VTK with Qt6 support available
+#cmakedefine USTK_HAVE_VTK_QT6
 
 // VTK version in hexadecimal (for example 5.8.0 gives 0x050800).
 #ifdef USTK_HAVE_VTK_QT

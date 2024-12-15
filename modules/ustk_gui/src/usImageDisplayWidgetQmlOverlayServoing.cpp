@@ -38,7 +38,7 @@
 
 #include <visp3/ustk_gui/usImageDisplayWidgetQmlOverlayServoing.h>
 
-#if (defined(USTK_HAVE_VTK_QT5) || defined(USTK_HAVE_QT5))
+#if (defined(USTK_HAVE_VTK_QT5) || defined(USTK_HAVE_QT5) || defined(USTK_HAVE_VTK_QT6))
 
 #include <QQuickItem>
 
@@ -76,7 +76,7 @@ usImageDisplayWidgetQmlOverlayServoing::usImageDisplayWidgetQmlOverlayServoing()
 /**
 * Destructor.
 */
-usImageDisplayWidgetQmlOverlayServoing::~usImageDisplayWidgetQmlOverlayServoing() {}
+usImageDisplayWidgetQmlOverlayServoing::~usImageDisplayWidgetQmlOverlayServoing() { }
 
 void usImageDisplayWidgetQmlOverlayServoing::resizeEvent(QResizeEvent *event)
 {
@@ -106,7 +106,8 @@ void usImageDisplayWidgetQmlOverlayServoing::updateFrame(const usImagePreScan2D<
     m_scanConverter.convert(img, m_postScan);
     m_QImage = QImage(m_postScan.bitmap, m_postScan.getWidth(), m_postScan.getHeight(), m_postScan.getWidth(),
                       QImage::Format_Indexed8);
-  } else
+  }
+  else
     m_QImage = QImage(img.bitmap, img.getWidth(), img.getHeight(), img.getWidth(), QImage::Format_Indexed8);
 
   QImage I = m_QImage.convertToFormat(QImage::Format_RGB888);
@@ -135,7 +136,8 @@ vpImagePoint usImageDisplayWidgetQmlOverlayServoing::displayImageToRealImageDime
   if (m_useScanConversion) {
     imageHeight = m_postScan.getHeight();
     imageWidth = m_postScan.getWidth();
-  } else {
+  }
+  else {
     imageHeight = m_image.getHeight();
     imageWidth = m_image.getWidth();
   }
@@ -154,7 +156,8 @@ usImageDisplayWidgetQmlOverlayServoing::realImageToDisplayImageDimentions(const 
   if (m_useScanConversion) {
     imageHeight = m_postScan.getHeight();
     imageWidth = m_postScan.getWidth();
-  } else {
+  }
+  else {
     imageHeight = m_image.getHeight();
     imageWidth = m_image.getWidth();
   }
@@ -177,16 +180,17 @@ usImageDisplayWidgetQmlOverlayServoing::displayImageToRealImageDimentions(const 
   if (m_useScanConversion) {
     imageHeight = m_postScan.getHeight();
     imageWidth = m_postScan.getWidth();
-  } else {
+  }
+  else {
     imageHeight = m_image.getHeight();
     imageWidth = m_image.getWidth();
   }
   int newHeight =
-      (displayRectangle.getHeight() * imageHeight / (double)height()) * std::cos(displayRectangle.getOrientation()) +
-      (displayRectangle.getWidth() * imageWidth / (double)width()) * std::sin(displayRectangle.getOrientation());
+    (displayRectangle.getHeight() * imageHeight / (double)height()) * std::cos(displayRectangle.getOrientation()) +
+    (displayRectangle.getWidth() * imageWidth / (double)width()) * std::sin(displayRectangle.getOrientation());
   int newWidth =
-      (displayRectangle.getHeight() * imageHeight / (double)height()) * std::sin(displayRectangle.getOrientation()) +
-      (displayRectangle.getWidth() * imageWidth / (double)width()) * std::cos(displayRectangle.getOrientation());
+    (displayRectangle.getHeight() * imageHeight / (double)height()) * std::sin(displayRectangle.getOrientation()) +
+    (displayRectangle.getWidth() * imageWidth / (double)width()) * std::cos(displayRectangle.getOrientation());
 
   return vpRectOriented(center, newWidth, newHeight, displayRectangle.getOrientation());
 }
@@ -204,17 +208,18 @@ usImageDisplayWidgetQmlOverlayServoing::realImageToDisplayImageDimentions(const 
   if (m_useScanConversion) {
     imageHeight = m_postScan.getHeight();
     imageWidth = m_postScan.getWidth();
-  } else {
+  }
+  else {
     imageHeight = m_image.getHeight();
     imageWidth = m_image.getWidth();
   }
   int newHeight =
-      (realRectangle.getHeight() * height() / (double)imageHeight) * std::cos(realRectangle.getOrientation()) +
-      (realRectangle.getWidth() * width() / (double)imageWidth) * std::sin(realRectangle.getOrientation());
+    (realRectangle.getHeight() * height() / (double)imageHeight) * std::cos(realRectangle.getOrientation()) +
+    (realRectangle.getWidth() * width() / (double)imageWidth) * std::sin(realRectangle.getOrientation());
 
   int newWidth =
-      (realRectangle.getHeight() * height() / (double)imageHeight) * std::sin(realRectangle.getOrientation()) +
-      (realRectangle.getWidth() * width() / (double)imageWidth) * std::cos(realRectangle.getOrientation());
+    (realRectangle.getHeight() * height() / (double)imageHeight) * std::sin(realRectangle.getOrientation()) +
+    (realRectangle.getWidth() * width() / (double)imageWidth) * std::cos(realRectangle.getOrientation());
 
   return vpRectOriented(center, newWidth, newHeight, realRectangle.getOrientation());
 }

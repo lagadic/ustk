@@ -327,8 +327,8 @@ int main(int argc, const char *argv[])
     ofile << std::endl;
 
     // Display
-    int size = static_cast<int>(ceil(log10(n0 + 1))) + 1
-      char *noChar = new char[size];
+    int size = static_cast<int>(ceil(log10(n0 + 1))) + 1;
+    char *noChar = new char[size];
     snprintf(noChar, size, "%d", n0);
     windowTitle = std::string("Frame ") + std::string(noChar);
     delete[] noChar;

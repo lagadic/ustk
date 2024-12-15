@@ -58,7 +58,7 @@ usNetworkGrabberRF2D::usNetworkGrabberRF2D(usNetworkGrabber *parent) : usNetwork
 /**
 * Destructor.
 */
-usNetworkGrabberRF2D::~usNetworkGrabberRF2D() {}
+usNetworkGrabberRF2D::~usNetworkGrabberRF2D() { }
 
 /**
 * Slot called when data is coming on the network.
@@ -70,7 +70,9 @@ void usNetworkGrabberRF2D::dataArrived()
   ////////////////// HEADER READING //////////////////
   QDataStream in;
   in.setDevice(m_tcpSocket);
-#if (defined(USTK_HAVE_QT5) || defined(USTK_HAVE_VTK_QT5))
+#if defined(USTK_HAVE_VTK_QT6)
+  in.setVersion(QDataStream::Qt_6_0);
+#elif (defined(USTK_HAVE_QT5) || defined(USTK_HAVE_VTK_QT5))
   in.setVersion(QDataStream::Qt_5_0);
 #elif defined(USTK_HAVE_VTK_QT4)
   in.setVersion(QDataStream::Qt_4_8);
@@ -83,7 +85,8 @@ void usNetworkGrabberRF2D::dataArrived()
     in >> headerType;
     if (m_verbose)
       std::cout << "header received, type = " << headerType << std::endl;
-  } else {
+  }
+  else {
     headerType = 0; // not a header received, but a part of a frame
   }
   // init confirm header received
@@ -164,13 +167,14 @@ void usNetworkGrabberRF2D::dataArrived()
     if (m_imageHeader.transducerRadius != 0.) {
       m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setScanLinePitch(m_imageHeader.scanLinePitch);
       m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setTransducerConvexity(true);
-    } else { // linear transducer
+    }
+    else { // linear transducer
       m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setScanLinePitch(0.);
       m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setTransducerConvexity(false);
     }
     m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setDepth(m_imageHeader.imageDepth / 1000.0);
     m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)
-        ->setAxialResolution((m_imageHeader.imageDepth / 1000.0) / m_imageHeader.frameHeight);
+      ->setAxialResolution((m_imageHeader.imageDepth / 1000.0) / m_imageHeader.frameHeight);
     m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setTransmitFrequency(m_imageHeader.transmitFrequency);
     m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->setSamplingFrequency(m_imageHeader.samplingFrequency);
 
@@ -187,7 +191,7 @@ void usNetworkGrabberRF2D::dataArrived()
     }
 
     m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)
-        ->resize(m_imageHeader.frameHeight, m_imageHeader.frameWidth);
+      ->resize(m_imageHeader.frameHeight, m_imageHeader.frameWidth);
 
     m_bytesLeftToRead = m_imageHeader.dataLength;
 
@@ -219,7 +223,7 @@ void usNetworkGrabberRF2D::dataArrived()
     if (m_verbose) {
       std::cout << "reading following part of the frame" << std::endl;
       std::cout << "local image size = " << m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->getNumberOfPixel()
-                << std::endl;
+        << std::endl;
     }
     m_bytesLeftToRead -= in.readRawData(
         ((char *)m_outputBuffer.at(CURRENT_FILLED_FRAME_POSITION_IN_VEC)->bitmap) +

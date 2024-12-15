@@ -38,7 +38,7 @@
 
 #include <visp3/ustk_gui/usImageDisplayWidgetQmlOverlay.h>
 
-#if (defined(USTK_HAVE_VTK_QT5) || defined(USTK_HAVE_QT5))
+#if (defined(USTK_HAVE_VTK_QT5) || defined(USTK_HAVE_QT5) || defined(USTK_HAVE_VTK_QT6))
 
 #include <QQuickItem>
 
@@ -67,7 +67,7 @@ usImageDisplayWidgetQmlOverlay::usImageDisplayWidgetQmlOverlay() : usImageDispla
 /**
 * Destructor.
 */
-usImageDisplayWidgetQmlOverlay::~usImageDisplayWidgetQmlOverlay() {}
+usImageDisplayWidgetQmlOverlay::~usImageDisplayWidgetQmlOverlay() { }
 
 void usImageDisplayWidgetQmlOverlay::resizeEvent(QResizeEvent *event)
 {
@@ -87,7 +87,8 @@ vpImagePoint usImageDisplayWidgetQmlOverlay::displayImageToRealImageDimentions(c
   if (m_useScanConversion) {
     imageHeight = m_postScan.getHeight();
     imageWidth = m_postScan.getWidth();
-  } else {
+  }
+  else {
     imageHeight = m_image.getHeight();
     imageWidth = m_image.getWidth();
   }
@@ -105,7 +106,8 @@ vpImagePoint usImageDisplayWidgetQmlOverlay::realImageToDisplayImageDimentions(c
   if (m_useScanConversion) {
     imageHeight = m_postScan.getHeight();
     imageWidth = m_postScan.getWidth();
-  } else {
+  }
+  else {
     imageHeight = m_image.getHeight();
     imageWidth = m_image.getWidth();
   }
@@ -127,16 +129,17 @@ vpRectOriented usImageDisplayWidgetQmlOverlay::displayImageToRealImageDimentions
   if (m_useScanConversion) {
     imageHeight = m_postScan.getHeight();
     imageWidth = m_postScan.getWidth();
-  } else {
+  }
+  else {
     imageHeight = m_image.getHeight();
     imageWidth = m_image.getWidth();
   }
   int newHeight =
-      (displayRectangle.getHeight() * imageHeight / (double)height()) * std::cos(displayRectangle.getOrientation()) +
-      (displayRectangle.getWidth() * imageWidth / (double)width()) * std::sin(displayRectangle.getOrientation());
+    (displayRectangle.getHeight() * imageHeight / (double)height()) * std::cos(displayRectangle.getOrientation()) +
+    (displayRectangle.getWidth() * imageWidth / (double)width()) * std::sin(displayRectangle.getOrientation());
   int newWidth =
-      (displayRectangle.getHeight() * imageHeight / (double)height()) * std::sin(displayRectangle.getOrientation()) +
-      (displayRectangle.getWidth() * imageWidth / (double)width()) * std::cos(displayRectangle.getOrientation());
+    (displayRectangle.getHeight() * imageHeight / (double)height()) * std::sin(displayRectangle.getOrientation()) +
+    (displayRectangle.getWidth() * imageWidth / (double)width()) * std::cos(displayRectangle.getOrientation());
 
   return vpRectOriented(center, newWidth, newHeight, displayRectangle.getOrientation());
 }
@@ -153,17 +156,18 @@ vpRectOriented usImageDisplayWidgetQmlOverlay::realImageToDisplayImageDimentions
   if (m_useScanConversion) {
     imageHeight = m_postScan.getHeight();
     imageWidth = m_postScan.getWidth();
-  } else {
+  }
+  else {
     imageHeight = m_image.getHeight();
     imageWidth = m_image.getWidth();
   }
   int newHeight =
-      (realRectangle.getHeight() * height() / (double)imageHeight) * std::cos(realRectangle.getOrientation()) +
-      (realRectangle.getWidth() * width() / (double)imageWidth) * std::sin(realRectangle.getOrientation());
+    (realRectangle.getHeight() * height() / (double)imageHeight) * std::cos(realRectangle.getOrientation()) +
+    (realRectangle.getWidth() * width() / (double)imageWidth) * std::sin(realRectangle.getOrientation());
 
   int newWidth =
-      (realRectangle.getHeight() * height() / (double)imageHeight) * std::sin(realRectangle.getOrientation()) +
-      (realRectangle.getWidth() * width() / (double)imageWidth) * std::cos(realRectangle.getOrientation());
+    (realRectangle.getHeight() * height() / (double)imageHeight) * std::sin(realRectangle.getOrientation()) +
+    (realRectangle.getWidth() * width() / (double)imageWidth) * std::cos(realRectangle.getOrientation());
 
   return vpRectOriented(center, newWidth, newHeight, realRectangle.getOrientation());
 }

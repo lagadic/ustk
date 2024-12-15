@@ -49,7 +49,7 @@
 #include <QtGui/QGridLayout>
 #include <QtGui/QMainWindow>
 #include <QtGui/QPushButton>
-#elif defined USTK_HAVE_VTK_QT5
+#elif defined(USTK_HAVE_VTK_QT5) || defined(USTK_HAVE_VTK_QT6)
 #include <QApplication>
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QMainWindow>
