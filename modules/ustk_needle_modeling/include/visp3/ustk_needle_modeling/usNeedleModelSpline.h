@@ -43,7 +43,8 @@
 class VISP_EXPORT usNeedleModelSpline : public usNeedleModelBaseTip, public usBSpline3D
 {
 public:
-  enum class NeedlePreset : int {
+  enum class NeedlePreset : int
+  {
     BiopsyNeedle,
     BiopsyCannula,
     Symmetric,
@@ -66,6 +67,7 @@ protected:
   double m_needleYoungModulus;
 
 public:
+  using usNeedleModelBaseTip::operator=;
   //! Constructors, destructor
 
   usNeedleModelSpline();
