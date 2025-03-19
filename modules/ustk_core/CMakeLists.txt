@@ -44,8 +44,8 @@ if(USE_XML2)
   list(APPEND opt_libs_private ${LIBXML2_LIBRARIES})
 endif()
 
-IF(CUDA_FOUND)
-  IF(NOT VISP_INITIAL_PASS)
+if(USE_CUDA)
+  if(NOT VISP_INITIAL_PASS)
     CUDA_INCLUDE_DIRECTORIES(${VISP_MODULE_visp_ustk_core_LOCATION}/include)
     CUDA_INCLUDE_DIRECTORIES(${VISP_MODULE_visp_ustk_core_INC_DEP})
     foreach(d ${VISP_MODULE_visp_ustk_core_DEPS})
@@ -62,9 +62,9 @@ IF(CUDA_FOUND)
     LIBRARY DESTINATION ${VISP_LIB_INSTALL_PATH} COMPONENT libs
     ARCHIVE DESTINATION ${VISP_LIB_INSTALL_PATH} COMPONENT dev
     )
-  ENDIF(NOT VISP_INITIAL_PASS)
+  endif(NOT VISP_INITIAL_PASS)
   list(APPEND opt_libs ustk_core_cuda)
-ENDIF(CUDA_FOUND)
+endif()
 
 vp_add_module(ustk_core visp_io PRIVATE_OPTIONAL ${opt_libs_private})
 
