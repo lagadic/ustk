@@ -39,6 +39,8 @@
 
 #if defined(VISP_HAVE_XML2) && (defined(USTK_HAVE_QT5) || defined(USTK_HAVE_VTK_QT))
 
+#include <libxml/parser.h>
+
 /**
  * Default constructor.
  */
