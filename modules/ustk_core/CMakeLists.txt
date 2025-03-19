@@ -40,8 +40,8 @@ if(USE_FFTW)
 endif()
 
 if(USE_XML2)
-  include_directories(${XML2_INCLUDE_DIRS})
-  list(APPEND opt_libs_private ${XML2_LIBRARIES})
+  include_directories(${LIBXML2_INCLUDE_DIRS})
+  list(APPEND opt_libs_private ${LIBXML2_LIBRARIES})
 endif()
 
 IF(CUDA_FOUND)
