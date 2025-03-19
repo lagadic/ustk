@@ -89,7 +89,7 @@ endif()
 
 if(USE_CUDA)
   set(CUDA_SEPARABLE_COMPILATION ON)
-  set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS};-arch=sm_30;-lineinfo)
+  set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS};-lineinfo)
 endif()
 
 VP_SET(USTK_HAVE_QT5  TRUE IF USE_QT5)
@@ -134,5 +134,3 @@ status("    Use Qt:"            USE_VTK          THEN "yes (ver ${VTK_QT_VERSION
 status("    Use FFTW:"          USE_FFTW         THEN "yes" ELSE "no")
 status("    Use Armadillo:"     USE_ARMADILLO    THEN "yes (ver ${ARMADILLO_VERSION_STRING})" ELSE "no")
 status("    Use CUDA:"          USE_CUDA         THEN "yes (ver ${CUDA_VERSION_STRING})" ELSE "no")
-
-
