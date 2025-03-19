@@ -44,12 +44,13 @@ protected:
   double _length;
 
 public:
+  using usNeedleTip::operator=;
   //! Constructors, destructors
 
   usNeedleTipSymmetric();
   usNeedleTipSymmetric(const usNeedleTipSymmetric &needle);
   virtual ~usNeedleTipSymmetric();
-  virtual usNeedleTipSymmetric &operator=(const usNeedleTipSymmetric &needle);
+  usNeedleTipSymmetric &operator=(const usNeedleTipSymmetric &needle);
   virtual usNeedleTipSymmetric *clone() const; // Polymorph copy method
 
   //! Parameters setters and getters

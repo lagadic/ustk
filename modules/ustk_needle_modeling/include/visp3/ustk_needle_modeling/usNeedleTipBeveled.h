@@ -44,12 +44,13 @@ protected:
   double _length;
 
 public:
+  using usNeedleTip::operator=;
   //! Constructors, destructors
 
   usNeedleTipBeveled();
   usNeedleTipBeveled(const usNeedleTipBeveled &needle);
   virtual ~usNeedleTipBeveled();
-  virtual usNeedleTipBeveled &operator=(const usNeedleTipBeveled &needle);
+  usNeedleTipBeveled &operator=(const usNeedleTipBeveled &needle);
   virtual usNeedleTipBeveled *clone() const; // Polymorph copy method
 
   //! Parameters setters and getters

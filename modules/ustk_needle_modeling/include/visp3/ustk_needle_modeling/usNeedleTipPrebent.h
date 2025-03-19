@@ -50,12 +50,13 @@ protected:
   double _angle; // rad
 
 public:
+  using usNeedleTip::operator=;
   //! Constructors, destructors
 
   usNeedleTipPrebent();
   usNeedleTipPrebent(const usNeedleTipPrebent &needle);
   virtual ~usNeedleTipPrebent();
-  virtual usNeedleTipPrebent &operator=(const usNeedleTipPrebent &needle);
+  usNeedleTipPrebent &operator=(const usNeedleTipPrebent &needle);
   virtual usNeedleTipPrebent *clone() const; // Polymorph copy method
 
   //! Parameters setters and getters
