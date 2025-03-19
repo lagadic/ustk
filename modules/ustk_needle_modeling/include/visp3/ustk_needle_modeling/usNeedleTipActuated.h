@@ -46,12 +46,13 @@ protected:
   double _steeringAngle; // rad   angle with respect to x axis
 
 public:
+  using usNeedleTip::operator=;
   //! Constructors, destructors
 
   usNeedleTipActuated();
   usNeedleTipActuated(const usNeedleTipActuated &needle);
   virtual ~usNeedleTipActuated();
-  virtual usNeedleTipActuated &operator=(const usNeedleTipActuated &needle);
+  usNeedleTipActuated &operator=(const usNeedleTipActuated &needle);
   virtual usNeedleTipActuated *clone() const; // Polymorph copy method
 
   //! Parameters setters and getters

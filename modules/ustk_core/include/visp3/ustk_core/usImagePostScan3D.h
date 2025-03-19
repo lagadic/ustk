@@ -179,9 +179,8 @@ private:
 template <class Type>
 usImagePostScan3D<Type>::usImagePostScan3D()
   : usImage3D<Type>(), usTransducerSettings(), usMotorSettings(), m_elementSpacingX(1.0), m_elementSpacingY(1.0),
-    m_elementSpacingZ(1.0), m_scanLineDepth(0.0)
-{
-}
+  m_elementSpacingZ(1.0), m_scanLineDepth(0.0)
+{ }
 
 /**
 * Copy constructor from an other 3D post-scan image.
@@ -190,10 +189,9 @@ usImagePostScan3D<Type>::usImagePostScan3D()
 template <class Type>
 usImagePostScan3D<Type>::usImagePostScan3D(const usImagePostScan3D &other)
   : usImage3D<Type>(other), usTransducerSettings(other), usMotorSettings(other),
-    m_elementSpacingX(other.getElementSpacingX()), m_elementSpacingY(other.getElementSpacingY()),
-    m_elementSpacingZ(other.getElementSpacingZ()), m_scanLineDepth(other.getScanLineDepth())
-{
-}
+  m_elementSpacingX(other.getElementSpacingX()), m_elementSpacingY(other.getElementSpacingY()),
+  m_elementSpacingZ(other.getElementSpacingZ()), m_scanLineDepth(other.getScanLineDepth())
+{ }
 
 /**
 * Constructor from 3D image data, transducer and motor settings.
@@ -210,18 +208,17 @@ usImagePostScan3D<Type>::usImagePostScan3D(const usImage3D<Type> &image, const u
                                            const usMotorSettings &motorSettings, double spacingX, double spacingY,
                                            double spacingZ, double scanLineDepth)
   : usImage3D<Type>(image), usTransducerSettings(transducerSettings), usMotorSettings(motorSettings),
-    m_elementSpacingX(spacingX), m_elementSpacingY(spacingY), m_elementSpacingZ(spacingZ),
-    m_scanLineDepth(scanLineDepth)
-{
-}
+  m_elementSpacingX(spacingX), m_elementSpacingY(spacingY), m_elementSpacingZ(spacingZ),
+  m_scanLineDepth(scanLineDepth)
+{ }
 
 /**
 * Destructor.
 */
-template <class Type> usImagePostScan3D<Type>::~usImagePostScan3D() {}
+template <class Type> usImagePostScan3D<Type>::~usImagePostScan3D() { }
 
 /**
-* Assignement operator.
+* Assignment operator.
 */
 template <class Type> usImagePostScan3D<Type> &usImagePostScan3D<Type>::operator=(const usImagePostScan3D<Type> &other)
 {
@@ -247,9 +244,9 @@ template <class Type> usImagePostScan3D<Type> &usImagePostScan3D<Type>::operator
 template <class Type> bool usImagePostScan3D<Type>::operator==(usImagePostScan3D<Type> const &other)
 {
   return usImage3D<Type>::operator==(other) && usTransducerSettings::operator==(other) &&
-         usMotorSettings::operator==(other) && m_elementSpacingX == other.getElementSpacingX() &&
-         m_elementSpacingY == other.getElementSpacingY() && m_elementSpacingZ == other.getElementSpacingZ() &&
-         m_scanLineDepth == other.getScanLineDepth();
+    usMotorSettings::operator==(other) && m_elementSpacingX == other.getElementSpacingX() &&
+    m_elementSpacingY == other.getElementSpacingY() && m_elementSpacingZ == other.getElementSpacingZ() &&
+    m_scanLineDepth == other.getScanLineDepth();
 }
 
 /**
@@ -258,10 +255,10 @@ template <class Type> bool usImagePostScan3D<Type>::operator==(usImagePostScan3D
 template <class Type> std::ostream &operator<<(std::ostream &out, const usImagePostScan3D<Type> &other)
 {
   return out << static_cast<const usImage3D<Type> &>(other) << static_cast<const usTransducerSettings &>(other)
-             << static_cast<const usMotorSettings &>(other) << "spacingX = " << other.getElementSpacingX() << std::endl
-             << "spacingY = " << other.getElementSpacingY() << std::endl
-             << "spacingZ = " << other.getElementSpacingZ() << std::endl
-             << "scan line depth = " << other.getScanLineDepth() << std::endl;
+    << static_cast<const usMotorSettings &>(other) << "spacingX = " << other.getElementSpacingX() << std::endl
+    << "spacingY = " << other.getElementSpacingY() << std::endl
+    << "spacingZ = " << other.getElementSpacingZ() << std::endl
+    << "scan line depth = " << other.getScanLineDepth() << std::endl;
 }
 
 /**

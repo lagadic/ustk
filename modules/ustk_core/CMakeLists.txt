@@ -30,15 +30,28 @@
 #
 #############################################################################
 
+set(opt_incs "")
+set(opt_libs "")
+set(opt_libs_private "")
+
 if(USE_FFTW)
   list(APPEND opt_incs ${FFTW_INCLUDE_DIRS})
   list(APPEND opt_libs ${FFTW_LIBRARIES})
 endif()
 
-IF(CUDA_FOUND)
-  IF(NOT VISP_INITIAL_PASS)
+if(USE_XML2)
+  include_directories(${LIBXML2_INCLUDE_DIRS})
+  list(APPEND opt_libs_private ${LIBXML2_LIBRARIES})
+endif()
+
+if(USE_CUDA)
+  if(NOT VISP_INITIAL_PASS)
     CUDA_INCLUDE_DIRECTORIES(${VISP_MODULE_visp_ustk_core_LOCATION}/include)
     CUDA_INCLUDE_DIRECTORIES(${VISP_MODULE_visp_ustk_core_INC_DEP})
+    if(USE_OPENCV)
+      # To find opencv2/opencv_modules.hpp included in vpConfig.h
+      CUDA_INCLUDE_DIRECTORIES(${OpenCV_INCLUDE_DIRS})
+    endif()
     foreach(d ${VISP_MODULE_visp_ustk_core_DEPS})
       if(d MATCHES "^visp_" AND HAVE_${d})
         if(EXISTS "${VISP_MODULE_${d}_LOCATION}/include")
@@ -53,11 +66,11 @@ IF(CUDA_FOUND)
     LIBRARY DESTINATION ${VISP_LIB_INSTALL_PATH} COMPONENT libs
     ARCHIVE DESTINATION ${VISP_LIB_INSTALL_PATH} COMPONENT dev
     )
-  ENDIF(NOT VISP_INITIAL_PASS)
+  endif(NOT VISP_INITIAL_PASS)
   list(APPEND opt_libs ustk_core_cuda)
-ENDIF(CUDA_FOUND)
+endif()
 
-vp_add_module(ustk_core visp_io)
+vp_add_module(ustk_core visp_io PRIVATE_OPTIONAL ${opt_libs_private})
 
 vp_glob_module_sources()
 

@@ -43,7 +43,8 @@
 class VISP_EXPORT usNeedleModelPolynomial : public usNeedleModelBaseTip, public usPolynomialCurve3D
 {
 public:
-  enum class NeedlePreset : int {
+  enum class NeedlePreset : int
+  {
     BiopsyNeedle,
     BiopsyCannula,
     AbayazidRRM13,
@@ -60,6 +61,7 @@ protected:
   double m_needleYoungModulus;
 
 public:
+  using usNeedleModelBaseTip::operator=;
   //! Constructors, destructor
 
   usNeedleModelPolynomial();

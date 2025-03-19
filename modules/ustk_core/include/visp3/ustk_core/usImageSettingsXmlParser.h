@@ -32,7 +32,7 @@
 
 /**
  * @file usImageSettingsXmlParser.h
- * @brief Input/output operations between ultrasound image settings and the assiciated xml files.
+ * @brief Input/output operations between ultrasound image settings and the associated xml files.
  */
 
 #ifndef __usImageSettingsXmlParser_h_
@@ -56,7 +56,7 @@
 
 /**
  * @class usImageSettingsXmlParser
- * @brief Input/output operations between ultrasound image settings and the assiciated xml files.
+ * @brief Input/output operations between ultrasound image settings and the associated xml files.
  * @ingroup module_ustk_core
  */
 class VISP_EXPORT usImageSettingsXmlParser : public vpXmlParser
@@ -68,7 +68,8 @@ public:
   usImageSettingsXmlParser &operator=(const usImageSettingsXmlParser &twinparser);
   virtual ~usImageSettingsXmlParser();
 
-  typedef enum {
+  typedef enum
+  {
     CODE_XML_BAD = -1,
     CODE_XML_SETTINGS,
     CODE_XML_IMAGE_TYPE,

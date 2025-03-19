@@ -32,7 +32,7 @@
 
 /**
  * @file usImageHeaderXmlParser.cpp
- * @brief Input/output operations between ultrasound image settings and the assiciated xml files.
+ * @brief Input/output operations between ultrasound image settings and the associated xml files.
  */
 
 #include <visp3/ustk_core/usImageHeaderXmlParser.h>
@@ -70,7 +70,7 @@ usImageHeaderXmlParser::usImageHeaderXmlParser() : m_imageHeader(), m_sequence_n
 /**
 * Destructor.
 */
-usImageHeaderXmlParser::~usImageHeaderXmlParser() {}
+usImageHeaderXmlParser::~usImageHeaderXmlParser() { }
 
 /**
 * Reading method, called by vpXmlParser::parse().
