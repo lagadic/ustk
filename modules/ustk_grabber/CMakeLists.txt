@@ -55,24 +55,16 @@ if(USE_VTK)
   # Instruct CMake to run moc automatically when needed.
   set(CMAKE_AUTOMOC ON)
 
-    # Find Qt version corresponding to the Qt version used to compile VTK (4 or 5)
+  # Find Qt version corresponding to the Qt version used to compile VTK (4, 5 or 6)
   if(VTK_QT_VERSION VERSION_EQUAL "6")
-    find_package(Qt6 REQUIRED COMPONENTS Widgets Network QUIET)
-    qt6_wrap_ui(UI_Srcs ${UIs})
+    find_package(Qt6 COMPONENTS Core Widgets Network REQUIRED QUIET)
 
-    list(APPEND opt_incs "${Qt6Widgets_INCLUDE_DIRS}")
-    list(APPEND opt_incs "${Qt6Network_INCLUDE_DIRS}")
+    set(Qt6_COMPONENTS ${Qt6Core_LIBRARIES} ${Qt6Widgets_LIBRARIES} ${Qt6Network_LIBRARIES})
 
-    # The following line allows to build visp, but doesn't allow to build a project that uses
-    # visp as 3rd party:
-    # list(APPEND opt_libs ${Qt6Widgets_LIBRARIES} ${Qt6Network_LIBRARIES})
-    # Instead we get the corresponding interface link libraries that we can propagate with visp
-    #  when visp is used as a 3rd party:
-    set(Qt6_COMPONENTS ${Qt6Widgets_LIBRARIES} ${Qt6Network_LIBRARIES})
+    vp_get_interface_include_dirs(Qt6_COMPONENTS qt6_include_dirs_)
     vp_get_interface_link_libraries(Qt6_COMPONENTS qt6_link_libraries_)
+    list(APPEND opt_incs ${qt6_include_dirs_})
     list(APPEND opt_libs ${qt6_link_libraries_})
-
-  # Find Qt version corresponding to the Qt version used to compile VTK (4 or 5)
   elseif(VTK_QT_VERSION VERSION_EQUAL "5") # Qt5 not working yet
     find_package(Qt5 COMPONENTS Core Widgets Network REQUIRED QUIET)
 

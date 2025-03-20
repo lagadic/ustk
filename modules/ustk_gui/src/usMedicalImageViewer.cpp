@@ -78,7 +78,11 @@
 #include <vtkResliceImageViewer.h>
 #include <vtkResliceImageViewerMeasurements.h>
 
-#include <QDesktopWidget>
+#if defined(USTK_HAVE_VTK_QT6)
+#include <QScreen>
+#else
+#include <QDesktopWidget> // deprecated in Qt5 and removed in Qt6
+#endif
 #include <QResizeEvent>
 
 #if !(USTK_HAVE_VTK_VERSION < 0x090000)
@@ -103,7 +107,7 @@ public:
     widget3D->update();
   }
 
-  vtkResliceCursorCallback() : widget3D(), RIW() {}
+  vtkResliceCursorCallback() : widget3D(), RIW() { }
   us3DSceneWidget *widget3D;
   vtkResliceImageViewer *RIW[3];
 };
@@ -151,7 +155,7 @@ usMedicalImageViewer::usMedicalImageViewer(std::string imageFileName)
   for (int i = 0; i < 3; i++) {
     // make them all share the same reslice cursor object.
     vtkResliceCursorLineRepresentation *rep =
-        vtkResliceCursorLineRepresentation::SafeDownCast(riw[i]->GetResliceCursorWidget()->GetRepresentation());
+      vtkResliceCursorLineRepresentation::SafeDownCast(riw[i]->GetResliceCursorWidget()->GetRepresentation());
     riw[i]->SetResliceCursor(riw[0]->GetResliceCursor());
 
     rep->GetResliceCursorActor()->GetCursorAlgorithm()->SetReslicePlaneNormal(i);
@@ -226,14 +230,14 @@ void usMedicalImageViewer::ResetColorMap()
 */
 void usMedicalImageViewer::Render()
 {
-#if USTK_HAVE_VTK_VERSION < 0x090000
-  this->view1->GetRenderWindow()->Render();
-  this->view2->GetRenderWindow()->Render();
-  this->view3->GetRenderWindow()->Render();
-#else
+#if defined(USTK_HAVE_VTK_QT6)
   this->view1->renderWindow()->Render();
   this->view2->renderWindow()->Render();
   this->view3->renderWindow()->Render();
+#else
+  this->view1->GetRenderWindow()->Render();
+  this->view2->GetRenderWindow()->Render();
+  this->view3->GetRenderWindow()->Render();
 #endif
 
   this->view1->update();
@@ -288,10 +292,10 @@ void usMedicalImageViewer::AddDistanceMeasurementToView(int i)
 void usMedicalImageViewer::setupUi()
 {
   this->setMinimumSize(640, 480);
-#if USTK_HAVE_VTK_VERSION < 0x090000
-  QRect screenRect = QApplication::desktop()->screenGeometry();
+#if defined(USTK_HAVE_VTK_QT6)
+  QRect screenRect = QGuiApplication::primaryScreen()->geometry();
 #else
-  QRect screenRect = QApplication::screens()[0]->geometry();
+  QRect screenRect = QApplication::desktop()[0]->screenGeometry();
 #endif
   this->resize(screenRect.size());
 

@@ -89,9 +89,13 @@ private:
   QLineEdit *ipTextEdit;
   QComboBox *probeSelectComboBox;
 
+#if defined(USTK_HAVE_VTK_QT6)
+  QRegularExpressionValidator *ipValidator;
+#else
   QRegExpValidator *ipValidator;
+#endif
 
-  // Layouts
+// Layouts
   QGridLayout *Layout;
 
   QHostAddress hostAddress;

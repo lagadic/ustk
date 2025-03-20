@@ -64,7 +64,7 @@
 #include <QtGui/QMainWindow>
 #include <QtGui/QPushButton>
 #include <QtGui/QSlider>
-#elif defined(USTK_HAVE_VTK_QT5)
+#elif defined(USTK_HAVE_VTK_QT5) || defined(USTK_HAVE_VTK_QT6)
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QMainWindow>
@@ -84,7 +84,7 @@ class VISP_EXPORT us3DSceneSlicing : public QMainWindow
 public:
   // Constructor/Destructor
   us3DSceneSlicing(std::string imageFileName);
-  ~us3DSceneSlicing() {}
+  ~us3DSceneSlicing() { }
 
   void resizeEvent(QResizeEvent *event);
 
