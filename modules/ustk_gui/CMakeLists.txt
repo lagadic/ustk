@@ -34,8 +34,9 @@ if(USE_VTK)
   #include(${VTK_USE_FILE})
 
   list(APPEND opt_incs ${VTK_INCLUDE_DIRS})
+  vp_get_interface_include_dirs(VTK_LIBRARIES vtk_include_dirs_)
+  list(APPEND opt_incs ${vtk_include_dirs_})
   vp_get_interface_link_libraries(VTK_LIBRARIES vtk_link_libraries_)
-#  message("vtk_link_libraries_: ${vtk_link_libraries_}")
   list(APPEND opt_libs ${vtk_link_libraries_})
 
   # Instruct CMake to run moc automatically when needed.
@@ -61,26 +62,14 @@ if(USE_VTK)
     list(APPEND opt_libs ${qt6_link_libraries_})
 
   elseif(VTK_QT_VERSION VERSION_EQUAL "5")
-    find_package(Qt5 COMPONENTS Gui Widgets QuickWidgets REQUIRED QUIET)
-    qt5_wrap_ui(UI_Srcs ${UIs})
+    find_package(Qt5 COMPONENTS Core Gui Widgets Quick QuickWidgets REQUIRED QUIET)
 
-    qt5_add_resources(UI_RESOURCES resources/resources.qrc)
-    set_property(SOURCE ${UI_RESOURCES} PROPERTY SKIP_AUTOMOC ON) # To avoid CMP0071 warning
+    set(Qt5_COMPONENTS ${Qt5Core_LIBRARIES} ${Qt5Widgets_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5Quick_LIBRARIES} ${Qt5QuickWidgets_LIBRARIES})
 
-    list(APPEND opt_incs "${Qt5Gui_INCLUDE_DIRS}")
-    list(APPEND opt_incs "${Qt5Widgets_INCLUDE_DIRS}")
-    list(APPEND opt_incs "${Qt5QuickWidgets_INCLUDE_DIRS}")
-
-    # The following line allows to build visp, but doesn't allow to build a project that uses
-    # visp as 3rd party:
-    # list(APPEND opt_libs ${Qt5Widgets_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5QuickWidgets_LIBRARIES})
-    # Instead we get the corresponding interface link libraries that we can propagate with visp
-    # when visp is used as a 3rd party:
-    set(Qt5_COMPONENTS ${Qt5Widgets_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5QuickWidgets_LIBRARIES})
+    vp_get_interface_include_dirs(Qt5_COMPONENTS qt5_include_dirs_)
     vp_get_interface_link_libraries(Qt5_COMPONENTS qt5_link_libraries_)
-#    message("qt5_link_libraries_: ${qt5_link_libraries_}")
+    list(APPEND opt_incs ${qt5_include_dirs_})
     list(APPEND opt_libs ${qt5_link_libraries_})
-
   elseif(VTK_QT_VERSION VERSION_EQUAL "4")
     find_package(Qt4 REQUIRED QtGui QtCore OPTIONAL_COMPONENTS QtNetwork)
     # Use what VTK built with
