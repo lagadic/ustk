@@ -44,6 +44,8 @@
 #include <visp3/ustk_core/usImagePostScan2D.h>
 #include <visp3/ustk_gui/us2DSceneWidget.h>
 
+#include <QWheelEvent>
+
 /**
 * Constructor.
 * @param parent The QWidget parent.
@@ -321,7 +323,8 @@ void us2DSceneWidget::keyPressEvent(QKeyEvent *event)
 {
   if (event->key() == Qt::Key_H) {
     m_rPressed = true;
-  } else if (event->key() == Qt::Key_P) {
+  }
+  else if (event->key() == Qt::Key_P) {
     m_pPressed = true;
   }
   event->accept();
@@ -334,7 +337,8 @@ void us2DSceneWidget::keyReleaseEvent(QKeyEvent *event)
 {
   if (event->key() == Qt::Key_H) {
     m_rPressed = false;
-  } else if (event->key() == Qt::Key_P) {
+  }
+  else if (event->key() == Qt::Key_P) {
     m_pPressed = false;
   }
   event->accept();
@@ -383,8 +387,9 @@ void us2DSceneWidget::mouseMoveEvent(QMouseEvent *event)
     m_lastmouserPosX = event->pos().x();
     m_lastmouserPosY = event->pos().y();
     event->accept();
-  } else {
-    // propagate event to allow colormap change in vtk
+  }
+  else {
+ // propagate event to allow colormap change in vtk
     usViewerWidget::mouseMoveEvent(event);
   }
 }
@@ -450,7 +455,8 @@ void us2DSceneWidget::mousePressEvent(QMouseEvent *event)
       std::cout << "Picked value = " << vector.data[0] << " " << vector.data[1] << " " << vector.data[2] << std::endl;
       m_pickedVoxel = vector;
       emit(voxelPicked(vector));
-    } else
+    }
+    else
       std::cout << "Pick out of image" << std::endl;
   }
   usViewerWidget::mousePressEvent(event);

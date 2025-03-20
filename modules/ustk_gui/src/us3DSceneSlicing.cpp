@@ -80,7 +80,11 @@
 
 #include <vtkHomogeneousTransform.h>
 
-#include <QDesktopWidget>
+#if defined(USTK_HAVE_VTK_QT6)
+#include <QScreen>
+#else
+#include <QDesktopWidget> // deprecated in Qt5 and removed in Qt6
+#endif
 #include <QResizeEvent>
 
 /**
@@ -163,7 +167,11 @@ void us3DSceneSlicing::Render()
 void us3DSceneSlicing::setupUi()
 {
   this->setMinimumSize(640, 480);
+#if defined(USTK_HAVE_VTK_QT6)
+  QRect screenRect = QGuiApplication::primaryScreen()->geometry();
+#else
   QRect screenRect = QApplication::desktop()->screenGeometry();
+#endif
   this->resize(screenRect.size());
 
   gridLayoutWidget = new QWidget(this);

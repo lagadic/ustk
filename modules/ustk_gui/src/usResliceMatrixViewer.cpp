@@ -73,7 +73,11 @@
 
 #include <vtkHomogeneousTransform.h>
 
-#include <QDesktopWidget>
+#if defined(USTK_HAVE_VTK_QT6)
+#include <QScreen>
+#else
+#include <QDesktopWidget> // deprecated in Qt5 and removed in Qt6
+#endif
 #include <QFileDialog>
 #include <QResizeEvent>
 
@@ -248,10 +252,17 @@ void usResliceMatrixViewer::ResetViews()
 */
 void usResliceMatrixViewer::Render()
 {
+#if defined(USTK_HAVE_VTK_QT6)
+  this->view1->renderWindow()->Render();
+  this->view2->renderWindow()->Render();
+  this->view3->renderWindow()->Render();
+  this->view4->renderWindow()->Render();
+#else
   this->view1->GetRenderWindow()->Render();
   this->view2->GetRenderWindow()->Render();
   this->view3->GetRenderWindow()->Render();
   this->view4->GetRenderWindow()->Render();
+#endif
 }
 
 /**
@@ -260,7 +271,11 @@ void usResliceMatrixViewer::Render()
 void usResliceMatrixViewer::setupUi()
 {
   this->setMinimumSize(640, 480);
-  QRect screenRect = QApplication::desktop()->screenGeometry();
+#if defined(USTK_HAVE_VTK_QT6)
+  QRect screenRect = QGuiApplication::primaryScreen()->geometry();
+#else
+  QRect screenRect = QApplication::desktop()[0]->screenGeometry();
+#endif
   this->resize(screenRect.size());
 
   gridLayoutWidget = new QWidget(this);
