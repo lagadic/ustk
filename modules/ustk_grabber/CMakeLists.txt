@@ -74,22 +74,14 @@ if(USE_VTK)
 
   # Find Qt version corresponding to the Qt version used to compile VTK (4 or 5)
   elseif(VTK_QT_VERSION VERSION_EQUAL "5") # Qt5 not working yet
-    find_package(Qt5 COMPONENTS Widgets Network REQUIRED QUIET)
-    qt5_wrap_ui(UI_Srcs ${UIs})
+    find_package(Qt5 COMPONENTS Core Widgets Network REQUIRED QUIET)
 
-    list(APPEND opt_incs "${Qt5Widgets_INCLUDE_DIRS}")
-    list(APPEND opt_incs "${Qt5Network_INCLUDE_DIRS}")
+    set(Qt5_COMPONENTS ${Qt5Core_LIBRARIES} ${Qt5Widgets_LIBRARIES} ${Qt5Network_LIBRARIES})
 
-    # The following line allows to build visp, but doesn't allow to build a project that uses
-    # visp as 3rd party:
-    # list(APPEND opt_libs ${Qt5Widgets_LIBRARIES} ${Qt5Network_LIBRARIES})
-    # Instead we get the corresponding interface link libraries that we can propagate with visp
-    #  when visp is used as a 3rd party:
-    set(Qt5_COMPONENTS ${Qt5Widgets_LIBRARIES} ${Qt5Network_LIBRARIES})
+    vp_get_interface_include_dirs(Qt5_COMPONENTS qt5_include_dirs_)
     vp_get_interface_link_libraries(Qt5_COMPONENTS qt5_link_libraries_)
-#    message("qt5_link_libraries_: ${qt5_link_libraries_}")
+    list(APPEND opt_incs ${qt5_include_dirs_})
     list(APPEND opt_libs ${qt5_link_libraries_})
-
   elseif(VTK_QT_VERSION VERSION_EQUAL "4")
     find_package(Qt4 REQUIRED QtGui QtCore)
     # Use what VTK built with
