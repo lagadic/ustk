@@ -43,6 +43,10 @@
 #include <vtkImageImport.h>
 #include <vtkPointData.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 /**
 * Converts a usImagePostScan3D to a vtkImageData.
 */
@@ -57,7 +61,8 @@ void usVTKConverter::convert(const usImagePostScan3D<unsigned char> &postScanIma
     importer->SetDataExtentToWholeExtent();
     importer->SetNumberOfScalarComponents(1);
     importer->SetImportVoidPointer((void *)postScanImage.getConstData(), 1);
-  } else
+  }
+  else
     importer->SetImportVoidPointer((void *)postScanImage.getConstData());
 
   importer->Update();
@@ -81,7 +86,8 @@ void usVTKConverter::convert(const usImagePreScan3D<unsigned char> &preScanImage
                              preScanImage.getNumberOfFrames() - 1);
     importer->SetDataExtentToWholeExtent();
     importer->SetNumberOfScalarComponents(1);
-  } else
+  }
+  else
     importer->SetImportVoidPointer((void *)preScanImage.getConstData());
 
   importer->Update();
@@ -106,7 +112,7 @@ void usVTKConverter::convert(vtkSmartPointer<vtkImageData> &vtkPostScanImage,
   for (int i = 0; i < imageDims[0]; i++) {
     for (int j = 0; j < imageDims[1]; j++) {
       postScanImage[j][i] =
-          (unsigned char)(vtkPostScanImage->GetScalarComponentAsDouble(i, imageDims[1] - j - 1, 0, 0));
+        (unsigned char)(vtkPostScanImage->GetScalarComponentAsDouble(i, imageDims[1] - j - 1, 0, 0));
     }
   }
 

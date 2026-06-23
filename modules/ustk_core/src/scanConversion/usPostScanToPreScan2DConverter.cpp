@@ -33,10 +33,14 @@
 #include <visp3/ustk_core/usPostScanToPreScan2DConverter.h>
 
 //#include <visp/vpMath.h>
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 /**
  * Default constructor.
  */
-usPostScanToPreScan2DConverter::usPostScanToPreScan2DConverter() : m_isInit(false) {}
+usPostScanToPreScan2DConverter::usPostScanToPreScan2DConverter() : m_isInit(false) { }
 
 /**
  * Initialisation constructor.
@@ -63,7 +67,7 @@ usPostScanToPreScan2DConverter::usPostScanToPreScan2DConverter(const usTransduce
 /**
  * Destructor.
  */
-usPostScanToPreScan2DConverter::~usPostScanToPreScan2DConverter() {}
+usPostScanToPreScan2DConverter::~usPostScanToPreScan2DConverter() { }
 
 /**
 * Initialize the back-scan converter.
@@ -147,7 +151,7 @@ void usPostScanToPreScan2DConverter::init(const usTransducerSettings &transducer
   if (transducerSettings.isTransducerConvex()) {
     double APitch = transducerSettings.getDepth() / BModeSampleNumber;
     double LPitch =
-        transducerSettings.getFieldOfView() * transducerSettings.getTransducerRadius() / (scanLineNumber - 1);
+      transducerSettings.getFieldOfView() * transducerSettings.getTransducerRadius() / (scanLineNumber - 1);
 
     double r_min = transducerSettings.getTransducerRadius();
     double r_max = (transducerSettings.getTransducerRadius() + APitch * BModeSampleNumber);
@@ -237,7 +241,8 @@ double usPostScanToPreScan2DConverter::interpolateLinear(const vpImage<unsigned 
     if (x1 == x2) {
       val1 = I(x1, y1);
       val2 = I(x1, y2);
-    } else {
+    }
+    else {
       val1 = (x2 - x) * I(x1, y1) + (x - x1) * I(x2, y1);
       val2 = (x2 - x) * I(x1, y2) + (x - x1) * I(x2, y2);
     }

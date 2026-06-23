@@ -36,14 +36,17 @@
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpException.h>
 
-usNeedleTipPrebent::usNeedleTipPrebent() : usNeedleTip(), _diameter(0.001), _length(0.01), _angle(0) {}
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
+usNeedleTipPrebent::usNeedleTipPrebent() : usNeedleTip(), _diameter(0.001), _length(0.01), _angle(0) { }
 
 usNeedleTipPrebent::usNeedleTipPrebent(const usNeedleTipPrebent &tip)
   : usNeedleTip(tip), _diameter(tip._diameter), _length(tip._length), _angle(tip._angle)
-{
-}
+{ }
 
-usNeedleTipPrebent::~usNeedleTipPrebent() {}
+usNeedleTipPrebent::~usNeedleTipPrebent() { }
 
 usNeedleTipPrebent &usNeedleTipPrebent::operator=(const usNeedleTipPrebent &tip)
 {

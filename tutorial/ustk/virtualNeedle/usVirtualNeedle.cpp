@@ -39,6 +39,10 @@
 
 #ifdef USTK_HAVE_VTK_QT
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 /**
 * Constructor.
 */
@@ -110,32 +114,38 @@ void usVirtualNeedle::keyPressEvent(QKeyEvent *event)
     transform.eye();
     transform[0][3] = 0.001; // add 1mm on X axis
     updateNeedlePosition(transform);
-  } else if (event->key() == Qt::Key_Right) {
+  }
+  else if (event->key() == Qt::Key_Right) {
     vpHomogeneousMatrix transform;
     transform.eye();
     transform[0][3] = -0.001; // minus 1mm on X axis
     updateNeedlePosition(transform);
-  } else if (event->key() == Qt::Key_Up) {
+  }
+  else if (event->key() == Qt::Key_Up) {
     vpHomogeneousMatrix transform;
     transform.eye();
     transform[1][3] = 0.001; // add 1mm on Y axis
     updateNeedlePosition(transform);
-  } else if (event->key() == Qt::Key_Down) {
+  }
+  else if (event->key() == Qt::Key_Down) {
     vpHomogeneousMatrix transform;
     transform.eye();
     transform[1][3] = -0.001; // remove 1mm on Y axis
     updateNeedlePosition(transform);
-  } else if (event->key() == Qt::Key_PageUp) {
+  }
+  else if (event->key() == Qt::Key_PageUp) {
     vpHomogeneousMatrix transform;
     transform.eye();
     transform[2][3] = 0.001; // remove 1mm on Z axis
     updateNeedlePosition(transform);
-  } else if (event->key() == Qt::Key_PageDown) {
+  }
+  else if (event->key() == Qt::Key_PageDown) {
     vpHomogeneousMatrix transform;
     transform.eye();
     transform[2][3] = -0.001; // remove 1mm on Z axis
     updateNeedlePosition(transform);
-  } else if (event->key() == Qt::Key_Space) { // move first point of the mesh of 1mm along Z
+  }
+  else if (event->key() == Qt::Key_Space) { // move first point of the mesh of 1mm along Z
     double *point1 = m_meshPolyData->GetPoints()->GetPoint(0);
     point1[2] += 0.001;
     m_meshPolyData->GetPoints()->SetPoint(0, point1);
@@ -145,7 +155,8 @@ void usVirtualNeedle::keyPressEvent(QKeyEvent *event)
 #else
     this->renderWindow()->Render();
 #endif
-  } else if (event->key() == Qt::Key_0) { // move first point of the mesh of - 1mm along Z
+  }
+  else if (event->key() == Qt::Key_0) { // move first point of the mesh of - 1mm along Z
     double *point1 = m_meshPolyData->GetPoints()->GetPoint(0);
     point1[2] -= 0.001;
     m_meshPolyData->GetPoints()->SetPoint(0, point1);
@@ -155,7 +166,8 @@ void usVirtualNeedle::keyPressEvent(QKeyEvent *event)
 #else
     this->renderWindow()->Render();
 #endif
-  } else {
+  }
+  else {
     usViewerWidget::keyPressEvent(event);
   }
 }
@@ -189,8 +201,9 @@ void usVirtualNeedle::updateNeedlePosition(vpHomogeneousMatrix transform)
     vtkSmartPointer<vtkMatrix4x4> vtkMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
     usVTKConverter::convert(transform, vtkMatrix);
     m_needleActor->SetUserMatrix(vtkMatrix);
-  } else {
-    // get current matrix
+  }
+  else {
+ // get current matrix
     vpHomogeneousMatrix currentTransform;
     currentTransform.eye();
     usVTKConverter::convert(m_needleActor->GetUserMatrix(), currentTransform);

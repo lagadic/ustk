@@ -20,6 +20,10 @@
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/io/vpImageIo.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 int main(int argc, char **argv)
 {
   // QT application
@@ -127,8 +131,8 @@ int main(int argc, char **argv)
 int main()
 {
   std::cout << "You should intall Qt5 (with wigdets and network modules), FFTW and a display graphic system (GDI or "
-               "X11) to run this tutorial"
-            << std::endl;
+    "X11) to run this tutorial"
+    << std::endl;
   return 0;
 }
 

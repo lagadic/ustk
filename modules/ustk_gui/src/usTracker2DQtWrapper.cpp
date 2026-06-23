@@ -39,18 +39,21 @@
 
 #if (defined(USTK_HAVE_VTK_QT) || defined(USTK_HAVE_QT5)) && defined(VISP_HAVE_MODULE_USTK_TEMPLATE_TRACKING)
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 /**
 * Constructor.
 */
 usTracker2DQtWrapper::usTracker2DQtWrapper()
   : QObject(), m_tracker(), m_firstImage(), m_firstFrameArrived(false), m_isInitialized(false)
-{
-}
+{ }
 
 /**
 * Destructor.
 */
-usTracker2DQtWrapper::~usTracker2DQtWrapper() {}
+usTracker2DQtWrapper::~usTracker2DQtWrapper() { }
 
 /**
 * Slot to init the tracker.
@@ -61,7 +64,8 @@ void usTracker2DQtWrapper::initTracker(vpRectOriented rect)
   if (m_firstFrameArrived) {
     m_tracker.init(m_firstImage, rect);
     m_isInitialized = true;
-  } else {
+  }
+  else {
     throw(vpException(vpException::fatalError, "Cannot init tracker: no frames sent to usTracker2DQtWrapper."));
   }
 }
@@ -75,7 +79,8 @@ void usTracker2DQtWrapper::updateImage(vpImage<unsigned char> image)
   if (m_isInitialized) {
     m_tracker.update(image);
     emit(newTrackedRectangle(m_tracker.getTarget()));
-  } else {
+  }
+  else {
     m_firstImage = image;
     m_firstFrameArrived = true;
   }
@@ -90,7 +95,8 @@ void usTracker2DQtWrapper::updateImage(usImagePreScan2D<unsigned char> image)
   if (m_isInitialized) {
     m_tracker.update(image);
     emit(newTrackedRectangle(m_tracker.getTarget()));
-  } else {
+  }
+  else {
     m_firstImage = image;
     m_firstFrameArrived = true;
   }
@@ -105,7 +111,8 @@ void usTracker2DQtWrapper::updateImage(usImagePostScan2D<unsigned char> image)
   if (m_isInitialized) {
     m_tracker.update(image);
     emit(newTrackedRectangle(m_tracker.getTarget()));
-  } else {
+  }
+  else {
     m_firstImage = image;
     m_firstFrameArrived = true;
   }

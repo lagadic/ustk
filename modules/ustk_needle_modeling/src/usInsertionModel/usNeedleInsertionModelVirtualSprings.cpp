@@ -55,24 +55,28 @@
 #include <visp3/core/vpTranslationVector.h>
 #include <visp3/gui/vpDisplayX.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 usNeedleInsertionModelVirtualSprings::usNeedleInsertionModelVirtualSprings()
   : m_needle(),
 
-    m_tipForce(0), m_tipMoment(0), m_cutAngle(0), m_bevelLength(0.001),
+  m_tipForce(0), m_tipMoment(0), m_cutAngle(0), m_bevelLength(0.001),
 
-    m_defaultSpringStiffness(100), m_stiffnessPerUnitLength(25000),
-    m_tissueSurface(vpColVector(3, 0), vpColVector(3, 0)),
+  m_defaultSpringStiffness(100), m_stiffnessPerUnitLength(25000),
+  m_tissueSurface(vpColVector(3, 0), vpColVector(3, 0)),
 
-    m_interSpringDistance(0.005), m_interTipSpringDistance(0.0005),
+  m_interSpringDistance(0.005), m_interTipSpringDistance(0.0005),
 
-    m_IsStateConsistent(false),
+  m_IsStateConsistent(false),
 
-    m_LastSegmentLengthComputed(true),
+  m_LastSegmentLengthComputed(true),
 
-    m_insertionBehavior(InsertionType::NaturalBehavior), m_IsInserting(false), m_AllowSpringAddition(true),
-    m_AllowSpringRemoval(true), m_AutomaticSpringAddition(true),
+  m_insertionBehavior(InsertionType::NaturalBehavior), m_IsInserting(false), m_AllowSpringAddition(true),
+  m_AllowSpringRemoval(true), m_AutomaticSpringAddition(true),
 
-    m_tipSpringsIndex(0), m_nbMinTipSprings(1), m_nbMaxTipSprings(10)
+  m_tipSpringsIndex(0), m_nbMinTipSprings(1), m_nbMaxTipSprings(10)
 
 {
   // Computation of tip position
@@ -83,31 +87,30 @@ usNeedleInsertionModelVirtualSprings::usNeedleInsertionModelVirtualSprings(
     const usNeedleInsertionModelVirtualSprings &needle)
   : m_needle(needle.m_needle),
 
-    m_tipForce(needle.m_tipForce), m_tipMoment(needle.m_tipMoment), m_cutAngle(needle.m_cutAngle),
-    m_bevelLength(needle.m_bevelLength),
+  m_tipForce(needle.m_tipForce), m_tipMoment(needle.m_tipMoment), m_cutAngle(needle.m_cutAngle),
+  m_bevelLength(needle.m_bevelLength),
 
-    m_defaultSpringStiffness(needle.m_defaultSpringStiffness),
-    m_stiffnessPerUnitLength(needle.m_stiffnessPerUnitLength),
+  m_defaultSpringStiffness(needle.m_defaultSpringStiffness),
+  m_stiffnessPerUnitLength(needle.m_stiffnessPerUnitLength),
 
-    m_springs(needle.m_springs), m_inactiveAutoAddedSprings(needle.m_inactiveAutoAddedSprings),
-    m_inactiveMeasureSprings(needle.m_inactiveMeasureSprings), m_tissueSurface(needle.m_tissueSurface),
-    m_interSpringDistance(needle.m_interSpringDistance), m_interTipSpringDistance(needle.m_interTipSpringDistance),
+  m_springs(needle.m_springs), m_inactiveAutoAddedSprings(needle.m_inactiveAutoAddedSprings),
+  m_inactiveMeasureSprings(needle.m_inactiveMeasureSprings), m_tissueSurface(needle.m_tissueSurface),
+  m_interSpringDistance(needle.m_interSpringDistance), m_interTipSpringDistance(needle.m_interTipSpringDistance),
 
-    m_IsStateConsistent(needle.m_IsStateConsistent),
+  m_IsStateConsistent(needle.m_IsStateConsistent),
 
-    m_LastSegmentLengthComputed(needle.m_LastSegmentLengthComputed),
+  m_LastSegmentLengthComputed(needle.m_LastSegmentLengthComputed),
 
-    m_insertionBehavior(needle.m_insertionBehavior), m_IsInserting(needle.m_IsInserting),
-    m_AllowSpringAddition(needle.m_AllowSpringAddition), m_AllowSpringRemoval(needle.m_AllowSpringRemoval),
-    m_AutomaticSpringAddition(needle.m_AutomaticSpringAddition),
+  m_insertionBehavior(needle.m_insertionBehavior), m_IsInserting(needle.m_IsInserting),
+  m_AllowSpringAddition(needle.m_AllowSpringAddition), m_AllowSpringRemoval(needle.m_AllowSpringRemoval),
+  m_AutomaticSpringAddition(needle.m_AutomaticSpringAddition),
 
-    m_tipSpringsIndex(needle.m_tipSpringsIndex), m_nbMinTipSprings(needle.m_nbMinTipSprings),
-    m_nbMaxTipSprings(needle.m_nbMaxTipSprings)
+  m_tipSpringsIndex(needle.m_tipSpringsIndex), m_nbMinTipSprings(needle.m_nbMinTipSprings),
+  m_nbMaxTipSprings(needle.m_nbMaxTipSprings)
 
-{
-}
+{ }
 
-usNeedleInsertionModelVirtualSprings::~usNeedleInsertionModelVirtualSprings() {}
+usNeedleInsertionModelVirtualSprings::~usNeedleInsertionModelVirtualSprings() { }
 
 usNeedleInsertionModelVirtualSprings *usNeedleInsertionModelVirtualSprings::clone() const
 {
@@ -268,7 +271,8 @@ void usNeedleInsertionModelVirtualSprings::setStiffnessPerUnitLength(double K)
   if (K > 0) {
     m_stiffnessPerUnitLength = K;
     updateTipForce();
-  } else
+  }
+  else
     m_stiffnessPerUnitLength = 0;
 }
 
@@ -373,7 +377,8 @@ void usNeedleInsertionModelVirtualSprings::setNbMinTipSprings(int nb)
       m_nbMinTipSprings = nb;
     else
       m_nbMinTipSprings = m_nbMaxTipSprings;
-  } else
+  }
+  else
     m_nbMinTipSprings = 1;
 }
 
@@ -389,7 +394,8 @@ void usNeedleInsertionModelVirtualSprings::setNbMaxTipSprings(int nb)
       m_nbMaxTipSprings = nb;
     else
       m_nbMaxTipSprings = m_nbMinTipSprings;
-  } else
+  }
+  else
     m_nbMaxTipSprings = 1;
 }
 
@@ -536,7 +542,7 @@ vpPoseVector usNeedleInsertionModelVirtualSprings::getBasePose() const { return 
 
 bool usNeedleInsertionModelVirtualSprings::setSpringPosition(int index, const vpColVector &P, bool update)
 {
-  if (index < 0 || index > (int)m_springs.size() - 1)
+  if (index < 0 || index >(int)m_springs.size() - 1)
     throw vpException(vpException::badValue,
                       "usNeedleInsertionModelVirtualSprings::setSpringPosition: invlaid spring index");
 
@@ -553,7 +559,7 @@ bool usNeedleInsertionModelVirtualSprings::setSpringPosition(int index, const vp
 
 bool usNeedleInsertionModelVirtualSprings::setSpringDirection(int index, const vpColVector &D, bool update)
 {
-  if (index < 0 || index > (int)m_springs.size() - 1)
+  if (index < 0 || index >(int)m_springs.size() - 1)
     throw vpException(vpException::badValue,
                       "usNeedleInsertionModelVirtualSprings::setSpringDirection: invalid spring index");
   if (D.size() != 3)
@@ -569,7 +575,7 @@ bool usNeedleInsertionModelVirtualSprings::setSpringDirection(int index, const v
 
 void usNeedleInsertionModelVirtualSprings::setSpringStiffness(int index, double K, bool update)
 {
-  if (index < 0 || index > (int)m_springs.size() - 1)
+  if (index < 0 || index >(int)m_springs.size() - 1)
     throw vpException(vpException::badValue,
                       "usNeedleInsertionModelVirtualSprings::setSpringStiffness: bad spring index");
   if (K <= 0)
@@ -602,7 +608,7 @@ void usNeedleInsertionModelVirtualSprings::setSurfaceAtTip()
   vpColVector p = m_needle.accessLastSegment().getEndPoint();
   vpColVector d = m_needle.accessLastSegment().getEndTangent();
   p += m_bevelLength * d +
-       m_needle.getOuterDiameter() / 2 * vpColVector(vpHomogeneousMatrix(m_needle.getTipPose()).getCol(1), 0, 3);
+    m_needle.getOuterDiameter() / 2 * vpColVector(vpHomogeneousMatrix(m_needle.getTipPose()).getCol(1), 0, 3);
   m_tissueSurface.setPosition(p);
   m_tissueSurface.setDirection(d);
 }
@@ -640,7 +646,8 @@ void usNeedleInsertionModelVirtualSprings::addInsertionPointOnSegmentHard(int se
     usVirtualSpring spg(m_needle.accessLastSegment().getStartPoint() + l * bevelDirection,
                         m_needle.accessSegment(segment).getEndTangent(), m_defaultSpringStiffness);
     m_springs.insert(m_springs.begin() + segment, spg);
-  } else {
+  }
+  else {
     usVirtualSpring spg(m_needle.accessSegment(segment).getEndPoint(), m_needle.accessSegment(segment).getEndTangent(),
                         m_defaultSpringStiffness);
     m_springs.insert(m_springs.begin() + segment, spg);
@@ -672,11 +679,12 @@ void usNeedleInsertionModelVirtualSprings::addInsertionPointOnSegment(int segmen
     if (segment == 0) // if first spring added
     {
       K = m_stiffnessPerUnitLength * l2;
-    } else {
+    }
+    else {
       double L1 =
-          m_needle.accessSegment(segment - 1).getParametricLength(); // length of tissue before current last spring
+        m_needle.accessSegment(segment - 1).getParametricLength(); // length of tissue before current last spring
       double L = m_needle.accessLastSegment().getParametricLength() +
-                 m_bevelLength; // length of tissue after current last spring
+        m_bevelLength; // length of tissue after current last spring
       if (segment == 1)
         L1 = 0;
       K = m_springs.at(segment - 1).getStiffness() * (L - s / 2) / (L1 / 2 + L);
@@ -685,7 +693,8 @@ void usNeedleInsertionModelVirtualSprings::addInsertionPointOnSegment(int segmen
 
     this->addInsertionPointOnSegmentHard(segment, s);
     m_springs.back().setStiffness(K);
-  } else // spring added on intermediate segment => interpolation
+  }
+  else // spring added on intermediate segment => interpolation
   {
     double c = s / Lseg;
     vpColVector x0 = m_springs.at(segment - 1).getPosition();
@@ -734,7 +743,8 @@ int usNeedleInsertionModelVirtualSprings::addInsertionPoint(usVirtualSpring spg)
   double s = -1;
   if (usGeometryTools::DoesSegmentCrossPlane(m_needle.accessSegment(segment), spg)) {
     usGeometryTools::getPlaneCurveCrossingPoint(m_needle.accessSegment(segment), spg, -1, &s);
-  } else
+  }
+  else
     s = Lseg / 2;
 
   double l2 = Lseg - s;
@@ -745,18 +755,20 @@ int usNeedleInsertionModelVirtualSprings::addInsertionPoint(usVirtualSpring spg)
     if (segment == 0) // if first spring added
     {
       K = 2 * m_stiffnessPerUnitLength * (l2 + m_bevelLength);
-    } else {
+    }
+    else {
       double L1 =
-          m_needle.accessSegment(segment - 1).getParametricLength(); // length of tissue before current last spring
+        m_needle.accessSegment(segment - 1).getParametricLength(); // length of tissue before current last spring
       double L = m_needle.accessLastSegment().getParametricLength() +
-                 m_bevelLength; // length of tissue after current last spring
+        m_bevelLength; // length of tissue after current last spring
       if (segment == 1)
         L1 = 0;
       K = m_springs.at(segment - 1).getStiffness() * (L - s / 2) / (L1 / 2 + L);
       m_springs.at(segment - 1).addStiffness(-K);
     }
     spg.setStiffness(K);
-  } else // spring added on intermediate segment => interpolation
+  }
+  else // spring added on intermediate segment => interpolation
   {
     double L1 = m_needle.accessSegment(segment - 1).getParametricLength();
     if (segment - 1 == 0)
@@ -790,7 +802,7 @@ int usNeedleInsertionModelVirtualSprings::addInsertionPoint(const vpColVector &p
 
   if (index == 0 && m_springs.size() != 0) {
     std::cout << "Warning in usNeedleInsertionModelVirtualSprings::addInsertionPoint: add spring on first segment"
-              << std::endl;
+      << std::endl;
   }
 
   usVirtualSpring spg(p, d, 0);
@@ -802,19 +814,22 @@ int usNeedleInsertionModelVirtualSprings::addInsertionPoint(const vpColVector &p
       !usGeometryTools::IsPointInFrontOfPlane(m_needle.accessSegment(index).getEndPoint(), spg)) {
     spg.setDirection(-spg.getDirection());
     s = Lseg / 2;
-  } else if (usGeometryTools::IsPointInFrontOfPlane(m_needle.accessSegment(index).getStartPoint(), spg) &&
-             usGeometryTools::IsPointInFrontOfPlane(m_needle.accessSegment(index).getEndPoint(), spg)) {
+  }
+  else if (usGeometryTools::IsPointInFrontOfPlane(m_needle.accessSegment(index).getStartPoint(), spg) &&
+          usGeometryTools::IsPointInFrontOfPlane(m_needle.accessSegment(index).getEndPoint(), spg)) {
     s = m_interTipSpringDistance;
 
     vpColVector P = m_needle.accessSegment(index).getPoint(s);
     spg.setDirection(vpColVector::crossProd(P - p, vpColVector::crossProd(d, P - p)).normalize());
-  } else if (!usGeometryTools::IsPointInFrontOfPlane(m_needle.accessSegment(index).getStartPoint(), spg) &&
-             !usGeometryTools::IsPointInFrontOfPlane(m_needle.accessSegment(index).getEndPoint(), spg)) {
+  }
+  else if (!usGeometryTools::IsPointInFrontOfPlane(m_needle.accessSegment(index).getStartPoint(), spg) &&
+          !usGeometryTools::IsPointInFrontOfPlane(m_needle.accessSegment(index).getEndPoint(), spg)) {
     s = Lseg - m_interTipSpringDistance;
 
     vpColVector P = m_needle.accessSegment(index).getPoint(s);
     spg.setDirection(vpColVector::crossProd(P - p, vpColVector::crossProd(d, P - p)).normalize());
-  } else {
+  }
+  else {
     s = Lseg / 2;
   }
 
@@ -828,18 +843,20 @@ int usNeedleInsertionModelVirtualSprings::addInsertionPoint(const vpColVector &p
     if (segment == 0) // if first spring added
     {
       K = 2 * m_stiffnessPerUnitLength * (l2 + m_bevelLength);
-    } else {
+    }
+    else {
       double L1 =
-          m_needle.accessSegment(segment - 1).getParametricLength(); // length of tissue before current last spring
+        m_needle.accessSegment(segment - 1).getParametricLength(); // length of tissue before current last spring
       double L = m_needle.accessLastSegment().getParametricLength() +
-                 m_bevelLength; // length of tissue after current last spring
+        m_bevelLength; // length of tissue after current last spring
       if (segment == 1)
         L1 = 0;
       double K = m_springs.at(segment - 1).getStiffness() * (L - s / 2) / (L1 / 2 + L);
       m_springs.at(segment - 1).addStiffness(-K);
     }
     spg.setStiffness(K);
-  } else // spring added on intermediate segment => interpolation
+  }
+  else // spring added on intermediate segment => interpolation
   {
     double L1 = m_needle.accessSegment(segment - 1).getParametricLength();
     if (segment - 1 == 0)
@@ -928,16 +945,16 @@ void usNeedleInsertionModelVirtualSprings::removeInsertionPoints(int first, int 
       this->fusionSprings(first - 1, last);
 
     double L1 = m_needle.accessSegment(m_needle.getNbSegments() - 3)
-                    .getParametricLength(); // length of tissue before last spring that will remain
+      .getParametricLength(); // length of tissue before last spring that will remain
     double L = m_needle.accessSegment(m_needle.getNbSegments() - 2)
-                   .getParametricLength(); // length of tissue before current last spring
+      .getParametricLength(); // length of tissue before current last spring
     double L2 = m_needle.accessLastSegment().getParametricLength() +
-                m_bevelLength; // length of tissue after current last spring
+      m_bevelLength; // length of tissue after current last spring
     if (m_springs.size() == 2)
       L1 = 0;
     m_springs.at(m_springs.size() - 2)
-        .setStiffness((m_springs.at(m_springs.size() - 2).getStiffness() + m_springs.back().getStiffness()) *
-                      (L1 / 2 + L2) / (L1 / 2 + L + L2));
+      .setStiffness((m_springs.at(m_springs.size() - 2).getStiffness() + m_springs.back().getStiffness()) *
+                    (L1 / 2 + L2) / (L1 / 2 + L + L2));
 
     if (!m_springs.back().IsPositionUpdateAllowed())
       m_inactiveMeasureSprings.push_back(m_springs.back());
@@ -989,7 +1006,8 @@ void usNeedleInsertionModelVirtualSprings::fusionSprings(int firstSpring, int la
     if (!m_springs.at(firstSpring + 1).IsPositionUpdateAllowed())
       m_inactiveMeasureSprings.push_back(m_springs.at(firstSpring + 1));
     this->removeInsertionPointsHard(firstSpring + 1);
-  } else {
+  }
+  else {
     int middle = (firstSpring + lastSpring) / 2;
     this->fusionSprings(middle, lastSpring);
     this->fusionSprings(firstSpring, middle + 1);
@@ -1028,7 +1046,8 @@ void usNeedleInsertionModelVirtualSprings::updateCutAngle()
     double vect = vpColVector::crossProd(z, ztip).frobeniusNorm();
     double dot = vpColVector::dotProd(z, ztip);
     m_cutAngle = 180 / M_PI * atan2(vect, dot);
-  } else {
+  }
+  else {
     m_cutAngle = 0;
   }
   // m_cutAngle = 0;
@@ -1043,12 +1062,12 @@ void usNeedleInsertionModelVirtualSprings::updateTipForce()
   double b = m_needle.getOuterDiameter() / sin(bevel_rad);
 
   m_tipForce = 0.5 * m_stiffnessPerUnitLength *
-               (a * a * tan(cut_rad) / 2 - b * b * cos(bevel_rad) * tan(bevel_rad - cut_rad) / 2);
+    (a * a * tan(cut_rad) / 2 - b * b * cos(bevel_rad) * tan(bevel_rad - cut_rad) / 2);
 
   m_tipMoment = 0.5 * m_stiffnessPerUnitLength *
-                (-a * a * a * tan(cut_rad) / 6 +
-                 b * b * tan(bevel_rad - cut_rad) / 2 *
-                     (a * cos(bevel_rad) / 3 - m_needle.getOuterDiameter() * sin(bevel_rad) / 6));
+    (-a * a * a * tan(cut_rad) / 6 +
+     b * b * tan(bevel_rad - cut_rad) / 2 *
+         (a * cos(bevel_rad) / 3 - m_needle.getOuterDiameter() * sin(bevel_rad) / 6));
 }
 
 void usNeedleInsertionModelVirtualSprings::updateInsertionDirections()
@@ -1202,7 +1221,8 @@ void usNeedleInsertionModelVirtualSprings::solveSegmentsParametersSparseEigen()
       z[1] = 0;
       z[2] = 1;
       n1m_n = vpColVector::crossProd(m_springs.at(n).getDirection(), z);
-    } else {
+    }
+    else {
       vpColVector y(3);
       y[0] = 0;
       y[1] = 1;
@@ -1291,9 +1311,9 @@ void usNeedleInsertionModelVirtualSprings::solveSegmentsParametersSparseEigen()
 
   for (int i = 0; i < m_needle.getNbSegments(); i++) {
     vpColVector vect =
-        vpColVector::crossProd(m_needle.accessSegment(i).getStartTangent(), m_needle.accessSegment(i).getEndTangent());
+      vpColVector::crossProd(m_needle.accessSegment(i).getStartTangent(), m_needle.accessSegment(i).getEndTangent());
     double dot =
-        vpColVector::dotProd(m_needle.accessSegment(i).getStartTangent(), m_needle.accessSegment(i).getEndTangent());
+      vpColVector::dotProd(m_needle.accessSegment(i).getStartTangent(), m_needle.accessSegment(i).getEndTangent());
     double theta = atan2(vect.frobeniusNorm(), dot);
     vect.normalize();
     vect = theta * vect;
@@ -1460,7 +1480,8 @@ void usNeedleInsertionModelVirtualSprings::solveSegmentsParametersOpenCV()
       z[1] = 0;
       z[2] = 1;
       n1m_n = vpColVector::crossProd(m_springs.at(n).getDirection(), z);
-    } else {
+    }
+    else {
       vpColVector y(3);
       y[0] = 0;
       y[1] = 1;
@@ -1543,9 +1564,9 @@ void usNeedleInsertionModelVirtualSprings::solveSegmentsParametersOpenCV()
 
   for (int i = 0; i < m_needle.getNbSegments(); i++) {
     vpColVector vect =
-        vpColVector::crossProd(m_needle.accessSegment(i).getStartTangent(), m_needle.accessSegment(i).getEndTangent());
+      vpColVector::crossProd(m_needle.accessSegment(i).getStartTangent(), m_needle.accessSegment(i).getEndTangent());
     double dot =
-        vpColVector::dotProd(m_needle.accessSegment(i).getStartTangent(), m_needle.accessSegment(i).getEndTangent());
+      vpColVector::dotProd(m_needle.accessSegment(i).getStartTangent(), m_needle.accessSegment(i).getEndTangent());
     double theta = atan2(vect.frobeniusNorm(), dot);
     vect.normalize();
     vect = theta * vect;
@@ -1710,7 +1731,8 @@ void usNeedleInsertionModelVirtualSprings::solveSegmentsParametersViSP()
       z[1] = 0;
       z[2] = 1;
       n1m_n = vpColVector::crossProd(m_springs.at(n).getDirection(), z);
-    } else {
+    }
+    else {
       vpColVector y(3);
       y[0] = 0;
       y[1] = 1;
@@ -1796,9 +1818,9 @@ void usNeedleInsertionModelVirtualSprings::solveSegmentsParametersViSP()
 
   for (int i = 0; i < m_needle.getNbSegments(); i++) {
     vpColVector vect =
-        vpColVector::crossProd(m_needle.accessSegment(i).getStartTangent(), m_needle.accessSegment(i).getEndTangent());
+      vpColVector::crossProd(m_needle.accessSegment(i).getStartTangent(), m_needle.accessSegment(i).getEndTangent());
     double dot =
-        vpColVector::dotProd(m_needle.accessSegment(i).getStartTangent(), m_needle.accessSegment(i).getEndTangent());
+      vpColVector::dotProd(m_needle.accessSegment(i).getStartTangent(), m_needle.accessSegment(i).getEndTangent());
     double theta = atan2(vect.frobeniusNorm(), dot);
     vect.normalize();
     vect = theta * vect;
@@ -1859,12 +1881,14 @@ bool usNeedleInsertionModelVirtualSprings::addRemoveSprings()
         this->addInsertionPointOnSegment(m_needle.getNbSegments() - 1, s);
         m_LastSegmentLengthComputed = true;
         return true;
-      } else {
+      }
+      else {
         m_needle.accessLastSegment().setParametricLength(m_needle.getFullLength());
         m_LastSegmentLengthComputed = true;
         return false;
       }
-    } else {
+    }
+    else {
       m_needle.accessLastSegment().setParametricLength(m_needle.getFullLength());
       m_LastSegmentLengthComputed = true;
       return false;
@@ -1889,7 +1913,7 @@ bool usNeedleInsertionModelVirtualSprings::addRemoveSprings()
     // if the needle is still inserted
     if (segment - 1 > 0) {
       double lastSegmentLength =
-          m_needle.getFullLength() - (totalLength - m_needle.accessSegment(segment - 1).getParametricLength());
+        m_needle.getFullLength() - (totalLength - m_needle.accessSegment(segment - 1).getParametricLength());
       int lastValidSpringIndex = segment - 2;
 
       if (m_AutomaticSpringAddition) {
@@ -1910,10 +1934,12 @@ bool usNeedleInsertionModelVirtualSprings::addRemoveSprings()
           if (l > 1.5 * m_interTipSpringDistance) {
             this->addInsertionPointOnSegment(m_tipSpringsIndex, l - m_interTipSpringDistance);
             lastValidSpringIndex++;
-          } else
+          }
+          else
             m_tipSpringsIndex--;
         }
-      } else
+      }
+      else
         m_tipSpringsIndex = lastValidSpringIndex;
 
       // Remove all springs where the needle is not anymore
@@ -1935,7 +1961,7 @@ bool usNeedleInsertionModelVirtualSprings::addRemoveSprings()
     // Keep spring if it leads to a segment that is too long or if it is a measure spring and increase tip spring index
     // instead
     if ((m_tipSpringsIndex == 0) || (m_needle.accessSegment(m_tipSpringsIndex).getParametricLength() +
-                                         m_needle.accessSegment(m_tipSpringsIndex + 1).getParametricLength() >=
+                                     m_needle.accessSegment(m_tipSpringsIndex + 1).getParametricLength() >=
                                      m_interSpringDistance) ||
         (!m_springs.at(m_tipSpringsIndex).IsPositionUpdateAllowed())) {
       // this->fusionSprings(m_tipSpringsIndex, m_tipSpringsIndex+2);
@@ -2006,8 +2032,8 @@ void usNeedleInsertionModelVirtualSprings::addMeasureSpring(const vpColVector &p
   if (m_tissueSurface.getDirection().frobeniusNorm() != 0 &&
       !usGeometryTools::IsPointInFrontOfPlane(p, m_tissueSurface)) {
     std::cerr
-        << "Warning in usNeedleInsertionModelVirtualSprings::addMeasureSpring: cannot add spring outside of tissue"
-        << std::endl;
+      << "Warning in usNeedleInsertionModelVirtualSprings::addMeasureSpring: cannot add spring outside of tissue"
+      << std::endl;
     return;
   }
 
@@ -2051,7 +2077,8 @@ bool usNeedleInsertionModelVirtualSprings::updateState()
     // Removal
     else if (insertionStep < -1e-5 && m_IsInserting)
       m_IsInserting = false;
-  } else
+  }
+  else
     m_IsInserting = false;
 
   int i = 0;

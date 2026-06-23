@@ -59,7 +59,7 @@
  * @brief Input/output operations between ultrasound image settings and the associated xml files.
  * @ingroup module_ustk_core
  */
-class VISP_EXPORT usImageSettingsXmlParser : public vpXmlParser
+class VISP_EXPORT usImageSettingsXmlParser : public VISP_NAMESPACE_ADDRESSING vpXmlParser
 {
 public:
   usImageSettingsXmlParser();

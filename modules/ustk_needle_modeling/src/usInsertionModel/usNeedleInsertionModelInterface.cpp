@@ -37,6 +37,10 @@
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpExponentialMap.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 bool usNeedleInsertionModelInterface::setBasePose(double tx, double ty, double tz, double thetax, double thetay,
                                                   double thetaz)
 {

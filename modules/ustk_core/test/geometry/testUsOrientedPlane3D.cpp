@@ -42,6 +42,10 @@
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpMatrix.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 int main()
 {
   std::cout << "Start testUsOrientedPlane3D" << std::endl;

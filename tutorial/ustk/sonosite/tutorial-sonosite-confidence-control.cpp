@@ -19,6 +19,10 @@
 
 #if defined(VISP_HAVE_V4L2) && defined(VISP_HAVE_PTHREAD) && defined(VISP_HAVE_VIPER850)
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 // Shared vars
 typedef enum { capture_waiting, capture_started, capture_stopped } t_CaptureState;
 t_CaptureState s_capture_state = capture_waiting;
@@ -218,7 +222,8 @@ vpThread::Return displayFunction(vpThread::Args args)
       vpDisplay::flush(preScan_);
       vpDisplay::flush(confidencePostScan_);
       vpDisplay::flush(confidencePreScan_);
-    } else {
+    }
+    else {
       vpTime::wait(2); // Sleep 2ms
     }
   } while (capture_state_ != capture_stopped);

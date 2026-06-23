@@ -35,6 +35,7 @@
 
 #include <vector>
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpMatrix.h>
@@ -137,52 +138,52 @@ public:
   /**
    * Set the curve polynomial coefficients.
    */
-  void setPolynomialCoefficients(const vpMatrix &polynomialCoefficients);
+  void setPolynomialCoefficients(const VISP_NAMESPACE_ADDRESSING vpMatrix &polynomialCoefficients);
 
   /**
    * Get the polynomial coefficients.
    */
-  vpMatrix getPolynomialCoefficients() const;
+  VISP_NAMESPACE_ADDRESSING vpMatrix getPolynomialCoefficients() const;
 
   /**
    * Get the polynomial curve point at a given parametric value.
    */
-  vpColVector getPoint(double parameter) const;
+  VISP_NAMESPACE_ADDRESSING vpColVector getPoint(double parameter) const;
 
   /**
    * Get the polynomial curve points at given parametric values.
    */
-  vpMatrix getPoints(const vpColVector &parameters) const;
+  VISP_NAMESPACE_ADDRESSING vpMatrix getPoints(const VISP_NAMESPACE_ADDRESSING vpColVector &parameters) const;
 
   /**
    * Get the starting extremity of the polynomial curve.
    */
-  vpColVector getStartPoint() const;
+  VISP_NAMESPACE_ADDRESSING vpColVector getStartPoint() const;
 
   /**
    * Get the ending extremity of the polynomial curve.
    */
-  vpColVector getEndPoint() const;
+  VISP_NAMESPACE_ADDRESSING vpColVector getEndPoint() const;
 
   /**
    * Get the tangent vector at a given parametric value.
    */
-  vpColVector getTangent(double parameter) const;
+  VISP_NAMESPACE_ADDRESSING vpColVector getTangent(double parameter) const;
 
   /**
    * Get the tangent vector at the starting extremity of the polynomial curve.
    */
-  vpColVector getStartTangent() const;
+  VISP_NAMESPACE_ADDRESSING vpColVector getStartTangent() const;
 
   /**
    * Get the tangent vector at the starting extremity of the polynomial curve.
    */
-  vpColVector getEndTangent() const;
+  VISP_NAMESPACE_ADDRESSING vpColVector getEndTangent() const;
 
   /**
    * Get the derivative of the polynmial curve at a given parametric value.
    */
-  vpColVector getDerivative(double parameter, unsigned int order) const;
+  VISP_NAMESPACE_ADDRESSING vpColVector getDerivative(double parameter, unsigned int order) const;
 
   /**
    * Define the polynomial curve to fit as best as possible a set of control points at given parametric values.
@@ -192,7 +193,7 @@ public:
    * @param order The order of the resulting polynomial curve (keep the current order of the curve if given value is <1
    * (default))
    */
-  void defineFromPoints(const std::vector<vpColVector> &points, const std::vector<double> &param,
+  void defineFromPoints(const std::vector<VISP_NAMESPACE_ADDRESSING vpColVector> &points, const std::vector<double> &param,
                         unsigned int order = 0);
 
   /**
@@ -203,7 +204,7 @@ public:
    * @param order The order of the resulting polynomial curve (keep the current order of the curve if given value is <1
    * (default))
    */
-  void defineFromPoints(const vpMatrix points, const vpColVector &param, unsigned int order = 0);
+  void defineFromPoints(const VISP_NAMESPACE_ADDRESSING vpMatrix points, const VISP_NAMESPACE_ADDRESSING vpColVector &param, unsigned int order = 0);
 
   /**
    * Define the polynomial curve to fit as best as possible a set of control points.
@@ -213,7 +214,7 @@ public:
    * @param order The order of the resulting polynomial curve (keep the current order of the curve if given value is <1
    * (default))
    */
-  void defineFromPointsAuto(const std::vector<vpColVector> &points, unsigned int order = 0);
+  void defineFromPointsAuto(const std::vector<VISP_NAMESPACE_ADDRESSING vpColVector> &points, unsigned int order = 0);
 
   /**
    * Define the polynomial curve to fit as best as possible a set of control points.
@@ -223,7 +224,7 @@ public:
    * @param order The order of the resulting polynomial curve (keep the current order of the curve if given value is <1
    * (default))
    */
-  void defineFromPointsAuto(const vpMatrix &points, unsigned int order = 0);
+  void defineFromPointsAuto(const VISP_NAMESPACE_ADDRESSING vpMatrix &points, unsigned int order = 0);
 
   /**
    * Define the polynomial curve to fit as best as possible a set of weighted control points at given parametric values.
@@ -235,7 +236,7 @@ public:
    * @param order The order of the resulting polynomial curve (keep the current order of the curve if given value is <1
    * (default))
    */
-  void defineFromPointsAuto(const std::vector<vpColVector> &points, const vpColVector &direction,
+  void defineFromPointsAuto(const std::vector<VISP_NAMESPACE_ADDRESSING vpColVector> &points, const VISP_NAMESPACE_ADDRESSING vpColVector &direction,
                             unsigned int order = 0);
 
   /**
@@ -248,7 +249,7 @@ public:
    * @param order The order of the resulting polynomial curve (keep the current order of the curve if given value is <1
    * (default))
    */
-  void defineFromPointsAuto(const vpMatrix &points, const vpColVector &direction, unsigned int order = 0);
+  void defineFromPointsAuto(const VISP_NAMESPACE_ADDRESSING vpMatrix &points, const VISP_NAMESPACE_ADDRESSING vpColVector &direction, unsigned int order = 0);
 
   /**
    * Define the polynomial curve to fit as best as possible a set of weighted control points at given parametric values.
@@ -259,7 +260,7 @@ public:
    * @param order The order of the resulting polynomial curve (keep the current order of the curve if given value is <1
    * (default))
    */
-  void defineFromWeightedPoints(const std::vector<vpColVector> &points, const std::vector<double> &param,
+  void defineFromWeightedPoints(const std::vector<VISP_NAMESPACE_ADDRESSING vpColVector> &points, const std::vector<double> &param,
                                 const std::vector<double> &weights, unsigned int order = 0);
 
   /**
@@ -271,7 +272,7 @@ public:
    * @param order The order of the resulting polynomial curve (keep the current order of the curve if given value is <1
    * (default))
    */
-  void defineFromWeightedPoints(const vpMatrix &points, const vpColVector &param, const vpColVector &weights,
+  void defineFromWeightedPoints(const VISP_NAMESPACE_ADDRESSING vpMatrix &points, const VISP_NAMESPACE_ADDRESSING vpColVector &param, const VISP_NAMESPACE_ADDRESSING vpColVector &weights,
                                 unsigned int order = 0);
 
   /**
@@ -283,7 +284,7 @@ public:
    * @param order The order of the resulting polynomial curve (keep the current order of the curve if given value is <1
    * (default))
    */
-  void defineFromWeightedPointsAuto(const std::vector<vpColVector> &points, const std::vector<double> &weights,
+  void defineFromWeightedPointsAuto(const std::vector<VISP_NAMESPACE_ADDRESSING vpColVector> &points, const std::vector<double> &weights,
                                     unsigned int order = 0);
 
   /**
@@ -295,7 +296,7 @@ public:
    * @param order The order of the resulting polynomial curve (keep the current order of the curve if given value is <1
    * (default))
    */
-  void defineFromWeightedPointsAuto(const vpMatrix &points, const vpColVector &weights, unsigned int order = 0);
+  void defineFromWeightedPointsAuto(const VISP_NAMESPACE_ADDRESSING vpMatrix &points, const VISP_NAMESPACE_ADDRESSING vpColVector &weights, unsigned int order = 0);
 
   /**
    * Define the polynomial curve to fit as best as possible a set of control points at given parametric values.
@@ -308,8 +309,8 @@ public:
    * @param order The order of the resulting polynomial curve (keep the current order of the curve if given value is <1
    * (default))
    */
-  void defineFromWeightedPointsAuto(const std::vector<vpColVector> &points, const std::vector<double> &weights,
-                                    const vpColVector &direction, unsigned int order = 0);
+  void defineFromWeightedPointsAuto(const std::vector<VISP_NAMESPACE_ADDRESSING vpColVector> &points, const std::vector<double> &weights,
+                                    const VISP_NAMESPACE_ADDRESSING vpColVector &direction, unsigned int order = 0);
 
   /**
    * Define the polynomial curve to fit as best as possible a set of control points at given parametric values.
@@ -322,7 +323,7 @@ public:
    * @param order The order of the resulting polynomial curve (keep the current order of the curve if given value is <1
    * (default))
    */
-  void defineFromWeightedPointsAuto(const vpMatrix &points, const vpColVector &weights, const vpColVector &direction,
+  void defineFromWeightedPointsAuto(const VISP_NAMESPACE_ADDRESSING vpMatrix &points, const VISP_NAMESPACE_ADDRESSING vpColVector &weights, const VISP_NAMESPACE_ADDRESSING vpColVector &direction,
                                     unsigned int order = 0);
 
   /**
@@ -340,7 +341,7 @@ public:
    * @param center3D Center of the circle fitting the portion of the curve.
    * @param direction3D Normal of the circle fitting the portion of the curve.
    */
-  double getCurvatureFromShape(double start, double end, vpColVector &center3D, vpColVector &direction3D) const;
+  double getCurvatureFromShape(double start, double end, VISP_NAMESPACE_ADDRESSING vpColVector &center3D, VISP_NAMESPACE_ADDRESSING vpColVector &direction3D) const;
 
   /**
    * Get the mean deviation of the polynomial with respect to the straight axis between the two extremities.
@@ -355,7 +356,7 @@ public:
    *
    * @param controlPoints Reference to the desired control points.
    */
-  void setControlPoints(const vpMatrix &controlPoints);
+  void setControlPoints(const VISP_NAMESPACE_ADDRESSING vpMatrix &controlPoints);
 
   /**
    * Set the control points.
@@ -365,12 +366,12 @@ public:
   /**
    * Get the control points. (to remove)
    */
-  vpMatrix getControlPoints() const;
+  VISP_NAMESPACE_ADDRESSING vpMatrix getControlPoints() const;
 
   /**
    * Get the rendering points. (to remove)
    */
-  vpMatrix getRenderingPoints() const;
+  VISP_NAMESPACE_ADDRESSING vpMatrix getRenderingPoints() const;
 
   /**
    * Compute the distance between two curves. (to remove)
@@ -406,7 +407,7 @@ public:
   /**
    * Apply an homogeneous transformation to the polynomial curve.
    */
-  void move(const vpHomogeneousMatrix &H);
+  void move(const VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &H);
 
   /**
    * Apply an homogeneous transformation to the polynomial curve.
@@ -431,7 +432,7 @@ protected:
   unsigned int m_order;              // Order of the polynomial curve
   double m_startParameter;           // starting value of the parametric variable
   double m_endParameter;             // ending value of the parametric variable
-  vpMatrix m_polynomialCoefficients; // coefficients of the polynomial curve
+  VISP_NAMESPACE_ADDRESSING vpMatrix m_polynomialCoefficients; // coefficients of the polynomial curve
 };
 
 VISP_EXPORT std::ostream &operator<<(std::ostream &s, const usPolynomialCurve3D &seg);

@@ -35,6 +35,7 @@
 
 #include <limits>
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpColor.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpImage.h>
@@ -48,55 +49,55 @@ namespace usGeometryDisplayTools
 {
 
 template <class ImageDataType>
-VISP_EXPORT void displayFrame(const vpImage<ImageDataType> &I, const vpHomogeneousMatrix &imageMFrame,
+VISP_EXPORT void displayFrame(const VISP_NAMESPACE_ADDRESSING vpImage<ImageDataType> &I, const VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &imageMFrame,
                               double Xscale = 3000, double Yscale = 3000);
 
 //! Display usOrientedPlane3D
 
 template <class ImageDataType>
-VISP_EXPORT void display(const usOrientedPlane3D &plane, const vpImage<ImageDataType> &I,
-                         const vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000,
-                         const vpColor &color = vpColor::green);
+VISP_EXPORT void display(const usOrientedPlane3D &plane, const VISP_NAMESPACE_ADDRESSING vpImage<ImageDataType> &I,
+                         const VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000,
+                         const VISP_NAMESPACE_ADDRESSING vpColor &color = VISP_NAMESPACE_ADDRESSING vpColor::green);
 
 //! Display usPolynomialCurve2D
 
 template <class ImageDataType>
-VISP_EXPORT void display(const usPolynomialCurve2D &curve, const vpImage<ImageDataType> &I, double Xscale = 3000,
-                         double Yscale = 3000, const vpColor &color = vpColor::red, int nbRenderingLines = 10);
+VISP_EXPORT void display(const usPolynomialCurve2D &curve, const VISP_NAMESPACE_ADDRESSING  vpImage<ImageDataType> &I, double Xscale = 3000,
+                         double Yscale = 3000, const VISP_NAMESPACE_ADDRESSING vpColor &color = VISP_NAMESPACE_ADDRESSING vpColor::red, int nbRenderingLines = 10);
 
 //! Display usPolynomialCurve3D
 
 template <class ImageDataType>
-VISP_EXPORT void display(const usPolynomialCurve3D &curve, const vpImage<ImageDataType> &I,
-                         const vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000,
-                         const vpColor &color = vpColor::red, int nbRenderingLines = 10,
+VISP_EXPORT void display(const usPolynomialCurve3D &curve, const VISP_NAMESPACE_ADDRESSING vpImage<ImageDataType> &I,
+                         const VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000,
+                         const VISP_NAMESPACE_ADDRESSING vpColor &color = VISP_NAMESPACE_ADDRESSING vpColor::red, int nbRenderingLines = 10,
                          double visibilityDistance = std::numeric_limits<double>::infinity());
 template <class ImageDataType>
-VISP_EXPORT void displayCurvatureFromShape(const usPolynomialCurve3D &spline, const vpImage<ImageDataType> &I,
-                                           const vpHomogeneousMatrix &imageMworld, double Xscale = 3000,
-                                           double Yscale = 3000, const vpColor &color = vpColor::black);
+VISP_EXPORT void displayCurvatureFromShape(const usPolynomialCurve3D &spline, const VISP_NAMESPACE_ADDRESSING vpImage<ImageDataType> &I,
+                                           const VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &imageMworld, double Xscale = 3000,
+                                           double Yscale = 3000, const VISP_NAMESPACE_ADDRESSING vpColor &color = VISP_NAMESPACE_ADDRESSING vpColor::black);
 
 //! Display usBSpline3D
 
 template <class ImageDataType>
-VISP_EXPORT void displayLine(const usBSpline3D &spline, const vpImage<ImageDataType> &I,
-                             const vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000,
-                             const vpColor &color = vpColor::red, int nbRenderingLinesPerSegment = 10,
+VISP_EXPORT void displayLine(const usBSpline3D &spline, const VISP_NAMESPACE_ADDRESSING vpImage<ImageDataType> &I,
+                             const VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000,
+                             const VISP_NAMESPACE_ADDRESSING vpColor &color = VISP_NAMESPACE_ADDRESSING vpColor::red, int nbRenderingLinesPerSegment = 10,
                              double visibilityDistance = std::numeric_limits<double>::infinity());
 template <class ImageDataType>
-VISP_EXPORT void displayExtremities(const usBSpline3D &spline, const vpImage<ImageDataType> &I,
-                                    const vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000,
-                                    const vpColor &color = vpColor::red,
+VISP_EXPORT void displayExtremities(const usBSpline3D &spline, const VISP_NAMESPACE_ADDRESSING vpImage<ImageDataType> &I,
+                                    const VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000,
+                                    const VISP_NAMESPACE_ADDRESSING vpColor &color = VISP_NAMESPACE_ADDRESSING vpColor::red,
                                     double visibilityDistance = std::numeric_limits<double>::infinity());
 template <class ImageDataType>
-VISP_EXPORT void display(const usBSpline3D &spline, const vpImage<ImageDataType> &I,
-                         const vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000,
-                         const vpColor &color = vpColor::red, int nbRenderingLines = 10,
+VISP_EXPORT void display(const usBSpline3D &spline, const VISP_NAMESPACE_ADDRESSING vpImage<ImageDataType> &I,
+                         const VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000,
+                         const VISP_NAMESPACE_ADDRESSING vpColor &color = VISP_NAMESPACE_ADDRESSING vpColor::red, int nbRenderingLines = 10,
                          double visibilityDistance = std::numeric_limits<double>::infinity());
 template <class ImageDataType>
-VISP_EXPORT void displayCurvatureFromShape(const usBSpline3D &spline, const vpImage<ImageDataType> &I,
-                                           const vpHomogeneousMatrix &imageMworld, double Xscale = 3000,
-                                           double Yscale = 3000, const vpColor &color = vpColor::black);
+VISP_EXPORT void displayCurvatureFromShape(const usBSpline3D &spline, const VISP_NAMESPACE_ADDRESSING vpImage<ImageDataType> &I,
+                                           const VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &imageMworld, double Xscale = 3000,
+                                           double Yscale = 3000, const VISP_NAMESPACE_ADDRESSING vpColor &color = VISP_NAMESPACE_ADDRESSING vpColor::black);
 
 } // namespace usGeometryDisplayTools
 

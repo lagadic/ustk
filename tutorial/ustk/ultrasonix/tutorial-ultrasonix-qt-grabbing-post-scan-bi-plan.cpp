@@ -13,6 +13,10 @@
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayX.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 int main(int argc, char **argv)
 {
   // QT application
@@ -60,9 +64,9 @@ int main(int argc, char **argv)
     grabbedFrame = qtGrabber->acquire();
 
     std::cout << "MAIN THREAD received frame No : " << grabbedFrame[0]->getFrameCount() << " and "
-              << grabbedFrame[1]->getFrameCount() << std::endl;
+      << grabbedFrame[1]->getFrameCount() << std::endl;
 
-    // init display
+// init display
     if (!displayInit && grabbedFrame[0]->getHeight() != 0 && grabbedFrame[0]->getWidth() != 0) {
 #if defined(VISP_HAVE_X11)
       display1 = new vpDisplayX(*(grabbedFrame[0]));
@@ -102,7 +106,7 @@ int main(int argc, char **argv)
 int main()
 {
   std::cout << "You should intall Qt5 (with wigdets and network modules), and display X  to run this tutorial"
-            << std::endl;
+    << std::endl;
   return 0;
 }
 

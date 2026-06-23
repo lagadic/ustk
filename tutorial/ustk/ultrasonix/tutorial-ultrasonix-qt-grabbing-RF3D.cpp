@@ -13,6 +13,10 @@
 #include <visp3/ustk_core/usRFToPreScan3DConverter.h>
 #include <visp3/ustk_grabber/usNetworkGrabberRF3D.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 int main(int argc, char **argv)
 {
   // QT application
@@ -50,17 +54,17 @@ int main(int argc, char **argv)
 
   // our local grabbing loop
   do {
-      grabbedVolume = qtGrabber->acquire();
+    grabbedVolume = qtGrabber->acquire();
 
-      std::cout << "MAIN THREAD received volume No : " << grabbedVolume->getVolumeCount() << std::endl;
+    std::cout << "MAIN THREAD received volume No : " << grabbedVolume->getVolumeCount() << std::endl;
 
-      // convert RF to pre-scan to save the image
-      converter.convert(*grabbedVolume, preScanImage);
+    // convert RF to pre-scan to save the image
+    converter.convert(*grabbedVolume, preScanImage);
 
-      QString filename = QString("volume") + QString::number(grabbedVolume->getVolumeCount()) + QString(".mhd");
-      usImageIo::write(preScanImage, filename.toStdString());
+    QString filename = QString("volume") + QString::number(grabbedVolume->getVolumeCount()) + QString(".mhd");
+    usImageIo::write(preScanImage, filename.toStdString());
   } while (captureRunning);
-    
+
   qtGrabber->stopAcquisition();
 
   return 0;
@@ -70,7 +74,7 @@ int main(int argc, char **argv)
 int main()
 {
   std::cout << "You should intall Qt5 (with wigdets and network modules), FFTW and GDI or X11 to run this tutorial"
-            << std::endl;
+    << std::endl;
   return 0;
 }
 

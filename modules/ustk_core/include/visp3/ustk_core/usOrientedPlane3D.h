@@ -35,6 +35,7 @@
 
 #include <iostream>
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpPoseVector.h>
@@ -42,33 +43,33 @@
 class VISP_EXPORT usOrientedPlane3D
 {
 protected:
-  vpColVector m_direction;
-  vpPoseVector m_pose;
+  VISP_NAMESPACE_ADDRESSING vpColVector m_direction;
+  VISP_NAMESPACE_ADDRESSING vpPoseVector m_pose;
 
 public:
   //! Constructors, destructor
 
   usOrientedPlane3D();
   usOrientedPlane3D(const usOrientedPlane3D &plane);
-  usOrientedPlane3D(const vpPoseVector &pose);
-  usOrientedPlane3D(const vpColVector &p, const vpColVector &d);
+  usOrientedPlane3D(const VISP_NAMESPACE_ADDRESSING vpPoseVector &pose);
+  usOrientedPlane3D(const VISP_NAMESPACE_ADDRESSING vpColVector &p, const VISP_NAMESPACE_ADDRESSING vpColVector &d);
   virtual ~usOrientedPlane3D();
   const usOrientedPlane3D &operator=(const usOrientedPlane3D &plane);
 
   //! Parameters setters and getters
 
-  void setPose(const vpPoseVector &pose);
-  vpPoseVector getPose() const;
+  void setPose(const VISP_NAMESPACE_ADDRESSING vpPoseVector &pose);
+  VISP_NAMESPACE_ADDRESSING vpPoseVector getPose() const;
 
-  void setPosition(const vpColVector &P);
-  vpColVector getPosition() const;
+  void setPosition(const VISP_NAMESPACE_ADDRESSING vpColVector &P);
+  VISP_NAMESPACE_ADDRESSING vpColVector getPosition() const;
 
-  void setDirection(const vpColVector &D);
-  vpColVector getDirection() const;
+  void setDirection(const VISP_NAMESPACE_ADDRESSING vpColVector &D);
+  VISP_NAMESPACE_ADDRESSING vpColVector getDirection() const;
 
-  void moveInLocalFrame(const vpHomogeneousMatrix &H);
+  void moveInLocalFrame(const VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &H);
   void moveInLocalFrame(double x, double y, double z, double tx, double ty, double tz);
-  void moveInWorldFrame(const vpHomogeneousMatrix &H);
+  void moveInWorldFrame(const VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &H);
   void moveInWorldFrame(double x, double y, double z, double tx, double ty, double tz);
 
   //! Data saving

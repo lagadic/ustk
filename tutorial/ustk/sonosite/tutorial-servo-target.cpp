@@ -18,6 +18,10 @@
 
 #if defined(VISP_HAVE_V4L2) && defined(VISP_HAVE_PTHREAD) && defined(VISP_HAVE_VIPER850)
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 // Shared vars
 typedef enum { capture_waiting, capture_started, capture_stopped } t_CaptureState;
 t_CaptureState s_capture_state = capture_waiting;
@@ -140,7 +144,7 @@ vpThread::Return displayFunction(vpThread::Args args)
       std::cout << "Height resolution : " << postScan_.getHeightResolution() << std::endl;
       std::cout << "Width resolution : " << postScan_.getWidthResolution() << std::endl;
       std::cout << "Center i = " << rectangle.getCenter().get_i() << ", j = " << rectangle.getCenter().get_j()
-                << std::endl;
+        << std::endl;
       std::cout << "xtarget = " << xtarget << ", ytarget = " << ytarget << std::endl;
 
       double time = (vpTime::measureTimeMs() - startTime) / 1000.0;
@@ -192,7 +196,8 @@ vpThread::Return displayFunction(vpThread::Args args)
       // Update the display
       vpDisplay::flush(postScan_);
       firstLoopCycle = false;
-    } else {
+    }
+    else {
       vpTime::wait(2); // Sleep 2ms
     }
   } while (capture_state_ != capture_stopped);

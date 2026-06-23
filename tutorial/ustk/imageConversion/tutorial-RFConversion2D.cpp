@@ -6,6 +6,10 @@
 #include <visp3/ustk_core/usImageIo.h>
 #include <visp3/ustk_core/usRFToPostScan2DConverter.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 int main(int argc, char **argv)
 {
   std::string filename;

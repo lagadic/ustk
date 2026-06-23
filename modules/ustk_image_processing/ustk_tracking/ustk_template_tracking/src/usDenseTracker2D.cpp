@@ -37,6 +37,10 @@
 
 #include <visp3/core/vpImageFilter.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 /**
  * Constructor.
  */
@@ -45,7 +49,7 @@ usDenseTracker2D::usDenseTracker2D() { m_isInit = false; }
 /**
  * Destructor.
  */
-usDenseTracker2D::~usDenseTracker2D() {}
+usDenseTracker2D::~usDenseTracker2D() { }
 
 /**
  * @brief Initialisation of the tracker : to call to set the region to track (R) in the image (I) before starting the
@@ -82,7 +86,7 @@ void usDenseTracker2D::init(const vpImage<unsigned char> &I, const vpRectOriente
       m_LI[u * m_width + v][0] = m_gradX[u][v];
       m_LI[u * m_width + v][1] = m_gradY[u][v];
       m_LI[u * m_width + v][2] =
-          (static_cast<double>(u) - u0) * m_gradY[u][v] - (static_cast<double>(v) - v0) * m_gradX[u][v];
+        (static_cast<double>(u) - u0) * m_gradY[u][v] - (static_cast<double>(v) - v0) * m_gradX[u][v];
     }
   // pseudo inverse of interaction matrix
   m_LI_inverse = m_LI.pseudoInverse();

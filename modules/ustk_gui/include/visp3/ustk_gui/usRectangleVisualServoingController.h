@@ -68,13 +68,13 @@ signals:
   void confidenceMap(usImagePreScan2D<unsigned char>);
   void updatePobeXVelocity(int linearVelocity);
   void updateProbeZOrientation(int angularVelocity);
-  void newRectTracked(vpRectOriented rect);
+  void newRectTracked(VISP_NAMESPACE_ADDRESSING vpRectOriented rect);
   void newPostScanFrame(usImagePostScan2D<unsigned char> image);
   void trackerXError(double error);
 
 public slots:
   void updateImage(usImagePreScan2D<unsigned char> image);
-  void initTracker(vpRectOriented rect);
+  void initTracker(VISP_NAMESPACE_ADDRESSING vpRectOriented rect);
   void stopTracking();
   void activateController(bool activate);
   void activateController();

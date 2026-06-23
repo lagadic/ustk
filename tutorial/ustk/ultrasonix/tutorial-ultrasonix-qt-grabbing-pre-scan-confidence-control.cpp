@@ -17,6 +17,10 @@
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/robot/vpRobotViper850.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 // Shared vars
 
 vpMutex s_mutex_control_velocity;
@@ -242,7 +246,7 @@ vpThread::Return controlFunction(vpThread::Args args)
 
       // Compute the force/torque control law in the sensor frame (propotionnal + derivate controller)
       v_s =
-          lambdaProportionnal * sEs + lambdaDerivate * (sEs - sEs_last) / deltaTmilliseconds + lambdaIntegral * sEs_sum;
+        lambdaProportionnal * sEs + lambdaDerivate * (sEs - sEs_last) / deltaTmilliseconds + lambdaIntegral * sEs_sum;
 
       v_s[0] = 0.0;
       v_s[1] = 0.0;
@@ -285,17 +289,20 @@ int main(int argc, char **argv)
   usNetworkGrabber::usInitHeaderSent header;
   if (qApp->arguments().contains(QString("--probeID"))) {
     header.probeId = qApp->arguments().at(qApp->arguments().indexOf(QString("--probeID")) + 1).toInt();
-  } else
+  }
+  else
     header.probeId = 15; // 4DC7 id = 15 by default
 
   if (qApp->arguments().contains(QString("--slotID"))) {
     header.slotId = qApp->arguments().at(qApp->arguments().indexOf(QString("--slotID")) + 1).toInt();
-  } else
+  }
+  else
     header.slotId = 0; // top slot id = 0 by default
 
   if (qApp->arguments().contains(QString("--imagingMode"))) {
     header.imagingMode = qApp->arguments().at(qApp->arguments().indexOf(QString("--imagingMode")) + 1).toInt();
-  } else
+  }
+  else
     header.imagingMode = 0; // B-mode = 0 by default
 
   // prepare image;
@@ -400,7 +407,7 @@ int main(int argc, char **argv)
       vpTime::wait(10); // wait to simulate a local process running on last frame frabbed
     }
   } while (captureRunning);
-  
+
   qtGrabber->stopAcquisition();
 
   std::cout << "stop capture" << std::endl;
@@ -442,7 +449,7 @@ int main(int argc, char **argv)
 int main()
 {
   std::cout << "You should intall Qt5 (with wigdets and network modules), and display X to run this tutorial"
-            << std::endl;
+    << std::endl;
   return 0;
 }
 

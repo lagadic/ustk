@@ -49,68 +49,68 @@
 class VISP_EXPORT usTissueTranslationEstimatorUKF : public usUnscentedKalmanFilter
 {
 public:
-    
-    enum StateDynamicsType : int {CONSTANT_POSITION, CONSTANT_VELOCITY};
-    enum TissueTranslationType : int {LATERAL_TRANSLATIONS_ONLY, FULL_TRANSLATIONS};
-    enum MeasureType : int {NEEDLE_BODY_POINTS, TIP_POSITION_AND_DIRECTION, BASE_FORCE_TORQUE};
-    
-    double m_var_measure_p;
-    double m_var_measure_d;
-    double m_var_measure_f;
-    double m_var_measure_t;
-    double m_var_process_p;
-    double m_var_process_v;
-    StateDynamicsType m_stateDynamicsType;
-    TissueTranslationType m_tissueTranslationType;
-    MeasureType m_measureType;
-    
-    double m_propagationTime;
 
-    usNeedleInsertionModelRayleighRitzSpline m_needle;
+  enum StateDynamicsType : int { CONSTANT_POSITION, CONSTANT_VELOCITY };
+  enum TissueTranslationType : int { LATERAL_TRANSLATIONS_ONLY, FULL_TRANSLATIONS };
+  enum MeasureType : int { NEEDLE_BODY_POINTS, TIP_POSITION_AND_DIRECTION, BASE_FORCE_TORQUE };
+
+  double m_var_measure_p;
+  double m_var_measure_d;
+  double m_var_measure_f;
+  double m_var_measure_t;
+  double m_var_process_p;
+  double m_var_process_v;
+  StateDynamicsType m_stateDynamicsType;
+  TissueTranslationType m_tissueTranslationType;
+  MeasureType m_measureType;
+
+  double m_propagationTime;
+
+  usNeedleInsertionModelRayleighRitzSpline m_needle;
 
 public:
-    usTissueTranslationEstimatorUKF();
-    ~usTissueTranslationEstimatorUKF();
-    
-    double getPositionMeasureNoiseVariance() const;
-    void setPositionMeasureNoiseVariance(double sigma);
-    
-    double getTipDirectionMeasureNoiseVariance() const;
-    void setTipDirectionMeasureNoiseVariance(double sigma);
-            
-    double getForceMeasureNoiseVariance() const;
-    void setForceMeasureNoiseVariance(double sigma);
-    
-    double getTorqueMeasureNoiseVariance() const;
-    void setTorqueMeasureNoiseVariance(double sigma);
-    
-    double getTissuePositionProcessNoiseVariance() const;
-    void setTissuePositionProcessNoiseVariance(double sigma);
-    
-    double getTissueVelocityProcessNoiseVariance() const;
-    void setTissueVelocityProcessNoiseVariance(double sigma);
-    
-    StateDynamicsType getStateDynamicsType() const;
-    void setStateDynamicsType(StateDynamicsType type);
-    
-    TissueTranslationType getTissueTranslationType() const;
-    void setTissueTranslationType(TissueTranslationType type);
-    
-    MeasureType getMeasureType() const;
-    void setMeasureType(MeasureType type);
-    
-    void setPropagationTime(double time);
-    
-    void setCurrentNeedle(const usNeedleInsertionModelRayleighRitzSpline& needle);
-    void applyStateToNeedle(usNeedleInsertionModelRayleighRitzSpline& needle) const;
-    
-    bool checkConsistency(const vpColVector &measure);
-    void computeProcessNoiseCovarianceMatrix();
-    void computeMeasureNoiseCovarianceMatrix();
-    vpColVector propagateSigmaPoint(const vpColVector &sigmaPoint);
-    vpColVector computeMeasureFromSigmaPoint(const vpColVector &sigmaPoint);
-    double stateNorm(const vpColVector& state) const;
-    vpColVector measureLog(const vpColVector& measure, const vpColVector &measureCenter) const;
+  usTissueTranslationEstimatorUKF();
+  ~usTissueTranslationEstimatorUKF();
+
+  double getPositionMeasureNoiseVariance() const;
+  void setPositionMeasureNoiseVariance(double sigma);
+
+  double getTipDirectionMeasureNoiseVariance() const;
+  void setTipDirectionMeasureNoiseVariance(double sigma);
+
+  double getForceMeasureNoiseVariance() const;
+  void setForceMeasureNoiseVariance(double sigma);
+
+  double getTorqueMeasureNoiseVariance() const;
+  void setTorqueMeasureNoiseVariance(double sigma);
+
+  double getTissuePositionProcessNoiseVariance() const;
+  void setTissuePositionProcessNoiseVariance(double sigma);
+
+  double getTissueVelocityProcessNoiseVariance() const;
+  void setTissueVelocityProcessNoiseVariance(double sigma);
+
+  StateDynamicsType getStateDynamicsType() const;
+  void setStateDynamicsType(StateDynamicsType type);
+
+  TissueTranslationType getTissueTranslationType() const;
+  void setTissueTranslationType(TissueTranslationType type);
+
+  MeasureType getMeasureType() const;
+  void setMeasureType(MeasureType type);
+
+  void setPropagationTime(double time);
+
+  void setCurrentNeedle(const usNeedleInsertionModelRayleighRitzSpline &needle);
+  void applyStateToNeedle(usNeedleInsertionModelRayleighRitzSpline &needle) const;
+
+  bool checkConsistency(const VISP_NAMESPACE_ADDRESSING vpColVector &measure);
+  void computeProcessNoiseCovarianceMatrix();
+  void computeMeasureNoiseCovarianceMatrix();
+  VISP_NAMESPACE_ADDRESSING vpColVector propagateSigmaPoint(const VISP_NAMESPACE_ADDRESSING vpColVector &sigmaPoint);
+  VISP_NAMESPACE_ADDRESSING vpColVector computeMeasureFromSigmaPoint(const VISP_NAMESPACE_ADDRESSING vpColVector &sigmaPoint);
+  double stateNorm(const VISP_NAMESPACE_ADDRESSING vpColVector &state) const;
+  VISP_NAMESPACE_ADDRESSING vpColVector measureLog(const VISP_NAMESPACE_ADDRESSING vpColVector &measure, const VISP_NAMESPACE_ADDRESSING vpColVector &measureCenter) const;
 };
 
 #endif // __usTissueTranslationEstimatorUKF_h_

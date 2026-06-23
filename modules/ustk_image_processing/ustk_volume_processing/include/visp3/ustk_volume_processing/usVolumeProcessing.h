@@ -136,15 +136,15 @@ public:
 
   static usImage3D<double> generateGaussianDerivativeFilterKK(double sigma, int size);
 
-  template <class Type> static void gradient(const usImage3D<Type> &src, usImage3D<vpColVector> &dst);
+  template <class Type> static void gradient(const usImage3D<Type> &src, usImage3D<VISP_NAMESPACE_ADDRESSING vpColVector> &dst);
 
-  template <class Type> static void hessian(const usImage3D<Type> &src, usImage3D<vpMatrix> &dst);
+  template <class Type> static void hessian(const usImage3D<Type> &src, usImage3D<VISP_NAMESPACE_ADDRESSING vpMatrix> &dst);
 
   template <class Type> static Type max(const usImage3D<Type> &V);
 
   template <class Type> static Type min(const usImage3D<Type> &V);
 
-  static void norm(const usImage3D<vpColVector> &src, usImage3D<double> &dst);
+  static void norm(const usImage3D<VISP_NAMESPACE_ADDRESSING vpColVector> &src, usImage3D<double> &dst);
 };
 
 /****************************************************************************
@@ -458,8 +458,12 @@ void usVolumeProcessing::derivativeK(const usImage3D<Type1> &src, usImage3D<Type
  * @param src The volume to filter.
  * @param dst The volume filtered.
  */
-template <class Type> void usVolumeProcessing::gradient(const usImage3D<Type> &src, usImage3D<vpColVector> &dst)
+template <class Type> void usVolumeProcessing::gradient(const usImage3D<Type> &src, usImage3D<VISP_NAMESPACE_ADDRESSING vpColVector> &dst)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   unsigned int height = src.getHeight();
   unsigned int width = src.getWidth();
   unsigned int nbFrames = src.getNumberOfFrames();
@@ -482,8 +486,12 @@ template <class Type> void usVolumeProcessing::gradient(const usImage3D<Type> &s
  * @param src The volume to filter.
  * @param dst The volume filtered.
  */
-template <class Type> void usVolumeProcessing::hessian(const usImage3D<Type> &src, usImage3D<vpMatrix> &dst)
+template <class Type> void usVolumeProcessing::hessian(const usImage3D<Type> &src, usImage3D<VISP_NAMESPACE_ADDRESSING vpMatrix> &dst)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   unsigned int height = src.getHeight();
   unsigned int width = src.getWidth();
   unsigned int nbFrames = src.getNumberOfFrames();
@@ -529,6 +537,10 @@ template <class Type> void usVolumeProcessing::hessian(const usImage3D<Type> &sr
 template <class Type>
 void usVolumeProcessing::frangi(const usImage3D<Type> &src, usImage3D<double> &dst, double a, double b, double c)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   unsigned int height = src.getHeight();
   unsigned int width = src.getWidth();
   unsigned int nbFrames = src.getNumberOfFrames();
@@ -555,7 +567,7 @@ void usVolumeProcessing::frangi(const usImage3D<Type> &src, usImage3D<double> &d
       double S = evalues.frobeniusNorm();
 
       v = (1.0 - exp(-vpMath::sqr(Ra) / (2.0 * vpMath::sqr(a)))) * exp(-vpMath::sqr(Rb) / (2.0 * vpMath::sqr(b))) *
-          (1.0 - exp(-vpMath::sqr(S) / (2.0 * vpMath::sqr(c))));
+        (1.0 - exp(-vpMath::sqr(S) / (2.0 * vpMath::sqr(c))));
     }
     dst.getData()[i] = v;
   }
@@ -570,6 +582,10 @@ void usVolumeProcessing::frangi(const usImage3D<Type> &src, usImage3D<double> &d
 template <class Type1, class Type2>
 void usVolumeProcessing::difference(const usImage3D<Type1> &src1, const usImage3D<Type1> &src2, usImage3D<Type2> &dst)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   unsigned int height = src1.getHeight();
   unsigned int width = src1.getWidth();
   unsigned int nbFrames = src1.getNumberOfFrames();
@@ -591,6 +607,10 @@ template <class Type1, class Type2>
 void usVolumeProcessing::absoluteDifference(const usImage3D<Type1> &src1, const usImage3D<Type1> &src2,
                                             usImage3D<Type2> &dst)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   unsigned int height = src1.getHeight();
   unsigned int width = src1.getWidth();
   unsigned int nbFrames = src1.getNumberOfFrames();

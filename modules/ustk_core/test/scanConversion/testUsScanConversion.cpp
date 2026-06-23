@@ -50,6 +50,10 @@
 /*                               MAIN FUNCTION                                */
 /* -------------------------------------------------------------------------- */
 #if defined(VISP_HAVE_XML2)
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 int main(int argc, const char **argv)
 {
   (void)argc;
@@ -63,8 +67,8 @@ int main(int argc, const char **argv)
   std::cout << "-------------------------------------------------------" << std::endl;
   std::cout << "  testUsScanConversion2D.cpp" << std::endl << std::endl;
   std::cout << "  The test converts a pre-scan image to post-scan, and converts it back to pre-scan."
-               "  Then it checks if the difference between the 2 images, using sum of square differences."
-            << std::endl;
+    "  Then it checks if the difference between the 2 images, using sum of square differences."
+    << std::endl;
   std::cout << "-------------------------------------------------------" << std::endl;
   std::cout << std::endl;
 
@@ -90,7 +94,8 @@ int main(int argc, const char **argv)
     for (unsigned int j = 0; j < prescanBack.getWidth(); j++) {
       if (i > 3 && j > 3) { // we skip top & left borders, they have huge differencies compared to the rest of the image
         inc += (prescanBack[i][j] - prescanReference[i][j]) * (prescanBack[i][j] - prescanReference[i][j]);
-      } else {
+      }
+      else {
         pxSkipped++;
       }
     }

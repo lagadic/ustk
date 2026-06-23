@@ -59,28 +59,28 @@ public:
   usDenseTracker2D();
   ~usDenseTracker2D();
 
-  vpImage<unsigned char> &getRegion();
+  VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &getRegion();
 
-  vpRectOriented getTarget() const;
+  VISP_NAMESPACE_ADDRESSING vpRectOriented getTarget() const;
 
-  vpImage<unsigned char> &getTemplate();
+  VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &getTemplate();
 
-  void init(const vpImage<unsigned char> &I, const vpRectOriented &R);
+  void init(const VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &I, const VISP_NAMESPACE_ADDRESSING vpRectOriented &R);
 
   bool isInit();
 
-  void update(const vpImage<unsigned char> &I);
+  void update(const VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &I);
 
 private:
-  vpColVector s_desired;
-  vpColVector s_current;
-  vpRectOriented m_target;
-  vpImage<unsigned char> m_template;
-  vpImage<unsigned char> m_region;
-  vpImage<double> m_gradX;
-  vpImage<double> m_gradY;
-  vpMatrix m_LI;
-  vpMatrix m_LI_inverse;
+  VISP_NAMESPACE_ADDRESSING vpColVector s_desired;
+  VISP_NAMESPACE_ADDRESSING vpColVector s_current;
+  VISP_NAMESPACE_ADDRESSING vpRectOriented m_target;
+  VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> m_template;
+  VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> m_region;
+  VISP_NAMESPACE_ADDRESSING vpImage<double> m_gradX;
+  VISP_NAMESPACE_ADDRESSING vpImage<double> m_gradY;
+  VISP_NAMESPACE_ADDRESSING vpMatrix m_LI;
+  VISP_NAMESPACE_ADDRESSING vpMatrix m_LI_inverse;
   unsigned int m_height;
   unsigned int m_width;
   unsigned int m_size;

@@ -1,17 +1,20 @@
 #include <visp3/ustk_core/usMHDSequenceReader.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 /**
 * Constructor, initializes the member attribues.
 */
 usMHDSequenceReader::usMHDSequenceReader()
   : m_sequenceDirectory(), m_sequenceImageType(us::NOT_SET), m_sequenceFiles(), m_totalImageNumber(0), m_imageCounter(0)
-{
-}
+{ }
 
 /**
 * Destructor.
 */
-usMHDSequenceReader::~usMHDSequenceReader() {}
+usMHDSequenceReader::~usMHDSequenceReader() { }
 
 /**
 * Setter for the directory containing the mhd sequence to read. To call before calling acquire !
@@ -159,10 +162,11 @@ void usMHDSequenceReader::acquire(usImagePostScan2D<unsigned char> &image, uint6
   if (mhdHeader.isTransducerConvex) {
     // distance
     double deltaDepthPostScan2D =
-        mhdHeader.transducerRadius *
-        (1 - std::cos((double)((mhdHeader.scanLineNumber - 1) * mhdHeader.scanLinePitch / 2.0)));
+      mhdHeader.transducerRadius *
+      (1 - std::cos((double)((mhdHeader.scanLineNumber - 1) * mhdHeader.scanLinePitch / 2.0)));
     image.setDepth(mhdHeader.elementSpacing[1] * mhdHeader.dim[1] - deltaDepthPostScan2D);
-  } else // linear transducer
+  }
+  else // linear transducer
     image.setDepth(mhdHeader.elementSpacing[1] * mhdHeader.dim[1]);
 
   image.setWidthResolution(mhdHeader.dim[0]);
@@ -544,10 +548,11 @@ void usMHDSequenceReader::getImage(unsigned int imageNumber, usImagePostScan2D<u
   if (mhdHeader.isTransducerConvex) {
     // distance
     double deltaDepthPostScan2D =
-        mhdHeader.transducerRadius *
-        (1 - std::cos((double)((mhdHeader.scanLineNumber - 1) * mhdHeader.scanLinePitch / 2.0)));
+      mhdHeader.transducerRadius *
+      (1 - std::cos((double)((mhdHeader.scanLineNumber - 1) * mhdHeader.scanLinePitch / 2.0)));
     image.setDepth(mhdHeader.elementSpacing[1] * mhdHeader.dim[1] - deltaDepthPostScan2D);
-  } else // linear transducer
+  }
+  else // linear transducer
     image.setDepth(mhdHeader.elementSpacing[1] * mhdHeader.dim[1]);
 
   image.setWidthResolution(mhdHeader.dim[0]);

@@ -37,6 +37,10 @@
 #include <omp.h>
 #endif
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 #ifdef USTK_HAVE_CUDA
 extern void GPUDirectConversionWrapper(unsigned char *dataPost, const unsigned char *dataPre, unsigned int m_nbX, unsigned int m_nbY, unsigned int m_nbZ, int X, int Y, int Z, double m_resolution, double xmax, double ymin, double zmax, unsigned int frameNumber, unsigned int scanLineNumber, double transducerRadius, double motorRadius, double scanLinePitch, double axialResolution, double framePitch, bool sweepInZdirection);
 #endif
@@ -46,10 +50,9 @@ extern void GPUDirectConversionWrapper(unsigned char *dataPost, const unsigned c
  */
 usPreScanToPostScan3DConverter::usPreScanToPostScan3DConverter()
   : m_converterOptimizationMethod(SINGLE_THREAD_REDUCED_LOOKUP_TABLE),
-    m_conversionOptimizationMethodUsedAtInit(SINGLE_THREAD_DIRECT_CONVERSION), m_GPULookupTables{NULL, NULL}, m_GPULookupTablesSize{0,0}, m_VpreScan(), m_downSamplingFactor(1),
-    m_resolution(), m_SweepInZdirection(true), m_initDone(false)
-{
-}
+  m_conversionOptimizationMethodUsedAtInit(SINGLE_THREAD_DIRECT_CONVERSION), m_GPULookupTables { NULL, NULL }, m_GPULookupTablesSize { 0,0 }, m_VpreScan(), m_downSamplingFactor(1),
+  m_resolution(), m_SweepInZdirection(true), m_initDone(false)
+{ }
 
 /**
  * Initialisation constructor.
@@ -125,7 +128,7 @@ void usPreScanToPostScan3DConverter::init(const usImagePreScan3D<unsigned char> 
 #ifdef USTK_HAVE_CUDA
   this->GPUFreeLookupTables();
 #endif
-  
+
   switch (m_converterOptimizationMethod) {
   case SINGLE_THREAD_DIRECT_CONVERSION: {
     break;
@@ -142,7 +145,8 @@ void usPreScanToPostScan3DConverter::init(const usImagePreScan3D<unsigned char> 
       // reserve to avoid reallocation during the LUT filling
       m_lookupTables[0].reserve(LUTmaxSize);
       m_lookupTables[1].reserve(LUTmaxSize);
-    } catch (std::exception &e) {
+    }
+    catch (std::exception &e) {
       throw vpException(vpException::ioError, "usPreScanToPostScan3DConverter::init: using method "
                                               "SINGLE_THREAD_FULL_LOOKUP_TABLE leads to %s \n Use another optimization "
                                               "method or downsample the volume",
@@ -219,14 +223,15 @@ void usPreScanToPostScan3DConverter::init(const usImagePreScan3D<unsigned char> 
       // reserve to avoid reallocation during the LUT filling
       m_lookupTables[0].reserve(LUTmaxSize);
       m_lookupTables[1].reserve(LUTmaxSize);
-    } catch (std::exception &e) {
+    }
+    catch (std::exception &e) {
       throw vpException(vpException::ioError, "usPreScanToPostScan3DConverter::init: using method "
                                               "MULTI_THREAD_FULL_LOOKUP_TABLE leads to %s \n Use another optimization "
                                               "method or downsample the volume",
                         e.what());
     }
 
-    for (unsigned int sweepingDirection = 0 ; sweepingDirection < 2 ; sweepingDirection++) {
+    for (unsigned int sweepingDirection = 0; sweepingDirection < 2; sweepingDirection++) {
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
@@ -300,7 +305,7 @@ void usPreScanToPostScan3DConverter::init(const usImagePreScan3D<unsigned char> 
 #ifdef USTK_HAVE_CUDA
     this->GPUAllocateFullLookupTables();
     this->GPUFillFullLookupTables();
-std::cout << "LUT 1 size (bytes) : " << sizeof(usVoxelWeightAndIndex) * m_GPULookupTablesSize[0] << std::endl;
+    std::cout << "LUT 1 size (bytes) : " << sizeof(usVoxelWeightAndIndex) * m_GPULookupTablesSize[0] << std::endl;
     std::cout << "LUT 2 size (bytes) : " << sizeof(usVoxelWeightAndIndex) * m_GPULookupTablesSize[1] << std::endl;
 #else
     throw vpException(
@@ -308,14 +313,15 @@ std::cout << "LUT 1 size (bytes) : " << sizeof(usVoxelWeightAndIndex) * m_GPULoo
         "usPreScanToPostScan3DConverter::init: using method GPU_FULL_LOOKUP_TABLE is not implemented yet");
 #endif
     break;
-  }
+    }
   case SINGLE_THREAD_REDUCED_LOOKUP_TABLE: {
     try {
       long int LUTmaxSize = (long int)m_nbX * (long int)m_nbY * (long int)m_nbZ;
       // reserve to avoid reallocation during the LUT filling
       m_reducedLookupTables[0].reserve(LUTmaxSize);
       m_reducedLookupTables[1].reserve(LUTmaxSize);
-    } catch (std::exception &e) {
+    }
+    catch (std::exception &e) {
       throw vpException(vpException::ioError, "usPreScanToPostScan3DConverter::init: using method "
                                               "SINGLE_THREAD_REDUCED_LOOKUP_TABLE leads to %s \n Use another "
                                               "optimization method or downsample the volume",
@@ -354,9 +360,9 @@ std::cout << "LUT 1 size (bytes) : " << sizeof(usVoxelWeightAndIndex) * m_GPULoo
       }
     }
     std::cout << "LUT 1 size (bytes) : " << sizeof(usVoxelWeightAndIndexReducedMemory) * m_reducedLookupTables[0].size()
-              << std::endl;
+      << std::endl;
     std::cout << "LUT 2 size (bytes) : " << sizeof(usVoxelWeightAndIndexReducedMemory) * m_reducedLookupTables[1].size()
-              << std::endl;
+      << std::endl;
     break;
   }
   case MULTI_THREAD_REDUCED_LOOKUP_TABLE: {
@@ -365,7 +371,8 @@ std::cout << "LUT 1 size (bytes) : " << sizeof(usVoxelWeightAndIndex) * m_GPULoo
       // reserve to avoid reallocation during the LUT filling
       m_reducedLookupTables[0].reserve(LUTmaxSize);
       m_reducedLookupTables[1].reserve(LUTmaxSize);
-    } catch (std::exception &e) {
+    }
+    catch (std::exception &e) {
       throw vpException(vpException::ioError, "usPreScanToPostScan3DConverter::init: using method "
                                               "MULTI_THREAD_REDUCED_LOOKUP_TABLE leads to %s \n Use another "
                                               "optimization method or downsample the volume",
@@ -409,9 +416,9 @@ std::cout << "LUT 1 size (bytes) : " << sizeof(usVoxelWeightAndIndex) * m_GPULoo
       }
     }
     std::cout << "LUT 1 size (bytes) : " << sizeof(usVoxelWeightAndIndexReducedMemory) * m_reducedLookupTables[0].size()
-              << std::endl;
+      << std::endl;
     std::cout << "LUT 2 size (bytes) : " << sizeof(usVoxelWeightAndIndexReducedMemory) * m_reducedLookupTables[1].size()
-              << std::endl;
+      << std::endl;
     break;
   }
   case GPU_REDUCED_LOOKUP_TABLE: {
@@ -431,12 +438,12 @@ std::cout << "LUT 1 size (bytes) : " << sizeof(usVoxelWeightAndIndex) * m_GPULoo
 
   m_conversionOptimizationMethodUsedAtInit = m_converterOptimizationMethod;
   m_initDone = true;
-}
+  }
 
-/**
- * Destructor.
- */
-usPreScanToPostScan3DConverter::~usPreScanToPostScan3DConverter() {}
+  /**
+   * Destructor.
+   */
+usPreScanToPostScan3DConverter::~usPreScanToPostScan3DConverter() { }
 
 /**
  * Conversion method : compute the scan-conversion 3D and write the post-scan image settings.
@@ -450,9 +457,9 @@ void usPreScanToPostScan3DConverter::convert(usImagePostScan3D<unsigned char> &p
 
   postScanImage.resize(m_nbY, m_nbX, m_nbZ);
   postScanImage.initData(0);
-  (usTransducerSettings&)postScanImage = (const usTransducerSettings&)preScanImage;
-  (usMotorSettings&)postScanImage = (const usMotorSettings&)preScanImage;
-            
+  (usTransducerSettings &)postScanImage = (const usTransducerSettings &)preScanImage;
+  (usMotorSettings &)postScanImage = (const usMotorSettings &)preScanImage;
+
   unsigned char *dataPost = postScanImage.getData();
   const unsigned char *dataPre = preScanImage.getConstData();
 
@@ -504,22 +511,22 @@ void usPreScanToPostScan3DConverter::convert(usImagePostScan3D<unsigned char> &p
             double v1w = v1 * w;
             double vw = v * w;
 
-            double W[8] = {u1 * v1w1, u * v1w1, u1 * vw1, u * vw1, u1 * v1w, u * v1w, u1 * vw, u * vw};
+            double W[8] = { u1 * v1w1, u * v1w1, u1 * vw1, u * vw1, u1 * v1w, u * v1w, u1 * vw, u * vw };
 
             double Xjj = X * jj;
             double Xjj1 = X * (jj + 1);
             double XYKK = XY * kk;
             double XYKK1 = XY * (kk + 1);
 
-            unsigned int index[8] = {(unsigned int)(ii + Xjj + XYKK),   (unsigned int)(ii + 1 + Xjj + XYKK),
+            unsigned int index[8] = { (unsigned int)(ii + Xjj + XYKK),   (unsigned int)(ii + 1 + Xjj + XYKK),
                                      (unsigned int)(ii + Xjj1 + XYKK),  (unsigned int)(ii + 1 + Xjj1 + XYKK),
                                      (unsigned int)(ii + Xjj + XYKK1),  (unsigned int)(ii + 1 + Xjj + XYKK1),
-                                     (unsigned int)(ii + Xjj1 + XYKK1), (unsigned int)(ii + 1 + Xjj1 + XYKK1)};
+                                     (unsigned int)(ii + Xjj1 + XYKK1), (unsigned int)(ii + 1 + Xjj1 + XYKK1) };
 
             double val = 0;
-            for (int n = 0; n < 8; n++) 
+            for (int n = 0; n < 8; n++)
               val += W[n] * dataPre[index[n]];
-            
+
             dataPost[x + m_nbX * y + nbXY * z] = (unsigned char)val;
           }
         }
@@ -577,20 +584,20 @@ void usPreScanToPostScan3DConverter::convert(usImagePostScan3D<unsigned char> &p
             double v1w = v1 * w;
             double vw = v * w;
 
-            double W[8] = {u1 * v1w1, u * v1w1, u1 * vw1, u * vw1, u1 * v1w, u * v1w, u1 * vw, u * vw};
+            double W[8] = { u1 * v1w1, u * v1w1, u1 * vw1, u * vw1, u1 * v1w, u * v1w, u1 * vw, u * vw };
 
             double Xjj = X * jj;
             double Xjj1 = X * (jj + 1);
             double XYKK = XY * kk;
             double XYKK1 = XY * (kk + 1);
 
-            unsigned int index[8] = {(unsigned int)(ii + Xjj + XYKK),   (unsigned int)(ii + 1 + Xjj + XYKK),
+            unsigned int index[8] = { (unsigned int)(ii + Xjj + XYKK),   (unsigned int)(ii + 1 + Xjj + XYKK),
                                      (unsigned int)(ii + Xjj1 + XYKK),  (unsigned int)(ii + 1 + Xjj1 + XYKK),
                                      (unsigned int)(ii + Xjj + XYKK1),  (unsigned int)(ii + 1 + Xjj + XYKK1),
-                                     (unsigned int)(ii + Xjj1 + XYKK1), (unsigned int)(ii + 1 + Xjj1 + XYKK1)};
+                                     (unsigned int)(ii + Xjj1 + XYKK1), (unsigned int)(ii + 1 + Xjj1 + XYKK1) };
 
             double val = 0;
-            for (int n = 0; n < 8; n++) 
+            for (int n = 0; n < 8; n++)
               val += W[n] * dataPre[index[n]];
 #ifdef VISP_HAVE_OPENMP
 #pragma omp critical
@@ -664,11 +671,11 @@ void usPreScanToPostScan3DConverter::convert(usImagePostScan3D<unsigned char> &p
       double v1w = v1 * w;
       double vw = v * w;
 
-      double W[8] = {u1 * v1w1, u * v1w1, u1 * vw1, u * vw1, u1 * v1w, u * v1w, u1 * vw, u * vw};
+      double W[8] = { u1 * v1w1, u * v1w1, u1 * vw1, u * vw1, u1 * v1w, u * v1w, u1 * vw, u * vw };
 
-      unsigned int index[8] = {m.m_inputIndex,          m.m_inputIndex + 1,         m.m_inputIndex + X,
+      unsigned int index[8] = { m.m_inputIndex,          m.m_inputIndex + 1,         m.m_inputIndex + X,
                                m.m_inputIndex + 1 + X,  m.m_inputIndex + XY,        m.m_inputIndex + 1 + XY,
-                               m.m_inputIndex + X + XY, m.m_inputIndex + 1 + X + XY};
+                               m.m_inputIndex + X + XY, m.m_inputIndex + 1 + X + XY };
 
       double val = 0;
       for (int j = 0; j < 8; j++)
@@ -699,11 +706,11 @@ void usPreScanToPostScan3DConverter::convert(usImagePostScan3D<unsigned char> &p
       double v1w = v1 * w;
       double vw = v * w;
 
-      double W[8] = {u1 * v1w1, u * v1w1, u1 * vw1, u * vw1, u1 * v1w, u * v1w, u1 * vw, u * vw};
+      double W[8] = { u1 * v1w1, u * v1w1, u1 * vw1, u * vw1, u1 * v1w, u * v1w, u1 * vw, u * vw };
 
-      unsigned int index[8] = {m.m_inputIndex,          m.m_inputIndex + 1,         m.m_inputIndex + X,
+      unsigned int index[8] = { m.m_inputIndex,          m.m_inputIndex + 1,         m.m_inputIndex + X,
                                m.m_inputIndex + 1 + X,  m.m_inputIndex + XY,        m.m_inputIndex + 1 + XY,
-                               m.m_inputIndex + X + XY, m.m_inputIndex + 1 + X + XY};
+                               m.m_inputIndex + X + XY, m.m_inputIndex + 1 + X + XY };
 
       double val = 0;
       for (int j = 0; j < 8; j++)
@@ -731,12 +738,12 @@ void usPreScanToPostScan3DConverter::convert(usImagePostScan3D<unsigned char> &p
   postScanImage.setElementSpacingY(m_resolution);
   postScanImage.setElementSpacingZ(m_resolution);
   postScanImage.setScanLineDepth(m_resolution * m_VpreScan.getBModeSampleNumber());
-}
+  }
 
-/**
- * Choose the method used for the optimization of the conversion.
- * @param method optimization method.
- */
+  /**
+   * Choose the method used for the optimization of the conversion.
+   * @param method optimization method.
+   */
 void usPreScanToPostScan3DConverter::setConverterOptimizationMethod(usConverterOptimizationMethod method)
 {
   m_converterOptimizationMethod = method;
@@ -752,8 +759,8 @@ void usPreScanToPostScan3DConverter::setConverterOptimizationMethod(usConverterO
   case MULTI_THREAD_REDUCED_LOOKUP_TABLE: {
 #ifndef VISP_HAVE_OPENMP
     std::cout << "Warning in usPreScanToPostScan3DConverter::setConverterOptimizationMethod: OpenMP is not available "
-                 "to use multi-thread optimization, will use single thread implementation instead."
-              << std::endl;
+      "to use multi-thread optimization, will use single thread implementation instead."
+      << std::endl;
 #endif
     break;
   }
@@ -797,9 +804,9 @@ void usPreScanToPostScan3DConverter::convertPreScanCoordToPostScanCoord(double i
   // const double theta = (sweepInZdirection ? 1 : -1) * (m_VpreScan.getFramePitch() * Nframe * (j_preScan + Nline *
   // k_preScan) / (Nframe * Nline - 1) - offsetTheta);
   const double theta =
-      (m_VpreScan.getFramePitch() * Nframe *
-           ((sweepInZdirection ? j_preScan : Nline - 1 - j_preScan) + Nline * k_preScan) / (Nframe * Nline - 1) -
-       offsetTheta);
+    (m_VpreScan.getFramePitch() * Nframe *
+         ((sweepInZdirection ? j_preScan : Nline - 1 - j_preScan) + Nline * k_preScan) / (Nframe * Nline - 1) -
+     offsetTheta);
 
   const double cPhi = cos(phi);
 
@@ -849,6 +856,6 @@ void usPreScanToPostScan3DConverter::convertPostScanCoordToPreScanCoord(double i
   //}
   if (k_preScan) {
     *k_preScan = (Nframe * Nline - 1) * (0.5 / Nline + theta / (m_VpreScan.getFramePitch() * Nframe * Nline)) -
-                 (sweepInZdirection ? jtmp : Nline - 1 - jtmp) / Nline;
+      (sweepInZdirection ? jtmp : Nline - 1 - jtmp) / Nline;
   }
 }

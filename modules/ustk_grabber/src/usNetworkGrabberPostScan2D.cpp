@@ -38,6 +38,10 @@
 #include <QtCore/QDataStream>
 #include <QtCore/QEventLoop>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 /**
 * Constructor. Inititializes the image, and manages Qt signal.
 */

@@ -68,10 +68,10 @@ public slots:
   void setROI(unsigned int i, unsigned int j, unsigned int height, unsigned int width);
 
 private slots:
-  void strainMapReadySlot(vpImage<unsigned char>);
+  void strainMapReadySlot(VISP_NAMESPACE_ADDRESSING vpImage<unsigned char>);
 
 signals:
-  void elastographyImageReady(vpImage<vpRGBa>);
+  void elastographyImageReady(VISP_NAMESPACE_ADDRESSING vpImage<VISP_NAMESPACE_ADDRESSING vpRGBa>);
 
 private:
   // processing objects

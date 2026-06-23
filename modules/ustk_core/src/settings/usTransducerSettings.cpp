@@ -44,14 +44,17 @@
 
 // ustk includes
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 /**
 * Basic constructor, all settings set to default.
 */
 usTransducerSettings::usTransducerSettings()
   : m_transducerRadius(0.0f), m_scanLinePitch(0.0f), m_scanLineNumber(0), m_isTransducerConvex(true),
-    m_scanLineNumberIsSet(false), m_transmitFrequency(0), m_samplingFrequency(0)
-{
-}
+  m_scanLineNumberIsSet(false), m_transmitFrequency(0), m_samplingFrequency(0)
+{ }
 
 /**
 * Full constructor with all the settings availables:
@@ -70,10 +73,9 @@ usTransducerSettings::usTransducerSettings(double transducerRadius, double scanL
                                            bool transducerConvex, double depth, int transmitFrequency,
                                            int samplingFrequency)
   : m_transducerRadius(transducerRadius), m_scanLinePitch(scanLinePitch), m_scanLineNumber(scanLineNumber),
-    m_isTransducerConvex(transducerConvex), m_depth(depth), m_scanLineNumberIsSet(true),
-    m_transmitFrequency(transmitFrequency), m_samplingFrequency(samplingFrequency)
-{
-}
+  m_isTransducerConvex(transducerConvex), m_depth(depth), m_scanLineNumberIsSet(true),
+  m_transmitFrequency(transmitFrequency), m_samplingFrequency(samplingFrequency)
+{ }
 
 /**
 * Copy constructor.
@@ -84,7 +86,7 @@ usTransducerSettings::usTransducerSettings(const usTransducerSettings &other) { 
 /**
 * Destructor.
 */
-usTransducerSettings::~usTransducerSettings() {}
+usTransducerSettings::~usTransducerSettings() { }
 
 /**
 * Assignment operator.
@@ -140,10 +142,10 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &out, const usTransducerSettin
   else
     out << "scan line pitch distance: " << other.getScanLinePitch() << std::endl;
   out << "scan line number : " << other.getScanLineNumber() << std::endl
-      << "convex probe used: " << other.isTransducerConvex() << std::endl
-      << "depth : " << other.getDepth() << std::endl
-      << "sampling frequency " << other.getSamplingFrequency() << std::endl
-      << "transmit frequency " << other.getTransmitFrequency() << std::endl;
+    << "convex probe used: " << other.isTransducerConvex() << std::endl
+    << "depth : " << other.getDepth() << std::endl
+    << "sampling frequency " << other.getSamplingFrequency() << std::endl
+    << "transmit frequency " << other.getTransmitFrequency() << std::endl;
   return out;
 }
 

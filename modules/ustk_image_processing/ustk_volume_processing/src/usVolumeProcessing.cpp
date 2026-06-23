@@ -34,6 +34,10 @@
 #include <visp3/core/vpException.h>
 #include <visp3/ustk_volume_processing/usVolumeProcessing.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 /**
  * Compute the norm of a vector image.
  * @param src Input volume.
@@ -165,7 +169,7 @@ usImage3D<double> usVolumeProcessing::generateGaussianDerivativeFilterII(double 
       for (int i = 0; i < size; i++) {
         ddgi = (vpMath::sqr(i - m) / (4.0 * vpMath::sqr(sigma2) * sqrt(2.0 * M_PI)) -
                 1.0 / (2.0 * sigma * sigma2 * sqrt(2.0 * M_PI))) *
-               exp(-vpMath::sqr(i - m) / (2.0 * sigma2));
+          exp(-vpMath::sqr(i - m) / (2.0 * sigma2));
         filter(i, j, k, ddgi * gj * gk);
       }
     }
@@ -196,7 +200,7 @@ usImage3D<double> usVolumeProcessing::generateGaussianDerivativeFilterJJ(double 
     for (int j = 0; j < size; j++) {
       ddgj = (vpMath::sqr(j - m) / (4.0 * vpMath::sqr(sigma2) * sqrt(2.0 * M_PI)) -
               1.0 / (2.0 * sigma * sigma2 * sqrt(2.0 * M_PI))) *
-             exp(-vpMath::sqr(j - m) / (2.0 * sigma2));
+        exp(-vpMath::sqr(j - m) / (2.0 * sigma2));
       for (int i = 0; i < size; i++) {
         gi = exp(-vpMath::sqr(i - m) / (2.0 * sigma2)) / (sigma * sqrt(2.0 * M_PI));
         filter(i, j, k, gi * ddgj * gk);
@@ -227,7 +231,7 @@ usImage3D<double> usVolumeProcessing::generateGaussianDerivativeFilterKK(double 
   for (int k = 0; k < size; k++) {
     ddgk = (vpMath::sqr(k - m) / (4.0 * vpMath::sqr(sigma2) * sqrt(2.0 * M_PI)) -
             1.0 / (2.0 * sigma * sigma2 * sqrt(2.0 * M_PI))) *
-           exp(-vpMath::sqr(k - m) / (2.0 * sigma2));
+      exp(-vpMath::sqr(k - m) / (2.0 * sigma2));
     for (int j = 0; j < size; j++) {
       gj = exp(-vpMath::sqr(j - m) / (2.0 * sigma2)) / (sigma * sqrt(2.0 * M_PI));
       for (int i = 0; i < size; i++) {

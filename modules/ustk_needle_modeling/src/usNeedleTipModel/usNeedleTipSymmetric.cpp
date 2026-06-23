@@ -35,14 +35,17 @@
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 
-usNeedleTipSymmetric::usNeedleTipSymmetric() : usNeedleTip(), _diameter(0.001), _length(0.001) {}
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
+usNeedleTipSymmetric::usNeedleTipSymmetric() : usNeedleTip(), _diameter(0.001), _length(0.001) { }
 
 usNeedleTipSymmetric::usNeedleTipSymmetric(const usNeedleTipSymmetric &tip)
   : usNeedleTip(tip), _diameter(tip._diameter), _length(tip._length)
-{
-}
+{ }
 
-usNeedleTipSymmetric::~usNeedleTipSymmetric() {}
+usNeedleTipSymmetric::~usNeedleTipSymmetric() { }
 
 usNeedleTipSymmetric &usNeedleTipSymmetric::operator=(const usNeedleTipSymmetric &tip)
 {

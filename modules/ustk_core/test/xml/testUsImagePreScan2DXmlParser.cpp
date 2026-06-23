@@ -72,6 +72,10 @@
 // List of allowed command line options
 #define GETOPTARGS "cdo:h"
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 void usage(const char *name, const char *badparam, const std::string &opath, const std::string &user);
 bool getOptions(int argc, const char **argv, std::string &opath, const std::string &user);
 
@@ -203,7 +207,8 @@ int main(int argc, const char **argv)
       try {
         // Create the dirname
         vpIoTools::makeDirectory(dirname);
-      } catch (...) {
+      }
+      catch (...) {
         usage(argv[0], NULL, opath, username);
         std::cerr << std::endl << "ERROR:" << std::endl;
         std::cerr << "  Cannot create " << dirname << std::endl;
@@ -247,7 +252,8 @@ int main(int argc, const char **argv)
     vpXmlParser::cleanup();
     std::cout << "Test failed !" << std::endl;
     return 1;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
     return 1;
   }

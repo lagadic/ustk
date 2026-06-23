@@ -33,9 +33,13 @@
 #include <visp/vpMath.h>
 #include <visp3/ustk_core/usPreScanToPostScan2DConverter.h>
 
-usPreScanToPostScan2DConverter::usPreScanToPostScan2DConverter() : m_initDone(false) {}
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
-usPreScanToPostScan2DConverter::~usPreScanToPostScan2DConverter() {}
+usPreScanToPostScan2DConverter::usPreScanToPostScan2DConverter() : m_initDone(false) { }
+
+usPreScanToPostScan2DConverter::~usPreScanToPostScan2DConverter() { }
 
 /**
 * Initialize the scan-converter.
@@ -85,7 +89,8 @@ void usPreScanToPostScan2DConverter::init(const usImagePostScan2D<unsigned char>
         m_tMap[i][j] = atan2(y, x) * inputSettings.getTransducerRadius() / LPitch + (scanLineNumber - 1) / 2.0;
       }
     }
-  } else {
+  }
+  else {
     m_scanLineNumber = scanLineNumber;
     m_BModeSampleNumber = BModeSampleNumber;
     m_xResolution = inputSettings.getWidthResolution();
@@ -156,7 +161,8 @@ void usPreScanToPostScan2DConverter::init(const usTransducerSettings &inputSetti
         m_tMap[i][j] = atan2(y, x) * inputSettings.getTransducerRadius() / LPitch + (scanLineNumber - 1) / 2.0;
       }
     }
-  } else {
+  }
+  else {
     m_scanLineNumber = scanLineNumber;
     m_BModeSampleNumber = BModeSampleNumber;
     m_xResolution = xResolution;
@@ -205,7 +211,8 @@ void usPreScanToPostScan2DConverter::convert(const usImagePreScan2D<unsigned cha
     if (preScanImage.isTransducerConvex()) {
       double resolution = preScanImage.getAxialResolution();
       init(preScanImage, preScanImage.getBModeSampleNumber(), preScanImage.getScanLineNumber(), resolution, resolution);
-    } else {
+    }
+    else {
       init(preScanImage, preScanImage.getBModeSampleNumber(), preScanImage.getScanLineNumber(),
            preScanImage.getScanLinePitch(), preScanImage.getAxialResolution());
     }
@@ -251,7 +258,8 @@ double usPreScanToPostScan2DConverter::interpolateLinear(const vpImage<unsigned 
     if (x1 == x2) {
       val1 = I(x1, y1);
       val2 = I(x1, y2);
-    } else {
+    }
+    else {
       val1 = (x2 - x) * I(x1, y1) + (x - x1) * I(x2, y1);
       val2 = (x2 - x) * I(x1, y2) + (x - x1) * I(x2, y2);
     }

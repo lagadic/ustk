@@ -63,8 +63,8 @@ class VISP_EXPORT usRawFileParser
 public:
   /** @name 2D io */
   //@{
-  void read(vpImage<unsigned char> &image2D, const std::string &mhdFileName);
-  void write(const vpImage<unsigned char> &image2D, const std::string &rawFileName);
+  void read(VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &image2D, const std::string &mhdFileName);
+  void write(const VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &image2D, const std::string &rawFileName);
   void read(usImageRF2D<short> &image2D, const std::string &mhdFileName);
   void write(const usImageRF2D<short> &image2D, const std::string &rawFileName);
   //@}

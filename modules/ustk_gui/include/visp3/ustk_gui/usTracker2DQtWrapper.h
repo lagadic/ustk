@@ -62,18 +62,18 @@ public:
   ~usTracker2DQtWrapper();
 
 public slots:
-  void initTracker(vpRectOriented rect);
-  void updateImage(vpImage<unsigned char> image);
+  void initTracker(VISP_NAMESPACE_ADDRESSING vpRectOriented rect);
+  void updateImage(VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> image);
   void updateImage(usImagePreScan2D<unsigned char> image);
   void updateImage(usImagePostScan2D<unsigned char> image);
   void stopTracking();
 
 signals:
-  void newTrackedRectangle(vpRectOriented);
+  void newTrackedRectangle(VISP_NAMESPACE_ADDRESSING vpRectOriented);
 
 private:
   usDenseTracker2D m_tracker;
-  vpImage<unsigned char> m_firstImage;
+  VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> m_firstImage;
   bool m_firstFrameArrived;
   bool m_isInitialized;
 };

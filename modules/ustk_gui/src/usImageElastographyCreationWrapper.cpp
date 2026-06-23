@@ -40,12 +40,16 @@
 
 #if (defined(USTK_HAVE_VTK_QT) || defined(USTK_HAVE_QT5)) && defined(VISP_HAVE_MODULE_USTK_ELASTOGRAPHY)
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 /**
 * Constructor.
 */
 usImageElastographyCreationWrapper::usImageElastographyCreationWrapper()
   : QObject(), m_elastography(), m_elastographyImageCreation(), m_RFConverter(), m_preScanImage(), m_heighPositionROI(),
-    m_widthPositionROI()
+  m_widthPositionROI()
 {
   connect(&m_elastography, SIGNAL(elastoReady(vpImage<unsigned char>)), this,
           SLOT(strainMapReadySlot(vpImage<unsigned char>)));
@@ -54,7 +58,7 @@ usImageElastographyCreationWrapper::usImageElastographyCreationWrapper()
 /**
 * Destructor.
 */
-usImageElastographyCreationWrapper::~usImageElastographyCreationWrapper() {}
+usImageElastographyCreationWrapper::~usImageElastographyCreationWrapper() { }
 
 /**
 * ROI setter, coordinates are set in RF image pixel coordinates.

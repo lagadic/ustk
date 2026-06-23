@@ -32,14 +32,17 @@
 
 #include <visp3/ustk_needle_modeling/usTissueModelSpline.h>
 
-usTissueModelSpline::usTissueModelSpline() : m_surface(), m_path() {}
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
+usTissueModelSpline::usTissueModelSpline() : m_surface(), m_path() { }
 
 usTissueModelSpline::usTissueModelSpline(const usTissueModelSpline &tissue)
   : m_surface(tissue.m_surface), m_path(tissue.m_path)
-{
-}
+{ }
 
-usTissueModelSpline::~usTissueModelSpline() {}
+usTissueModelSpline::~usTissueModelSpline() { }
 
 const usTissueModelSpline &usTissueModelSpline::operator=(const usTissueModelSpline &tissue)
 {

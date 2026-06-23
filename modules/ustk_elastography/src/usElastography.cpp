@@ -35,6 +35,10 @@
 
 #if defined(USTK_HAVE_FFTW)
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 /**
 * Default constructor.
 */
@@ -144,7 +148,8 @@ void usElastography::updateRF(const usImageRF2D<short> &image)
 {
   if (!m_isloadPre) {
     setPreCompression(image);
-  } else {
+  }
+  else {
     if (m_isloadPost)
       setPreCompression(m_Postcomp);
     setPostCompression(image);
@@ -218,8 +223,9 @@ vpImage<unsigned char> usElastography::run()
       throw vpException(vpException::fatalError,
                         "usElastography : cannot use block-matching algorithm, armadillo is missing.");
 #endif
-    } else {
-      // Step 1: Numerical gradients
+    }
+    else {
+   // Step 1: Numerical gradients
       vpMatrix Fx = usSignalProcessing::getXGradient(m_PreROI);
       vpMatrix Fy = usSignalProcessing::getYGradient(m_PreROI);
       // Difference
@@ -320,9 +326,9 @@ vpImage<unsigned char> usElastography::run()
     for (unsigned int xIndex = 0; xIndex < m_StrainMap.getCols(); ++xIndex) {
       for (unsigned int yIndex = 0; yIndex < m_StrainMap.getRows(); ++yIndex) {
         m_StrainMap[yIndex][xIndex] =
-            std::isnan(strainMatrix[yIndex * m_decimationFactor][xIndex])
-                ? 0.0
-                : 254 * (fabs(strainMatrix[yIndex * m_decimationFactor][xIndex]) / (m_max_abs));
+          std::isnan(strainMatrix[yIndex * m_decimationFactor][xIndex])
+          ? 0.0
+          : 254 * (fabs(strainMatrix[yIndex * m_decimationFactor][xIndex]) / (m_max_abs));
       }
     }
   }

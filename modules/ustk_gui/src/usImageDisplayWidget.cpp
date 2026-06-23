@@ -39,6 +39,10 @@
 
 #if (defined(USTK_HAVE_VTK_QT) || defined(USTK_HAVE_QT5))
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 /**
 * Constructor.
 */
@@ -102,7 +106,8 @@ void usImageDisplayWidget::updateFrame(const usImagePreScan2D<unsigned char> img
     m_scanConverter.convert(img, m_postScan);
     m_QImage = QImage(m_postScan.bitmap, m_postScan.getWidth(), m_postScan.getHeight(), m_postScan.getWidth(),
                       QImage::Format_Indexed8);
-  } else {
+  }
+  else {
     m_image = img;
     m_QImage = QImage(img.bitmap, img.getWidth(), img.getHeight(), img.getWidth(), QImage::Format_Indexed8);
   }

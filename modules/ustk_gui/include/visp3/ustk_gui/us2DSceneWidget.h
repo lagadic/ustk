@@ -132,11 +132,11 @@ class VISP_EXPORT us2DSceneWidget : public usViewerWidget
 public:
   // Constructor/Destructor
   us2DSceneWidget(QWidget *parent = NULL, Qt::WindowFlags f = Qt::WindowFlags());
-  ~us2DSceneWidget() {}
+  ~us2DSceneWidget() { }
 
   void drawLine(double u1, double v1, double w1, double u2, double v2, double w2);
 
-  void getClick(vpColVector &vec);
+  void getClick(VISP_NAMESPACE_ADDRESSING vpColVector &vec);
 
   void getCurrentSlice(usImagePostScan2D<unsigned char> &image2D);
 
@@ -176,14 +176,14 @@ public:
 public slots:
   void updateImageData(vtkImageData *imageData);
 
-  void changeMatrix(vpHomogeneousMatrix matrix);
+  void changeMatrix(VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix matrix);
 
   void saveViewSlot();
   void updateView();
 
 signals:
   void matrixChanged(vtkMatrix4x4 *matrix);
-  void voxelPicked(vpColVector vector);
+  void voxelPicked(VISP_NAMESPACE_ADDRESSING vpColVector vector);
 
 private:
   // image
@@ -234,7 +234,7 @@ private:
 
   // for getClick blocking
   bool m_pickingState;
-  vpColVector m_pickedVoxel;
+  VISP_NAMESPACE_ADDRESSING vpColVector m_pickedVoxel;
 };
 #endif
 #endif // __us2DSceneWidget_h_

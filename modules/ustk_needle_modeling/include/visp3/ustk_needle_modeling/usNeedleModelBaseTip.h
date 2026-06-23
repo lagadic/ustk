@@ -42,11 +42,11 @@
 class VISP_EXPORT usNeedleModelBaseTip
 {
 protected:
-  vpPoseVector m_basePose;
-  vpHomogeneousMatrix m_worldMbase;
+  VISP_NAMESPACE_ADDRESSING vpPoseVector m_basePose;
+  VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix m_worldMbase;
 
-  vpPoseVector m_tipPose;
-  vpHomogeneousMatrix m_worldMtip;
+  VISP_NAMESPACE_ADDRESSING vpPoseVector m_tipPose;
+  VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix m_worldMtip;
 
 public:
   //! Constructors, destructors
@@ -60,49 +60,49 @@ public:
 
   //! Parameters setters and getters
 
-  vpPoseVector getBasePose() const;
-  vpHomogeneousMatrix getWorldMbase() const;
-  vpColVector getBasePosition() const;
-  vpColVector getBaseDirection() const;
+  VISP_NAMESPACE_ADDRESSING vpPoseVector getBasePose() const;
+  VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix getWorldMbase() const;
+  VISP_NAMESPACE_ADDRESSING vpColVector getBasePosition() const;
+  VISP_NAMESPACE_ADDRESSING vpColVector getBaseDirection() const;
 
-  vpPoseVector getTipPose() const;
-  vpHomogeneousMatrix getWorldMtip() const;
-  vpColVector getTipPosition() const;
-  vpColVector getTipDirection() const;
+  VISP_NAMESPACE_ADDRESSING vpPoseVector getTipPose() const;
+  VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix getWorldMtip() const;
+  VISP_NAMESPACE_ADDRESSING vpColVector getTipPosition() const;
+  VISP_NAMESPACE_ADDRESSING vpColVector getTipDirection() const;
 
   //! Command of the needle
 
   void setBasePose(double tx, double ty, double tz, double thetax, double thetay, double thetaz);
-  void setBasePose(const vpPoseVector &pose);
-  void setBasePose(const vpHomogeneousMatrix &Hpose);
+  void setBasePose(const VISP_NAMESPACE_ADDRESSING vpPoseVector &pose);
+  void setBasePose(const VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &Hpose);
 
   void setTipPose(double tx, double ty, double tz, double thetax, double thetay, double thetaz);
-  void setTipPose(const vpPoseVector &pose);
-  void setTipPose(const vpHomogeneousMatrix &Hpose);
+  void setTipPose(const VISP_NAMESPACE_ADDRESSING vpPoseVector &pose);
+  void setTipPose(const VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &Hpose);
 
-  void moveBase(const vpColVector &control, double time);
+  void moveBase(const VISP_NAMESPACE_ADDRESSING vpColVector &control, double time);
   void moveBase(double tx, double ty, double tz, double thetax, double thetay, double thetaz);
-  void moveBase(const vpPoseVector &pose);
-  void moveBase(const vpColVector &v);
-  void moveBase(const vpHomogeneousMatrix &Hmotion);
+  void moveBase(const VISP_NAMESPACE_ADDRESSING vpPoseVector &pose);
+  void moveBase(const VISP_NAMESPACE_ADDRESSING vpColVector &v);
+  void moveBase(const VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &Hmotion);
 
-  void moveBaseWorldFrame(const vpColVector &command, double time);
+  void moveBaseWorldFrame(const VISP_NAMESPACE_ADDRESSING vpColVector &command, double time);
   void moveBaseWorldFrame(double tx, double ty, double tz, double thetax, double thetay, double thetaz);
-  void moveBaseWorldFrame(const vpPoseVector &pose);
-  void moveBaseWorldFrame(const vpColVector &v);
-  void moveBaseWorldFrame(const vpHomogeneousMatrix &Hmotion);
+  void moveBaseWorldFrame(const VISP_NAMESPACE_ADDRESSING vpPoseVector &pose);
+  void moveBaseWorldFrame(const VISP_NAMESPACE_ADDRESSING vpColVector &v);
+  void moveBaseWorldFrame(const VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &Hmotion);
 
-  void moveTip(const vpColVector &control, double time);
+  void moveTip(const VISP_NAMESPACE_ADDRESSING vpColVector &control, double time);
   void moveTip(double tx, double ty, double tz, double thetax, double thetay, double thetaz);
-  void moveTip(const vpPoseVector &pose);
-  void moveTip(const vpColVector &v);
-  void moveTip(const vpHomogeneousMatrix &Hmotion);
+  void moveTip(const VISP_NAMESPACE_ADDRESSING vpPoseVector &pose);
+  void moveTip(const VISP_NAMESPACE_ADDRESSING vpColVector &v);
+  void moveTip(const VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &Hmotion);
 
-  void moveTipWorldFrame(const vpColVector &command, double time);
+  void moveTipWorldFrame(const VISP_NAMESPACE_ADDRESSING vpColVector &command, double time);
   void moveTipWorldFrame(double tx, double ty, double tz, double thetax, double thetay, double thetaz);
-  void moveTipWorldFrame(const vpPoseVector &pose);
-  void moveTipWorldFrame(const vpColVector &v);
-  void moveTipWorldFrame(const vpHomogeneousMatrix &Hmotion);
+  void moveTipWorldFrame(const VISP_NAMESPACE_ADDRESSING vpPoseVector &pose);
+  void moveTipWorldFrame(const VISP_NAMESPACE_ADDRESSING vpColVector &v);
+  void moveTipWorldFrame(const VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &Hmotion);
 
   //! Data saving
 

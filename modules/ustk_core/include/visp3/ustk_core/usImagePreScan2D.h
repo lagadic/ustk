@@ -38,6 +38,7 @@
 #ifndef __usImagePreScan2D_h_
 #define __usImagePreScan2D_h_
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 
 #include <visp3/ustk_core/usImagePreScanSettings.h>
@@ -102,7 +103,7 @@ int main()
   \endcode
 
  */
-template <class Type> class usImagePreScan2D : public vpImage<Type>, public usImagePreScanSettings
+template <class Type> class usImagePreScan2D : public VISP_NAMESPACE_ADDRESSING vpImage<Type>, public usImagePreScanSettings
 {
 public:
   // default constructors
@@ -110,7 +111,7 @@ public:
   // sized constructor
   usImagePreScan2D(unsigned int height, unsigned int width);
   // All parameters initialisation constructors
-  usImagePreScan2D(const vpImage<Type> &image, const usImagePreScanSettings &preScanSettings);
+  usImagePreScan2D(const VISP_NAMESPACE_ADDRESSING vpImage<Type> &image, const usImagePreScanSettings &preScanSettings);
   // usImagePreScan2D copy constructor
   usImagePreScan2D(const usImagePreScan2D &other);
 
@@ -127,7 +128,7 @@ public:
   bool operator==(const usImagePreScan2D<Type> &other);
   bool operator!=(const usImagePreScan2D<Type> &other);
 
-  void setData(const vpImage<Type> image);
+  void setData(const VISP_NAMESPACE_ADDRESSING vpImage<Type> image);
   void setScanLineNumber(unsigned int scanLineNumber);
 
   // Filtering before calling vpImage::resize() to update scanLineNumber
@@ -138,7 +139,7 @@ public:
 /**
 * Basic constructor, all settings set to default values.
 */
-template <class Type> usImagePreScan2D<Type>::usImagePreScan2D() : vpImage<Type>(), usImagePreScanSettings() {}
+template <class Type> usImagePreScan2D<Type>::usImagePreScan2D() : VISP_NAMESPACE_ADDRESSING vpImage<Type>(), usImagePreScanSettings() { }
 
 /**
 * Copy constructor.
@@ -146,9 +147,8 @@ template <class Type> usImagePreScan2D<Type>::usImagePreScan2D() : vpImage<Type>
 */
 template <class Type>
 usImagePreScan2D<Type>::usImagePreScan2D(const usImagePreScan2D &other)
-  : vpImage<Type>(other), usImagePreScanSettings(other)
-{
-}
+  : VISP_NAMESPACE_ADDRESSING vpImage<Type>(other), usImagePreScanSettings(other)
+{ }
 
 /**
 * Constructor from image size.
@@ -157,7 +157,7 @@ usImagePreScan2D<Type>::usImagePreScan2D(const usImagePreScan2D &other)
 */
 template <class Type>
 usImagePreScan2D<Type>::usImagePreScan2D(unsigned int height, unsigned int width)
-  : vpImage<Type>(height, width), usImagePreScanSettings()
+  : VISP_NAMESPACE_ADDRESSING vpImage<Type>(height, width), usImagePreScanSettings()
 {
   usTransducerSettings::setScanLineNumber(width);
 }
@@ -168,9 +168,13 @@ usImagePreScan2D<Type>::usImagePreScan2D(unsigned int height, unsigned int width
 * @param preScanSettings Pre-scan settings you want to set.
 */
 template <class Type>
-usImagePreScan2D<Type>::usImagePreScan2D(const vpImage<Type> &image, const usImagePreScanSettings &preScanSettings)
-  : vpImage<Type>(image), usImagePreScanSettings(preScanSettings)
+usImagePreScan2D<Type>::usImagePreScan2D(const VISP_NAMESPACE_ADDRESSING vpImage<Type> &image, const usImagePreScanSettings &preScanSettings)
+  : VISP_NAMESPACE_ADDRESSING vpImage<Type>(image), usImagePreScanSettings(preScanSettings)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   if (image.getWidth() != preScanSettings.getScanLineNumber())
     throw(vpException(vpException::badValue, "Pre-scan image width differ from transducer scanline number"));
 }
@@ -178,13 +182,16 @@ usImagePreScan2D<Type>::usImagePreScan2D(const vpImage<Type> &image, const usIma
 /**
 * Destructor.
 */
-template <class Type> usImagePreScan2D<Type>::~usImagePreScan2D() {}
+template <class Type> usImagePreScan2D<Type>::~usImagePreScan2D() { }
 
 /**
 * Copy operator.
 */
 template <class Type> usImagePreScan2D<Type> &usImagePreScan2D<Type>::operator=(const usImagePreScan2D<Type> &other)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   // from vpImage
   vpImage<Type>::operator=(other);
 
@@ -199,6 +206,9 @@ template <class Type> usImagePreScan2D<Type> &usImagePreScan2D<Type>::operator=(
 */
 template <class Type> bool usImagePreScan2D<Type>::operator==(const usImagePreScan2D<Type> &other)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   return (vpImage<Type>::operator==(other) && usImagePreScanSettings::operator==(other));
 }
 
@@ -216,8 +226,8 @@ template <class Type> bool usImagePreScan2D<Type>::operator!=(const usImagePreSc
 template <class Type> std::ostream &operator<<(std::ostream &out, const usImagePreScan2D<Type> &other)
 {
   return out << static_cast<const usImagePreScanSettings &>(other)
-             << "number of B-mode samples in a scan line : " << other.getBModeSampleNumber() << std::endl
-             << "number of scan lines : " << other.getScanLineNumber() << std::endl;
+    << "number of B-mode samples in a scan line : " << other.getBModeSampleNumber() << std::endl
+    << "number of scan lines : " << other.getScanLineNumber() << std::endl;
 }
 
 /**
@@ -226,6 +236,10 @@ template <class Type> std::ostream &operator<<(std::ostream &out, const usImageP
 */
 template <class Type> unsigned int usImagePreScan2D<Type>::getBModeSampleNumber() const
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   return vpImage<Type>::getHeight();
 }
 
@@ -233,8 +247,12 @@ template <class Type> unsigned int usImagePreScan2D<Type>::getBModeSampleNumber(
 * Setter for the image data.
 * @param image The image to set.
 */
-template <class Type> void usImagePreScan2D<Type>::setData(const vpImage<Type> image)
+template <class Type> void usImagePreScan2D<Type>::setData(const VISP_NAMESPACE_ADDRESSING vpImage<Type> image)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   vpImage<Type>::operator=(image);
   setScanLineNumber(image.getWidth());
 }
@@ -247,6 +265,10 @@ template <class Type> void usImagePreScan2D<Type>::setData(const vpImage<Type> i
  */
 template <class Type> void usImagePreScan2D<Type>::setScanLineNumber(unsigned int scanLineNumber)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   vpImage<Type>::resize(vpImage<Type>::getHeight(), scanLineNumber);
   usTransducerSettings::setScanLineNumber(scanLineNumber);
 }
@@ -260,6 +282,10 @@ template <class Type> void usImagePreScan2D<Type>::setScanLineNumber(unsigned in
  */
 template <class Type> void usImagePreScan2D<Type>::resize(const unsigned int h, const unsigned int w)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   usTransducerSettings::setScanLineNumber(w);
   vpImage<Type>::resize(h, w);
 }
@@ -274,6 +300,10 @@ template <class Type> void usImagePreScan2D<Type>::resize(const unsigned int h, 
  */
 template <class Type> void usImagePreScan2D<Type>::resize(const unsigned int h, const unsigned int w, const Type val)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   usTransducerSettings::setScanLineNumber(w);
   vpImage<Type>::resize(h, w, val);
 }

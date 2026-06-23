@@ -42,12 +42,12 @@
 /**
 * Constructor.
 */
-usElastographyQtWrapper::usElastographyQtWrapper() : QObject(), m_elastography() {}
+usElastographyQtWrapper::usElastographyQtWrapper() : QObject(), m_elastography() { }
 
 /**
 * Destructor.
 */
-usElastographyQtWrapper::~usElastographyQtWrapper() {}
+usElastographyQtWrapper::~usElastographyQtWrapper() { }
 
 /**
 * ROI setter, coordinates are set in RF image pixel coordinates.
@@ -65,6 +65,10 @@ void usElastographyQtWrapper::setROI(int tx, int ty, int tw, int th) { m_elastog
 */
 void usElastographyQtWrapper::updateFrame(const usImageRF2D<short int> &img)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   m_elastography.updateRF(img);
   vpImage<unsigned char> elasto = m_elastography.run();
   if (elasto.getHeight() != 0 && elasto.getWidth() != 0)

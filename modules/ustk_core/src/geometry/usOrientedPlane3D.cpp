@@ -36,12 +36,15 @@
 #include <visp3/core/vpRotationMatrix.h>
 #include <visp3/core/vpThetaUVector.h>
 
-usOrientedPlane3D::usOrientedPlane3D() : m_direction(3, 0), m_pose(0, 0, 0, 0, 0, 0) {}
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
+usOrientedPlane3D::usOrientedPlane3D() : m_direction(3, 0), m_pose(0, 0, 0, 0, 0, 0) { }
 
 usOrientedPlane3D::usOrientedPlane3D(const usOrientedPlane3D &plane)
   : m_direction(plane.m_direction), m_pose(plane.m_pose)
-{
-}
+{ }
 
 usOrientedPlane3D::usOrientedPlane3D(const vpPoseVector &pose) : m_direction(3, 0), m_pose(pose) { }
 
@@ -51,7 +54,7 @@ usOrientedPlane3D::usOrientedPlane3D(const vpColVector &p, const vpColVector &d)
   this->setDirection(d);
 }
 
-usOrientedPlane3D::~usOrientedPlane3D() {}
+usOrientedPlane3D::~usOrientedPlane3D() { }
 
 const usOrientedPlane3D &usOrientedPlane3D::operator=(const usOrientedPlane3D &plane)
 {
@@ -106,7 +109,8 @@ void usOrientedPlane3D::setDirection(const vpColVector &D)
       m_pose[3 + i] = tu[i];
     m_direction = D;
     m_direction.normalize();
-  } else {
+  }
+  else {
     m_direction = 0;
     for (int i = 3; i < 6; i++)
       m_pose[i] = 0;

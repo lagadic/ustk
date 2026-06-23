@@ -9,6 +9,10 @@
 #include <visp3/ustk_gui/us3DSceneWidget.h>
 #include <visp3/ustk_gui/usVTKConverter.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 int main(int argc, char **argv)
 {
   std::string mhd_filename;

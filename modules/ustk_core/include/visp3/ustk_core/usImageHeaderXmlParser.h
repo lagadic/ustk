@@ -55,7 +55,7 @@
  * @brief Input/output operations between ultrasound image header and the associated xml files. Used for virtual server.
  * @ingroup module_ustk_grabber
  */
-class VISP_EXPORT usImageHeaderXmlParser : public vpXmlParser
+class VISP_EXPORT usImageHeaderXmlParser : public VISP_NAMESPACE_ADDRESSING vpXmlParser
 {
 public:
   usImageHeaderXmlParser();

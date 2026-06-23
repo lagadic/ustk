@@ -34,14 +34,17 @@
 
 #include <visp3/core/vpException.h>
 
-usNeedleTip::usNeedleTip() : m_basePose(), m_worldMbase(), m_tipPose(), m_worldMtip() {}
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
+usNeedleTip::usNeedleTip() : m_basePose(), m_worldMbase(), m_tipPose(), m_worldMtip() { }
 
 usNeedleTip::usNeedleTip(const usNeedleTip &tip)
   : m_basePose(tip.m_basePose), m_worldMbase(tip.m_worldMbase), m_tipPose(tip.m_tipPose), m_worldMtip(tip.m_worldMtip)
-{
-}
+{ }
 
-usNeedleTip::~usNeedleTip() {}
+usNeedleTip::~usNeedleTip() { }
 
 usNeedleTip &usNeedleTip::operator=(const usNeedleTip &tip)
 {

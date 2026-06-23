@@ -73,8 +73,8 @@ public:
   bool moveBase(double controlCurvature, double vz, double wz, double time);
 
   using usNeedleInsertionModelInterface::setBasePose;
-  bool setBasePose(const vpPoseVector &pose);
-  vpPoseVector getBasePose() const;
+  bool setBasePose(const VISP_NAMESPACE_ADDRESSING vpPoseVector &pose);
+  VISP_NAMESPACE_ADDRESSING vpPoseVector getBasePose() const;
 };
 
 #endif // __usNeedleInsertionModelKinematic_h

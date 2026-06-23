@@ -32,14 +32,17 @@
 
 #include <visp3/ustk_needle_modeling/usTissueModelPolynomial.h>
 
-usTissueModelPolynomial::usTissueModelPolynomial() : m_surface(), m_path() {}
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
+usTissueModelPolynomial::usTissueModelPolynomial() : m_surface(), m_path() { }
 
 usTissueModelPolynomial::usTissueModelPolynomial(const usTissueModelPolynomial &tissue)
   : m_surface(tissue.m_surface), m_path(tissue.m_path)
-{
-}
+{ }
 
-usTissueModelPolynomial::~usTissueModelPolynomial() {}
+usTissueModelPolynomial::~usTissueModelPolynomial() { }
 
 const usTissueModelPolynomial &usTissueModelPolynomial::operator=(const usTissueModelPolynomial &tissue)
 {

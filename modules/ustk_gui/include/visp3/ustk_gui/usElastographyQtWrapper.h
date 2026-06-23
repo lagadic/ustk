@@ -65,7 +65,7 @@ public slots:
   void updateFrame(const usImageRF2D<short int> &img);
 
 signals:
-  void elastoReady(vpImage<unsigned char>);
+  void elastoReady(VISP_NAMESPACE_ADDRESSING vpImage<unsigned char>);
 
 private:
   usElastography m_elastography;

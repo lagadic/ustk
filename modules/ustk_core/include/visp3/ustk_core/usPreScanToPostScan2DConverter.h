@@ -38,6 +38,7 @@
 #ifndef __usPreScanToPostScan2DConverter_h_
 #define __usPreScanToPostScan2DConverter_h_
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/ustk_core/usImagePostScan2D.h>
 #include <visp3/ustk_core/usImagePreScan2D.h>
 #include <visp3/ustk_core/usPreScanToPostScan2DConverter.h>
@@ -109,10 +110,10 @@ protected:
             const double xResolution, const double yResolution);
 
 private:
-  double interpolateLinear(const vpImage<unsigned char> &I, double x, double y);
+  double interpolateLinear(const VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &I, double x, double y);
 
-  vpMatrix m_rMap;
-  vpMatrix m_tMap;
+  VISP_NAMESPACE_ADDRESSING vpMatrix m_rMap;
+  VISP_NAMESPACE_ADDRESSING vpMatrix m_tMap;
 
   double m_xResolution;
   double m_yResolution;

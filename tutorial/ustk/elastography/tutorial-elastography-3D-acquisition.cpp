@@ -10,6 +10,10 @@
 
 #include <visp3/ustk_grabber/usNetworkGrabberRF3D.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 int main(int argc, char **argv)
 {
   // QT application
@@ -23,17 +27,19 @@ int main(int argc, char **argv)
   // record directories
   if (qApp->arguments().contains(QString("--preCompressed"))) {
     preCompressedDirectory =
-        qApp->arguments().at(qApp->arguments().indexOf(QString("--preCompressed")) + 1).toStdString();
-  } else {
+      qApp->arguments().at(qApp->arguments().indexOf(QString("--preCompressed")) + 1).toStdString();
+  }
+  else {
     std::cout << "You need to specify the directory to record the pre-compressed volumes with --preCompressed option\n";
     throw vpException(vpException::fatalError, "No output directory specified for pre-compressed volumes !");
   }
   if (qApp->arguments().contains(QString("--postCompressed"))) {
     postCompressedDirectory =
-        qApp->arguments().at(qApp->arguments().indexOf(QString("--postCompressed")) + 1).toStdString();
-  } else {
+      qApp->arguments().at(qApp->arguments().indexOf(QString("--postCompressed")) + 1).toStdString();
+  }
+  else {
     std::cout
-        << "You need to specify the directory to record the post-compressed volumes with --postCompressed option\n";
+      << "You need to specify the directory to record the post-compressed volumes with --postCompressed option\n";
     throw vpException(vpException::fatalError, "No output directory specified for post-compressed volumes !");
   }
 

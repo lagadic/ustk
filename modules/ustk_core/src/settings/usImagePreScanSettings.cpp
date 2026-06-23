@@ -39,6 +39,10 @@
 // ustk includes
 #include <visp3/ustk_core/usImagePreScanSettings.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 /**
 * Default constructor, all parameters set with default values.
 */

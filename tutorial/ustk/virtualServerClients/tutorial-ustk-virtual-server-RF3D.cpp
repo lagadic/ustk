@@ -18,6 +18,10 @@
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 int main(int argc, char **argv)
 {
   // QT application
@@ -71,7 +75,8 @@ int main(int argc, char **argv)
       if (!outputPath.isEmpty())
         writer.write(preScanImage, grabbedVolume->getTimeStamps());
 
-    } else {
+    }
+    else {
       vpTime::wait(10);
     }
   } while (captureRunning);
@@ -83,7 +88,7 @@ int main(int argc, char **argv)
 int main()
 {
   std::cout << "You should intall Qt5 (with wigdets and network modules), and display X  to run this tutorial"
-            << std::endl;
+    << std::endl;
   return 0;
 }
 

@@ -74,8 +74,8 @@ public:
   static void convert(vtkSmartPointer<vtkImageData> &vtkPostScanImage, usImagePostScan2D<unsigned char> &postScanImage);
 
   // matrix types
-  static void convert(const vpHomogeneousMatrix &, vtkMatrix4x4 *);
-  static void convert(vtkMatrix4x4 *, vpHomogeneousMatrix &);
+  static void convert(const VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &, vtkMatrix4x4 *);
+  static void convert(vtkMatrix4x4 *, VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &);
 };
 #endif
 #endif // __usMedicalImageViewer_h_

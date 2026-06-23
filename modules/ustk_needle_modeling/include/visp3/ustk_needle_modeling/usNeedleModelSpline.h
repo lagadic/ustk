@@ -107,10 +107,10 @@ public:
 
   //! Needle position
 
-  vpColVector getNeedlePoint(double l) const;
-  vpColVector getNeedleDirection(double l) const;
+  VISP_NAMESPACE_ADDRESSING vpColVector getNeedlePoint(double l) const;
+  VISP_NAMESPACE_ADDRESSING vpColVector getNeedleDirection(double l) const;
 
-  double getDistanceFromPoint(const vpColVector &P, double start = 0, double stop = -1, double threshold = 1e-5) const;
+  double getDistanceFromPoint(const VISP_NAMESPACE_ADDRESSING vpColVector &P, double start = 0, double stop = -1, double threshold = 1e-5) const;
 
   //! Needle bending
 
@@ -118,11 +118,11 @@ public:
 
   //! Force at base
 
-  vpColVector getBaseStaticTorsor() const;
+  VISP_NAMESPACE_ADDRESSING vpColVector getBaseStaticTorsor() const;
 
   //! Curvature
 
-  double getCurvatureFromNeedleShape(double start, double end, vpColVector &center3D, vpColVector &direction3D) const;
+  double getCurvatureFromNeedleShape(double start, double end, VISP_NAMESPACE_ADDRESSING vpColVector &center3D, VISP_NAMESPACE_ADDRESSING vpColVector &direction3D) const;
 
   //! Display
 

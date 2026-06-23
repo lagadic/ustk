@@ -35,14 +35,17 @@
 
 #if defined(USTK_HAVE_FFTW)
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 /**
 * Default constructor.
 * It only initializes the pointers class members to NULL.
 */
 usConvolution2d::usConvolution2d()
   : outa(NULL), outb(NULL), outc(NULL), out(NULL), ad(NULL), bd(NULL), p1(), p2(), p3(), m_init(false)
-{
-}
+{ }
 
 /**
 * Destructor.
@@ -112,7 +115,8 @@ void usConvolution2d::init(const vpMatrix &matrix1, const vpMatrix &matrix2)
     p1 = fftw_plan_dft_2d(wf, hf, ad, outa, FFTW_FORWARD, FFTW_ESTIMATE);
     p2 = fftw_plan_dft_2d(wf, hf, bd, outb, FFTW_FORWARD, FFTW_ESTIMATE);
     p3 = fftw_plan_dft_2d(wf, hf, outc, out, FFTW_BACKWARD, FFTW_ESTIMATE);
-  } else { // init already done with correct matrix dimentions
+  }
+  else { // init already done with correct matrix dimentions
     m_M1 = matrix1;
     m_M2 = matrix2;
   }

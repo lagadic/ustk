@@ -55,7 +55,7 @@ public:
 
   usVirtualSpring();
   usVirtualSpring(const usVirtualSpring &spring);
-  usVirtualSpring(const vpColVector &p, const vpColVector &d, double K);
+  usVirtualSpring(const VISP_NAMESPACE_ADDRESSING vpColVector &p, const VISP_NAMESPACE_ADDRESSING vpColVector &d, double K);
   virtual ~usVirtualSpring();
   const usVirtualSpring &operator=(const usVirtualSpring &spring);
 

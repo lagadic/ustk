@@ -32,13 +32,16 @@
 
 #include <visp3/ustk_elastography/usImageElastography.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 /*!
   \brief Constructor.
 */
 usImageElastography::usImageElastography()
   : m_ultrasoundImage(), m_strainMap(), m_elastoImage(), m_heigthPosition(0), m_widthPosition(0)
-{
-}
+{ }
 
 /**
 * Initializing constructor.
@@ -53,7 +56,7 @@ usImageElastography::usImageElastography(const vpImage<unsigned char> &ultrasoun
                                          const vpImage<unsigned char> &strainMap, unsigned int heightPosition,
                                          unsigned int widthPosition)
   : m_ultrasoundImage(ultrasoundImage), m_strainMap(strainMap), m_elastoImage(), m_heigthPosition(heightPosition),
-    m_widthPosition(widthPosition)
+  m_widthPosition(widthPosition)
 {
   computeElastographyImage();
 }
@@ -61,7 +64,7 @@ usImageElastography::usImageElastography(const vpImage<unsigned char> &ultrasoun
 /**
 * Destructor.
 */
-usImageElastography::~usImageElastography() {}
+usImageElastography::~usImageElastography() { }
 
 /**
 * Get the resulting image, combinig ultrasound and elastography.
@@ -115,7 +118,8 @@ void usImageElastography::computeElastographyImage()
       if (i >= (int)m_heigthPosition && i < (int)(m_heigthPosition + m_strainMap.getHeight()) && j >= m_widthPosition &&
           j < m_widthPosition + m_strainMap.getWidth()) {
         newColor.R = m_strainMap[i - m_heigthPosition][j - m_widthPosition];
-      } else { // oustide
+      }
+      else { // oustide
         newColor.R = m_ultrasoundImage[i][j];
         newColor.G = m_ultrasoundImage[i][j];
         newColor.B = m_ultrasoundImage[i][j];

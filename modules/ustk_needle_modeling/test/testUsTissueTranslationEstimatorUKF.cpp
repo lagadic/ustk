@@ -69,6 +69,10 @@
 // List of allowed command line options
 #define GETOPTARGS "hlt:cd"
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 typedef enum { vpX11, vpGTK, vpGDI, vpD3D, vpCV } vpDisplayType;
 
 void usage(const char *name, const char *badparam, vpDisplayType &dtype);
@@ -155,423 +159,395 @@ OPTIONS:                                               Default\n\
 */
 bool getOptions(int argc, const char **argv, vpDisplayType &dtype, bool &list, bool &display)
 {
-    const char *optarg_;
-    int c;
-    std::string sDisplayType;
-    while((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1)
-    {
+  const char *optarg_;
+  int c;
+  std::string sDisplayType;
+  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
-        switch (c)
-        {
-            case 'l':
-                list = true;
-                break;
-            case 't':
-                sDisplayType = optarg_;
-                // Parse the display type option
-                if(sDisplayType.compare("X11") == 0) dtype = vpX11;
-                else if (sDisplayType.compare("GTK") == 0) dtype = vpGTK;
-                else if (sDisplayType.compare("GDI") == 0) dtype = vpGDI;
-                else if (sDisplayType.compare("D3D") == 0) dtype = vpD3D;
-                else if (sDisplayType.compare("CV") == 0) dtype = vpCV;
-                
-                break;
-            case 'h':
-                usage(argv[0], NULL, dtype);
-                return false;
-                break;
-            case 'c':
-                break;
-            case 'd':
-                display = false;
-                break;
+    switch (c) {
+    case 'l':
+      list = true;
+      break;
+    case 't':
+      sDisplayType = optarg_;
+      // Parse the display type option
+      if (sDisplayType.compare("X11") == 0) dtype = vpX11;
+      else if (sDisplayType.compare("GTK") == 0) dtype = vpGTK;
+      else if (sDisplayType.compare("GDI") == 0) dtype = vpGDI;
+      else if (sDisplayType.compare("D3D") == 0) dtype = vpD3D;
+      else if (sDisplayType.compare("CV") == 0) dtype = vpCV;
+
+      break;
+    case 'h':
+      usage(argv[0], NULL, dtype);
+      return false;
+      break;
+    case 'c':
+      break;
+    case 'd':
+      display = false;
+      break;
 
 
-            default:
-                usage(argv[0], optarg_, dtype);
-                return false;
-                break;
-        }
+    default:
+      usage(argv[0], optarg_, dtype);
+      return false;
+      break;
     }
+  }
 
-    if((c == 1) || (c == -1))
-    {
-        // standalone param or error
-        usage(argv[0], NULL, dtype);
-        std::cerr << "ERROR: " << std::endl;
-        std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
-        return false;
-    }
+  if ((c == 1) || (c == -1)) {
+      // standalone param or error
+    usage(argv[0], NULL, dtype);
+    std::cerr << "ERROR: " << std::endl;
+    std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
+    return false;
+  }
 
-    return true;
+  return true;
 }
 
 
 
 int main(int argc, const char **argv)
 {
-    bool opt_list = false;   // To print the list of video devices
-    vpDisplayType opt_dtype; // Type of display to use
-    bool opt_display = true;
+  bool opt_list = false;   // To print the list of video devices
+  vpDisplayType opt_dtype; // Type of display to use
+  bool opt_display = true;
 
 // Default display is one available
 #if defined VISP_HAVE_GTK
-    opt_dtype = vpGTK;
+  opt_dtype = vpGTK;
 #elif defined VISP_HAVE_X11
-    opt_dtype = vpX11;
+  opt_dtype = vpX11;
 #elif defined VISP_HAVE_GDI
-    opt_dtype = vpGDI;
+  opt_dtype = vpGDI;
 #elif defined VISP_HAVE_D3D9
-    opt_dtype = vpD3D;
+  opt_dtype = vpD3D;
 #elif defined VISP_HAVE_OPENCV
-    opt_dtype = vpCV;
+  opt_dtype = vpCV;
 #endif
 
     // Read the command line options
-    if(!getOptions(argc, argv, opt_dtype, opt_list, opt_display)) exit(-1);
+  if (!getOptions(argc, argv, opt_dtype, opt_list, opt_display)) exit(-1);
 
-    // Print the list of video-devices available
-    if (opt_list) {
-      unsigned nbDevices = 0;
-      std::cout << "List of video-devices available: \n";
+  // Print the list of video-devices available
+  if (opt_list) {
+    unsigned nbDevices = 0;
+    std::cout << "List of video-devices available: \n";
 #if defined VISP_HAVE_GTK
-      std::cout << "  GTK (use \"-t GTK\" option to use it)\n";
-      nbDevices++;
+    std::cout << "  GTK (use \"-t GTK\" option to use it)\n";
+    nbDevices++;
 #endif
 #if defined VISP_HAVE_X11
-      std::cout << "  X11 (use \"-t X11\" option to use it)\n";
-      nbDevices++;
+    std::cout << "  X11 (use \"-t X11\" option to use it)\n";
+    nbDevices++;
 #endif
 #if defined VISP_HAVE_GDI
-      std::cout << "  GDI (use \"-t GDI\" option to use it)\n";
-      nbDevices++;
+    std::cout << "  GDI (use \"-t GDI\" option to use it)\n";
+    nbDevices++;
 #endif
 #if defined VISP_HAVE_D3D9
-      std::cout << "  D3D (use \"-t D3D\" option to use it)\n";
-      nbDevices++;
+    std::cout << "  D3D (use \"-t D3D\" option to use it)\n";
+    nbDevices++;
 #endif
 #if defined VISP_HAVE_OPENCV
-      std::cout << "  CV (use \"-t CV\" option to use it)\n";
-      nbDevices++;
+    std::cout << "  CV (use \"-t CV\" option to use it)\n";
+    nbDevices++;
 #endif
-      if (!nbDevices) {
-        std::cout << "  No display is available\n";
-      }
-      return (0);
+    if (!nbDevices) {
+      std::cout << "  No display is available\n";
     }
+    return (0);
+}
 
-    vpImage<unsigned char> I1(700, 500, 255);
-    vpImage<vpRGBa> I2(700, 500, vpRGBa(255,255,255,255));
-    
-    vpDisplay *display1 = nullptr;
-    vpDisplay *display2 = nullptr;
+  vpImage<unsigned char> I1(700, 500, 255);
+  vpImage<vpRGBa> I2(700, 500, vpRGBa(255, 255, 255, 255));
+
+  vpDisplay *display1 = nullptr;
+  vpDisplay *display2 = nullptr;
 #if defined(VISP_HAVE_DISPLAY)
-    vpPlot *statePlot = NULL;
+  vpPlot *statePlot = NULL;
 #endif
 
-    if(opt_display)
-    {
-      switch (opt_dtype)
-      {
-          case vpX11:
-              std::cout << "Requested X11 display functionnalities..." << std::endl;
+  if (opt_display) {
+    switch (opt_dtype) {
+    case vpX11:
+      std::cout << "Requested X11 display functionnalities..." << std::endl;
 #if defined VISP_HAVE_X11
-              display1 = new vpDisplayX;
-              display2 = new vpDisplayX;
+      display1 = new vpDisplayX;
+      display2 = new vpDisplayX;
 #else
-              std::cout << "  Sorry, X11 video device is not available.\n";
-              std::cout << "Use \"" << argv[0] << " -l\" to print the list of available devices.\n";
-              return 0;
+      std::cout << "  Sorry, X11 video device is not available.\n";
+      std::cout << "Use \"" << argv[0] << " -l\" to print the list of available devices.\n";
+      return 0;
 #endif
-              break;
-          case vpGTK:
-              std::cout << "Requested GTK display functionnalities..." << std::endl;
+      break;
+    case vpGTK:
+      std::cout << "Requested GTK display functionnalities..." << std::endl;
 #if defined VISP_HAVE_GTK
-              display1 = new vpDisplayGTK;
-              display2 = new vpDisplayGTK;
+      display1 = new vpDisplayGTK;
+      display2 = new vpDisplayGTK;
 #else
-              std::cout << "  Sorry, GTK video device is not available.\n";
-              std::cout << "Use \"" << argv[0] << " -l\" to print the list of available devices.\n";
-              return 0;
+      std::cout << "  Sorry, GTK video device is not available.\n";
+      std::cout << "Use \"" << argv[0] << " -l\" to print the list of available devices.\n";
+      return 0;
 #endif
-              break;
-          case vpGDI:
-              std::cout << "Requested GDI display functionnalities..." << std::endl;
+      break;
+    case vpGDI:
+      std::cout << "Requested GDI display functionnalities..." << std::endl;
 #if defined VISP_HAVE_GDI
-              display1 = new vpDisplayGDI;
-              display2 = new vpDisplayGDI;
+      display1 = new vpDisplayGDI;
+      display2 = new vpDisplayGDI;
 #else
-              std::cout << "  Sorry, GDI video device is not available.\n";
-              std::cout << "Use \"" << argv[0] << " -l\" to print the list of available devices.\n";
-              return 0;
+      std::cout << "  Sorry, GDI video device is not available.\n";
+      std::cout << "Use \"" << argv[0] << " -l\" to print the list of available devices.\n";
+      return 0;
 #endif
-              break;
-          case vpD3D:
-              std::cout << "Requested D3D display functionnalities..." << std::endl;
+      break;
+    case vpD3D:
+      std::cout << "Requested D3D display functionnalities..." << std::endl;
 #if defined VISP_HAVE_D3D9
-              display1 = new vpDisplayD3D;
-              display2 = new vpDisplayD3D;
+      display1 = new vpDisplayD3D;
+      display2 = new vpDisplayD3D;
 #else
-              std::cout << "  Sorry, D3D video device is not available.\n";
-              std::cout << "Use \"" << argv[0] << " -l\" to print the list of available devices.\n";
-              return 0;
+      std::cout << "  Sorry, D3D video device is not available.\n";
+      std::cout << "Use \"" << argv[0] << " -l\" to print the list of available devices.\n";
+      return 0;
 #endif
-              break;
-          case vpCV:
-              std::cout << "Requested OpenCV display functionnalities..." << std::endl;
+      break;
+    case vpCV:
+      std::cout << "Requested OpenCV display functionnalities..." << std::endl;
 #if defined(VISP_HAVE_OPENCV)
-              display1 = new vpDisplayOpenCV;
-              display2 = new vpDisplayOpenCV;
+      display1 = new vpDisplayOpenCV;
+      display2 = new vpDisplayOpenCV;
 #else
-              std::cout << "  Sorry, OpenCV video device is not available.\n";
-              std::cout << "Use \"" << argv[0] << " -l\" to print the list of available devices.\n";
-              return 0;
+      std::cout << "  Sorry, OpenCV video device is not available.\n";
+      std::cout << "Use \"" << argv[0] << " -l\" to print the list of available devices.\n";
+      return 0;
 #endif
-              break;
+      break;
+    }
+  }
+
+  std::cout << "Start test testUsTissueTranslationEstimatorUKF" << std::endl;
+
+  const int nbNeedles = 6;
+
+  if (opt_display) {
+    display1->init(I1, 0, 0, "XZ");
+    display2->init(I2, display1->getWindowXPosition()+display1->getWidth(), display1->getWindowYPosition(), "YZ");
+
+#if defined(VISP_HAVE_DISPLAY)
+    statePlot = new vpPlot;
+    statePlot->init(4);
+    for (int i = 0; i<4; i++) statePlot->initGraph(i, 1+nbNeedles);
+    statePlot->setTitle(0, "Tissue position X");
+    statePlot->setTitle(1, "Tissue position Y");
+    statePlot->setTitle(2, "Tissue velocity X");
+    statePlot->setTitle(3, "Tissue velocity Y");
+    statePlot->setLegend(0, 0, "Ref");
+    for (int i = 0; i<nbNeedles; i++) statePlot->setLegend(0, i+1, [i]() {std::ostringstream t;t<<i;return t.str();}());
+#endif
+  }
+
+  usNeedleInsertionModelRayleighRitzSpline needleRef;
+  usNeedleInsertionModelRayleighRitzSpline needle[nbNeedles];
+
+  needleRef.loadPreset(usNeedleInsertionModelRayleighRitzSpline::ModelPreset::BiopsyNeedle);
+  for (int i = 0; i<nbNeedles; i++) needle[i].loadPreset(usNeedleInsertionModelRayleighRitzSpline::ModelPreset::BiopsyNeedle);
+
+  needleRef.setPathUpdateType(usNeedleInsertionModelRayleighRitzSpline::PathUpdateType::WithTipPosition);
+  for (int i = 0; i<nbNeedles; i++) needle[i].setPathUpdateType(usNeedleInsertionModelRayleighRitzSpline::PathUpdateType::WithTipPosition);
+
+  needleRef.setStiffnessPerUnitLength(10000);
+  for (int i = 0; i<nbNeedles; i++) needle[i].setStiffnessPerUnitLength(10000);
+
+  vpPoseVector needleInitialBasePose(0, 0, -0.08, 0, 0, 0);
+  needleRef.setBasePose(needleInitialBasePose);
+  for (int i = 0; i<nbNeedles; i++) needle[i].setBasePose(needleInitialBasePose);
+
+  needleRef.setSurfaceAtTip();
+  for (int i = 0; i<nbNeedles; i++) needle[i].setSurfaceAtTip();
+
+  double std_measure_position = 1e-3;
+  double std_measure_tip_direction = 1e-3;
+  double std_measure_force = 1e-3;
+  double std_measure_torque = 1e-3;
+  double std_process_position_only = 1e-3;
+  double std_process_position = 1e-6;
+  double std_process_velocity = 1e-4;
+
+  usTissueTranslationEstimatorUKF Kalman[nbNeedles];
+  for (int i = 0; i<nbNeedles; i++) {
+    Kalman[i].setPositionMeasureNoiseVariance(std_measure_position*std_measure_position);
+    Kalman[i].setTipDirectionMeasureNoiseVariance(std_measure_tip_direction*std_measure_tip_direction);
+    Kalman[i].setForceMeasureNoiseVariance(std_measure_force*std_measure_force);
+    Kalman[i].setTorqueMeasureNoiseVariance(std_measure_torque*std_measure_torque);
+
+    Kalman[i].setProcessNoiseType(usTissueTranslationEstimatorUKF::ADDITIVE_NOISE);
+    Kalman[i].setMeasureNoiseType(usTissueTranslationEstimatorUKF::ADDITIVE_NOISE);
+
+    Kalman[i].setSigmaPointGenerationType(usTissueTranslationEstimatorUKF::LIMITED_SPREAD);
+    Kalman[i].setSigmaPointScalingFactor(1e-2);
+    Kalman[i].setSigmaPointSpreadThreshold(0.0001);
+
+    Kalman[i].setTissueTranslationType(usTissueTranslationEstimatorUKF::LATERAL_TRANSLATIONS_ONLY);
+  }
+
+  for (int i = 0; i<nbNeedles/2; i++) {
+    Kalman[i].setStateDynamicsType(usTissueTranslationEstimatorUKF::CONSTANT_VELOCITY);
+    vpMatrix P(6, 6, 0);
+    P[0][0] = std_process_position*std_process_position;
+    P[1][1] = std_process_position*std_process_position;
+    P[3][3] = std_process_velocity*std_process_velocity;
+    P[4][4] = std_process_velocity*std_process_velocity;
+    Kalman[i].setStateCovarianceMatrix(P);
+    Kalman[i].setTissuePositionProcessNoiseVariance(std_process_position*std_process_position);
+    Kalman[i].setTissueVelocityProcessNoiseVariance(std_process_velocity*std_process_velocity);
+
+    Kalman[nbNeedles/2+i].setStateDynamicsType(usTissueTranslationEstimatorUKF::CONSTANT_POSITION);
+    P.resize(3, 3);
+    P[0][0] = std_process_position_only*std_process_position_only;
+    P[1][1] = std_process_position_only*std_process_position_only;
+    Kalman[nbNeedles/2+i].setStateCovarianceMatrix(P);
+    Kalman[nbNeedles/2+i].setTissuePositionProcessNoiseVariance(std_process_position_only*std_process_position_only);
+  }
+
+  for (int i = 0; i<nbNeedles; i += 3) {
+    Kalman[i].setMeasureType(usTissueTranslationEstimatorUKF::NEEDLE_BODY_POINTS);
+    Kalman[i+1].setMeasureType(usTissueTranslationEstimatorUKF::TIP_POSITION_AND_DIRECTION);
+    Kalman[i+2].setMeasureType(usTissueTranslationEstimatorUKF::BASE_FORCE_TORQUE);
+  }
+
+  double time = 0;
+  for (int i = 0; i<50;i++) {
+    for (int i = 0; i<nbNeedles; i++) Kalman[i].setCurrentNeedle(needle[i]);
+
+    if (i<10) {
+      vpColVector baseControl(6, 0);
+      baseControl[2] = 0.005;
+      baseControl[1] = 0.0005;
+      needleRef.moveBase(baseControl, 1);
+      for (int i = 0; i<nbNeedles; i++) needle[i].moveBase(baseControl, 1);
+    }
+
+    if (i<10) {
+      needleRef.accessTissue().move(0.001, 0, 0, 0, 0, 0);
+      needleRef.updateState();
+#if defined(VISP_HAVE_DISPLAY)
+      if (opt_display) {
+        statePlot->plot(2, 0, time, 0.001);
+        statePlot->plot(3, 0, time, 0);
+    }
+#endif
+  }
+    else if (i<20) {
+      needleRef.accessTissue().move(0, 0.001, 0, 0, 0, 0);
+      needleRef.updateState();
+#if defined(VISP_HAVE_DISPLAY)
+      if (opt_display) {
+        statePlot->plot(2, 0, time, 0);
+        statePlot->plot(3, 0, time, 0.001);
+    }
+#endif
+        }
+    else if (i<30) {
+      needleRef.accessTissue().move(-0.002, 0, 0, 0, 0, 0);
+      needleRef.updateState();
+#if defined(VISP_HAVE_DISPLAY)
+      if (opt_display) {
+        statePlot->plot(2, 0, time, -0.002);
+        statePlot->plot(3, 0, time, 0);
+    }
+#endif
+        }
+    else if (i<40) {
+      needleRef.accessTissue().move(0, -0.002, 0, 0, 0, 0);
+      needleRef.updateState();
+#if defined(VISP_HAVE_DISPLAY)
+      if (opt_display) {
+        statePlot->plot(2, 0, time, 0);
+        statePlot->plot(3, 0, time, -0.002);
+    }
+#endif
+        }
+    else {
+      needleRef.accessTissue().move(0.001, 0.001, 0, 0, 0, 0);
+      needleRef.updateState();
+#if defined(VISP_HAVE_DISPLAY)
+      if (opt_display) {
+        statePlot->plot(2, 0, time, 0.001);
+        statePlot->plot(3, 0, time, 0.001);
+    }
+#endif
+    }
+
+#if defined(VISP_HAVE_DISPLAY)
+    if (opt_display) {
+      statePlot->plot(0, 0, time, needleRef.accessTissue().getPose()[0]);
+      statePlot->plot(1, 0, time, needleRef.accessTissue().getPose()[1]);
+        }
+#endif
+
+    int nbObs = floor(needleRef.getInsertionDepth()/0.005) + 2;
+    double step = needleRef.getInsertionDepth()/(nbObs-1);
+    vpColVector CP(3*nbObs);
+
+    for (int j = 0; j<nbObs; j++) {
+      vpColVector p = needleRef.accessNeedle().getNeedlePoint(needleRef.accessNeedle().getParametricLength()-j*step);
+      CP.insert(3*j, p);
+    }
+
+    vpColVector tipMeasures(6);
+    tipMeasures.insert(0, needleRef.accessNeedle().getTipPosition());
+    tipMeasures.insert(3, needleRef.accessNeedle().getTipDirection());
+
+    vpColVector baseForceMeasures(needleRef.accessNeedle().getBaseStaticTorsor());
+
+    for (int i = 0; i<nbNeedles; i++) Kalman[i].setPropagationTime(1.);
+
+    for (int i = 0; i<nbNeedles; i += 3) {
+      Kalman[i].filter(CP);
+      Kalman[i+1].filter(tipMeasures);
+      Kalman[i+2].filter(baseForceMeasures);
+    }
+
+    for (int i = 0; i<nbNeedles; i++) {
+      Kalman[i].applyStateToNeedle(needle[i]);
+      needle[i].updateState();
+    }
+
+    if (opt_display) {
+      vpDisplay::display(I1);
+      vpDisplay::display(I2);
+      usNeedleModelingDisplayTools::display(needleRef, I1, vpHomogeneousMatrix(0.08, 0.1, 0.2, -M_PI / 2, 0, 0), 3000, 3000);
+      usNeedleModelingDisplayTools::display(needleRef, I2, vpHomogeneousMatrix(0.08, 0.1, 0.2, -2*M_PI / (3*sqrt(3)), 2*M_PI / (3*sqrt(3)), 2*M_PI / (3*sqrt(3))), 3000, 3000);
+      for (int i = 0; i<nbNeedles; i++) {
+        usNeedleModelingDisplayTools::display(needle[i], I1, vpHomogeneousMatrix(0.08, 0.1, 0.2, -M_PI / 2, 0, 0), 3000, 3000);
+        usNeedleModelingDisplayTools::display(needle[i], I2, vpHomogeneousMatrix(0.08, 0.1, 0.2, -2*M_PI / (3*sqrt(3)), 2*M_PI / (3*sqrt(3)), 2*M_PI / (3*sqrt(3))), 3000, 3000);
+#if defined(VISP_HAVE_DISPLAY)
+        statePlot->plot(0, 1+i, time, needle[i].accessTissue().getPose()[0]);
+        statePlot->plot(1, 1+i, time, needle[i].accessTissue().getPose()[1]);
+#endif
       }
+#if defined(VISP_HAVE_DISPLAY)
+      for (int i = 0; i<nbNeedles/2; i++) {
+        statePlot->plot(2, 1+i, time, Kalman[i].getState()[3]);
+        statePlot->plot(3, 1+i, time, Kalman[i].getState()[4]);
+      }
+#endif
+      vpDisplay::flush(I1);
+      vpDisplay::flush(I2);
+    }
+    time += 1;
     }
 
-    std::cout << "Start test testUsTissueTranslationEstimatorUKF" << std::endl;
-    
-    const int nbNeedles = 6;
-        
-    if(opt_display)
-    {
-        display1->init(I1, 0,0, "XZ");
-        display2->init(I2, display1->getWindowXPosition()+display1->getWidth(), display1->getWindowYPosition(), "YZ");
-
+  if (display1) delete display1;
+  if (display2) delete display2;
 #if defined(VISP_HAVE_DISPLAY)
-        statePlot = new vpPlot;
-        statePlot->init(4);
-        for(int i=0 ; i<4 ; i++) statePlot->initGraph(i,1+nbNeedles);
-        statePlot->setTitle(0, "Tissue position X");
-        statePlot->setTitle(1, "Tissue position Y");
-        statePlot->setTitle(2, "Tissue velocity X");
-        statePlot->setTitle(3, "Tissue velocity Y");
-        statePlot->setLegend(0,0, "Ref");
-        for(int i=0 ; i<nbNeedles ; i++) statePlot->setLegend(0,i+1,[i](){std::ostringstream t;t<<i;return t.str();}());
-#endif
-    }
-    
-    usNeedleInsertionModelRayleighRitzSpline needleRef;
-    usNeedleInsertionModelRayleighRitzSpline needle[nbNeedles];
-
-    needleRef.loadPreset(usNeedleInsertionModelRayleighRitzSpline::ModelPreset::BiopsyNeedle);
-    for(int i = 0 ; i<nbNeedles ; i++) needle[i].loadPreset(usNeedleInsertionModelRayleighRitzSpline::ModelPreset::BiopsyNeedle);
-
-    needleRef.setPathUpdateType(usNeedleInsertionModelRayleighRitzSpline::PathUpdateType::WithTipPosition);
-    for(int i = 0 ; i<nbNeedles ; i++) needle[i].setPathUpdateType(usNeedleInsertionModelRayleighRitzSpline::PathUpdateType::WithTipPosition);
-
-    needleRef.setStiffnessPerUnitLength(10000);
-    for(int i = 0 ; i<nbNeedles ; i++) needle[i].setStiffnessPerUnitLength(10000);
-
-    vpPoseVector needleInitialBasePose(0,0,-0.08, 0, 0, 0);
-    needleRef.setBasePose(needleInitialBasePose);
-    for(int i = 0 ; i<nbNeedles ; i++) needle[i].setBasePose(needleInitialBasePose);
-
-    needleRef.setSurfaceAtTip();
-    for(int i = 0 ; i<nbNeedles ; i++) needle[i].setSurfaceAtTip();
-
-    double std_measure_position = 1e-3;
-    double std_measure_tip_direction = 1e-3;
-    double std_measure_force = 1e-3;
-    double std_measure_torque = 1e-3;
-    double std_process_position_only = 1e-3;
-    double std_process_position = 1e-6;
-    double std_process_velocity = 1e-4;
-
-    usTissueTranslationEstimatorUKF Kalman[nbNeedles];
-    for(int i=0 ; i<nbNeedles ; i++)
-    {
-        Kalman[i].setPositionMeasureNoiseVariance(std_measure_position*std_measure_position);
-        Kalman[i].setTipDirectionMeasureNoiseVariance(std_measure_tip_direction*std_measure_tip_direction);
-        Kalman[i].setForceMeasureNoiseVariance(std_measure_force*std_measure_force);
-        Kalman[i].setTorqueMeasureNoiseVariance(std_measure_torque*std_measure_torque);
-
-        Kalman[i].setProcessNoiseType(usTissueTranslationEstimatorUKF::ADDITIVE_NOISE);
-        Kalman[i].setMeasureNoiseType(usTissueTranslationEstimatorUKF::ADDITIVE_NOISE);
-        
-        Kalman[i].setSigmaPointGenerationType(usTissueTranslationEstimatorUKF::LIMITED_SPREAD);
-        Kalman[i].setSigmaPointScalingFactor(1e-2);
-        Kalman[i].setSigmaPointSpreadThreshold(0.0001);
-        
-        Kalman[i].setTissueTranslationType(usTissueTranslationEstimatorUKF::LATERAL_TRANSLATIONS_ONLY);
-    }
-    
-    for(int i=0 ; i<nbNeedles/2 ; i++)
-    {
-      Kalman[i].setStateDynamicsType(usTissueTranslationEstimatorUKF::CONSTANT_VELOCITY);
-      vpMatrix P(6,6,0);
-      P[0][0] = std_process_position*std_process_position;
-      P[1][1] = std_process_position*std_process_position;
-      P[3][3] = std_process_velocity*std_process_velocity;
-      P[4][4] = std_process_velocity*std_process_velocity;
-      Kalman[i].setStateCovarianceMatrix(P);
-      Kalman[i].setTissuePositionProcessNoiseVariance(std_process_position*std_process_position);
-      Kalman[i].setTissueVelocityProcessNoiseVariance(std_process_velocity*std_process_velocity);
-      
-      Kalman[nbNeedles/2+i].setStateDynamicsType(usTissueTranslationEstimatorUKF::CONSTANT_POSITION);
-      P.resize(3,3);
-      P[0][0] = std_process_position_only*std_process_position_only;
-      P[1][1] = std_process_position_only*std_process_position_only;
-      Kalman[nbNeedles/2+i].setStateCovarianceMatrix(P);
-      Kalman[nbNeedles/2+i].setTissuePositionProcessNoiseVariance(std_process_position_only*std_process_position_only);
-    }
-    
-    for(int i=0 ; i<nbNeedles ; i+=3)
-    {
-      Kalman[i].setMeasureType(usTissueTranslationEstimatorUKF::NEEDLE_BODY_POINTS);
-      Kalman[i+1].setMeasureType(usTissueTranslationEstimatorUKF::TIP_POSITION_AND_DIRECTION);
-      Kalman[i+2].setMeasureType(usTissueTranslationEstimatorUKF::BASE_FORCE_TORQUE);
-    }
-      
-    double time = 0;
-    for(int i=0; i<50 ;i++)
-    {
-        for(int i=0 ; i<nbNeedles ; i++) Kalman[i].setCurrentNeedle(needle[i]);
-
-        if(i<10)
-        {
-            vpColVector baseControl(6,0);
-            baseControl[2] = 0.005;
-            baseControl[1] = 0.0005;
-            needleRef.moveBase(baseControl, 1);
-            for(int i=0 ; i<nbNeedles ; i++) needle[i].moveBase(baseControl, 1);
-        }
-
-        if(i<10)
-        {
-            needleRef.accessTissue().move(0.001,0,0,0,0,0);
-            needleRef.updateState();
-#if defined(VISP_HAVE_DISPLAY)
-            if(opt_display)
-            {
-                statePlot->plot(2,0, time, 0.001);
-                statePlot->plot(3,0, time, 0);
-            }
-#endif
-        }
-        else if(i<20)
-        {
-            needleRef.accessTissue().move(0,0.001,0,0,0,0);
-            needleRef.updateState();
-#if defined(VISP_HAVE_DISPLAY)
-            if(opt_display)
-            {
-                statePlot->plot(2,0, time, 0);
-                statePlot->plot(3,0, time, 0.001);
-            }
-#endif
-        }
-        else if(i<30)
-        {
-            needleRef.accessTissue().move(-0.002,0,0,0,0,0);
-            needleRef.updateState();
-#if defined(VISP_HAVE_DISPLAY)
-            if(opt_display)
-            {
-                statePlot->plot(2,0, time, -0.002);
-                statePlot->plot(3,0, time, 0);
-            }
-#endif
-        }
-        else if(i<40)
-        {
-            needleRef.accessTissue().move(0,-0.002,0,0,0,0);
-            needleRef.updateState();
-#if defined(VISP_HAVE_DISPLAY)
-            if(opt_display)
-            {
-                statePlot->plot(2,0, time, 0);
-                statePlot->plot(3,0, time, -0.002);
-            }
-#endif
-        }
-        else
-        {
-            needleRef.accessTissue().move(0.001,0.001,0,0,0,0);
-            needleRef.updateState();
-#if defined(VISP_HAVE_DISPLAY)
-            if(opt_display)
-            {
-                statePlot->plot(2,0, time, 0.001);
-                statePlot->plot(3,0, time, 0.001);
-            }
-#endif
-        }
-        
-#if defined(VISP_HAVE_DISPLAY)
-        if(opt_display)
-        {
-            statePlot->plot(0,0, time, needleRef.accessTissue().getPose()[0]);
-            statePlot->plot(1,0, time, needleRef.accessTissue().getPose()[1]);
-        }
+  if (statePlot) delete statePlot;
 #endif
 
-        int nbObs = floor(needleRef.getInsertionDepth()/0.005) + 2;
-        double step = needleRef.getInsertionDepth()/(nbObs-1);
-        vpColVector CP(3*nbObs);
-
-        for(int j=0 ; j<nbObs ; j++)
-        {
-            vpColVector p = needleRef.accessNeedle().getNeedlePoint(needleRef.accessNeedle().getParametricLength()-j*step);
-            CP.insert(3*j, p);
-        }
-        
-        vpColVector tipMeasures(6);
-        tipMeasures.insert(0, needleRef.accessNeedle().getTipPosition());
-        tipMeasures.insert(3, needleRef.accessNeedle().getTipDirection());
-        
-        vpColVector baseForceMeasures(needleRef.accessNeedle().getBaseStaticTorsor());
-
-        for(int i=0 ; i<nbNeedles ; i++) Kalman[i].setPropagationTime(1.);
-        
-        for(int i=0 ; i<nbNeedles ; i+=3)
-        {
-            Kalman[i].filter(CP);
-            Kalman[i+1].filter(tipMeasures);
-            Kalman[i+2].filter(baseForceMeasures);
-        }
-
-        for(int i=0 ; i<nbNeedles ; i++)
-        {
-            Kalman[i].applyStateToNeedle(needle[i]);
-            needle[i].updateState();
-        }
-
-        if(opt_display)
-        {
-            vpDisplay::display(I1);
-            vpDisplay::display(I2);
-            usNeedleModelingDisplayTools::display(needleRef, I1, vpHomogeneousMatrix(0.08, 0.1, 0.2, -M_PI / 2, 0, 0), 3000, 3000);
-            usNeedleModelingDisplayTools::display(needleRef, I2, vpHomogeneousMatrix(0.08, 0.1, 0.2, -2*M_PI / (3*sqrt(3)), 2*M_PI / (3*sqrt(3)), 2*M_PI / (3*sqrt(3))), 3000, 3000);
-            for(int i=0 ; i<nbNeedles ; i++)
-            {
-                usNeedleModelingDisplayTools::display(needle[i], I1, vpHomogeneousMatrix(0.08, 0.1, 0.2, -M_PI / 2, 0, 0), 3000, 3000);
-                usNeedleModelingDisplayTools::display(needle[i], I2, vpHomogeneousMatrix(0.08, 0.1, 0.2, -2*M_PI / (3*sqrt(3)), 2*M_PI / (3*sqrt(3)), 2*M_PI / (3*sqrt(3))), 3000, 3000);
-#if defined(VISP_HAVE_DISPLAY)
-                statePlot->plot(0,1+i, time, needle[i].accessTissue().getPose()[0]);
-                statePlot->plot(1,1+i, time, needle[i].accessTissue().getPose()[1]);
-#endif
-            }
-#if defined(VISP_HAVE_DISPLAY)
-            for(int i=0 ; i<nbNeedles/2 ; i++)
-            {
-                statePlot->plot(2,1+i, time, Kalman[i].getState()[3]);
-                statePlot->plot(3,1+i, time, Kalman[i].getState()[4]);
-            }
-#endif
-            vpDisplay::flush(I1);
-            vpDisplay::flush(I2);
-        }
-        time += 1;
-    }
-    
-    if (display1) delete display1;
-    if (display2) delete display2;
-#if defined(VISP_HAVE_DISPLAY)
-    if (statePlot) delete statePlot;
-#endif
-
-    return 0;
+  return 0;
 }

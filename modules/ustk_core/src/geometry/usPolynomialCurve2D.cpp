@@ -37,16 +37,18 @@
 
 #include <visp3/core/vpException.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 usPolynomialCurve2D::usPolynomialCurve2D()
   : m_order(0), m_startParameter(0), m_endParameter(1), m_polynomialCoefficients(2, 1, 0)
-{
-}
+{ }
 
 usPolynomialCurve2D::usPolynomialCurve2D(const usPolynomialCurve2D &curve)
   : m_order(curve.m_order), m_startParameter(curve.m_startParameter), m_endParameter(curve.m_endParameter),
-    m_polynomialCoefficients(curve.m_polynomialCoefficients)
-{
-}
+  m_polynomialCoefficients(curve.m_polynomialCoefficients)
+{ }
 
 const usPolynomialCurve2D &usPolynomialCurve2D::operator=(const usPolynomialCurve2D &curve)
 {
@@ -58,12 +60,11 @@ const usPolynomialCurve2D &usPolynomialCurve2D::operator=(const usPolynomialCurv
   return *this;
 }
 
-usPolynomialCurve2D::~usPolynomialCurve2D() {}
+usPolynomialCurve2D::~usPolynomialCurve2D() { }
 
 usPolynomialCurve2D::usPolynomialCurve2D(unsigned int order)
   : m_order(order), m_startParameter(0), m_endParameter(1), m_polynomialCoefficients(2, m_order + 1, 0)
-{
-}
+{ }
 
 void usPolynomialCurve2D::setOrder(unsigned int order)
 {
@@ -73,8 +74,9 @@ void usPolynomialCurve2D::setOrder(unsigned int order)
     // Keep same polynomial
     m_order = order;
     m_polynomialCoefficients.resize(2, order + 1, false);
-  } else {
-    // Find polynomial to have the same properties at the extremities (position, direction, curvature, ...)
+  }
+  else {
+ // Find polynomial to have the same properties at the extremities (position, direction, curvature, ...)
     int nb_coef = order + 1;
     int nb_constraints_begin = nb_coef / 2 + nb_coef % 2;
     int nb_constraints_end = nb_coef / 2;
@@ -149,7 +151,8 @@ void usPolynomialCurve2D::setBoundaries(double startParameter, double endParamet
   if (startParameter <= endParameter) {
     m_startParameter = startParameter;
     m_endParameter = endParameter;
-  } else {
+  }
+  else {
     m_startParameter = endParameter;
     m_endParameter = startParameter;
     this->reverse();
@@ -325,7 +328,8 @@ void usPolynomialCurve2D::defineFromPoints(const std::vector<vpColVector> &point
       A = M.pseudoInverse(std::numeric_limits<double>::epsilon()) * B;
     else
       A = M.inverseByCholeskyLapack() * B;
-  } catch (std::exception &e) {
+  }
+  catch (std::exception &e) {
     throw vpException(vpException::fatalError, "usPolynomialCurve2D::defineFromPoints(const std::vector<vpColVector> "
                                                "&points, const std::vector<double> &param, unsigned int order): %s",
                       e.what());
@@ -383,7 +387,8 @@ void usPolynomialCurve2D::defineFromPoints(const vpMatrix points, const vpColVec
       A = M.pseudoInverse(std::numeric_limits<double>::epsilon()) * B;
     else
       A = M.inverseByCholeskyLapack() * B;
-  } catch (std::exception &e) {
+  }
+  catch (std::exception &e) {
     throw vpException(vpException::fatalError, "usPolynomialCurve2D::defineFromPoints(const std::vector<vpColVector> "
                                                "&points, const std::vector<double> &param, unsigned int order): %s",
                       e.what());
@@ -537,7 +542,7 @@ void usPolynomialCurve2D::defineFromPointsAuto(const vpMatrix &points, const vpC
     for (unsigned int j = 0; j < 2; j++)
       newPoints[j][i] = points[j][index[i]];
     interLength[i - 1] =
-        sqrt(vpMath::sqr(newPoints[0][i] - newPoints[0][i - 1]) + vpMath::sqr(newPoints[1][i] - newPoints[1][i - 1]));
+      sqrt(vpMath::sqr(newPoints[0][i] - newPoints[0][i - 1]) + vpMath::sqr(newPoints[1][i] - newPoints[1][i - 1]));
     newLength += interLength[i - 1];
   }
   double scaling = oldLength / newLength;
@@ -602,7 +607,8 @@ void usPolynomialCurve2D::defineFromWeightedPoints(const std::vector<vpColVector
   vpMatrix A;
   try {
     A = M.pseudoInverse(std::numeric_limits<double>::epsilon()) * B;
-  } catch (std::exception &e) {
+  }
+  catch (std::exception &e) {
     throw vpException(vpException::fatalError, "usPolynomialCurve2D::defineFromWeightedPoints(const vpMatrix &points, "
                                                "const vpColVector &param, const vpColVector &weights, unsigned int "
                                                "order): %s",
@@ -663,7 +669,8 @@ void usPolynomialCurve2D::defineFromWeightedPoints(const vpMatrix &points, const
   vpMatrix A;
   try {
     A = M.pseudoInverse(std::numeric_limits<double>::epsilon()) * B;
-  } catch (std::exception &e) {
+  }
+  catch (std::exception &e) {
     throw vpException(vpException::fatalError, "usPolynomialCurve2D::defineFromWeightedPoints(const vpMatrix &points, "
                                                "const vpColVector &param, const vpColVector &weights, unsigned int "
                                                "order): %s",
@@ -808,7 +815,7 @@ void usPolynomialCurve2D::defineFromWeightedPointsAuto(const vpMatrix &points, c
       newPoints[j][i] = points[j][index[i]];
     newWeights[i] = weights[index[i]];
     interLength[i - 1] =
-        sqrt(vpMath::sqr(newPoints[0][i] - newPoints[0][i - 1]) + vpMath::sqr(newPoints[1][i] - newPoints[1][i - 1]));
+      sqrt(vpMath::sqr(newPoints[0][i] - newPoints[0][i - 1]) + vpMath::sqr(newPoints[1][i] - newPoints[1][i - 1]));
     newLength += interLength[i - 1];
   }
   double scaling = oldLength / newLength;
@@ -925,7 +932,7 @@ void usPolynomialCurve2D::defineFromWeightedPointsAuto(const vpMatrix &points, c
       newPoints[j][i] = points[j][index[i]];
     newWeights[i] = weights[index[i]];
     interLength[i - 1] =
-        sqrt(vpMath::sqr(newPoints[0][i] - newPoints[0][i - 1]) + vpMath::sqr(newPoints[1][i] - newPoints[1][i - 1]));
+      sqrt(vpMath::sqr(newPoints[0][i] - newPoints[0][i - 1]) + vpMath::sqr(newPoints[1][i] - newPoints[1][i - 1]));
     newLength += interLength[i - 1];
   }
   double scaling = oldLength / newLength;

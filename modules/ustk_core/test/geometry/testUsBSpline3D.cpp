@@ -42,6 +42,10 @@
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 int main()
 {
   std::cout << "Start testUsBSpline3D" << std::endl;

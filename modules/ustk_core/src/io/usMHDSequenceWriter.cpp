@@ -1,5 +1,9 @@
 #include <visp3/ustk_core/usMHDSequenceWriter.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 /**
 * Constructor, initializes the member attribues.
 */

@@ -44,6 +44,10 @@
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpMatrix.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 int main()
 {
   std::cout << "Start testUsPolynomialCurve3D" << std::endl;
@@ -155,64 +159,64 @@ int main()
 
   curve.defineFromPoints(points1, params1, 4);
   std::cout << "done: case 1 usPolynomialCurve3D::defineFromPoints(const std::vector<vpColVector> &points, const "
-               "std::vector<double> &param, unsigned int order)"
-            << std::endl;
+    "std::vector<double> &param, unsigned int order)"
+    << std::endl;
   curve.defineFromPoints(points2, params2, 4);
   std::cout << "done: case 2 usPolynomialCurve3D::defineFromPoints(const std::vector<vpColVector> &points, const "
-               "std::vector<double> &param, unsigned int order)"
-            << std::endl;
+    "std::vector<double> &param, unsigned int order)"
+    << std::endl;
   curve.defineFromPoints(point3M, params3V, 3);
   std::cout << "done: case 3 usPolynomialCurve3D::defineFromPoints(const std::vector<vpColVector> &points, const "
-               "std::vector<double> &param, unsigned int order)"
-            << std::endl;
+    "std::vector<double> &param, unsigned int order)"
+    << std::endl;
 
   curve.defineFromPoints(points3, params3, 3);
   std::cout << "done: usPolynomialCurve3D::defineFromPoints(const vpMatrix points, const vpColVector &param, unsigned "
-               "int order)"
-            << std::endl;
+    "int order)"
+    << std::endl;
   curve.defineFromPointsAuto(points3, 3);
   std::cout
-      << "done: usPolynomialCurve3D::defineFromPointsAuto(const std::vector<vpColVector> &points, unsigned int order)"
-      << std::endl;
+    << "done: usPolynomialCurve3D::defineFromPointsAuto(const std::vector<vpColVector> &points, unsigned int order)"
+    << std::endl;
   curve.defineFromPointsAuto(point3M, 3);
   std::cout << "done: usPolynomialCurve3D::defineFromPointsAuto(const vpMatrix &points, unsigned int order)"
-            << std::endl;
+    << std::endl;
 
   vpColVector direction(3, 0);
   direction[0] = 1;
   curve.defineFromPointsAuto(points3, direction, 3);
   std::cout << "done: usPolynomialCurve3D::defineFromPointsAuto(const std::vector<vpColVector> &points, const "
-               "vpColVector &direction, unsigned int order)"
-            << std::endl;
+    "vpColVector &direction, unsigned int order)"
+    << std::endl;
   curve.defineFromPointsAuto(point3M, direction, 3);
   std::cout << "done: usPolynomialCurve3D::defineFromPointsAuto(const vpMatrix &points, const vpColVector &direction, "
-               "unsigned int order)"
-            << std::endl;
+    "unsigned int order)"
+    << std::endl;
   curve.defineFromWeightedPoints(points3, params3, weights3, 3);
   std::cout << "done: usPolynomialCurve3D::defineFromWeightedPoints(const std::vector<vpColVector> &points, const "
-               "std::vector<double> &param, const std::vector<double> &weights, unsigned int order)"
-            << std::endl;
+    "std::vector<double> &param, const std::vector<double> &weights, unsigned int order)"
+    << std::endl;
   curve.defineFromWeightedPoints(point3M, params3V, weights3V, 3);
   std::cout << "done: usPolynomialCurve3D::defineFromWeightedPoints(const vpMatrix &points, const vpColVector &param, "
-               "const vpColVector &weights, unsigned int order)"
-            << std::endl;
+    "const vpColVector &weights, unsigned int order)"
+    << std::endl;
 
   curve.defineFromWeightedPointsAuto(points3, weights3, 3);
   std::cout << "done: usPolynomialCurve3D::defineFromWeightedPointsAuto(const std::vector<vpColVector> &points, const "
-               "std::vector<double> &weights, unsigned int order)"
-            << std::endl;
+    "std::vector<double> &weights, unsigned int order)"
+    << std::endl;
   curve.defineFromWeightedPointsAuto(point3M, weights3V, 3);
   std::cout << "done: usPolynomialCurve3D::defineFromWeightedPointsAuto(const vpMatrix &points, const vpColVector "
-               "&weights, unsigned int order)"
-            << std::endl;
+    "&weights, unsigned int order)"
+    << std::endl;
   curve.defineFromWeightedPointsAuto(points3, weights3, direction, 3);
   std::cout << "done: usPolynomialCurve3D::defineFromWeightedPointsAuto(const std::vector<vpColVector> &points, const "
-               "std::vector<double> &weights, const vpColVector &direction, unsigned int order)"
-            << std::endl;
+    "std::vector<double> &weights, const vpColVector &direction, unsigned int order)"
+    << std::endl;
   curve.defineFromWeightedPointsAuto(point3M, weights3V, direction, 3);
   std::cout << "done: usPolynomialCurve3D::defineFromWeightedPointsAuto(const vpMatrix &points, const vpColVector "
-               "&weights, const vpColVector &direction, unsigned int order)"
-            << std::endl;
+    "&weights, const vpColVector &direction, unsigned int order)"
+    << std::endl;
 
   curve.getCurvature(0.25);
   std::cout << "done: usPolynomialCurve3D::getCurvature" << std::endl;

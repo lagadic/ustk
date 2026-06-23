@@ -31,12 +31,12 @@ public:
   const usBSpline3D &accessPath() const;
   usBSpline3D &accessPath();
 
-  bool moveInWorldFrame(const vpHomogeneousMatrix &H);
+  bool moveInWorldFrame(const VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &H);
   bool moveInWorldFrame(double x, double y, double z, double tx, double ty, double tz);
-  bool move(const vpHomogeneousMatrix &H);
+  bool move(const VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &H);
   bool move(double x, double y, double z, double tx, double ty, double tz);
-  bool setPose(const vpPoseVector &p);
-  vpPoseVector getPose() const;
+  bool setPose(const VISP_NAMESPACE_ADDRESSING vpPoseVector &p);
+  VISP_NAMESPACE_ADDRESSING vpPoseVector getPose() const;
 
   //! Data saving
 

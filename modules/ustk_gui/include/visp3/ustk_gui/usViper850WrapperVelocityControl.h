@@ -96,16 +96,16 @@ private slots:
 private:
   bool m_initialized;
   bool m_run;
-  vpRobotViper850 *viper;
+  VISP_NAMESPACE_ADDRESSING vpRobotViper850 *viper;
   void startRobot(void);
 
-  vpMatrix eJe; // robot jacobian
+  VISP_NAMESPACE_ADDRESSING vpMatrix eJe; // robot jacobian
 
-  vpVelocityTwistMatrix eVp; // change velocity from ultrasound probe contact force to end-effector frame
+  VISP_NAMESPACE_ADDRESSING vpVelocityTwistMatrix eVp; // change velocity from ultrasound probe contact force to end-effector frame
 
-  vpColVector velocityProbeContact; // velocity in ultrasound probe contact point
-  vpColVector q_dot;
-  vpColVector ve; // velocity of end-effector
+  VISP_NAMESPACE_ADDRESSING vpColVector velocityProbeContact; // velocity in ultrasound probe contact point
+  VISP_NAMESPACE_ADDRESSING vpColVector q_dot;
+  VISP_NAMESPACE_ADDRESSING vpColVector ve; // velocity of end-effector
 };
 #endif // USTK_HAVE_VTK_QT && VISP_HAVE_VIPER850
 #endif // __usViper850WrapperVelocityControl_h_

@@ -46,6 +46,10 @@
 #include <visp3/ustk_core/usSequenceReader.h>
 #include <visp3/ustk_needle_detection/usNeedleTrackerSIR2D.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 int main()
 {
   std::string xml_filename;
@@ -154,14 +158,14 @@ int main()
     double error = sqrt(vpMath::sqr(tipMean[0] - tipGroundTruth.at(i)[0]) + vpMath::sqr(tipMean[1] - tipGroundTruth.at(i)[1]));
     if (error > error_max) {
       std::cout << "Error " << error << " exeeds " << error_max << " with i error=" << std::abs(tipMean[0] - tipGroundTruth.at(i)[0])
-                << ", j error= " << std::abs(tipMean[1] - tipGroundTruth.at(i)[1]) << std::endl;
+        << ", j error= " << std::abs(tipMean[1] - tipGroundTruth.at(i)[1]) << std::endl;
 
       return EXIT_FAILURE;
     }
   }
   tipGroundTruth.clear();
 
-  std::cout << "Test succeed" << std::endl; 
+  std::cout << "Test succeed" << std::endl;
   return EXIT_SUCCESS;
 }
 

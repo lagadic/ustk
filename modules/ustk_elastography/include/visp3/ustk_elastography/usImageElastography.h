@@ -39,6 +39,8 @@
 #ifndef __usImageElastography_h_
 #define __usImageElastography_h_
 
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpImage.h>
 #include <visp3/core/vpRGBa.h>
 #include <visp3/ustk_core/usImagePostScan2D.h>
 #include <visp3/ustk_core/usImagePreScan2D.h>
@@ -69,21 +71,21 @@ class VISP_EXPORT usImageElastography
 
 public:
   usImageElastography();
-  usImageElastography(const vpImage<unsigned char> &ultrasoundImage, const vpImage<unsigned char> &strainMap,
+  usImageElastography(const VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &ultrasoundImage, const VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &strainMap,
                       unsigned int heightPosition, unsigned int widthPosition);
   virtual ~usImageElastography();
 
-  vpImage<vpRGBa> getElastoImage();
+  VISP_NAMESPACE_ADDRESSING vpImage<VISP_NAMESPACE_ADDRESSING vpRGBa> getElastoImage();
 
-  void setStrainMap(const vpImage<unsigned char> &strainMap, unsigned int heightPosition, unsigned int widthPosition);
-  void setUltrasoundImage(const vpImage<unsigned char> &ultrasoundImage);
+  void setStrainMap(const VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &strainMap, unsigned int heightPosition, unsigned int widthPosition);
+  void setUltrasoundImage(const VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &ultrasoundImage);
 
 private:
   void computeElastographyImage();
 
-  vpImage<unsigned char> m_ultrasoundImage;
-  vpImage<unsigned char> m_strainMap;
-  vpImage<vpRGBa> m_elastoImage;
+  VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> m_ultrasoundImage;
+  VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> m_strainMap;
+  VISP_NAMESPACE_ADDRESSING vpImage<VISP_NAMESPACE_ADDRESSING vpRGBa> m_elastoImage;
 
   unsigned int m_heigthPosition;
   unsigned int m_widthPosition;

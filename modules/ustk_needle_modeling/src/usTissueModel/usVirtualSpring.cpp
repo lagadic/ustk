@@ -32,35 +32,37 @@
 
 #include <visp3/ustk_needle_modeling/usVirtualSpring.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 usVirtualSpring::usVirtualSpring()
   : usOrientedPlane3D(), m_stiffness(0),
 
-    m_IsActive(true), m_IsRemovable(true), m_AllowPositionUpdate(true), m_AllowDirectionUpdate(true),
-    m_AllowStiffnessUpdate(true)
-{
-}
+  m_IsActive(true), m_IsRemovable(true), m_AllowPositionUpdate(true), m_AllowDirectionUpdate(true),
+  m_AllowStiffnessUpdate(true)
+{ }
 
 usVirtualSpring::usVirtualSpring(const usVirtualSpring &spring)
   : usOrientedPlane3D(spring),
 
-    m_stiffness(spring.m_stiffness),
+  m_stiffness(spring.m_stiffness),
 
-    m_IsActive(spring.m_IsActive), m_IsRemovable(spring.m_IsRemovable),
-    m_AllowPositionUpdate(spring.m_AllowPositionUpdate), m_AllowDirectionUpdate(spring.m_AllowDirectionUpdate),
-    m_AllowStiffnessUpdate(spring.m_AllowStiffnessUpdate)
-{
-}
+  m_IsActive(spring.m_IsActive), m_IsRemovable(spring.m_IsRemovable),
+  m_AllowPositionUpdate(spring.m_AllowPositionUpdate), m_AllowDirectionUpdate(spring.m_AllowDirectionUpdate),
+  m_AllowStiffnessUpdate(spring.m_AllowStiffnessUpdate)
+{ }
 
 usVirtualSpring::usVirtualSpring(const vpColVector &p, const vpColVector &d, double K)
   : usOrientedPlane3D(p, d), m_stiffness(0),
 
-    m_IsActive(true), m_IsRemovable(true), m_AllowPositionUpdate(true), m_AllowDirectionUpdate(true),
-    m_AllowStiffnessUpdate(true)
+  m_IsActive(true), m_IsRemovable(true), m_AllowPositionUpdate(true), m_AllowDirectionUpdate(true),
+  m_AllowStiffnessUpdate(true)
 {
   this->setStiffness(K);
 }
 
-usVirtualSpring::~usVirtualSpring() {}
+usVirtualSpring::~usVirtualSpring() { }
 
 const usVirtualSpring &usVirtualSpring::operator=(const usVirtualSpring &spring)
 {

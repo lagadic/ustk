@@ -38,15 +38,19 @@
 
 #include <visp3/ustk_core/usRfReader.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 /**
 * Default constructor.
 */
-usRfReader::usRfReader() : m_fileName(""), m_fileNameIsSet(false), m_header() {}
+usRfReader::usRfReader() : m_fileName(""), m_fileNameIsSet(false), m_header() { }
 
 /**
 * Destructor.
 */
-usRfReader::~usRfReader() {}
+usRfReader::~usRfReader() { }
 
 /**
 * FileName setter.

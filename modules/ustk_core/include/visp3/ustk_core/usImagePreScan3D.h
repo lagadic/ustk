@@ -39,6 +39,7 @@
 #ifndef __usImagePreScan3D_h_
 #define __usImagePreScan3D_h_
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/ustk_core/usImage3D.h>
 #include <visp3/ustk_core/usImagePreScan2D.h>
 
@@ -174,8 +175,7 @@ public:
 */
 template <class Type>
 usImagePreScan3D<Type>::usImagePreScan3D() : usImage3D<Type>(), usImagePreScanSettings(), usMotorSettings()
-{
-}
+{ }
 
 /**
 * Copy constructor.
@@ -188,6 +188,10 @@ usImagePreScan3D<Type>::usImagePreScan3D(const usImage3D<Type> &image, const usI
                                          const usMotorSettings &motorSettings)
   : usImage3D<Type>(image), usImagePreScanSettings(preScanSettings), usMotorSettings(motorSettings)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   if (image.getWidth() != preScanSettings.getScanLineNumber())
     throw(vpException(vpException::badValue, "3D pre-scan image X-size differ from transducer scan line number"));
   if (image.getNumberOfFrames() != motorSettings.getFrameNumber())
@@ -201,13 +205,12 @@ usImagePreScan3D<Type>::usImagePreScan3D(const usImage3D<Type> &image, const usI
 template <class Type>
 usImagePreScan3D<Type>::usImagePreScan3D(const usImagePreScan3D &other)
   : usImage3D<Type>(other), usImagePreScanSettings(other), usMotorSettings(other)
-{
-}
+{ }
 
 /**
 * Destructor.
 */
-template <class Type> usImagePreScan3D<Type>::~usImagePreScan3D() {}
+template <class Type> usImagePreScan3D<Type>::~usImagePreScan3D() { }
 
 /**
 * Copy operator.
@@ -241,7 +244,7 @@ template <class Type> bool usImagePreScan3D<Type>::operator==(const usImagePreSc
 template <class Type> std::ostream &operator<<(std::ostream &out, const usImagePreScan3D<Type> &other)
 {
   return out << static_cast<const usImage3D<Type> &>(other) << static_cast<const usImagePreScanSettings &>(other)
-             << static_cast<const usMotorSettings &>(other);
+    << static_cast<const usMotorSettings &>(other);
 }
 
 /**
@@ -311,6 +314,10 @@ void usImagePreScan3D<Type>::resize(unsigned int height, unsigned int width, uns
  */
 template <class Type> void usImagePreScan3D<Type>::insertFrame(const usImagePreScan2D<Type> &frame, unsigned int index)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   // Dimentions checks
   if (index > this->getNumberOfFrames())
     throw(vpException(vpException::badValue, "usImage3D::insertFrame : frame index out of volume"));
@@ -337,8 +344,11 @@ template <class Type> void usImagePreScan3D<Type>::insertFrame(const usImagePreS
  */
 template <class Type> void usImagePreScan3D<Type>::getFrame(usImagePreScan2D<Type> &image, unsigned int index)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
 
-  // Dimentions checks
+  // Dimensions checks
   if (index > this->getNumberOfFrames() - 1)
     throw(vpException(vpException::badValue, "usImage3D::getFrame : frame index out of volume"));
 

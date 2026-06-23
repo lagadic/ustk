@@ -72,7 +72,7 @@ public:
   double getFPS(void) { return m_FPS; }
   double getSamplingFrequency(void) { return m_samplingFrequency; }
 
-  vpImage<unsigned char> run();
+  VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> run();
 
   void setDecimationFactor(unsigned int decimationFactor) { m_decimationFactor = decimationFactor; }
   void setFPS(double fps);
@@ -89,7 +89,7 @@ public:
 private:
   usImageRF2D<short int> usImageRF_ROI(const usImageRF2D<short int> &M, uint r, uint c, uint nrows, uint ncols);
 
-  vpImage<unsigned char> m_StrainMap;
+  VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> m_StrainMap;
   usImageRF2D<short int> m_Precomp;
   usImageRF2D<short int> m_Postcomp;
 
@@ -122,8 +122,8 @@ private:
   usMotionEstimation m_ME;
 #endif
 
-  vpMatrix U;
-  vpMatrix V;
+  VISP_NAMESPACE_ADDRESSING vpMatrix U;
+  VISP_NAMESPACE_ADDRESSING vpMatrix V;
 
   unsigned int m_decimationFactor;
 };

@@ -37,6 +37,10 @@
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpRGBa.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 namespace usGeometryDisplayTools
 {
 
