@@ -36,14 +36,17 @@
 #include <visp3/core/vpExponentialMap.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 
-usNeedleInsertionModelKinematic::usNeedleInsertionModelKinematic() : m_needle(), m_naturalCurvature(0) {}
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
+usNeedleInsertionModelKinematic::usNeedleInsertionModelKinematic() : m_needle(), m_naturalCurvature(0) { }
 
 usNeedleInsertionModelKinematic::usNeedleInsertionModelKinematic(const usNeedleInsertionModelKinematic &needle)
   : m_needle(needle.m_needle), m_naturalCurvature(needle.m_naturalCurvature)
-{
-}
+{ }
 
-usNeedleInsertionModelKinematic::~usNeedleInsertionModelKinematic() {}
+usNeedleInsertionModelKinematic::~usNeedleInsertionModelKinematic() { }
 
 usNeedleInsertionModelKinematic &usNeedleInsertionModelKinematic::
 operator=(const usNeedleInsertionModelKinematic &needle)

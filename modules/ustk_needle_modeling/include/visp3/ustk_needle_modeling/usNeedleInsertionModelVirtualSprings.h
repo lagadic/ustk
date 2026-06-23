@@ -51,7 +51,8 @@ class VISP_EXPORT usNeedleInsertionModelVirtualSprings : public usNeedleInsertio
 {
 public:
   enum class InsertionType : int { ForceInsert, ForceRemove, NaturalBehavior };
-  enum class ModelPreset : int {
+  enum class ModelPreset : int
+  {
     BiopsyNeedle,
     BiopsyCannula,
     AbayazidRRM13,
@@ -155,8 +156,8 @@ public:
   const usNeedleModelSpline &accessNeedle() const;
   usNeedleModelSpline &accessNeedle();
   bool IsNeedleInserted() const;
-  vpColVector getNeedleInsertionPoint() const;
-  vpColVector getTissueInsertionPoint() const;
+  VISP_NAMESPACE_ADDRESSING vpColVector getNeedleInsertionPoint() const;
+  VISP_NAMESPACE_ADDRESSING vpColVector getTissueInsertionPoint() const;
   double getNeedleFreeLength() const;
   double getInsertionDepth() const;
 
@@ -191,7 +192,7 @@ public:
 
   //! Needle position
 
-  double getPathDistanceFromPoint(const vpColVector &P) const;
+  double getPathDistanceFromPoint(const VISP_NAMESPACE_ADDRESSING vpColVector &P) const;
 
   //! Tissue deformation energy
 
@@ -205,20 +206,20 @@ public:
   //! Control of the needle
 
   using usNeedleInsertionModelInterface::setBasePose;
-  bool setBasePose(const vpPoseVector &p);
-  vpPoseVector getBasePose() const;
+  bool setBasePose(const VISP_NAMESPACE_ADDRESSING vpPoseVector &p);
+  VISP_NAMESPACE_ADDRESSING vpPoseVector getBasePose() const;
 
   //! Control of the tissue
 
   void addMeasureSpring(
-      const vpColVector &p,
-      const vpColVector &d); // Add a spring in space and recompute stiffnesses in vicinity to keep the tissue property
+      const VISP_NAMESPACE_ADDRESSING vpColVector &p,
+      const VISP_NAMESPACE_ADDRESSING vpColVector &d); // Add a spring in space and recompute stiffnesses in vicinity to keep the tissue property
 
-  bool setSpringPosition(int index, const vpColVector &P, bool update = false);
-  bool setSpringDirection(int index, const vpColVector &D, bool update = false);
+  bool setSpringPosition(int index, const VISP_NAMESPACE_ADDRESSING vpColVector &P, bool update = false);
+  bool setSpringDirection(int index, const VISP_NAMESPACE_ADDRESSING vpColVector &D, bool update = false);
   void setSpringStiffness(int index, double K, bool update = false);
-  bool moveSpringPosition(int index, const vpColVector &dP, bool update = false);
-  bool moveSpringDirection(int index, const vpThetaUVector &thetaU, bool update = false);
+  bool moveSpringPosition(int index, const VISP_NAMESPACE_ADDRESSING vpColVector &dP, bool update = false);
+  bool moveSpringDirection(int index, const VISP_NAMESPACE_ADDRESSING vpThetaUVector &thetaU, bool update = false);
   void addSpringStiffness(int index, double dK, bool update = false);
 
   void setSurfaceAtTip();
@@ -227,8 +228,8 @@ public:
 
   int addInsertionPoint(usVirtualSpring spg);
   int addInsertionPoint(
-      const vpColVector &p,
-      const vpColVector &d); // Add a spring in space and recompute stiffnesses in vicinity to keep the tissue property
+      const VISP_NAMESPACE_ADDRESSING vpColVector &p,
+      const VISP_NAMESPACE_ADDRESSING vpColVector &d); // Add a spring in space and recompute stiffnesses in vicinity to keep the tissue property
 
   void addInsertionPointOnSegmentHard(int segment,
                                       double s); // Add a spring on the needle with default spring stiffness

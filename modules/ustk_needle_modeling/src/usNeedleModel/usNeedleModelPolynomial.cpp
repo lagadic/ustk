@@ -39,10 +39,14 @@
 #include <visp3/core/vpRowVector.h>
 #include <visp3/core/vpTime.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 usNeedleModelPolynomial::usNeedleModelPolynomial()
   : usNeedleModelBaseTip(), usPolynomialCurve3D(),
 
-    m_outerDiameter(0.001), m_insideDiameter(0), m_needleYoungModulus(200000000000)
+  m_outerDiameter(0.001), m_insideDiameter(0), m_needleYoungModulus(200000000000)
 {
   this->init();
 }
@@ -50,12 +54,11 @@ usNeedleModelPolynomial::usNeedleModelPolynomial()
 usNeedleModelPolynomial::usNeedleModelPolynomial(const usNeedleModelPolynomial &needle)
   : usNeedleModelBaseTip(needle), usPolynomialCurve3D(needle),
 
-    m_outerDiameter(needle.m_outerDiameter), m_insideDiameter(needle.m_insideDiameter),
-    m_needleYoungModulus(needle.m_needleYoungModulus)
-{
-}
+  m_outerDiameter(needle.m_outerDiameter), m_insideDiameter(needle.m_insideDiameter),
+  m_needleYoungModulus(needle.m_needleYoungModulus)
+{ }
 
-usNeedleModelPolynomial::~usNeedleModelPolynomial() {}
+usNeedleModelPolynomial::~usNeedleModelPolynomial() { }
 
 const usNeedleModelPolynomial &usNeedleModelPolynomial::operator=(const usNeedleModelPolynomial &needle)
 {
@@ -345,7 +348,8 @@ double usNeedleModelPolynomial::getCurvatureFromNeedleShape(double start, double
 
   if (direction3D.size() == 3) {
     direction3D = V.getCol(2);
-  } else if (direction3D.size() == 4) {
+  }
+  else if (direction3D.size() == 4) {
     direction3D.insert(0, V.getCol(2));
     direction3D[3] = 0;
   }
@@ -353,7 +357,8 @@ double usNeedleModelPolynomial::getCurvatureFromNeedleShape(double start, double
   if (center3D.size() == 3) {
     V.resize(3, 2, false);
     center3D = V * center;
-  } else if (center3D.size() == 4) {
+  }
+  else if (center3D.size() == 4) {
     V.resize(3, 2, false);
     center3D.insert(0, V * center + mean.t());
     center3D[3] = 1;

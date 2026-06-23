@@ -39,10 +39,14 @@
 #include <visp3/core/vpRowVector.h>
 #include <visp3/core/vpTime.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 usNeedleModelSpline::usNeedleModelSpline()
   : usNeedleModelBaseTip(), usBSpline3D(),
 
-    m_length(0.1), m_outerDiameter(0.001), m_insideDiameter(0), m_needleYoungModulus(200000000000)
+  m_length(0.1), m_outerDiameter(0.001), m_insideDiameter(0), m_needleYoungModulus(200000000000)
 {
   this->init();
 }
@@ -50,12 +54,11 @@ usNeedleModelSpline::usNeedleModelSpline()
 usNeedleModelSpline::usNeedleModelSpline(const usNeedleModelSpline &needle)
   : usNeedleModelBaseTip(needle), usBSpline3D(needle),
 
-    m_length(needle.m_length), m_outerDiameter(needle.m_outerDiameter), m_insideDiameter(needle.m_insideDiameter),
-    m_needleYoungModulus(needle.m_needleYoungModulus)
-{
-}
+  m_length(needle.m_length), m_outerDiameter(needle.m_outerDiameter), m_insideDiameter(needle.m_insideDiameter),
+  m_needleYoungModulus(needle.m_needleYoungModulus)
+{ }
 
-usNeedleModelSpline::~usNeedleModelSpline() {}
+usNeedleModelSpline::~usNeedleModelSpline() { }
 
 const usNeedleModelSpline &usNeedleModelSpline::operator=(const usNeedleModelSpline &needle)
 {
@@ -273,7 +276,8 @@ double usNeedleModelSpline::getBendingEnergy() const
 
       E += pow(curvature, 2);
     }
-  } else {
+  }
+  else {
     for (unsigned int n = 0; n < m_spline.size(); n++) {
       const usPolynomialCurve3D &poly = m_spline.at(n);
 
@@ -446,7 +450,8 @@ double usNeedleModelSpline::getCurvatureFromNeedleShape(double start, double end
 
   if (direction3D.size() == 3) {
     direction3D = V.getCol(2);
-  } else if (direction3D.size() == 4) {
+  }
+  else if (direction3D.size() == 4) {
     direction3D.insert(0, V.getCol(2));
     direction3D[3] = 0;
   }
@@ -454,7 +459,8 @@ double usNeedleModelSpline::getCurvatureFromNeedleShape(double start, double end
   if (center3D.size() == 3) {
     V.resize(3, 2, false);
     center3D = V * center;
-  } else if (center3D.size() == 4) {
+  }
+  else if (center3D.size() == 4) {
     V.resize(3, 2, false);
     center3D.insert(0, V * center + mean.t());
     center3D[3] = 1;
@@ -521,7 +527,7 @@ void usNeedleModelSpline::showNeedleSegmentCoef() const
     vpMatrix m = m_spline.at(i).getPolynomialCoefficients();
     for (int j = 0; j < 3; j++) {
       std::cout << "\t\t " << std::setw(15) << m[j][0] << " " << std::setw(15) << m[j][1] << " " << std::setw(15)
-                << m[j][2] << " " << std::setw(15) << m[j][3] << "\n";
+        << m[j][2] << " " << std::setw(15) << m[j][3] << "\n";
     }
   }
   std::cout << std::endl;

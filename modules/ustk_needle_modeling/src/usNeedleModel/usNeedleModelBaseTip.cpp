@@ -35,6 +35,10 @@
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpExponentialMap.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 usNeedleModelBaseTip::usNeedleModelBaseTip() : m_basePose(), m_worldMbase(), m_tipPose(), m_worldMtip() { }
 
 usNeedleModelBaseTip::usNeedleModelBaseTip(const usNeedleModelBaseTip &needle)

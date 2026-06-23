@@ -58,120 +58,120 @@ namespace usNeedleModelingDisplayTools
 //! Display usNeedleModelBaseTip
 
 template <class ImageDataType>
-VISP_EXPORT void displayBase(const usNeedleModelBaseTip &needleModel, const vpImage<ImageDataType> &I,
-                             const vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000);
+VISP_EXPORT void displayBase(const usNeedleModelBaseTip &needleModel, const VISP_NAMESPACE_ADDRESSING vpImage<ImageDataType> &I,
+                             const VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000);
 template <class ImageDataType>
-VISP_EXPORT void displayTip(const usNeedleModelBaseTip &needleModel, const vpImage<ImageDataType> &I,
-                            const vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000);
+VISP_EXPORT void displayTip(const usNeedleModelBaseTip &needleModel, const VISP_NAMESPACE_ADDRESSING vpImage<ImageDataType> &I,
+                            const VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000);
 template <class ImageDataType>
-VISP_EXPORT void display(const usNeedleModelBaseTip &needleModel, vpImage<unsigned char> &I,
-                         const vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000);
+VISP_EXPORT void display(const usNeedleModelBaseTip &needleModel, VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &I,
+                         const VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000);
 
 //! Display usNeedleModelPolynomial
 
 template <class ImageDataType>
-VISP_EXPORT void displayNeedle(const usNeedleModelPolynomial &needleModel, const vpImage<ImageDataType> &I,
-                               const vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000,
+VISP_EXPORT void displayNeedle(const usNeedleModelPolynomial &needleModel, const VISP_NAMESPACE_ADDRESSING vpImage<ImageDataType> &I,
+                               const VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000,
                                bool displayFullBody = false);
 template <class ImageDataType>
-VISP_EXPORT void displayBaseStaticTorsor(const usNeedleModelPolynomial &needleModel, const vpImage<ImageDataType> &I,
-                                         const vpHomogeneousMatrix &imageMworld, double Xscale = 3000,
+VISP_EXPORT void displayBaseStaticTorsor(const usNeedleModelPolynomial &needleModel, const VISP_NAMESPACE_ADDRESSING vpImage<ImageDataType> &I,
+                                         const VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &imageMworld, double Xscale = 3000,
                                          double Yscale = 3000);
 template <class ImageDataType>
-VISP_EXPORT void displayCurvatureFromShape(const usNeedleModelPolynomial &needleModel, const vpImage<ImageDataType> &I,
-                                           const vpHomogeneousMatrix &imageMworld, double Xscale = 3000,
+VISP_EXPORT void displayCurvatureFromShape(const usNeedleModelPolynomial &needleModel, const VISP_NAMESPACE_ADDRESSING vpImage<ImageDataType> &I,
+                                           const VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &imageMworld, double Xscale = 3000,
                                            double Yscale = 3000);
 template <class ImageDataType>
-VISP_EXPORT void display(const usNeedleModelPolynomial &needleModel, const vpImage<ImageDataType> &I,
-                         const vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000,
+VISP_EXPORT void display(const usNeedleModelPolynomial &needleModel, const VISP_NAMESPACE_ADDRESSING vpImage<ImageDataType> &I,
+                         const VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000,
                          bool displayFullBody = false);
 
 //! Display usNeedleModelSpline
 
 template <class ImageDataType>
-VISP_EXPORT void displayNeedle(const usNeedleModelSpline &needleModel, const vpImage<ImageDataType> &I,
-                               const vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000,
+VISP_EXPORT void displayNeedle(const usNeedleModelSpline &needleModel, const VISP_NAMESPACE_ADDRESSING vpImage<ImageDataType> &I,
+                               const VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000,
                                bool displayFullBody = false);
 template <class ImageDataType>
-VISP_EXPORT void displayBaseStaticTorsor(const usNeedleModelSpline &needleModel, const vpImage<ImageDataType> &I,
-                                         const vpHomogeneousMatrix &imageMworld, double Xscale = 3000,
+VISP_EXPORT void displayBaseStaticTorsor(const usNeedleModelSpline &needleModel, const VISP_NAMESPACE_ADDRESSING vpImage<ImageDataType> &I,
+                                         const VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &imageMworld, double Xscale = 3000,
                                          double Yscale = 3000);
 template <class ImageDataType>
-VISP_EXPORT void displayCurvatureFromShape(const usNeedleModelSpline &needleModel, const vpImage<ImageDataType> &I,
-                                           const vpHomogeneousMatrix &imageMworld, double Xscale = 3000,
+VISP_EXPORT void displayCurvatureFromShape(const usNeedleModelSpline &needleModel, const VISP_NAMESPACE_ADDRESSING vpImage<ImageDataType> &I,
+                                           const VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &imageMworld, double Xscale = 3000,
                                            double Yscale = 3000);
 template <class ImageDataType>
-VISP_EXPORT void display(const usNeedleModelSpline &needleModel, const vpImage<ImageDataType> &I,
-                         const vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000,
+VISP_EXPORT void display(const usNeedleModelSpline &needleModel, const VISP_NAMESPACE_ADDRESSING vpImage<ImageDataType> &I,
+                         const VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000,
                          bool displayFullBody = false);
 
 //! Display usVirtualSpring
 
 template <class ImageDataType>
-VISP_EXPORT void display(const usVirtualSpring &spring, const vpImage<ImageDataType> &I,
-                         const vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000);
+VISP_EXPORT void display(const usVirtualSpring &spring, const VISP_NAMESPACE_ADDRESSING vpImage<ImageDataType> &I,
+                         const VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000);
 
 //! Display usTissueModelSpline
 
 template <class ImageDataType>
-VISP_EXPORT void display(const usTissueModelSpline &tissue, const vpImage<ImageDataType> &I,
-                         const vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000);
+VISP_EXPORT void display(const usTissueModelSpline &tissue, const VISP_NAMESPACE_ADDRESSING vpImage<ImageDataType> &I,
+                         const VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000);
 
 //! Display usNeedleTip
 
 template <class ImageDataType>
-VISP_EXPORT void display(const usNeedleTip &tip, const vpImage<ImageDataType> &I,
-                         const vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000);
+VISP_EXPORT void display(const usNeedleTip &tip, const VISP_NAMESPACE_ADDRESSING vpImage<ImageDataType> &I,
+                         const VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000);
 
 //! Display usNeedleTipActuated
 
 template <class ImageDataType>
-VISP_EXPORT void display(const usNeedleTipActuated &tip, const vpImage<ImageDataType> &I,
-                         const vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000);
+VISP_EXPORT void display(const usNeedleTipActuated &tip, const VISP_NAMESPACE_ADDRESSING vpImage<ImageDataType> &I,
+                         const VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000);
 
 //! Display usNeedleTipBeveled
 
 template <class ImageDataType>
-VISP_EXPORT void display(const usNeedleTipBeveled &tip, const vpImage<ImageDataType> &I,
-                         const vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000);
+VISP_EXPORT void display(const usNeedleTipBeveled &tip, const VISP_NAMESPACE_ADDRESSING vpImage<ImageDataType> &I,
+                         const VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000);
 
 //! Display usNeedleTipPrebent
 
 template <class ImageDataType>
-VISP_EXPORT void display(const usNeedleTipPrebent &tip, const vpImage<ImageDataType> &I,
-                         const vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000);
+VISP_EXPORT void display(const usNeedleTipPrebent &tip, const VISP_NAMESPACE_ADDRESSING vpImage<ImageDataType> &I,
+                         const VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000);
 
 //! Display usNeedleTipSymmetric
 
 template <class ImageDataType>
-VISP_EXPORT void display(const usNeedleTipSymmetric &tip, const vpImage<ImageDataType> &I,
-                         const vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000);
+VISP_EXPORT void display(const usNeedleTipSymmetric &tip, const VISP_NAMESPACE_ADDRESSING vpImage<ImageDataType> &I,
+                         const VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000);
 
 //! Display usNeedleInsertionModelKinematic
 
 template <class ImageDataType>
-VISP_EXPORT void display(const usNeedleInsertionModelKinematic &model, const vpImage<ImageDataType> &I,
-                         const vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000);
+VISP_EXPORT void display(const usNeedleInsertionModelKinematic &model, const VISP_NAMESPACE_ADDRESSING vpImage<ImageDataType> &I,
+                         const VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000);
 
 //! Display usNeedleInsertionModelRayleighRitzSpline
 
 template <class ImageDataType>
-VISP_EXPORT void displayLayers(const usNeedleInsertionModelRayleighRitzSpline &model, const vpImage<ImageDataType> &I,
-                               const vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000);
+VISP_EXPORT void displayLayers(const usNeedleInsertionModelRayleighRitzSpline &model, const VISP_NAMESPACE_ADDRESSING vpImage<ImageDataType> &I,
+                               const VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000);
 template <class ImageDataType>
 VISP_EXPORT void displayInteraction(const usNeedleInsertionModelRayleighRitzSpline &model,
-                                    const vpImage<ImageDataType> &I, const vpHomogeneousMatrix &imageMworld,
+                                    const VISP_NAMESPACE_ADDRESSING vpImage<ImageDataType> &I, const VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &imageMworld,
                                     double Xscale = 3000, double Yscale = 3000);
 template <class ImageDataType>
-VISP_EXPORT void display(const usNeedleInsertionModelRayleighRitzSpline &model, const vpImage<ImageDataType> &I,
-                         const vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000,
+VISP_EXPORT void display(const usNeedleInsertionModelRayleighRitzSpline &model, const VISP_NAMESPACE_ADDRESSING vpImage<ImageDataType> &I,
+                         const VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000,
                          bool displayFullBody = false);
 
 //! Display usNeedleInsertionModelVirtualSprings
 
 template <class ImageDataType>
-VISP_EXPORT void display(const usNeedleInsertionModelVirtualSprings &model, const vpImage<ImageDataType> &I,
-                         const vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000,
+VISP_EXPORT void display(const usNeedleInsertionModelVirtualSprings &model, const VISP_NAMESPACE_ADDRESSING vpImage<ImageDataType> &I,
+                         const VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &imageMworld, double Xscale = 3000, double Yscale = 3000,
                          bool displayFullBody = false);
 
 } // namespace usNeedleModelingDisplayTools

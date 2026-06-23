@@ -35,14 +35,17 @@
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 
-usNeedleTipBeveled::usNeedleTipBeveled() : usNeedleTip(), _diameter(0.001), _length(0.001) {}
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
+usNeedleTipBeveled::usNeedleTipBeveled() : usNeedleTip(), _diameter(0.001), _length(0.001) { }
 
 usNeedleTipBeveled::usNeedleTipBeveled(const usNeedleTipBeveled &tip)
   : usNeedleTip(tip), _diameter(tip._diameter), _length(tip._length)
-{
-}
+{ }
 
-usNeedleTipBeveled::~usNeedleTipBeveled() {}
+usNeedleTipBeveled::~usNeedleTipBeveled() { }
 
 usNeedleTipBeveled &usNeedleTipBeveled::operator=(const usNeedleTipBeveled &tip)
 {

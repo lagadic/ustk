@@ -49,10 +49,14 @@
 
 #include <iomanip>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 usNeedleInsertionModelRayleighRitzSpline::usNeedleInsertionModelRayleighRitzSpline()
   : m_needle(), m_needleTip(new usNeedleTipBeveled()), m_needleTipType(NeedleTipType::BeveledTip), m_tissue(),
-    m_pathUpdateType(PathUpdateType::NoUpdate), m_pathUpdateLengthThreshold(0.001), m_pathUpdateMixCoefficient(0.5),
-    m_solvingMethod(SolvingMethod::FixedBeamLength)
+  m_pathUpdateType(PathUpdateType::NoUpdate), m_pathUpdateLengthThreshold(0.001), m_pathUpdateMixCoefficient(0.5),
+  m_solvingMethod(SolvingMethod::FixedBeamLength)
 {
   m_stiffnessPerUnitLength.resize(1, 10000);
   m_layerLength.resize(1, 1);
@@ -62,15 +66,14 @@ usNeedleInsertionModelRayleighRitzSpline::usNeedleInsertionModelRayleighRitzSpli
 usNeedleInsertionModelRayleighRitzSpline::usNeedleInsertionModelRayleighRitzSpline(
     const usNeedleInsertionModelRayleighRitzSpline &model)
   : m_needle(model.m_needle), m_needleTip(model.m_needleTip->clone()), m_needleTipType(model.m_needleTipType),
-    m_tissue(model.m_tissue), m_stiffnessPerUnitLength(model.m_stiffnessPerUnitLength),
-    m_layerLength(model.m_layerLength),
+  m_tissue(model.m_tissue), m_stiffnessPerUnitLength(model.m_stiffnessPerUnitLength),
+  m_layerLength(model.m_layerLength),
 
-    m_pathUpdateType(model.m_pathUpdateType), m_pathUpdateLengthThreshold(model.m_pathUpdateLengthThreshold),
-    m_pathUpdateMixCoefficient(model.m_pathUpdateMixCoefficient),
+  m_pathUpdateType(model.m_pathUpdateType), m_pathUpdateLengthThreshold(model.m_pathUpdateLengthThreshold),
+  m_pathUpdateMixCoefficient(model.m_pathUpdateMixCoefficient),
 
-    m_solvingMethod(model.m_solvingMethod), m_restDilatationFactor(model.m_restDilatationFactor)
-{
-}
+  m_solvingMethod(model.m_solvingMethod), m_restDilatationFactor(model.m_restDilatationFactor)
+{ }
 
 usNeedleInsertionModelRayleighRitzSpline::~usNeedleInsertionModelRayleighRitzSpline()
 {
@@ -379,7 +382,8 @@ double usNeedleInsertionModelRayleighRitzSpline::getNeedleFreeLength(int *seg, d
       if (!usGeometryTools::IsPointInFrontOfPlane(m_needle.accessSegment(i).getEndPoint(), m_tissue.accessSurface())) {
         ltot += m_needle.accessSegment(i).getParametricLength();
         i++;
-      } else {
+      }
+      else {
         if (usGeometryTools::DoesSegmentCrossPlane(m_needle.accessSegment(i), m_tissue.accessSurface())) {
           usGeometryTools::getPlaneCurveCrossingPoint(m_needle.accessSegment(i), m_tissue.accessSurface(), -1, &l);
           ltot += l;
@@ -393,14 +397,16 @@ double usNeedleInsertionModelRayleighRitzSpline::getNeedleFreeLength(int *seg, d
         *seg = i;
       if (param != nullptr)
         *param = l;
-    } else {
+    }
+    else {
       if (seg != nullptr)
         *seg = -1;
       if (param != nullptr)
         *param = -1;
     }
     return ltot;
-  } else {
+  }
+  else {
     if (seg != nullptr)
       *seg = -1;
     if (param != nullptr)
@@ -463,7 +469,8 @@ bool usNeedleInsertionModelRayleighRitzSpline::getCorrespondingPathPoint(double 
             insertionLength) {
       currentNeedleInsertedLength += m_needle.accessSegment(needleIndex).getParametricLength() - needleParam;
       needleParam = 0;
-    } else {
+    }
+    else {
       currentNeedleInsertedLength = insertionLength;
     }
 
@@ -473,7 +480,7 @@ bool usNeedleInsertionModelRayleighRitzSpline::getCorrespondingPathPoint(double 
                        (m_tissue.accessPath().accessSegment(restIndex).getParametricLength() - currentRestParam) <
                currentNeedleInsertedLength) {
       currentRestLength += m_restDilatationFactor.at(needleIndex) *
-                           (m_tissue.accessPath().accessSegment(restIndex).getParametricLength() - currentRestParam);
+        (m_tissue.accessPath().accessSegment(restIndex).getParametricLength() - currentRestParam);
       currentRestParam = 0;
       restIndex++;
     }
@@ -716,13 +723,14 @@ bool usNeedleInsertionModelRayleighRitzSpline::cutPathToPoint(const vpColVector 
                       "usNeedleInsertionModelRayleighRitzSpline::cutPathToPoint: invalid vector dimension");
 
   if (!usGeometryTools::IsPointInFrontOfPlane(P, m_tissue.accessSurface())) return false;
-  
+
   vpColVector lastPoint(3);
   vpColVector lastDirection(3);
   if (m_tissue.accessPath().getNbSegments() > 0) {
     lastPoint = m_tissue.accessPath().accessLastSegment().getEndPoint();
     lastDirection = m_needle.getTipDirection(); // m_tissue.accessPath().accessLastSegment().getEndTangent();
-  } else {
+  }
+  else {
     lastDirection = m_needle.getTipDirection();
     lastPoint = usGeometryTools::projectPointOnPlane(P, m_tissue.accessSurface(), lastDirection);
   }
@@ -730,8 +738,8 @@ bool usNeedleInsertionModelRayleighRitzSpline::cutPathToPoint(const vpColVector 
   if (vpColVector::dotProd(P - lastPoint, lastDirection) > m_pathUpdateLengthThreshold) {
     if ((P - m_needle.getBasePosition()).frobeniusNorm() > 1.1*m_needle.getFullLength()) {
       std::cout << "Warning usNeedleInsertionModelRayleighRitzSpline::cutPathToPoint: cut point is inconsistent with "
-                   "current needle state"
-                << std::endl;
+        "current needle state"
+        << std::endl;
       return false;
     }
 
@@ -743,7 +751,8 @@ bool usNeedleInsertionModelRayleighRitzSpline::cutPathToPoint(const vpColVector 
     seg.setParametricLength((P - lastPoint).frobeniusNorm());
     m_tissue.accessPath().addSegment(seg);
     return true;
-  } else
+  }
+  else
     return false;
 }
 
@@ -764,7 +773,8 @@ void usNeedleInsertionModelRayleighRitzSpline::solveSegmentsParametersSparseEige
       trueFreeLength += m_needle.accessSegment(i).getLength();
     }
     trueFreeLength += m_needle.accessSegment(seg).getSubPolynomialCurve(0, param).getLength();
-  } else {
+  }
+  else {
     vpColVector p(3);
     for (int i = 0; i < 3; i++)
       p[i] = m_needle.getBasePose()[i];
@@ -968,9 +978,9 @@ void usNeedleInsertionModelRayleighRitzSpline::solveSegmentsParametersSparseEige
       double l = LsegMin;
       while (l < LsegMax) {
         usPolynomialCurve3D p(m_tissue.accessPath().accessSegment(restIndex).getSubPolynomialCurve(
-            currentRestParam,
-            ((restIndex == m_tissue.accessPath().getNbSegments() - 1) ? currentRestParam : 0) +
-                m_tissue.accessPath().accessSegment(restIndex).getParametricLength()));
+          currentRestParam,
+          ((restIndex == m_tissue.accessPath().getNbSegments() - 1) ? currentRestParam : 0) +
+          m_tissue.accessPath().accessSegment(restIndex).getParametricLength()));
         p.changeCoefficientsToFitBoundaries(l, l + m_restDilatationFactor.at(i - 1) * p.getParametricLength());
         int nbRestSegCoef = p.getOrder() + 1;
 
@@ -980,7 +990,8 @@ void usNeedleInsertionModelRayleighRitzSpline::solveSegmentsParametersSparseEige
           Lmax = LsegMax;
           currentRestParam += (LsegMax - l) / m_restDilatationFactor.at(i - 1);
           l = LsegMax;
-        } else {
+        }
+        else {
           Lmax = l + p.getParametricLength();
           l = Lmax;
           currentRestParam = 0;
@@ -1002,7 +1013,8 @@ void usNeedleInsertionModelRayleighRitzSpline::solveSegmentsParametersSparseEige
         layerIndex++;
         nextLayerDepth += m_layerLength.at(layerIndex);
         lseg += LsegMax - LsegMin;
-      } else
+      }
+      else
         lseg = segLength;
 
       currentDepth += LsegMax - LsegMin;
@@ -1074,7 +1086,8 @@ void usNeedleInsertionModelRayleighRitzSpline::solveSegmentsParametersFullSparse
       trueFreeLength += m_needle.accessSegment(i).getLength();
     }
     trueFreeLength += m_needle.accessSegment(seg).getSubPolynomialCurve(0, param).getLength();
-  } else {
+  }
+  else {
     vpColVector p(3);
     for (int i = 0; i < 3; i++)
       p[i] = m_needle.getBasePose()[i];
@@ -1296,9 +1309,9 @@ void usNeedleInsertionModelRayleighRitzSpline::solveSegmentsParametersFullSparse
       double l = LsegMin;
       while (l < LsegMax) {
         usPolynomialCurve3D p(m_tissue.accessPath().accessSegment(restIndex).getSubPolynomialCurve(
-            currentRestParam,
-            ((restIndex == m_tissue.accessPath().getNbSegments() - 1) ? currentRestParam : 0) +
-                m_tissue.accessPath().accessSegment(restIndex).getParametricLength()));
+          currentRestParam,
+          ((restIndex == m_tissue.accessPath().getNbSegments() - 1) ? currentRestParam : 0) +
+          m_tissue.accessPath().accessSegment(restIndex).getParametricLength()));
         p.changeCoefficientsToFitBoundaries(l, l + m_restDilatationFactor.at(i) * p.getParametricLength());
         int nbRestSegCoef = p.getOrder() + 1;
 
@@ -1308,7 +1321,8 @@ void usNeedleInsertionModelRayleighRitzSpline::solveSegmentsParametersFullSparse
           Lmax = LsegMax;
           currentRestParam += (LsegMax - l) / m_restDilatationFactor.at(i);
           l = LsegMax;
-        } else {
+        }
+        else {
           Lmax = l + p.getParametricLength();
           l = Lmax;
           currentRestParam = 0;
@@ -1330,7 +1344,8 @@ void usNeedleInsertionModelRayleighRitzSpline::solveSegmentsParametersFullSparse
         layerIndex++;
         nextLayerDepth += m_layerLength.at(layerIndex);
         lseg += LsegMax - LsegMin;
-      } else
+      }
+      else
         lseg = segLength;
 
       currentDepth += LsegMax - LsegMin;
@@ -1363,8 +1378,8 @@ void usNeedleInsertionModelRayleighRitzSpline::solveSegmentsParametersFullSparse
       double cosTheta = vpColVector::dotProd(m_tissue.accessSurface().getDirection(), bevelSegment);
       if (cosTheta > std::numeric_limits<double>::epsilon())
         LbevMin =
-            fabs(usGeometryTools::getPointPlaneDistance(m_needleTip->getBasePosition(), m_tissue.accessSurface())) /
-            cosTheta;
+        fabs(usGeometryTools::getPointPlaneDistance(m_needleTip->getBasePosition(), m_tissue.accessSurface())) /
+        cosTheta;
       else
         LbevMin = bevLength;
     }
@@ -1403,9 +1418,9 @@ void usNeedleInsertionModelRayleighRitzSpline::solveSegmentsParametersFullSparse
       double l = LbevMin;
       while (l < LbevMax) {
         usPolynomialCurve3D p(m_tissue.accessPath().accessSegment(restIndex).getSubPolynomialCurve(
-            currentRestParam,
-            ((restIndex == m_tissue.accessPath().getNbSegments() - 1) ? currentRestParam : 0) +
-                m_tissue.accessPath().accessSegment(restIndex).getParametricLength()));
+          currentRestParam,
+          ((restIndex == m_tissue.accessPath().getNbSegments() - 1) ? currentRestParam : 0) +
+          m_tissue.accessPath().accessSegment(restIndex).getParametricLength()));
         p.changeCoefficientsToFitBoundaries(l, l + p.getParametricLength());
         int nbRestSegCoef = p.getOrder() + 1;
 
@@ -1415,7 +1430,8 @@ void usNeedleInsertionModelRayleighRitzSpline::solveSegmentsParametersFullSparse
           Lmax = LbevMax;
           currentRestParam += LbevMax - l;
           l = LbevMax;
-        } else {
+        }
+        else {
           Lmax = l + p.getParametricLength();
           l = Lmax;
           currentRestParam = 0;
@@ -1444,7 +1460,8 @@ void usNeedleInsertionModelRayleighRitzSpline::solveSegmentsParametersFullSparse
         layerIndex++;
         nextLayerDepth += m_layerLength.at(layerIndex);
         lbev += LbevMax - LbevMin;
-      } else
+      }
+      else
         lbev = bevLength;
 
       currentDepth += LbevMax - LbevMin;
@@ -1514,7 +1531,8 @@ void usNeedleInsertionModelRayleighRitzSpline::solveSegmentsParametersFullSparse
       trueFreeLength += m_needle.accessSegment(i).getLength();
     }
     trueFreeLength += m_needle.accessSegment(seg).getSubPolynomialCurve(0, param).getLength();
-  } else {
+  }
+  else {
     vpColVector p(3);
     for (int i = 0; i < 3; i++)
       p[i] = m_needle.getBasePose()[i];
@@ -1730,9 +1748,9 @@ void usNeedleInsertionModelRayleighRitzSpline::solveSegmentsParametersFullSparse
         double factor = m_restDilatationFactor.at(i);
         while (l < LsegMax) {
           usPolynomialCurve3D p(m_tissue.accessPath().accessSegment(restIndex).getSubPolynomialCurve(
-              currentRestParam,
-              ((restIndex == m_tissue.accessPath().getNbSegments() - 1) ? currentRestParam : 0) +
-                  m_tissue.accessPath().accessSegment(restIndex).getParametricLength()));
+            currentRestParam,
+            ((restIndex == m_tissue.accessPath().getNbSegments() - 1) ? currentRestParam : 0) +
+            m_tissue.accessPath().accessSegment(restIndex).getParametricLength()));
           p.changeCoefficientsToFitBoundaries(l, l + factor * p.getParametricLength());
           int nbRestSegCoef = p.getOrder() + 1;
 
@@ -1742,7 +1760,8 @@ void usNeedleInsertionModelRayleighRitzSpline::solveSegmentsParametersFullSparse
             Lmax = LsegMax;
             currentRestParam += (LsegMax - l) / factor;
             l = LsegMax;
-          } else {
+          }
+          else {
             Lmax = l + p.getParametricLength();
             l = Lmax;
             currentRestParam = 0;
@@ -1765,7 +1784,8 @@ void usNeedleInsertionModelRayleighRitzSpline::solveSegmentsParametersFullSparse
         layerIndex++;
         nextLayerDepth += m_layerLength.at(layerIndex);
         lseg += LsegMax - LsegMin;
-      } else
+      }
+      else
         lseg = segLength;
 
       currentDepth += LsegMax - LsegMin;
@@ -1802,8 +1822,8 @@ void usNeedleInsertionModelRayleighRitzSpline::solveSegmentsParametersFullSparse
       double cosTheta = vpColVector::dotProd(m_tissue.accessSurface().getDirection(), bevelSegment);
       if (cosTheta > std::numeric_limits<double>::epsilon())
         LbevMin =
-            fabs(usGeometryTools::getPointPlaneDistance(m_needleTip->getBasePosition(), m_tissue.accessSurface())) /
-            cosTheta;
+        fabs(usGeometryTools::getPointPlaneDistance(m_needleTip->getBasePosition(), m_tissue.accessSurface())) /
+        cosTheta;
       else
         LbevMin = bevLength;
     }
@@ -1842,9 +1862,9 @@ void usNeedleInsertionModelRayleighRitzSpline::solveSegmentsParametersFullSparse
       double l = LbevMin;
       while (l < LbevMax) {
         usPolynomialCurve3D p(m_tissue.accessPath().accessSegment(restIndex).getSubPolynomialCurve(
-            currentRestParam,
-            ((restIndex == m_tissue.accessPath().getNbSegments() - 1) ? currentRestParam : 0) +
-                m_tissue.accessPath().accessSegment(restIndex).getParametricLength()));
+          currentRestParam,
+          ((restIndex == m_tissue.accessPath().getNbSegments() - 1) ? currentRestParam : 0) +
+          m_tissue.accessPath().accessSegment(restIndex).getParametricLength()));
         p.changeCoefficientsToFitBoundaries(l, l + p.getParametricLength());
         int nbRestSegCoef = p.getOrder() + 1;
 
@@ -1854,7 +1874,8 @@ void usNeedleInsertionModelRayleighRitzSpline::solveSegmentsParametersFullSparse
           Lmax = LbevMax;
           currentRestParam += LbevMax - l;
           l = LbevMax;
-        } else {
+        }
+        else {
           Lmax = l + p.getParametricLength();
           l = Lmax;
           currentRestParam = 0;
@@ -1883,7 +1904,8 @@ void usNeedleInsertionModelRayleighRitzSpline::solveSegmentsParametersFullSparse
         layerIndex++;
         nextLayerDepth += m_layerLength.at(layerIndex);
         lbev += LbevMax - LbevMin;
-      } else
+      }
+      else
         lbev = bevLength;
 
       currentDepth += LbevMax - LbevMin;
@@ -1952,7 +1974,8 @@ void usNeedleInsertionModelRayleighRitzSpline::solveSegmentsParametersDense()
       trueFreeLength += m_needle.accessSegment(i).getLength();
     }
     trueFreeLength += m_needle.accessSegment(seg).getSubPolynomialCurve(0, param).getLength();
-  } else {
+  }
+  else {
     vpColVector p(3);
     for (int i = 0; i < 3; i++)
       p[i] = m_needle.getBasePose()[i];
@@ -2164,9 +2187,9 @@ void usNeedleInsertionModelRayleighRitzSpline::solveSegmentsParametersDense()
         double factor = m_restDilatationFactor.at(i);
         while (l < LsegMax) {
           usPolynomialCurve3D p(m_tissue.accessPath().accessSegment(restIndex).getSubPolynomialCurve(
-              currentRestParam,
-              ((restIndex == m_tissue.accessPath().getNbSegments() - 1) ? currentRestParam : 0) +
-                  m_tissue.accessPath().accessSegment(restIndex).getParametricLength()));
+            currentRestParam,
+            ((restIndex == m_tissue.accessPath().getNbSegments() - 1) ? currentRestParam : 0) +
+            m_tissue.accessPath().accessSegment(restIndex).getParametricLength()));
           p.changeCoefficientsToFitBoundaries(l, l + factor * p.getParametricLength());
           int nbRestSegCoef = p.getOrder() + 1;
 
@@ -2176,7 +2199,8 @@ void usNeedleInsertionModelRayleighRitzSpline::solveSegmentsParametersDense()
             Lmax = LsegMax;
             currentRestParam += (LsegMax - l) / factor;
             l = LsegMax;
-          } else {
+          }
+          else {
             Lmax = l + p.getParametricLength();
             l = Lmax;
             currentRestParam = 0;
@@ -2199,7 +2223,8 @@ void usNeedleInsertionModelRayleighRitzSpline::solveSegmentsParametersDense()
         layerIndex++;
         nextLayerDepth += m_layerLength.at(layerIndex);
         lseg += LsegMax - LsegMin;
-      } else
+      }
+      else
         lseg = segLength;
 
       currentDepth += LsegMax - LsegMin;
@@ -2236,8 +2261,8 @@ void usNeedleInsertionModelRayleighRitzSpline::solveSegmentsParametersDense()
       double cosTheta = vpColVector::dotProd(m_tissue.accessSurface().getDirection(), bevelSegment);
       if (cosTheta > std::numeric_limits<double>::epsilon())
         LbevMin =
-            fabs(usGeometryTools::getPointPlaneDistance(m_needleTip->getBasePosition(), m_tissue.accessSurface())) /
-            cosTheta;
+        fabs(usGeometryTools::getPointPlaneDistance(m_needleTip->getBasePosition(), m_tissue.accessSurface())) /
+        cosTheta;
       else
         LbevMin = bevLength;
     }
@@ -2276,9 +2301,9 @@ void usNeedleInsertionModelRayleighRitzSpline::solveSegmentsParametersDense()
       double l = LbevMin;
       while (l < LbevMax) {
         usPolynomialCurve3D p(m_tissue.accessPath().accessSegment(restIndex).getSubPolynomialCurve(
-            currentRestParam,
-            ((restIndex == m_tissue.accessPath().getNbSegments() - 1) ? currentRestParam : 0) +
-                m_tissue.accessPath().accessSegment(restIndex).getParametricLength()));
+          currentRestParam,
+          ((restIndex == m_tissue.accessPath().getNbSegments() - 1) ? currentRestParam : 0) +
+          m_tissue.accessPath().accessSegment(restIndex).getParametricLength()));
         p.changeCoefficientsToFitBoundaries(l, l + p.getParametricLength());
         int nbRestSegCoef = p.getOrder() + 1;
 
@@ -2288,7 +2313,8 @@ void usNeedleInsertionModelRayleighRitzSpline::solveSegmentsParametersDense()
           Lmax = LbevMax;
           currentRestParam += LbevMax - l;
           l = LbevMax;
-        } else {
+        }
+        else {
           Lmax = l + p.getParametricLength();
           l = Lmax;
           currentRestParam = 0;
@@ -2317,7 +2343,8 @@ void usNeedleInsertionModelRayleighRitzSpline::solveSegmentsParametersDense()
         layerIndex++;
         nextLayerDepth += m_layerLength.at(layerIndex);
         lbev += LbevMax - LbevMin;
-      } else
+      }
+      else
         lbev = bevLength;
 
       currentDepth += LbevMax - LbevMin;
@@ -2373,9 +2400,9 @@ void usNeedleInsertionModelRayleighRitzSpline::updateTipPose()
   vpTranslationVector t(pt[0], pt[1], pt[2]);
 
   vpColVector vect =
-      vpColVector::crossProd(m_needle.accessSegment(0).getStartTangent(), m_needle.accessLastSegment().getEndTangent());
+    vpColVector::crossProd(m_needle.accessSegment(0).getStartTangent(), m_needle.accessLastSegment().getEndTangent());
   double dot =
-      vpColVector::dotProd(m_needle.accessSegment(0).getStartTangent(), m_needle.accessLastSegment().getEndTangent());
+    vpColVector::dotProd(m_needle.accessSegment(0).getStartTangent(), m_needle.accessLastSegment().getEndTangent());
   double theta = atan2(vect.frobeniusNorm(), dot);
   vect.normalize();
   vect = theta * vect;
@@ -2428,7 +2455,8 @@ bool usNeedleInsertionModelRayleighRitzSpline::updateState()
 
         for (unsigned int i = 0; i < m_restDilatationFactor.size(); i++)
           m_restDilatationFactor.at(i) = l / restLength;
-      } else {
+      }
+      else {
         pl.setPosition(m_tissue.accessPath().accessLastSegment().getEndPoint());
         if (usGeometryTools::DoesSegmentCrossPlaneDirect(m_needle, pl)) {
           double l = -1;
@@ -2438,7 +2466,8 @@ bool usNeedleInsertionModelRayleighRitzSpline::updateState()
 
           for (unsigned int i = 0; i < m_restDilatationFactor.size(); i++)
             m_restDilatationFactor.at(i) = l / restLength;
-        } else
+        }
+        else
           for (unsigned int i = 0; i < m_restDilatationFactor.size(); i++)
             m_restDilatationFactor.at(i) = 1;
       }
@@ -2475,20 +2504,24 @@ bool usNeedleInsertionModelRayleighRitzSpline::updatePath()
           restIndex, restParam);
       lastPoint = m_tissue.accessPath().accessLastSegment().getEndPoint();
       lastDirection = m_tissue.accessPath().accessLastSegment().getEndTangent();
-    } else if (usGeometryTools::IsPointInFrontOfPlane(m_needleTip->getTipPosition(), m_tissue.accessSurface())) {
+    }
+    else if (usGeometryTools::IsPointInFrontOfPlane(m_needleTip->getTipPosition(), m_tissue.accessSurface())) {
       lastDirection = m_needleTip->getTipDirection();
       lastPoint =
-          usGeometryTools::projectPointOnPlane(m_needleTip->getTipPosition(), m_tissue.accessSurface(), lastDirection);
-    } else
+        usGeometryTools::projectPointOnPlane(m_needleTip->getTipPosition(), m_tissue.accessSurface(), lastDirection);
+    }
+    else
       return false;
 
     double insertionStep = 0;
 
     if (m_tissue.accessPath().getNbSegments() > 0 && restIndex == m_tissue.accessPath().getNbSegments() - 1) {
       insertionStep = restParam - m_tissue.accessPath().accessSegment(restIndex).getParametricLength();
-    } else if (m_tissue.accessPath().getNbSegments() == 0) {
+    }
+    else if (m_tissue.accessPath().getNbSegments() == 0) {
       insertionStep = vpColVector::dotProd(m_needleTip->getTipPosition() - lastPoint, lastDirection);
-    } else
+    }
+    else
       return false;
 
     if (insertionStep > m_pathUpdateLengthThreshold) {
@@ -2503,7 +2536,8 @@ bool usNeedleInsertionModelRayleighRitzSpline::updatePath()
       seg.setParametricLength(u.frobeniusNorm());
       m_tissue.accessPath().addSegment(seg);
       return true;
-    } else
+    }
+    else
       return false;
   }
   case PathUpdateType::WithTipMix: {
@@ -2517,20 +2551,24 @@ bool usNeedleInsertionModelRayleighRitzSpline::updatePath()
           restIndex, restParam);
       lastPoint = m_tissue.accessPath().accessLastSegment().getEndPoint();
       lastDirection = m_tissue.accessPath().accessLastSegment().getEndTangent();
-    } else if (usGeometryTools::IsPointInFrontOfPlane(m_needleTip->getTipPosition(), m_tissue.accessSurface())) {
+    }
+    else if (usGeometryTools::IsPointInFrontOfPlane(m_needleTip->getTipPosition(), m_tissue.accessSurface())) {
       lastDirection = m_needleTip->getTipDirection();
       lastPoint =
-          usGeometryTools::projectPointOnPlane(m_needleTip->getTipPosition(), m_tissue.accessSurface(), lastDirection);
-    } else
+        usGeometryTools::projectPointOnPlane(m_needleTip->getTipPosition(), m_tissue.accessSurface(), lastDirection);
+    }
+    else
       return false;
 
     double insertionStep = 0;
 
     if (m_tissue.accessPath().getNbSegments() > 0 && restIndex == m_tissue.accessPath().getNbSegments() - 1) {
       insertionStep = restParam - m_tissue.accessPath().accessSegment(restIndex).getParametricLength();
-    } else if (m_tissue.accessPath().getNbSegments() == 0) {
+    }
+    else if (m_tissue.accessPath().getNbSegments() == 0) {
       insertionStep = vpColVector::dotProd(m_needleTip->getTipPosition() - lastPoint, lastDirection);
-    } else
+    }
+    else
       return false;
 
     if (insertionStep > m_pathUpdateLengthThreshold) {
@@ -2539,14 +2577,15 @@ bool usNeedleInsertionModelRayleighRitzSpline::updatePath()
       M.insert(lastPoint, 0, 0);
 
       vpColVector newPoint = m_pathUpdateMixCoefficient * (lastPoint + insertionStep * m_needleTip->getTipDirection()) +
-                             (1 - m_pathUpdateMixCoefficient) * m_needleTip->getTipPosition();
+        (1 - m_pathUpdateMixCoefficient) * m_needleTip->getTipPosition();
 
       M.insert((newPoint - lastPoint).normalize(), 0, 1);
       seg.setPolynomialCoefficients(M);
       seg.setParametricLength((newPoint - lastPoint).frobeniusNorm());
       m_tissue.accessPath().addSegment(seg);
       return true;
-    } else
+    }
+    else
       return false;
   }
   default:

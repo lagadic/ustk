@@ -42,10 +42,10 @@
 class VISP_EXPORT usNeedleTip
 {
 protected:
-  vpPoseVector m_basePose;
-  vpHomogeneousMatrix m_worldMbase;
-  vpPoseVector m_tipPose;
-  vpHomogeneousMatrix m_worldMtip;
+  VISP_NAMESPACE_ADDRESSING vpPoseVector m_basePose;
+  VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix m_worldMbase;
+  VISP_NAMESPACE_ADDRESSING vpPoseVector m_tipPose;
+  VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix m_worldMtip;
 
 public:
   //! Constructors, destructors
@@ -58,21 +58,21 @@ public:
 
   //! Parameters setters and getters
 
-  void setBasePose(const vpPoseVector &pose);
-  vpPoseVector getBasePose() const;
-  void setWorldMbase(const vpHomogeneousMatrix &worldMbase);
-  vpHomogeneousMatrix getWorldMbase() const;
-  void setBasePosition(const vpColVector &position);
-  vpColVector getBasePosition() const;
+  void setBasePose(const VISP_NAMESPACE_ADDRESSING vpPoseVector &pose);
+  VISP_NAMESPACE_ADDRESSING vpPoseVector getBasePose() const;
+  void setWorldMbase(const VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &worldMbase);
+  VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix getWorldMbase() const;
+  void setBasePosition(const VISP_NAMESPACE_ADDRESSING vpColVector &position);
+  VISP_NAMESPACE_ADDRESSING vpColVector getBasePosition() const;
 
-  vpPoseVector getTipPose() const;
-  vpHomogeneousMatrix getWorldMtip() const;
-  vpColVector getTipPosition() const;
-  vpColVector getTipDirection() const;
+  VISP_NAMESPACE_ADDRESSING vpPoseVector getTipPose() const;
+  VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix getWorldMtip() const;
+  VISP_NAMESPACE_ADDRESSING vpColVector getTipPosition() const;
+  VISP_NAMESPACE_ADDRESSING vpColVector getTipDirection() const;
 
-  vpColVector getBaseAxisX() const;
-  vpColVector getBaseAxisY() const;
-  vpColVector getBaseAxisZ() const;
+  VISP_NAMESPACE_ADDRESSING vpColVector getBaseAxisX() const;
+  VISP_NAMESPACE_ADDRESSING vpColVector getBaseAxisY() const;
+  VISP_NAMESPACE_ADDRESSING vpColVector getBaseAxisZ() const;
 
   //! Data saving
 

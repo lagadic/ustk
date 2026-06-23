@@ -35,15 +35,18 @@
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 
-usNeedleTipActuated::usNeedleTipActuated() : usNeedleTip(), _diameter(0), _length(0), _angle(0), _steeringAngle(0) {}
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
+usNeedleTipActuated::usNeedleTipActuated() : usNeedleTip(), _diameter(0), _length(0), _angle(0), _steeringAngle(0) { }
 
 usNeedleTipActuated::usNeedleTipActuated(const usNeedleTipActuated &tip)
   : usNeedleTip(tip), _diameter(tip._diameter), _length(tip._length), _angle(tip._angle),
-    _steeringAngle(tip._steeringAngle)
-{
-}
+  _steeringAngle(tip._steeringAngle)
+{ }
 
-usNeedleTipActuated::~usNeedleTipActuated() {}
+usNeedleTipActuated::~usNeedleTipActuated() { }
 
 usNeedleTipActuated &usNeedleTipActuated::operator=(const usNeedleTipActuated &tip)
 {

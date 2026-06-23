@@ -53,7 +53,8 @@
 class VISP_EXPORT usNeedleInsertionModelRayleighRitzSpline : public usNeedleInsertionModelInterface
 {
 public:
-  enum class ModelPreset : int {
+  enum class ModelPreset : int
+  {
     BiopsyNeedle,
     BiopsyCannula,
     Symmetric,
@@ -158,8 +159,8 @@ public:
   bool IsNeedleInserted() const;
   double getNeedleFreeLength(int *seg = nullptr, double *param = nullptr) const;
   double getInsertionDepth() const;
-  vpColVector getNeedleInsertionPoint() const;
-  vpColVector getTissueInsertionPoint() const;
+  VISP_NAMESPACE_ADDRESSING vpColVector getNeedleInsertionPoint() const;
+  VISP_NAMESPACE_ADDRESSING vpColVector getTissueInsertionPoint() const;
 
   bool getCorrespondingPathPoint(double l, int &correspondingRestIndex, double &correspondingRestParam) const;
 
@@ -179,13 +180,13 @@ public:
   //! Control of the needle
 
   using usNeedleInsertionModelInterface::setBasePose;
-  bool setBasePose(const vpPoseVector &p);
-  vpPoseVector getBasePose() const;
+  bool setBasePose(const VISP_NAMESPACE_ADDRESSING vpPoseVector &p);
+  VISP_NAMESPACE_ADDRESSING vpPoseVector getBasePose() const;
 
   //! Control of the tissue
 
   void setSurfaceAtTip();
-  bool cutPathToPoint(const vpColVector &P);
+  bool cutPathToPoint(const VISP_NAMESPACE_ADDRESSING vpColVector &P);
 
   //! Internal model command
 

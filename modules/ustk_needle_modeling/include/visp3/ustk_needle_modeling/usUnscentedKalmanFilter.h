@@ -50,104 +50,104 @@
 class VISP_EXPORT usUnscentedKalmanFilter
 {
 public:
-    enum NoiseType : int {ADDITIVE_NOISE, GENERIC_NOISE};
-    enum SigmaPointGenerationType : int {STANDARD_COVARIANCE, FIXED_SCALING_FACTOR, LIMITED_SPREAD};
-    
-protected:
-    
-    unsigned int m_stateDimension;
-    unsigned int m_measureDimension;
-    unsigned int m_processNoiseDimension;
-    unsigned int m_measureNoiseDimension;
+  enum NoiseType : int { ADDITIVE_NOISE, GENERIC_NOISE };
+  enum SigmaPointGenerationType : int { STANDARD_COVARIANCE, FIXED_SCALING_FACTOR, LIMITED_SPREAD };
 
-    vpColVector m_state;
-    vpMatrix m_stateCovarianceMatrix;
-    
-    NoiseType m_processNoiseType;
-    vpMatrix m_processNoiseCovarianceMatrix;
-    bool m_computeProcessNoiseCovarianceMatrixAutomatically;
-    
-    NoiseType m_measureNoiseType;
-    vpMatrix m_measureNoiseCovarianceMatrix;
-    bool m_computeMeasureNoiseCovarianceMatrixAutomatically;
-    
-    vpColVector m_measure;
-    
-    SigmaPointGenerationType m_sigmaPointsGenerationType;
-    vpMatrix m_sigmaPointsInit;
-    vpMatrix m_sigmaPointsPropagated;
-    vpMatrix m_sigmaPointsMeasure;
-    vpColVector m_sigmaPointsMeanWeights;
-    vpColVector m_sigmaPointsCovarianceWeights;
-    double m_sigmaPointsScalingFactor;
-    double m_sigmaPointsSpreadThreshold;
-    
-    vpColVector m_stateSigmaMean;
-    vpColVector m_measureSigmaMean;
-    vpMatrix m_stateSigmaCovarianceMatrix;
-    vpMatrix m_stateMeasureSigmaCovarianceMatrix;
-    vpMatrix m_measureSigmaCovarianceMatrix;
+protected:
+
+  unsigned int m_stateDimension;
+  unsigned int m_measureDimension;
+  unsigned int m_processNoiseDimension;
+  unsigned int m_measureNoiseDimension;
+
+  VISP_NAMESPACE_ADDRESSING vpColVector m_state;
+  VISP_NAMESPACE_ADDRESSING vpMatrix m_stateCovarianceMatrix;
+
+  NoiseType m_processNoiseType;
+  VISP_NAMESPACE_ADDRESSING vpMatrix m_processNoiseCovarianceMatrix;
+  bool m_computeProcessNoiseCovarianceMatrixAutomatically;
+
+  NoiseType m_measureNoiseType;
+  VISP_NAMESPACE_ADDRESSING vpMatrix m_measureNoiseCovarianceMatrix;
+  bool m_computeMeasureNoiseCovarianceMatrixAutomatically;
+
+  VISP_NAMESPACE_ADDRESSING vpColVector m_measure;
+
+  SigmaPointGenerationType m_sigmaPointsGenerationType;
+  VISP_NAMESPACE_ADDRESSING vpMatrix m_sigmaPointsInit;
+  VISP_NAMESPACE_ADDRESSING vpMatrix m_sigmaPointsPropagated;
+  VISP_NAMESPACE_ADDRESSING vpMatrix m_sigmaPointsMeasure;
+  VISP_NAMESPACE_ADDRESSING vpColVector m_sigmaPointsMeanWeights;
+  VISP_NAMESPACE_ADDRESSING vpColVector m_sigmaPointsCovarianceWeights;
+  double m_sigmaPointsScalingFactor;
+  double m_sigmaPointsSpreadThreshold;
+
+  VISP_NAMESPACE_ADDRESSING vpColVector m_stateSigmaMean;
+  VISP_NAMESPACE_ADDRESSING vpColVector m_measureSigmaMean;
+  VISP_NAMESPACE_ADDRESSING vpMatrix m_stateSigmaCovarianceMatrix;
+  VISP_NAMESPACE_ADDRESSING vpMatrix m_stateMeasureSigmaCovarianceMatrix;
+  VISP_NAMESPACE_ADDRESSING vpMatrix m_measureSigmaCovarianceMatrix;
 
 public:
-    usUnscentedKalmanFilter();
-    virtual ~usUnscentedKalmanFilter();
-    
-    int getStateDimension() const;
-    void setStateDimension(int dim);
-    
-    int getMeasureDimension() const;
-    void setMeasureDimension(int dim);
-    
-    NoiseType getProcessNoiseType() const;
-    void setProcessNoiseType(NoiseType type);
-    int getProcessNoiseDimension() const;
-    void setProcessNoiseDimension(int dim);
-    
-    NoiseType getMeasureNoiseType() const;
-    void setMeasureNoiseType(NoiseType type);
-    int getMeasureNoiseDimension() const;
-    void setMeasureNoiseDimension(int dim);
-            
-    SigmaPointGenerationType getSigmaPointGenerationType() const;
-    void setSigmaPointGenerationType(SigmaPointGenerationType type);
-    double getSigmaPointScalingFactor() const;
-    void setSigmaPointScalingFactor(double factor);
-    double getSigmaPointSpreadThreshold() const;
-    void setSigmaPointSpreadThreshold(double threshold);
-    
-    vpColVector getState() const;
-    void setState(const vpColVector &state);
-    
-    vpMatrix getStateCovarianceMatrix() const;
-    void setStateCovarianceMatrix(const vpMatrix &mat);
-    
-    vpMatrix getProcessNoiseCovarianceMatrix() const;
-    void setProcessNoiseCovarianceMatrix(const vpMatrix &cov);
-    bool computeProcessNoiseCovarianceMatrixAutomatically() const;
-    void computeProcessNoiseCovarianceMatrixAutomatically(bool flag);
-    
-    vpMatrix getMeasureNoiseCovarianceMatrix() const;
-    void setMeasureNoiseCovarianceMatrix(const vpMatrix &cov);
-    bool computeMeasureNoiseCovarianceMatrixAutomatically() const;
-    void computeMeasureNoiseCovarianceMatrixAutomatically(bool flag);
-    
-    virtual bool checkConsistency(const vpColVector &measure);
-    virtual void computeProcessNoiseCovarianceMatrix();
-    virtual void computeMeasureNoiseCovarianceMatrix();
-    bool generateSigmaPoints();
-    bool computePropagatedSigmaPoints();
-    bool computeSigmaMeasures();
-    void computeMeansAndCovarianceMatricesFromSigmaPoints();
-    bool updateState();
-    
-    bool filter(const vpColVector &measure);
-    
-    virtual vpColVector propagateSigmaPoint(const vpColVector &sigmaPoint)=0;
-    virtual vpColVector computeMeasureFromSigmaPoint(const vpColVector &sigmaPoint)=0;
-    virtual double stateNorm(const vpColVector &state) const;
-    virtual vpColVector measureLog(const vpColVector &measure, const vpColVector &measureCenter) const;
-    virtual vpColVector stateLog(const vpColVector &state, const vpColVector &stateCenter) const;
-    virtual vpColVector stateExp(const vpColVector &state, const vpColVector &stateCenter) const;
+  usUnscentedKalmanFilter();
+  virtual ~usUnscentedKalmanFilter();
+
+  int getStateDimension() const;
+  void setStateDimension(int dim);
+
+  int getMeasureDimension() const;
+  void setMeasureDimension(int dim);
+
+  NoiseType getProcessNoiseType() const;
+  void setProcessNoiseType(NoiseType type);
+  int getProcessNoiseDimension() const;
+  void setProcessNoiseDimension(int dim);
+
+  NoiseType getMeasureNoiseType() const;
+  void setMeasureNoiseType(NoiseType type);
+  int getMeasureNoiseDimension() const;
+  void setMeasureNoiseDimension(int dim);
+
+  SigmaPointGenerationType getSigmaPointGenerationType() const;
+  void setSigmaPointGenerationType(SigmaPointGenerationType type);
+  double getSigmaPointScalingFactor() const;
+  void setSigmaPointScalingFactor(double factor);
+  double getSigmaPointSpreadThreshold() const;
+  void setSigmaPointSpreadThreshold(double threshold);
+
+  VISP_NAMESPACE_ADDRESSING vpColVector getState() const;
+  void setState(const VISP_NAMESPACE_ADDRESSING vpColVector &state);
+
+  VISP_NAMESPACE_ADDRESSING vpMatrix getStateCovarianceMatrix() const;
+  void setStateCovarianceMatrix(const VISP_NAMESPACE_ADDRESSING vpMatrix &mat);
+
+  VISP_NAMESPACE_ADDRESSING vpMatrix getProcessNoiseCovarianceMatrix() const;
+  void setProcessNoiseCovarianceMatrix(const VISP_NAMESPACE_ADDRESSING vpMatrix &cov);
+  bool computeProcessNoiseCovarianceMatrixAutomatically() const;
+  void computeProcessNoiseCovarianceMatrixAutomatically(bool flag);
+
+  VISP_NAMESPACE_ADDRESSING vpMatrix getMeasureNoiseCovarianceMatrix() const;
+  void setMeasureNoiseCovarianceMatrix(const VISP_NAMESPACE_ADDRESSING vpMatrix &cov);
+  bool computeMeasureNoiseCovarianceMatrixAutomatically() const;
+  void computeMeasureNoiseCovarianceMatrixAutomatically(bool flag);
+
+  virtual bool checkConsistency(const VISP_NAMESPACE_ADDRESSING vpColVector &measure);
+  virtual void computeProcessNoiseCovarianceMatrix();
+  virtual void computeMeasureNoiseCovarianceMatrix();
+  bool generateSigmaPoints();
+  bool computePropagatedSigmaPoints();
+  bool computeSigmaMeasures();
+  void computeMeansAndCovarianceMatricesFromSigmaPoints();
+  bool updateState();
+
+  bool filter(const VISP_NAMESPACE_ADDRESSING vpColVector &measure);
+
+  virtual VISP_NAMESPACE_ADDRESSING vpColVector propagateSigmaPoint(const VISP_NAMESPACE_ADDRESSING vpColVector &sigmaPoint) = 0;
+  virtual VISP_NAMESPACE_ADDRESSING vpColVector computeMeasureFromSigmaPoint(const VISP_NAMESPACE_ADDRESSING vpColVector &sigmaPoint) = 0;
+  virtual double stateNorm(const VISP_NAMESPACE_ADDRESSING vpColVector &state) const;
+  virtual VISP_NAMESPACE_ADDRESSING vpColVector measureLog(const VISP_NAMESPACE_ADDRESSING vpColVector &measure, const VISP_NAMESPACE_ADDRESSING vpColVector &measureCenter) const;
+  virtual VISP_NAMESPACE_ADDRESSING vpColVector stateLog(const VISP_NAMESPACE_ADDRESSING vpColVector &state, const VISP_NAMESPACE_ADDRESSING vpColVector &stateCenter) const;
+  virtual VISP_NAMESPACE_ADDRESSING vpColVector stateExp(const VISP_NAMESPACE_ADDRESSING vpColVector &state, const VISP_NAMESPACE_ADDRESSING vpColVector &stateCenter) const;
 };
 
 #endif // __usUnscentedKalmanFilter_h_
