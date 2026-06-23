@@ -81,7 +81,7 @@ public:
 
   void stopRecording();
 
-  void useVpDisplay(vpDisplay *display);
+  void useVpDisplay(VISP_NAMESPACE_ADDRESSING vpDisplay *display);
 
 signals:
   void newFrameAvailable();

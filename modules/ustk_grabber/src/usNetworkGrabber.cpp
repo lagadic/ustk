@@ -44,6 +44,10 @@
 
 using namespace std;
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 /**
 * Constructor.
 * @param parent Parent QObject.
