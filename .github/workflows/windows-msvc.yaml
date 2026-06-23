@@ -37,7 +37,7 @@ jobs:
       working-directory: ${{ github.workspace }}
       run: |
         git clone --depth 1 https://github.com/lagadic/visp visp
-        echo "VISP_SRC_DIR=$HOME/visp" >> $GITHUB_ENV
+        echo "VISP_SRC_DIR=${{ github.workspace }}/visp" >> $GITHUB_ENV
 
     - name: Clone visp-images
       shell: bash
