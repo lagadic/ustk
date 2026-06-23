@@ -15,8 +15,8 @@ int main()
 
   if (us::getDataSetPath().empty()) {
     std::cout << "You should set USTK_DATASET_PATH environment var to access to ustk dataset containing RF volumes for "
-                 "elastography"
-              << std::endl;
+      "elastography"
+      << std::endl;
     return 0;
   }
 

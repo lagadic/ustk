@@ -38,6 +38,10 @@
 
 #ifdef USTK_HAVE_VTK_QT
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 /**
 * Constructor.
 */
@@ -60,7 +64,7 @@ usMeshDeformation::usMeshDeformation(QWidget *parent, Qt::WindowFlags f) : usVie
   renderWindow->AddRenderer(renderer);
 }
 
-usMeshDeformation::~usMeshDeformation() {}
+usMeshDeformation::~usMeshDeformation() { }
 
 /**
 * Qt paint event overload if needed to update Qt widget
@@ -84,7 +88,8 @@ void usMeshDeformation::keyPressEvent(QKeyEvent *event)
 #else
     this->renderWindow()->Render();
 #endif
-  } else if (event->key() == Qt::Key_Down) { // move first point of the mesh of along Y
+  }
+  else if (event->key() == Qt::Key_Down) { // move first point of the mesh of along Y
     double *point1 = m_meshPolyData->GetPoints()->GetPoint(0);
     point1[1] -= 1;
     m_meshPolyData->GetPoints()->SetPoint(0, point1);
@@ -94,7 +99,8 @@ void usMeshDeformation::keyPressEvent(QKeyEvent *event)
 #else
     this->renderWindow()->Render();
 #endif
-  } else {
+  }
+  else {
     usViewerWidget::keyPressEvent(event);
   }
 }
@@ -127,8 +133,9 @@ void usMeshDeformation::updateMeshPosition(vpHomogeneousMatrix transform)
     vtkSmartPointer<vtkMatrix4x4> vtkMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
     usVTKConverter::convert(transform, vtkMatrix);
     m_meshActor->SetUserMatrix(vtkMatrix);
-  } else {
-    // get current matrix
+  }
+  else {
+ // get current matrix
     vpHomogeneousMatrix currentTransform;
     currentTransform.eye();
     usVTKConverter::convert(m_meshActor->GetUserMatrix(), currentTransform);

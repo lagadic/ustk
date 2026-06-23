@@ -3,6 +3,10 @@
 #include <visp3/ustk_core/usPreScanToPostScan3DConverter.h>
 #include <visp3/ustk_core/usSequenceReader.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 int main(int argc, char **argv)
 {
   std::string mhd_filename;

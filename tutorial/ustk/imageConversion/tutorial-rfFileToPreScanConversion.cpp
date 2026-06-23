@@ -9,6 +9,10 @@
 #include <visp3/ustk_core/usImageRF3D.h>
 #include <visp3/ustk_core/usRFToPreScan3DConverter.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 int main()
 {
   std::string filename;

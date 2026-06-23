@@ -29,6 +29,11 @@
 #include <QApplication>
 
 #include <visp3/gui/vpDisplayX.h>
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 // Shared vars
 typedef enum { capture_waiting, capture_started, capture_stopped } t_CaptureState;
 t_CaptureState s_capture_state = capture_waiting;
@@ -223,7 +228,8 @@ vpThread::Return displayFunction(vpThread::Args args)
       // Update the display
       vpDisplay::flush(postScan_);
       vpDisplay::flush(confidencePostScan_);
-    } else {
+    }
+    else {
       vpTime::wait(2); // Sleep 2ms
     }
   } while (capture_state_ != capture_stopped);

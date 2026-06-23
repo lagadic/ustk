@@ -119,7 +119,7 @@ public:
   void render();
 
 public slots:
-  void updateNeedlePosition(vpHomogeneousMatrix transform);
+  void updateNeedlePosition(VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix transform);
 
 private:
   // mesh polydata

@@ -120,7 +120,7 @@ public:
   void render();
 
 public slots:
-  void updateMeshPosition(vpHomogeneousMatrix transform);
+  void updateMeshPosition(VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix transform);
 
 private:
   // mesh polydata
