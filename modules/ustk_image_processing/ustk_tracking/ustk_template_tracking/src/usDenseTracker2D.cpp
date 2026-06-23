@@ -37,6 +37,10 @@
 
 #include <visp3/core/vpImageFilter.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 /**
  * Constructor.
  */
@@ -53,12 +57,8 @@ usDenseTracker2D::~usDenseTracker2D() { }
  * @param I Image containing a region to track.
  * @param R Region of interest (in the image pxiel coordinates).
  */
-void usDenseTracker2D::init(const VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &I, const VISP_NAMESPACE_ADDRESSING vpRectOriented &R)
+void usDenseTracker2D::init(const vpImage<unsigned char> &I, const vpRectOriented &R)
 {
-#ifdef ENABLE_VISP_NAMESPACE
-  using namespace VISP_NAMESPACE_NAME;
-#endif
-
   vpImageTools::extract(I, m_template, R);
   vpImageTools::extract(I, m_region, R);
   m_target = R;
@@ -97,12 +97,8 @@ void usDenseTracker2D::init(const VISP_NAMESPACE_ADDRESSING vpImage<unsigned cha
  * @brief Tracking method, to call at every new frame to track.
  * @param I The new image.
  */
-void usDenseTracker2D::update(const VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &I)
+void usDenseTracker2D::update(const vpImage<unsigned char> &I)
 {
-#ifdef ENABLE_VISP_NAMESPACE
-  using namespace VISP_NAMESPACE_NAME;
-#endif
-
   if (m_isInit) {
     double gain = 0.6;
 
@@ -150,17 +146,13 @@ void usDenseTracker2D::update(const VISP_NAMESPACE_ADDRESSING vpImage<unsigned c
  */
 vpRectOriented usDenseTracker2D::getTarget() const
 {
-#ifdef ENABLE_VISP_NAMESPACE
-  using namespace VISP_NAMESPACE_NAME;
-#endif
-
   if (!m_isInit)
     throw(vpException(vpException::fatalError, "usDenseTracker2D not initialized !"));
   return m_target;
 }
 
-VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &usDenseTracker2D::getTemplate() { return m_template; }
+vpImage<unsigned char> &usDenseTracker2D::getTemplate() { return m_template; }
 
-VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &usDenseTracker2D::getRegion() { return m_region; }
+vpImage<unsigned char> &usDenseTracker2D::getRegion() { return m_region; }
 
 bool usDenseTracker2D::isInit() { return m_isInit; }
