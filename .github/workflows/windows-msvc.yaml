@@ -34,23 +34,21 @@ jobs:
 
     - name: Clone visp
       shell: bash
-      working-directory: ${{ github.workspace }}
       run: |
-        git clone --depth 1 https://github.com/lagadic/visp visp
-        echo "VISP_SRC_DIR=${{ github.workspace }}/visp" >> $GITHUB_ENV
+        git clone --depth 1 https://github.com/lagadic/visp /d/a/visp
+        echo "VISP_SRC_DIR=D:\a\visp" >> $GITHUB_ENV
 
     - name: Clone visp-images
       shell: bash
-      working-directory: ${{ github.workspace }}
       run: |
-        # git clone --depth 1 https://github.com/lagadic/visp-images visp-images
-        echo "VISP_INPUT_IMAGE_PATH=${{ github.workspace }}/visp-images" >> $GITHUB_ENV
+        git clone --depth 1 https://github.com/lagadic/visp-images /d/a/visp-images
+        echo "VISP_INPUT_IMAGE_PATH=D:\a\visp-images" >> $GITHUB_ENV
 
     - name: Clone ustk-dataset
       shell: bash
       run: |
-        # git clone --depth 1 https://github.com/lagadic/ustk-dataset ustk-dataset
-        echo "USTK_DATASET_PATH=${{ github.workspace }}/ustk-dataset" >> $GITHUB_ENV
+        git clone --depth 1 https://github.com/lagadic/ustk-dataset /d/a/ustk-dataset
+        echo "USTK_DATASET_PATH=D:\a\ustk-dataset" >> $GITHUB_ENV
         echo ${USTK_DATASET_PATH}
 
     - name: Configure ViSP
