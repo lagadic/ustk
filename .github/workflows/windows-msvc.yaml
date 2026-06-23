@@ -67,28 +67,28 @@ jobs:
         cmake %VISP_SRC_DIR% -G "Visual Studio 17 2022" -A "x64" -DVISP_CONTRIB_MODULES_PATH=.. -DBUILD_MODULE_visp_ar=OFF -DBUILD_MODULE_visp_blob=OFF -DBUILD_MODULE_visp_detection=OFF -DBUILD_MODULE_visp_klt=OFF -DBUILD_MODULE_visp_mbt=OFF -DBUILD_MODULE_visp_me=OFF -DBUILD_MODULE_visp_tt=OFF -DBUILD_MODULE_visp_tt_mi=OFF -DBUILD_MODULE_visp_vision=OFF -DBUILD_MODULE_visp_visual_features=OFF -DBUILD_MODULE_visp_vs=OFF
         type ViSP-third-party.txt
 
-    # - name: Build UsTK
-    #   working-directory: ${{ github.workspace }}\build
-    #   run: |
-    #     cmake --build . --config Release
+    - name: Build UsTK
+      working-directory: ${{ github.workspace }}\build
+      run: |
+        cmake --build . --config Release
 
-    # - name: Install UsTK
-    #   working-directory: ${{ github.workspace }}\build
-    #   run: |
-    #     cmake --build . --config Release --target install
+    - name: Install UsTK
+      working-directory: ${{ github.workspace }}\build
+      run: |
+        cmake --build . --config Release --target install
 
-    # - name: Check installation folder
-    #   working-directory: ${{ github.workspace }}\build
-    #   run: |
-    #     dir ${{ github.workspace }}\build\install\x64\vc17\bin
+    - name: Check installation folder
+      working-directory: ${{ github.workspace }}\build
+      run: |
+        dir ${{ github.workspace }}\build\install\x64\vc17\bin
 
-    # - name: Test ViSP
-    #   working-directory: ${{ github.workspace }}\build
-    #   run: |
-    #     set VISP_INPUT_IMAGE_PATH=${{ env.VISP_INPUT_IMAGE_PATH }}
-    #     echo "VISP_INPUT_IMAGE_PATH: "
-    #     echo %VISP_INPUT_IMAGE_PATH%
-    #     set PATH=%PATH%;${{ github.workspace }}\build\install\x64\vc17\bin
-    #     echo "PATH: "
-    #     echo %PATH%
-    #     ctest --output-on-failure -C Release -V
+    - name: Test ViSP
+      working-directory: ${{ github.workspace }}\build
+      run: |
+        set VISP_INPUT_IMAGE_PATH=${{ env.VISP_INPUT_IMAGE_PATH }}
+        echo "VISP_INPUT_IMAGE_PATH: "
+        echo %VISP_INPUT_IMAGE_PATH%
+        set PATH=%PATH%;${{ github.workspace }}\build\install\x64\vc17\bin
+        echo "PATH: "
+        echo %PATH%
+        ctest --output-on-failure -C Release -V
