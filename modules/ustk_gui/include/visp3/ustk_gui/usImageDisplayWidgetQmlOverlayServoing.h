@@ -74,7 +74,7 @@ public:
 public slots:
   void enableFeaturesDisplay();
   void disableFeaturesDisplay();
-  void updateRectPosition(vpRectOriented newRectangle);
+  void updateRectPosition(VISP_NAMESPACE_ADDRESSING vpRectOriented newRectangle);
   void updateConfidenceAngle(double scanline);
   void updateConfidenceMap(usImagePreScan2D<unsigned char> confidence);
   void updateFrame(const usImagePreScan2D<unsigned char> img);
@@ -82,17 +82,17 @@ public slots:
   void startTrackingSlot();
 
 signals:
-  void startTrackingRect(vpRectOriented);
+  void startTrackingRect(VISP_NAMESPACE_ADDRESSING vpRectOriented);
   void stopTrackingRect();
   void startServoingRect();
   void stopServoingRect();
 
 private:
-  vpImagePoint displayImageToRealImageDimentions(const vpImagePoint displayPoint);
-  vpImagePoint realImageToDisplayImageDimentions(const vpImagePoint realImagePoint);
+  VISP_NAMESPACE_ADDRESSING vpImagePoint displayImageToRealImageDimentions(const VISP_NAMESPACE_ADDRESSING vpImagePoint displayPoint);
+  VISP_NAMESPACE_ADDRESSING vpImagePoint realImageToDisplayImageDimentions(const VISP_NAMESPACE_ADDRESSING vpImagePoint realImagePoint);
 
-  vpRectOriented displayImageToRealImageDimentions(const vpRectOriented displayRectangle);
-  vpRectOriented realImageToDisplayImageDimentions(const vpRectOriented realRectangle);
+  VISP_NAMESPACE_ADDRESSING vpRectOriented displayImageToRealImageDimentions(const VISP_NAMESPACE_ADDRESSING vpRectOriented displayRectangle);
+  VISP_NAMESPACE_ADDRESSING vpRectOriented realImageToDisplayImageDimentions(const VISP_NAMESPACE_ADDRESSING vpRectOriented realRectangle);
 
   QQuickWidget *m_qQuickOverlay;
   bool m_isTrackingRect;
@@ -102,12 +102,12 @@ private:
   // optionnal features displays
   bool m_useFeatureDisplay;
   usImagePreScan2D<unsigned char> m_confidence;
-  vpPlot m_plot;
+  VISP_NAMESPACE_ADDRESSING vpPlot m_plot;
   double m_startTime;
 #if defined(VISP_HAVE_GDI)
-  vpDisplayGDI *m_display;
+  VISP_NAMESPACE_ADDRESSING vpDisplayGDI *m_display;
 #elif defined(VISP_HAVE_OPENCV)
-  vpDisplayOpenCV *m_display;
+  VISP_NAMESPACE_ADDRESSING vpDisplayOpenCV *m_display;
 #endif
 };
 #endif // QT && ELASTOGRAPHY

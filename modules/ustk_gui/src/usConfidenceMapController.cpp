@@ -44,13 +44,16 @@
 */
 usConfidenceMapController::usConfidenceMapController(QObject *parent)
   : QObject(parent), m_confidenceProcessor(), m_confidenceMap(), m_gain(5), m_activated(false)
-{
-}
+{ }
 
-usConfidenceMapController::~usConfidenceMapController() {}
+usConfidenceMapController::~usConfidenceMapController() { }
 
 void usConfidenceMapController::updateImage(usImagePreScan2D<unsigned char> image)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   m_confidenceProcessor.run(m_confidenceMap, image);
 
   // robot orientation control law

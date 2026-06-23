@@ -69,7 +69,7 @@ public:
   void resizeEvent(QResizeEvent *event);
 
 public slots:
-  void updateFrame(const vpImage<unsigned char> img);
+  void updateFrame(const VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> img);
   void updateFrame(const usImagePreScan2D<unsigned char> img);
   void updateFrame(const usImagePostScan2D<unsigned char> img);
 
@@ -84,7 +84,7 @@ protected:
   bool m_useScanConversion;
   usPreScanToPostScan2DConverter m_scanConverter;
   usImagePostScan2D<unsigned char> m_postScan;
-  vpImage<unsigned char> m_image;
+  VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> m_image;
 };
 #endif // QT
 #endif // __usImageDisplayWidget_h_

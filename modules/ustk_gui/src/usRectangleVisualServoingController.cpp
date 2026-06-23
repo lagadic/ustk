@@ -39,16 +39,19 @@
 
 #if (defined(USTK_HAVE_VTK_QT) || defined(USTK_HAVE_QT5)) && defined(VISP_HAVE_MODULE_USTK_TEMPLATE_TRACKING)
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 /**
 * Constructor.
 */
 usRectangleVisualServoingController::usRectangleVisualServoingController(QObject *parent)
   : QObject(parent), m_tracker(), m_confidenceProcess(), m_converter(), m_imagePreScan(), m_confidencePreScan(),
-    m_imagePostScan(), m_trackerActivated(false), m_controllerActivated(false)
-{
-}
+  m_imagePostScan(), m_trackerActivated(false), m_controllerActivated(false)
+{ }
 
-usRectangleVisualServoingController::~usRectangleVisualServoingController() {}
+usRectangleVisualServoingController::~usRectangleVisualServoingController() { }
 
 void usRectangleVisualServoingController::updateImage(usImagePreScan2D<unsigned char> image)
 {

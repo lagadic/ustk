@@ -67,7 +67,7 @@ public:
   void resizeEvent(QResizeEvent *event);
 
 public slots:
-  void updateFrame(const vpImage<vpRGBa> elastographyImage);
+  void updateFrame(const VISP_NAMESPACE_ADDRESSING vpImage<VISP_NAMESPACE_ADDRESSING vpRGBa> elastographyImage);
 
 private:
   QLabel *m_label;

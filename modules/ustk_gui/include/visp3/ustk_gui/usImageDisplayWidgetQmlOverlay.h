@@ -65,19 +65,19 @@ public:
   void resizeEvent(QResizeEvent *event);
 
 public slots:
-  void updateRectPosition(vpRectOriented newRectangle);
+  void updateRectPosition(VISP_NAMESPACE_ADDRESSING vpRectOriented newRectangle);
   void startTrackingSlot();
 
 signals:
-  void startTracking(vpRectOriented);
+  void startTracking(VISP_NAMESPACE_ADDRESSING vpRectOriented);
   void stopTracking();
 
 private:
-  vpImagePoint displayImageToRealImageDimentions(const vpImagePoint displayPoint);
-  vpImagePoint realImageToDisplayImageDimentions(const vpImagePoint realImagePoint);
+  VISP_NAMESPACE_ADDRESSING vpImagePoint displayImageToRealImageDimentions(const VISP_NAMESPACE_ADDRESSING vpImagePoint displayPoint);
+  VISP_NAMESPACE_ADDRESSING vpImagePoint realImageToDisplayImageDimentions(const VISP_NAMESPACE_ADDRESSING vpImagePoint realImagePoint);
 
-  vpRectOriented displayImageToRealImageDimentions(const vpRectOriented displayRectangle);
-  vpRectOriented realImageToDisplayImageDimentions(const vpRectOriented realRectangle);
+  VISP_NAMESPACE_ADDRESSING vpRectOriented displayImageToRealImageDimentions(const VISP_NAMESPACE_ADDRESSING vpRectOriented displayRectangle);
+  VISP_NAMESPACE_ADDRESSING vpRectOriented realImageToDisplayImageDimentions(const VISP_NAMESPACE_ADDRESSING vpRectOriented realRectangle);
 
   QQuickWidget *m_qQuickOverlay;
 };

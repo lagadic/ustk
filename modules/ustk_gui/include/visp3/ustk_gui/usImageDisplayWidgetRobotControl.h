@@ -72,7 +72,7 @@ public:
   void resizeEvent(QResizeEvent *event);
 
 public slots:
-  void updateFrame(const vpImage<unsigned char> img);
+  void updateFrame(const VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> img);
   void updateFrame(const usImagePreScan2D<unsigned char> img);
   void updateConfidenceServoingStatus(bool);
   void updateConfidenceAngle(double sanline);
@@ -94,12 +94,12 @@ private:
   // optionnal features displays
   bool m_useFeatureDisplay;
   usImagePreScan2D<unsigned char> m_confidence;
-  vpPlot m_plot;
+  VISP_NAMESPACE_ADDRESSING vpPlot m_plot;
   double m_startTime;
 #if defined(VISP_HAVE_GDI)
-  vpDisplayGDI *m_display;
+  VISP_NAMESPACE_ADDRESSING vpDisplayGDI *m_display;
 #elif defined(VISP_HAVE_OPENCV)
-  vpDisplayOpenCV *m_display;
+  VISP_NAMESPACE_ADDRESSING vpDisplayOpenCV *m_display;
 #endif
 };
 #endif // QT && ELASTOGRAPHY

@@ -81,6 +81,10 @@
 #include <QFileDialog>
 #include <QResizeEvent>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 /**
 * Constructor.
 * @param imageFileName the mhd file to read.

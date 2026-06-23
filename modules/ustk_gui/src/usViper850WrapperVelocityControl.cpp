@@ -2,6 +2,10 @@
 
 #if defined(USTK_HAVE_VTK_QT) && defined(VISP_HAVE_VIPER850) && defined(VISP_HAVE_MODULE_ROBOT)
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 usViper850WrapperVelocityControl::usViper850WrapperVelocityControl()
 {
   m_initialized = false;
@@ -25,7 +29,8 @@ void usViper850WrapperVelocityControl::init()
   try {
     // create viper object
     viper = new vpRobotViper850();
-  } catch (...) {
+  }
+  catch (...) {
     std::cout << "Viper robot could not be initialized" << std::endl;
     emit(robotError());
   }
@@ -55,12 +60,14 @@ void usViper850WrapperVelocityControl::startRobot(void)
     try {
       viper->powerOn();
       viper->setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
-    } catch (...) {
+    }
+    catch (...) {
       viper->setRobotState(vpRobot::STATE_STOP);
       std::cout << "Viper robot could not be initialized" << std::endl;
       emit(robotError());
     }
-  } else
+  }
+  else
     std::cout << "For security reason, the Viper robot has to be used with the dead man switch)" << std::endl;
 }
 
@@ -95,7 +102,8 @@ void usViper850WrapperVelocityControl::controlLoop()
 
       // Send the joint velocities to the robot
       viper->setVelocity(vpRobot::ARTICULAR_FRAME, q_dot);
-    } catch (...) {
+    }
+    catch (...) {
       viper->setRobotState(vpRobot::STATE_STOP);
       std::cout << "Viper robot could not be initialized" << std::endl;
       emit(robotError());
@@ -322,7 +330,8 @@ void usViper850WrapperVelocityControl::controlLoopAutomatic()
       viper->setVelocity(vpRobot::ARTICULAR_FRAME, q_dot);
       iter++;
 
-    } catch (...) {
+    }
+    catch (...) {
       viper->setRobotState(vpRobot::STATE_STOP);
       std::cout << "Viper robot could not be initialized" << std::endl;
       emit(robotError());
