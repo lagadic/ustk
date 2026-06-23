@@ -44,13 +44,16 @@
 
 // ustk includes
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 /**
 * Basic Constructor, all settings set to default.
 */
 usMotorSettings::usMotorSettings()
   : m_motorRadius(0.0), m_framePitch(0.0), m_frameNumberIsSet(false), m_motorType(LinearMotor)
-{
-}
+{ }
 
 /**
 * Full Constructor, all settings availables
@@ -63,9 +66,8 @@ usMotorSettings::usMotorSettings()
 usMotorSettings::usMotorSettings(double motorRadius, double framePitch, unsigned int frameNumber,
                                  const usMotorType &motorType)
   : m_motorRadius(motorRadius), m_framePitch(framePitch), m_frameNumber(frameNumber), m_frameNumberIsSet(true),
-    m_motorType(motorType)
-{
-}
+  m_motorType(motorType)
+{ }
 
 /**
 * Copy Constructor, all settings availables
@@ -73,14 +75,13 @@ usMotorSettings::usMotorSettings(double motorRadius, double framePitch, unsigned
 */
 usMotorSettings::usMotorSettings(const usMotorSettings &other)
   : m_motorRadius(other.getMotorRadius()), m_framePitch(other.getFramePitch()), m_frameNumber(other.getFrameNumber()),
-    m_frameNumberIsSet(other.frameNumberIsSet()), m_motorType(other.getMotorType())
-{
-}
+  m_frameNumberIsSet(other.frameNumberIsSet()), m_motorType(other.getMotorType())
+{ }
 
 /**
 * Destructor.
 */
-usMotorSettings::~usMotorSettings() {}
+usMotorSettings::~usMotorSettings() { }
 
 /**
 * Assignment operator.
@@ -121,9 +122,9 @@ bool usMotorSettings::operator!=(const usMotorSettings &other) { return !operato
 VISP_EXPORT std::ostream &operator<<(std::ostream &out, const usMotorSettings &other)
 {
   return out << "motor radius : " << other.getMotorRadius() << std::endl
-             << "frame angle : " << other.getFramePitch() << std::endl
-             << "frame number : " << other.getFrameNumber() << std::endl
-             << "motor type : " << other.getMotorType() << std::endl;
+    << "frame angle : " << other.getFramePitch() << std::endl
+    << "frame number : " << other.getFrameNumber() << std::endl
+    << "motor type : " << other.getMotorType() << std::endl;
 }
 
 // probe settings getters/setters

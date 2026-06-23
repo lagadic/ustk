@@ -40,19 +40,22 @@
 
 #if defined(USTK_HAVE_FFTW)
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 /**
 * Constructor.
 * @param decimationFactor Decimation factor : keep only 1 pre-scan sample every N sample (N = decimationFactor)
 */
 usRFToPostScan2DConverter::usRFToPostScan2DConverter(int decimationFactor)
   : m_RFConverter(decimationFactor), m_scanConverter()
-{
-}
+{ }
 
 /**
 * Destructor.
 */
-usRFToPostScan2DConverter::~usRFToPostScan2DConverter() {}
+usRFToPostScan2DConverter::~usRFToPostScan2DConverter() { }
 
 /**
 * Convert method : performs the conversion from RF frame to a post-scan frame using the following processes :

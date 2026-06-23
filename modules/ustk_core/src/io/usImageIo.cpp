@@ -47,6 +47,10 @@
 #include <visp3/ustk_core/usRfReader.h>
 #include <visp3/ustk_core/usSequenceReader.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 usImageIo::usHeaderFormatType usImageIo::getHeaderFormat(const std::string &headerFileName)
 {
   std::string ext = usImageIo::getExtension(headerFileName);
@@ -90,7 +94,8 @@ void usImageIo::write(const usImageRF2D<short> &imageRf2D, const std::string &he
   usImageIo::usHeaderFormatType headerFormat = getHeaderFormat(headerFileName);
   if (headerFormat == FORMAT_XML) {
     write(imageRf2D, headerFileName, std::string(".png"));
-  } else if (headerFormat == FORMAT_MHD) {
+  }
+  else if (headerFormat == FORMAT_MHD) {
     write(imageRf2D, headerFileName, std::string(".raw"));
   }
 }
@@ -139,7 +144,8 @@ void usImageIo::write(const usImageRF2D<short> &imageRf2D, const std::string &he
     // filling raw
     usRawFileParser rawParser;
     rawParser.write(imageRf2D, imageFileName);
-  } else {
+  }
+  else {
     throw(vpException(vpException::fatalError, "Only mdh/raw files types are allowed to write 3D RF images."));
   }
 }
@@ -157,8 +163,9 @@ void usImageIo::read(usImageRF2D<short int> &imageRf2D, const std::string &heade
     usRfReader reader;
     reader.setFileName(headerFileName);
     reader.open(imageRf2D);
-  } else if (headerFormat == FORMAT_MHD) {
-    // header parsing
+  }
+  else if (headerFormat == FORMAT_MHD) {
+ // header parsing
     usMetaHeaderParser mhdParser;
     mhdParser.read(headerFileName);
     if (mhdParser.getImageType() != us::RF_2D && mhdParser.getImageType() != us::NOT_SET) {
@@ -186,9 +193,10 @@ void usImageIo::read(usImageRF2D<short int> &imageRf2D, const std::string &heade
     // data parsing
     usRawFileParser rawParser;
     std::string fullImageFileName =
-        vpIoTools::getParent(headerFileName) + vpIoTools::path("/") + mhdParser.getRawFileName();
+      vpIoTools::getParent(headerFileName) + vpIoTools::path("/") + mhdParser.getRawFileName();
     rawParser.read(imageRf2D, fullImageFileName);
-  } else
+  }
+  else
     throw(vpException(vpException::fatalError, "Unknown header format."));
 }
 
@@ -203,7 +211,8 @@ void usImageIo::write(const usImageRF3D<short> &imageRf3D, const std::string &he
   usImageIo::usHeaderFormatType headerFormat = getHeaderFormat(headerFileName);
   if (headerFormat == FORMAT_XML) {
     write(imageRf3D, headerFileName, std::string(".png"));
-  } else if (headerFormat == FORMAT_MHD) {
+  }
+  else if (headerFormat == FORMAT_MHD) {
     write(imageRf3D, headerFileName, std::string(".raw"));
   }
 }
@@ -256,7 +265,8 @@ void usImageIo::write(const usImageRF3D<short> &imageRf3D, const std::string &he
     // filling raw
     usRawFileParser rawParser;
     rawParser.write(imageRf3D, imageFileName);
-  } else {
+  }
+  else {
     throw(vpException(vpException::fatalError, "Unknown extension, only mdh allowed for 3D RF images."));
   }
 }
@@ -306,9 +316,10 @@ void usImageIo::read(usImageRF3D<short> &imageRf3, const std::string &headerFile
     // data parsing
     usRawFileParser rawParser;
     std::string fullImageFileName =
-        vpIoTools::getParent(headerFileName) + vpIoTools::path("/") + mhdParser.getRawFileName();
+      vpIoTools::getParent(headerFileName) + vpIoTools::path("/") + mhdParser.getRawFileName();
     rawParser.read(imageRf3, fullImageFileName);
-  } else
+  }
+  else
     throw(vpException(vpException::fatalError, "Only mdh type is allowed for RF 3D."));
 }
 
@@ -323,9 +334,11 @@ void usImageIo::write(const usImagePreScan2D<unsigned char> &preScanImage, const
   usImageIo::usHeaderFormatType headerFormat = getHeaderFormat(headerFileName);
   if (headerFormat == FORMAT_XML) {
     write(preScanImage, headerFileName, std::string(".png"));
-  } else if (headerFormat == FORMAT_MHD) {
+  }
+  else if (headerFormat == FORMAT_MHD) {
     write(preScanImage, headerFileName, std::string(".raw"));
-  } else {
+  }
+  else {
     throw(vpException(vpException::fatalError, "Unknown extension."));
   }
 }
@@ -358,14 +371,16 @@ void usImageIo::write(const usImagePreScan2D<unsigned char> &preScanImage, const
       xmlSettings.setImageFileName(imageFileName);
       // write xml
       xmlSettings.save(headerFileName);
-    } catch (std::exception &e) {
+}
+    catch (std::exception &e) {
       std::cout << "Error writing postScan image : " << std::endl;
       std::cout << e.what() << std::endl;
     }
 #else
     throw(vpException(vpException::fatalError, "Requires xml2"));
 #endif
-  } else if (headerFormat == FORMAT_MHD) {
+  }
+  else if (headerFormat == FORMAT_MHD) {
     if (imageExtension2D != ".raw") {
       throw(vpException(vpException::fatalError, "mhd files goes with .raw image extension"));
     }
@@ -397,7 +412,8 @@ void usImageIo::write(const usImagePreScan2D<unsigned char> &preScanImage, const
     // filling raw
     usRawFileParser rawParser;
     rawParser.write(preScanImage, imageFileName);
-  } else {
+  }
+  else {
     throw(vpException(vpException::fatalError, "Unknown extension."));
   }
 }
@@ -417,7 +433,7 @@ void usImageIo::read(usImagePreScan2D<unsigned char> &preScanImage, const std::s
     xmlSettings.parse(headerFileName);
 
     std::string fullImageFileName =
-        vpIoTools::getParent(headerFileName) + vpIoTools::path("/") + xmlSettings.getImageFileName();
+      vpIoTools::getParent(headerFileName) + vpIoTools::path("/") + xmlSettings.getImageFileName();
     vpImageIo::read(preScanImage, fullImageFileName);
 
     preScanImage.setTransducerRadius(xmlSettings.getTransducerSettings().getTransducerRadius());
@@ -431,8 +447,9 @@ void usImageIo::read(usImagePreScan2D<unsigned char> &preScanImage, const std::s
 #else
     throw(vpException(vpException::fatalError, "Requires xml2 library"));
 #endif // VISP_HAVE_XML2
-  } else if (headerFormat == FORMAT_MHD) {
-    // header parsing
+  }
+  else if (headerFormat == FORMAT_MHD) {
+ // header parsing
     usMetaHeaderParser mhdParser;
     mhdParser.read(headerFileName);
     if (mhdParser.getImageType() != us::PRESCAN_2D && mhdParser.getImageType() != us::NOT_SET) {
@@ -461,9 +478,10 @@ void usImageIo::read(usImagePreScan2D<unsigned char> &preScanImage, const std::s
     // data parsing
     usRawFileParser rawParser;
     std::string fullImageFileName =
-        vpIoTools::getParent(headerFileName) + vpIoTools::path("/") + mhdParser.getRawFileName();
+      vpIoTools::getParent(headerFileName) + vpIoTools::path("/") + mhdParser.getRawFileName();
     rawParser.read(preScanImage, fullImageFileName);
-  } else
+  }
+  else
     throw(vpException(vpException::fatalError, "Unknown header format."));
 }
 
@@ -478,7 +496,8 @@ void usImageIo::write(const usImagePreScan3D<unsigned char> &preScanImage, const
   usImageIo::usHeaderFormatType headerFormat = getHeaderFormat(headerFileName);
   if (headerFormat == FORMAT_XML) {
     write(preScanImage, headerFileName, std::string(".png"));
-  } else if (headerFormat == FORMAT_MHD) {
+  }
+  else if (headerFormat == FORMAT_MHD) {
     write(preScanImage, headerFileName, std::string(".raw"));
   }
 }
@@ -502,7 +521,8 @@ void usImageIo::write(const usImagePreScan3D<unsigned char> &preScanImage, const
 #else
     throw(vpException(vpException::fatalError, "Requires xml2"));
 #endif
-  } else if (headerFormat == FORMAT_MHD) {
+}
+  else if (headerFormat == FORMAT_MHD) {
     if (imageExtension2D != ".raw") {
       throw(vpException(vpException::fatalError, "mhd files goes with .raw image extension"));
     }
@@ -539,7 +559,8 @@ void usImageIo::write(const usImagePreScan3D<unsigned char> &preScanImage, const
     // filling raw
     usRawFileParser rawParser;
     rawParser.write(preScanImage, imageFileName);
-  } else {
+  }
+  else {
     throw(vpException(vpException::fatalError, "Unknown extension."));
   }
 }
@@ -586,8 +607,9 @@ void usImageIo::read(usImagePreScan3D<unsigned char> &preScanImage, const std::s
 #else
     throw(vpException(vpException::fatalError, "Requires xml2 library"));
 #endif // VISP_HAVE_XML2
-  } else if (headerFormat == FORMAT_MHD) {
-    // header parsing
+}
+  else if (headerFormat == FORMAT_MHD) {
+ // header parsing
     usMetaHeaderParser mhdParser;
     mhdParser.read(headerFileName);
     if (mhdParser.getImageType() != us::PRESCAN_3D && mhdParser.getImageType() != us::NOT_SET) {
@@ -623,10 +645,11 @@ void usImageIo::read(usImagePreScan3D<unsigned char> &preScanImage, const std::s
     // data parsing
     usRawFileParser rawParser;
     std::string fullImageFileName =
-        vpIoTools::getParent(headerFileName) + vpIoTools::path("/") + mhdParser.getRawFileName();
+      vpIoTools::getParent(headerFileName) + vpIoTools::path("/") + mhdParser.getRawFileName();
     rawParser.read(preScanImage, fullImageFileName);
-  } else if (headerFormat == FORMAT_VOL) {
-    // INIT
+  }
+  else if (headerFormat == FORMAT_VOL) {
+ // INIT
     int szHeader = sizeof(VolHeader);
     int n = 0;
     char byte;
@@ -651,15 +674,15 @@ void usImageIo::read(usImagePreScan3D<unsigned char> &preScanImage, const std::s
     }
     // Print header info
     std::cout << std::endl
-              << "Data header information: " << std::endl
-              << "   type = " << header.type << std::endl
-              << "   volumes = " << header.volumes << std::endl
-              << "   fpv = " << header.fpv << std::endl
-              << "   w = " << header.w << std::endl
-              << "   h = " << header.h << std::endl
-              << "   ss = " << header.ss << std::endl;
+      << "Data header information: " << std::endl
+      << "   type = " << header.type << std::endl
+      << "   volumes = " << header.volumes << std::endl
+      << "   fpv = " << header.fpv << std::endl
+      << "   w = " << header.w << std::endl
+      << "   h = " << header.h << std::endl
+      << "   ss = " << header.ss << std::endl;
 
-    // CHECK IMAGE TYPE
+// CHECK IMAGE TYPE
     if (header.type != 0)
       throw(vpException(vpException::badValue, "trying to read non-prescan in .vol file"));
 
@@ -683,7 +706,8 @@ void usImageIo::read(usImagePreScan3D<unsigned char> &preScanImage, const std::s
       }
     }
 
-  } else
+  }
+  else
     throw(vpException(vpException::fatalError, "Unknown header format."));
 }
 
@@ -752,7 +776,8 @@ void usImageIo::write(const usImagePostScan2D<unsigned char> &postScanImage, con
   usImageIo::usHeaderFormatType headerFormat = getHeaderFormat(headerFileName);
   if (headerFormat == FORMAT_XML) {
     write(postScanImage, headerFileName, std::string(".png"));
-  } else if (headerFormat == FORMAT_MHD) {
+  }
+  else if (headerFormat == FORMAT_MHD) {
     write(postScanImage, headerFileName, std::string(".raw"));
   }
 }
@@ -785,14 +810,16 @@ void usImageIo::write(const usImagePostScan2D<unsigned char> &postScanImage, con
       imageFileName = vpIoTools::getName(imageFileName);
       xmlSettings.setImageFileName(imageFileName);
       xmlSettings.save(headerFileName);
-    } catch (std::exception &e) {
+    }
+    catch (std::exception &e) {
       std::cout << "Error writing postScan image : " << std::endl;
       std::cout << e.what() << std::endl;
     }
 #else
     throw(vpException(vpException::fatalError, "Requires xml2 library"));
 #endif
-  } else if (headerFormat == FORMAT_MHD) {
+  }
+  else if (headerFormat == FORMAT_MHD) {
     if (imageExtension2D != ".raw" && imageExtension2D != ".RAW") {
       throw(vpException(vpException::fatalError, "mhd files goes with .raw image extension"));
     }
@@ -827,7 +854,8 @@ void usImageIo::write(const usImagePostScan2D<unsigned char> &postScanImage, con
     // filling raw
     usRawFileParser rawParser;
     rawParser.write(postScanImage, imageFileName);
-  } else
+  }
+  else
     throw(vpException(vpException::fatalError, "Unknown header format."));
 }
 
@@ -845,7 +873,7 @@ void usImageIo::read(usImagePostScan2D<unsigned char> &postScanImage, const std:
     xmlSettings.parse(headerFileName);
 
     std::string fullImageFileName =
-        vpIoTools::getParent(headerFileName) + vpIoTools::path("/") + xmlSettings.getImageFileName();
+      vpIoTools::getParent(headerFileName) + vpIoTools::path("/") + xmlSettings.getImageFileName();
     vpImageIo::read(postScanImage, fullImageFileName);
 
     postScanImage.setTransducerRadius(xmlSettings.getTransducerSettings().getTransducerRadius());
@@ -859,9 +887,10 @@ void usImageIo::read(usImagePostScan2D<unsigned char> &postScanImage, const std:
 #else
     throw(vpException(vpException::fatalError, "Requires xml2 library"));
 #endif
-  } else if (headerFormat == FORMAT_MHD) {
-    // mhd reading
-    // header parsing
+  }
+  else if (headerFormat == FORMAT_MHD) {
+ // mhd reading
+ // header parsing
     usMetaHeaderParser mhdParser;
     mhdParser.read(headerFileName);
     if (mhdParser.getImageType() != us::POSTSCAN_2D && mhdParser.getImageType() != us::NOT_SET) {
@@ -888,9 +917,10 @@ void usImageIo::read(usImagePostScan2D<unsigned char> &postScanImage, const std:
     // data parsing
     usRawFileParser rawParser;
     std::string fullImageFileName =
-        vpIoTools::getParent(headerFileName) + vpIoTools::path("/") + mhdParser.getRawFileName();
+      vpIoTools::getParent(headerFileName) + vpIoTools::path("/") + mhdParser.getRawFileName();
     rawParser.read(postScanImage, fullImageFileName);
-  } else
+  }
+  else
     throw(vpException(vpException::fatalError, "Unknown header format."));
 }
 
@@ -905,7 +935,8 @@ void usImageIo::write(const usImagePostScan3D<unsigned char> &postScanImage, con
   usImageIo::usHeaderFormatType headerFormat = getHeaderFormat(headerFileName);
   if (headerFormat == FORMAT_XML) {
     write(postScanImage, headerFileName, std::string(".png"));
-  } else if (headerFormat == FORMAT_MHD) {
+  }
+  else if (headerFormat == FORMAT_MHD) {
     write(postScanImage, headerFileName, std::string(".raw"));
   }
 }
@@ -926,7 +957,8 @@ void usImageIo::write(const usImagePostScan3D<unsigned char> &postScanImage, con
 #else
     throw(vpException(vpException::fatalError, "Requires xml2 library"));
 #endif
-  } else if (headerFormat == FORMAT_MHD) {
+  }
+  else if (headerFormat == FORMAT_MHD) {
     if (imageExtension2D != ".raw") {
       throw(vpException(vpException::fatalError, "mhd files goes with .raw image extension"));
     }
@@ -966,7 +998,8 @@ void usImageIo::write(const usImagePostScan3D<unsigned char> &postScanImage, con
     // filling raw
     usRawFileParser rawParser;
     rawParser.write(postScanImage, imageFileName);
-  } else
+  }
+  else
     throw(vpException(vpException::fatalError, "Unknown header format."));
 }
 
@@ -984,8 +1017,9 @@ void usImageIo::read(usImagePostScan3D<unsigned char> &postScanImage, const std:
 #else
     throw(vpException(vpException::fatalError, "Requires xml2 library"));
 #endif
-  } else if (headerFormat == FORMAT_MHD) {
-    // header parsing
+  }
+  else if (headerFormat == FORMAT_MHD) {
+ // header parsing
     usMetaHeaderParser mhdParser;
     mhdParser.read(headerFileName);
     if (mhdParser.getImageType() != us::POSTSCAN_3D && mhdParser.getImageType() != us::NOT_SET) {
@@ -1017,8 +1051,9 @@ void usImageIo::read(usImagePostScan3D<unsigned char> &postScanImage, const std:
     // data parsing
     usRawFileParser rawParser;
     std::string fullImageFileName =
-        vpIoTools::getParent(headerFileName) + vpIoTools::path("/") + mhdParser.getRawFileName();
+      vpIoTools::getParent(headerFileName) + vpIoTools::path("/") + mhdParser.getRawFileName();
     rawParser.read(postScanImage, fullImageFileName);
-  } else
+  }
+  else
     throw(vpException(vpException::fatalError, "Unknown header format."));
 }

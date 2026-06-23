@@ -39,6 +39,10 @@
 
 #if defined(USTK_HAVE_FFTW)
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 /**
 * Constructor.
 * @param decimationFactor Decimation factor for RF conversion (keeping 1 RF sample every decimationFactor samples)
@@ -52,7 +56,7 @@ usRFToPostScan3DConverter::usRFToPostScan3DConverter(int decimationFactor)
 /**
 * Destructor.
 */
-usRFToPostScan3DConverter::~usRFToPostScan3DConverter() {}
+usRFToPostScan3DConverter::~usRFToPostScan3DConverter() { }
 
 /**
 * Convert method : performs the conversion from RF frame to a post-scan volume.

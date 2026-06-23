@@ -36,16 +36,18 @@
 
 #include <visp3/core/vpException.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 usPolynomialCurve3D::usPolynomialCurve3D()
   : m_order(0), m_startParameter(0), m_endParameter(1), m_polynomialCoefficients(3, 1, 0)
-{
-}
+{ }
 
 usPolynomialCurve3D::usPolynomialCurve3D(const usPolynomialCurve3D &curve)
   : m_order(curve.m_order), m_startParameter(curve.m_startParameter), m_endParameter(curve.m_endParameter),
-    m_polynomialCoefficients(curve.m_polynomialCoefficients)
-{
-}
+  m_polynomialCoefficients(curve.m_polynomialCoefficients)
+{ }
 
 const usPolynomialCurve3D &usPolynomialCurve3D::operator=(const usPolynomialCurve3D &curve)
 {
@@ -57,12 +59,11 @@ const usPolynomialCurve3D &usPolynomialCurve3D::operator=(const usPolynomialCurv
   return *this;
 }
 
-usPolynomialCurve3D::~usPolynomialCurve3D() {}
+usPolynomialCurve3D::~usPolynomialCurve3D() { }
 
 usPolynomialCurve3D::usPolynomialCurve3D(unsigned int order)
   : m_order(order), m_startParameter(0), m_endParameter(1), m_polynomialCoefficients(3, m_order + 1, 0)
-{
-}
+{ }
 
 void usPolynomialCurve3D::setOrder(unsigned int order)
 {
@@ -72,8 +73,9 @@ void usPolynomialCurve3D::setOrder(unsigned int order)
     // Keep same polynomial
     m_order = order;
     m_polynomialCoefficients.resize(3, order + 1, false);
-  } else {
-    // Find polynomial to have the same properties at the extremities (position, direction, curvature, ...)
+  }
+  else {
+ // Find polynomial to have the same properties at the extremities (position, direction, curvature, ...)
     int nb_coef = order + 1;
     int nb_constraints_begin = nb_coef / 2 + nb_coef % 2;
     int nb_constraints_end = nb_coef / 2;
@@ -148,7 +150,8 @@ void usPolynomialCurve3D::setBoundaries(double startParameter, double endParamet
   if (startParameter <= endParameter) {
     m_startParameter = startParameter;
     m_endParameter = endParameter;
-  } else {
+  }
+  else {
     m_startParameter = endParameter;
     m_endParameter = startParameter;
     this->reverse();
@@ -324,7 +327,8 @@ void usPolynomialCurve3D::defineFromPoints(const std::vector<vpColVector> &point
       A = M.pseudoInverse(std::numeric_limits<double>::epsilon()) * B;
     else
       A = M.inverseByCholeskyLapack() * B;
-  } catch (std::exception &e) {
+  }
+  catch (std::exception &e) {
     throw vpException(vpException::fatalError, "usPolynomialCurve3D::defineFromPoints(const std::vector<vpColVector> "
                                                "&points, const std::vector<double> &param, unsigned int order): %s",
                       e.what());
@@ -382,7 +386,8 @@ void usPolynomialCurve3D::defineFromPoints(const vpMatrix points, const vpColVec
       A = M.pseudoInverse(std::numeric_limits<double>::epsilon()) * B;
     else
       A = M.inverseByCholeskyLapack() * B;
-  } catch (std::exception &e) {
+  }
+  catch (std::exception &e) {
     throw vpException(vpException::fatalError, "usPolynomialCurve3D::defineFromPoints(const std::vector<vpColVector> "
                                                "&points, const std::vector<double> &param, unsigned int order): %s",
                       e.what());
@@ -537,8 +542,8 @@ void usPolynomialCurve3D::defineFromPointsAuto(const vpMatrix &points, const vpC
     for (unsigned int j = 0; j < 3; j++)
       newPoints[j][i] = points[j][index[i]];
     interLength[i - 1] =
-        sqrt(vpMath::sqr(newPoints[0][i] - newPoints[0][i - 1]) + vpMath::sqr(newPoints[1][i] - newPoints[1][i - 1]) +
-             vpMath::sqr(newPoints[2][i] - newPoints[2][i - 1]));
+      sqrt(vpMath::sqr(newPoints[0][i] - newPoints[0][i - 1]) + vpMath::sqr(newPoints[1][i] - newPoints[1][i - 1]) +
+           vpMath::sqr(newPoints[2][i] - newPoints[2][i - 1]));
     newLength += interLength[i - 1];
   }
   double scaling = oldLength / newLength;
@@ -603,7 +608,8 @@ void usPolynomialCurve3D::defineFromWeightedPoints(const std::vector<vpColVector
   vpMatrix A;
   try {
     A = M.pseudoInverse(std::numeric_limits<double>::epsilon()) * B;
-  } catch (std::exception &e) {
+  }
+  catch (std::exception &e) {
     throw vpException(vpException::fatalError, "usPolynomialCurve3D::defineFromWeightedPoints(const vpMatrix &points, "
                                                "const vpColVector &param, const vpColVector &weights, unsigned int "
                                                "order): %s",
@@ -664,7 +670,8 @@ void usPolynomialCurve3D::defineFromWeightedPoints(const vpMatrix &points, const
   vpMatrix A;
   try {
     A = M.pseudoInverse(std::numeric_limits<double>::epsilon()) * B;
-  } catch (std::exception &e) {
+  }
+  catch (std::exception &e) {
     throw vpException(vpException::fatalError, "usPolynomialCurve3D::defineFromWeightedPoints(const vpMatrix &points, "
                                                "const vpColVector &param, const vpColVector &weights, unsigned int "
                                                "order): %s",
@@ -810,8 +817,8 @@ void usPolynomialCurve3D::defineFromWeightedPointsAuto(const vpMatrix &points, c
       newPoints[j][i] = points[j][index[i]];
     newWeights[i] = weights[index[i]];
     interLength[i - 1] =
-        sqrt(vpMath::sqr(newPoints[0][i] - newPoints[0][i - 1]) + vpMath::sqr(newPoints[1][i] - newPoints[1][i - 1]) +
-             vpMath::sqr(newPoints[2][i] - newPoints[2][i - 1]));
+      sqrt(vpMath::sqr(newPoints[0][i] - newPoints[0][i - 1]) + vpMath::sqr(newPoints[1][i] - newPoints[1][i - 1]) +
+           vpMath::sqr(newPoints[2][i] - newPoints[2][i - 1]));
     newLength += interLength[i - 1];
   }
   double scaling = oldLength / newLength;
@@ -929,8 +936,8 @@ void usPolynomialCurve3D::defineFromWeightedPointsAuto(const vpMatrix &points, c
       newPoints[j][i] = points[j][index[i]];
     newWeights[i] = weights[index[i]];
     interLength[i - 1] =
-        sqrt(vpMath::sqr(newPoints[0][i] - newPoints[0][i - 1]) + vpMath::sqr(newPoints[1][i] - newPoints[1][i - 1]) +
-             vpMath::sqr(newPoints[2][i] - newPoints[2][i - 1]));
+      sqrt(vpMath::sqr(newPoints[0][i] - newPoints[0][i - 1]) + vpMath::sqr(newPoints[1][i] - newPoints[1][i - 1]) +
+           vpMath::sqr(newPoints[2][i] - newPoints[2][i - 1]));
     newLength += interLength[i - 1];
   }
   double scaling = oldLength / newLength;
@@ -1038,7 +1045,8 @@ double usPolynomialCurve3D::getCurvatureFromShape(double start, double end, vpCo
 
   if (direction3D.size() == 3) {
     direction3D = V.getCol(2);
-  } else if (direction3D.size() == 4) {
+  }
+  else if (direction3D.size() == 4) {
     direction3D.insert(0, V.getCol(2));
     direction3D[3] = 0;
   }
@@ -1046,7 +1054,8 @@ double usPolynomialCurve3D::getCurvatureFromShape(double start, double end, vpCo
   if (center3D.size() == 3) {
     V.resize(3, 2, false);
     center3D = V * center;
-  } else if (center3D.size() == 4) {
+  }
+  else if (center3D.size() == 4) {
     V.resize(3, 2, false);
     center3D.insert(0, V * center + mean.t());
     center3D[3] = 1;

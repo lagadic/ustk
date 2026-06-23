@@ -41,6 +41,10 @@
 #include <visp3/core/vpException.h>
 #include <visp3/ustk_core/usRawFileParser.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 /**
 * Reading method for unisgned char 3D images.
 * @param[out] image3D 3D-image to fill.
@@ -61,7 +65,7 @@ void usRawFileParser::read(usImage3D<unsigned char> &image3D, const std::string 
 void usRawFileParser::write(const usImage3D<unsigned char> &image3D, const std::string &rawFilename)
 {
   std::fstream fileStream(rawFilename.c_str(), std::ios::out | std::ios::binary);
-  fileStream.write((const char*)image3D.getConstData(), image3D.getSize()*sizeof(unsigned char));
+  fileStream.write((const char *)image3D.getConstData(), image3D.getSize()*sizeof(unsigned char));
   fileStream.close();
 }
 
@@ -73,7 +77,7 @@ void usRawFileParser::write(const usImage3D<unsigned char> &image3D, const std::
 void usRawFileParser::read(usImageRF3D<short> &image3D, const std::string &rawFilename)
 {
   std::ifstream fileStream(rawFilename.c_str(), std::ios::in | std::ios::binary);
-  fileStream.read((char*)image3D.bitmap, image3D.getSize()*sizeof(short));
+  fileStream.read((char *)image3D.bitmap, image3D.getSize()*sizeof(short));
   fileStream.close();
 }
 
@@ -85,7 +89,7 @@ void usRawFileParser::read(usImageRF3D<short> &image3D, const std::string &rawFi
 void usRawFileParser::write(const usImageRF3D<short> &image3D, const std::string &rawFilename)
 {
   std::fstream fileStream(rawFilename.c_str(), std::ios::out | std::ios::binary);
-  fileStream.write((const char*)image3D.getConstData(), image3D.getSize()*sizeof(short));
+  fileStream.write((const char *)image3D.getConstData(), image3D.getSize()*sizeof(short));
   fileStream.close();
 }
 

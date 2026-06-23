@@ -38,6 +38,10 @@
 #include <algorithm>
 #include <visp3/ustk_core/usPixelMeterConversion.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 /**
  * @brief Conversion for 2D post-scan images.
  * @param [in] image 2D Post-scan image with settings well filled.
@@ -66,8 +70,8 @@ void usPixelMeterConversion::convert(const usImagePostScan2D<unsigned char> &ima
   if (image.isTransducerConvex()) {
     x = image.getWidthResolution() * u - (((double)image.getWidth() * image.getWidthResolution()) / 2.0);
     y = image.getHeightResolution() * v +
-        image.getTransducerRadius() *
-            std::cos(((double)image.getScanLineNumber() - 1) * image.getScanLinePitch() / 2.0);
+      image.getTransducerRadius() *
+      std::cos(((double)image.getScanLineNumber() - 1) * image.getScanLinePitch() / 2.0);
   }
   // Then linear probe type
   else {
@@ -117,13 +121,15 @@ void usPixelMeterConversion::convert(const usImagePostScan3D<unsigned char> &ima
       x = image.getElementSpacingX() * u - ((image.getWidth() * image.getElementSpacingX()) / 2.0);
       y = image.getElementSpacingY() * v;
       z = image.getElementSpacingZ() * w - (image.getNumberOfFrames() * image.getElementSpacingZ() / 2.0);
-    } else if (image.getMotorType() == usMotorSettings::TiltingMotor) { // tilting motor
+    }
+    else if (image.getMotorType() == usMotorSettings::TiltingMotor) { // tilting motor
       x = image.getElementSpacingX() * u - ((image.getWidth() * image.getElementSpacingX()) / 2.0);
       y = image.getElementSpacingY() * v +
-          image.getMotorRadius() * std::cos((image.getFrameNumber() - 1) * image.getFramePitch() / 2.0) -
-          image.getMotorRadius();
+        image.getMotorRadius() * std::cos((image.getFrameNumber() - 1) * image.getFramePitch() / 2.0) -
+        image.getMotorRadius();
       z = image.getElementSpacingZ() * w - (image.getNumberOfFrames() * image.getElementSpacingZ() / 2.0);
-    } else
+    }
+    else
       throw(vpException(vpException::notImplementedError, "Rotationnal Motor is not available yet."));
   }
   // Then convex transducer
@@ -131,20 +137,22 @@ void usPixelMeterConversion::convert(const usImagePostScan3D<unsigned char> &ima
     if (image.getMotorType() == usMotorSettings::LinearMotor) { // linear motor
       x = image.getElementSpacingX() * u - (image.getWidth() * image.getElementSpacingX() / 2.0);
       y = image.getElementSpacingY() * v +
-          image.getTransducerRadius() * std::cos((image.getScanLineNumber() - 1) * image.getScanLinePitch() / 2.0);
+        image.getTransducerRadius() * std::cos((image.getScanLineNumber() - 1) * image.getScanLinePitch() / 2.0);
       z = image.getElementSpacingZ() * w - (image.getNumberOfFrames() * image.getElementSpacingZ() / 2.0);
-    } else if (image.getMotorType() == usMotorSettings::TiltingMotor) { // tilting motor
+    }
+    else if (image.getMotorType() == usMotorSettings::TiltingMotor) { // tilting motor
       x = image.getElementSpacingX() * u - (image.getWidth() * image.getElementSpacingX() / 2.0);
 
       y = image.getElementSpacingY() * v +
-          (image.getTransducerRadius() *                                                // Rmin
-               std::cos((image.getScanLineNumber() - 1) * image.getScanLinePitch() / 2) // cos (FOV/2)
-           - (image.getTransducerRadius() - image.getMotorRadius()))                    // Delta R
-              * std::cos((image.getFrameNumber() - 1) * image.getFramePitch() / 2)      // cos(Phi/2)
-          + (image.getTransducerRadius() - image.getMotorRadius());                     // Delta R
+        (image.getTransducerRadius() *                                                // Rmin
+             std::cos((image.getScanLineNumber() - 1) * image.getScanLinePitch() / 2) // cos (FOV/2)
+         - (image.getTransducerRadius() - image.getMotorRadius()))                    // Delta R
+        * std::cos((image.getFrameNumber() - 1) * image.getFramePitch() / 2)      // cos(Phi/2)
+        + (image.getTransducerRadius() - image.getMotorRadius());                     // Delta R
 
       z = image.getElementSpacingZ() * w - (image.getNumberOfFrames() * image.getElementSpacingZ() / 2.0);
-    } else
+    }
+    else
       throw(vpException(vpException::notImplementedError, "Rotationnal Motor is not available yet."));
   }
 }

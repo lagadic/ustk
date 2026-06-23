@@ -37,6 +37,10 @@
 
 #include <visp3/ustk_core/usMeterPixelConversion.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 /**
 * Conversion method for 2D ultrasound images.
 *
@@ -54,7 +58,7 @@ void usMeterPixelConversion::convert(const usImagePostScan2D<unsigned char> &ima
   if (image.isTransducerConvex()) {
     u = (x + ((image.getWidth() * image.getWidthResolution()) / 2)) / image.getWidthResolution();
     v = (y - image.getTransducerRadius() * std::cos((image.getScanLineNumber() - 1) * image.getScanLinePitch() / 2)) /
-        image.getHeightResolution();
+      image.getHeightResolution();
   }
   // Then linear probe type
   else {
@@ -83,13 +87,15 @@ void usMeterPixelConversion::convert(const usImagePostScan3D<unsigned char> &ima
       u = (x + ((image.getWidth() * image.getElementSpacingX()) / 2)) / image.getElementSpacingX();
       v = y / image.getElementSpacingY();
       w = (z + image.getNumberOfFrames() * image.getElementSpacingZ() / 2) / image.getElementSpacingZ();
-    } else if (image.getMotorType() == usMotorSettings::TiltingMotor) { // tilting motor
+    }
+    else if (image.getMotorType() == usMotorSettings::TiltingMotor) { // tilting motor
       u = (x + ((image.getWidth() * image.getElementSpacingX()) / 2)) / image.getElementSpacingX();
       v = (y - image.getMotorRadius() * std::cos((image.getFrameNumber() - 1) * image.getFramePitch() / 2) +
            image.getMotorRadius()) /
-          image.getElementSpacingY();
+        image.getElementSpacingY();
       w = (z + image.getNumberOfFrames() * image.getElementSpacingZ() / 2) / image.getElementSpacingZ();
-    } else
+    }
+    else
       throw(vpException(vpException::notImplementedError, "Rotationnal Motor is not available yet."));
   }
   // Then convex transducer
@@ -97,21 +103,23 @@ void usMeterPixelConversion::convert(const usImagePostScan3D<unsigned char> &ima
     if (image.getMotorType() == usMotorSettings::LinearMotor) { // linear motor
       u = (x + ((image.getWidth() * image.getElementSpacingX()) / 2)) / image.getElementSpacingX();
       v = (y - image.getTransducerRadius() * std::cos((image.getScanLineNumber() - 1) * image.getScanLinePitch() / 2)) /
-          image.getElementSpacingY();
+        image.getElementSpacingY();
       w = (z + image.getNumberOfFrames() * image.getElementSpacingZ() / 2) / image.getElementSpacingZ();
-    } else if (image.getMotorType() == usMotorSettings::TiltingMotor) { // tilting motor
+    }
+    else if (image.getMotorType() == usMotorSettings::TiltingMotor) { // tilting motor
       u = (x + ((image.getWidth() * image.getElementSpacingX()) / 2)) / image.getElementSpacingX();
 
       v = (y -
            (image.getTransducerRadius() *                                                // Rmin
-                std::cos((image.getScanLineNumber() - 1) * image.getScanLinePitch() / 2) // cos (FOV/2)
+            std::cos((image.getScanLineNumber() - 1) * image.getScanLinePitch() / 2) // cos (FOV/2)
             - (image.getTransducerRadius() - image.getMotorRadius()))                    // Delta R
                * std::cos((image.getFrameNumber() - 1) * image.getFramePitch() / 2)      // cos(Phi/2)
            - (image.getTransducerRadius() - image.getMotorRadius()))                     // Delta R
-          / image.getElementSpacingY();
+        / image.getElementSpacingY();
 
       w = (z + image.getNumberOfFrames() * image.getElementSpacingZ() / 2) / image.getElementSpacingZ();
-    } else
+    }
+    else
       throw(vpException(vpException::notImplementedError, "Rotationnal Motor is not available yet."));
   }
 }

@@ -35,6 +35,7 @@
 
 #include <vector>
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 
@@ -73,7 +74,7 @@ public:
   void removeSegments(int i, int j);
   void clear();
 
-  void defineFromPoints(const std::vector<vpColVector> &points, const std::vector<double> &lengths, int order = 3);
+  void defineFromPoints(const std::vector<VISP_NAMESPACE_ADDRESSING vpColVector> &points, const std::vector<double> &lengths, int order = 3);
 
   const usPolynomialCurve3D &accessSegment(int i) const;
   const usPolynomialCurve3D &accessLastSegment() const;
@@ -83,22 +84,22 @@ public:
 
   //! Move
 
-  bool move(const vpHomogeneousMatrix &H);
+  bool move(const VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &H);
   bool move(double x, double y, double z, double tx, double ty, double tz);
 
   //! Measure curve information
 
   //! Position
 
-  vpColVector getPoint(double param) const;
-  vpColVector getTangent(double param) const;
-  double getDistanceFromPoint(const vpColVector &point, double start = 0, double stop = -1,
+  VISP_NAMESPACE_ADDRESSING vpColVector getPoint(double param) const;
+  VISP_NAMESPACE_ADDRESSING vpColVector getTangent(double param) const;
+  double getDistanceFromPoint(const VISP_NAMESPACE_ADDRESSING vpColVector &point, double start = 0, double stop = -1,
                               double threshold = 1e-5) const;
   bool getParametersFromLength(double l, int &index, double &param) const;
 
   //! Curvature
 
-  double getCurvatureFromShape(double start, double end, vpColVector &center3D, vpColVector &direction3D) const;
+  double getCurvatureFromShape(double start, double end, VISP_NAMESPACE_ADDRESSING vpColVector &center3D, VISP_NAMESPACE_ADDRESSING vpColVector &direction3D) const;
 
   //! Data saving
 

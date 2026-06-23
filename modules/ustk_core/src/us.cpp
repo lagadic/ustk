@@ -53,6 +53,9 @@ namespace us
  */
 std::string getDataSetPath()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   std::string data_path;
   std::string file_to_test("post-scan/3D_mhd/volume.mhd");
   std::string filename;
@@ -69,7 +72,8 @@ std::string getDataSetPath()
     filename = data_path + "/" + file_to_test;
     if (vpIoTools::checkFilename(filename))
       return data_path;
-  } catch (...) {
+  }
+  catch (...) {
   }
   data_path = "";
   return data_path;

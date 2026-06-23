@@ -105,11 +105,11 @@ int main()
 }
   \endcode
  */
-template <class Type> class usImagePostScan2D : public vpImage<Type>, public usTransducerSettings
+template <class Type> class usImagePostScan2D : public VISP_NAMESPACE_ADDRESSING vpImage<Type>, public usTransducerSettings
 {
 public:
   usImagePostScan2D();
-  usImagePostScan2D(const vpImage<Type> &image, const usTransducerSettings &transducerSettings,
+  usImagePostScan2D(const VISP_NAMESPACE_ADDRESSING vpImage<Type> &image, const usTransducerSettings &transducerSettings,
                     double widthResolution = 0.0, double heightResolution = 0.0);
   usImagePostScan2D(const usImagePostScan2D<Type> &other);
   virtual ~usImagePostScan2D();
@@ -120,7 +120,7 @@ public:
   usImagePostScan2D<Type> &operator=(const usImagePostScan2D<Type> &other);
   bool operator==(const usImagePostScan2D<Type> &other);
 
-  void setData(const vpImage<Type> &image);
+  void setData(const VISP_NAMESPACE_ADDRESSING vpImage<Type> &image);
   void setHeightResolution(double heightResolution);
   void setWidthResolution(double widthResolution);
 
@@ -134,7 +134,7 @@ private:
 */
 template <class Type>
 usImagePostScan2D<Type>::usImagePostScan2D()
-  : vpImage<Type>(), usTransducerSettings(), m_widthResolution(0.0), m_heightResolution(0.0)
+  : VISP_NAMESPACE_ADDRESSING vpImage<Type>(), usTransducerSettings(), m_widthResolution(0.0), m_heightResolution(0.0)
 { }
 
 /**
@@ -143,7 +143,7 @@ usImagePostScan2D<Type>::usImagePostScan2D()
 */
 template <class Type>
 usImagePostScan2D<Type>::usImagePostScan2D(const usImagePostScan2D<Type> &other)
-  : vpImage<Type>(other), usTransducerSettings(other), m_widthResolution(other.getWidthResolution()),
+  : VISP_NAMESPACE_ADDRESSING vpImage<Type>(other), usTransducerSettings(other), m_widthResolution(other.getWidthResolution()),
   m_heightResolution(other.getHeightResolution())
 { }
 
@@ -155,9 +155,9 @@ usImagePostScan2D<Type>::usImagePostScan2D(const usImagePostScan2D<Type> &other)
 * @param widthResolution Width (in meters) of a pixel.
 */
 template <class Type>
-usImagePostScan2D<Type>::usImagePostScan2D(const vpImage<Type> &image, const usTransducerSettings &transducerSettings,
+usImagePostScan2D<Type>::usImagePostScan2D(const VISP_NAMESPACE_ADDRESSING vpImage<Type> &image, const usTransducerSettings &transducerSettings,
                                            double widthResolution, double heightResolution)
-  : vpImage<Type>(image), usTransducerSettings(transducerSettings), m_widthResolution(widthResolution),
+  : VISP_NAMESPACE_ADDRESSING vpImage<Type>(image), usTransducerSettings(transducerSettings), m_widthResolution(widthResolution),
   m_heightResolution(heightResolution)
 { }
 
@@ -171,6 +171,10 @@ template <class Type> usImagePostScan2D<Type>::~usImagePostScan2D() { }
 */
 template <class Type> usImagePostScan2D<Type> &usImagePostScan2D<Type>::operator=(const usImagePostScan2D<Type> &other)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   // from vpImage
   vpImage<Type>::operator=(other);
 
@@ -189,6 +193,9 @@ template <class Type> usImagePostScan2D<Type> &usImagePostScan2D<Type>::operator
 */
 template <class Type> bool usImagePostScan2D<Type>::operator==(const usImagePostScan2D<Type> &other)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   return (vpImage<Type>::operator==(other) && usTransducerSettings::operator==(other) &&
           m_heightResolution == other.getHeightResolution() && m_widthResolution == other.getWidthResolution());
 }
@@ -208,8 +215,11 @@ template <class Type> std::ostream &operator<<(std::ostream &out, const usImageP
 * Setter that updates 2D post-scan image data.
 * @param image Data to set.
 */
-template <class Type> void usImagePostScan2D<Type>::setData(const vpImage<Type> &image)
+template <class Type> void usImagePostScan2D<Type>::setData(const VISP_NAMESPACE_ADDRESSING vpImage<Type> &image)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   vpImage<Type>::operator=(image);
 }
 

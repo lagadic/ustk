@@ -45,6 +45,7 @@
 #include <iostream>
 #include <vector>
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpImage.h>
@@ -151,6 +152,10 @@ template <class ImageType> void usSequenceWriter<ImageType>::setSequenceFileName
 */
 template <class ImageType> void usSequenceWriter<ImageType>::setImageFileName(const std::string &imageFileName)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   // create subdirectory if there is one
   if (m_headerFileNameIsSet) {
     std::string relativePathToHeader = vpIoTools::getParent(imageFileName);
@@ -179,6 +184,10 @@ template <class ImageType> void usSequenceWriter<ImageType>::setFirstFrameIndex(
 */
 template <class ImageType> void usSequenceWriter<ImageType>::open(const ImageType &image, uint64_t timestamp)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   if (!m_headerFileNameIsSet || !m_imageFileNameIsSet)
     throw(vpException(vpException::badValue, "file names not set"));
 
@@ -223,11 +232,18 @@ template <class ImageType> void usSequenceWriter<ImageType>::open(const ImageTyp
 */
 template <class ImageType> void usSequenceWriter<ImageType>::close()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   throw(vpException(vpException::notImplementedError));
 }
 
 template <> inline void usSequenceWriter<usImageRF2D<unsigned char> >::close()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   if (!is_open)
     return;
 
@@ -246,6 +262,10 @@ template <> inline void usSequenceWriter<usImageRF2D<unsigned char> >::close()
 
 template <> inline void usSequenceWriter<usImagePreScan2D<unsigned char> >::close()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   if (!is_open)
     return;
 
@@ -265,6 +285,10 @@ template <> inline void usSequenceWriter<usImagePreScan2D<unsigned char> >::clos
 
 template <> inline void usSequenceWriter<usImagePostScan2D<unsigned char> >::close()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   if (!is_open)
     return;
 
@@ -290,6 +314,10 @@ template <> inline void usSequenceWriter<usImagePostScan2D<unsigned char> >::clo
 */
 template <class ImageType> void usSequenceWriter<ImageType>::saveImage(const ImageType &image, uint64_t timestamp)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   if (!is_open) {
     open(image, timestamp);
     return; // first image has been written by open();

@@ -44,15 +44,19 @@
 #include <omp.h>
 #endif
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 /**
 * Constructor.
 */
-usRFToPreScan3DConverter::usRFToPreScan3DConverter() : m_frameNumber(), m_isInit(false), m_decimationFactor(10) {}
+usRFToPreScan3DConverter::usRFToPreScan3DConverter() : m_frameNumber(), m_isInit(false), m_decimationFactor(10) { }
 
 /**
 * Destructor.
 */
-usRFToPreScan3DConverter::~usRFToPreScan3DConverter() {}
+usRFToPreScan3DConverter::~usRFToPreScan3DConverter() { }
 
 /**
 * Convert method : performs the conversion from RF frame to a pre-scan frame using the following processes :

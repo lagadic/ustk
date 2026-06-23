@@ -40,6 +40,10 @@
 #include <visp3/core/vpException.h>
 #include <visp3/ustk_core/usMetaHeaderParser.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 /**
 * Default constructor.
 */

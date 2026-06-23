@@ -46,6 +46,10 @@
 /*                               MAIN FUNCTION                                */
 /* -------------------------------------------------------------------------- */
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 int main(int argc, const char **argv)
 {
   bool testFailed = false;
@@ -60,8 +64,8 @@ int main(int argc, const char **argv)
   std::cout << "-------------------------------------------------------" << std::endl;
   std::cout << "  testUsMeterConversion.cpp" << std::endl << std::endl;
   std::cout << "  The test converts a pixel position to a meter position, and converts it back to pixel conversion."
-               "  Then it checks if it is the same position."
-            << std::endl;
+    "  Then it checks if it is the same position."
+    << std::endl;
   std::cout << "-------------------------------------------------------" << std::endl;
   std::cout << std::endl;
 
@@ -93,7 +97,7 @@ int main(int argc, const char **argv)
   usImagePostScan2DReference.setHeightResolution(0.0018);
 
   std::cout << "before conversion, u = " << std::scientific << UBase << ", and v = " << std::scientific << VBase
-            << std::endl;
+    << std::endl;
 
   usPixelMeterConversion::convert(usImagePostScan2DReference, UBase, VBase, X, Y);
 
@@ -102,7 +106,7 @@ int main(int argc, const char **argv)
   usMeterPixelConversion::convert(usImagePostScan2DReference, X, Y, U, V);
 
   std::cout << "after back conversion, u = " << std::scientific << U << ", and v = " << std::scientific << V
-            << std::endl;
+    << std::endl;
 
   std::cout << "|U - UBase| = " << std::abs(U - UBase) << std::endl;
   std::cout << "|UBase * epsilon| = " << std::abs(std::numeric_limits<double>::epsilon() * UBase) << std::endl;
@@ -121,7 +125,7 @@ int main(int argc, const char **argv)
   usImagePostScan2DReference.setTransducerConvexity(false);
 
   std::cout << "before conversion, u = " << std::scientific << UBase << ", and v = " << std::scientific << VBase
-            << std::endl;
+    << std::endl;
 
   usPixelMeterConversion::convert(usImagePostScan2DReference, UBase, VBase, X, Y);
 
@@ -130,7 +134,7 @@ int main(int argc, const char **argv)
   usMeterPixelConversion::convert(usImagePostScan2DReference, X, Y, U, V);
 
   std::cout << "after back conversion, u = " << std::scientific << U << ", and v = " << std::scientific << V
-            << std::endl;
+    << std::endl;
 
   std::cout << "|U - UBase| = " << std::abs(U - UBase) << std::endl;
   std::cout << "|UBase * epsilon| = " << std::abs(std::numeric_limits<double>::epsilon() * UBase) << std::endl;

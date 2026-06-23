@@ -39,6 +39,10 @@
 #include <visp3/core/vpRotationMatrix.h>
 #include <visp3/core/vpTranslationVector.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 namespace usGeometryTools
 {
 
@@ -110,7 +114,8 @@ vpColVector getPlaneCurveCrossingPoint(const usPolynomialCurve3D &poly, const us
     if (sideMid == sideStart) {
       start = mid;
       Pstart = Pmid;
-    } else if (sideMid == sideEnd) {
+    }
+    else if (sideMid == sideEnd) {
       end = mid;
       Pend = Pmid;
     }
@@ -161,7 +166,8 @@ vpColVector getPlaneCurveCrossingPoint(const usBSpline3D &spline, const usOrient
         if (sideMid == sideStart) {
           start = mid;
           Pstart = Pmid;
-        } else if (sideMid == sideEnd) {
+        }
+        else if (sideMid == sideEnd) {
           end = mid;
           Pend = Pmid;
         }
@@ -179,7 +185,8 @@ vpColVector getPlaneCurveCrossingPoint(const usBSpline3D &spline, const usOrient
   if (seg >= N) {
     throw vpException(vpException::badValue,
                       "usGeometryTools::getPlaneCurveCrossingPoint(usBSpline3D): spline and plane do not cross");
-  } else {
+  }
+  else {
     double t1 = -1;
     vpColVector P = getPlaneCurveCrossingPoint(spline.accessSegment(seg), plane, threshold, &t1);
     if (t)
@@ -194,13 +201,15 @@ vpColVector projectPointOnPlane(const vpColVector &point, const usOrientedPlane3
   vpColVector d(plane.getDirection());
   if (direction.getCols() != 3) {
     return (point - vpColVector::dotProd(point - p, d) * d);
-  } else {
+  }
+  else {
     vpColVector dp = direction;
     dp.normalize();
     double cos_theta = vpColVector::dotProd(dp, d);
     if (fabs(cos_theta) < std::numeric_limits<double>::epsilon()) {
       return (point - vpColVector::dotProd(point - p, d) * d);
-    } else {
+    }
+    else {
       return (point - vpColVector::dotProd(point - p, d) / cos_theta * dp);
     }
   }
@@ -270,7 +279,8 @@ vpColVector projectPointOnCurve(const vpColVector &point, const usBSpline3D &spl
     if (index)
       *index = seg;
     return projectPointOnCurve(point, spline.accessSegment(seg), threshold, t);
-  } else {
+  }
+  else {
     double t1;
     double t2;
     vpColVector P1 = projectPointOnCurve(point, spline.accessSegment(seg - 1), threshold, &t1);
@@ -280,7 +290,8 @@ vpColVector projectPointOnCurve(const vpColVector &point, const usBSpline3D &spl
       if (t)
         *t = t1;
       return P1;
-    } else {
+    }
+    else {
       if (t)
         *t = t2;
       return P2;
@@ -470,7 +481,8 @@ vpPoseVector ICPPointCloudRelativePose(std::vector<vpColVector> &P1, std::vector
   if (initialGuess) {
     T = initialGuess->getTranslationVector();
     R = initialGuess->getRotationMatrix();
-  } else {
+  }
+  else {
     vpColVector meanP1(3, 0);
     for (unsigned int i = 0; i < P1.size(); i++)
       meanP1 += P1[i];

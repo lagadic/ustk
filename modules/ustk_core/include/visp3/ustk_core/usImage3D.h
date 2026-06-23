@@ -46,6 +46,7 @@
 #include <iostream>
 #include <vector>
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpImage.h>
@@ -242,6 +243,10 @@ private:
 template <class Type>
 inline void usImage3D<Type>::init(unsigned int height, unsigned int width, unsigned int numberOfFrames)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   if ((width != this->m_width) || (height != this->m_height) || (numberOfFrames != this->m_numberOfFrames)) {
     if (bitmap != NULL) {
       vpDEBUG_TRACE(10, "Destruction bitmap[]");
@@ -279,8 +284,7 @@ inline void usImage3D<Type>::init(unsigned int height, unsigned int width, unsig
 
 template <class Type>
 usImage3D<Type>::usImage3D() : m_width(0), m_height(0), m_numberOfFrames(0), m_size(0), bitmap(NULL), framPointer(NULL)
-{
-}
+{ }
 
 template <class Type>
 usImage3D<Type>::usImage3D(unsigned int height, unsigned int width, unsigned int frameNumber)
@@ -332,14 +336,15 @@ template <class Type> usImage3D<Type> &usImage3D<Type>::operator=(const usImage3
 template <class Type> bool usImage3D<Type>::operator==(const usImage3D<Type> &other)
 {
   bool settingsOk = this->getWidth() == other.getWidth() && this->getHeight() == other.getHeight() &&
-                    this->getNumberOfFrames() == other.getNumberOfFrames();
+    this->getNumberOfFrames() == other.getNumberOfFrames();
 
   if (settingsOk) {
     for (unsigned int i = 0; i < m_size; i++) {
       if (bitmap[i] != other.getConstData()[i])
         return false;
     }
-  } else
+  }
+  else
     return false;
   return true;
 }
@@ -347,18 +352,23 @@ template <class Type> bool usImage3D<Type>::operator==(const usImage3D<Type> &ot
 template <class Type> std::ostream &operator<<(std::ostream &out, const usImage3D<Type> &image)
 {
   return out << "width : " << image.getWidth() << std::endl
-             << "height : " << image.getHeight() << std::endl
-             << "frames in volume : " << image.getNumberOfFrames() << std::endl;
+    << "height : " << image.getHeight() << std::endl
+    << "frames in volume : " << image.getNumberOfFrames() << std::endl;
 }
 
 template <class Type> void usImage3D<Type>::setData(Type *data, int numberOfVoxels)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   try {
     if (m_size != numberOfVoxels) {
       throw(vpException(vpException::fatalError, "usImage3D::setData() error, bitmap dimensions mismatch."));
     }
     memcpy(bitmap, data, m_size * sizeof(Type));
-  } catch (std::exception e) {
+  }
+  catch (std::exception e) {
     std::cout << "usImage3D::setData(), error when trying to copy the data :" << std::endl;
     std::cout << e.what() << std::endl;
   }
@@ -368,7 +378,8 @@ template <class Type> void usImage3D<Type>::initData(Type value)
 {
   try {
     std::fill_n(bitmap, m_size, value);
-  } catch (const std::exception &e) {
+  }
+  catch (const std::exception &e) {
     std::cout << e.what() << std::endl;
   }
 }

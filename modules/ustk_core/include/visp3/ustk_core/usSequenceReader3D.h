@@ -45,6 +45,7 @@
 #include <iostream>
 #include <vector>
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpException.h>
 
@@ -124,13 +125,12 @@ public:
 template <class ImageType>
 usSequenceReader3D<ImageType>::usSequenceReader3D()
   : m_frameCount(0), m_fileName(""), m_fileNameIsSet(false), is_open(false), m_volHeader()
-{
-}
+{ }
 
 /**
 * Destructor.
 */
-template <class ImageType> usSequenceReader3D<ImageType>::~usSequenceReader3D() {}
+template <class ImageType> usSequenceReader3D<ImageType>::~usSequenceReader3D() { }
 
 /**
 * FileName setter.
@@ -148,6 +148,10 @@ template <class ImageType> void usSequenceReader3D<ImageType>::setSequenceFileNa
 */
 template <class ImageType> void usSequenceReader3D<ImageType>::open(ImageType &image)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   (void)image;
   throw(vpException(vpException::notImplementedError));
 }
@@ -189,6 +193,10 @@ void usSequenceReader3D<usImageRF2D<short> >::open(usImageRF2D<short> &image)
 
 template <> void usSequenceReader3D<usImagePreScan3D<unsigned char> >::open(usImagePreScan3D<unsigned char> &image)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   if (!m_fileNameIsSet) {
     throw(vpException(vpException::badValue, "Sequence file name not set"));
   }
@@ -241,6 +249,10 @@ template <> void usSequenceReader3D<usImagePreScan3D<unsigned char> >::open(usIm
 
 template <> void usSequenceReader3D<usImagePostScan3D<unsigned char> >::open(usImagePostScan3D<unsigned char> &image)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   if (!m_fileNameIsSet) {
     throw(vpException(vpException::badValue, "Sequence file name not set"));
   }
@@ -354,6 +366,10 @@ template <>
 void usSequenceReader3D<usImagePreScan3D<unsigned char> >::getVolume(usImagePreScan3D<unsigned char> &preScanImage,
                                                                      int volumeNumberInSequence)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   if (!is_open) {
     this->open(preScanImage);
     return;

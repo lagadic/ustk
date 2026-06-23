@@ -40,6 +40,7 @@
 
 #include <cstring>
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/ustk_core/usImagePreScanSettings.h>
 
 /*!
@@ -162,8 +163,7 @@ private:
 */
 template <class Type>
 usImageRF2D<Type>::usImageRF2D() : usImagePreScanSettings(), bitmap(NULL), npixels(0), width(0), height(0), col(NULL)
-{
-}
+{ }
 
 /**
 * Initializing constructor.
@@ -187,6 +187,10 @@ template <class Type>
 usImageRF2D<Type>::usImageRF2D(unsigned int height, unsigned int width, const usImagePreScanSettings &preScanSettings)
   : usImagePreScanSettings(preScanSettings), bitmap(NULL), npixels(0), width(0), height(0), col(NULL)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   if (width != preScanSettings.getScanLineNumber())
     throw(vpException(vpException::badValue, "RF image width differ from transducer scan line number"));
 
@@ -266,6 +270,10 @@ template <class Type> bool usImageRF2D<Type>::operator==(const usImageRF2D<Type>
 */
 template <class Type> Type usImageRF2D<Type>::operator()(unsigned int i, unsigned int j) const
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   if (i >= height || j >= width)
     throw vpException(vpException::dimensionError, "usImageRF2D, try to acess index out of image bounds");
 
@@ -280,6 +288,10 @@ template <class Type> Type usImageRF2D<Type>::operator()(unsigned int i, unsigne
 */
 template <class Type> void usImageRF2D<Type>::operator()(unsigned int i, unsigned int j, const Type &value)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   if (i >= height || j >= width)
     throw vpException(vpException::dimensionError, "usImageRF2D, try to write at index out of image bounds");
 
@@ -292,10 +304,10 @@ template <class Type> void usImageRF2D<Type>::operator()(unsigned int i, unsigne
 template <class Type> std::ostream &operator<<(std::ostream &out, const usImageRF2D<Type> &other)
 {
   return out << static_cast<const usImagePreScanSettings &>(other) << "image height : " << other.getHeight()
-             << std::endl
-             << "image width : " << other.getWidth() << std::endl
-             << "number of A-samples in a scan line : " << other.getRFSampleNumber() << std::endl
-             << "number of scan lines : " << other.getScanLineNumber() << std::endl;
+    << std::endl
+    << "image width : " << other.getWidth() << std::endl
+    << "number of A-samples in a scan line : " << other.getRFSampleNumber() << std::endl
+    << "number of scan lines : " << other.getScanLineNumber() << std::endl;
 }
 
 /**
@@ -370,6 +382,10 @@ void usImageRF2D<Type>::resize(const unsigned int height, const unsigned int wid
 */
 template <class Type> void usImageRF2D<Type>::init(unsigned int height, unsigned int width)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   if (width != this->width) {
     if (col != NULL) {
       delete[] col;

@@ -40,14 +40,17 @@
 
 #if defined(USTK_HAVE_FFTW)
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 /**
 * Constructor.
 * @param decimationFactor Decimation factor : keep only 1 pre-scan sample every N sample (N = decimationFactor)
 */
 usRFToPreScan2DConverter::usRFToPreScan2DConverter(int decimationFactor)
   : m_logCompressor(), m_decimationFactor(decimationFactor), m_isInit(false)
-{
-}
+{ }
 
 /**
 * Destructor.
@@ -82,7 +85,8 @@ void usRFToPreScan2DConverter::init(int widthRF, int heigthRF)
     fftw_destroy_plan(m_pinv);
     delete m_env;
     delete m_comp;
-  } else if (m_signalSize == heigthRF && m_scanLineNumber == heigthRF)
+  }
+  else if (m_signalSize == heigthRF && m_scanLineNumber == heigthRF)
     return;
 
   // for FFT
@@ -132,7 +136,8 @@ void usRFToPreScan2DConverter::enveloppeDetection(const short int *s, double *ou
     else if (i == N / 2) {
       m_fft_out[i][0] = 0;
       m_fft_out[i][1] = 0;
-    } else if (i > N / 2)
+    }
+    else if (i > N / 2)
       m_fft_out[i][0] = -m_fft_out[i][0];
     if (i == 0) {
       m_fft_out[i][0] = 0;

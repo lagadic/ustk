@@ -227,6 +227,10 @@ template <class ImageType> void usSequenceReader<ImageType>::setLastFrameIndex(l
 */
 template <class ImageType> void usSequenceReader<ImageType>::open(ImageType &image)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   (void)image;
   throw(vpException(vpException::notImplementedError));
 }
@@ -238,6 +242,10 @@ template <class ImageType> void usSequenceReader<ImageType>::open(ImageType &ima
 */
 template <class ImageType> void usSequenceReader<ImageType>::open(ImageType &image, uint64_t &timestamp)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   (void)image;
   (void)timestamp;
   throw(vpException(vpException::notImplementedError));
@@ -245,6 +253,10 @@ template <class ImageType> void usSequenceReader<ImageType>::open(ImageType &ima
 
 template <> inline void usSequenceReader<usImagePreScan2D<unsigned char> >::open(usImagePreScan2D<unsigned char> &image)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   if (!m_fileNameIsSet) {
     throw(vpException(vpException::badValue, "Sequence settings file name not set"));
   }
@@ -338,6 +350,10 @@ template <>
 inline void usSequenceReader<usImagePreScan2D<unsigned char> >::open(usImagePreScan2D<unsigned char> &image,
                                                                      uint64_t &timestamp)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   if (!m_fileNameIsSet) {
     throw(vpException(vpException::badValue, "Sequence settings file name not set"));
   }
@@ -435,6 +451,10 @@ inline void usSequenceReader<usImagePreScan2D<unsigned char> >::open(usImagePreS
 template <>
 inline void usSequenceReader<usImagePostScan2D<unsigned char> >::open(usImagePostScan2D<unsigned char> &image)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   if (!m_fileNameIsSet) {
     throw(vpException(vpException::badValue, "Sequence settings file name not set"));
   }
@@ -534,6 +554,10 @@ template <>
 inline void usSequenceReader<usImagePostScan2D<unsigned char> >::open(usImagePostScan2D<unsigned char> &image,
                                                                       uint64_t &timestamp)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   if (!m_fileNameIsSet) {
     throw(vpException(vpException::badValue, "Sequence settings file name not set"));
   }
@@ -638,6 +662,10 @@ inline void usSequenceReader<usImagePostScan2D<unsigned char> >::open(usImagePos
 */
 template <class ImageType> void usSequenceReader<ImageType>::acquire(ImageType &image)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   if (!is_open) {
     this->open(image);
     return;
@@ -703,6 +731,10 @@ template <class ImageType> void usSequenceReader<ImageType>::acquire(ImageType &
 */
 template <class ImageType> void usSequenceReader<ImageType>::acquire(ImageType &image, uint64_t &timestamp)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   if (!is_open) {
     this->open(image, timestamp);
     return;
@@ -772,6 +804,10 @@ template <class ImageType> void usSequenceReader<ImageType>::acquire(ImageType &
 template <>
 inline void usSequenceReader<usImagePreScan2D<unsigned char> >::acquire(usImagePreScan2D<unsigned char> &image)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   if (!is_open) {
     this->open(image);
     return;
@@ -842,6 +878,10 @@ template <>
 inline void usSequenceReader<usImagePreScan2D<unsigned char> >::acquire(usImagePreScan2D<unsigned char> &image,
                                                                         uint64_t &timestamp)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   if (!is_open) {
     this->open(image, timestamp);
     return;
@@ -913,6 +953,10 @@ inline void usSequenceReader<usImagePreScan2D<unsigned char> >::acquire(usImageP
 */
 template <class ImageType> void usSequenceReader<ImageType>::getFrame(ImageType &image, int index)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   if (!is_open) {
     open(image);
     return;
@@ -957,6 +1001,10 @@ template <class ImageType> void usSequenceReader<ImageType>::setLoopCycling(bool
 */
 template <class ImageType> long usSequenceReader<ImageType>::getFrameCount()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   if (is_open)
     return m_lastFrame - m_firstFrame + 1;
   throw(vpException(vpException::fatalError, "Cannot compute the frame number of the sequence before opening it !"));
@@ -968,6 +1016,9 @@ template <class ImageType> long usSequenceReader<ImageType>::getFrameCount()
 */
 template <class ImageType> usImageSettingsXmlParser usSequenceReader<ImageType>::getXmlParser()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   if (is_open)
     return m_xmlParser;
   throw(vpException(vpException::fatalError, "Sequence not opened, xml parser is empty !"));

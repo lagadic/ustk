@@ -42,11 +42,15 @@
 
 #include <visp3/core/vpException.h>
 
-usBSpline3D::usBSpline3D() {}
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
-usBSpline3D::usBSpline3D(const usBSpline3D &spline) : m_spline(spline.m_spline) {}
+usBSpline3D::usBSpline3D() { }
 
-usBSpline3D::~usBSpline3D() {}
+usBSpline3D::usBSpline3D(const usBSpline3D &spline) : m_spline(spline.m_spline) { }
+
+usBSpline3D::~usBSpline3D() { }
 
 const usBSpline3D &usBSpline3D::operator=(const usBSpline3D &spline)
 {
@@ -235,7 +239,8 @@ void usBSpline3D::defineFromPoints(const std::vector<vpColVector> &points, const
     solver.compute(M);
 
     A = solver.solve(B);
-  } catch (std::exception &e) {
+  }
+  catch (std::exception &e) {
     throw vpException(vpException::fatalError, "usBSpline3D::defineFromPoints: %s\n", e.what());
   }
 
@@ -254,7 +259,7 @@ void usBSpline3D::defineFromPoints(const std::vector<vpColVector> &points, const
     // seg.setMaxCurvilinearCoordinate(seg.getLength());
     m_spline.push_back(seg);
     startIndex += nbSegCoef;
-  }
+}
 
 #else
 
@@ -370,7 +375,8 @@ void usBSpline3D::defineFromPoints(const std::vector<vpColVector> &points, const
 
   try {
     A = M.inverseByLU() * B;
-  } catch (std::exception &e) {
+  }
+  catch (std::exception &e) {
     throw vpException(vpException::fatalError, "usBSpline3D::defineFromPoints: %s\n", e.what());
   }
 
@@ -425,7 +431,8 @@ usBSpline3D usBSpline3D::getSubSpline(double a, double b) const
         tb = ta + b - t;
         p = m_spline.at(i).getSubPolynomialCurve(ta, tb);
         ta = tb;
-      } else {
+      }
+      else {
         tb = m_spline.at(i).getParametricLength();
         p = m_spline.at(i).getSubPolynomialCurve(ta, tb);
         ta = 0;
@@ -437,7 +444,8 @@ usBSpline3D usBSpline3D::getSubSpline(double a, double b) const
       t += p.getParametricLength();
     }
 
-  } else
+  }
+  else
     s = *this;
 
   return s;
@@ -658,7 +666,8 @@ double usBSpline3D::getCurvatureFromShape(double start, double end, vpColVector 
 
   if (direction3D.size() == 3) {
     direction3D = V.getCol(2);
-  } else if (direction3D.size() == 4) {
+  }
+  else if (direction3D.size() == 4) {
     direction3D.insert(0, V.getCol(2));
     direction3D[3] = 0;
   }
@@ -666,7 +675,8 @@ double usBSpline3D::getCurvatureFromShape(double start, double end, vpColVector 
   if (center3D.size() == 3) {
     V.resize(3, 2, false);
     center3D = V * center;
-  } else if (center3D.size() == 4) {
+  }
+  else if (center3D.size() == 4) {
     V.resize(3, 2, false);
     center3D.insert(0, V * center + mean.t());
     center3D[3] = 1;

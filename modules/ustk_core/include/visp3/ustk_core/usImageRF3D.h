@@ -40,6 +40,7 @@
 
 #include <cstring>
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/ustk_core/usImageRF2D.h>
 
 #include <visp3/ustk_core/usImagePreScanSettings.h>
@@ -187,9 +188,8 @@ private:
 template <class Type>
 usImageRF3D<Type>::usImageRF3D()
   : usImagePreScanSettings(), usMotorSettings(), m_width(0), m_height(0), m_numberOfFrames(0), m_size(0), bitmap(NULL),
-    framPointer(NULL)
-{
-}
+  framPointer(NULL)
+{ }
 
 /**
 * Basic constructor.
@@ -197,7 +197,7 @@ usImageRF3D<Type>::usImageRF3D()
 template <class Type>
 usImageRF3D<Type>::usImageRF3D(unsigned int height, unsigned int width, unsigned int numberOfFrames)
   : usImagePreScanSettings(), usMotorSettings(), m_width(0), m_height(0), m_numberOfFrames(0), m_size(0), bitmap(NULL),
-    framPointer(NULL)
+  framPointer(NULL)
 {
   resize(height, width, numberOfFrames);
 }
@@ -214,8 +214,12 @@ template <class Type>
 usImageRF3D<Type>::usImageRF3D(unsigned int height, unsigned int width, unsigned int numberOfFrames,
                                const usImagePreScanSettings &preScanSettings, const usMotorSettings &motorSettings)
   : usImagePreScanSettings(preScanSettings), usMotorSettings(motorSettings), m_width(0), m_height(0),
-    m_numberOfFrames(0), m_size(0), bitmap(NULL), framPointer(NULL)
+  m_numberOfFrames(0), m_size(0), bitmap(NULL), framPointer(NULL)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   if (width != preScanSettings.getScanLineNumber())
     throw(vpException(vpException::badValue, "3D RF image U-size differ from transducer scanline number"));
   if (numberOfFrames != motorSettings.getFrameNumber())
@@ -231,7 +235,7 @@ usImageRF3D<Type>::usImageRF3D(unsigned int height, unsigned int width, unsigned
 template <class Type>
 usImageRF3D<Type>::usImageRF3D(const usImageRF3D &other)
   : usImagePreScanSettings(other), usMotorSettings(other), m_width(0), m_height(0), m_numberOfFrames(0), m_size(0),
-    bitmap(NULL)
+  bitmap(NULL)
 {
   init(other.getHeight(), other.getWidth(), other.getNumberOfFrames());
   memcpy(bitmap, other.getConstData(), (size_t)(m_width * m_height * m_numberOfFrames * sizeof(Type)));
@@ -309,8 +313,8 @@ template <class Type> bool usImageRF3D<Type>::operator==(const usImageRF3D<Type>
 template <class Type> std::ostream &operator<<(std::ostream &out, const usImageRF3D<Type> &image)
 {
   return out << "width : " << image.getWidth() << "\nheight : " << image.getHeight()
-             << "\nnumberOfFrames : " << image.getNumberOfFrames() << std::endl
-             << static_cast<const usImagePreScanSettings &>(image) << static_cast<const usMotorSettings &>(image);
+    << "\nnumberOfFrames : " << image.getNumberOfFrames() << std::endl
+    << static_cast<const usImagePreScanSettings &>(image) << static_cast<const usMotorSettings &>(image);
 }
 
 /**
@@ -368,6 +372,10 @@ void usImageRF3D<Type>::resize(unsigned int height, unsigned int width, unsigned
  */
 template <class Type> void usImageRF3D<Type>::insertFrame(const usImageRF2D<short> &frame, unsigned int index)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   // Dimentions checks
   if (index > this->getNumberOfFrames())
     throw(vpException(vpException::badValue, "usImageRF3D::insertFrame : frame index out of volume"));
@@ -394,6 +402,10 @@ template <class Type> void usImageRF3D<Type>::insertFrame(const usImageRF2D<shor
  */
 template <class Type> void usImageRF3D<Type>::getFrame(usImageRF2D<Type> &image, unsigned int index) const
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   // Dimentions checks
   if (index > this->getNumberOfFrames())
     throw(vpException(vpException::badValue, "usImageRF3D::getFrame : frame index out of volume"));
@@ -433,6 +445,10 @@ template <class Type> void usImageRF3D<Type>::getFrame(usImageRF2D<Type> &image,
 */
 template <class Type> void usImageRF3D<Type>::init(unsigned int height, unsigned int width, unsigned int numberOfFrames)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   if ((width != this->m_width) || (height != this->m_height) || (numberOfFrames != this->m_numberOfFrames)) {
     if (bitmap != NULL) {
       delete[] bitmap;
@@ -502,6 +518,10 @@ template <class Type> const Type *usImageRF3D<Type>::getConstData() const { retu
 */
 template <class Type> Type usImageRF3D<Type>::operator()(unsigned int i, unsigned int j, unsigned int k) const
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   bool indexOK = j < m_width && i < m_height && k < m_numberOfFrames;
   if (!indexOK)
     throw(vpException(vpException::dimensionError, "usImageRF3D : accessing a voxel out of range !"));
@@ -519,6 +539,10 @@ template <class Type> Type usImageRF3D<Type>::operator()(unsigned int i, unsigne
 template <class Type>
 void usImageRF3D<Type>::operator()(unsigned int i, unsigned int j, unsigned int k, const Type &value)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   bool indexOK = j < m_width && i < m_height && k < m_numberOfFrames;
   if (!indexOK)
     throw(vpException(vpException::dimensionError, "usImageRF3D : trying to write in a voxel out of range !"));

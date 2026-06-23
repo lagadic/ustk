@@ -33,6 +33,9 @@
 #include <visp3/ustk_core/usImage3D.h>
 #include <visp3/ustk_core/usPreScanToPostScan3DConverter.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 int main(int argc, const char **argv)
 {
@@ -56,15 +59,15 @@ int main(int argc, const char **argv)
   // Fill pre-scan volume with some data
 
   usImage3D<unsigned char> I(sampleNumber, scanLineNumber, frameNumber);
-  for(unsigned int k=0 ; k<frameNumber ; k+=2 ) {
-    for(unsigned int j=0 ; j<scanLineNumber ; j++ ) {
-      for(unsigned int i=0 ; i<sampleNumber ; i++ ) {
-        I(i,j,k,255);
+  for (unsigned int k = 0; k<frameNumber; k += 2) {
+    for (unsigned int j = 0; j<scanLineNumber; j++) {
+      for (unsigned int i = 0; i<sampleNumber; i++) {
+        I(i, j, k, 255);
       }
     }
   }
   preScan.setData(I);
-  
+
   // Fill pre-scan volume info
 
   preScan.setTransducerRadius(transducerRadius);
@@ -79,35 +82,33 @@ int main(int argc, const char **argv)
   // Test all conversion optimization methods and compare timings
 
   usImagePostScan3D<unsigned char> postscan[18];
-  
-  usPreScanToPostScan3DConverter::usConverterOptimizationMethod optMethod[9] = 
-      {usPreScanToPostScan3DConverter::SINGLE_THREAD_DIRECT_CONVERSION,
-       usPreScanToPostScan3DConverter::MULTI_THREAD_DIRECT_CONVERSION,
-       usPreScanToPostScan3DConverter::GPU_DIRECT_CONVERSION,
-       usPreScanToPostScan3DConverter::SINGLE_THREAD_REDUCED_LOOKUP_TABLE,
-       usPreScanToPostScan3DConverter::MULTI_THREAD_REDUCED_LOOKUP_TABLE,
-       usPreScanToPostScan3DConverter::GPU_REDUCED_LOOKUP_TABLE,
-       usPreScanToPostScan3DConverter::SINGLE_THREAD_FULL_LOOKUP_TABLE,
-       usPreScanToPostScan3DConverter::MULTI_THREAD_FULL_LOOKUP_TABLE,
-       usPreScanToPostScan3DConverter::GPU_FULL_LOOKUP_TABLE};
-  
-  char method[9][35] = 
-      {"SINGLE_THREAD_DIRECT_CONVERSION",
-       "MULTI_THREAD_DIRECT_CONVERSION",
-       "GPU_DIRECT_CONVERSION",
-       "SINGLE_THREAD_REDUCED_LOOKUP_TABLE",
-       "MULTI_THREAD_REDUCED_LOOKUP_TABLE",
-       "GPU_REDUCED_LOOKUP_TABLE",
-       "SINGLE_THREAD_FULL_LOOKUP_TABLE",
-       "MULTI_THREAD_FULL_LOOKUP_TABLE",
-       "GPU_FULL_LOOKUP_TABLE"};
-      
-  for(int i=0 ; i<9 ; i++)
-  {
+
+  usPreScanToPostScan3DConverter::usConverterOptimizationMethod optMethod[9] =
+  { usPreScanToPostScan3DConverter::SINGLE_THREAD_DIRECT_CONVERSION,
+   usPreScanToPostScan3DConverter::MULTI_THREAD_DIRECT_CONVERSION,
+   usPreScanToPostScan3DConverter::GPU_DIRECT_CONVERSION,
+   usPreScanToPostScan3DConverter::SINGLE_THREAD_REDUCED_LOOKUP_TABLE,
+   usPreScanToPostScan3DConverter::MULTI_THREAD_REDUCED_LOOKUP_TABLE,
+   usPreScanToPostScan3DConverter::GPU_REDUCED_LOOKUP_TABLE,
+   usPreScanToPostScan3DConverter::SINGLE_THREAD_FULL_LOOKUP_TABLE,
+   usPreScanToPostScan3DConverter::MULTI_THREAD_FULL_LOOKUP_TABLE,
+   usPreScanToPostScan3DConverter::GPU_FULL_LOOKUP_TABLE };
+
+  char method[9][35] =
+  { "SINGLE_THREAD_DIRECT_CONVERSION",
+   "MULTI_THREAD_DIRECT_CONVERSION",
+   "GPU_DIRECT_CONVERSION",
+   "SINGLE_THREAD_REDUCED_LOOKUP_TABLE",
+   "MULTI_THREAD_REDUCED_LOOKUP_TABLE",
+   "GPU_REDUCED_LOOKUP_TABLE",
+   "SINGLE_THREAD_FULL_LOOKUP_TABLE",
+   "MULTI_THREAD_FULL_LOOKUP_TABLE",
+   "GPU_FULL_LOOKUP_TABLE" };
+
+  for (int i = 0; i<9; i++) {
     std::cout << "---------- Optimization method: " << method[i] << std::endl;
     usPreScanToPostScan3DConverter converter;
-    try
-    {
+    try {
       converter.setConverterOptimizationMethod(optMethod[i]);
       std::cout << "---- Converter initialization:" << std::endl;
       double t = vpTime::measureTimeMs();
@@ -126,11 +127,10 @@ int main(int argc, const char **argv)
       std::cout << "Timing: " << vpTime::measureTimeMs()-t <<  std::endl;
       std::cout << "---- End of conversion" << std::endl;
     }
-    catch(std::exception &e)
-    {
+    catch (std::exception &e) {
       std::cout << e.what() << std::endl;
     }
-  }  
-  
+  }
+
   return 0;
 }
