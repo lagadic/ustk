@@ -34,6 +34,10 @@
 
 #if defined(USTK_HAVE_FFTW)
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 /**
 * Default constructor.
 */
@@ -62,7 +66,7 @@ usElastography3D::usElastography3D(usImageRF3D<short int> &Pre, usImageRF3D<shor
 /**
 * Destructor.
 */
-usElastography3D::~usElastography3D() {}
+usElastography3D::~usElastography3D() { }
 
 /**
 * Pre-compresssed RF volume setter.
@@ -128,7 +132,8 @@ void usElastography3D::updateRF(const usImageRF3D<short> &volume)
 {
   if (!m_isloadPre) {
     setPreCompression(volume);
-  } else {
+  }
+  else {
     if (m_isloadPost)
       setPreCompression(m_Postcomp);
     setPostCompression(volume);

@@ -87,12 +87,12 @@ public:
   mat MedianFilt2D(mat M, int kw, int kh);
   mat getU(void) { return m_U; }
   mat getV(void) { return m_V; }
-  vpMatrix getU_vp(void) { return convert_mat2vpMatrix(m_U); }
-  vpMatrix getV_vp(void) { return convert_mat2vpMatrix(m_V); }
+  VISP_NAMESPACE_ADDRESSING vpMatrix getU_vp(void) { return convert_mat2vpMatrix(m_U); }
+  VISP_NAMESPACE_ADDRESSING vpMatrix getV_vp(void) { return convert_mat2vpMatrix(m_V); }
   void saveU(const char *t_s);
   void saveV(const char *t_s);
   mat convert_usImageRF2mat(const usImageRF2D<short> &vI);
-  vpMatrix convert_mat2vpMatrix(mat vI);
+  VISP_NAMESPACE_ADDRESSING vpMatrix convert_mat2vpMatrix(mat vI);
 
 private:
   mat m_M1;

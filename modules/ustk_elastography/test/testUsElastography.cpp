@@ -38,6 +38,10 @@
 #include <visp3/ustk_core/usImageIo.h>
 #include <visp3/ustk_elastography/usElastography.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 int main()
 {
 
@@ -62,7 +66,7 @@ int main()
   // read groud truth image
   vpImage<unsigned char> groundTruthStrainImage;
   std::string groundTruthFileName =
-      us::getDataSetPath() + std::string("/ustk-tests-groudTruth/testElasto_imgRFElasto12&15_ROI-40-2500-50-500.png");
+    us::getDataSetPath() + std::string("/ustk-tests-groudTruth/testElasto_imgRFElasto12&15_ROI-40-2500-50-500.png");
   vpImageIo::read(groundTruthStrainImage, groundTruthFileName.c_str());
 
   // compare

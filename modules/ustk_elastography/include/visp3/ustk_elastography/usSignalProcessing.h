@@ -40,6 +40,7 @@
  * interpolation).
  */
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMatrix.h>
 #include <visp3/ustk_core/usImageRF2D.h>
 
@@ -74,16 +75,16 @@ public:
   /// Virtual destructor
   virtual ~usSignalProcessing();
   /// Gaussian Kernel generator
-  static vpMatrix GaussianFilter(int height, int width, double sigma);
+  static VISP_NAMESPACE_ADDRESSING vpMatrix GaussianFilter(int height, int width, double sigma);
   /// Computation of gradients
-  static vpMatrix getXGradient(const usImageRF2D<short> &image);
-  static vpMatrix getYGradient(const usImageRF2D<short int> &image);
+  static VISP_NAMESPACE_ADDRESSING vpMatrix getXGradient(const usImageRF2D<short> &image);
+  static VISP_NAMESPACE_ADDRESSING vpMatrix getYGradient(const usImageRF2D<short int> &image);
   // Diference between usImageRF2D
-  static vpMatrix Difference(const usImageRF2D<short int> &A, const usImageRF2D<short int> &B);
+  static VISP_NAMESPACE_ADDRESSING vpMatrix Difference(const usImageRF2D<short int> &A, const usImageRF2D<short int> &B);
   /// Bilinear Interpolation
-  static vpMatrix BilinearInterpolation(vpMatrix In, uint newW, uint newH);
+  static VISP_NAMESPACE_ADDRESSING vpMatrix BilinearInterpolation(VISP_NAMESPACE_ADDRESSING vpMatrix In, uint newW, uint newH);
   /// Element-wise product
-  static vpMatrix HadamardProd(vpMatrix matrix1, vpMatrix matrix2);
+  static VISP_NAMESPACE_ADDRESSING vpMatrix HadamardProd(VISP_NAMESPACE_ADDRESSING vpMatrix matrix1, VISP_NAMESPACE_ADDRESSING vpMatrix matrix2);
 };
 
 #endif // __usSignalProcessing_h_

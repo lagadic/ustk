@@ -59,8 +59,8 @@ class VISP_EXPORT usConvolution2d
 public:
   usConvolution2d();
   virtual ~usConvolution2d();
-  void init(const vpMatrix &matrix1, const vpMatrix &matrix2);
-  vpMatrix run(const vpMatrix &matrix1, const vpMatrix &matrix2);
+  void init(const VISP_NAMESPACE_ADDRESSING vpMatrix &matrix1, const VISP_NAMESPACE_ADDRESSING vpMatrix &matrix2);
+  VISP_NAMESPACE_ADDRESSING vpMatrix run(const VISP_NAMESPACE_ADDRESSING vpMatrix &matrix1, const VISP_NAMESPACE_ADDRESSING vpMatrix &matrix2);
 
 private:
   fftw_complex *outa;
@@ -75,9 +75,9 @@ private:
 
   bool m_init;
 
-  vpMatrix m_M1;
-  vpMatrix m_M2;
-  vpMatrix m_R;
+  VISP_NAMESPACE_ADDRESSING vpMatrix m_M1;
+  VISP_NAMESPACE_ADDRESSING vpMatrix m_M2;
+  VISP_NAMESPACE_ADDRESSING vpMatrix m_R;
   unsigned int h_dst;
   unsigned int w_dst;
   unsigned int hf;

@@ -33,16 +33,20 @@
 
 #include <visp3/ustk_elastography/usSignalProcessing.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 /*!
  * \brief usSignalProcessing::usSignalProcessing
  * Constructor
  */
-usSignalProcessing::usSignalProcessing() {}
+usSignalProcessing::usSignalProcessing() { }
 /*!
  * \brief usSignalProcessing::~usSignalProcessing
  * Destructor - void
  */
-usSignalProcessing::~usSignalProcessing() {}
+usSignalProcessing::~usSignalProcessing() { }
 
 /**
 * Gaussian filter kernel generator.
