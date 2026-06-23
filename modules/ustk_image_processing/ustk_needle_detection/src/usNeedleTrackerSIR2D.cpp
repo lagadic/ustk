@@ -34,6 +34,10 @@
 #include <visp3/core/vpImageFilter.h>
 #include <visp3/ustk_needle_detection/usNeedleTrackerSIR2D.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 usNeedleTrackerSIR2D::usNeedleTrackerSIR2D()
 {
   m_needleModel = NULL;
@@ -117,7 +121,7 @@ usPolynomialCurve2D *usNeedleTrackerSIR2D::getParticle(unsigned int i)
 {
   if (i >= m_nParticles) {
     std::cerr << "Error: in usNeedleTrackerSIR2D::getParticle(): "
-              << "Particle index is out of range." << std::endl;
+      << "Particle index is out of range." << std::endl;
     exit(EXIT_FAILURE);
   }
   return m_particles[i];
@@ -127,7 +131,7 @@ double usNeedleTrackerSIR2D::getWeight(unsigned int i)
 {
   if (i >= m_nParticles) {
     std::cerr << "Error: in usNeedleTrackerSIR2D::getWeight(): "
-              << "Particle index is out of range." << std::endl;
+      << "Particle index is out of range." << std::endl;
     exit(EXIT_FAILURE);
   }
   return m_weights[i];
@@ -236,12 +240,12 @@ void usNeedleTrackerSIR2D::run(vpImage<unsigned char> &I, double v)
   if ((m_needleModel->getLength()) > m_lengthThreshold && (m_nPoints != m_nPointsCurrent)) {
     std::cout << "Changing polynomial order from " << m_nPointsCurrent - 1 << " to " << m_nPointsCurrent << std::endl;
     usPolynomialCurve2D *newModel =
-        new usPolynomialCurve2D(m_needleModel->getNewOrderPolynomialCurve(m_nPointsCurrent));
+      new usPolynomialCurve2D(m_needleModel->getNewOrderPolynomialCurve(m_nPointsCurrent));
     delete m_needleModel;
     m_needleModel = newModel;
     for (unsigned int i = 0; i < m_nParticles; ++i) {
       usPolynomialCurve2D *newModel =
-          new usPolynomialCurve2D(m_particles[i]->getNewOrderPolynomialCurve(m_nPointsCurrent));
+        new usPolynomialCurve2D(m_particles[i]->getNewOrderPolynomialCurve(m_nPointsCurrent));
       delete m_particles[i];
       m_particles[i] = newModel;
     }

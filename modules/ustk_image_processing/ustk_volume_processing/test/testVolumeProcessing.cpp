@@ -42,6 +42,10 @@
 #include <visp3/core/vpMatrix.h>
 #include <visp3/ustk_core/usImage3D.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 int main()
 {
   std::cout << "Start testVolumeProcessing" << std::endl;
@@ -151,7 +155,7 @@ int main()
   std::cout << "done: usVolumeProcessing::frangi" << std::endl;
 #else
   std::cout << "ViSP does not have GSL 3rd party to compute usVolumeProcessing::frangi, skipping frangi test."
-            << std::endl;
+    << std::endl;
 #endif
 
   usImage3D<vpColVector> Vvect(size, size, size, vpColVector(3, 1));

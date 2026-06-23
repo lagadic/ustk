@@ -33,15 +33,19 @@
 
 #include <visp3/ustk_confidence_map/usScanlineConfidence2D.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 /**
 * Default constructor.
 */
-usScanlineConfidence2D::usScanlineConfidence2D() {}
+usScanlineConfidence2D::usScanlineConfidence2D() { }
 
 /**
 * Default destructor.
 */
-usScanlineConfidence2D::~usScanlineConfidence2D() {}
+usScanlineConfidence2D::~usScanlineConfidence2D() { }
 
 /**
 * Run the confidence map processor on pre-scan image.

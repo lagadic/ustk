@@ -45,7 +45,7 @@ usDenseTracker2D::usDenseTracker2D() { m_isInit = false; }
 /**
  * Destructor.
  */
-usDenseTracker2D::~usDenseTracker2D() {}
+usDenseTracker2D::~usDenseTracker2D() { }
 
 /**
  * @brief Initialisation of the tracker : to call to set the region to track (R) in the image (I) before starting the
@@ -53,8 +53,12 @@ usDenseTracker2D::~usDenseTracker2D() {}
  * @param I Image containing a region to track.
  * @param R Region of interest (in the image pxiel coordinates).
  */
-void usDenseTracker2D::init(const vpImage<unsigned char> &I, const vpRectOriented &R)
+void usDenseTracker2D::init(const VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &I, const VISP_NAMESPACE_ADDRESSING vpRectOriented &R)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   vpImageTools::extract(I, m_template, R);
   vpImageTools::extract(I, m_region, R);
   m_target = R;
@@ -82,7 +86,7 @@ void usDenseTracker2D::init(const vpImage<unsigned char> &I, const vpRectOriente
       m_LI[u * m_width + v][0] = m_gradX[u][v];
       m_LI[u * m_width + v][1] = m_gradY[u][v];
       m_LI[u * m_width + v][2] =
-          (static_cast<double>(u) - u0) * m_gradY[u][v] - (static_cast<double>(v) - v0) * m_gradX[u][v];
+        (static_cast<double>(u) - u0) * m_gradY[u][v] - (static_cast<double>(v) - v0) * m_gradX[u][v];
     }
   // pseudo inverse of interaction matrix
   m_LI_inverse = m_LI.pseudoInverse();
@@ -93,8 +97,12 @@ void usDenseTracker2D::init(const vpImage<unsigned char> &I, const vpRectOriente
  * @brief Tracking method, to call at every new frame to track.
  * @param I The new image.
  */
-void usDenseTracker2D::update(const vpImage<unsigned char> &I)
+void usDenseTracker2D::update(const VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &I)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   if (m_isInit) {
     double gain = 0.6;
 
@@ -142,13 +150,17 @@ void usDenseTracker2D::update(const vpImage<unsigned char> &I)
  */
 vpRectOriented usDenseTracker2D::getTarget() const
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   if (!m_isInit)
     throw(vpException(vpException::fatalError, "usDenseTracker2D not initialized !"));
   return m_target;
 }
 
-vpImage<unsigned char> &usDenseTracker2D::getTemplate() { return m_template; }
+VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &usDenseTracker2D::getTemplate() { return m_template; }
 
-vpImage<unsigned char> &usDenseTracker2D::getRegion() { return m_region; }
+VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &usDenseTracker2D::getRegion() { return m_region; }
 
 bool usDenseTracker2D::isInit() { return m_isInit; }

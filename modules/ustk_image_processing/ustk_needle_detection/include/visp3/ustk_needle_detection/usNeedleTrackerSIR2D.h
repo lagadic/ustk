@@ -69,7 +69,7 @@ public:
    * @param model The needle model.
    * @param I The input image.
    */
-  double computeLikelihood(const usPolynomialCurve2D &model, const vpImage<unsigned char> &I);
+  double computeLikelihood(const usPolynomialCurve2D &model, const VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &I);
 
   /**
    * Returns the detected needle model.
@@ -109,7 +109,7 @@ public:
    * @param nParticles The number of particles.
    * @param needle The initial needle model.
    */
-  void init(const vpImage<unsigned char> &I, unsigned int nPoints, unsigned int nParticles,
+  void init(const VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &I, unsigned int nPoints, unsigned int nParticles,
             const usPolynomialCurve2D &needle);
 
   /**
@@ -123,7 +123,7 @@ public:
    * @param I The input image.
    * @param v The insertion velocity.
    */
-  void run(vpImage<unsigned char> &I, double v);
+  void run(VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &I, double v);
 
   /**
      * Set the standard deviation for the update noise.
@@ -147,9 +147,9 @@ private:
   usPolynomialCurve2D *m_needleModel;
   usPolynomialCurve2D **m_particles;
   double *m_weights;
-  vpGaussRand m_noise;
-  vpUniRand m_sample;
-  vpMatrix m_sigma;
+  VISP_NAMESPACE_ADDRESSING vpGaussRand m_noise;
+  VISP_NAMESPACE_ADDRESSING vpUniRand m_sample;
+  VISP_NAMESPACE_ADDRESSING vpMatrix m_sigma;
   double m_lengthThreshold;
 
   // Image parameters

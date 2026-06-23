@@ -38,6 +38,10 @@
 
 #if defined(VISP_HAVE_XML2)
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 bool compare(int number1, int number2) { return (number2 == number1); }
 
 int main()

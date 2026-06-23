@@ -33,6 +33,10 @@
 
 #include <visp3/ustk_needle_detection/usNeedleDetectionTools.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 void usNeedleDetectionTools::arithmeticMean(vpMatrix points, double *mean, unsigned int npts, unsigned int d)
 {
   for (unsigned int i = 0; i < d; i++) {
@@ -49,7 +53,7 @@ vpColVector usNeedleDetectionTools::geometricMedian(vpMatrix points, unsigned in
 {
   if (npts == 0) {
     std::cerr << "Error: In usNeedleDetectionTools::geometricMedian(): "
-              << "argument 2 should be > 0." << std::endl;
+      << "argument 2 should be > 0." << std::endl;
     exit(EXIT_FAILURE);
   }
   if (npts == 1) {
@@ -369,7 +373,7 @@ vpMatrix usNeedleDetectionTools::approximateCoordinates(vpMatrix X, vpMatrix MSS
   double ss = dirVec.sumSquare();
   if (ss == 0.0) {
     std::cerr << "Error: in usNeedleDetectionTools::approximateCoordinates(): "
-              << "first and last points are equal." << std::endl;
+      << "first and last points are equal." << std::endl;
     exit(EXIT_FAILURE);
   }
   ndirVec = dirVec / ss;
