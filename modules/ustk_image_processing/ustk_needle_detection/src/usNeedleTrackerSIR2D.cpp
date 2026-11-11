@@ -31,12 +31,31 @@
  *
  *****************************************************************************/
 
-#include <visp3/core/vpImageFilter.h>
+#include <visp3/core/vpImage.h>
 #include <visp3/ustk_needle_detection/usNeedleTrackerSIR2D.h>
 
 #ifdef ENABLE_VISP_NAMESPACE
 using namespace VISP_NAMESPACE_NAME;
 #endif
+
+namespace
+{
+/*!
+ * Apply a 5x5 Gaussian filter to the image pixel located at (r, c).
+ * The pixel should be at least at 2 pixels from the image borders.
+ * \note This was previously provided by vpImageFilter::gaussianFilter() that is no more part of ViSP public API.
+ */
+double gaussianFilter5x5(const vpImage<unsigned char> &I, unsigned int r, unsigned int c)
+{
+  return ((15.0 * I[r][c]) + (12.0 * (I[r - 1][c] + I[r][c - 1] + I[r + 1][c] + I[r][c + 1])) +
+          (9.0 * (I[r - 1][c - 1] + I[r + 1][c - 1] + I[r - 1][c + 1] + I[r + 1][c + 1])) +
+          (5.0 * (I[r - 2][c] + I[r][c - 2] + I[r + 2][c] + I[r][c + 2])) +
+          (4.0 * (I[r - 2][c + 1] + I[r - 2][c - 1] + I[r - 1][c - 2] + I[r + 1][c - 2] + I[r + 2][c - 1] +
+                  I[r + 2][c + 1] + I[r - 1][c + 2] + I[r + 1][c + 2])) +
+          (2.0 * (I[r - 2][c - 2] + I[r + 2][c - 2] + I[r - 2][c + 2] + I[r + 2][c + 2]))) /
+    159.0;
+}
+}
 
 usNeedleTrackerSIR2D::usNeedleTrackerSIR2D()
 {
@@ -105,7 +124,7 @@ void usNeedleTrackerSIR2D::init(const vpImage<unsigned char> &I, unsigned int nP
     unsigned int x = vpMath::round(point[0]);
     unsigned int y = vpMath::round(point[1]);
     if ((3 <= x) && (x < dims[0] - 3) && (3 <= y) && (y < dims[1] - 3)) {
-      m_fgMean += vpImageFilter::gaussianFilter(I, x, y);
+      m_fgMean += gaussianFilter5x5(I, x, y);
     }
     ++c;
   }
@@ -267,7 +286,7 @@ double usNeedleTrackerSIR2D::computeLikelihood(const usPolynomialCurve2D &model,
     unsigned int y = vpMath::round(point[1]);
     if ((3 <= x) && (x < m_dims[0] - 3) && (3 <= y) && (y < m_dims[1] - 3)) {
       ++c;
-      intensity = vpImageFilter::gaussianFilter(I, x, y);
+      intensity = gaussianFilter5x5(I, x, y);
       l += intensity;
     }
   }
@@ -281,7 +300,7 @@ double usNeedleTrackerSIR2D::computeLikelihood(const usPolynomialCurve2D &model,
   unsigned int x = vpMath::round(point[0]);
   unsigned int y = vpMath::round(point[1]);
   if ((3 <= x) && (x < m_dims[0] - 3) && (3 <= y) && (y < m_dims[1] - 3)) {
-    intensity = vpImageFilter::gaussianFilter(I, x, y);
+    intensity = gaussianFilter5x5(I, x, y);
     l += intensity;
   }
 
@@ -289,7 +308,7 @@ double usNeedleTrackerSIR2D::computeLikelihood(const usPolynomialCurve2D &model,
   x = vpMath::round(point[0]);
   y = vpMath::round(point[1]);
   if ((3 <= x) && (x < m_dims[0] - 3) && (3 <= y) && (y < m_dims[1] - 3)) {
-    intensity = vpImageFilter::gaussianFilter(I, x, y);
+    intensity = gaussianFilter5x5(I, x, y);
     l -= intensity;
   }
 
