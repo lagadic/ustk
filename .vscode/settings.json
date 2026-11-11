@@ -195,4 +195,5 @@
   "editor.rulers": [
     {"column": 120, "color": "#ffcc00"}
   ],
+  "cmake.sourceDirectory": "/Users/fspindle/soft/ustk/test-pr/ustk-fspindle/ustk/modules",
 }
