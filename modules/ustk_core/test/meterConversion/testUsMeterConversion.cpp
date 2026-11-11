@@ -39,6 +39,8 @@
 #include <visp3/ustk_core/usMeterPixelConversion.h>
 #include <visp3/ustk_core/usPixelMeterConversion.h>
 
+#include <algorithm>
+#include <cmath>
 #include <string>
 #include <vector>
 
@@ -49,6 +51,18 @@
 #ifdef ENABLE_VISP_NAMESPACE
 using namespace VISP_NAMESPACE_NAME;
 #endif
+
+namespace
+{
+// Tolerance in pixel used to check that a pixel position is recovered after a pixel -> meter -> pixel conversion.
+// It should not be only relative to the pixel position, since the default position (0, 0) would then lead to a null
+// tolerance, while round-off errors are introduced by the trigonometric functions used for a convex transducer.
+const double pixelTolerance = 1e-9;
+
+double getTolerance(double base) { return pixelTolerance * std::max(1.0, std::abs(base)); }
+
+bool isSamePosition(double value, double base) { return std::abs(value - base) <= getTolerance(base); }
+}
 
 int main(int argc, const char **argv)
 {
@@ -108,13 +122,10 @@ int main(int argc, const char **argv)
   std::cout << "after back conversion, u = " << std::scientific << U << ", and v = " << std::scientific << V
     << std::endl;
 
-  std::cout << "|U - UBase| = " << std::abs(U - UBase) << std::endl;
-  std::cout << "|UBase * epsilon| = " << std::abs(std::numeric_limits<double>::epsilon() * UBase) << std::endl;
-  std::cout << "|V - VBase| = " << std::abs(V - VBase) << std::endl;
-  std::cout << "|VBase * epsilon| = " << std::abs(std::numeric_limits<double>::epsilon() * VBase) << std::endl;
+  std::cout << "|U - UBase| = " << std::abs(U - UBase) << " (tolerance " << getTolerance(UBase) << ")" << std::endl;
+  std::cout << "|V - VBase| = " << std::abs(V - VBase) << " (tolerance " << getTolerance(VBase) << ")" << std::endl;
 
-  if (!(std::abs(U - UBase) <= std::abs(std::numeric_limits<double>::epsilon() * UBase) &&
-        std::abs(V - VBase) <= std::abs(std::numeric_limits<double>::epsilon() * VBase))) {
+  if (!(isSamePosition(U, UBase) && isSamePosition(V, VBase))) {
     std::cout << "ERROR : Test for 2d image with convex transducer failed !" << std::endl;
     testFailed = true;
   }
@@ -136,13 +147,10 @@ int main(int argc, const char **argv)
   std::cout << "after back conversion, u = " << std::scientific << U << ", and v = " << std::scientific << V
     << std::endl;
 
-  std::cout << "|U - UBase| = " << std::abs(U - UBase) << std::endl;
-  std::cout << "|UBase * epsilon| = " << std::abs(std::numeric_limits<double>::epsilon() * UBase) << std::endl;
-  std::cout << "|V - VBase| = " << std::abs(V - VBase) << std::endl;
-  std::cout << "|VBase * epsilon| = " << std::abs(std::numeric_limits<double>::epsilon() * VBase) << std::endl;
+  std::cout << "|U - UBase| = " << std::abs(U - UBase) << " (tolerance " << getTolerance(UBase) << ")" << std::endl;
+  std::cout << "|V - VBase| = " << std::abs(V - VBase) << " (tolerance " << getTolerance(VBase) << ")" << std::endl;
 
-  if (!(std::abs(U - UBase) <= std::abs(std::numeric_limits<double>::epsilon() * UBase) &&
-        std::abs(V - VBase) <= std::abs(std::numeric_limits<double>::epsilon() * VBase))) {
+  if (!(isSamePosition(U, UBase) && isSamePosition(V, VBase))) {
     std::cout << "ERROR : Test for 2d image with linear transducer failed !" << std::endl;
     testFailed = true;
   }
